@@ -58,6 +58,26 @@ defmodule LineaUI.Components.AppShell do
   Dark mode (`<html class="dark">`, `localStorage["dark-mode"]`) and monochrome mode (`<body class="is-monochrome">`,
   `localStorage["monochrome-mode"]`) are client state; put `<.theme_script />` in the root layout's `<head>`
   so the first paint already has them.
+
+  ## Setup
+
+  The hooks (`LineaUI.AppShell`, `LineaUI.SidebarGroup`, `LineaUI.ShellPopper`, `LineaUI.ShellTooltips`,
+  `LineaUI.RightSidebar`, `LineaUI.ThemeToggle`, `LineaUI.MonochromeToggle`) come with LineaUI's `Hooks`.
+  Render the shell in the app layout of a `live_session` and give it the current path from an `on_mount`
+  hook, so the active items follow `navigate`:
+
+      def on_mount(:current_path, _params, _session, socket) do
+        {:cont,
+         Phoenix.LiveView.attach_hook(socket, :current_path, :handle_params, fn _params, url, socket ->
+           {:cont, assign(socket, :current_path, URI.parse(url).path)}
+         end)}
+      end
+
+  ## Layouts
+
+  `layout="sidebar"` (the default) takes a `main_sidebar/1` and a `sidebar_panel/1`; `"minimal"` adds a
+  `sidebar_panel_min/1`; `"sideblock"` takes a `sideblock/1`; `"horizontal"` keeps the main sidebar and panel
+  for phones and puts `horizontal_nav_menu/1`s in the `:nav` slot of `header/1`.
   """
 
   use LineaUI.Component
@@ -86,6 +106,15 @@ defmodule LineaUI.Components.AppShell do
   `on_toggle` runs when the browser opens or closes the sidebar (a toggle button, a close button, a breakpoint
   change, or a remembered choice applied on mount). An event name is pushed with
   `%{"id" => id, "open" => boolean}`; a `%JS{}` is executed.
+
+      <.app_shell id="shell" layout="minimal" sidebar_open={@sidebar_open} on_toggle="sidebar">
+        <:sidebar>…</:sidebar>
+        <:header><.header /></:header>
+        <.page_header title="Orders" />
+      </.app_shell>
+
+      def handle_event("sidebar", %{"open" => open}, socket),
+        do: {:noreply, assign(socket, :sidebar_open, open)}
   """
   attr :id, :string, default: "app-shell"
 
@@ -100,12 +129,20 @@ defmodule LineaUI.Components.AppShell do
     doc: "Whether the sidebar is open; defaults to open for `sidebar` and `sideblock`."
 
   attr :header_blur, :boolean, default: true, doc: "LineOne's `is-header-blur`."
-  attr :header_sticky, :boolean, default: true
+
+  attr :header_sticky, :boolean,
+    default: true,
+    doc: "`false` is LineOne's `is-header-not-sticky`."
+
   attr :persist, :boolean, default: true, doc: "Keep the sidebar choice in `localStorage`."
   attr :preloader, :boolean, default: false, doc: "LineOne's app preloader, faded out on mount."
   attr :on_toggle, :any, default: nil, doc: "An event name or a `%JS{}`."
   attr :target, :any, default: nil, doc: "The `phx-target` of `on_toggle`."
-  attr :main_class, :any, default: nil
+
+  attr :main_class, :any,
+    default: nil,
+    doc: "Merged into the classes of `<main class=\"main-content\">`."
+
   attr :class, :any, default: nil
   attr :rest, :global
   slot :sidebar, doc: "The main sidebar and its panel, or the sideblock."
@@ -251,13 +288,21 @@ defmodule LineaUI.Components.AppShell do
   @doc """
   One icon link of the main sidebar. With `label` it gets LineOne's tooltip on its right (inside a
   `main_sidebar/1`, which positions it) and that accessible name.
+
+      <.main_sidebar_link navigate={~p"/settings"} label="Settings" current={@current_path}>
+        <svg class="size-7">…</svg>
+      </.main_sidebar_link>
   """
-  attr :label, :string, default: nil
+  attr :label, :string, default: nil, doc: "The tooltip and the accessible name."
   attr :active, :boolean, default: false
-  attr :current, :string, default: nil
+
+  attr :current, :string,
+    default: nil,
+    doc: "The current path; the link is active when it matches."
+
   attr :class, :any, default: nil
   attr :rest, :global, include: @link_attrs
-  slot :inner_block, required: true
+  slot :inner_block, required: true, doc: "The icon."
 
   def main_sidebar_link(assigns) do
     assigns = assign(assigns, :active, assigns.active or active?(assigns.rest, assigns.current))
@@ -450,6 +495,14 @@ defmodule LineaUI.Components.AppShell do
   @doc """
   The sidebar panel next to the main sidebar: its title, the close button LineOne shows below `xl`, and the
   scrolling body (`sidebar_nav/1`, `sidebar_nav_divider/1`).
+
+      <.sidebar_panel title="Elements">
+        <.sidebar_nav>
+          <.sidebar_nav_link navigate={~p"/avatar"} current={@current_path}>Avatar</.sidebar_nav_link>
+        </.sidebar_nav>
+        <.sidebar_nav_divider />
+        <.sidebar_nav>…</.sidebar_nav>
+      </.sidebar_panel>
   """
   attr :title, :string, required: true
   attr :class, :any, default: nil
@@ -494,7 +547,13 @@ defmodule LineaUI.Components.AppShell do
     """
   end
 
-  @doc "A list of the sidebar panel: `sidebar_nav_link/1` and `sidebar_nav_group/1`."
+  @doc """
+  A list of the sidebar panel (or the sideblock): `sidebar_nav_link/1` and `sidebar_nav_group/1`.
+
+      <.sidebar_nav>
+        <.sidebar_nav_link navigate={~p"/orders"} current={@current_path}>Orders</.sidebar_nav_link>
+      </.sidebar_nav>
+  """
   attr :class, :any, default: nil
   attr :rest, :global
   slot :inner_block, required: true
@@ -507,9 +566,17 @@ defmodule LineaUI.Components.AppShell do
     """
   end
 
-  @doc "A plain link of the sidebar panel, active with `active` or when its path is `current`."
+  @doc """
+  A plain link of the sidebar panel, active with `active` or when its path is `current`.
+
+      <.sidebar_nav_link navigate={~p"/orders"} current={@current_path}>Orders</.sidebar_nav_link>
+  """
   attr :active, :boolean, default: false
-  attr :current, :string, default: nil
+
+  attr :current, :string,
+    default: nil,
+    doc: "The current path; the link is active when it matches."
+
   attr :class, :any, default: nil
   attr :rest, :global, include: @link_attrs
   slot :inner_block, required: true
@@ -551,7 +618,7 @@ defmodule LineaUI.Components.AppShell do
         <:item navigate={~p"/starter/2"}>Unblurred Header</:item>
       </.sidebar_nav_group>
   """
-  attr :id, :string, default: nil
+  attr :id, :string, default: nil, doc: "Defaults to `sidebar-group-<label>`."
   attr :label, :string, required: true
   attr :open, :boolean, default: nil, doc: "Defaults to whether an item is active."
 
@@ -559,7 +626,7 @@ defmodule LineaUI.Components.AppShell do
     default: "sidebar-nav",
     doc: "Groups with the same name open one at a time."
 
-  attr :current, :string, default: nil
+  attr :current, :string, default: nil, doc: "The current path; the matching item is active."
   attr :class, :any, default: nil
   attr :rest, :global
 
@@ -627,7 +694,11 @@ defmodule LineaUI.Components.AppShell do
   defp group_open?(nil, items), do: Enum.any?(items, & &1.active)
   defp group_open?(open, _items), do: open
 
-  @doc "The line between the lists of the sidebar panel."
+  @doc """
+  The line between the lists of the sidebar panel.
+
+      <.sidebar_nav_divider />
+  """
   attr :class, :any, default: nil
 
   def sidebar_nav_divider(assigns) do
@@ -640,6 +711,17 @@ defmodule LineaUI.Components.AppShell do
   LineOne's minimized sidebar panel (`layout="minimal"`): shown next to the main sidebar while the panel is
   closed. A header (an avatar), the icon links (`sidebar_min_group/1`, `sidebar_min_link/1`,
   `sidebar_min_divider/1`) and a footer.
+
+      <.sidebar_panel_min>
+        <:header><div class="avatar size-10">…</div></:header>
+        <.sidebar_min_group>
+          <.sidebar_min_link navigate={~p"/inbox"} label="Inbox" current={@current_path}><svg>…</svg></.sidebar_min_link>
+          <.sidebar_min_link navigate={~p"/trash"} label="Trash" color="error"><svg>…</svg></.sidebar_min_link>
+        </.sidebar_min_group>
+        <.sidebar_min_divider />
+        <.sidebar_min_group>…</.sidebar_min_group>
+        <:footer><.button variant="outline" shape="pill" icon aria-label="More">…</.button></:footer>
+      </.sidebar_panel_min>
   """
   attr :class, :any, default: nil
   attr :rest, :global
@@ -663,7 +745,13 @@ defmodule LineaUI.Components.AppShell do
     """
   end
 
-  @doc "A list of icon links of the minimized panel."
+  @doc """
+  A list of icon links of the minimized panel; the first one keeps LineOne's top margin.
+
+      <.sidebar_min_group>
+        <.sidebar_min_link href="#" label="Home"><svg>…</svg></.sidebar_min_link>
+      </.sidebar_min_group>
+  """
   attr :class, :any, default: nil
   slot :inner_block, required: true
 
@@ -688,15 +776,23 @@ defmodule LineaUI.Components.AppShell do
 
   @min_active "bg-primary/10 font-medium text-primary hover:bg-primary/20 focus:bg-primary/20 active:bg-primary/25 dark:bg-accent-light/10 dark:text-accent-light dark:hover:bg-accent-light/20 dark:focus:bg-accent-light/20 dark:active:bg-accent-light/25"
 
-  @doc "An icon link of the minimized panel; `label` is its accessible name."
-  attr :label, :string, default: nil
+  @doc """
+  An icon link of the minimized panel. Active links are primary soft, the others take `color`.
+
+      <.sidebar_min_link navigate={~p"/starred"} label="Starred" color="warning"><svg>…</svg></.sidebar_min_link>
+  """
+  attr :label, :string, default: nil, doc: "The accessible name."
 
   attr :color, :string,
     default: "neutral",
     values: ~w(neutral primary secondary info success warning error)
 
   attr :active, :boolean, default: false
-  attr :current, :string, default: nil
+
+  attr :current, :string,
+    default: nil,
+    doc: "The current path; the link is active when it matches."
+
   attr :class, :any, default: nil
   attr :rest, :global, include: @link_attrs
   slot :inner_block, required: true
@@ -722,7 +818,11 @@ defmodule LineaUI.Components.AppShell do
   defp min_state(true, _color), do: @min_active
   defp min_state(false, color), do: Map.fetch!(@min_colors, color)
 
-  @doc "The line between the lists of the minimized panel."
+  @doc """
+  The line between the lists of the minimized panel.
+
+      <.sidebar_min_divider />
+  """
   attr :class, :any, default: nil
 
   def sidebar_min_divider(assigns) do
@@ -733,7 +833,16 @@ defmodule LineaUI.Components.AppShell do
 
   @doc """
   LineOne's sideblock (`layout="sideblock"`): one wide sidebar with the logo, the close button and the
-  navigation (`sidebar_nav/1`).
+  navigation (`sidebar_nav/1`). It goes in the `:sidebar` slot of `<.app_shell layout="sideblock">`.
+
+      <.sideblock>
+        <:logo navigate={~p"/"} src={~p"/images/app-logo.svg"} />
+        <.sidebar_nav>
+          <.sidebar_nav_group label="Orders" current={@current_path}>
+            <:item navigate={~p"/orders"}>All orders</:item>
+          </.sidebar_nav_group>
+        </.sidebar_nav>
+      </.sideblock>
   """
   attr :class, :any, default: nil
   attr :rest, :global
@@ -1049,7 +1158,9 @@ defmodule LineaUI.Components.AppShell do
 
   @doc """
   LineOne's animated hamburger: three bars that turn into an arrow while the sidebar is open. Inside an
-  `app_shell/1` it toggles the sidebar.
+  `app_shell/1` it toggles the sidebar; `header/1` already renders one.
+
+      <.sidebar_toggle />
   """
   attr :class, :any, default: nil
   attr :rest, :global
@@ -1163,9 +1274,17 @@ defmodule LineaUI.Components.AppShell do
     do:
       "text-slate-600 hover:bg-slate-300/20 hover:text-slate-800 active:bg-slate-300/25 dark:text-navy-200 dark:hover:bg-navy-300/20 dark:hover:text-navy-100 dark:active:bg-navy-300/25"
 
-  @doc "A link of a horizontal navigation box. A click closes the box."
+  @doc """
+  A link of a horizontal navigation box (inside `horizontal_nav_menu/1`). A click closes the box.
+
+      <.horizontal_nav_link navigate={~p"/reports"} current={@current_path}>Reports</.horizontal_nav_link>
+  """
   attr :active, :boolean, default: false
-  attr :current, :string, default: nil
+
+  attr :current, :string,
+    default: nil,
+    doc: "The current path; the link is active when it matches."
+
   attr :class, :any, default: nil
   attr :rest, :global, include: @link_attrs
   slot :inner_block, required: true
@@ -1191,7 +1310,11 @@ defmodule LineaUI.Components.AppShell do
     """
   end
 
-  @doc "The line between the links of a horizontal navigation box."
+  @doc """
+  The line between the links of a horizontal navigation box.
+
+      <.horizontal_nav_divider />
+  """
   attr :class, :any, default: nil
 
   def horizontal_nav_divider(assigns) do
@@ -1207,6 +1330,11 @@ defmodule LineaUI.Components.AppShell do
   Opened with `open`, `right_sidebar_toggle/1`, or `LineaUI.open/close/toggle(id)` (also from the server with
   a socket). Esc, the overlay and the close button close it. `on_open` and `on_close` take an event name,
   pushed with `%{"id" => id}`, or a `%JS{}`.
+
+      <.right_sidebar id="right-sidebar" open={@panel_open} on_close="panel-closed">
+        <:title><span class="text-xs">25 May, 2022</span></:title>
+        <div class="px-3">…</div>
+      </.right_sidebar>
   """
   attr :id, :string, required: true
   attr :open, :boolean, default: false
@@ -1280,7 +1408,12 @@ defmodule LineaUI.Components.AppShell do
     """
   end
 
-  @doc "The header button that toggles a `right_sidebar/1`."
+  @doc """
+  The header button (LineOne's grid icon) that toggles a `right_sidebar/1`; `header/1` renders one with
+  `right_sidebar="id"`.
+
+      <.right_sidebar_toggle target="right-sidebar" />
+  """
   attr :target, :string, required: true
   attr :class, :any, default: nil
   attr :rest, :global
@@ -1381,6 +1514,8 @@ defmodule LineaUI.Components.AppShell do
   LineOne's dark mode button: a moon in dark mode, a sun in light mode. It toggles the `dark` class of `<html>`
   and keeps it in `localStorage["dark-mode"]`. `on_change` gets `%{"dark" => boolean}` (an event name) or runs
   (a `%JS{}`).
+
+      <.theme_toggle id="theme" on_change="theme-changed" />
   """
   attr :id, :string, default: "theme-toggle"
   attr :on_change, :any, default: nil
@@ -1423,6 +1558,9 @@ defmodule LineaUI.Components.AppShell do
   monochrome page (`variant="switch"`, the label as content). It toggles the `is-monochrome` class of `<body>`
   and keeps it in `localStorage["monochrome-mode"]`; every toggle on the page follows. `on_change` gets
   `%{"monochrome" => boolean}` or runs.
+
+      <.monochrome_toggle id="mono" />
+      <.monochrome_toggle id="mono-switch" variant="switch">Toggle Monochrome Mode</.monochrome_toggle>
   """
   attr :id, :string, default: "monochrome-toggle"
   attr :variant, :string, default: "button", values: ~w(button switch)
@@ -1485,6 +1623,10 @@ defmodule LineaUI.Components.AppShell do
   @doc """
   The script for the root layout's `<head>` that applies the stored dark mode before the first paint (LineOne's
   "prevent flickering" script) and the stored monochrome mode as soon as `<body>` exists.
+
+      <head>
+        <.theme_script />
+      </head>
   """
   attr :rest, :global
 
