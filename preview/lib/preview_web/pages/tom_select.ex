@@ -178,9 +178,7 @@ defmodule PreviewWeb.Pages.TomSelect do
         >
           <:option :let={author}>
             <div class="flex space-x-3">
-              <div class="avatar size-8">
-                <img class="rounded-full" src={author.data.src} alt="avatar" />
-              </div>
+              <.avatar src={author.data.src} size="xs" />
               <div class="flex flex-col">
                 <span>{author.label}</span>
                 <span class="text-xs opacity-80">{author.data.job}</span>
@@ -188,12 +186,10 @@ defmodule PreviewWeb.Pages.TomSelect do
             </div>
           </:option>
           <:item :let={author}>
-            <span class="badge mr-2 rounded-full bg-primary p-px text-white dark:bg-accent">
-              <span class="avatar size-6">
-                <img class="rounded-full" src={author.data.src} alt="avatar" />
-              </span>
+            <.badge color="primary" shape="pill" class="mr-2 p-px">
+              <.avatar src={author.data.src} size="xs" class="size-6" />
               <span class="mx-2">{author.label}</span>
-            </span>
+            </.badge>
           </:item>
         </.select>
       </div>

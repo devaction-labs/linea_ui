@@ -14,7 +14,7 @@ defmodule PreviewWeb.Pages.Select do
     ~H"""
     <.example title="Basic Select" class="max-w-xl">
       <p>
-        The <code class="inline-code">&lt;select&gt;</code>
+        The <.inline_code>&lt;select&gt;</.inline_code>
         HTML element represents a control that provides a menu of options. Check out code for detail of usage.
       </p>
       <div class="mt-5">
@@ -26,7 +26,7 @@ defmodule PreviewWeb.Pages.Select do
     <.example title="Rounded Select" class="max-w-xl">
       <p>
         Select can have a rounded-sm shape. To do this, you should use the
-        <code class="inline-code">rounded-full</code>
+        <.inline_code>rounded-full</.inline_code>
         utility. Check out code for detail of usage.
       </p>
       <div class="mt-5">
@@ -69,7 +69,7 @@ defmodule PreviewWeb.Pages.Select do
     </.example>
     <.example title="Multipie Select" class="max-w-xl">
       <p>
-        The <code class="inline-code">multiple</code>
+        The <.inline_code>multiple</.inline_code>
         attribute indicates that multiple options can be selected in the list. Check out code for detail of usage.
       </p>
       <div class="mt-5">

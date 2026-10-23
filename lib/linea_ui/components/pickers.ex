@@ -3,6 +3,8 @@ defmodule LineaUI.Components.Pickers do
 
   use LineaUI.Component
 
+  alias LineaUI.Components.Form
+
   @doc false
   attr :label, :string, default: nil
   attr :help, :string, default: nil
@@ -22,10 +24,8 @@ defmodule LineaUI.Components.Pickers do
     <label class={merge(["block", @class])} for={@for}>
       <span :if={@label}>{@label}</span>
       {render_slot(@inner_block)}
-      <span :for={message <- @errors} class="mt-1 block text-tiny-plus text-error">{message}</span>
-      <span :if={@help} class="mt-1 block text-tiny-plus text-slate-400 dark:text-navy-300">
-        {@help}
-      </span>
+      <Form.help_text :if={@help} class="mt-1 block">{@help}</Form.help_text>
+      <Form.error :for={message <- @errors} class="mt-1">{message}</Form.error>
     </label>
     """
   end
