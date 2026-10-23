@@ -38,7 +38,7 @@ defmodule LineaUI.Components.BadgeTest do
       """)
 
     assert [_] = find(html, "span.badge > span.bg-current") |> Enum.to_list()
-    assert "space-x-2.5" in classes(html, "span.badge")
+    assert "gap-2.5" in classes(html, "span.badge")
   end
 
   test "on_remove adds the round remove button" do

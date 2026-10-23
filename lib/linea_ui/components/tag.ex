@@ -18,7 +18,7 @@ defmodule LineaUI.Components.Tag do
 
   use LineaUI.Component
 
-  @base "tag"
+  @base "tag disabled:pointer-events-none disabled:opacity-60 aria-disabled:pointer-events-none aria-disabled:opacity-60"
 
   @variants %{
     "solid" => %{

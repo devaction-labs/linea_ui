@@ -163,8 +163,8 @@ defmodule LineaUI.Components.Badge do
   defp remove_js(event, nil, id), do: JS.push(event, value: %{id: id})
   defp remove_js(event, target, id), do: JS.push(event, target: target, value: %{id: id})
 
-  defp spacing(true), do: "space-x-2.5"
-  defp spacing(false), do: "space-x-2"
+  defp spacing(true), do: "gap-2.5"
+  defp spacing(false), do: "gap-2"
 
   defp variant_class(variant, color), do: @variants[variant][color]
   defp shape_class(shape), do: @shapes[shape]

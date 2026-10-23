@@ -151,7 +151,11 @@ defmodule LineaUI.Components.Button do
   attr(:type, :string, default: "button")
   attr(:disabled, :boolean, default: false)
   attr(:class, :any, default: nil)
-  attr(:rest, :global, include: ~w(href navigate patch method download form name value))
+
+  attr(:rest, :global,
+    include: ~w(href navigate patch method download target rel form name value)
+  )
+
   slot(:inner_block, required: true)
 
   def button(assigns) do

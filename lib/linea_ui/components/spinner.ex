@@ -20,7 +20,9 @@ defmodule LineaUI.Components.Spinner do
     "info" => "border-info border-r-transparent",
     "success" => "border-success border-r-transparent",
     "warning" => "border-warning border-r-transparent",
-    "error" => "border-error border-r-transparent"
+    "error" => "border-error border-r-transparent",
+    "white" => "border-white border-r-transparent",
+    "current" => "border-current border-r-transparent"
   }
 
   @soft %{
@@ -31,7 +33,9 @@ defmodule LineaUI.Components.Spinner do
     "info" => "border-info/30 border-r-info",
     "success" => "border-success/30 border-r-success",
     "warning" => "border-warning/30 border-r-warning",
-    "error" => "border-error/30 border-r-error"
+    "error" => "border-error/30 border-r-error",
+    "white" => "border-white/30 border-r-white",
+    "current" => "border-current/30 border-r-current"
   }
 
   @dots %{
@@ -41,7 +45,9 @@ defmodule LineaUI.Components.Spinner do
     "info" => "bg-info",
     "success" => "bg-success",
     "warning" => "bg-warning",
-    "error" => "bg-error"
+    "error" => "bg-error",
+    "white" => "bg-white",
+    "current" => "bg-current"
   }
 
   @texts %{
@@ -51,7 +57,9 @@ defmodule LineaUI.Components.Spinner do
     "info" => "text-info",
     "success" => "text-success",
     "warning" => "text-warning",
-    "error" => "text-error"
+    "error" => "text-error",
+    "white" => "text-white",
+    "current" => "text-current"
   }
 
   @sizes %{
@@ -77,7 +85,8 @@ defmodule LineaUI.Components.Spinner do
   """
   attr(:color, :string,
     default: "neutral",
-    values: ~w(neutral primary secondary info success warning error)
+    values: ~w(neutral primary secondary info success warning error white current),
+    doc: "`white` and `current` (the text color) are for spinners inside filled buttons."
   )
 
   attr(:variant, :string,
