@@ -14,6 +14,7 @@ defmodule PreviewWeb.Pages.ExtensionClipboard do
     ~H"""
     <.toaster flash={@flash} />
     <.narrow title="Basic Usage" text={@text} class="mt-5">
+      <:lead><code class="inline-code">$clipboard</code>{" "}</:lead>
       <div class="alert flex items-center justify-between rounded-lg bg-primary px-4 py-3 text-white dark:bg-accent sm:px-5">
         <p id="clipboardContent1">Lorem ipsum dolor sit amet consectetur.</p>
         <.clipboard
@@ -25,6 +26,7 @@ defmodule PreviewWeb.Pages.ExtensionClipboard do
       </div>
     </.narrow>
     <.narrow title="Advanced Usage" text={@text} class="mt-5">
+      <:lead><code class="inline-code">$clipboard</code>{" "}</:lead>
       <.clipboard_input id="clipboardContent2" placeholder="Enter text" />
     </.narrow>
     """

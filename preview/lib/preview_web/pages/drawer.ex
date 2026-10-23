@@ -12,10 +12,10 @@ defmodule PreviewWeb.Pages.Drawer do
     assigns = assign(assigns, text: @text)
 
     ~H"""
-    <.narrow title="Left Drawer" text={@text} class="mt-5">
+    <.narrow title="Left Drawer" text={@text} wide class="mt-5">
       <.button phx-click={LineaUI.toggle("drawer1")}>Left Drawer</.button>
     </.narrow>
-    <.narrow title="Right Drawer" text={@text} class="mt-5">
+    <.narrow title="Right Drawer" text={@text} wide class="mt-5">
       <.button phx-click={LineaUI.toggle("drawer2")}>Right Drawer</.button>
     </.narrow>
 

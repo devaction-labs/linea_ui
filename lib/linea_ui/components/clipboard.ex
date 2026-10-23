@@ -66,10 +66,13 @@ defmodule LineaUI.Components.Clipboard do
       data-on-copy={@on_copy_js}
       {@rest}
     >
-      {@inner_block == [] && "Copy"}{render_slot(@inner_block)}
+      {default_label(@inner_block)}{render_slot(@inner_block)}
     </Button.button>
     """
   end
+
+  defp default_label([]), do: "Copy"
+  defp default_label(_inner_block), do: nil
 
   @doc """
   LineOne's "Advanced Usage": a text field with a copy button joined to its end. The field is a

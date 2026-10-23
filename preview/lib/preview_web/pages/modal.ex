@@ -34,17 +34,17 @@ defmodule PreviewWeb.Pages.Modal do
       )
 
     ~H"""
-    <.narrow title="Basic Modal" text={@text} class="mt-5">
+    <.narrow title="Basic Modal" text={@text} wide class="mt-5">
       <.button phx-click={LineaUI.open("modal1")}>Basic Modal</.button>
     </.narrow>
-    <.narrow title="Backdrop Blur" text={@text} class="mt-5">
+    <.narrow title="Backdrop Blur" text={@text} wide class="mt-5">
       <.button phx-click={LineaUI.open("modal2")}>Backdrop Blur</.button>
     </.narrow>
-    <.narrow title="Modal Transition" text={@text} class="inline-space mt-5 flex">
+    <.narrow title="Modal Transition" text={@text} wide class="inline-space mt-5 flex">
       <.button phx-click={LineaUI.open("modal3")}>Shift Up</.button>
       <.button phx-click={LineaUI.open("modal4")}>Shift Down</.button>
     </.narrow>
-    <.narrow title="Modal Scale" text={@text} class="inline-space mt-5 flex">
+    <.narrow title="Modal Scale" text={@text} wide class="inline-space mt-5 flex">
       <.button phx-click={LineaUI.open("modal5")}>Origin Top</.button>
       <.button phx-click={LineaUI.open("modal6")}>Origin bottom</.button>
     </.narrow>

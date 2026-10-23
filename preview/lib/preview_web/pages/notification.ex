@@ -29,7 +29,7 @@ defmodule PreviewWeb.Pages.Notification do
       <.button phx-click="default-toast">Default</.button>
     </.narrow>
 
-    <.narrow title="Notification Variants" text={@text} class="inline-space mt-5">
+    <.narrow title="Notification Variants" text={@text} wide class="inline-space mt-5">
       <.button
         :for={color <- ~w(primary secondary info success warning error)}
         color={color}
@@ -51,7 +51,7 @@ defmodule PreviewWeb.Pages.Notification do
       </.button>
     </.narrow>
 
-    <.narrow title="Notification Position" text={@text} class="inline-space mt-5">
+    <.narrow title="Notification Position" text={@text} wide class="inline-space mt-5">
       <.button
         :for={{position, label} <- @positions}
         phx-click={
@@ -65,13 +65,13 @@ defmodule PreviewWeb.Pages.Notification do
       </.button>
     </.narrow>
 
-    <.narrow title="Notification Duration" text={@text} class="mt-5">
+    <.narrow title="Notification Duration" text={@text} wide class="mt-5">
       <.button phx-click={show_toast("This is a simple notification", color: "info", duration: 3000)}>
         3 Seconds
       </.button>
     </.narrow>
 
-    <.narrow title="Custom HTML Content" text={@text} class="mt-5">
+    <.narrow title="Custom HTML Content" text={@text} wide class="mt-5">
       <.button phx-click={show_toast(nil, template: "custom-html-notif", duration: 3000)}>
         HTML content
       </.button>
