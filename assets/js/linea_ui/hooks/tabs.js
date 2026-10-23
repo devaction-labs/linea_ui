@@ -1,3 +1,4 @@
+import {execWithPayload} from "../lib/js_payload.js"
 import {keyName, nextTab} from "../lib/keys.js"
 import {openTabs, resolveSelection} from "../lib/tabs_logic.js"
 
@@ -68,7 +69,7 @@ export default {
       const target = this.el.getAttribute("phx-target") || this.el
       this.el.dispatchEvent(new CustomEvent("linea:change", {bubbles: true, detail: {id: this.el.id, value}}))
       event && this.pushEventTo(target, event, {id: this.el.id, value})
-      onChange && this.liveSocket.execJS(this.el, onChange)
+      execWithPayload(this.liveSocket, this.el, onChange, {id: this.el.id, value})
     },
 
     apply(value) {

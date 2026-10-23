@@ -1,3 +1,4 @@
+import {execWithPayload} from "../lib/js_payload.js"
 import {runKey} from "../lib/keys.js"
 import {cursorRect, placeTooltip} from "../lib/tip_place.js"
 import {FOCUSABLE, withDescription} from "../lib/tooltip_logic.js"
@@ -160,7 +161,7 @@ const Tooltip = {
 
   run(name) {
     const js = this.el.dataset[name]
-    js && js !== "[]" && this.liveSocket.execJS(this.el, js)
+    execWithPayload(this.liveSocket, this.el, js, {id: this.el.id})
   },
 
   place() {

@@ -1,3 +1,4 @@
+import {execWithPayload} from "../lib/js_payload.js"
 /**
  * LineOne's dark mode and monochrome mode toggles. Dark mode is the `dark` class of `<html>` kept in
  * `localStorage["dark-mode"]` (`"dark"` or `""`), as LineOne's `services/darkMode.js` does; monochrome mode is the
@@ -23,7 +24,7 @@ const notify = (hook, payload) => {
   const event = hook.el.dataset.changeEvent
   const js = hook.el.getAttribute("data-on-change")
   event && hook.pushEventTo(hook.el.dataset.target || hook.el, event, payload)
-  js && hook.liveSocket.execJS(hook.el, js)
+  execWithPayload(hook.liveSocket, hook.el, js, payload)
 }
 
 const mode = ({key, value, element, className, event, payload}) => ({

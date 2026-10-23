@@ -31,7 +31,7 @@ defmodule LineaUI.Components.Clipboard do
     default: nil,
     doc: "A selector of the field or element whose text is copied."
 
-  attr :toast, :string, default: "Text Copied", doc: "Shown after a copy; `nil` for none."
+  attr :toast, :any, default: "Text Copied", doc: "Shown after a copy; `nil` or `\"\"` for none."
   attr :error_toast, :string, default: "Error"
   attr :on_copy, :any, default: nil, doc: "An event name or a `%JS{}`."
   attr :target, :any, default: nil
@@ -83,7 +83,7 @@ defmodule LineaUI.Components.Clipboard do
   attr :value, :string, default: nil
   attr :placeholder, :string, default: nil
   attr :label, :string, default: "Copy", doc: "The button's text."
-  attr :toast, :string, default: "Text Copied"
+  attr :toast, :any, default: "Text Copied", doc: "Shown after a copy; `nil` or `\"\"` for none."
   attr :error_toast, :string, default: "Error"
   attr :on_copy, :any, default: nil
   attr :target, :any, default: nil

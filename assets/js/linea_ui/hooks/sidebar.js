@@ -1,3 +1,4 @@
+import {execWithPayload} from "../lib/js_payload.js"
 /**
  * The application shell: the sidebar state (LineOne's `is-sidebar-open`), the collapsible groups of the sidebar
  * panel, the poppers of the header and the sidebar, the main sidebar tooltips and the right sidebar drawer.
@@ -36,7 +37,7 @@ const serverOpen = (el) => el.dataset.open === "true"
 
 const execAttr = (hook, el, name) => {
   const js = el.getAttribute(name)
-  js && hook.liveSocket.execJS(el, js)
+  execWithPayload(hook.liveSocket, el, js, {id: el.id})
 }
 
 const notify = (hook, kind, payload) => {

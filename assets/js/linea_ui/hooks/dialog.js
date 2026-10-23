@@ -1,3 +1,4 @@
+import {execWithPayload} from "../lib/js_payload.js"
 import {COMMANDS, commandOf} from "../lib/anchor_logic.js"
 import {runKey, tabExit} from "../lib/keys.js"
 import {isTop, lockStyle, stackWith, stackWithout} from "../lib/overlay_logic.js"
@@ -31,7 +32,7 @@ export const listen = (hook, actions) => {
 }
 
 /** Runs the `%JS{}` an overlay keeps in a `data-*` attribute (`on_open`, `on_close`), when it has one. */
-export const runJS = (hook, encoded) => encoded && encoded !== "[]" && hook.liveSocket.execJS(hook.el, encoded)
+export const runJS = (hook, encoded, payload = {id: hook.el.id}) => execWithPayload(hook.liveSocket, hook.el, encoded, payload)
 
 const lock = () => {
   const html = document.documentElement

@@ -1,3 +1,4 @@
+import {execWithPayload} from "../lib/js_payload.js"
 const COPIED_MS = 2000
 
 const textOf = (el) => (el ? ("value" in el && typeof el.value === "string" ? el.value : el.innerText) : "")
@@ -39,7 +40,7 @@ export default {
       clearTimeout(this.timer)
       this.timer = setTimeout(() => this.el.removeAttribute("data-copied"), COPIED_MS)
       const onCopy = this.el.dataset.onCopy
-      onCopy && onCopy !== "[]" && this.liveSocket.execJS(this.el, onCopy)
+      execWithPayload(this.liveSocket, this.el, onCopy, {id: this.el.id})
     },
   },
 }

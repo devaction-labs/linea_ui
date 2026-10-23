@@ -36,7 +36,13 @@ defmodule LineaUI.Components.Drawer do
   attr :on_open, :any, default: nil, doc: "An event name or a `%JS{}`."
   attr :on_close, :any, default: nil, doc: "An event name or a `%JS{}`."
   attr :target, :any, default: nil, doc: "The `phx-target` of `on_open` / `on_close` events."
-  attr :class, :any, default: nil, doc: "Merged into the white panel (its width is `w-72`)."
+
+  attr :class, :any,
+    default: nil,
+    doc:
+      "Merged into the sliding frame: its width (`w-72` by default, e.g. `class=\"w-96\"`) and shadow."
+
+  attr :panel_class, :any, default: nil, doc: "Merged into the white panel inside the frame."
   attr :rest, :global
   slot :inner_block, required: true
 
@@ -73,7 +79,9 @@ defmodule LineaUI.Components.Drawer do
       >
       </div>
       <div
-        class={["drawer-content fixed top-0 z-[101] hidden h-full w-72", side_class(@side)]}
+        class={
+          merge(["drawer-content fixed top-0 z-[101] hidden h-full w-72", side_class(@side), @class])
+        }
         phx-mounted={JS.ignore_attributes(["class"])}
       >
         <div
@@ -81,7 +89,7 @@ defmodule LineaUI.Components.Drawer do
           class={
             merge([
               "flex h-full w-full transform-gpu flex-col bg-white outline-hidden transition-transform duration-200 dark:bg-navy-700",
-              @class
+              @panel_class
             ])
           }
           tabindex="-1"

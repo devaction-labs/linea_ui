@@ -1,3 +1,4 @@
+import {execWithPayload} from "../lib/js_payload.js"
 import {
   fraction,
   keyStep,
@@ -12,6 +13,9 @@ import {
   thumb,
 } from "../lib/carousel_logic.js"
 
+/** How long a smooth scroll the hook started may take before scroll events count as the person's again. */
+const HEADING_MS = 1000
+
 const STACKED = ["fade", "flip", "cube", "cards", "coverflow", "creative"]
 
 /**
@@ -20,7 +24,7 @@ const STACKED = ["fade", "flip", "cube", "cards", "coverflow", "creative"]
  */
 const emit = (hook, spec, payload, source = hook.el) => {
   const run = {
-    js: () => hook.liveSocket.execJS(source, spec),
+    js: () => execWithPayload(hook.liveSocket, source, spec, payload),
     push: () => hook.pushEventTo(hook.el.getAttribute("phx-target") || hook.el, spec, payload),
   }
   spec && run[spec.trim().startsWith("[") ? "js" : "push"]()
@@ -65,6 +69,7 @@ const Carousel = {
     this.pause()
     this.stopDrag?.()
     cancelAnimationFrame(this.frame)
+    clearTimeout(this.headingTimer)
     this.cleanups.forEach((cleanup) => cleanup())
   },
 
@@ -137,6 +142,9 @@ const Carousel = {
 
   scrollTo(index, behavior) {
     const start = this.starts()[index] ?? 0
+    this.heading = behavior === "smooth" ? index : undefined
+    clearTimeout(this.headingTimer)
+    this.headingTimer = setTimeout(() => (this.heading = undefined), HEADING_MS)
     this.track().scrollTo({[this.vertical() ? "top" : "left"]: Math.min(start, this.room()), behavior})
     this.select(index)
   },
@@ -154,8 +162,13 @@ const Carousel = {
       const position = this.position()
       const atEnd = this.room() > 0 && position >= this.room() - 1
       const index = atEnd ? this.slides().length - 1 : nearest(position, this.starts())
-      this.dragging || index === this.index ? this.render() : this.select(index)
+      const passing = this.heading !== undefined && !this.dragging
+      passing ? index === this.heading && (this.heading = undefined) : this.settle(index)
     })
+  },
+
+  settle(index) {
+    this.dragging || index === this.index ? this.render() : this.select(index)
   },
 
   clicked(event) {

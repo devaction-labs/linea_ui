@@ -1,8 +1,9 @@
+import {execWithPayload} from "../lib/js_payload.js"
 import {resolveBranch, target} from "../lib/carousel_logic.js"
 
 const emit = (hook, spec, payload, source = hook.el) => {
   const run = {
-    js: () => hook.liveSocket.execJS(source, spec),
+    js: () => execWithPayload(hook.liveSocket, source, spec, payload),
     push: () => hook.pushEventTo(hook.el.getAttribute("phx-target") || hook.el, spec, payload),
   }
   spec && run[spec.trim().startsWith("[") ? "js" : "push"]()
