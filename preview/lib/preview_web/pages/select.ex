@@ -4,7 +4,7 @@ defmodule PreviewWeb.Pages.Select do
   @events ["Corporate event", "Wedding", "Birthday", "Other"]
 
   def mount(socket) do
-    assign(socket, events: @events, form: to_form(%{"event" => "Wedding"}, as: :party))
+    assign(socket, events: @events, form: to_form(%{"event" => "Corporate event"}, as: :party))
   end
 
   def handle_event("change", %{"party" => params}, socket),

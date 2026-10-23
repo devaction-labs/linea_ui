@@ -1762,4 +1762,10 @@ span.flatpickr-day.selected {
   padding: 0;
 }
 
+
+/* LineaUI additions to the ported looks. */
+.ts-control > span.item {
+  display: inline-flex;
+  vertical-align: middle;
+}
 }
