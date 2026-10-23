@@ -130,7 +130,7 @@ defmodule PreviewWeb.Pages.TableAdvanced do
       <:col :let={user} label="#">{user.id}</:col>
       <:col :let={user} label="Avatar">
         <div class="avatar flex size-10">
-          <img class="mask is-squircle" src={avatar(user.avatar)} alt="avatar" />
+          <img class="mask is-squircle" src={avatar_src(user.avatar)} alt="avatar" />
         </div>
       </:col>
       <:col
@@ -175,7 +175,7 @@ defmodule PreviewWeb.Pages.TableAdvanced do
       <:col :let={dev} label="#">{dev.id}</:col>
       <:col :let={dev} label="Avatar">
         <div class="avatar flex">
-          <img class="rounded-full" src={avatar(dev.avatar)} alt="avatar" />
+          <img class="rounded-full" src={avatar_src(dev.avatar)} alt="avatar" />
         </div>
       </:col>
       <:col :let={dev} label="Name" class="font-medium text-slate-700 dark:text-navy-100">
@@ -500,7 +500,7 @@ defmodule PreviewWeb.Pages.TableAdvanced do
     ]
   end
 
-  defp avatar(n), do: "/lineone/images/avatar/avatar-#{n}.jpg"
+  defp avatar_src(n), do: "/lineone/images/avatar/avatar-#{n}.jpg"
 
   defp role_class("Author"), do: "bg-info/10 text-info dark:bg-info/15"
 

@@ -12,7 +12,7 @@ defmodule PreviewWeb.Pages.Badge do
       text="Badges are used to inform user of the status of specific data. Check out code for detail of usage."
       class="inline-space mt-5"
     >
-      <.badge :for={color <- @colors ++ ~w(dark light)} color={color}>{label(color)}</.badge>
+      <.badge :for={color <- @colors ++ ~w(dark light)} color={color}>{color_label(color)}</.badge>
     </.example>
 
     <.example title="Rounded Badge" class="">
@@ -23,7 +23,7 @@ defmodule PreviewWeb.Pages.Badge do
       </.text>
       <div class="inline-space mt-5">
         <.badge :for={color <- @colors ++ ~w(dark light)} color={color} shape="pill">
-          {label(color)}
+          {color_label(color)}
         </.badge>
       </div>
     </.example>
@@ -33,7 +33,7 @@ defmodule PreviewWeb.Pages.Badge do
       text="Badges can be glow. To do this, you should use colored shadows. Check out code for detail of usage."
       class="inline-space mt-5"
     >
-      <.badge :for={color <- @colors} color={color} variant="glow">{label(color)}</.badge>
+      <.badge :for={color <- @colors} color={color} variant="glow">{color_label(color)}</.badge>
     </.example>
 
     <.example
@@ -41,7 +41,7 @@ defmodule PreviewWeb.Pages.Badge do
       text="Badges can have a soft colors. To do this, you should use some opacity. Check out code for detail of usage."
       class="inline-space mt-5"
     >
-      <.badge :for={color <- tl(@colors)} color={color} variant="soft">{label(color)}</.badge>
+      <.badge :for={color <- tl(@colors)} color={color} variant="soft">{color_label(color)}</.badge>
     </.example>
 
     <.example
@@ -50,7 +50,7 @@ defmodule PreviewWeb.Pages.Badge do
       class="inline-space mt-5"
     >
       <.badge :for={color <- @colors} color={color} variant="outline" shape="pill">
-        {label(color)}
+        {color_label(color)}
       </.badge>
     </.example>
 
@@ -155,9 +155,9 @@ defmodule PreviewWeb.Pages.Badge do
     """
   end
 
-  defp label("neutral"), do: "Default"
-  defp label(color), do: String.capitalize(color)
+  defp color_label("neutral"), do: "Default"
+  defp color_label(color), do: String.capitalize(color)
 
   defp dot_label("secondary"), do: "Primary"
-  defp dot_label(color), do: label(color)
+  defp dot_label(color), do: color_label(color)
 end

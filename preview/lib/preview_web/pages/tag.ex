@@ -12,7 +12,7 @@ defmodule PreviewWeb.Pages.Tag do
       text="Tags are compact elements that represent an input, attribute, or action. tags allow users to enter information, make selections, filter content, or trigger actions. Check out code for detail of usage."
       class="inline-space mt-5"
     >
-      <.tag :for={color <- @colors ++ ["light"]} href="#" color={color}>{label(color)}</.tag>
+      <.tag :for={color <- @colors ++ ["light"]} href="#" color={color}>{color_label(color)}</.tag>
     </.example>
 
     <.example title="Rounded Tag" class="">
@@ -23,7 +23,7 @@ defmodule PreviewWeb.Pages.Tag do
       </.text>
       <div class="inline-space mt-5">
         <.tag :for={color <- @colors ++ ["light"]} href="#" color={color} shape="pill">
-          {label(color)}
+          {color_label(color)}
         </.tag>
       </div>
     </.example>
@@ -34,7 +34,7 @@ defmodule PreviewWeb.Pages.Tag do
       class="inline-space mt-5"
     >
       <.tag :for={color <- tl(@colors)} href="#" color={color} variant="bordered" shape="pill">
-        {label(color)}
+        {color_label(color)}
       </.tag>
     </.example>
 
@@ -114,6 +114,6 @@ defmodule PreviewWeb.Pages.Tag do
     """
   end
 
-  defp label("neutral"), do: "Default"
-  defp label(color), do: String.capitalize(color)
+  defp color_label("neutral"), do: "Default"
+  defp color_label(color), do: String.capitalize(color)
 end

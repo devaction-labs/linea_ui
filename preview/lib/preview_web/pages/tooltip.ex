@@ -12,7 +12,7 @@ defmodule PreviewWeb.Pages.Tooltip do
       title="Basic Tooltip"
       text="A tooltip is often used to specify extra information about something when the user moves the mouse pointer over an element. Check out code for detail of usage."
     >
-      <.tooltip :for={color <- @colors} id={"tip-#{color}"} text={label(color)} color={color}>
+      <.tooltip :for={color <- @colors} id={"tip-#{color}"} text={color_label(color)} color={color}>
         <.button
           color={button_color(color)}
           class={
@@ -20,7 +20,7 @@ defmodule PreviewWeb.Pages.Tooltip do
               "dark:bg-slate-150 dark:text-slate-800 dark:hover:bg-slate-200 dark:focus:bg-slate-200"
           }
         >
-          {label(color)}
+          {color_label(color)}
         </.button>
       </.tooltip>
     </.example>
@@ -109,8 +109,8 @@ defmodule PreviewWeb.Pages.Tooltip do
     """
   end
 
-  defp label("neutral"), do: "Default"
-  defp label(color), do: String.capitalize(color)
+  defp color_label("neutral"), do: "Default"
+  defp color_label(color), do: String.capitalize(color)
 
   defp button_color("light"), do: "neutral"
   defp button_color(color), do: color
