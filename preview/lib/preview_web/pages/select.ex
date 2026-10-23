@@ -14,7 +14,8 @@ defmodule PreviewWeb.Pages.Select do
     ~H"""
     <.example title="Basic Select" class="max-w-xl">
       <p>
-        The <.inline_code>&lt;select&gt;</.inline_code>
+        The
+        <.inline_code>&lt;select&gt;</.inline_code>
         HTML element represents a control that provides a menu of options. Check out code for detail of usage.
       </p>
       <div class="mt-5">
@@ -69,7 +70,8 @@ defmodule PreviewWeb.Pages.Select do
     </.example>
     <.example title="Multipie Select" class="max-w-xl">
       <p>
-        The <.inline_code>multiple</.inline_code>
+        The
+        <.inline_code>multiple</.inline_code>
         attribute indicates that multiple options can be selected in the list. Check out code for detail of usage.
       </p>
       <div class="mt-5">
