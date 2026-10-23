@@ -105,7 +105,7 @@ defmodule PreviewWeb.Pages.Dropdown do
     </.narrow>
 
     <.narrow title="HTML Content" text={@text} class="mt-5">
-      <.dropdown id="dropdown8" label="Dropdown" class="w-72 py-0 dark:border-navy-600">
+      <.dropdown id="dropdown8" label="Dropdown" class="w-72 py-0 font-sans dark:border-navy-600">
         <.dropdown_header>Only Selected People</.dropdown_header>
         <.dropdown_search placeholder="Type username..." />
         <div class="my-2">

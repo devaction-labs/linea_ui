@@ -76,7 +76,7 @@ export const anchorBox = ({placement, anchor, panel, screen, offset = 0, padding
   const asked = parsePlacement(placement)
   const side = pickSide(asked.side, {panel, room: roomAround(anchor, screen), offset, fallbacks})
   const vertical = VERTICAL[side]
-  const align = side === asked.side ? asked.align : "center"
+  const align = asked.align
   const at = corner(side, align, anchor, panel, offset)
   const shiftX = vertical ? clampShift(at.left, panel.width, screen.width, padding) : 0
   const shiftY = vertical ? 0 : clampShift(at.top, panel.height, screen.height, padding)
