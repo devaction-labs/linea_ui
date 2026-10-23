@@ -52,6 +52,19 @@ Errors are translated with the app's own function:
 config :linea_ui, :translate_error, &MyAppWeb.CoreComponents.translate_error/1
 ```
 
+## Claude Code skill
+
+```bash
+mix linea_ui.install      # after adding the dependency, and after every upgrade
+```
+
+writes `.claude/skills/linea-ui/` — a short `SKILL.md` index (the rules every component shares
+and one line per component) and `references/<component>.md` with the attrs, allowed values,
+slots and examples of each, generated from the installed components themselves, so it never
+drifts from the code. Only the index is loaded up front; a reference is read when its component
+is used. The task also points `AGENTS.md`/`CLAUDE.md` at the skill (once) and prints the
+remaining setup lines. `mix linea_ui.gen.skill --path <dir>` writes only the skill.
+
 ## Usage
 
 ```heex

@@ -91,6 +91,13 @@ The components are LiveView-first, not static markup with JS on top.
   (`live_isolated`, `render_click`, `render_change`, `assert_push_event`, `render_hook`). Test
   LiveViews live in the test file or `test/support/live/<component>_live.ex`.
 
+## Docs feed the Claude Code skill
+
+`mix linea_ui.gen.skill` builds the skill an app's agent reads from your `@moduledoc` (first
+paragraph = the one-line summary in the index, so make it say what the component is), each
+function's `@doc` (with a HEEx example) and every `attr`/`slot` `doc:` and `values:`. Write them
+for someone who will use the component without reading its source.
+
 ## Tests
 
 `test/linea_ui/components/<name>_test.exs`, `use LineaUI.ComponentCase, async: true`:
