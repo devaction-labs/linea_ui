@@ -87,6 +87,14 @@
 }
 
 @layer components {
+  .ac > summary.ac-trigger {
+    @apply text-slate-700 dark:text-navy-100;
+  }
+
+  .ac > summary.ac-trigger .ac-icon {
+    @apply text-slate-400 dark:text-navy-300;
+  }
+
   [data-accordion][data-variant="border-bottom"] > .ac > .ac-panel > .ac-body {
     @apply pb-4;
   }

@@ -145,9 +145,9 @@ defmodule LineaUI.Components.Accordion do
       class={merge(["ac", @class])}
       {@rest}
     >
-      <:trigger class="ac-trigger flex items-center justify-between py-4 text-base font-medium text-slate-700 dark:text-navy-100">
+      <:trigger class="ac-trigger flex items-center justify-between py-4 text-base font-medium">
         <p>{@title}</p>
-        <div class="ac-icon text-sm font-normal leading-none text-slate-400 transition-transform duration-300 dark:text-navy-300">
+        <div class="ac-icon text-sm font-normal leading-none transition-transform duration-300">
           <.chevron />
         </div>
       </:trigger>
