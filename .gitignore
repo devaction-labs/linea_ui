@@ -11,3 +11,4 @@ preview/_build/
 preview/deps/
 preview/priv/static/assets/
 preview/tmp/
+/.claude/

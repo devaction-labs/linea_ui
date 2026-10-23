@@ -58,6 +58,39 @@ The result must look **identical** to LineOne, light and dark.
 - Extra CSS (keyframes, pseudo-elements, third-party look) goes in the `assets/css/parts/<yours>.css`
   file, inside `@layer components { }`. Do not edit `assets/css/linea_ui.css`.
 
+## LiveView integration (required)
+
+The components are LiveView-first, not static markup with JS on top.
+
+- **Server and client both drive state.** Every stateful component (overlays, tabs, accordion,
+  collapse, select, pickers, carousel, sidebar...) takes its state from an attr (`open`, `selected`,
+  `value`, `page`, `expanded`) *and* works client-side without a round trip. When the server changes
+  the attr, the server wins; a choice made in the browser survives patches that did not change it
+  (the vendored `resolveSelection` pattern in devaction_ui's `tabs.js`).
+- **The server hears what the client did.** `on_open`, `on_close`, `on_change`, `on_select`... accept
+  an event name (string) or a `%JS{}`; Esc or an outside click that closes a modal still runs
+  `on_close`, so a server-held `open` assign can be synced. A component that emits events takes a
+  `target` attr (`phx-target`), and hooks push with `this.pushEventTo(this.el, ...)` so the closest
+  LiveComponent gets them. Document the payload of every event in the `@doc`.
+- **Server pushes reach hooks.** `LineaUI.open/close/toggle(socket, id)` and component-specific
+  pushes (`send_toast`) work from `handle_event`/`handle_info`; hooks subscribe with `handleEvent`
+  and filter by id.
+- **Forms just work.** Inside `<.form phx-change phx-submit>`: every custom control submits through a
+  real (hidden) input with the field's `name`, and dispatches a bubbling `input` event when its value
+  changes so `phx-change` fires; it does not re-fire when the server only echoes the same value;
+  `phx-debounce`/`phx-throttle` pass through `rest`; errors follow `used_input?/1`; `phx-feedback`
+  is not used (LiveView 1.x). Uploads use `allow_upload`/`live_file_input`.
+- **Lists accept streams.** Table, data table, timeline, menu list, treeview rows take `rows={@streams.x}`
+  with `row_id` like Phoenix core's table, and render `phx-update="stream"` when given a stream.
+- **Loading states** use LiveView's classes (`phx-click-loading:`, `phx-submit-loading:`) — Tailwind
+  variants for them are expected in the app's CSS (the preview defines them).
+- **Hooks** implement `mounted`, `updated` (re-read data attrs), `destroyed` (remove window/document
+  listeners, timers, observers), never keep a stale element reference across patches, and never
+  register a listener twice.
+- **Tests with a real LiveView** for every component that emits or receives events: `use LineaUI.LiveCase`
+  (`live_isolated`, `render_click`, `render_change`, `assert_push_event`, `render_hook`). Test
+  LiveViews live in the test file or `test/support/live/<component>_live.ex`.
+
 ## Tests
 
 `test/linea_ui/components/<name>_test.exs`, `use LineaUI.ComponentCase, async: true`:
