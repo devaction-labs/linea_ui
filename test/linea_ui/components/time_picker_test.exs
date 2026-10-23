@@ -4,7 +4,7 @@ defmodule LineaUI.Components.TimePickerTest do
   test "a time with the clock icon and flatpickr's time-only popup" do
     html = render(~H|<.time_picker id="t" name="at" value="13:13" time_24hr minute_step={10} />|)
 
-    assert find(html, "#t[phx-hook='LineaUI.TimePicker'][data-kind=time][data-time-24=true]")
+    assert find(html, "#t[phx-hook='LineaUI.TimePicker'][data-kind=time][data-time24=true]")
            |> Enum.count() == 1
 
     assert html |> find("#t") |> LazyHTML.attribute("data-minute-step") == ["10"]

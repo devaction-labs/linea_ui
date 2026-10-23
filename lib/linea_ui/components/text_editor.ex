@@ -101,14 +101,30 @@ defmodule LineaUI.Components.TextEditor do
         data-debounce={@debounce}
         {@rest}
       >
-        <div class="ql-toolbar ql-snow" role="toolbar" data-toolbar>
+        <div
+          class={[
+            "ql-toolbar ql-snow",
+            @errors != [] && "border-error",
+            @disabled && "pointer-events-none opacity-60"
+          ]}
+          role="toolbar"
+          aria-disabled={@disabled && "true"}
+          data-toolbar
+        >
           <span :for={group <- @toolbar} class="ql-formats">
             <.tool :for={tool <- group} tool={tool} id={@id} disabled={@disabled} />
           </span>
         </div>
         <div
           id={@id <> "-container"}
-          class={merge(["ql-container ql-snow", @errors != [] && "border-error", @content_class])}
+          class={
+            merge([
+              "ql-container ql-snow",
+              @errors != [] && "border-error",
+              @disabled && "cursor-not-allowed bg-slate-50 opacity-60 dark:bg-navy-800",
+              @content_class
+            ])
+          }
           phx-update="ignore"
         >
           <div

@@ -194,7 +194,7 @@ defmodule LineaUI.Components.DatePicker.Shell do
         data-max={iso(@max)}
         data-min-time={@min_time}
         data-max-time={@max_time}
-        data-time-24={bool(@time_24hr)}
+        data-time24={bool(@time_24hr)}
         data-minute-step={@minute_step}
         data-hour-step={@hour_step}
         data-default-hour={@default_hour}
