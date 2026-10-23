@@ -14,76 +14,10 @@ defmodule LineaUI.Skill do
   @spec files() :: [{String.t(), String.t()}]
   def files do
     version = Application.spec(:linea_ui, :vsn) |> to_string()
-    components = LineaUI.components() |> Enum.map(&describe/1) |> Enum.sort_by(& &1.key)
-    documented = Enum.reject(components, &(&1.functions == []))
+    documented = LineaUI.Docs.components()
 
     [{"SKILL.md", index(documented, version)} | Enum.map(documented, &reference/1)]
   end
-
-  defp describe({key, module}) do
-    Code.ensure_loaded!(module)
-
-    %{
-      key: key,
-      module: module,
-      summary: summary(module),
-      moduledoc: moduledoc(module),
-      functions: functions(module)
-    }
-  end
-
-  defp functions(module) do
-    case function_exported?(module, :__components__, 0) do
-      true ->
-        module.__components__()
-        |> Enum.filter(fn {name, _component} -> function_exported?(module, name, 1) end)
-        |> Enum.sort_by(fn {_name, c} -> c.line end)
-        |> Enum.map(&function(module, &1))
-
-      false ->
-        []
-    end
-  end
-
-  defp function(module, {name, component}) do
-    %{
-      name: name,
-      doc: function_doc(module, name),
-      attrs: component.attrs |> Enum.reject(&(&1.type == :global)) |> Enum.sort_by(& &1.line),
-      global: Enum.find(component.attrs, &(&1.type == :global)),
-      slots: component.slots
-    }
-  end
-
-  defp docs(module) do
-    case Code.fetch_docs(module) do
-      {:docs_v1, _, _, _, moduledoc, _, docs} -> {moduledoc, docs}
-      _ -> {:none, []}
-    end
-  end
-
-  defp moduledoc(module) do
-    case docs(module) do
-      {%{"en" => doc}, _} -> String.trim(doc)
-      _ -> ""
-    end
-  end
-
-  defp summary(module) do
-    module |> moduledoc() |> String.split("\n\n", parts: 2) |> hd() |> String.replace("\n", " ")
-  end
-
-  defp function_doc(module, name) do
-    {_moduledoc, docs} = docs(module)
-
-    Enum.find_value(docs, "", fn
-      {{:function, ^name, 1}, _, _, %{"en" => doc}, _} -> strip_generated(doc)
-      _ -> nil
-    end)
-  end
-
-  defp strip_generated(doc),
-    do: doc |> String.split(~r/^## (Attributes|Slots)$/m) |> hd() |> String.trim()
 
   defp index(components, version) do
     rows =
