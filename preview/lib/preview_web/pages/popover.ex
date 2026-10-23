@@ -5,9 +5,6 @@ defmodule PreviewWeb.Pages.Popover do
 
   @text "The Popover component is similar to tooltips. The difference is that the popover can contain much more content. Check out code for detail of usage."
 
-  @tag "tag bg-slate-150 text-slate-800 hover:bg-slate-200 focus:bg-slate-200 active:bg-slate-200/80 dark:bg-navy-500 dark:text-navy-100 dark:hover:bg-navy-450 dark:focus:bg-navy-450 dark:active:bg-navy-450/90"
-  @checkbox "form-checkbox is-basic size-5 rounded-sm border-slate-400/70 checked:border-primary checked:bg-primary hover:border-primary focus:border-primary dark:border-navy-400 dark:checked:border-accent dark:checked:bg-accent dark:hover:border-accent dark:focus:border-accent"
-
   @profiles [
     {"popover4", "avatar-19", "John Doe", "@johndoeaccount"},
     {"popover5", "avatar-11", "Sally Ramos", "@sallyramos"},
@@ -27,8 +24,6 @@ defmodule PreviewWeb.Pages.Popover do
     assigns =
       assign(assigns,
         text: @text,
-        tag: @tag,
-        checkbox: @checkbox,
         profiles: @profiles,
         cards: @cards
       )
@@ -40,7 +35,7 @@ defmodule PreviewWeb.Pages.Popover do
         <:title>UI/UX Design</:title>
         <p class="mt-2">Lorem ipsum dolor sit amet, consectetur adipisicing elit.</p>
         <div class="mt-3 flex space-x-2">
-          <a :for={n <- 1..3} href="#" class={@tag}>Tag {n}</a>
+          <.tag :for={n <- 1..3} href="#">Tag {n}</.tag>
         </div>
         <p class="mt-3 text-xs text-slate-400 dark:text-navy-300">
           Lorem ipsum dolor sit amet, elit.
@@ -121,25 +116,25 @@ defmodule PreviewWeb.Pages.Popover do
         <:title>Select Columns</:title>
         <p class="mt-1 text-xs-plus">Lorem ipsum dolor sit amet, consectetur.</p>
         <div class="mt-4 flex flex-col space-y-4 text-slate-600 dark:text-navy-100">
-          <label
+          <.checkbox
             :for={
-              {label, checked} <- [{"ID", true}, {"Name", true}, {"Email", true}, {"Address", false}]
+              {text, checked} <- [{"ID", true}, {"Name", true}, {"Email", true}, {"Address", false}]
             }
-            class="inline-flex items-center space-x-2"
-          >
-            <input checked={checked} class={@checkbox} type="checkbox" />
-            <span>{label}</span>
-          </label>
+            name={text}
+            label={text}
+            color="primary"
+            checked={checked}
+          />
         </div>
         <div class="my-4 h-px bg-slate-200 dark:bg-navy-500"></div>
         <div class="flex flex-col space-y-4 text-slate-600 dark:text-navy-100">
-          <label
-            :for={{label, checked} <- [{"Created at", true}, {"Updated at", false}]}
-            class="inline-flex items-center space-x-2"
-          >
-            <input checked={checked} class={@checkbox} type="checkbox" />
-            <span>{label}</span>
-          </label>
+          <.checkbox
+            :for={{text, checked} <- [{"Created at", true}, {"Updated at", false}]}
+            name={text}
+            label={text}
+            color="primary"
+            checked={checked}
+          />
         </div>
         <.button color="primary" size="sm" class="mt-4 w-full">Apply</.button>
       </.popover>

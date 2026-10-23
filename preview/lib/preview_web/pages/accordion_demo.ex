@@ -95,13 +95,7 @@ defmodule PreviewWeb.Pages.AccordionDemo do
     ~H"""
     <p>{@lorem}</p>
     <div class="flex space-x-2 pt-3">
-      <a
-        :for={n <- 1..2}
-        href="#"
-        class="tag rounded-full border border-primary text-primary dark:border-accent-light dark:text-accent-light"
-      >
-        Tag {n}
-      </a>
+      <.tag :for={n <- 1..2} href="#" color="primary" variant="outline" shape="pill">Tag {n}</.tag>
     </div>
     """
   end

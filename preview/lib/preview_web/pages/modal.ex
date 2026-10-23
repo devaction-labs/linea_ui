@@ -5,9 +5,6 @@ defmodule PreviewWeb.Pages.Modal do
 
   @text "The Modal component inform users about a specific task and may contain critical information, require decisions, or involve multiple tasks."
 
-  @checkbox "form-checkbox is-basic size-5 rounded-sm border-slate-400/70 checked:border-primary checked:bg-primary hover:border-primary focus:border-primary dark:border-navy-400 dark:checked:border-accent dark:checked:bg-accent dark:hover:border-accent dark:focus:border-accent"
-  @switch "form-switch is-outline h-5 w-10 rounded-full border border-slate-400/70 bg-transparent before:rounded-full before:bg-slate-300 checked:border-primary checked:before:bg-primary dark:border-navy-400 dark:before:bg-navy-300 dark:checked:border-accent dark:checked:before:bg-accent"
-
   @users [
     {"1", "Cy Ganderton", "Admin", "Online"},
     {"2", "Travis Fuller", "Teacher", "Online"},
@@ -20,8 +17,6 @@ defmodule PreviewWeb.Pages.Modal do
     assigns =
       assign(assigns,
         text: @text,
-        checkbox: @checkbox,
-        switch: @switch,
         users: @users,
         columns: [
           {"ID", true},
@@ -117,14 +112,16 @@ defmodule PreviewWeb.Pages.Modal do
       <:header variant="plain">Table Settings</:header>
       <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aut dignissimos.</p>
       <div class="mt-4 grid grid-cols-2 gap-4">
-        <label :for={{label, checked} <- @columns} class="inline-flex items-center space-x-2">
-          <input checked={checked} class={@checkbox} type="checkbox" />
-          <p>{label}</p>
-        </label>
-        <label class="col-span-2 inline-flex items-center space-x-2">
-          <input class={@switch} type="checkbox" />
-          <span>Show Avatar</span>
-        </label>
+        <.checkbox
+          :for={{text, checked} <- @columns}
+          name={"columns[#{text}]"}
+          label={text}
+          color="primary"
+          checked={checked}
+        />
+        <div class="col-span-2">
+          <.switch name="avatar" label="Show Avatar" variant="outline" color="primary" />
+        </div>
       </div>
       <div class="mt-4 text-right">
         <.button variant="flat" size="sm" shape="pill" class="px-5">Cancel</.button>
@@ -169,10 +166,7 @@ defmodule PreviewWeb.Pages.Modal do
             type="text"
           />
         </label>
-        <label class="inline-flex items-center space-x-2">
-          <input class={@switch} type="checkbox" />
-          <span>Public pin</span>
-        </label>
+        <.switch name="public" label="Public pin" variant="outline" color="primary" />
         <div class="space-x-2 text-right">
           <.button
             variant="outline"
