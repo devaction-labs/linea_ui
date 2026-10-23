@@ -98,11 +98,10 @@ defmodule LineaUI.Components.Dropdown do
       </div>
       <div
         id={"#{@id}-menu"}
-        class="popper-root"
+        class="popper-root absolute left-0 top-0 w-max"
         data-panel
-        data-state="closed"
         aria-hidden="true"
-        phx-mounted={JS.ignore_attributes(["data-state", "data-placement", "style", "aria-hidden"])}
+        phx-mounted={JS.ignore_attributes(["class", "style", "data-popper-placement", "aria-hidden"])}
       >
         <div
           class={

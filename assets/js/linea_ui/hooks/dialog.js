@@ -44,11 +44,26 @@ const unlock = () => {
   saved = null
 }
 
+const PARTS = ":scope > .drawer-overlay, :scope > .drawer-content"
+
+const PAINT = {
+  modal: (el, state) => {
+    el.classList.toggle("show", state !== "closed")
+    el.classList.toggle("animate:leave", state === "leaving")
+  },
+  drawer: (el, state) =>
+    el.querySelectorAll(PARTS).forEach((part) => {
+      part.classList.toggle("hidden", state === "closed")
+      part.classList.toggle("animate:leave", state === "leaving")
+    }),
+}
+
 const reducedMotion = () => window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false
 
 /**
- * `Modal` and `Drawer`. The element carries `data-state` (`closed`, `open`, `leaving`), which the CSS turns into
- * LineOne's enter and leave animations. Overlays stack: Esc closes the one on top, a click on the backdrop
+ * `Modal` and `Drawer`. The element carries `data-state` (`closed`, `open`, `leaving`) and LineOne's own classes for
+ * it (`show` and `animate:leave` on a modal, `hidden` and `animate:leave` on the parts of a drawer), so LineOne's CSS
+ * runs the enter and leave animations. Overlays stack: Esc closes the one on top, a click on the backdrop
  * closes its own (neither with `data-prevent-close="true"`). A modal locks the scroll of the page as LineOne
  * does, focus moves in when it opens, Tab stays inside, and focus returns to what had it on close. The server's
  * `open` (`data-open`) wins when it changes; a close in the browser runs `data-on-close`, so the server can
@@ -155,7 +170,7 @@ export default {
       this.returnTo = document.activeElement
       this.locks() && !stack.some((id) => document.getElementById(id)?.dataset.lock === "true") && lock()
       stack = stackWith(stack, this.el.id)
-      this.el.dataset.state = "open"
+      this.paint("open")
       this.el.setAttribute("aria-hidden", "false")
       const panel = this.panel()
       const target = panel.querySelector("[autofocus]") ?? panel
@@ -170,7 +185,7 @@ export default {
 
     hide() {
       stack = stackWithout(stack, this.el.id)
-      this.el.dataset.state = "leaving"
+      this.paint("leaving")
       this.el.setAttribute("aria-hidden", "true")
       const wait = reducedMotion() ? 0 : Number(this.el.dataset.leaveMs ?? 300)
       this.leaving = setTimeout(() => this.finish(), wait)
@@ -179,9 +194,14 @@ export default {
     },
 
     finish() {
-      this.el.dataset.state = "closed"
+      this.paint("closed")
       const anyLocked = stack.some((id) => document.getElementById(id)?.dataset.lock === "true")
       this.locks() && !anyLocked && unlock()
+    },
+
+    paint(state) {
+      this.el.dataset.state = state
+      PAINT[this.el.dataset.kind ?? "modal"](this.el, state)
     },
 
     trap(event) {

@@ -57,6 +57,7 @@ defmodule LineaUI.Components.Drawer do
       phx-mounted={JS.ignore_attributes(["data-state", "aria-hidden"])}
       data-state="closed"
       data-open={bool(@open)}
+      data-kind="drawer"
       data-lock="false"
       data-leave-ms="200"
       data-prevent-close={bool(@prevent_close)}
@@ -64,9 +65,17 @@ defmodule LineaUI.Components.Drawer do
       data-on-close={@on_close_js}
       {@rest}
     >
-      <div :if={@overlay} class="drawer-overlay fixed inset-0 z-[100] bg-slate-900/60" data-backdrop>
+      <div
+        :if={@overlay}
+        class="drawer-overlay fixed inset-0 z-[100] hidden bg-slate-900/60"
+        phx-mounted={JS.ignore_attributes(["class"])}
+        data-backdrop
+      >
       </div>
-      <div class={["drawer-content fixed top-0 z-[101] h-full w-72", side_class(@side)]}>
+      <div
+        class={["drawer-content fixed top-0 z-[101] hidden h-full w-72", side_class(@side)]}
+        phx-mounted={JS.ignore_attributes(["class"])}
+      >
         <div
           id={"#{@id}-panel"}
           class={

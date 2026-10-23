@@ -76,12 +76,11 @@ defmodule LineaUI.Components.Popover do
       <div data-trigger class="flex">{render_slot(@trigger)}</div>
       <div
         id={"#{@id}-panel"}
-        class="popper-root"
+        class="popper-root absolute left-0 top-0 w-max"
         role="dialog"
         data-panel
-        data-state="closed"
         aria-hidden="true"
-        phx-mounted={JS.ignore_attributes(["data-state", "data-placement", "style", "aria-hidden"])}
+        phx-mounted={JS.ignore_attributes(["class", "style", "data-popper-placement", "aria-hidden"])}
       >
         <div class="popper-box">
           <div class={

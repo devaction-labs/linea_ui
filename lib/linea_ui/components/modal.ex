@@ -129,9 +129,10 @@ defmodule LineaUI.Components.Modal do
       aria-hidden="true"
       aria-labelledby={@header != [] && "#{@id}-title"}
       phx-hook="LineaUI.Dialog"
-      phx-mounted={JS.ignore_attributes(["data-state", "aria-hidden"])}
+      phx-mounted={JS.ignore_attributes(["class", "data-state", "aria-hidden"])}
       data-state="closed"
       data-open={bool(@open)}
+      data-kind="modal"
       data-lock="true"
       data-leave-ms="300"
       data-prevent-close={bool(@prevent_close)}

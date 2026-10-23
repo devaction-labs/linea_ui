@@ -8,7 +8,7 @@ const list = (value) => (value ? value.split(",").map((side) => side.trim()).fil
 
 /**
  * What a dropdown and a popover share: a trigger (`[data-trigger]`, the first control inside it gets the ARIA
- * state) and a panel (`[data-panel]`, LineOne's `popper-root`) placed next to it from `data-placement`,
+ * state) and a panel (`[data-panel]`, LineOne's `popper-root`, shown with its `show` class and `data-popper-placement` as Popper sets them) placed next to it from `data-placement`,
  * `data-offset`, `data-padding` and `data-fallbacks`, the way LineOne's Popper setups do. The panel is absolute
  * inside the element, so it scrolls with the page and a transformed ancestor does not move it. Opening and
  * closing follow LineaUI's protocol; a click outside closes, as in LineOne, and Esc closes and gives the focus
@@ -57,7 +57,7 @@ export const Floating = {
   },
 
   isOpen() {
-    return this.panel().dataset.state === "open"
+    return this.panel().classList.contains("show")
   },
 
   announce() {
@@ -66,6 +66,7 @@ export const Floating = {
     control.setAttribute("aria-haspopup", this.el.dataset.popup ?? "dialog")
     control.setAttribute("aria-controls", this.panel().id)
     control.setAttribute("aria-expanded", String(this.isOpen()))
+    control.classList.toggle("is-active", this.isOpen())
   },
 
   toggle() {
@@ -81,7 +82,7 @@ export const Floating = {
   reveal() {
     const panel = this.panel()
     this.place()
-    panel.dataset.state = "open"
+    panel.classList.add("show")
     panel.setAttribute("aria-hidden", "false")
     this.announce()
     window.addEventListener("resize", this.reflow)
@@ -98,7 +99,7 @@ export const Floating = {
   conceal(returnFocus) {
     const panel = this.panel()
     const hadFocus = panel.contains(document.activeElement)
-    panel.dataset.state = "closed"
+    panel.classList.remove("show")
     panel.setAttribute("aria-hidden", "true")
     this.announce()
     window.removeEventListener("resize", this.reflow)
@@ -120,8 +121,8 @@ export const Floating = {
       fallbacks: list(this.el.dataset.fallbacks),
     })
     const {top, left} = toLocal(box, this.el.getBoundingClientRect())
-    Object.assign(panel.style, {top: `${top}px`, left: `${left}px`})
-    panel.dataset.placement = `${box.side}-${box.align}`
+    panel.style.transform = `translate(${left}px, ${top}px)`
+    panel.dataset.popperPlacement = box.align === "center" ? box.side : `${box.side}-${box.align}`
     const vertical = box.side === "top" || box.side === "bottom"
     arrow && Object.assign(arrow.style, vertical ? {left: `${box.arrow}px`, top: ""} : {top: `${box.arrow}px`, left: ""})
   },

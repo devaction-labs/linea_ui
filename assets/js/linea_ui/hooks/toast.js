@@ -57,8 +57,9 @@ export default {
     render(input, toast) {
       const el = document.createElement("div")
       const template = input.template && document.getElementById(input.template)
+      const color = colorOf(input.color)
       el.className = `toastify toastify-${toast.position.x} toastify-${toast.position.y}`
-      el.dataset.color = colorOf(input.color)
+      color === "neutral" || el.classList.add(color)
       el.setAttribute("role", input.color === "error" ? "alert" : "status")
       template ? this.fillTemplate(el, template) : this.fillText(el, input)
       el.querySelectorAll("[data-toast-dismiss]").forEach((button) => button.addEventListener("click", () => this.remove(toast)))

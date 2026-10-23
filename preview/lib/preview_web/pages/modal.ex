@@ -127,12 +127,12 @@ defmodule PreviewWeb.Pages.Modal do
         </label>
       </div>
       <div class="mt-4 text-right">
-        <.button variant="flat" size="sm" shape="pill" class="h-8">Cancel</.button>
+        <.button variant="flat" size="sm" shape="pill" class="px-5">Cancel</.button>
         <.button
           color="primary"
           size="sm"
           shape="pill"
-          class="h-8"
+          class="px-5"
           phx-click={LineaUI.close("modal4")}
         >
           Apply
