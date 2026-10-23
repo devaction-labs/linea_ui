@@ -3,12 +3,6 @@ defmodule LineaUI.Components.UploadLiveTest do
 
   alias LineaUI.Test.PickersLive
 
-  setup_all do
-    start_supervised!({Phoenix.PubSub, name: LineaUI.Test.UploadPubSub})
-    Phoenix.Config.put(LineaUI.TestEndpoint, :pubsub_server, LineaUI.Test.UploadPubSub)
-    :ok
-  end
-
   test "uploads show their entries, progress and cancel", %{conn: conn} do
     {:ok, view, _html} = live_isolated(conn, PickersLive)
 

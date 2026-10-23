@@ -4,6 +4,7 @@ config :linea_ui, LineaUI.TestEndpoint,
   secret_key_base: String.duplicate("linea_ui_test_secret_", 4),
   live_view: [signing_salt: "linea_ui_test"],
   render_errors: [formats: [html: LineaUI.TestEndpoint.ErrorHTML]],
+  pubsub_server: LineaUI.TestPubSub,
   server: false
 
 config :phoenix, :json_library, Jason

@@ -32,13 +32,20 @@ defmodule LineaUI.Component.Helpers do
 
     assigns
     |> assign(field: nil)
-    |> assign_new(:id, fn -> field.id end)
-    |> assign_new(:name, fn -> field_name(field, assigns) end)
-    |> assign_new(:value, fn -> field.value end)
+    |> fill(:id, field.id)
+    |> fill(:name, field_name(field, assigns))
+    |> fill(:value, field.value)
     |> assign(:errors, Enum.map(errors, &translate_error/1) ++ Map.get(assigns, :errors, []))
   end
 
   def assign_field(assigns), do: assign_new(assigns, :errors, fn -> [] end)
+
+  defp fill(assigns, key, value) do
+    case Map.get(assigns, key) do
+      nil -> assign(assigns, key, value)
+      _given -> assigns
+    end
+  end
 
   defp field_name(field, %{multiple: true}), do: field.name <> "[]"
   defp field_name(field, _assigns), do: field.name
