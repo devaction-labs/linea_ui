@@ -30,8 +30,10 @@ if config_env() == :dev do
         ~r"priv/static/(?!uploads/).*\.(js|css|png|jpeg|jpg|gif|svg)$"E,
         # Router, Controllers, LiveViews and LiveComponents
         ~r"lib/preview_web/router\.ex$"E,
-        ~r"lib/preview_web/(controllers|live|components)/.*\.(ex|heex)$"E
-      ]
+        ~r"lib/preview_web/(controllers|live|components|pages)/.*\.(ex|heex)$"E,
+        ~r"lib/linea_ui/.*\.ex$"E
+      ],
+      dirs: ["priv/static", "lib", "../lib"]
     ]
 end
 
