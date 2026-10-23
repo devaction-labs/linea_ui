@@ -199,7 +199,7 @@ defmodule LineaUI.Components.Alert do
       {@rest}
     >
       {render_slot(@icon)}
-      <div class={(@icon != [] or @dismissible or @action != []) && "flex-1"}>
+      <div>
         {render_slot(@inner_block)}
       </div>
       {render_slot(@action)}

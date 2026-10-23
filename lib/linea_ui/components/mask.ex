@@ -47,12 +47,13 @@ defmodule LineaUI.Components.Mask do
 
   def mask(%{src: src} = assigns) when is_binary(src) do
     ~H"""
-    <img
-      src={@src}
-      alt={@alt}
-      class={merge([mask_class(@shape), "object-cover object-center", @class])}
-      {@rest}
-    />
+    <div class={merge(["relative inline-flex size-10 shrink-0", @class])} {@rest}>
+      <img
+        src={@src}
+        alt={@alt}
+        class={[mask_class(@shape), "h-full w-full object-cover object-center"]}
+      />
+    </div>
     """
   end
 
