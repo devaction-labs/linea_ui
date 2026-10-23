@@ -80,7 +80,8 @@ defmodule LineaUI.Components.Tag do
         "border border-primary text-primary hover:bg-primary/20 focus:bg-primary/20 active:bg-primary/25 dark:border-accent-light dark:text-accent-light dark:hover:bg-accent-light/20 dark:focus:bg-accent-light/20 dark:active:bg-accent-light/25",
       "secondary" =>
         "border border-secondary text-secondary hover:bg-secondary/20 focus:bg-secondary/20 active:bg-secondary/25 dark:border-secondary-light dark:text-secondary-light dark:hover:bg-secondary-light/20 dark:focus:bg-secondary-light/20 dark:active:bg-secondary-light/25",
-      "info" => "border border-info text-info hover:bg-info/20 focus:bg-info/20 active:bg-info/25",
+      "info" =>
+        "border border-info text-info hover:bg-info/20 focus:bg-info/20 active:bg-info/25",
       "success" =>
         "border border-success text-success hover:bg-success/20 focus:bg-success/20 active:bg-success/25",
       "warning" =>
@@ -111,7 +112,12 @@ defmodule LineaUI.Components.Tag do
     assigns
     |> assign(
       :classes,
-      merge([@base, @variants[assigns.variant][assigns.color], @shapes[assigns.shape], assigns.class])
+      merge([
+        @base,
+        @variants[assigns.variant][assigns.color],
+        @shapes[assigns.shape],
+        assigns.class
+      ])
     )
     |> render_tag()
   end

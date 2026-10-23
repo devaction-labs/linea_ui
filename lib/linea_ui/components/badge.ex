@@ -12,8 +12,6 @@ defmodule LineaUI.Components.Badge do
 
   use LineaUI.Component
 
-  @base "badge"
-
   @variants %{
     "solid" => %{
       "neutral" => "bg-slate-150 text-slate-800 dark:bg-navy-500 dark:text-navy-100",
@@ -53,7 +51,8 @@ defmodule LineaUI.Components.Badge do
       "light" => "bg-slate-150/60 text-slate-700"
     },
     "outline" => %{
-      "neutral" => "border border-slate-300 text-slate-800 dark:border-navy-450 dark:text-navy-50",
+      "neutral" =>
+        "border border-slate-300 text-slate-800 dark:border-navy-450 dark:text-navy-50",
       "primary" =>
         "border border-primary text-primary dark:border-accent-light dark:text-accent-light",
       "secondary" =>
@@ -97,7 +96,15 @@ defmodule LineaUI.Components.Badge do
 
   attr(:on_remove, :any,
     default: nil,
-    doc: "A `JS` command or event name: adds a small round remove button after the content."
+    doc:
+      "An event name or a `JS` command: adds a small round remove button after the content. The event's payload is `%{\"id\" => id}`."
+  )
+
+  attr(:id, :string, default: nil)
+
+  attr(:target, :any,
+    default: nil,
+    doc: "The `phx-target` of `on_remove` when it is an event name."
   )
 
   attr(:remove_label, :string, default: "Remove")
@@ -108,9 +115,10 @@ defmodule LineaUI.Components.Badge do
   def badge(assigns) do
     ~H"""
     <span
+      id={@id}
       class={
         merge([
-          @base,
+          "badge",
           spacing(@dot),
           variant_class(@variant, @color),
           shape_class(@shape),
@@ -125,7 +133,7 @@ defmodule LineaUI.Components.Badge do
         :if={@on_remove}
         type="button"
         aria-label={@remove_label}
-        phx-click={@on_remove}
+        phx-click={remove_js(@on_remove, @target, @id)}
         class="btn size-4.5 rounded-full bg-black/20 p-0 hover:bg-black/30 focus:bg-black/30 dark:bg-white/20 dark:hover:bg-white/30 dark:focus:bg-white/30"
       >
         <svg
@@ -135,12 +143,21 @@ defmodule LineaUI.Components.Badge do
           viewBox="0 0 24 24"
           stroke="currentColor"
         >
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12" />
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="3"
+            d="M6 18L18 6M6 6l12 12"
+          />
         </svg>
       </button>
     </span>
     """
   end
+
+  defp remove_js(%JS{} = js, _target, _id), do: js
+  defp remove_js(event, nil, id), do: JS.push(event, value: %{id: id})
+  defp remove_js(event, target, id), do: JS.push(event, target: target, value: %{id: id})
 
   defp spacing(true), do: "space-x-2.5"
   defp spacing(false), do: "space-x-2"

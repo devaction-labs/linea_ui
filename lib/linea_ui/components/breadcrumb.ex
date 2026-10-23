@@ -57,14 +57,15 @@ defmodule LineaUI.Components.Breadcrumb do
           :for={{item, index} <- Enum.with_index(@item)}
           class={index < @last && "flex items-center space-x-2"}
         >
-          <.crumb item={item} link_class={@links[@variant]} current={index == @last} />
+          <.crumb item={item} link_class={link_class(@variant)} current={index == @last} />
           <.separator :if={index < @last} separator={@separator} />
         </li>
       </ul>
     </nav>
     """
-    |> then(& &1)
   end
+
+  defp link_class(variant), do: @links[variant]
 
   attr(:item, :map, required: true)
   attr(:link_class, :string, required: true)
@@ -87,7 +88,10 @@ defmodule LineaUI.Components.Breadcrumb do
 
   defp crumb(assigns) do
     ~H"""
-    <div class={merge(["flex items-center space-x-1.5", @item[:class]])} aria-current={@current && "page"}>
+    <div
+      class={merge(["flex items-center space-x-1.5", @item[:class]])}
+      aria-current={@current && "page"}
+    >
       {render_slot(@item)}
     </div>
     """

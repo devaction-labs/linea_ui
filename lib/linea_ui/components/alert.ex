@@ -137,7 +137,19 @@ defmodule LineaUI.Components.Alert do
     doc: "Adds LineOne's close button, which fades the alert out."
   )
 
-  attr(:on_dismiss, JS, default: %JS{}, doc: "Runs before the alert is hidden.")
+  attr(:on_dismiss, :any,
+    default: nil,
+    doc:
+      "An event name or a `JS` command run when the close button is pressed. The event's payload is `%{\"id\" => id}`."
+  )
+
+  attr(:target, :any, default: nil, doc: "The `phx-target` of `on_dismiss`.")
+
+  attr(:open, :boolean,
+    default: true,
+    doc: "`false` renders the alert hidden; the close button hides it in the browser."
+  )
+
   attr(:class, :any, default: nil)
   attr(:rest, :global)
 
@@ -174,6 +186,7 @@ defmodule LineaUI.Components.Alert do
     <div
       id={@id}
       role="alert"
+      hidden={!@open}
       class={
         merge([
           @base_classes,
@@ -193,7 +206,7 @@ defmodule LineaUI.Components.Alert do
       <.close_button
         :if={@dismissible}
         color={close_color(@color, @variant)}
-        on_dismiss={@on_dismiss}
+        on_dismiss={dismiss_js(@on_dismiss, @target, @id)}
       />
     </div>
     """
@@ -204,6 +217,7 @@ defmodule LineaUI.Components.Alert do
     <div
       id={@id}
       role="alert"
+      hidden={!@open}
       class={
         merge([
           @base_classes,
@@ -224,7 +238,10 @@ defmodule LineaUI.Components.Alert do
       </div>
       {render_slot(@action)}
       <div :if={@dismissible} class="px-2">
-        <.close_button color={close_color(@color, @variant)} on_dismiss={@on_dismiss} />
+        <.close_button
+          color={close_color(@color, @variant)}
+          on_dismiss={dismiss_js(@on_dismiss, @target, @id)}
+        />
       </div>
       <div :if={@accent == "right"} class={bar(@color)}></div>
     </div>
@@ -275,6 +292,11 @@ defmodule LineaUI.Components.Alert do
     </button>
     """
   end
+
+  defp dismiss_js(nil, _target, _id), do: %JS{}
+  defp dismiss_js(%JS{} = js, _target, _id), do: js
+  defp dismiss_js(event, nil, id), do: JS.push(event, value: %{id: id})
+  defp dismiss_js(event, target, id), do: JS.push(event, target: target, value: %{id: id})
 
   defp close_classes(color), do: @close_buttons[color]
 
