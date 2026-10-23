@@ -47,7 +47,7 @@ const notify = (hook, kind, payload) => {
 
 const listenCommands = (hook, actions) => {
   hook.commandListeners = COMMANDS.map((name) => {
-    const local = () => actions[name]()
+    const local = (event) => event.target === hook.el && actions[name]()
     hook.el.addEventListener(`linea:${name}`, local)
     hook.handleEvent(`linea:${name}`, ({id}) => typeof id === "string" && hook.el.matches(id) && actions[name]())
     return () => hook.el.removeEventListener(`linea:${name}`, local)
