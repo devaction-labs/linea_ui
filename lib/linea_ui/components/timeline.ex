@@ -1,5 +1,217 @@
 defmodule LineaUI.Components.Timeline do
-  @moduledoc false
+  @moduledoc """
+  LineOne's timeline: events down a line, each marked by a filled, outlined or icon point.
+
+      <.timeline class="max-w-sm">
+        <.timeline_item title="Video Added" time="1 hour ago" color="primary"
+          description="Mores Clarke added new video" />
+        <.timeline_item title="Design Completed" time="3 hours ago" color="success" ping>
+          <a href="#">File_final.fig</a>
+        </.timeline_item>
+      </.timeline>
+
+      <.timeline size="lg" line_space>
+        <.timeline_item title="Images Added" time="1 hour ago" color="primary" variant="icon">
+          <:point><svg class="size-3">…</svg></:point>
+        </.timeline_item>
+      </.timeline>
+
+  The inner block of an item comes after its description: images, links, tags, members.
+
+  The items can come from a list or a stream through `rows` and the `:item` slot, which gets
+  `{dom_id, row}` and renders a `timeline_item` with that `id`:
+
+      <.timeline id="events" rows={@streams.events}>
+        <:item :let={{id, event}}>
+          <.timeline_item id={id} title={event.title} time={event.ago} color={event.color} />
+        </:item>
+      </.timeline>
+
+  Given a stream, the list renders with `phx-update="stream"` (and needs an `id`).
+  """
 
   use LineaUI.Component
+
+  @solid %{
+    "neutral" => "bg-slate-300 dark:bg-navy-400",
+    "primary" => "bg-primary dark:bg-accent",
+    "secondary" => "bg-secondary dark:bg-secondary-light",
+    "accent" => "bg-accent dark:bg-accent",
+    "info" => "bg-info",
+    "success" => "bg-success",
+    "warning" => "bg-warning",
+    "error" => "bg-error"
+  }
+
+  @outline %{
+    "neutral" => "border-2 border-slate-300 dark:border-navy-400",
+    "primary" => "border-2 border-primary dark:border-accent",
+    "secondary" => "border-2 border-secondary dark:border-secondary-light",
+    "accent" => "border-2 border-accent dark:border-accent",
+    "info" => "border-2 border-info",
+    "success" => "border-2 border-success",
+    "warning" => "border-2 border-warning",
+    "error" => "border-2 border-error"
+  }
+
+  @icon %{
+    "neutral" =>
+      "border border-current bg-white text-slate-400 dark:bg-navy-700 dark:text-navy-300",
+    "primary" => "border border-current bg-white text-primary dark:bg-navy-700 dark:text-accent",
+    "secondary" =>
+      "border border-current bg-white text-secondary dark:bg-navy-700 dark:text-secondary-light",
+    "accent" => "border border-current bg-white text-accent dark:bg-navy-700 dark:text-accent",
+    "info" => "border border-current bg-white text-info dark:bg-navy-700",
+    "success" => "border border-current bg-white text-success dark:bg-navy-700",
+    "warning" => "border border-current bg-white text-warning dark:bg-navy-700",
+    "error" => "border border-current bg-white text-error dark:bg-navy-700"
+  }
+
+  @variants %{"solid" => @solid, "outline" => @outline, "icon" => @icon}
+
+  @pings %{
+    "neutral" => "bg-slate-300 dark:bg-navy-400",
+    "primary" => "bg-primary dark:bg-accent",
+    "secondary" => "bg-secondary dark:bg-secondary-light",
+    "accent" => "bg-accent dark:bg-accent",
+    "info" => "bg-info",
+    "success" => "bg-success",
+    "warning" => "bg-warning",
+    "error" => "bg-error"
+  }
+
+  @sizes %{"md" => nil, "lg" => "[--size:1.5rem]"}
+
+  @doc """
+  Renders the line the `timeline_item`s hang on, either from its inner block or from `rows`.
+
+      <.timeline line_space class="max-w-sm">
+        <.timeline_item title="Video Added" time="1 hour ago" color="primary" />
+      </.timeline>
+
+      <.timeline id="events" rows={@streams.events}>
+        <:item :let={{id, event}}>
+          <.timeline_item id={id} title={event.title} time={event.ago} />
+        </:item>
+      </.timeline>
+  """
+  attr(:line_space, :boolean,
+    default: false,
+    doc: "Leaves a gap between the points and the line."
+  )
+
+  attr(:size, :string,
+    default: "md",
+    values: ~w(md lg),
+    doc: "`lg` makes room for an icon in the points."
+  )
+
+  attr(:id, :string, default: nil, doc: "Required with a stream.")
+  attr(:rows, :any, default: nil, doc: "A list or a stream of rows rendered by the `:item` slot.")
+
+  attr(:row_id, :any,
+    default: nil,
+    doc: "A function from a row to its DOM id, for a plain list (a stream brings its own ids)."
+  )
+
+  attr(:class, :any, default: nil)
+  attr(:rest, :global)
+  slot(:inner_block)
+  slot(:item, doc: "Renders one row; gets `{dom_id, row}`.")
+
+  def timeline(assigns) do
+    assigns =
+      assigns
+      |> assign(:size_class, @sizes[assigns.size])
+      |> assign(:stream, stream_update(assigns.rows))
+      |> assign(:entries, entries(assigns.rows, assigns.row_id))
+
+    ~H"""
+    <ol
+      id={@id}
+      class={merge(["timeline", @line_space && "line-space", @size_class, @class])}
+      phx-update={@stream}
+      {@rest}
+    >
+      {render_slot(@inner_block)}
+      <%= for entry <- @entries do %>
+        {render_slot(@item, entry)}
+      <% end %>
+    </ol>
+    """
+  end
+
+  defp stream_update(%Phoenix.LiveView.LiveStream{}), do: "stream"
+  defp stream_update(_rows), do: nil
+
+  defp entries(nil, _row_id), do: []
+  defp entries(%Phoenix.LiveView.LiveStream{} = stream, _row_id), do: stream
+
+  defp entries(rows, row_id) when is_function(row_id, 1),
+    do: Enum.map(rows, &{row_id.(&1), &1})
+
+  defp entries(rows, nil), do: Enum.map(rows, &{nil, &1})
+
+  @doc """
+  Renders one event: its point, title, time and description, then the inner block.
+
+      <.timeline_item title="Images Added" time="1 hour ago" color="primary" variant="icon"
+        description="Mores Clarke added new image gallery">
+        <:point><svg class="size-3">…</svg></:point>
+        <div class="mt-4 grid grid-cols-3 gap-3">…</div>
+      </.timeline_item>
+  """
+  attr(:title, :string, default: nil, doc: "The bold first line.")
+  attr(:time, :string, default: nil, doc: "Shown at the right of the title.")
+  attr(:description, :string, default: nil, doc: "The line under the title.")
+
+  attr(:color, :string,
+    default: "neutral",
+    doc: "The color of the point.",
+    values: ~w(neutral primary secondary accent info success warning error)
+  )
+
+  attr(:variant, :string,
+    default: "solid",
+    values: ~w(solid outline icon),
+    doc: "`icon` is a white point ringed in the color, holding the `:point` slot."
+  )
+
+  attr(:ping, :boolean, default: false, doc: "A pulsing ring around the point.")
+  attr(:class, :any, default: nil)
+  attr(:rest, :global)
+  slot(:point, doc: "What the point shows, usually an icon.")
+  slot(:inner_block)
+
+  def timeline_item(assigns) do
+    assigns =
+      assigns
+      |> assign(:point_class, @variants[assigns.variant][assigns.color])
+      |> assign(:ping_class, @pings[assigns.color])
+
+    ~H"""
+    <li class={merge(["timeline-item", @class])} {@rest}>
+      <div class={["timeline-item-point rounded-full", @point_class]}>
+        <span
+          :if={@ping}
+          class={["inline-flex h-full w-full animate-ping rounded-full opacity-80", @ping_class]}
+        ></span>
+        {render_slot(@point)}
+      </div>
+      <div class="timeline-item-content flex-1 pl-4 sm:pl-8">
+        <div
+          :if={@title || @time}
+          class="flex flex-col justify-between pb-2 sm:flex-row sm:pb-0"
+        >
+          <p class="pb-2 font-medium leading-none text-slate-600 dark:text-navy-100 sm:pb-0">
+            {@title}
+          </p>
+          <span :if={@time} class="text-xs text-slate-400 dark:text-navy-300">{@time}</span>
+        </div>
+        <p :if={@description} class="py-1">{@description}</p>
+        {render_slot(@inner_block)}
+      </div>
+    </li>
+    """
+  end
 end

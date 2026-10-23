@@ -1,0 +1,59 @@
+defmodule LineaUI.Components.TimelineTest do
+  use LineaUI.ComponentCase, async: true
+
+  test "renders items with title, time and description" do
+    html =
+      render(~H"""
+      <.timeline class="max-w-sm">
+        <.timeline_item title="Video Added" time="1 hour ago" color="primary" description="New video">
+          <a href="#">extra</a>
+        </.timeline_item>
+      </.timeline>
+      """)
+
+    assert ["timeline", "max-w-sm"] == classes(html, "ol")
+    assert "bg-primary" in classes(html, ".timeline-item-point")
+
+    assert html |> find(".timeline-item-content p.py-1") |> Enum.map(&LazyHTML.text/1) == [
+             "New video"
+           ]
+
+    assert html =~ "1 hour ago"
+    assert html |> find(".timeline-item-content a") |> Enum.count() == 1
+  end
+
+  test "variants, ping, line space and size" do
+    html =
+      render(~H"""
+      <.timeline line_space size="lg">
+        <.timeline_item variant="outline" color="success" />
+        <.timeline_item variant="icon" color="error" ping>
+          <:point><svg id="icon"></svg></:point>
+        </.timeline_item>
+      </.timeline>
+      """)
+
+    assert "line-space" in classes(html, "ol")
+    assert "[--size:1.5rem]" in classes(html, "ol")
+    assert "border-success" in classes(html, "li:first-child .timeline-item-point")
+    point = classes(html, "li:last-child .timeline-item-point")
+    assert "border-current" in point
+    assert "text-error" in point
+    assert html |> find(".timeline-item-point #icon") |> Enum.count() == 1
+    assert "animate-ping" in classes(html, "li:last-child .timeline-item-point span")
+  end
+
+  test "rows from a list with row_id" do
+    assigns = %{rows: [%{id: 1, title: "One"}, %{id: 2, title: "Two"}]}
+
+    html =
+      rendered_to_string(~H"""
+      <.timeline rows={@rows} row_id={&"ev-#{&1.id}"}>
+        <:item :let={{id, row}}><.timeline_item id={id} title={row.title} /></:item>
+      </.timeline>
+      """)
+
+    assert html |> find("li#ev-1, li#ev-2") |> Enum.count() == 2
+    assert html |> find("ol[phx-update]") |> Enum.count() == 0
+  end
+end
