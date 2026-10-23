@@ -1,7 +1,7 @@
 defmodule LineaUI.Components.DropdownTest do
   use LineaUI.ComponentCase, async: true
 
-  defp attr(html, selector, name), do: html |> find(selector) |> LazyHTML.attribute(name)
+  defp attr_of(html, selector, name), do: html |> find(selector) |> LazyHTML.attribute(name)
 
   test "label draws LineOne's button with the chevron; the menu is a popper root" do
     html =
@@ -13,13 +13,13 @@ defmodule LineaUI.Components.DropdownTest do
       </.dropdown>
       """)
 
-    assert attr(html, "#dd", "phx-hook") == ["LineaUI.Dropdown"]
-    assert attr(html, "#dd", "data-placement") == ["bottom-start"]
-    assert attr(html, "#dd", "data-offset") == ["4"]
+    assert attr_of(html, "#dd", "phx-hook") == ["LineaUI.Dropdown"]
+    assert attr_of(html, "#dd", "data-placement") == ["bottom-start"]
+    assert attr_of(html, "#dd", "data-offset") == ["4"]
     assert find(html, "#dd-button") |> LazyHTML.text() =~ "Dropdown"
     assert [_] = find(html, "#dd-button svg") |> Enum.to_list()
     assert "popper-root" in classes(html, "#dd-menu")
-    assert attr(html, "#dd-menu [role=menu]", "aria-labelledby") == ["dd-button"]
+    assert attr_of(html, "#dd-menu [role=menu]", "aria-labelledby") == ["dd-button"]
     assert [_, _] = find(html, "[role=menuitem][tabindex='-1']") |> Enum.to_list()
     assert [_] = find(html, "a[role=menuitem][href='#']") |> Enum.to_list()
     assert [_] = find(html, "button[role=menuitem][phx-click=go]") |> Enum.to_list()
@@ -44,10 +44,10 @@ defmodule LineaUI.Components.DropdownTest do
 
     assert [_] = find(html, "#dd [data-trigger] #mine") |> Enum.to_list()
     assert find(html, "#dd-button") |> Enum.to_list() == []
-    assert attr(html, "#dd", "data-placement") == ["top-end"]
-    assert attr(html, "#dd", "data-open") == ["true"]
-    assert attr(html, "#dd", "data-close-on-select") == ["false"]
-    assert attr(html, "#dd", "data-on-open") |> hd() =~ "opened"
+    assert attr_of(html, "#dd", "data-placement") == ["top-end"]
+    assert attr_of(html, "#dd", "data-open") == ["true"]
+    assert attr_of(html, "#dd", "data-close-on-select") == ["false"]
+    assert attr_of(html, "#dd", "data-on-open") |> hd() =~ "opened"
     assert "w-72" in classes(html, "#dd-menu > div")
   end
 
@@ -78,7 +78,7 @@ defmodule LineaUI.Components.DropdownTest do
       """)
 
     assert find(html, "h3") |> LazyHTML.text() =~ "People"
-    assert attr(html, "input", "name") == ["q"]
-    assert attr(html, "input", "phx-debounce") == ["300"]
+    assert attr_of(html, "input", "name") == ["q"]
+    assert attr_of(html, "input", "phx-debounce") == ["300"]
   end
 end

@@ -1,7 +1,7 @@
 defmodule LineaUI.Components.DisclosureTest do
   use LineaUI.ComponentCase, async: true
 
-  defp attr(html, selector, name), do: html |> find(selector) |> LazyHTML.attribute(name)
+  defp attr_of(html, selector, name), do: html |> find(selector) |> LazyHTML.attribute(name)
 
   test "collapse is a details element wired to its hook" do
     html =
@@ -12,12 +12,12 @@ defmodule LineaUI.Components.DisclosureTest do
       </.collapse>
       """)
 
-    assert attr(html, "details#c", "phx-hook") == ["LineaUI.Collapse"]
-    assert attr(html, "#c", "open") == [""]
-    assert attr(html, "#c", "data-open") == ["true"]
+    assert attr_of(html, "details#c", "phx-hook") == ["LineaUI.Collapse"]
+    assert attr_of(html, "#c", "open") == [""]
+    assert attr_of(html, "#c", "data-open") == ["true"]
     assert "py-4" in classes(html, "#c > summary")
     assert find(html, "#c > .ac-panel") |> LazyHTML.text() =~ "Body"
-    assert attr(html, "#c", "data-on-open") |> hd() =~ "opened"
+    assert attr_of(html, "#c", "data-on-open") |> hd() =~ "opened"
   end
 
   test "accordion styles and exclusivity" do
@@ -29,20 +29,20 @@ defmodule LineaUI.Components.DisclosureTest do
       </.accordion>
       """)
 
-    assert attr(html, "#a", "data-variant") == ["primary"]
-    assert attr(html, "#a", "data-exclusive") == ["true"]
+    assert attr_of(html, "#a", "data-variant") == ["primary"]
+    assert attr_of(html, "#a", "data-exclusive") == ["true"]
     assert "border-primary" in classes(html, "#a")
     assert [_, _] = find(html, "#a > details.ac") |> Enum.to_list()
     assert find(html, "#a1 summary.ac-trigger") |> LazyHTML.text() =~ "Item 1"
-    assert attr(html, "#a1", "open") == [""]
-    assert attr(html, "#a2", "open") == []
+    assert attr_of(html, "#a1", "open") == [""]
+    assert attr_of(html, "#a2", "open") == []
   end
 
   test "multiple lets items open independently" do
     html = render(~H|<.accordion id="a" multiple variant="divided">
   <.accordion_item id="i">x</.accordion_item>
 </.accordion>|)
-    assert attr(html, "#a", "data-exclusive") == ["false"]
+    assert attr_of(html, "#a", "data-exclusive") == ["false"]
     assert "space-y-4" in classes(html, "#a")
   end
 
@@ -56,7 +56,7 @@ defmodule LineaUI.Components.DisclosureTest do
       """)
 
     assert "pointer-events-none" in classes(html, "#i > summary")
-    assert attr(html, "#i .ac-trigger", "aria-label") == ["Open Simon"]
+    assert attr_of(html, "#i .ac-trigger", "aria-label") == ["Open Simon"]
     assert find(html, "#i > summary") |> LazyHTML.text() =~ "Simon"
   end
 end

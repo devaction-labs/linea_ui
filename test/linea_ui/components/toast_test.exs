@@ -2,8 +2,9 @@ defmodule LineaUI.Components.ToastTest do
   use LineaUI.ComponentCase, async: true
 
   alias LineaUI.Components.Toast
+  alias Phoenix.LiveView.JS
 
-  defp attr(html, selector, name), do: html |> find(selector) |> LazyHTML.attribute(name)
+  defp attr_of(html, selector, name), do: html |> find(selector) |> LazyHTML.attribute(name)
 
   test "the toaster carries the toasts of the flash and its defaults" do
     flash = %{"linea_toast" => [%{"id" => "t1", "message" => "Saved", "color" => "success"}]}
@@ -14,11 +15,11 @@ defmodule LineaUI.Components.ToastTest do
       <.toaster flash={@flash} position="center-top" duration={3000} />
       """)
 
-    assert attr(html, "#linea-toaster", "phx-hook") == ["LineaUI.Toast"]
-    assert attr(html, "#linea-toaster", "phx-update") == ["ignore"]
-    assert attr(html, "#linea-toaster", "data-position") == ["center-top"]
-    assert attr(html, "#linea-toaster", "data-duration") == ["3000"]
-    assert [json] = attr(html, "#linea-toaster", "data-flash")
+    assert attr_of(html, "#linea-toaster", "phx-hook") == ["LineaUI.Toast"]
+    assert attr_of(html, "#linea-toaster", "phx-update") == ["ignore"]
+    assert attr_of(html, "#linea-toaster", "data-position") == ["center-top"]
+    assert attr_of(html, "#linea-toaster", "data-duration") == ["3000"]
+    assert [json] = attr_of(html, "#linea-toaster", "data-flash")
     assert [%{"message" => "Saved", "color" => "success"}] = Jason.decode!(json)
   end
 

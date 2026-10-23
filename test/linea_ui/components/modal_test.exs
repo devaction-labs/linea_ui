@@ -1,17 +1,19 @@
 defmodule LineaUI.Components.ModalTest do
   use LineaUI.ComponentCase, async: true
 
-  defp attr(html, selector, name), do: html |> find(selector) |> LazyHTML.attribute(name)
+  alias Phoenix.LiveView.JS
+
+  defp attr_of(html, selector, name), do: html |> find(selector) |> LazyHTML.attribute(name)
 
   test "a closed, fading modal wired to the dialog hook" do
     html = render(~H|<.modal id="m">
   <p>Hi</p>
 </.modal>|)
 
-    assert attr(html, "#m", "phx-hook") == ["LineaUI.Dialog"]
-    assert attr(html, "#m", "data-open") == ["false"]
-    assert attr(html, "#m", "data-kind") == ["modal"]
-    assert attr(html, "#m", "role") == ["dialog"]
+    assert attr_of(html, "#m", "phx-hook") == ["LineaUI.Dialog"]
+    assert attr_of(html, "#m", "data-open") == ["false"]
+    assert attr_of(html, "#m", "data-kind") == ["modal"]
+    assert attr_of(html, "#m", "role") == ["dialog"]
     assert "modal" in classes(html, "#m")
     assert "max-w-lg" in classes(html, "#m-panel")
     assert [_] = find(html, "#m [data-backdrop]") |> Enum.to_list()
@@ -39,7 +41,7 @@ defmodule LineaUI.Components.ModalTest do
     assert "justify-start" in classes(html, "#m")
     assert ["max-w-2xl", "origin-bottom", "pb-4"] -- classes(html, "#m-panel") == []
     assert "backdrop-blur-sm" in classes(html, "#m [data-backdrop]")
-    assert attr(html, "#m", "data-open") == ["true"]
+    assert attr_of(html, "#m", "data-open") == ["true"]
   end
 
   test "the bar header carries the title and the close button; the footer and body follow" do
@@ -54,7 +56,7 @@ defmodule LineaUI.Components.ModalTest do
 
     assert find(html, "#m-title") |> LazyHTML.text() =~ "Edit Pin"
     assert "bg-slate-200" in classes(html, "#m-panel > div:first-child")
-    assert attr(html, "#m", "aria-labelledby") == ["m-title"]
+    assert attr_of(html, "#m", "aria-labelledby") == ["m-title"]
     assert "p-0" in classes(html, "#m-panel > div:nth-child(2)")
     assert "text-center" in classes(html, "#m-panel > div:last-child")
     assert [close] = find(html, "#m-panel button") |> Enum.to_list()
@@ -77,10 +79,10 @@ defmodule LineaUI.Components.ModalTest do
       <.modal id="m" prevent_close on_close="closed" on_open={JS.add_class("x", to: "body")}>x</.modal>
       """)
 
-    assert attr(html, "#m", "data-prevent-close") == ["true"]
-    assert [close] = attr(html, "#m", "data-on-close")
+    assert attr_of(html, "#m", "data-prevent-close") == ["true"]
+    assert [close] = attr_of(html, "#m", "data-on-close")
     assert close =~ ~s("event":"closed")
     assert close =~ ~s("id":"m")
-    assert attr(html, "#m", "data-on-open") |> hd() =~ "add_class"
+    assert attr_of(html, "#m", "data-on-open") |> hd() =~ "add_class"
   end
 end
