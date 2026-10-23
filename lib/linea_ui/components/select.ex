@@ -57,9 +57,9 @@ defmodule LineaUI.Components.Select do
   ms), to `target` or to the LiveView/LiveComponent the select is in; the server answers by
   re-rendering `options`.
   """
-  attr :id, :string, default: nil
-  attr :name, :string, default: nil
-  attr :value, :any, default: nil
+  attr :id, :string, doc: "Defaults to the field id, or a generated one."
+  attr :name, :string, doc: "Defaults to the field name (with `[]` when several values)."
+  attr :value, :any, doc: "Defaults to the field value."
 
   attr :field, Phoenix.HTML.FormField,
     default: nil,
@@ -117,6 +117,8 @@ defmodule LineaUI.Components.Select do
     assigns
     |> assign_field()
     |> assign_new(:id, fn -> nil end)
+    |> assign_new(:name, fn -> nil end)
+    |> assign_new(:value, fn -> nil end)
     |> assign(:entries, Options.normalize(assigns.options))
     |> then(&assign(&1, :selected, Options.values(&1.value)))
     |> render_native()
@@ -126,7 +128,8 @@ defmodule LineaUI.Components.Select do
     assigns
     |> assign_field()
     |> assign_new(:id, fn -> gen_id("select") end)
-    |> then(&assign(&1, :name, &1.name || &1.id))
+    |> then(&assign_new(&1, :name, fn -> &1.id end))
+    |> assign_new(:value, fn -> nil end)
     |> LineaUI.Components.Select.Listbox.prepare(:select)
     |> LineaUI.Components.Select.Listbox.listbox()
   end

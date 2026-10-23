@@ -16,9 +16,9 @@ defmodule LineaUI.Components.TagsInput do
   use LineaUI.Component
 
   @doc "Renders a tag input."
-  attr :id, :string, default: nil
-  attr :name, :string, default: nil
-  attr :value, :any, default: nil
+  attr :id, :string, doc: "Defaults to the field id, or a generated one."
+  attr :name, :string, doc: "Defaults to the field name (with `[]` when several values)."
+  attr :value, :any, doc: "Defaults to the field value."
   attr :field, Phoenix.HTML.FormField, default: nil
   attr :label, :string, default: nil
   attr :help, :string, default: nil
@@ -48,7 +48,8 @@ defmodule LineaUI.Components.TagsInput do
     |> assign(:multiple, true)
     |> assign_field()
     |> assign_new(:id, fn -> gen_id("tags") end)
-    |> then(&assign(&1, :name, &1.name || &1.id))
+    |> then(&assign_new(&1, :name, fn -> &1.id end))
+    |> assign_new(:value, fn -> nil end)
     |> assign(options: assigns.suggestions, create: true, on_search: nil, debounce: 0)
     |> assign(option: [], item: [])
     |> LineaUI.Components.Select.Listbox.prepare(:tags)

@@ -70,15 +70,15 @@ export const Listbox = {
     return this.q("[data-search]")
   },
 
-  get multiple() {
+  multiple() {
     return this.el.dataset.multiple === "true"
   },
 
-  get max() {
+  max() {
     return this.el.dataset.max ? Number(this.el.dataset.max) : null
   },
 
-  get local() {
+  local() {
     return !this.el.dataset.onSearch
   },
 
@@ -98,7 +98,7 @@ export const Listbox = {
   },
 
   open() {
-    const disabled = this.el.classList.contains("disabled") || isFull(this.values.length, this.multiple, this.max) && this.multiple
+    const disabled = this.el.classList.contains("disabled") || isFull(this.values.length, this.multiple(), this.max()) && this.multiple()
     !disabled && ((this.isOpen = true), this.input().focus(), this.refresh())
   },
 
@@ -160,8 +160,8 @@ export const Listbox = {
     this.term = rest
     this.isOpen = true
     this.active = -1
-    this.el.classList.toggle("input-hidden", !this.multiple && this.values.length > 0 && rest === "")
-    this.local ? this.refresh() : this.search(rest)
+    this.el.classList.toggle("input-hidden", !this.multiple() && this.values.length > 0 && rest === "")
+    this.local() ? this.refresh() : this.search(rest)
   },
 
   search(query) {
@@ -193,9 +193,9 @@ export const Listbox = {
 
   pick(value) {
     this.setTerm("")
-    this.change(choose(this.values, value, {multiple: this.multiple, max: this.max}))
-    !this.multiple && this.close()
-    isFull(this.values.length, this.multiple, this.max) && this.multiple && this.close()
+    this.change(choose(this.values, value, {multiple: this.multiple(), max: this.max()}))
+    !this.multiple() && this.close()
+    isFull(this.values.length, this.multiple(), this.max()) && this.multiple() && this.close()
   },
 
   createTyped() {
@@ -206,7 +206,7 @@ export const Listbox = {
   },
 
   create(term) {
-    const full = isFull(this.values.length, this.multiple, this.max) && this.multiple
+    const full = isFull(this.values.length, this.multiple(), this.max()) && this.multiple()
     const exists = this.options().some((row) => row.dataset.value === term)
     !full && !exists && this.q("[data-extra]").insertAdjacentHTML("beforeend", this.createdOption(term))
     !full && this.pick(term)
@@ -266,7 +266,7 @@ export const Listbox = {
 
   writeInput() {
     const select = this.q("[data-input]")
-    const empty = this.values.length === 0 && !this.multiple ? `<option value="" selected></option>` : ""
+    const empty = this.values.length === 0 && !this.multiple() ? `<option value="" selected></option>` : ""
     select.innerHTML =
       empty + this.values.map((value) => `<option value="${escapeHtml(value)}" selected>${escapeHtml(value)}</option>`).join("")
     ;[...select.options].forEach((option) => (option.selected = true))
@@ -287,7 +287,7 @@ export const Listbox = {
   },
 
   refresh() {
-    const state = {values: this.values, multiple: this.multiple, term: this.term, local: this.local}
+    const state = {values: this.values, multiple: this.multiple(), term: this.term, local: this.local()}
     const options = this.options()
     options.forEach((row) => {
       const visible = shows({value: row.dataset.value, label: row.dataset.label}, state)
@@ -311,7 +311,7 @@ export const Listbox = {
   },
 
   marked(label) {
-    return highlight(label, this.local ? this.term : "")
+    return highlight(label, this.local() ? this.term : "")
       .map(({text, hit}) => (hit ? `<span class="highlight">${escapeHtml(text)}</span>` : escapeHtml(text)))
       .join("")
   },
@@ -321,7 +321,7 @@ export const Listbox = {
     const term = this.term.trim()
     const wanted =
       this.el.dataset.create === "true" && term !== "" && canCreate(term, options.map((row) => row.dataset.label)) &&
-      !(this.multiple && isFull(this.values.length, true, this.max))
+      !(this.multiple() && isFull(this.values.length, true, this.max()))
     const label = escapeHtml(this.el.dataset.createLabel || "Add")
     holder.innerHTML = wanted ? `<div class="create" id="${this.el.id}-create-row">${label} <strong>${escapeHtml(term)}</strong>&hellip;</div>` : ""
   },
@@ -337,10 +337,10 @@ export const Listbox = {
   },
 
   paintWrapper() {
-    const full = isFull(this.values.length, this.multiple, this.max)
+    const full = isFull(this.values.length, this.multiple(), this.max())
     this.el.classList.toggle("has-items", this.values.length > 0)
     this.el.classList.toggle("full", full)
-    this.el.classList.toggle("input-hidden", !this.multiple && full && this.term === "")
+    this.el.classList.toggle("input-hidden", !this.multiple() && full && this.term === "")
   },
 
   paintOpen(rows) {
