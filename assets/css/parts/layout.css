@@ -47,16 +47,24 @@
   }
 
   .shell-tooltip {
-    @apply pointer-events-none invisible fixed top-0 left-0 z-[10003] rounded-[4px] bg-slate-150 px-[9px] py-[5px] text-sm leading-[1.4] whitespace-nowrap text-slate-800 opacity-0 dark:bg-navy-500 dark:text-navy-50;
-    transform: translateX(-10px);
-    transition:
-      opacity 300ms,
-      transform 300ms,
-      visibility 300ms;
+    @apply pointer-events-none invisible fixed top-0 left-0 z-[10003];
+    transition: visibility 300ms;
   }
 
   .shell-tooltip.show {
-    @apply visible opacity-100;
+    @apply visible;
+  }
+
+  .shell-tooltip-box {
+    @apply relative block rounded-[4px] bg-slate-150 px-[9px] py-[5px] text-sm leading-[1.4] whitespace-nowrap text-slate-800 opacity-0 dark:bg-navy-500 dark:text-navy-50;
+    transform: translateX(-10px);
+    transition:
+      opacity 300ms,
+      transform 300ms;
+  }
+
+  .shell-tooltip.show .shell-tooltip-box {
+    @apply opacity-100;
     transform: none;
   }
 

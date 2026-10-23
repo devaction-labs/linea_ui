@@ -278,10 +278,12 @@ defmodule LineaUI.Components.AppShell do
     >
       {render_slot(@inner_block)}
       <span :if={@label} role="tooltip" class="shell-tooltip">
-        {@label}
-        <svg class="shell-tooltip-arrow" viewBox="0 0 16 6" aria-hidden="true">
-          <path d="M0 6s1.796-.013 4.67-3.615C5.851.9 6.93.006 8 0c1.07-.006 2.148.887 3.343 2.385C14.233 6.005 16 6 16 6H0z" />
-        </svg>
+        <span class="shell-tooltip-box">
+          {@label}
+          <svg class="shell-tooltip-arrow" viewBox="0 0 16 6" aria-hidden="true">
+            <path d="M0 6s1.796-.013 4.67-3.615C5.851.9 6.93.006 8 0c1.07-.006 2.148.887 3.343 2.385C14.233 6.005 16 6 16 6H0z" />
+          </svg>
+        </span>
       </span>
     </.link>
     """
