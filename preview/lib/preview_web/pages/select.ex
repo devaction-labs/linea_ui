@@ -30,13 +30,25 @@ defmodule PreviewWeb.Pages.Select do
         utility. Check out code for detail of usage.
       </p>
       <div class="mt-5">
-        <.select native shape="pill" name="rounded" label="What type of event is it?" options={@events} />
+        <.select
+          native
+          shape="pill"
+          name="rounded"
+          label="What type of event is it?"
+          options={@events}
+        />
       </div>
     </.example>
     <.example title="Filled Select" class="max-w-xl">
       <p>The select component can be filled. Check out code for detail of usage.</p>
       <div class="mt-5">
-        <.select native variant="filled" name="filled" label="What type of event is it?" options={@events} />
+        <.select
+          native
+          variant="filled"
+          name="filled"
+          label="What type of event is it?"
+          options={@events}
+        />
       </div>
     </.example>
     <.example title="Select Size" class="max-w-xl">
@@ -48,7 +60,9 @@ defmodule PreviewWeb.Pages.Select do
       </div>
     </.example>
     <.example title="Disabled Select" class="max-w-xl">
-      <p>The selcet component have their own style when disabled.. Check out code for detail of usage.</p>
+      <p>
+        The selcet component have their own style when disabled.. Check out code for detail of usage.
+      </p>
       <div class="mt-5">
         <.select native disabled name="disabled" label="What type of event is it?" options={@events} />
       </div>

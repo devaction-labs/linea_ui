@@ -56,9 +56,24 @@ defmodule PreviewWeb.Pages.TomSelect do
   ]
 
   @authors [
-    %{value: 1, label: "John Doe", job: "Web designer", src: "/lineone/images/avatar/avatar-20.jpg"},
-    %{value: 2, label: "Emilie Watson", job: "Developer", src: "/lineone/images/avatar/avatar-11.jpg"},
-    %{value: 3, label: "Nancy Clarke", job: "Software Engineer", src: "/lineone/images/avatar/avatar-7.jpg"}
+    %{
+      value: 1,
+      label: "John Doe",
+      job: "Web designer",
+      src: "/lineone/images/avatar/avatar-20.jpg"
+    },
+    %{
+      value: 2,
+      label: "Emilie Watson",
+      job: "Developer",
+      src: "/lineone/images/avatar/avatar-11.jpg"
+    },
+    %{
+      value: 3,
+      label: "Nancy Clarke",
+      job: "Software Engineer",
+      src: "/lineone/images/avatar/avatar-7.jpg"
+    }
   ]
 
   def mount(socket) do
@@ -186,7 +201,13 @@ defmodule PreviewWeb.Pages.TomSelect do
     <.example title="Disable Persist" class="max-w-xl">
       <.intro />
       <div class="inline-space mt-5">
-        <.tags_input id="tom8" name="tags8" label="Enter Tags:" placeholder="Enter tags" persist={false} />
+        <.tags_input
+          id="tom8"
+          name="tags8"
+          label="Enter Tags:"
+          placeholder="Enter tags"
+          persist={false}
+        />
       </div>
     </.example>
     """
