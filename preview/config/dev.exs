@@ -14,6 +14,7 @@ config :preview, PreviewWeb.Endpoint,
     port: String.to_integer(System.get_env("LINEA_PREVIEW_PORT", "4200"))
   ],
   check_origin: false,
+  reloadable_apps: [:preview, :linea_ui],
   code_reloader: true,
   debug_errors: true,
   secret_key_base: "V6UO4ardie6u+h8LIUkOxJZiIWzwQYQczQeNeREzAx/B1hG9ryMug0bUWyH/8Y1E",

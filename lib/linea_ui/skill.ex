@@ -36,6 +36,7 @@ defmodule LineaUI.Skill do
     case function_exported?(module, :__components__, 0) do
       true ->
         module.__components__()
+        |> Enum.filter(fn {name, _component} -> function_exported?(module, name, 1) end)
         |> Enum.sort_by(fn {_name, c} -> c.line end)
         |> Enum.map(&function(module, &1))
 
