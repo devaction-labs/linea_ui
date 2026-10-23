@@ -42,13 +42,25 @@ defmodule LineaUI.Components.Carousel do
   @doc """
   Renders the carousel. Its children are `carousel_slide/1`s.
 
-  `on_change` is pushed with `%{"id" => id, "index" => index}` when the active slide changes.
+  `on_change` is pushed with `%{"id" => id, "index" => index}` (zero-based) when the active
+  slide changes; a `%JS{}` is executed instead. The server moves it by changing `index`, or with
+  `push_event(socket, "linea:carousel", %{id: id, index: n})`.
+
+      <.carousel id="gallery" index={@slide} on_change="slid" navigation pagination="bullets">
+        <.carousel_slide :for={src <- @images}>
+          <img class="h-full w-full object-cover" src={src} alt="" />
+        </.carousel_slide>
+      </.carousel>
+
+      def handle_event("slid", %{"index" => index}, socket), do: {:noreply, assign(socket, slide: index)}
   """
   attr(:id, :string, required: true)
   attr(:index, :integer, default: 0, doc: "The active slide, zero-based.")
 
   attr(:effect, :string,
     default: "slide",
+    doc:
+      "`slide` scrolls a snap track; the others stack the slides and animate them like Swiper's effects.",
     values: ~w(slide fade flip cube cards coverflow creative)
   )
 
@@ -57,6 +69,8 @@ defmodule LineaUI.Components.Carousel do
 
   attr(:pagination, :string,
     default: nil,
+    doc:
+      "`bullets` (clickable dots), `fraction` (`2 / 4`), `progress` (bar on top), `scrollbar` (draggable bar).",
     values: [nil, "bullets", "fraction", "progress", "scrollbar"]
   )
 
@@ -64,8 +78,13 @@ defmodule LineaUI.Components.Carousel do
   attr(:loop, :boolean, default: false, doc: "Wrap around past the last and first slides.")
   attr(:gap, :integer, default: nil, doc: "Pixels between slides (LineOne's `spaceBetween`).")
   attr(:zoom, :integer, default: nil, doc: "Double-click zoom ratio.")
-  attr(:on_change, :any, default: nil)
-  attr(:target, :any, default: nil)
+
+  attr(:on_change, :any,
+    default: nil,
+    doc: "Event name or `%JS{}`; pushed with `%{\"id\" => id, \"index\" => index}`."
+  )
+
+  attr(:target, :any, default: nil, doc: "The `phx-target` `on_change` goes to.")
   attr(:prev_label, :string, default: "Previous slide")
   attr(:next_label, :string, default: "Next slide")
   attr(:bullet_label, :string, default: "Go to slide")
@@ -147,7 +166,11 @@ defmodule LineaUI.Components.Carousel do
 
   @doc """
   Renders one slide. Its content fills it; with `zoom` on the carousel, the first child is
-  what double click zooms.
+  what double click zooms. Give it a width (`class="w-10/12"`) to show the next slide peeking.
+
+      <.carousel_slide class="w-10/12">
+        <img class="h-full w-full rounded-lg object-cover" src="/a.jpg" alt="" />
+      </.carousel_slide>
   """
   attr(:class, :any, default: nil)
   attr(:rest, :global)

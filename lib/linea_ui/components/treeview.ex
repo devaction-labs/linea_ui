@@ -54,7 +54,16 @@ defmodule LineaUI.Components.Treeview do
 
   `on_toggle` (an event name or a `%JS{}`) is pushed with `%{"id" => item_id, "expanded" => boolean}`
   when the person opens or closes a branch. `on_select` is pushed with `%{"id" => item_id}` when a
-  leaf is clicked. Both go to `target` when given.
+  leaf is clicked or gets Enter. Both go to `target` when given; a `%JS{}` is executed instead.
+
+      <.treeview id="files" expanded={@open_ids} on_toggle="toggled" on_select="opened">
+        <.tree_item id="src" label="src">
+          <.tree_item id="src/app.ex" label="app.ex" />
+        </.tree_item>
+      </.treeview>
+
+      def handle_event("toggled", %{"id" => id, "expanded" => open?}, socket), do: ...
+      def handle_event("opened", %{"id" => id}, socket), do: ...
   """
   attr(:id, :string, required: true)
 
@@ -63,8 +72,16 @@ defmodule LineaUI.Components.Treeview do
     doc: "Ids of the branches that are open, in addition to each item's own `expanded`."
   )
 
-  attr(:on_toggle, :any, default: nil)
-  attr(:on_select, :any, default: nil)
+  attr(:on_toggle, :any,
+    default: nil,
+    doc: "Event name or `%JS{}`; pushed with `%{\"id\" => id, \"expanded\" => boolean}`."
+  )
+
+  attr(:on_select, :any,
+    default: nil,
+    doc: "Event name or `%JS{}`; pushed with `%{\"id\" => id}` when a leaf is picked."
+  )
+
   attr(:target, :any, default: nil, doc: "The `phx-target` the events go to.")
   attr(:rows, :list, default: nil, doc: "A list or a stream (`@streams.x`) rendered by `:row`.")
   attr(:row_id, :any, default: nil, doc: "A function giving each row's DOM id (streams give it).")
@@ -110,10 +127,15 @@ defmodule LineaUI.Components.Treeview do
 
   `id` names the item in events and in the treeview's `expanded` list. `tag="div"` renders it
   without its own `<li>`, for a treeview `:row` that already sits in one.
+
+      <.tree_item id="design" label="Design" expanded>
+        <:icon><svg class="size-6 text-warning">…</svg></:icon>
+        <.tree_item id="web" label="Web Apps" />
+      </.tree_item>
   """
-  attr(:id, :string, default: nil)
+  attr(:id, :string, default: nil, doc: "Names the item in events and in `expanded`.")
   attr(:label, :string, default: nil)
-  attr(:expanded, :boolean, default: false)
+  attr(:expanded, :boolean, default: false, doc: "Whether the branch is open (server state).")
   attr(:tag, :string, default: "li", values: ~w(li div))
   attr(:class, :any, default: nil)
   attr(:rest, :global)

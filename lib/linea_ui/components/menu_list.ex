@@ -92,7 +92,14 @@ defmodule LineaUI.Components.MenuList do
   `active`, `value`, and any HTML attribute), or from `rows` with a `:row` slot.
 
   `on_select` is pushed with `%{"value" => value}` when an item that has a `value` is clicked;
-  it goes to `target` when given.
+  it goes to `target` when given; a `%JS{}` is executed instead.
+
+      <.menu_list variant="pill" on_select="pick">
+        <:item value="shipping" active={@tab == "shipping"}>Shipping</:item>
+        <:item navigate={~p"/payments"}><svg class="size-5">…</svg><span>Payments</span></:item>
+      </.menu_list>
+
+      def handle_event("pick", %{"value" => value}, socket), do: {:noreply, assign(socket, tab: value)}
   """
   attr(:id, :string, default: nil)
 
@@ -103,9 +110,18 @@ defmodule LineaUI.Components.MenuList do
       "LineOne's menu list examples 1–2 (`link`), 3–4/7–8 (`solid`), 5–6 (`pill`), 9–10 (`gradient`), 11–12 (`bordered`)."
   )
 
-  attr(:color, :string, default: "primary", values: ~w(primary neutral))
-  attr(:on_select, :any, default: nil)
-  attr(:target, :any, default: nil)
+  attr(:color, :string,
+    default: "primary",
+    values: ~w(primary neutral),
+    doc: "The active item's color (LineOne's examples 7–8 are `neutral`)."
+  )
+
+  attr(:on_select, :any,
+    default: nil,
+    doc: "Event name or `%JS{}`; pushed with `%{\"value\" => value}` by items with a `value`."
+  )
+
+  attr(:target, :any, default: nil, doc: "The `phx-target` `on_select` goes to.")
   attr(:rows, :list, default: nil, doc: "A list or a stream (`@streams.x`) rendered by `:row`.")
   attr(:row_id, :any, default: nil, doc: "A function giving each row's DOM id (streams give it).")
   attr(:class, :any, default: nil)
@@ -165,7 +181,11 @@ defmodule LineaUI.Components.MenuList do
 
   @doc """
   Renders one entry of a menu list as a link (`href`, `navigate`, `patch`) or, without one,
-  a link-styled button that pushes `on_select` with `%{"value" => value}`.
+  a link-styled button that pushes `on_select` with `%{"value" => value}`. Used alone or in
+  a `menu_list` `:row`.
+
+      <.menu_item variant="solid" navigate={~p"/start"} active>Getting start</.menu_item>
+      <.menu_item value="b" on_select="pick">Beta</.menu_item>
   """
   attr(:variant, :string, default: "link", values: ~w(link solid pill gradient bordered))
   attr(:color, :string, default: "primary", values: ~w(primary neutral))
