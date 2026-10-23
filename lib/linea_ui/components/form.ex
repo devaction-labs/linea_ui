@@ -17,6 +17,8 @@ defmodule LineaUI.Components.Form do
 
   use LineaUI.Component
 
+  alias LineaUI.Components.Control
+
   @help %{
     nil => "text-tiny-plus text-slate-400 dark:text-navy-300",
     "success" => "text-tiny-plus text-success",
@@ -74,9 +76,7 @@ defmodule LineaUI.Components.Form do
     """
   end
 
-  @doc false
-  @spec help_class(String.t() | nil) :: String.t()
-  def help_class(state), do: @help[state]
+  defp help_class(state), do: @help[state]
 
   @doc """
   Wraps a control with its caption, help line and errors, laid out the way LineOne's forms
@@ -92,10 +92,15 @@ defmodule LineaUI.Components.Form do
   """
   attr(:field, Phoenix.HTML.FormField, default: nil, doc: "Takes the errors from a form field.")
   attr(:id, :string, doc: "The id of the control, for the caption's `for`.")
-  attr(:label, :string, default: nil)
-  attr(:label_class, :any, default: nil)
-  attr(:help, :string, default: nil)
-  attr(:errors, :list, default: [])
+  attr(:label, :string, default: nil, doc: "The caption.")
+  attr(:label_class, :any, default: nil, doc: "Classes of the caption text.")
+  attr(:help, :string, default: nil, doc: "The small line under the control.")
+
+  attr(:errors, :list,
+    default: [],
+    doc: "Messages to show; `field` adds its own once the input was used."
+  )
+
   attr(:state, :string, default: nil, values: [nil, "success", "error"])
   attr(:as, :string, default: "label", values: ~w(label div))
   attr(:class, :any, default: nil)
@@ -104,7 +109,7 @@ defmodule LineaUI.Components.Form do
 
   def field(assigns) do
     assigns
-    |> assign_control()
+    |> Control.assign_control()
     |> render_field()
   end
 
@@ -135,12 +140,16 @@ defmodule LineaUI.Components.Form do
   defp control_class(nil), do: "flex"
   defp control_class(_label), do: "mt-1.5 flex"
 
-  @doc false
-  attr(:help, :string, default: nil)
-  attr(:errors, :list, default: [])
+  attr(:help, :string, default: nil, doc: "The small line under the control.")
+
+  attr(:errors, :list,
+    default: [],
+    doc: "Messages to show; `field` adds its own once the input was used."
+  )
+
   attr(:state, :string, default: nil)
 
-  def messages(assigns) do
+  defp messages(assigns) do
     ~H"""
     <.help_text :if={@help} state={help_state(@state, @errors)}>{@help}</.help_text>
     <.error :for={message <- @errors}>{message}</.error>
@@ -149,19 +158,4 @@ defmodule LineaUI.Components.Form do
 
   defp help_state(state, []), do: state
   defp help_state(_state, _errors), do: nil
-
-  @doc false
-  @spec state(String.t() | nil, list()) :: String.t() | nil
-  def state(_state, [_ | _]), do: "error"
-  def state(state, []), do: state
-
-  @doc false
-  @spec assign_control(map()) :: map()
-  def assign_control(assigns) do
-    assigns
-    |> assign_field()
-    |> assign_new(:id, fn -> nil end)
-    |> assign_new(:name, fn -> nil end)
-    |> assign_new(:value, fn -> nil end)
-  end
 end

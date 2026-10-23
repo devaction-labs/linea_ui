@@ -12,6 +12,7 @@ defmodule LineaUI.Components.Range do
 
   use LineaUI.Component
 
+  alias LineaUI.Components.Control
   alias LineaUI.Components.Form
 
   @colors %{
@@ -32,8 +33,8 @@ defmodule LineaUI.Components.Range do
 
   @doc "Renders a range slider."
   attr(:field, Phoenix.HTML.FormField, default: nil)
-  attr(:id, :string)
-  attr(:name, :string)
+  attr(:id, :string, doc: "Defaults to the field's id.")
+  attr(:name, :string, doc: "Defaults to the field's name.")
   attr(:value, :any)
   attr(:min, :any, default: nil)
   attr(:max, :any, default: nil)
@@ -45,18 +46,28 @@ defmodule LineaUI.Components.Range do
   )
 
   attr(:size, :string, default: "md", values: ~w(sm md lg))
-  attr(:label, :string, default: nil)
-  attr(:label_class, :any, default: nil)
-  attr(:help, :string, default: nil)
-  attr(:errors, :list, default: [])
+  attr(:label, :string, default: nil, doc: "The caption.")
+  attr(:label_class, :any, default: nil, doc: "Classes of the caption text.")
+  attr(:help, :string, default: nil, doc: "The small line under the control.")
+
+  attr(:errors, :list,
+    default: [],
+    doc: "Messages to show; `field` adds its own once the input was used."
+  )
+
   attr(:disabled, :boolean, default: false)
-  attr(:wrapper_class, :any, default: nil)
+
+  attr(:wrapper_class, :any,
+    default: nil,
+    doc: "Classes of the outer block (grid placement, spacing)."
+  )
+
   attr(:class, :any, default: nil)
   attr(:rest, :global, include: ~w(form list))
 
   def range(assigns) do
     assigns
-    |> Form.assign_control()
+    |> Control.assign_control()
     |> then(&assign(&1, :classes, classes(&1)))
     |> render_range()
   end

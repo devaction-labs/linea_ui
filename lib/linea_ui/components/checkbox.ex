@@ -16,6 +16,7 @@ defmodule LineaUI.Components.Checkbox do
   use LineaUI.Component
 
   alias LineaUI.Components.Choice
+  alias LineaUI.Components.Control
   alias LineaUI.Components.Form
 
   @shapes %{
@@ -30,8 +31,8 @@ defmodule LineaUI.Components.Checkbox do
   through a hidden input, so the field is always present in the params.
   """
   attr(:field, Phoenix.HTML.FormField, default: nil)
-  attr(:id, :string)
-  attr(:name, :string)
+  attr(:id, :string, doc: "Defaults to the field's id.")
+  attr(:name, :string, doc: "Defaults to the field's name.")
   attr(:value, :any)
   attr(:checked, :boolean, doc: "Defaults to whether `value` (or the field's value) is true.")
   attr(:checked_value, :string, default: "true")
@@ -42,19 +43,29 @@ defmodule LineaUI.Components.Checkbox do
   attr(:filled, :boolean, default: false, doc: "A tinted box while unchecked.")
   attr(:shape, :string, default: "square", values: ~w(square circle))
   attr(:size, :string, default: "md", values: Choice.sizes())
-  attr(:label, :string, default: nil)
-  attr(:label_class, :any, default: nil)
-  attr(:description, :string, default: nil)
-  attr(:errors, :list, default: [])
+  attr(:label, :string, default: nil, doc: "The caption.")
+  attr(:label_class, :any, default: nil, doc: "Classes of the caption text.")
+  attr(:description, :string, default: nil, doc: "A smaller grey line under the label.")
+
+  attr(:errors, :list,
+    default: [],
+    doc: "Messages to show; `field` adds its own once the input was used."
+  )
+
   attr(:disabled, :boolean, default: false)
-  attr(:wrapper_class, :any, default: nil)
+
+  attr(:wrapper_class, :any,
+    default: nil,
+    doc: "Classes of the outer block (grid placement, spacing)."
+  )
+
   attr(:class, :any, default: nil)
   attr(:rest, :global, include: ~w(form required))
   slot(:inner_block, doc: "Label content, instead of `label`.")
 
   def checkbox(assigns) do
     assigns
-    |> Form.assign_control()
+    |> Control.assign_control()
     |> assign_new(:checked, fn %{value: value} ->
       Phoenix.HTML.Form.normalize_value("checkbox", value)
     end)
@@ -62,9 +73,7 @@ defmodule LineaUI.Components.Checkbox do
     |> render_checkbox()
   end
 
-  @doc false
-  @spec classes(map()) :: String.t()
-  def classes(assigns) do
+  defp classes(assigns) do
     merge([Choice.classes("form-checkbox", assigns), @shapes[assigns.shape], assigns.class])
   end
 
@@ -78,7 +87,7 @@ defmodule LineaUI.Components.Checkbox do
       disabled={@disabled}
       form={@rest[:form]}
     />
-    <.choice_label
+    <Choice.label
       label={@label}
       label_class={@label_class}
       description={@description}
@@ -96,40 +105,8 @@ defmodule LineaUI.Components.Checkbox do
         aria-invalid={@errors != [] && "true"}
         {@rest}
       />
-    </.choice_label>
+    </Choice.label>
     <Form.error :for={message <- @errors}>{message}</Form.error>
-    """
-  end
-
-  @doc false
-  attr(:label, :string, default: nil)
-  attr(:label_class, :any, default: nil)
-  attr(:description, :string, default: nil)
-  attr(:content, :list, default: [], doc: "Slot entries rendered as the label text.")
-  attr(:text_class, :any, default: nil)
-  attr(:class, :any, default: nil)
-  slot(:inner_block, required: true)
-
-  def choice_label(%{description: nil} = assigns) do
-    ~H"""
-    <label class={merge(["inline-flex items-center space-x-2", @class])}>
-      {render_slot(@inner_block)}
-      <span :if={@label || @content != []} class={merge([@text_class, @label_class])}>
-        {@label}{render_slot(@content)}
-      </span>
-    </label>
-    """
-  end
-
-  def choice_label(assigns) do
-    ~H"""
-    <label class={merge(["inline-flex items-start space-x-2", @class])}>
-      <span class="mt-0.5 flex">{render_slot(@inner_block)}</span>
-      <span class="flex flex-col">
-        <span class={merge([@text_class, @label_class])}>{@label}{render_slot(@content)}</span>
-        <span class="text-xs text-slate-400 dark:text-navy-300">{@description}</span>
-      </span>
-    </label>
     """
   end
 
@@ -145,8 +122,8 @@ defmodule LineaUI.Components.Checkbox do
       </.checkbox_group>
   """
   attr(:field, Phoenix.HTML.FormField, default: nil)
-  attr(:id, :string)
-  attr(:name, :string)
+  attr(:id, :string, doc: "Defaults to the field's id.")
+  attr(:name, :string, doc: "Defaults to the field's name.")
   attr(:value, :any)
   attr(:options, :list, default: [])
   attr(:color, :string, default: "neutral", values: @colors)
@@ -154,12 +131,22 @@ defmodule LineaUI.Components.Checkbox do
   attr(:filled, :boolean, default: false)
   attr(:shape, :string, default: "square", values: ~w(square circle))
   attr(:size, :string, default: "md", values: Choice.sizes())
-  attr(:label, :string, default: nil)
-  attr(:label_class, :any, default: nil)
-  attr(:help, :string, default: nil)
-  attr(:errors, :list, default: [])
+  attr(:label, :string, default: nil, doc: "The caption.")
+  attr(:label_class, :any, default: nil, doc: "Classes of the caption text.")
+  attr(:help, :string, default: nil, doc: "The small line under the control.")
+
+  attr(:errors, :list,
+    default: [],
+    doc: "Messages to show; `field` adds its own once the input was used."
+  )
+
   attr(:disabled, :boolean, default: false)
-  attr(:wrapper_class, :any, default: nil)
+
+  attr(:wrapper_class, :any,
+    default: nil,
+    doc: "Classes of the outer block (grid placement, spacing)."
+  )
+
   attr(:class, :any, default: nil, doc: "Classes of the container that lays the options out.")
   attr(:rest, :global)
 
@@ -174,7 +161,7 @@ defmodule LineaUI.Components.Checkbox do
   def checkbox_group(assigns) do
     assigns
     |> assign(:multiple, true)
-    |> Form.assign_control()
+    |> Control.assign_control()
     |> then(&assign(&1, :id, &1.id || gen_id("checkbox-group")))
     |> then(&assign(&1, :items, items(&1)))
     |> render_group()
@@ -247,11 +234,11 @@ defmodule LineaUI.Components.Checkbox do
         class={merge(["inline-space flex flex-wrap", @label && "mt-1.5", @class])}
         {@rest}
       >
-        <.choice_label
+        <Choice.label
           :for={item <- @items}
           label={item.label}
           description={item.description}
-          content={slot_content(item.content)}
+          content={Choice.slot_content(item.content)}
         >
           <input
             type="checkbox"
@@ -262,14 +249,9 @@ defmodule LineaUI.Components.Checkbox do
             disabled={@disabled || item.disabled}
             class={item.classes}
           />
-        </.choice_label>
+        </Choice.label>
       </div>
     </Form.field>
     """
   end
-
-  @doc false
-  @spec slot_content(list()) :: list()
-  def slot_content([%{inner_block: nil}]), do: []
-  def slot_content(slots), do: slots
 end

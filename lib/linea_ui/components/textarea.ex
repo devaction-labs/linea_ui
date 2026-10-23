@@ -19,6 +19,7 @@ defmodule LineaUI.Components.Textarea do
 
   use LineaUI.Component
 
+  alias LineaUI.Components.Control
   alias LineaUI.Components.Form
 
   @variants %{
@@ -51,19 +52,29 @@ defmodule LineaUI.Components.Textarea do
   bordered frame that lights up while it has focus.
   """
   attr(:field, Phoenix.HTML.FormField, default: nil)
-  attr(:id, :string)
-  attr(:name, :string)
+  attr(:id, :string, doc: "Defaults to the field's id.")
+  attr(:name, :string, doc: "Defaults to the field's name.")
   attr(:value, :any)
   attr(:rows, :integer, default: 4)
   attr(:variant, :string, default: "outlined", values: ~w(outlined filled plain))
   attr(:resizable, :boolean, default: false)
   attr(:state, :string, default: nil, values: [nil, "success", "error"])
-  attr(:label, :string, default: nil)
-  attr(:label_class, :any, default: nil)
-  attr(:help, :string, default: nil)
-  attr(:errors, :list, default: [])
+  attr(:label, :string, default: nil, doc: "The caption.")
+  attr(:label_class, :any, default: nil, doc: "Classes of the caption text.")
+  attr(:help, :string, default: nil, doc: "The small line under the control.")
+
+  attr(:errors, :list,
+    default: [],
+    doc: "Messages to show; `field` adds its own once the input was used."
+  )
+
   attr(:disabled, :boolean, default: false)
-  attr(:wrapper_class, :any, default: nil)
+
+  attr(:wrapper_class, :any,
+    default: nil,
+    doc: "Classes of the outer block (grid placement, spacing)."
+  )
+
   attr(:frame_class, :any, default: nil, doc: "Classes of the frame drawn around header/footer.")
   attr(:class, :any, default: nil)
 
@@ -77,8 +88,8 @@ defmodule LineaUI.Components.Textarea do
 
   def textarea(assigns) do
     assigns
-    |> Form.assign_control()
-    |> then(&assign(&1, :state, Form.state(&1.state, &1.errors)))
+    |> Control.assign_control()
+    |> then(&assign(&1, :state, Control.state(&1.state, &1.errors)))
     |> then(&assign(&1, :classes, classes(&1)))
     |> assign(:frame, @frame)
     |> render_textarea()

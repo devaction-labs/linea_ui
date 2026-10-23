@@ -35,12 +35,19 @@ defmodule LineaUI.Components.Input do
   | `phone` | `blocks` (`[3, 3, 4]`), `delimiter` (`" "`) |
   | `numeral` | `thousands` (`thousand lakh wan none`), `decimals` (`2`), `delimiter` (`","`), `decimal_mark` (`"."`), `positive` |
 
+  The input submits the masked text. `mask_submit="raw"` submits the unmasked value instead
+  (digits, or a plain number like `1234.5` for `numeral`) through a hidden input that carries
+  the field's name; `phx-debounce`/`phx-throttle` are copied onto it.
+
+      <.input field={@form[:amount]} mask="numeral" mask_submit="raw" phx-debounce="300" />
+
   The mask runs in the `LineaUI.InputMask` hook, so a masked input needs a stable `id` (it gets
   one from `field`; pass one otherwise when the input re-renders).
   """
 
   use LineaUI.Component
 
+  alias LineaUI.Components.Control
   alias LineaUI.Components.Form
 
   @types ~w(text email password number search tel url date time datetime-local month week color file hidden)
@@ -83,8 +90,8 @@ defmodule LineaUI.Components.Input do
     doc: "A form field: fills `id`, `name`, `value` and `errors`."
   )
 
-  attr(:id, :string)
-  attr(:name, :string)
+  attr(:id, :string, doc: "Defaults to the field's id.")
+  attr(:name, :string, doc: "Defaults to the field's name.")
   attr(:value, :any)
   attr(:type, :string, default: "text", values: @types)
 
@@ -103,10 +110,15 @@ defmodule LineaUI.Components.Input do
     doc: "Paints the border and the help line. Errors set `error` on their own."
   )
 
-  attr(:label, :string, default: nil)
-  attr(:label_class, :any, default: nil)
-  attr(:help, :string, default: nil)
-  attr(:errors, :list, default: [])
+  attr(:label, :string, default: nil, doc: "The caption.")
+  attr(:label_class, :any, default: nil, doc: "Classes of the caption text.")
+  attr(:help, :string, default: nil, doc: "The small line under the control.")
+
+  attr(:errors, :list,
+    default: [],
+    doc: "Messages to show; `field` adds its own once the input was used."
+  )
+
   attr(:disabled, :boolean, default: false)
 
   attr(:options, :list,
@@ -140,9 +152,9 @@ defmodule LineaUI.Components.Input do
 
   def input(assigns) do
     assigns
-    |> Form.assign_control()
+    |> Control.assign_control()
     |> assign_mask_id()
-    |> then(&assign(&1, :state, Form.state(&1.state, &1.errors)))
+    |> then(&assign(&1, :state, Control.state(&1.state, &1.errors)))
     |> assign_list()
     |> then(&assign(&1, :raw, raw_input(&1)))
     |> then(&assign(&1, :attrs, attrs(&1)))

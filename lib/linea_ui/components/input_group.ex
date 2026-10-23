@@ -43,9 +43,14 @@ defmodule LineaUI.Components.InputGroup do
   Renders the row. `label` adds a caption above it.
   """
   attr(:shape, :string, default: "rounded", values: ~w(rounded pill))
-  attr(:label, :string, default: nil)
-  attr(:label_class, :any, default: nil)
-  attr(:wrapper_class, :any, default: nil)
+  attr(:label, :string, default: nil, doc: "The caption.")
+  attr(:label_class, :any, default: nil, doc: "Classes of the caption text.")
+
+  attr(:wrapper_class, :any,
+    default: nil,
+    doc: "Classes of the outer block (grid placement, spacing)."
+  )
+
   attr(:class, :any, default: nil)
   attr(:rest, :global)
   slot(:inner_block, required: true)

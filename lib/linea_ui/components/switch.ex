@@ -10,7 +10,8 @@ defmodule LineaUI.Components.Switch do
 
   use LineaUI.Component
 
-  alias LineaUI.Components.Checkbox
+  alias LineaUI.Components.Choice
+  alias LineaUI.Components.Control
   alias LineaUI.Components.Form
 
   @variants %{
@@ -80,8 +81,8 @@ defmodule LineaUI.Components.Switch do
   `unchecked_value` through a hidden input when off.
   """
   attr(:field, Phoenix.HTML.FormField, default: nil)
-  attr(:id, :string)
-  attr(:name, :string)
+  attr(:id, :string, doc: "Defaults to the field's id.")
+  attr(:name, :string, doc: "Defaults to the field's name.")
   attr(:value, :any)
   attr(:checked, :boolean, doc: "Defaults to whether `value` (or the field's value) is true.")
   attr(:checked_value, :string, default: "true")
@@ -104,19 +105,29 @@ defmodule LineaUI.Components.Switch do
     doc: "Pixels between the thumb and the track edge: the higher, the smaller the thumb."
   )
 
-  attr(:label, :string, default: nil)
-  attr(:label_class, :any, default: nil)
-  attr(:description, :string, default: nil)
-  attr(:errors, :list, default: [])
+  attr(:label, :string, default: nil, doc: "The caption.")
+  attr(:label_class, :any, default: nil, doc: "Classes of the caption text.")
+  attr(:description, :string, default: nil, doc: "A smaller grey line under the label.")
+
+  attr(:errors, :list,
+    default: [],
+    doc: "Messages to show; `field` adds its own once the input was used."
+  )
+
   attr(:disabled, :boolean, default: false)
-  attr(:wrapper_class, :any, default: nil)
+
+  attr(:wrapper_class, :any,
+    default: nil,
+    doc: "Classes of the outer block (grid placement, spacing)."
+  )
+
   attr(:class, :any, default: nil)
   attr(:rest, :global, include: ~w(form required))
   slot(:inner_block, doc: "Label content, instead of `label`.")
 
   def switch(assigns) do
     assigns
-    |> Form.assign_control()
+    |> Control.assign_control()
     |> assign_new(:checked, fn %{value: value} ->
       Phoenix.HTML.Form.normalize_value("checkbox", value)
     end)
@@ -147,7 +158,7 @@ defmodule LineaUI.Components.Switch do
       disabled={@disabled}
       form={@rest[:form]}
     />
-    <Checkbox.choice_label
+    <Choice.label
       label={@label}
       label_class={@label_class}
       text_class={@text_class}
@@ -167,7 +178,7 @@ defmodule LineaUI.Components.Switch do
         aria-invalid={@errors != [] && "true"}
         {@rest}
       />
-    </Checkbox.choice_label>
+    </Choice.label>
     <Form.error :for={message <- @errors}>{message}</Form.error>
     """
   end

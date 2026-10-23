@@ -1,6 +1,10 @@
 defmodule LineaUI.Components.Choice do
   @moduledoc false
 
+  use Phoenix.Component
+
+  import LineaUI.ClassMerge, only: [merge: 1]
+
   @tones %{
     {"basic", false} => %{
       "neutral" =>
@@ -89,4 +93,41 @@ defmodule LineaUI.Components.Choice do
 
   @spec sizes() :: [String.t()]
   def sizes, do: ~w(xs sm md lg)
+
+  @doc false
+  attr(:label, :string, default: nil)
+  attr(:label_class, :any, default: nil)
+  attr(:description, :string, default: nil)
+  attr(:content, :list, default: [], doc: "Slot entries rendered as the label text.")
+  attr(:text_class, :any, default: nil)
+  attr(:class, :any, default: nil)
+  slot(:inner_block, required: true)
+
+  def label(%{description: nil} = assigns) do
+    ~H"""
+    <label class={merge(["inline-flex items-center space-x-2", @class])}>
+      {render_slot(@inner_block)}
+      <span :if={@label || @content != []} class={merge([@text_class, @label_class])}>
+        {@label}{render_slot(@content)}
+      </span>
+    </label>
+    """
+  end
+
+  def label(assigns) do
+    ~H"""
+    <label class={merge(["inline-flex items-start space-x-2", @class])}>
+      <span class="mt-0.5 flex">{render_slot(@inner_block)}</span>
+      <span class="flex flex-col">
+        <span class={merge([@text_class, @label_class])}>{@label}{render_slot(@content)}</span>
+        <span class="text-xs text-slate-400 dark:text-navy-300">{@description}</span>
+      </span>
+    </label>
+    """
+  end
+
+  @doc false
+  @spec slot_content(list()) :: list()
+  def slot_content([%{inner_block: nil}]), do: []
+  def slot_content(slots), do: slots
 end

@@ -14,8 +14,8 @@ defmodule LineaUI.Components.Radio do
 
   use LineaUI.Component
 
-  alias LineaUI.Components.Checkbox
   alias LineaUI.Components.Choice
+  alias LineaUI.Components.Control
   alias LineaUI.Components.Form
 
   @shapes %{
@@ -30,8 +30,8 @@ defmodule LineaUI.Components.Radio do
   slots, which may override `color`, `disabled` and `description` one by one.
   """
   attr(:field, Phoenix.HTML.FormField, default: nil)
-  attr(:id, :string)
-  attr(:name, :string)
+  attr(:id, :string, doc: "Defaults to the field's id.")
+  attr(:name, :string, doc: "Defaults to the field's name.")
   attr(:value, :any, doc: "The value of the checked radio.")
   attr(:options, :list, default: [])
   attr(:color, :string, default: "neutral", values: @colors)
@@ -39,12 +39,22 @@ defmodule LineaUI.Components.Radio do
   attr(:filled, :boolean, default: false)
   attr(:shape, :string, default: "circle", values: ~w(circle squircle))
   attr(:size, :string, default: "md", values: Choice.sizes())
-  attr(:label, :string, default: nil)
-  attr(:label_class, :any, default: nil)
-  attr(:help, :string, default: nil)
-  attr(:errors, :list, default: [])
+  attr(:label, :string, default: nil, doc: "The caption.")
+  attr(:label_class, :any, default: nil, doc: "Classes of the caption text.")
+  attr(:help, :string, default: nil, doc: "The small line under the control.")
+
+  attr(:errors, :list,
+    default: [],
+    doc: "Messages to show; `field` adds its own once the input was used."
+  )
+
   attr(:disabled, :boolean, default: false)
-  attr(:wrapper_class, :any, default: nil)
+
+  attr(:wrapper_class, :any,
+    default: nil,
+    doc: "Classes of the outer block (grid placement, spacing)."
+  )
+
   attr(:radio_class, :any, default: nil, doc: "Extra classes of every radio input.")
   attr(:class, :any, default: nil, doc: "Classes of the container that lays the radios out.")
   attr(:rest, :global, include: ~w(form required))
@@ -60,7 +70,7 @@ defmodule LineaUI.Components.Radio do
 
   def radio_group(assigns) do
     assigns
-    |> Form.assign_control()
+    |> Control.assign_control()
     |> then(&assign(&1, :id, &1.id || gen_id("radio-group")))
     |> then(&assign(&1, :items, items(&1)))
     |> render_group()
@@ -134,11 +144,11 @@ defmodule LineaUI.Components.Radio do
         aria-labelledby={@label && "#{@id}-label"}
         class={merge(["inline-space flex flex-wrap", @label && "mt-1.5", @class])}
       >
-        <Checkbox.choice_label
+        <Choice.label
           :for={item <- @items}
           label={item.label}
           description={item.description}
-          content={Checkbox.slot_content(item.content)}
+          content={Choice.slot_content(item.content)}
         >
           <input
             type="radio"
@@ -151,7 +161,7 @@ defmodule LineaUI.Components.Radio do
             aria-invalid={@errors != [] && "true"}
             {@rest}
           />
-        </Checkbox.choice_label>
+        </Choice.label>
       </div>
     </Form.field>
     """
