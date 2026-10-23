@@ -28,7 +28,7 @@ const chrome = spawn("chromium", [
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
 
 const target = async () => {
-  for (let i = 0; i < 50; i++) {
+  for (let i = 0; i < 300; i++) {
     try {
       const list = await (await fetch(`http://127.0.0.1:${port}/json`)).json()
       const page = list.find((t) => t.type === "page")

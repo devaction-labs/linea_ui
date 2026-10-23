@@ -1,1 +1,99 @@
 /* LineaUI — elements. Rules go inside @layer components { } or @layer base { }. */
+
+@layer components {
+  /* tooltip: tippy.js's core, svg-arrow and shift-away styles; LineOne's colors are in linea_ui.css */
+  .linea-tip {
+    position: fixed;
+    inset: 0 auto auto 0;
+    z-index: 10003;
+    max-width: calc(100vw - 10px);
+  }
+
+  .tippy-box {
+    position: relative;
+    max-width: 350px;
+    border-radius: 4px;
+    background-color: #333;
+    color: #fff;
+    font-size: 14px;
+    line-height: 1.4;
+    white-space: normal;
+    outline: 0;
+    transition-property: transform, visibility, opacity;
+  }
+
+  .tippy-content {
+    position: relative;
+    z-index: 1;
+    padding: 5px 9px;
+  }
+
+  .tippy-svg-arrow {
+    width: 16px;
+    height: 16px;
+    fill: #333;
+    text-align: initial;
+  }
+
+  .tippy-svg-arrow,
+  .tippy-svg-arrow > svg {
+    position: absolute;
+  }
+
+  .tippy-box[data-placement^="top"] > .tippy-svg-arrow {
+    bottom: 0;
+  }
+
+  .tippy-box[data-placement^="top"] > .tippy-svg-arrow > svg {
+    top: 16px;
+    transform: rotate(180deg);
+  }
+
+  .tippy-box[data-placement^="bottom"] > .tippy-svg-arrow {
+    top: 0;
+  }
+
+  .tippy-box[data-placement^="bottom"] > .tippy-svg-arrow > svg {
+    bottom: 16px;
+  }
+
+  .tippy-box[data-placement^="left"] > .tippy-svg-arrow {
+    right: 0;
+  }
+
+  .tippy-box[data-placement^="left"] > .tippy-svg-arrow > svg {
+    left: 11px;
+    top: calc(50% - 3px);
+    transform: rotate(90deg);
+  }
+
+  .tippy-box[data-placement^="right"] > .tippy-svg-arrow {
+    left: 0;
+  }
+
+  .tippy-box[data-placement^="right"] > .tippy-svg-arrow > svg {
+    right: 11px;
+    top: calc(50% - 3px);
+    transform: rotate(-90deg);
+  }
+
+  .tippy-box[data-animation="shift-away"][data-state="hidden"] {
+    opacity: 0;
+  }
+
+  .tippy-box[data-animation="shift-away"][data-state="hidden"][data-placement^="top"] {
+    transform: translateY(10px);
+  }
+
+  .tippy-box[data-animation="shift-away"][data-state="hidden"][data-placement^="bottom"] {
+    transform: translateY(-10px);
+  }
+
+  .tippy-box[data-animation="shift-away"][data-state="hidden"][data-placement^="left"] {
+    transform: translateX(10px);
+  }
+
+  .tippy-box[data-animation="shift-away"][data-state="hidden"][data-placement^="right"] {
+    transform: translateX(-10px);
+  }
+}

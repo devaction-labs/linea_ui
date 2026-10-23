@@ -203,6 +203,12 @@ defmodule LineaUI.Components.Button do
         <.button variant="outline">Week</.button>
       </.button_group>
   """
+  attr(:shape, :string,
+    default: "rounded",
+    values: ~w(rounded pill),
+    doc: "`pill` rounds the outer ends fully, as LineOne's First / Second / Third group."
+  )
+
   attr(:class, :any, default: nil)
   attr(:rest, :global)
   slot(:inner_block, required: true)
@@ -212,7 +218,8 @@ defmodule LineaUI.Components.Button do
     <div
       class={
         merge([
-          "inline-flex [&>*]:rounded-none [&>*:first-child]:rounded-l-lg [&>*:last-child]:rounded-r-lg [&>*+*]:-ml-px [&>*:focus]:z-10",
+          "flex -space-x-px [&>*:not(:first-child)]:rounded-l-none [&>*:not(:last-child)]:rounded-r-none [&>*:focus]:z-10",
+          group_shape(@shape),
           @class
         ])
       }
@@ -223,4 +230,9 @@ defmodule LineaUI.Components.Button do
     </div>
     """
   end
+
+  defp group_shape("pill"),
+    do: "[&>*:first-child]:rounded-l-full [&>*:last-child]:rounded-r-full"
+
+  defp group_shape("rounded"), do: nil
 end
