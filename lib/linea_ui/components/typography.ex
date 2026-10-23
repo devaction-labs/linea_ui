@@ -105,6 +105,9 @@ defmodule LineaUI.Components.Typography do
   @doc """
   Renders a heading, `<h1>` to `<h6>`, sized as LineOne's. `display` renders LineOne's display
   headings (an `<h1>` unless `level` says otherwise) from 1, the largest, to 5.
+
+      <.heading level={3} weight="semibold" color="primary">Orders</.heading>
+      <.heading display={1}>Welcome</.heading>
   """
   attr(:level, :integer, default: nil, values: [nil, 1, 2, 3, 4, 5, 6])
   attr(:display, :integer, default: nil, values: [nil, 1, 2, 3, 4, 5])
@@ -138,7 +141,11 @@ defmodule LineaUI.Components.Typography do
   defp heading_size(%{display: display}) when is_integer(display), do: @display_sizes[display]
   defp heading_size(assigns), do: @heading_sizes[heading_level(assigns)]
 
-  @doc "Renders a run of text: a paragraph unless `as` says otherwise."
+  @doc """
+  Renders a run of text: a paragraph unless `as` says otherwise.
+
+      <.text size="lg" weight="semibold" gradient="amber-orange">Hello</.text>
+  """
   attr(:as, :string, default: "p", values: ~w(p span div strong em small))
   attr(:size, :string, default: "inherit", values: ~w(inherit xs xs-plus sm base lg xl))
   attr(:weight, :string, default: "normal", values: ~w(normal light medium semibold bold))
@@ -183,6 +190,10 @@ defmodule LineaUI.Components.Typography do
   @doc """
   Renders a link inside running text, underlined in a theme color and style as LineOne's text
   decoration examples.
+
+      <.text_link navigate={~p"/about"} decoration_color="secondary" decoration_style="dotted">
+        About us
+      </.text_link>
   """
   attr(:decoration_color, :string,
     default: "current",
@@ -216,7 +227,11 @@ defmodule LineaUI.Components.Typography do
     """
   end
 
-  @doc "Renders code inside running text, the way LineOne's pages show class names."
+  @doc """
+  Renders code inside running text, the way LineOne's pages show class names.
+
+      Use the <.inline_code>rounded-full</.inline_code> utility.
+  """
   attr(:class, :any, default: nil)
   attr(:rest, :global)
   slot(:inner_block, required: true)
@@ -227,7 +242,11 @@ defmodule LineaUI.Components.Typography do
     """
   end
 
-  @doc "Renders a keyboard key."
+  @doc """
+  Renders a keyboard key.
+
+      <.kbd>Ctrl</.kbd> + <.kbd>K</.kbd>
+  """
   attr(:class, :any, default: nil)
   attr(:rest, :global)
   slot(:inner_block, required: true)

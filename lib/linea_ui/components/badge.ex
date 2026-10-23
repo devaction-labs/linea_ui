@@ -79,7 +79,11 @@ defmodule LineaUI.Components.Badge do
 
   @shapes %{"rounded" => "", "pill" => "rounded-full", "square" => "rounded-none"}
 
-  @doc "Renders a badge."
+  @doc """
+  Renders a badge.
+
+      <.badge color="success" variant="soft" shape="pill" dot>Active</.badge>
+  """
   attr(:color, :string,
     default: "neutral",
     values: ~w(neutral primary secondary info success warning error dark light)

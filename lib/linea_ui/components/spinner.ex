@@ -70,7 +70,11 @@ defmodule LineaUI.Components.Spinner do
     "xl" => "border-4"
   }
 
-  @doc "Renders a spinner."
+  @doc """
+  Renders a spinner (`role="status"`, labelled by `label`).
+
+      <.spinner color="primary" variant="soft" size="md" elastic />
+  """
   attr(:color, :string,
     default: "neutral",
     values: ~w(neutral primary secondary info success warning error)

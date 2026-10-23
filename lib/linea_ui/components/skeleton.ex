@@ -27,7 +27,12 @@ defmodule LineaUI.Components.Skeleton do
     "lg" => "rounded-lg"
   }
 
-  @doc "Renders a placeholder block; its size comes from `class`."
+  @doc """
+  Renders a placeholder block; its size comes from `class`.
+
+      <.skeleton shape="circle" class="size-16" />
+      <.skeleton class="h-3 w-8/12" />
+  """
   attr(:animation, :string, default: "wave", values: ~w(wave pulse none))
 
   attr(:shape, :string,

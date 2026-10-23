@@ -27,7 +27,14 @@ defmodule LineaUI.Components.Breadcrumb do
       "flex items-center space-x-1.5 rounded-lg border border-slate-200 px-1.5 py-1 leading-none text-primary transition-colors hover:text-primary-focus dark:border-navy-500 dark:text-accent-light dark:hover:text-accent"
   }
 
-  @doc "Renders a breadcrumb trail."
+  @doc """
+  Renders a breadcrumb trail; the last `:item` is the current page.
+
+      <.breadcrumb>
+        <:item navigate={~p"/"}>Home</:item>
+        <:item>Settings</:item>
+      </.breadcrumb>
+  """
   attr(:variant, :string,
     default: "plain",
     values: ~w(plain bordered),

@@ -19,7 +19,12 @@ defmodule LineaUI.Components.Divider do
 
   @line "bg-slate-200 dark:bg-navy-500"
 
-  @doc "Renders a divider, with the inner block as its text when given."
+  @doc """
+  Renders a divider, with the inner block as its text when given.
+
+      <.divider>OR</.divider>
+      <.divider orientation="vertical" />
+  """
   attr(:orientation, :string, default: "horizontal", values: ~w(horizontal vertical))
   attr(:class, :any, default: nil)
   attr(:rest, :global)

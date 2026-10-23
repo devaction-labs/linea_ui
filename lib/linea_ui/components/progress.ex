@@ -46,7 +46,11 @@ defmodule LineaUI.Components.Progress do
 
   @sizes %{"sm" => "h-1", "md" => "h-2", "lg" => "h-3", "xl" => "h-4"}
 
-  @doc "Renders a progress bar."
+  @doc """
+  Renders a progress bar.
+
+      <.progress value={@uploaded} max={@total} color="success" variant="soft" active />
+  """
   attr(:value, :any, default: 0, doc: "A number between 0 and `max`.")
   attr(:max, :any, default: 100)
 

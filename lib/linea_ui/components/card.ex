@@ -62,7 +62,14 @@ defmodule LineaUI.Components.Card do
     "colored" => "text-lg font-medium tracking-wide line-clamp-1"
   }
 
-  @doc "Renders a card."
+  @doc """
+  Renders a card, with an optional `:title` above the content.
+
+      <.card variant="glow" color="info">
+        <:title>Revenue</:title>
+        <p>$12,400 this month.</p>
+      </.card>
+  """
   attr(:variant, :string,
     default: "default",
     values: ~w(default bordered solid glow gradient gradient_outline),

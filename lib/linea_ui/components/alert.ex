@@ -115,6 +115,13 @@ defmodule LineaUI.Components.Alert do
 
   With `accent` or a boxed `:icon` the alert is split into parts and its padding moves to the
   content; otherwise the content sits in the padded alert itself, after an inline icon.
+
+      <.alert id="saved" color="success" variant="soft" dismissible on_dismiss="hide_notice">
+        <:icon><svg class="size-5">…</svg></:icon>
+        Changes saved.
+      </.alert>
+
+  With `on_dismiss="hide_notice"` the server gets `handle_event("hide_notice", %{"id" => "saved"}, socket)`.
   """
   attr(:id, :string, default: nil)
 

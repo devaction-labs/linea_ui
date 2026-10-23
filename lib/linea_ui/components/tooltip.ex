@@ -43,6 +43,12 @@ defmodule LineaUI.Components.Tooltip do
 
   `on_open` and `on_close` take an event name or a `JS` command; an event's payload is
   `%{"id" => id}` and it goes to `target` when given.
+
+      <.tooltip id="delete-tip" text="Delete forever" color="error" placement="bottom-end" delay={300}>
+        <.button color="error" icon aria-label="Delete">×</.button>
+      </.tooltip>
+
+  From the server: `LineaUI.open(socket, "delete-tip")`, or bind `open={@show_tip}`.
   """
   attr(:id, :string, required: true)
   attr(:text, :string, default: nil, doc: "The hint, when there is no `:content`.")

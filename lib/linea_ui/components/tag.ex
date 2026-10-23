@@ -95,7 +95,11 @@ defmodule LineaUI.Components.Tag do
 
   @shapes %{"rounded" => "", "pill" => "rounded-full", "square" => "rounded-none"}
 
-  @doc "Renders a tag: a link with `href`, `navigate` or `patch`, a button otherwise."
+  @doc """
+  Renders a tag: a link with `href`, `navigate` or `patch`, a button otherwise.
+
+      <.tag patch={~p"/posts?tag=elixir"} color="primary" variant="bordered" shape="pill">Elixir</.tag>
+  """
   attr(:color, :string,
     default: "neutral",
     values: ~w(neutral primary secondary info success warning error light)

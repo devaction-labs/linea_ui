@@ -33,7 +33,12 @@ defmodule LineaUI.Components.Mask do
   @spec mask_class(String.t()) :: String.t()
   def mask_class(shape), do: Map.fetch!(@shapes, shape)
 
-  @doc "Renders a masked image (with `src`) or a masked block around the inner content."
+  @doc """
+  Renders a masked image (with `src`) or a masked block around the inner content. Size it
+  with `class`.
+
+      <.mask shape="hexagon" src={@user.photo} alt={@user.name} class="size-20" />
+  """
   attr(:shape, :string,
     default: "squircle",
     values: ~w(squircle reuleaux-triangle diamond hexagon hexagon-2 octagon star star-2 heart)
