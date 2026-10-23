@@ -1,0 +1,239 @@
+defmodule LineaUI.Components.Select.Listbox do
+  @moduledoc false
+
+  use LineaUI.Component
+
+  alias LineaUI.Components.Pickers
+  alias LineaUI.Components.Select.Options
+
+  @doc false
+  @spec prepare(map(), :select | :tags) :: map()
+  def prepare(assigns, mode) do
+    entries = Options.normalize(assigns.options)
+    options = Options.flat(entries)
+    values = values(assigns.value, mode)
+    multiple = mode == :tags or assigns.multiple
+    count = length(values)
+
+    assigns
+    |> assign(
+      mode: mode,
+      multiple: multiple,
+      entries: entries,
+      options: options,
+      values: values,
+      chosen: Enum.map(values, &Options.find(options, &1)),
+      name: field_name(assigns.name, multiple),
+      full: full?(multiple, count, assigns.max),
+      forwarded: Pickers.forwarded(assigns.rest)
+    )
+  end
+
+  defp values(value, :tags) when is_binary(value),
+    do: value |> String.split(",", trim: true) |> Enum.map(&String.trim/1)
+
+  defp values(value, _mode), do: Options.values(value)
+
+  defp field_name(name, true), do: ensure_brackets(name)
+  defp field_name(name, false), do: name
+
+  defp ensure_brackets(name) do
+    case String.ends_with?(name, "[]") do
+      true -> name
+      false -> name <> "[]"
+    end
+  end
+
+  defp full?(false, count, _max), do: count >= 1
+  defp full?(true, _count, nil), do: false
+  defp full?(true, count, max), do: count >= max
+
+  @doc false
+  def listbox(assigns) do
+    ~H"""
+    <Pickers.field label={@label} help={@help} errors={@errors} for={@id <> "-ts-control"}>
+      <div
+        id={@id}
+        phx-hook="LineaUI.Select"
+        phx-mounted={JS.ignore_attributes(["class"])}
+        phx-target={@target}
+        class={
+          merge([
+            "ts-wrapper w-full",
+            @label && "mt-1.5",
+            mode_class(@multiple),
+            @removable && "plugin-remove_button",
+            @clearable && "plugin-clear_button",
+            @values != [] && "has-items",
+            @full && "full",
+            (@full and not @multiple) && "input-hidden",
+            @disabled && "disabled",
+            @errors != [] && "is-invalid",
+            @class
+          ])
+        }
+        data-mode={@mode}
+        data-multiple={bool(@multiple)}
+        data-create={bool(@create)}
+        data-persist={bool(@persist)}
+        data-restore={bool(@restore_on_backspace)}
+        data-max={@max}
+        data-name={@name}
+        data-value={Pickers.json(@values)}
+        data-on-search={@on_search}
+        data-debounce={@debounce}
+        data-create-label={@create_label}
+        data-remove-label={@removable && @remove_label}
+        {@rest}
+      >
+        <select
+          id={@id <> "-input"}
+          name={@name}
+          multiple={@multiple}
+          disabled={@disabled}
+          class="ts-hidden-accessible"
+          tabindex="-1"
+          aria-hidden="true"
+          phx-update="ignore"
+          data-input
+          {@forwarded}
+        >
+          <option :if={@values == [] and not @multiple} value="" selected></option>
+          <option :for={value <- @values} value={value} selected>{value}</option>
+        </select>
+        <input :if={@multiple} type="hidden" name={@name} value="" disabled={@disabled} />
+        <div id={@id <> "-control"} class="ts-control" phx-update="ignore">
+          <.chip
+            :for={option <- @chosen}
+            option={option}
+            item={@item}
+            removable={@removable}
+            remove_label={@remove_label}
+          />
+          <input
+            type="text"
+            id={@id <> "-ts-control"}
+            role="combobox"
+            aria-haspopup="listbox"
+            aria-expanded="false"
+            aria-controls={@id <> "-listbox"}
+            aria-invalid={@errors != [] && "true"}
+            autocomplete="off"
+            placeholder={@placeholder}
+            disabled={@disabled}
+            data-search
+          />
+          <div :if={@clearable} class="clear-button" title={@clear_label} data-clear>⨯</div>
+        </div>
+        <div
+          id={@id <> "-dropdown"}
+          class={["ts-dropdown", mode_class(@multiple)]}
+          phx-mounted={JS.ignore_attributes(["hidden"])}
+          hidden
+          data-dropdown
+        >
+          <div
+            id={@id <> "-listbox"}
+            class="ts-dropdown-content"
+            role="listbox"
+            aria-multiselectable={@multiple && "true"}
+          >
+            <div id={@id <> "-create"} phx-update="ignore" data-create-row></div>
+            <.entry :for={entry <- @entries} entry={entry} id={@id} option_slot={@option} />
+            <div id={@id <> "-extra"} phx-update="ignore" data-extra></div>
+          </div>
+        </div>
+        <div hidden data-templates>
+          <template :for={option <- @options} data-value={option.value}>
+            <.chip option={option} item={@item} removable={@removable} remove_label={@remove_label} />
+          </template>
+        </div>
+        <div hidden data-no-results>{@no_results}</div>
+      </div>
+    </Pickers.field>
+    """
+  end
+
+  defp mode_class(true), do: "multi"
+  defp mode_class(false), do: "single"
+
+  attr :option, :map, required: true
+  attr :item, :list, required: true
+  attr :removable, :boolean, required: true
+  attr :remove_label, :string, required: true
+
+  defp chip(%{item: []} = assigns) do
+    ~H"""
+    <div class="item" data-value={@option.value} data-ts-item>
+      {@option.label}<button
+        :if={@removable}
+        type="button"
+        class="remove"
+        tabindex="-1"
+        title={@remove_label}
+        aria-label={@remove_label}
+        data-remove
+      >×</button>
+    </div>
+    """
+  end
+
+  defp chip(assigns) do
+    ~H"""
+    <span class="item" data-value={@option.value} data-ts-item>
+      {render_slot(@item, @option)}
+    </span>
+    """
+  end
+
+  attr :entry, :map, required: true
+  attr :id, :string, required: true
+  attr :option_slot, :list, required: true
+
+  defp entry(%{entry: %{type: :group}} = assigns) do
+    ~H"""
+    <div class="optgroup" role="group" data-group>
+      <div class="optgroup-header">{@entry.label}</div>
+      <.entry :for={option <- @entry.options} entry={option} id={@id} option_slot={@option_slot} />
+    </div>
+    """
+  end
+
+  defp entry(%{option_slot: []} = assigns) do
+    ~H"""
+    <div
+      class="option"
+      role="option"
+      id={option_id(@id, @entry.value)}
+      data-value={@entry.value}
+      data-label={@entry.label}
+      data-selectable={not @entry.disabled && "true"}
+      data-disabled={@entry.disabled && "true"}
+      aria-disabled={@entry.disabled && "true"}
+      aria-selected="false"
+    >
+      <span data-text>{@entry.label}</span>
+    </div>
+    """
+  end
+
+  defp entry(assigns) do
+    ~H"""
+    <div
+      class="option"
+      role="option"
+      id={option_id(@id, @entry.value)}
+      data-value={@entry.value}
+      data-label={@entry.label}
+      data-selectable={not @entry.disabled && "true"}
+      data-disabled={@entry.disabled && "true"}
+      aria-disabled={@entry.disabled && "true"}
+      aria-selected="false"
+    >
+      {render_slot(@option_slot, @entry)}
+    </div>
+    """
+  end
+
+  defp option_id(id, value), do: "#{id}-opt-#{Base.url_encode64(value, padding: false)}"
+end
