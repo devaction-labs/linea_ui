@@ -1,1 +1,129 @@
-/* LineaUI — overlays. Rules go inside @layer components { } or @layer base { }. */
+/* LineaUI — overlays. LineOne's own modal, drawer, popper, notification colors and collapse rules are in linea_ui.css; this adds the rest. */
+
+@layer components {
+  .linea-collapse {
+    interpolate-size: allow-keywords;
+  }
+
+  .linea-collapse > summary {
+    list-style: none;
+  }
+
+  .linea-collapse > summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .linea-collapse::details-content {
+    block-size: 0;
+    overflow-y: clip;
+    transition:
+      block-size 200ms ease,
+      content-visibility 200ms allow-discrete;
+  }
+
+  .linea-collapse[open]::details-content {
+    block-size: auto;
+  }
+
+  .linea-collapse[open] > summary .ac-icon,
+  .linea-collapse[open] > summary.ac-icon {
+    @apply -rotate-180;
+  }
+
+  .toastify {
+    @apply fixed inline-block cursor-pointer opacity-0;
+    padding: 12px 20px;
+    max-width: calc(50% - 20px);
+    transition: all 0.4s cubic-bezier(0.215, 0.61, 0.355, 1);
+  }
+
+  .toastify.on {
+    opacity: 1;
+  }
+
+  .toastify-right {
+    right: 15px;
+  }
+
+  .toastify-left {
+    left: 15px;
+  }
+
+  .toastify-top {
+    top: -150px;
+  }
+
+  .toastify-bottom {
+    bottom: -150px;
+  }
+
+  .toastify-center {
+    left: 0;
+    right: 0;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  @media only screen and (max-width: 360px) {
+    .toastify-left,
+    .toastify-right {
+      left: 0;
+      right: 0;
+      margin-left: auto;
+      margin-right: auto;
+      max-width: fit-content;
+    }
+  }
+
+  .toastify .toast-close {
+    @apply cursor-pointer border-0 bg-transparent;
+    color: inherit;
+    font-family: inherit;
+    font-size: 1em;
+    opacity: 0.4;
+    padding: 0 5px;
+  }
+
+}
+
+@layer components {
+  .ac > summary.ac-trigger {
+    @apply text-slate-700 dark:text-navy-100;
+  }
+
+  .ac > summary.ac-trigger .ac-icon {
+    @apply text-slate-400 dark:text-navy-300;
+  }
+
+  [data-accordion][data-variant="border-bottom"] > .ac > .ac-panel > .ac-body {
+    @apply pb-4;
+  }
+
+  [data-accordion]:is([data-variant="bordered"], [data-variant="divided"]) > .ac > .ac-trigger {
+    @apply px-4 sm:px-5;
+  }
+
+  [data-accordion]:is([data-variant="bordered"], [data-variant="divided"]) > .ac > .ac-panel > .ac-body {
+    @apply px-4 pb-4 sm:px-5;
+  }
+
+  [data-accordion][data-variant="divided"] > .ac {
+    @apply rounded-lg border border-slate-150 dark:border-navy-500;
+  }
+
+  [data-accordion][data-variant="primary"] > .ac > .ac-trigger {
+    @apply bg-primary px-4 text-white dark:bg-accent dark:text-white sm:px-5;
+  }
+
+  [data-accordion][data-variant="primary"] > .ac > .ac-trigger .ac-icon {
+    @apply text-indigo-100 dark:text-indigo-100;
+  }
+
+  [data-accordion]:is([data-variant="primary"], [data-variant="advanced"]) > .ac > .ac-panel > .ac-body {
+    @apply px-4 py-4 sm:px-5;
+  }
+
+  [data-accordion][data-variant="advanced"] > .ac {
+    @apply overflow-hidden rounded-lg border border-slate-150 dark:border-navy-500;
+  }
+}
