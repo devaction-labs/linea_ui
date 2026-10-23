@@ -24,7 +24,6 @@ defmodule PreviewWeb.Pages.Notification do
     assigns = assign(assigns, text: @text, positions: @positions)
 
     ~H"""
-    <.toaster flash={@flash} />
     <.narrow title="Basic Notification" text={@text} class="mt-5">
       <.button phx-click="default-toast">Default</.button>
     </.narrow>

@@ -12,7 +12,6 @@ defmodule PreviewWeb.Pages.ExtensionClipboard do
     assigns = assign(assigns, text: @text)
 
     ~H"""
-    <.toaster flash={@flash} />
     <.narrow title="Basic Usage" text={@text} class="mt-5">
       <:lead><code class="inline-code">$clipboard</code>{" "}</:lead>
       <div class="alert flex items-center justify-between rounded-lg bg-primary px-4 py-3 text-white dark:bg-accent sm:px-5">

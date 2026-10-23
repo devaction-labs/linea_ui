@@ -68,6 +68,7 @@ defmodule PreviewWeb.Layouts do
         </div>
       </main>
     </div>
+    <.toaster id="preview-toaster" flash={@flash} />
     """
   end
 
