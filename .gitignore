@@ -1,0 +1,13 @@
+/_build/
+/deps/
+/doc/
+/cover/
+erl_crash.dump
+*.ez
+linea_ui-*.tar
+/tmp/
+node_modules/
+preview/_build/
+preview/deps/
+preview/priv/static/assets/
+preview/tmp/

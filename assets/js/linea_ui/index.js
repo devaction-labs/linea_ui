@@ -1,0 +1,53 @@
+/**
+ * LineaUI's LiveView hooks. In the app's app.js:
+ *
+ *   import {Hooks as LineaHooks} from "linea_ui"
+ *   new LiveSocket("/live", Socket, {hooks: {...LineaHooks}, ...})
+ *
+ * Every hook is registered as `LineaUI.<Name>`, the value the components put in `phx-hook`.
+ */
+import Carousel from "./hooks/carousel.js"
+import Chart from "./hooks/chart.js"
+import Clipboard from "./hooks/clipboard.js"
+import DataTable from "./hooks/data_table.js"
+import DatePicker from "./hooks/date_picker.js"
+import Dialog from "./hooks/dialog.js"
+import Dropdown from "./hooks/dropdown.js"
+import InputMask from "./hooks/input_mask.js"
+import Popover from "./hooks/popover.js"
+import Range from "./hooks/range.js"
+import Select from "./hooks/select.js"
+import Sidebar from "./hooks/sidebar.js"
+import Tabs from "./hooks/tabs.js"
+import TagsInput from "./hooks/tags_input.js"
+import TextEditor from "./hooks/text_editor.js"
+import Theme from "./hooks/theme.js"
+import TimePicker from "./hooks/time_picker.js"
+import Toast from "./hooks/toast.js"
+import Tooltip from "./hooks/tooltip.js"
+import Upload from "./hooks/upload.js"
+
+export const Hooks = {
+  ...Carousel,
+  ...Chart,
+  ...Clipboard,
+  ...DataTable,
+  ...DatePicker,
+  ...Dialog,
+  ...Dropdown,
+  ...InputMask,
+  ...Popover,
+  ...Range,
+  ...Select,
+  ...Sidebar,
+  ...Tabs,
+  ...TagsInput,
+  ...TextEditor,
+  ...Theme,
+  ...TimePicker,
+  ...Toast,
+  ...Tooltip,
+  ...Upload,
+}
+
+export default Hooks

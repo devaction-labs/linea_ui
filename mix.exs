@@ -1,0 +1,54 @@
+defmodule LineaUI.MixProject do
+  use Mix.Project
+
+  @version "0.1.0"
+
+  def project do
+    [
+      app: :linea_ui,
+      version: @version,
+      elixir: "~> 1.18",
+      elixirc_paths: elixirc_paths(Mix.env()),
+      start_permanent: Mix.env() == :prod,
+      compilers: [:phoenix_live_view] ++ Mix.compilers(),
+      deps: deps(),
+      aliases: aliases(),
+      description: "Phoenix LiveView components with the LineOne design.",
+      package: package(),
+      docs: [main: "LineaUI", extras: ["README.md"]]
+    ]
+  end
+
+  def application do
+    [mod: {LineaUI.Application, []}, extra_applications: [:logger]]
+  end
+
+  defp elixirc_paths(:test), do: ["lib", "test/support"]
+  defp elixirc_paths(_), do: ["lib"]
+
+  defp deps do
+    [
+      {:phoenix, "~> 1.8"},
+      {:phoenix_live_view, "~> 1.1"},
+      {:phoenix_html, "~> 4.1"},
+      {:jason, "~> 1.2"},
+      {:lazy_html, ">= 0.1.0", only: :test},
+      {:ex_doc, "~> 0.34", only: :dev, runtime: false}
+    ]
+  end
+
+  defp aliases do
+    [
+      "js.test": ["cmd node --test \"assets/js/linea_ui/**/*.test.js\""],
+      precommit: ["compile --warnings-as-errors", "format", "test", "js.test"]
+    ]
+  end
+
+  defp package do
+    [
+      licenses: ["Proprietary"],
+      files: ~w(lib assets/css assets/js priv package.json README.md mix.exs),
+      exclude_patterns: [~r/\.test\.js$/]
+    ]
+  end
+end
