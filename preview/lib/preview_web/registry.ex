@@ -42,9 +42,11 @@ defmodule PreviewWeb.Registry do
       |> List.last()
       |> Macro.underscore()
       |> String.replace("_", "-")
+      |> String.replace(~r/([a-z])(\d)/, "\\1-\\2")
 
     module.__page__()
-    |> Map.merge(%{module: module, slug: slug})
+    |> Map.put_new(:slug, slug)
+    |> Map.put(:module, module)
     |> Map.put_new(:lineone, nil)
   end
 end
