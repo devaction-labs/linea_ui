@@ -49,7 +49,8 @@ const InputMask = {
         ? dropBefore(typed, caret)
         : {text: typed, position: caret}
 
-    this.show(edit.text, significantBefore(edit.text, edit.position))
+    const atEnd = edit.position >= edit.text.length
+    this.show(edit.text, atEnd ? Infinity : significantBefore(edit.text, edit.position))
     this.submitRaw && this.forward(event)
   },
 
@@ -67,7 +68,7 @@ const InputMask = {
     this.shown = formatted
     if (this.el.value !== formatted) this.el.value = formatted
     if (significant === null || document.activeElement !== this.el) return
-    const position = caretFor(formatted, significant)
+    const position = significant === Infinity ? formatted.length : caretFor(formatted, significant)
     try {
       this.el.setSelectionRange(position, position)
     } catch (_error) {

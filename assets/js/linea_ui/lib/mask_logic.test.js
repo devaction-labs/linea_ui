@@ -4,7 +4,8 @@ import {format, raw, caretFor, significantBefore, dropBefore, cardBlocks} from "
 
 test("blocks with a prefix keep the prefix and join blocks with the delimiter", () => {
   const options = {prefix: "Prefix", delimiter: "-", blocks: [6, 4, 4, 7]}
-  assert.equal(format("", "blocks", options), "Prefix")
+  assert.equal(format("", "blocks", options), "Prefix-")
+  assert.equal(format("Prefix", "blocks", options), "Prefix-")
   assert.equal(format("Prefix1234", "blocks", options), "Prefix-1234")
   assert.equal(format("Prefix-12345678abcdefghij", "blocks", options), "Prefix-1234-5678-abcdefg")
   assert.equal(format("Prefi12", "blocks", options), "Prefix-12")

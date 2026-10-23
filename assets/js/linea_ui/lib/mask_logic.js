@@ -41,8 +41,10 @@ const blocksRaw = (value, options) => {
 const formatBlocks = (value, options) => {
   const prefix = options.prefix ?? ""
   const blocks = options.blocks ?? [Infinity]
+  const delimiters = delimitersOf(options, " ")
   const content = prefix + blocksRaw(value, options)
-  return chunk(content, blocks, delimitersOf(options, " ")) || prefix
+  const prefixOnly = prefix !== "" && content === prefix && blocks[0] === prefix.length && blocks.length > 1
+  return prefixOnly ? prefix + delimiters[0] : chunk(content, blocks, delimiters)
 }
 
 /** The card brand's blocks, from the first digits. */
