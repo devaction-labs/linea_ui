@@ -1,1 +1,464 @@
 /* LineaUI — data. Rules go inside @layer components { } or @layer base { }. */
+
+/* tabs-steps-timeline-pagination */
+
+/* tables */
+@layer components {
+  .table-sort-icon {
+    --table-sort-none: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 401.998 401.998'%3E%3Cpath d='M73.092,164.452h255.813c4.949,0,9.233-1.807,12.848-5.424c3.613-3.616,5.427-7.898,5.427-12.847%0Ac0-4.949-1.813-9.229-5.427-12.85L213.846,5.424C210.232,1.812,205.951,0,200.999,0s-9.233,1.812-12.85,5.424L60.242,133.331%0Ac-3.617,3.617-5.424,7.901-5.424,12.85c0,4.948,1.807,9.231,5.424,12.847C63.863,162.645,68.144,164.452,73.092,164.452z'/%3E%3Cpath d='M328.905,237.549H73.092c-4.952,0-9.233,1.808-12.85,5.421c-3.617,3.617-5.424,7.898-5.424,12.847%0Ac0,4.949,1.807,9.233,5.424,12.848L188.149,396.57c3.621,3.617,7.902,5.428,12.85,5.428s9.233-1.811,12.847-5.428l127.907-127.906%0Ac3.613-3.614,5.427-7.898,5.427-12.848c0-4.948-1.813-9.229-5.427-12.847C338.139,239.353,333.854,237.549,328.905,237.549z'/%3E%3C/svg%3E");
+    --table-sort-asc: url("data:image/svg+xml,%3Csvg fill='currentColor' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 292.362 292.361'%3E%3Cpath d='M286.935,197.287L159.028,69.381c-3.613-3.617-7.895-5.424-12.847-5.424s-9.233,1.807-12.85,5.424L5.424,197.287 C1.807,200.904,0,205.186,0,210.134s1.807,9.233,5.424,12.847c3.621,3.617,7.902,5.425,12.85,5.425h255.813 c4.949,0,9.233-1.808,12.848-5.425c3.613-3.613,5.427-7.898,5.427-12.847S290.548,200.904,286.935,197.287z'/%3E%3C/svg%3E");
+    --table-sort-desc: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 292.362 292.362'%3E%3Cpath d='M286.935,69.377c-3.614-3.617-7.898-5.424-12.848-5.424H18.274c-4.952,0-9.233,1.807-12.85,5.424 C1.807,72.998,0,77.279,0,82.228c0,4.948,1.807,9.229,5.424,12.847l127.907,127.907c3.621,3.617,7.902,5.428,12.85,5.428 s9.233-1.811,12.847-5.428L286.935,95.074c3.613-3.617,5.427-7.898,5.427-12.847C292.362,77.279,290.548,72.998,286.935,69.377z'/%3E%3C/svg%3E");
+    mask-image: var(--table-sort-none);
+    mask-size: cover;
+    mask-repeat: no-repeat;
+    @apply inline-block size-3 shrink-0 bg-slate-400 dark:bg-navy-400;
+  }
+
+  .table-sort-icon[data-sort="asc"] {
+    mask-image: var(--table-sort-asc);
+    @apply bg-slate-600 dark:bg-navy-100;
+  }
+
+  .table-select-all:indeterminate {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath stroke='white' stroke-linecap='round' stroke-width='2.5' d='M4 8h8'/%3E%3C/svg%3E");
+    background-size: 100% 100%;
+    @apply border-primary bg-primary dark:border-accent dark:bg-accent;
+  }
+
+  .table-sort-icon[data-sort="desc"] {
+    mask-image: var(--table-sort-desc);
+    @apply bg-slate-600 dark:bg-navy-100;
+  }
+}
+
+/* tree-menu-carousel */
+@layer components {
+  .tree-item {
+    interpolate-size: allow-keywords;
+  }
+
+  .tree-item::details-content {
+    block-size: 0;
+    overflow: hidden;
+    transition:
+      block-size 200ms ease,
+      content-visibility 200ms allow-discrete;
+  }
+
+  .tree-item[open]::details-content {
+    block-size: auto;
+  }
+
+  .tree-item > summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .carousel {
+    --carousel-theme: #7e75fa;
+    --carousel-pagination: #4f46e5;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+    container-type: inline-size;
+  }
+
+  .carousel-track {
+    display: flex;
+    gap: var(--carousel-gap, 0px);
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    height: 100%;
+  }
+
+  .carousel-track::-webkit-scrollbar {
+    display: none;
+  }
+
+  .carousel-track[data-dragging] {
+    scroll-snap-type: none;
+    cursor: grabbing;
+    user-select: none;
+  }
+
+  .carousel-slide {
+    position: relative;
+    flex-shrink: 0;
+    width: 100%;
+    height: 100%;
+    scroll-snap-align: start;
+  }
+
+  .carousel-slide > * {
+    transition: transform 300ms;
+  }
+
+  .carousel[data-direction="vertical"] > .carousel-track {
+    flex-direction: column;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+    scroll-snap-type: y mandatory;
+  }
+
+  .carousel[data-direction="vertical"] .carousel-slide {
+    height: 100%;
+  }
+
+  .carousel:is([data-effect="fade"], [data-effect="flip"], [data-effect="cube"], [data-effect="cards"], [data-effect="coverflow"], [data-effect="creative"]) > .carousel-track {
+    display: grid;
+    overflow: visible;
+    touch-action: pan-y;
+    transform-style: preserve-3d;
+  }
+
+  .carousel:is([data-effect="fade"], [data-effect="flip"], [data-effect="cube"], [data-effect="cards"], [data-effect="coverflow"], [data-effect="creative"]) .carousel-slide {
+    grid-area: 1 / 1;
+    transition:
+      transform 300ms,
+      opacity 300ms;
+  }
+
+  .carousel[data-effect="fade"] .carousel-slide {
+    opacity: calc(1 - var(--near, 0));
+  }
+
+  .carousel:is([data-effect="flip"], [data-effect="cube"], [data-effect="cards"], [data-effect="coverflow"], [data-effect="creative"]) > .carousel-track {
+    perspective: 1200px;
+  }
+
+  .carousel[data-effect="flip"] {
+    overflow: visible;
+  }
+
+  .carousel[data-effect="flip"] .carousel-slide {
+    backface-visibility: hidden;
+    transform: rotateY(calc(var(--offset, 0) * 180deg));
+  }
+
+  .carousel[data-effect="cube"] {
+    overflow: visible;
+  }
+
+  .carousel[data-effect="cube"] .carousel-slide {
+    backface-visibility: hidden;
+    transform-origin: 50% 50% -50cqw;
+    transform: rotateY(calc(var(--offset, 0) * 90deg));
+  }
+
+  .carousel[data-effect="cards"] {
+    overflow: visible;
+  }
+
+  .carousel[data-effect="cards"] > .carousel-track {
+    cursor: grab;
+  }
+
+  .carousel[data-effect="cards"] .carousel-slide {
+    transform-origin: center bottom;
+    backface-visibility: hidden;
+    overflow: hidden;
+    transform: translate3d(calc(var(--offset, 0) * (8% - var(--distance, 0) * 0.75%)), 0, calc(var(--distance, 0) * -100px))
+      rotateZ(calc(var(--offset, 0) * 2deg));
+  }
+
+  .carousel[data-effect="cards"] .carousel-slide::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: rgba(0, 0, 0, 0.15);
+    opacity: clamp(0, calc((var(--distance, 0) - 0.5) * 2), 1);
+    pointer-events: none;
+    transition: opacity 300ms;
+  }
+
+  .carousel[data-effect="coverflow"] .carousel-slide {
+    transform: translateX(calc(var(--offset, 0) * 100%)) translateZ(calc(var(--distance, 0) * -100px))
+      rotateY(calc(var(--offset, 0) * -35deg));
+  }
+
+  .carousel[data-effect="creative"] > .carousel-track {
+    cursor: grab;
+  }
+
+  .carousel[data-effect="creative"] .carousel-slide {
+    transform: translate3d(calc(var(--side, 0) * 125%), 0, calc(var(--near, 0) * -800px))
+      rotateZ(calc(var(--side, 0) * 90deg));
+  }
+
+  .carousel-button {
+    position: absolute;
+    top: 50%;
+    z-index: 10;
+    display: flex;
+    width: 24px;
+    height: 24px;
+    margin-top: -12px;
+    align-items: center;
+    justify-content: center;
+    color: var(--carousel-theme);
+    cursor: pointer;
+  }
+
+  .carousel-button:disabled {
+    opacity: 0.35;
+    cursor: auto;
+    pointer-events: none;
+  }
+
+  .carousel-button svg {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    fill: currentColor;
+    pointer-events: none;
+  }
+
+  .carousel-button[data-carousel-prev] {
+    left: 4px;
+  }
+
+  .carousel-button[data-carousel-prev] svg {
+    transform: rotate(180deg);
+  }
+
+  .carousel-button[data-carousel-next] {
+    right: 4px;
+  }
+
+  .carousel[data-direction="vertical"] > .carousel-button {
+    left: 50%;
+    right: auto;
+    margin-top: 0;
+    margin-left: -12px;
+  }
+
+  .carousel[data-direction="vertical"] > .carousel-button[data-carousel-prev] {
+    top: 4px;
+  }
+
+  .carousel[data-direction="vertical"] > .carousel-button[data-carousel-prev] svg {
+    transform: rotate(-90deg);
+  }
+
+  .carousel[data-direction="vertical"] > .carousel-button[data-carousel-next] {
+    top: auto;
+    bottom: 4px;
+  }
+
+  .carousel[data-direction="vertical"] > .carousel-button[data-carousel-next] svg {
+    transform: rotate(90deg);
+  }
+
+  .carousel-pagination {
+    position: absolute;
+    z-index: 10;
+    text-align: center;
+    transition: 300ms opacity;
+    transform: translate3d(0, 0, 0);
+  }
+
+  .carousel-pagination:is([data-carousel-pagination="bullets"], [data-carousel-pagination="fraction"]) {
+    bottom: 8px;
+    left: 0;
+    width: 100%;
+  }
+
+  .carousel-bullet {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    margin: 0 4px;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    background: #000;
+    opacity: 0.2;
+    cursor: pointer;
+  }
+
+  .carousel-bullet[data-active="true"] {
+    opacity: 1;
+    background: var(--carousel-pagination);
+  }
+
+  .carousel[data-direction="vertical"] > .carousel-pagination[data-carousel-pagination="bullets"] {
+    top: 50%;
+    right: 8px;
+    bottom: auto;
+    left: auto;
+    width: auto;
+    transform: translate3d(0, -50%, 0);
+  }
+
+  .carousel[data-direction="vertical"] .carousel-bullet {
+    display: block;
+    margin: 6px 0;
+  }
+
+  .carousel-pagination[data-carousel-pagination="progress"] {
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: rgba(0, 0, 0, 0.25);
+  }
+
+  .carousel[data-direction="vertical"] > .carousel-pagination[data-carousel-pagination="progress"] {
+    width: 4px;
+    height: 100%;
+  }
+
+  .carousel-progress-fill {
+    position: absolute;
+    inset: 0;
+    background: var(--carousel-pagination);
+    transform: scale(0);
+    transform-origin: left top;
+    transition: transform 300ms;
+  }
+
+  .carousel-scrollbar {
+    position: absolute;
+    z-index: 50;
+    left: 1%;
+    bottom: 4px;
+    width: 98%;
+    height: 4px;
+    border-radius: 10px;
+    background: rgba(0, 0, 0, 0.1);
+    touch-action: none;
+  }
+
+  .carousel[data-direction="vertical"] > .carousel-scrollbar {
+    top: 1%;
+    right: 4px;
+    bottom: auto;
+    left: auto;
+    width: 4px;
+    height: 98%;
+  }
+
+  .carousel-scrollbar-thumb {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+    background: rgba(0, 0, 0, 0.5);
+    cursor: pointer;
+  }
+
+  .carousel-parallax-bg {
+    position: absolute;
+    inset: 0;
+    width: 130%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    transition: transform 300ms;
+  }
+}
+
+/* chart */
+@layer components {
+  .apexcharts-text {
+    @apply fill-current font-inter! text-slate-500 dark:text-navy-200;
+  }
+
+  .apexcharts-text.apexcharts-yaxis-label,
+  .apexcharts-text.apexcharts-xaxis-label {
+    @apply fill-current! text-slate-400 dark:text-navy-300;
+  }
+
+  .apexcharts-legend-text {
+    @apply text-slate-500! dark:text-navy-200!;
+  }
+
+  .apexcharts-tooltip {
+    @apply border-slate-150! bg-white/[.85]! text-slate-700! shadow-none! dark:border-navy-600! dark:bg-navy-700/[.85]! dark:text-navy-50!;
+  }
+
+  .apexcharts-tooltip-title {
+    @apply border-slate-150! bg-slate-150! dark:border-transparent! dark:bg-navy-900!;
+  }
+
+  .apexcharts-xaxistooltip,
+  .apexcharts-yaxistooltip {
+    @apply rounded-sm border-slate-300! bg-slate-150! text-slate-600! dark:border-navy-600! dark:bg-navy-900! dark:text-navy-100!;
+  }
+
+  .apexcharts-xaxistooltip:before {
+    @apply border-b-current! text-slate-300 dark:text-navy-600!;
+  }
+
+  .apexcharts-xaxistooltip:after {
+    @apply border-b-current! text-slate-150 dark:text-navy-900;
+  }
+
+  .apexcharts-yaxistooltip:before {
+    @apply border-l-current! text-slate-300 dark:text-navy-600;
+  }
+
+  .apexcharts-yaxistooltip:after {
+    @apply border-l-current! text-slate-150 dark:text-navy-900;
+  }
+
+  .apexcharts-canvas .apexcharts-heatmap-rect,
+  .apexcharts-canvas .apexcharts-xaxis-tick,
+  .apexcharts-canvas line {
+    @apply stroke-current! text-slate-200 dark:text-navy-500;
+  }
+
+  .apexcharts-canvas .apexcharts-marker {
+    @apply stroke-current! text-slate-150 dark:text-navy-800;
+  }
+
+  .apexcharts-canvas .apexcharts-radialbar-track .apexcharts-radialbar-area {
+    @apply stroke-current! text-slate-150 dark:text-navy-900;
+  }
+
+  .apexcharts-canvas .apexcharts-datalabels-group .apexcharts-datalabel-label {
+    @apply fill-slate-600 font-inter dark:fill-navy-100;
+  }
+
+  .apexcharts-canvas .apexcharts-datalabels-group .apexcharts-datalabel-value,
+  .apexcharts-canvas .apexcharts-datalabels .apexcharts-datalabel {
+    @apply fill-slate-500 font-inter dark:fill-navy-200;
+  }
+
+  .apexcharts-canvas .apexcharts-radar-series polygon {
+    @apply fill-slate-100 stroke-slate-200 dark:fill-navy-800 dark:stroke-navy-600;
+  }
+
+  .apexcharts-canvas .apexcharts-pie .apexcharts-pie-series .apexcharts-pie-area {
+    stroke: none;
+  }
+
+  .apexcharts-canvas line[stroke="transparent"] {
+    @apply hidden;
+  }
+
+  .apexcharts-menu {
+    @apply rounded-sm! border-slate-150! bg-white! dark:border-navy-500! dark:bg-navy-700!;
+  }
+
+  .apexcharts-menu .apexcharts-menu-item:hover {
+    @apply bg-slate-100! dark:bg-navy-600!;
+  }
+
+  .ax-transparent-gridline .apexcharts-gridline {
+    stroke: transparent !important;
+  }
+
+  .ax-rounded-b-lg .apexcharts-svg {
+    @apply rounded-b-lg;
+  }
+
+  .apexcharts-legend-marker {
+    @apply ltr:mr-2! rtl:ml-2!;
+  }
+}

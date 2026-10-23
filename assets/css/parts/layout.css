@@ -1,1 +1,75 @@
 /* LineaUI — layout. Rules go inside @layer components { } or @layer base { }. */
+
+@layer base {
+  [data-settling] .main-sidebar,
+  [data-settling] .sidebar-panel,
+  [data-settling] .sidebar-panel-min,
+  [data-settling] nav.header,
+  [data-settling] nav.header .header-container,
+  [data-settling] .main-content,
+  [data-settling] .sidebar-toggle span {
+    transition: none !important;
+  }
+
+  .is-header-solid nav.header .header-container.header-container {
+    backdrop-filter: none;
+    background-color: var(--color-white) !important;
+  }
+
+  .dark .is-header-solid nav.header .header-container.header-container {
+    background-color: var(--color-navy-700) !important;
+  }
+}
+
+@layer components {
+  .app-preloader.is-leaving {
+    animation: fade-out 500ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+
+  .sidebar-group {
+    interpolate-size: allow-keywords;
+  }
+
+  .sidebar-group::details-content {
+    block-size: 0;
+    overflow: hidden;
+    transition:
+      block-size 200ms ease,
+      content-visibility 200ms allow-discrete;
+  }
+
+  .sidebar-group[open]::details-content {
+    block-size: auto;
+  }
+
+  .sidebar-group > summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .shell-tooltip {
+    @apply pointer-events-none invisible fixed top-0 left-0 z-[10003];
+    transition: visibility 300ms;
+  }
+
+  .shell-tooltip.show {
+    @apply visible;
+  }
+
+  .shell-tooltip-box {
+    @apply relative block rounded-[4px] bg-slate-150 px-[9px] py-[5px] text-sm leading-[1.4] whitespace-nowrap text-slate-800 opacity-0 dark:bg-navy-500 dark:text-navy-50;
+    transform: translateX(-10px);
+    transition:
+      opacity 300ms,
+      transform 300ms;
+  }
+
+  .shell-tooltip.show .shell-tooltip-box {
+    @apply opacity-100;
+    transform: none;
+  }
+
+  .shell-tooltip-arrow {
+    @apply absolute top-1/2 right-full h-1.5 w-4 fill-current text-slate-150 dark:text-navy-500;
+    transform: translate(5px, -50%) rotate(-90deg);
+  }
+}

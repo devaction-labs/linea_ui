@@ -25,6 +25,7 @@ import Theme from "./hooks/theme.js"
 import TimePicker from "./hooks/time_picker.js"
 import Toast from "./hooks/toast.js"
 import Tooltip from "./hooks/tooltip.js"
+import Treeview from "./hooks/treeview.js"
 import Upload from "./hooks/upload.js"
 
 export const Hooks = {
@@ -47,6 +48,7 @@ export const Hooks = {
   ...TimePicker,
   ...Toast,
   ...Tooltip,
+  ...Treeview,
   ...Upload,
 }
 

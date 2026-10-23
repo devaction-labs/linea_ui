@@ -1,5 +1,622 @@
 defmodule LineaUI.Components.DataTable do
-  @moduledoc false
+  @moduledoc """
+  A table with a search box, sortable headers, a pagination footer and row selection, in the
+  two looks LineOne shows: `advanced` (the Table Advanced page: a title bar with a search
+  that slides open, the table as a card, "Show 10 entries" and a pager underneath) and `grid`
+  (the Grid Table page: a search box on the right, sort arrows, "Showing 1 to 10 of 15
+  results" and Previous/Next).
+
+  The LiveView owns the state: it filters, sorts and slices the rows and gives the component
+  the current page; the component only renders it and sends events back.
+
+      <.data_table
+        id="users"
+        rows={@users}
+        search={@search}
+        on_search="search"
+        sort_by={@sort_by}
+        sort_dir={@sort_dir}
+        on_sort="sort"
+        page={@page}
+        page_size={10}
+        total={@total}
+        on_page="paginate"
+      >
+        <:title>Users Table</:title>
+        <:col :let={user} label="Name" sort_key="name">{user.name}</:col>
+        <:col :let={user} label="Email">{user.email}</:col>
+      </.data_table>
+
+      def handle_event("search", %{"search" => q}, socket), do: ...
+      def handle_event("sort", %{"column" => col, "direction" => dir}, socket), do: ...
+      def handle_event("paginate", %{"page" => page}, socket), do: ...
+
+  Rows may be a stream (`rows={@streams.users}`); the body then renders with
+  `phx-update="stream"` and `total` drives the footer. `:col`, `:action`, `:expand`,
+  `:empty`, `row_id`, `row_key`, `row_item`, `row_click` and selection work as in
+  `LineaUI.Components.Table.table/1`.
+  """
 
   use LineaUI.Component
+
+  alias LineaUI.Components.Table
+
+  @pager_list %{
+    "rounded" => "pagination",
+    "pill" => "pagination",
+    "circle" => "pagination space-x-1.5"
+  }
+
+  @pager_li %{
+    "rounded" =>
+      {"rounded-l-lg bg-slate-150 dark:bg-navy-500", "bg-slate-150 dark:bg-navy-500",
+       "rounded-r-lg bg-slate-150 dark:bg-navy-500"},
+    "pill" =>
+      {"rounded-l-full bg-slate-150 dark:bg-navy-500", "bg-slate-150 dark:bg-navy-500",
+       "rounded-r-full bg-slate-150 dark:bg-navy-500"},
+    "circle" => {"", "", ""}
+  }
+
+  @pager_arrow %{
+    "rounded" =>
+      "flex size-8 items-center justify-center rounded-lg text-slate-500 transition-colors hover:bg-slate-300 focus:bg-slate-300 active:bg-slate-300/80 disabled:pointer-events-none disabled:opacity-60 aria-disabled:pointer-events-none aria-disabled:opacity-60 dark:text-navy-200 dark:hover:bg-navy-450 dark:focus:bg-navy-450 dark:active:bg-navy-450/90",
+    "pill" =>
+      "flex size-8 items-center justify-center rounded-full text-slate-500 transition-colors hover:bg-slate-300 focus:bg-slate-300 active:bg-slate-300/80 disabled:pointer-events-none disabled:opacity-60 aria-disabled:pointer-events-none aria-disabled:opacity-60 dark:text-navy-200 dark:hover:bg-navy-450 dark:focus:bg-navy-450 dark:active:bg-navy-450/90",
+    "circle" =>
+      "flex size-8 items-center justify-center rounded-full bg-slate-150 text-slate-500 transition-colors hover:bg-slate-300 focus:bg-slate-300 active:bg-slate-300/80 disabled:pointer-events-none disabled:opacity-60 aria-disabled:pointer-events-none aria-disabled:opacity-60 dark:bg-navy-500 dark:text-navy-200 dark:hover:bg-navy-450 dark:focus:bg-navy-450 dark:active:bg-navy-450/90"
+  }
+
+  @pager_page %{
+    "rounded" =>
+      "flex h-8 min-w-[2rem] items-center justify-center rounded-lg px-3 leading-tight transition-colors hover:bg-slate-300 focus:bg-slate-300 active:bg-slate-300/80 dark:hover:bg-navy-450 dark:focus:bg-navy-450 dark:active:bg-navy-450/90",
+    "pill" =>
+      "flex h-8 min-w-[2rem] items-center justify-center rounded-full px-3 leading-tight transition-colors hover:bg-slate-300 focus:bg-slate-300 active:bg-slate-300/80 dark:hover:bg-navy-450 dark:focus:bg-navy-450 dark:active:bg-navy-450/90",
+    "circle" =>
+      "flex h-8 min-w-[2rem] items-center justify-center rounded-full bg-slate-150 px-3 leading-tight transition-colors hover:bg-slate-300 focus:bg-slate-300 active:bg-slate-300/80 dark:bg-navy-500 dark:hover:bg-navy-450 dark:focus:bg-navy-450 dark:active:bg-navy-450/90"
+  }
+
+  @pager_current %{
+    "rounded" =>
+      "flex h-8 min-w-[2rem] items-center justify-center rounded-lg bg-primary px-3 leading-tight text-white transition-colors hover:bg-primary-focus focus:bg-primary-focus active:bg-primary-focus/90 dark:bg-accent dark:hover:bg-accent-focus dark:focus:bg-accent-focus dark:active:bg-accent/90",
+    "pill" =>
+      "flex h-8 min-w-[2rem] items-center justify-center rounded-full bg-primary px-3 leading-tight text-white transition-colors hover:bg-primary-focus focus:bg-primary-focus active:bg-primary-focus/90 dark:bg-accent dark:hover:bg-accent-focus dark:focus:bg-accent-focus dark:active:bg-accent/90",
+    "circle" =>
+      "flex h-8 min-w-[2rem] items-center justify-center rounded-full bg-primary px-3 leading-tight text-white transition-colors hover:bg-primary-focus focus:bg-primary-focus active:bg-primary-focus/90 dark:bg-accent dark:hover:bg-accent-focus dark:focus:bg-accent-focus dark:active:bg-accent/90"
+  }
+
+  @grid_button "flex h-8 min-w-[2rem] items-center justify-center rounded-full bg-slate-150 px-3 leading-tight transition-colors hover:bg-slate-300 focus:bg-slate-300 disabled:pointer-events-none disabled:opacity-60 aria-disabled:pointer-events-none aria-disabled:opacity-60 dark:bg-navy-500 dark:hover:bg-navy-450 dark:focus:bg-navy-450"
+
+  @grid_current "flex h-8 min-w-[2rem] items-center justify-center rounded-full bg-primary px-3 leading-tight text-white transition-colors dark:bg-accent"
+
+  @icon_button "btn size-8 rounded-full p-0 hover:bg-slate-300/20 focus:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25"
+
+  @doc """
+  Renders a data table. The LiveView passes the rows of the current page and handles the
+  events below.
+
+      <.data_table
+        id="contacts"
+        variant="grid"
+        rows={@rows}
+        total={@total}
+        page={@page}
+        on_page="paginate"
+        search={@search}
+        on_search="search"
+        sort_by={@sort_by}
+        sort_dir={@sort_dir}
+        on_sort="sort"
+        row_key={& &1.id}
+        selected={@selected}
+        on_select="select"
+        on_select_all="select_all"
+      >
+        <:col :let={c} label="Name" sort_key="name">{c.name}</:col>
+        <:col :let={c} label="Email" sort_key="email">{c.email}</:col>
+      </.data_table>
+
+  Events, each an event name or a `%JS{}` (sent to `target` when given):
+
+  * `on_search` — the search input changed or was submitted: `%{"search" => query}`.
+  * `on_sort` — a sortable header was clicked: `%{"column" => sort_key, "direction" => "asc" | "desc"}`,
+    the direction to sort by next.
+  * `on_page` — a page was chosen: `%{"page" => "3"}` (a string, as every `phx-value-*`).
+    With `page_path` (a function of the page number) the pager renders `patch` links instead.
+  * `on_page_size` — the "Show N entries" select changed: `%{"page_size" => "30"}`.
+  * `on_select` — a row checkbox: `%{"id" => key, "selected" => "true" | "false"}`.
+  * `on_select_all` — the header checkbox: `%{"selected" => "true" | "false"}`.
+
+  The footer shows when `on_page` or `page_path` is given; the search when `on_search` is.
+  """
+  attr(:id, :string, required: true)
+  attr(:rows, :any, required: true, doc: "The rows of the current page, a list or a stream.")
+  attr(:variant, :string, default: "advanced", values: ~w(advanced grid))
+
+  attr(:row_id, :any,
+    default: nil,
+    doc: "A function giving each row's DOM id; streams default to the stream id."
+  )
+
+  attr(:row_key, :any,
+    default: nil,
+    doc: "A function giving a row's selection key; defaults to its DOM id."
+  )
+
+  attr(:row_item, :any,
+    default: &Function.identity/1,
+    doc: "Maps each row before the slots get it."
+  )
+
+  attr(:row_click, :any,
+    default: nil,
+    doc: "A function of the row returning a `JS` or an event name."
+  )
+
+  attr(:hoverable, :boolean,
+    default: nil,
+    doc: "Highlights the hovered row; on by default, off for expandable rows."
+  )
+
+  attr(:search, :string, default: "", doc: "The current query.")
+  attr(:search_placeholder, :string, default: nil, doc: "Placeholder of the search input.")
+  attr(:on_search, :any, default: nil, doc: "See the events above.")
+  attr(:sort_by, :string, default: nil, doc: "The `sort_key` of the sorted column.")
+  attr(:sort_dir, :string, default: "asc", values: ~w(asc desc), doc: "Direction of `sort_by`.")
+  attr(:on_sort, :any, default: nil, doc: "See the events above.")
+  attr(:page, :integer, default: 1, doc: "The current page, from 1.")
+  attr(:page_size, :integer, default: 10, doc: "Rows per page.")
+  attr(:total, :integer, default: nil, doc: "Rows across every page. Defaults to the row count.")
+  attr(:on_page, :any, default: nil, doc: "See the events above.")
+  attr(:page_path, :any, default: nil, doc: "A function of the page number returning a path.")
+  attr(:page_sizes, :list, default: [], doc: "Options of the \"Show N entries\" select.")
+  attr(:on_page_size, :any, default: nil, doc: "See the events above.")
+
+  attr(:pager, :string,
+    default: "rounded",
+    values: ~w(rounded pill circle),
+    doc: "The pager look of the `advanced` variant."
+  )
+
+  attr(:show_label, :string, default: "Show", doc: "Text before the page-size select.")
+  attr(:entries_label, :string, default: "entries", doc: "Text after the page-size select.")
+  attr(:prev_label, :string, default: "Previous", doc: "Text of the `grid` pager's first button.")
+  attr(:next_label, :string, default: "Next", doc: "Text of the `grid` pager's last button.")
+  attr(:selected, :list, default: [], doc: "Keys of the selected rows.")
+
+  attr(:all_selected, :boolean,
+    default: nil,
+    doc: "Whether the header checkbox is checked; computed for lists."
+  )
+
+  attr(:on_select, :any, default: nil, doc: "See the events above.")
+  attr(:on_select_all, :any, default: nil, doc: "See the events above.")
+  attr(:expand_label, :string, default: nil, doc: "Header of the expand column.")
+  attr(:target, :any, default: nil, doc: "`phx-target` of every event.")
+  attr(:class, :any, default: nil)
+  attr(:rest, :global)
+
+  slot :col, required: true, doc: "A column; receives the row (after `row_item`)." do
+    attr(:label, :string, doc: "Header text.")
+    attr(:class, :any, doc: "Extra classes of the column's cells.")
+    attr(:head_class, :any, doc: "Extra classes of the column's header.")
+    attr(:sort_key, :string, doc: "Makes the header sortable; sent as `\"column\"` in `on_sort`.")
+  end
+
+  slot(:title, doc: "The `advanced` variant's heading.")
+  slot(:actions, doc: "Buttons at the right of the `advanced` title bar.")
+
+  slot(:filters,
+    doc:
+      "A filter panel the `advanced` title bar's filter button opens. Receives the `JS` that toggles it."
+  )
+
+  slot(:summary,
+    doc: "Replaces the \"1 - 10 of 15 entries\" text; receives `%{first: n, last: n, total: n}`."
+  )
+
+  slot(:action, doc: "Cells appended to every row.")
+  slot(:expand, doc: "Detail under each row, see `LineaUI.Components.Table.table/1`.")
+  slot(:empty, doc: "Shown when `rows` is an empty list.")
+
+  def data_table(assigns) do
+    assigns
+    |> assign(:total, total(assigns))
+    |> assign_pages()
+    |> assign(:paginated, assigns.on_page != nil or assigns.page_path != nil)
+    |> assign(:icon_button, @icon_button)
+    |> render_data_table()
+  end
+
+  defp total(%{total: nil, rows: rows}) when is_list(rows), do: length(rows)
+  defp total(%{total: nil}), do: 0
+  defp total(%{total: total}), do: total
+
+  defp assign_pages(%{total: total, page_size: size, page: page} = assigns) do
+    pages = max(div(total + size - 1, size), 1)
+    current = page |> max(1) |> min(pages)
+
+    assign(assigns,
+      page: current,
+      pages: pages,
+      window: window(current, pages),
+      range: %{first: first(total, current, size), last: min(current * size, total), total: total}
+    )
+  end
+
+  defp first(0, _page, _size), do: 0
+  defp first(_total, page, size), do: (page - 1) * size + 1
+
+  defp window(page, pages) do
+    start = (page - 2) |> min(pages - 4) |> max(1)
+    Enum.to_list(start..min(start + 4, pages))
+  end
+
+  defp render_data_table(%{variant: "grid"} = assigns) do
+    ~H"""
+    <div id={@id} class={merge(["w-full", @class])} {@rest}>
+      <form
+        :if={@on_search}
+        id={@id <> "-search-form"}
+        class="flex justify-end px-4 pb-5 sm:px-5"
+        phx-change={@on_search}
+        phx-submit={@on_search}
+        phx-target={@target}
+      >
+        <input
+          type="search"
+          name="search"
+          value={@search}
+          placeholder={@search_placeholder || "Type a keyword..."}
+          aria-label={@search_placeholder || "Type a keyword..."}
+          autocomplete="off"
+          phx-debounce="300"
+          class="form-input appearance-none rounded-lg border border-slate-300 bg-transparent px-3 py-2 font-medium outline-hidden placeholder:font-normal placeholder:text-slate-400/70 dark:border-navy-450 dark:bg-navy-700 dark:text-navy-100"
+        />
+      </form>
+      <.data_table_body {assigns} table_variant="grid" rounded="none" />
+      <div
+        :if={@paginated}
+        class="flex flex-col justify-between space-y-4 px-4 py-4 sm:flex-row sm:items-center sm:space-y-0 sm:px-5"
+      >
+        <div role="status" aria-live="polite">
+          <span :if={@summary == []}>
+            Showing <b>{@range.first}</b> to <b>{@range.last}</b> of <b>{@range.total}</b> results
+          </span>
+          {render_slot(@summary, @range)}
+        </div>
+        <div class="flex flex-wrap space-x-1 text-slate-600 dark:text-slate-300">
+          <.pager_link
+            {pager_link_assigns(assigns)}
+            to={@page - 1}
+            disabled={@page == 1}
+            class={grid_button()}
+            label={@prev_label}
+          >
+            {@prev_label}
+          </.pager_link>
+          <.pager_link
+            :for={n <- @window}
+            {pager_link_assigns(assigns)}
+            to={n}
+            current={n == @page}
+            class={grid_page_class(n == @page)}
+            label={"Page #{n}"}
+          >
+            {n}
+          </.pager_link>
+          <.pager_link
+            {pager_link_assigns(assigns)}
+            to={@page + 1}
+            disabled={@page == @pages}
+            class={grid_button()}
+            label={@next_label}
+          >
+            {@next_label}
+          </.pager_link>
+        </div>
+      </div>
+    </div>
+    """
+  end
+
+  defp render_data_table(assigns) do
+    ~H"""
+    <div id={@id} class={@class} {@rest}>
+      <div class="flex items-center justify-between">
+        <h2 class="text-base font-medium tracking-wide text-slate-700 line-clamp-1 dark:text-navy-100">
+          {render_slot(@title)}
+        </h2>
+        <div class="flex">
+          <form
+            :if={@on_search}
+            id={@id <> "-search-form"}
+            class="flex items-center"
+            phx-change={@on_search}
+            phx-submit={@on_search}
+            phx-target={@target}
+          >
+            <label class="block">
+              <input
+                id={@id <> "-search"}
+                type="text"
+                name="search"
+                value={@search}
+                placeholder={@search_placeholder || "Search here..."}
+                aria-label={@search_placeholder || "Search here..."}
+                autocomplete="off"
+                phx-debounce="300"
+                class={search_input_class(@search)}
+              />
+            </label>
+            <button
+              type="button"
+              class={@icon_button}
+              aria-label={@search_placeholder || "Search here..."}
+              aria-controls={@id <> "-search"}
+              phx-click={toggle_search(@id)}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="size-4.5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="1.5"
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                />
+              </svg>
+            </button>
+          </form>
+          <button
+            :if={@filters != []}
+            type="button"
+            class={@icon_button}
+            aria-controls={@id <> "-filters"}
+            aria-expanded="false"
+            phx-click={data_table_toggle_filters(@id)}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="size-4.5" fill="none" viewBox="0 0 24 24">
+              <path
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-width="2"
+                d="M18 11.5H6M21 4H3m6 15h6"
+              />
+            </svg>
+          </button>
+          {render_slot(@actions)}
+        </div>
+      </div>
+      <div :if={@filters != []} id={@id <> "-filters"} class="hidden">
+        <div class="max-w-2xl py-3">
+          {render_slot(@filters, data_table_toggle_filters(@id))}
+        </div>
+      </div>
+      <div class="card mt-3">
+        <.data_table_body {assigns} table_variant="hoverable" rounded="top" />
+        <div
+          :if={@paginated}
+          class="flex flex-col justify-between space-y-4 px-4 py-4 sm:flex-row sm:items-center sm:space-y-0 sm:px-5"
+        >
+          <form
+            :if={@page_sizes != []}
+            id={@id <> "-page-size-form"}
+            class="flex items-center space-x-2 text-xs-plus"
+            phx-change={@on_page_size}
+            phx-target={@target}
+          >
+            <span>{@show_label}</span>
+            <label class="block">
+              <select
+                name="page_size"
+                aria-label={@show_label <> " " <> @entries_label}
+                class="form-select rounded-full border border-slate-300 bg-white px-2 py-1 pr-6 hover:border-slate-400 focus:border-primary dark:border-navy-450 dark:bg-navy-700 dark:hover:border-navy-400 dark:focus:border-accent"
+              >
+                <option :for={size <- @page_sizes} value={size} selected={size == @page_size}>
+                  {size}
+                </option>
+              </select>
+            </label>
+            <span>{@entries_label}</span>
+          </form>
+          <.advanced_summary :if={@page_sizes == []} range={@range} summary={@summary} />
+          <.advanced_pager {assigns} />
+          <.advanced_summary :if={@page_sizes != []} range={@range} summary={@summary} />
+        </div>
+      </div>
+    </div>
+    """
+  end
+
+  @table_keys ~w(row_id row_key row_item row_click sort_by sort_dir on_sort on_select on_select_all
+                 selected all_selected expand_label target col action expand empty)a
+
+  defp data_table_body(assigns) do
+    assigns =
+      assign(
+        assigns,
+        :table,
+        assigns
+        |> Map.take(@table_keys)
+        |> Map.merge(%{
+          id: assigns.id <> "-table",
+          rows: assigns.rows,
+          variant: assigns.table_variant,
+          rounded: assigns.rounded,
+          hoverable: hoverable(assigns.hoverable, assigns.expand),
+          rest: %{},
+          class: nil,
+          wrapper_class: nil,
+          __changed__: nil
+        })
+      )
+
+    ~H"""
+    {Table.table(@table)}
+    """
+  end
+
+  defp hoverable(nil, [_ | _]), do: false
+  defp hoverable(value, _expand), do: value
+
+  defp advanced_summary(assigns) do
+    ~H"""
+    <div class="text-xs-plus" role="status" aria-live="polite">
+      <span :if={@summary == []}>
+        {@range.first} - {@range.last} of {@range.total} entries
+      </span>
+      {render_slot(@summary, @range)}
+    </div>
+    """
+  end
+
+  defp advanced_pager(assigns) do
+    assigns =
+      assign(assigns,
+        list_class: @pager_list[assigns.pager],
+        li: @pager_li[assigns.pager],
+        arrow: @pager_arrow[assigns.pager],
+        page_class: @pager_page[assigns.pager],
+        current_class: @pager_current[assigns.pager]
+      )
+
+    ~H"""
+    <ol class={@list_class}>
+      <li class={elem(@li, 0)}>
+        <.pager_link
+          {pager_link_assigns(assigns)}
+          to={@page - 1}
+          disabled={@page == 1}
+          class={@arrow}
+          label={@prev_label}
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="size-4"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+          </svg>
+        </.pager_link>
+      </li>
+      <li :for={n <- @window} class={elem(@li, 1)}>
+        <.pager_link
+          {pager_link_assigns(assigns)}
+          to={n}
+          current={n == @page}
+          class={page_class(n == @page, @page_class, @current_class)}
+          label={"Page #{n}"}
+        >
+          {n}
+        </.pager_link>
+      </li>
+      <li class={elem(@li, 2)}>
+        <.pager_link
+          {pager_link_assigns(assigns)}
+          to={@page + 1}
+          disabled={@page == @pages}
+          class={@arrow}
+          label={@next_label}
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="size-4"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+          </svg>
+        </.pager_link>
+      </li>
+    </ol>
+    """
+  end
+
+  defp pager_link_assigns(assigns),
+    do:
+      assigns
+      |> Map.take([:on_page, :page_path, :target])
+      |> Map.merge(%{current: false, disabled: false})
+
+  defp page_class(true, _page, current), do: current
+  defp page_class(false, page, _current), do: page
+
+  defp grid_button, do: @grid_button
+  defp grid_page_class(true), do: @grid_current
+  defp grid_page_class(false), do: @grid_button
+
+  defp pager_link(%{page_path: nil} = assigns) do
+    ~H"""
+    <button
+      type="button"
+      class={@class}
+      disabled={@disabled}
+      aria-label={@label}
+      aria-current={@current && "page"}
+      phx-click={@on_page}
+      phx-value-page={@to}
+      phx-target={@target}
+    >
+      {render_slot(@inner_block)}
+    </button>
+    """
+  end
+
+  defp pager_link(%{disabled: true} = assigns) do
+    ~H"""
+    <span class={@class} aria-disabled="true" aria-label={@label}>
+      {render_slot(@inner_block)}
+    </span>
+    """
+  end
+
+  defp pager_link(assigns) do
+    ~H"""
+    <.link
+      patch={@page_path.(@to)}
+      class={@class}
+      aria-label={@label}
+      aria-current={@current && "page"}
+    >
+      {render_slot(@inner_block)}
+    </.link>
+    """
+  end
+
+  defp search_input_class("") do
+    "form-input w-0 bg-transparent px-1 text-right transition-all duration-100 placeholder:text-slate-500 dark:placeholder:text-navy-200"
+  end
+
+  defp search_input_class(_search) do
+    "form-input w-32 bg-transparent px-1 text-right transition-all duration-100 placeholder:text-slate-500 lg:w-48 dark:placeholder:text-navy-200"
+  end
+
+  defp toggle_search(id) do
+    ("#" <> id <> "-search")
+    |> then(&JS.toggle_class("w-0 w-32 lg:w-48", to: &1))
+    |> JS.focus(to: "#" <> id <> "-search")
+  end
+
+  @doc """
+  The `JS` that opens and closes the filter panel of the data table with `id` (the `:filters`
+  slot also receives it).
+
+      <.button phx-click={data_table_toggle_filters("projects")}>Filters</.button>
+  """
+  @spec data_table_toggle_filters(JS.t(), String.t()) :: JS.t()
+  def data_table_toggle_filters(js \\ %JS{}, id) do
+    js
+    |> JS.toggle(to: "#" <> id <> "-filters")
+    |> JS.toggle_attribute({"aria-expanded", "true", "false"},
+      to: "#" <> id <> " [aria-controls='" <> id <> "-filters']"
+    )
+  end
 end
