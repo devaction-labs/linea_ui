@@ -10,7 +10,7 @@ defmodule PreviewWeb.Pages.FormLayout4 do
     assigns = assign(assigns, select: @select, caption: @caption)
 
     ~H"""
-    <div class="flex flex-col items-center justify-between space-y-4 pb-5 sm:flex-row sm:space-y-0 lg:pb-6">
+    <div class="flex flex-col items-center justify-between space-y-4 sm:flex-row sm:space-y-0">
       <div class="flex items-center space-x-1">
         <.icon name="doc-plus" class="size-6" stroke="2" />
         <h2 class="text-xl font-medium text-slate-700 line-clamp-1 dark:text-navy-50">New Post</h2>
@@ -51,7 +51,7 @@ defmodule PreviewWeb.Pages.FormLayout4 do
             />
             <div>
               <span class={@caption}>Post Images</span>
-              <label class="mt-1.5 flex h-[76px] cursor-pointer items-center justify-center rounded-lg border border-slate-300 bg-slate-100 text-slate-500 dark:border-navy-450 dark:bg-navy-600 dark:text-navy-200">
+              <label class="mt-1.5 mb-4 flex h-[76px] cursor-pointer items-center justify-center rounded-lg border-2 border-dashed border-slate-300 text-base text-slate-600 dark:border-navy-450 dark:text-navy-100">
                 <input type="file" name="images" multiple class="sr-only" />
                 <span>Drag & Drop your files or <span class="underline">Browse</span></span>
               </label>
@@ -88,7 +88,6 @@ defmodule PreviewWeb.Pages.FormLayout4 do
           <.input
             id="postPublishDate"
             name="publish"
-            type="date"
             label="Publish Date"
             label_class={@caption}
             placeholder="Choose date..."

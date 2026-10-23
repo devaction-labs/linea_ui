@@ -75,7 +75,7 @@ defmodule PreviewWeb.Pages.FormLayout2 do
             </div>
             <div>
               <span>Images</span>
-              <label class="mt-1.5 flex h-[76px] cursor-pointer items-center justify-center rounded-lg border border-slate-300 bg-slate-100 text-slate-500 dark:border-navy-450 dark:bg-navy-600 dark:text-navy-200">
+              <label class="mt-1.5 mb-4 flex h-[76px] cursor-pointer items-center justify-center rounded-lg border-2 border-dashed border-slate-300 text-base text-slate-600 dark:border-navy-450 dark:text-navy-100">
                 <input type="file" name="images" multiple class="sr-only" />
                 <span>Drag & Drop your files or <span class="underline">Browse</span></span>
               </label>
