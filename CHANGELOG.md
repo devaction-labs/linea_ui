@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- `dropdown` filter menu: `dropdown_checkbox` and `dropdown_radio` (`menuitemcheckbox` / `menuitemradio`) toggle without
+  closing the menu, with a real input beside them when given a `name` (so `phx-change` and `phx-submit` see them),
+  `data-server-checked` so the server wins only when it changes the state, and a muted `count`. `dropdown_submenu`
+  takes `count` and the browser keeps its badge in step with the ticked items; `dropdown` takes `keep_submenus`.
+  `dropdown_footer` adds Clear (unchecks every checkbox) and Apply (closes the menu, submits the form or runs
+  `on_apply`), `dropdown_label` captions a group.
 - `signature_pad`: sign with pointer events (mouse, touch, pen) or type a name; the signature leaves as SVG text in a
   hidden input (`field`, `phx-change`, `on_change`), with a Clear button, a ready/empty status, a stored SVG shown
   from `value` and `locale="pt_BR"`.

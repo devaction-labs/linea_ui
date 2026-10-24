@@ -40,6 +40,15 @@ defmodule PreviewWeb.Pages.SignetumKit do
     %{id: 10, title: "Reunião de equipe", date: ~D[2026-10-23]}
   ]
 
+  @orders [
+    {"PV-1284", "Drogaria Feira Saúde", "Balcão", "Faturado", 4280.0},
+    {"PV-1283", "Clínica Santa Mônica", "Representante", "Aprovado", 12_850.4},
+    {"PV-1282", "Ótica Visão Feira", "Loja online", "Rascunho", 2460.0},
+    {"PV-1281", "Hospital Dom Pedro", "Representante", "Faturado", 9744.0},
+    {"PV-1280", "Mercado Bom Preço", "Balcão", "Cancelado", 1890.0},
+    {"PV-1279", "Farmácia Popular do Tomba", "Loja online", "Aprovado", 3120.0}
+  ]
+
   def mount(socket) do
     assign(socket,
       color: "#4C3FE0",
@@ -48,7 +57,10 @@ defmodule PreviewWeb.Pages.SignetumKit do
       cal_view: "month",
       cal_events: @events,
       cal_last: nil,
-      signature: ""
+      signature: "",
+      orders: @orders,
+      pending: %{"status" => ["Aprovado", "Faturado"], "channel" => [], "sort" => "recent"},
+      applied: %{"status" => ["Aprovado", "Faturado"], "channel" => [], "sort" => "recent"}
     )
   end
 
@@ -57,6 +69,14 @@ defmodule PreviewWeb.Pages.SignetumKit do
 
   def handle_event("sign", %{"receipt" => %{"signature" => svg}}, socket),
     do: {:noreply, assign(socket, signature: svg)}
+
+  def handle_event("draft", %{"filter" => params}, socket),
+    do: {:noreply, assign(socket, pending: Map.merge(%{"status" => [], "channel" => []}, params))}
+
+  def handle_event("apply", %{"filter" => params}, socket) do
+    params = Map.merge(%{"status" => [], "channel" => []}, params)
+    {:noreply, assign(socket, pending: params, applied: params)}
+  end
 
   def handle_event("cal_navigate", %{"date" => date, "view" => view}, socket),
     do: {:noreply, assign(socket, cal_date: Date.from_iso8601!(date), cal_view: view)}
@@ -123,6 +143,65 @@ defmodule PreviewWeb.Pages.SignetumKit do
         />
       </form>
       <p class="mt-2 text-xs-plus">SVG: <span id="sign-size">{byte_size(@signature)}</span> bytes</p>
+    </.example>
+    <.example
+      title="Filter menu"
+      text="Checkboxes and radios keep the menu open; submenus stay open; Clear and Apply."
+      class="mt-5 block"
+    >
+      <form
+        id="orders-filter"
+        phx-change="draft"
+        phx-submit="apply"
+        class="mb-3 flex items-center gap-3"
+      >
+        <.dropdown
+          id="orders-menu"
+          label="Filtrar"
+          keep_submenus
+          close_on_select={false}
+          class="min-w-56"
+        >
+          <.dropdown_submenu id="orders-status" label="Status" count={length(@pending["status"])}>
+            <.dropdown_checkbox
+              :for={status <- ~w(Aprovado Faturado Rascunho Cancelado)}
+              name="filter[status][]"
+              value={status}
+              checked={status in @pending["status"]}
+              count={Enum.count(@orders, &(elem(&1, 3) == status))}
+            >
+              {status}
+            </.dropdown_checkbox>
+          </.dropdown_submenu>
+          <.dropdown_submenu
+            id="orders-channel"
+            label="Canal de venda"
+            count={length(@pending["channel"])}
+          >
+            <.dropdown_checkbox
+              :for={channel <- ~w(Balcão Representante)}
+              name="filter[channel][]"
+              value={channel}
+              checked={channel in @pending["channel"]}
+            >
+              {channel}
+            </.dropdown_checkbox>
+          </.dropdown_submenu>
+          <.dropdown_separator />
+          <.dropdown_label>Ordenar por</.dropdown_label>
+          <.dropdown_radio name="filter[sort]" value="recent" checked={@pending["sort"] == "recent"}>
+            Mais recentes
+          </.dropdown_radio>
+          <.dropdown_radio name="filter[sort]" value="value" checked={@pending["sort"] == "value"}>
+            Maior valor
+          </.dropdown_radio>
+          <.dropdown_footer
+            locale="pt_BR"
+            apply_count={length(@pending["status"]) + length(@pending["channel"])}
+          />
+        </.dropdown>
+        <span class="text-xs-plus">Aplicado: <span id="applied">{inspect(@applied)}</span></span>
+      </form>
     </.example>
     """
   end
