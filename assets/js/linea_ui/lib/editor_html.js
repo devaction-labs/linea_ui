@@ -4,7 +4,7 @@
  */
 import {safeHref} from "./editor_logic.js"
 
-const KEEP = new Set(["P", "BR", "B", "STRONG", "I", "EM", "U", "S", "STRIKE", "SUB", "SUP", "H1", "H2", "H3", "H4", "H5", "H6", "OL", "UL", "LI", "BLOCKQUOTE", "PRE", "CODE", "A", "SPAN", "DIV", "FONT"])
+const KEEP = new Set(["P", "BR", "B", "STRONG", "I", "EM", "U", "S", "STRIKE", "SUB", "SUP", "H1", "H2", "H3", "H4", "H5", "H6", "OL", "UL", "LI", "BLOCKQUOTE", "PRE", "CODE", "HR", "A", "SPAN", "DIV", "FONT"])
 const DROP = new Set(["SCRIPT", "STYLE", "IFRAME", "OBJECT", "EMBED", "LINK", "META", "TEMPLATE", "NOSCRIPT", "SVG", "MATH", "FORM", "INPUT", "BUTTON", "TEXTAREA", "SELECT"])
 
 /** What happens to an element: `keep` it, `unwrap` it (keep its children) or `drop` it with its children. */

@@ -136,3 +136,69 @@ export const hostNames = (dataset) => ({
 
 /** The headers of an image upload: the content type, and the token (empty when the page has none) in `csrfHeader`. */
 export const uploadHeaders = ({token, csrfHeader, type}) => ({[csrfHeader]: token ?? "", "content-type": type})
+
+const TRIGGERS = {
+  slash: /(^|\s)\/([\p{L}\d-]*)$/u,
+  mention: /(^|\s)@([\p{L}\d._-]*)$/u,
+}
+
+/**
+ * The menu the text before the caret asks for: `{kind, query, length}` (`length` counts the trigger character),
+ * or `null`. Only the kinds in `kinds` are looked for, in that order.
+ */
+export const triggerOf = (before, kinds) => {
+  const found = kinds.map((kind) => [kind, TRIGGERS[kind].exec(before ?? "")]).find(([, match]) => match)
+  return found ? {kind: found[0], query: found[1][2], length: found[1][2].length + 1} : null
+}
+
+const escapeRegExp = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
+
+const tokenPattern = ({variables = [], mentions = []}) => {
+  const alternatives = [
+    variables.length > 0 && `\\{(?<variable>${variables.map(escapeRegExp).join("|")})\\}`,
+    mentions.length > 0 && `@(?<mention>${mentions.map(escapeRegExp).join("|")})(?![\\w-])`,
+  ].filter(Boolean)
+  return alternatives.length > 0 ? new RegExp(alternatives.join("|"), "g") : null
+}
+
+/**
+ * A text as plain parts and tokens: `{cliente}` of a known variable and `@handle` of a known mention become
+ * `{kind: "variable" | "mention", name, text}`, the rest `{text}`.
+ */
+export const tokenize = (text, names) => {
+  const pattern = tokenPattern(names)
+  const matches = pattern ? [...text.matchAll(pattern)] : []
+  const parts = matches.reduce(
+    (acc, match) => ({
+      at: match.index + match[0].length,
+      list: [
+        ...acc.list,
+        {text: text.slice(acc.at, match.index)},
+        match.groups.variable !== undefined
+          ? {kind: "variable", name: match.groups.variable, text: match[0]}
+          : {kind: "mention", name: match.groups.mention, text: match[0]},
+      ],
+    }),
+    {at: 0, list: []},
+  )
+  return [...parts.list, {text: text.slice(parts.at)}].filter((part) => part.kind || part.text !== "")
+}
+
+/** The handles of the known mentions a text holds, each once, in the order they appear. */
+export const mentionsIn = (text, handles) =>
+  [...new Set(tokenize(text ?? "", {mentions: handles}).filter((part) => part.kind === "mention").map((part) => part.name))]
+
+/** What each entry of the editor's "/" menu does: the browser's editing command and its value. */
+export const slashActions = {
+  paragraph: ["formatBlock", "p"],
+  h1: ["formatBlock", "h1"],
+  h2: ["formatBlock", "h2"],
+  bullet: ["insertUnorderedList"],
+  ordered: ["insertOrderedList"],
+  quote: ["formatBlock", "blockquote"],
+  code: ["formatBlock", "pre"],
+  divider: ["insertHorizontalRule"],
+}
+
+/** The words of the editor's footer: the count and its label. */
+export const wordsLabel = (text, label) => `${wordCount(text)} ${label}`

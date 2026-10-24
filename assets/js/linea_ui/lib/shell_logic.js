@@ -73,3 +73,30 @@ export const place = ({placement, gap, anchor, box, origin, screen}) => {
 
 /** The side of a placement, the value of `data-popper-placement` LineOne's CSS reads for its shift. */
 export const side = (placement) => placement.split("-")[0]
+
+/** The key the framed shell's menu keeps its collapsed state under. */
+export const RAIL_KEY = "linea-rail"
+
+/** Whether the window is narrower than `md`, where the framed shell's menu is a top bar and cannot be collapsed. */
+export const isMobile = (width) => width < BREAKPOINTS.md
+
+/** The value kept in `localStorage` for a collapsed or an expanded menu. */
+export const railValue = (collapsed) => (collapsed ? "collapsed" : "expanded")
+
+/** The choice a stored value holds (`true` for collapsed), or `null` when there is none. */
+export const storedCollapsed = (stored) => ({collapsed: true, expanded: false})[stored] ?? null
+
+/** Whether the menu starts collapsed: never on a phone, otherwise what the person chose, otherwise what the page rendered. */
+export const initialCollapsed = ({width, stored, rendered}) => !isMobile(width) && (storedCollapsed(stored) ?? rendered)
+
+/** The date and time of the page header's clock: `Sat, 24 Oct 2026 · 07:40`. */
+export const clockText = (date, locale) => {
+  const parts = Object.fromEntries(
+    new Intl.DateTimeFormat(locale, {weekday: "short", day: "numeric", month: "short", year: "numeric"})
+      .formatToParts(date)
+      .map(({type, value}) => [type, value.replace(/\.$/, "")]),
+  )
+  const label = (text) => text.charAt(0).toLocaleUpperCase(locale) + text.slice(1)
+  const time = new Intl.DateTimeFormat(locale, {hour: "2-digit", minute: "2-digit", hour12: false}).format(date)
+  return `${label(parts.weekday)}, ${parts.day} ${parts.month} ${parts.year} · ${time}`
+}

@@ -19,6 +19,22 @@ defmodule LineaUI.Components.Avatar do
       <.avatar src="/images/jane.jpg" status="success" status_position="bottom-right" />
 
   The inner block, when given, replaces the initials (an icon, a counter).
+
+  ## People, companies and the assistant
+
+  `name` gives the initials (first and last word) and, with `color="auto"`, a color that is always
+  the same for the same name; `status` also takes the presence of a person, drawn at the bottom
+  right; `kind` draws a company, a customer, a supplier, the assistant or the "invite" placeholder;
+  `size` also takes the pixels, `"24"`, `"32"`, `"40"`, `"48"` and `"64"`:
+
+      <.avatar name="Ana Souza" color="auto" size="40" status="online" />
+      <.avatar kind="company" name="Farmácia Signetum" size="48" />
+      <.avatar kind="assistant" size="32" />
+      <.avatar kind="invite" size="40" />
+
+      <.avatar_group more={3} size="32">
+        <.avatar :for={user <- @users} name={user.name} color="auto" size="32" ring />
+      </.avatar_group>
   """
 
   use LineaUI.Component
@@ -105,7 +121,11 @@ defmodule LineaUI.Components.Avatar do
     "info" => "bg-info",
     "success" => "bg-success",
     "warning" => "bg-warning",
-    "error" => "bg-error"
+    "error" => "bg-error",
+    "online" => "bg-success",
+    "away" => "bg-warning",
+    "busy" => "bg-error",
+    "offline" => "bg-slate-400"
   }
 
   @pings %{
@@ -115,7 +135,11 @@ defmodule LineaUI.Components.Avatar do
     "info" => "bg-info",
     "success" => "bg-success",
     "warning" => "bg-warning",
-    "error" => "bg-error"
+    "error" => "bg-error",
+    "online" => "bg-success",
+    "away" => "bg-warning",
+    "busy" => "bg-error",
+    "offline" => "bg-slate-400"
   }
 
   @dot_sizes %{
@@ -161,6 +185,32 @@ defmodule LineaUI.Components.Avatar do
   }
 
   @colors ~w(neutral primary secondary info success warning error)
+  @presences ~w(online away busy offline)
+  @kinds ~w(company customer supplier assistant invite)
+  @squared_kinds ~w(company customer supplier)
+
+  @size_aliases %{"24" => "3xs", "32" => "xs", "40" => "sm", "48" => "md", "64" => "lg"}
+
+  @auto [
+    "bg-primary text-white dark:bg-accent",
+    "bg-info text-white",
+    "bg-success text-white",
+    "bg-warning text-white",
+    "bg-pink-600 text-white",
+    "bg-violet-600 text-white",
+    "bg-teal-600 text-white",
+    "bg-error text-white"
+  ]
+
+  @kind_faces %{
+    "company" => "bg-navy-900 text-white dark:bg-navy-500",
+    "customer" => "bg-success-focus text-white",
+    "supplier" => "bg-warning-focus text-white",
+    "assistant" =>
+      "bg-linear-to-br from-primary to-purple-500 text-white dark:from-accent dark:to-purple-400",
+    "invite" =>
+      "border-[1.5px] border-dashed border-slate-300 bg-transparent text-slate-500 dark:border-navy-450 dark:text-navy-200"
+  }
 
   @ring_widths %{
     "1" => "ring-1",
@@ -183,14 +233,27 @@ defmodule LineaUI.Components.Avatar do
 
   @doc "Renders an avatar."
   attr(:src, :string, default: nil)
-  attr(:alt, :string, default: "avatar")
+  attr(:alt, :string, default: "avatar", doc: "The picture's text; the `name` when not given.")
   attr(:initials, :string, default: nil, doc: "Shown (upper-cased) when there is no `src`.")
+
+  attr(:name, :string,
+    default: nil,
+    doc:
+      "A person or company name: its first and last word give the initials when there are none, and `color=\"auto\"` picks a color from it."
+  )
+
+  attr(:kind, :string,
+    default: nil,
+    values: [nil | @kinds],
+    doc:
+      "`company`, `customer` and `supplier` are rounded squares in the navy, green and amber of their lists, with the initials; `assistant` is the indigo to purple gradient with a sparkle; `invite` is the dashed \"add a person\" placeholder."
+  )
 
   attr(:size, :string,
     default: "sm",
-    values: ~w(3xs 2xs xs xs-plus sm md lg xl 2xl),
+    values: ~w(3xs 2xs xs xs-plus sm md lg xl 2xl 24 32 40 48 64),
     doc:
-      "`3xs` is size-6, `2xs` size-7, `xs` size-8, `xs-plus` size-9, `sm` size-10 (default), `md` size-12, `lg` size-16, `xl` size-20, `2xl` size-24."
+      "`3xs` is size-6, `2xs` size-7, `xs` size-8, `xs-plus` size-9, `sm` size-10 (default), `md` size-12, `lg` size-16, `xl` size-20, `2xl` size-24. The pixel sizes are aliases: `24` is `3xs`, `32` is `xs`, `40` is `sm`, `48` is `md`, `64` is `lg`."
   )
 
   attr(:shape, :string,
@@ -200,7 +263,12 @@ defmodule LineaUI.Components.Avatar do
     doc: "`square` is LineOne's `rounded-lg`, `rounded` its `rounded-xl`; the others are masks."
   )
 
-  attr(:color, :string, default: "neutral", values: @colors, doc: "The initials' color.")
+  attr(:color, :string,
+    default: "neutral",
+    values: ["auto" | @colors],
+    doc:
+      "The initials' color; `auto` takes one of eight from the `name`, always the same for the same name (solid only)."
+  )
 
   attr(:variant, :string,
     default: "solid",
@@ -210,14 +278,15 @@ defmodule LineaUI.Components.Avatar do
 
   attr(:status, :any,
     default: nil,
-    values: [nil, false | @colors],
+    values: [nil, false | @colors ++ @presences],
     doc:
-      "A status dot's color; `nil` or `false` shows no dot. Works the same on an image and on initials. Use `status_position=\"bottom-right\"` for LineOne's online dot."
+      "A status dot's color; `nil` or `false` shows no dot. Works the same on an image and on initials. `online` (green), `away` (amber), `busy` (red) and `offline` (grey) are a person's presence, at the bottom right unless `status_position` says otherwise."
   )
 
   attr(:status_position, :string,
-    default: "top-right",
-    values: ~w(top-right top-left bottom-right bottom-left)
+    default: nil,
+    values: [nil | ~w(top-right top-left bottom-right bottom-left)],
+    doc: "`top-right`, or `bottom-right` for a presence."
   )
 
   attr(:ping, :boolean, default: false, doc: "Animates the status dot with a ping.")
@@ -260,7 +329,40 @@ defmodule LineaUI.Components.Avatar do
   attr(:rest, :global)
   slot(:inner_block)
 
-  def avatar(%{gradient: gradient} = assigns) when is_binary(gradient) do
+  def avatar(assigns), do: assigns |> prepare() |> render_avatar()
+
+  defp prepare(assigns) do
+    assigns
+    |> assign(:size, Map.get(@size_aliases, assigns.size, assigns.size))
+    |> assign(:initials, assigns.initials || initials_of(assigns.name))
+    |> assign(:alt, alt_of(assigns))
+    |> assign(:status_position, status_position(assigns))
+    |> assign(:shape, shape_of(assigns))
+  end
+
+  defp initials_of(nil), do: nil
+
+  defp initials_of(name) do
+    case String.split(name) do
+      [] -> nil
+      [word] -> String.slice(word, 0, 2)
+      [first | rest] -> String.first(first) <> String.first(List.last(rest))
+    end
+  end
+
+  defp alt_of(%{alt: "avatar", name: name}) when is_binary(name), do: name
+  defp alt_of(%{alt: alt}), do: alt
+
+  defp status_position(%{status_position: nil, status: status}) when status in @presences,
+    do: "bottom-right"
+
+  defp status_position(%{status_position: nil}), do: "top-right"
+  defp status_position(%{status_position: position}), do: position
+
+  defp shape_of(%{kind: kind}) when kind in @squared_kinds, do: "rounded"
+  defp shape_of(%{shape: shape}), do: shape
+
+  defp render_avatar(%{gradient: gradient} = assigns) when is_binary(gradient) do
     ~H"""
     <div
       class={merge(["flex rounded-full p-0.5", gradient_class(@gradient), size(@size), @class])}
@@ -274,7 +376,7 @@ defmodule LineaUI.Components.Avatar do
     """
   end
 
-  def avatar(assigns) do
+  defp render_avatar(assigns) do
     ~H"""
     <div class={merge(["avatar", size(@size), @ring && "hover:z-10", @class])} {@rest}>
       <.face {assigns} />
@@ -289,6 +391,38 @@ defmodule LineaUI.Components.Avatar do
     """
   end
 
+  defp face(%{kind: "assistant"} = assigns) do
+    ~H"""
+    <div class={
+      merge([
+        "is-initial flex items-center justify-center",
+        shape(@shape),
+        kind_face("assistant"),
+        ring(@ring, @ring_color),
+        @face_class
+      ])
+    }>
+      {render_slot(@inner_block) || sparkle(assigns)}
+    </div>
+    """
+  end
+
+  defp face(%{kind: "invite"} = assigns) do
+    ~H"""
+    <div class={
+      merge([
+        "is-initial flex items-center justify-center",
+        shape(@shape),
+        kind_face("invite"),
+        ring(@ring, @ring_color),
+        @face_class
+      ])
+    }>
+      {render_slot(@inner_block) || plus(assigns)}
+    </div>
+    """
+  end
+
   defp face(assigns) do
     ~H"""
     <div class={
@@ -296,13 +430,42 @@ defmodule LineaUI.Components.Avatar do
         "is-initial uppercase",
         shape(@shape),
         text_size(@size),
-        initials(@variant, @color),
+        initials(@variant, @color, @kind, @name),
         ring(@ring, @ring_color),
         @face_class
       ])
     }>
       {render_slot(@inner_block) || @initials}
     </div>
+    """
+  end
+
+  defp sparkle(assigns) do
+    ~H"""
+    <svg
+      class="size-[45%]"
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      stroke="none"
+      aria-hidden="true"
+    >
+      <path d="M12 3l1.8 4.2L18 9l-4.2 1.8L12 15l-1.8-4.2L6 9l4.2-1.8zM18 15l.9 2.1L21 18l-2.1.9L18 21l-.9-2.1L15 18l2.1-.9z" />
+    </svg>
+    """
+  end
+
+  defp plus(assigns) do
+    ~H"""
+    <svg
+      class="size-[40%]"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      aria-hidden="true"
+    >
+      <path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14M5 12h14" />
+    </svg>
     """
   end
 
@@ -327,7 +490,16 @@ defmodule LineaUI.Components.Avatar do
 
   defp size(size), do: @sizes[size]
   defp text_size(size), do: @text_sizes[size]
-  defp initials(variant, color), do: @initials[variant][color]
+
+  defp initials(_variant, _color, kind, _name) when is_map_key(@kind_faces, kind),
+    do: @kind_faces[kind]
+
+  defp initials(_variant, "auto", _kind, name) when is_binary(name),
+    do: Enum.at(@auto, :erlang.phash2(name, length(@auto)))
+
+  defp initials(variant, "auto", _kind, _name), do: initials(variant, "neutral", nil, nil)
+  defp initials(variant, color, _kind, _name), do: @initials[variant][color]
+  defp kind_face(kind), do: @kind_faces[kind]
   defp dot(color), do: @dots[color]
   defp ping(color), do: @pings[color]
   defp position(position), do: @positions[position]
@@ -360,6 +532,17 @@ defmodule LineaUI.Components.Avatar do
     doc: "How far the avatars overlap: `2` is `-space-x-2`, `3` is `-space-x-3`."
   )
 
+  attr(:more, :integer,
+    default: nil,
+    doc: "How many more people there are than avatars: draws a \"+N\" avatar at the end."
+  )
+
+  attr(:size, :string,
+    default: "xs",
+    values: ~w(3xs 2xs xs xs-plus sm md lg xl 2xl 24 32 40 48 64),
+    doc: "The size of the \"+N\" avatar; give it the same `size` as the avatars."
+  )
+
   attr(:class, :any, default: nil)
   attr(:rest, :global)
   slot(:inner_block, required: true)
@@ -371,6 +554,13 @@ defmodule LineaUI.Components.Avatar do
       {@rest}
     >
       {render_slot(@inner_block)}
+      <.avatar
+        :if={@more}
+        initials={"+#{@more}"}
+        variant="soft"
+        size={@size}
+        ring
+      />
     </div>
     """
   end

@@ -290,4 +290,197 @@
   .toastify.rich .toast-close {
     margin: -2px -6px 0 0;
   }
+
+  .toastify.has-progress {
+    @apply items-center bg-white text-slate-800 dark:bg-navy-700 dark:text-navy-50;
+    box-shadow:
+      0 12px 30px rgb(15 23 42 / 0.1),
+      inset 0 0 0 1px color-mix(in oklab, var(--linea-aura-1) 30%, transparent);
+  }
+
+  .toastify.has-progress[data-state="done"] {
+    box-shadow:
+      0 12px 30px rgb(15 23 42 / 0.1),
+      inset 0 0 0 1px color-mix(in oklab, var(--color-success) 35%, transparent);
+  }
+
+  .toastify.has-progress > :not(.toast-fill) {
+    @apply relative;
+  }
+
+  .toastify.has-progress .toast-icon {
+    color: var(--linea-aura-1);
+  }
+
+  .toastify.has-progress[data-state="done"] .toast-icon {
+    color: var(--color-success);
+  }
+
+  .toastify .toast-fill {
+    @apply pointer-events-none absolute inset-y-0 left-0;
+    background-color: color-mix(in oklab, var(--linea-aura-1) 14%, transparent);
+    transition:
+      width 0.15s linear,
+      background-color 0.3s;
+  }
+
+  .toastify[data-state="done"] .toast-fill {
+    background-color: color-mix(in oklab, var(--color-success) 12%, transparent);
+  }
+
+  .toastify .toast-pct {
+    @apply font-mono text-sm font-medium;
+    color: var(--linea-aura-1);
+  }
+
+  .toastify[data-state="done"] .toast-pct {
+    color: var(--color-success);
+  }
+
+  :root {
+    --linea-aura-1: var(--color-primary);
+    --linea-aura-2: #a855f7;
+    --linea-aura-3: var(--color-success);
+  }
+
+  .dark {
+    --linea-aura-1: var(--color-accent-light);
+    --linea-aura-2: #c084fc;
+  }
+
+  .linea-aura {
+    --linea-aura-w: 1.5px;
+  }
+
+  .linea-aura:not(.toastify) {
+    position: relative;
+  }
+
+  .linea-aura[data-aura-size="xs"] {
+    --linea-aura-w: 1px;
+  }
+
+  .linea-aura[data-aura-size="lg"] {
+    --linea-aura-w: 2.5px;
+  }
+
+  .linea-aura[data-aura-color="primary"] {
+    --linea-aura-1: var(--color-primary);
+    --linea-aura-2: var(--color-accent);
+  }
+
+  .linea-aura[data-aura-color="secondary"] {
+    --linea-aura-1: var(--color-secondary);
+    --linea-aura-2: var(--color-secondary-light);
+  }
+
+  .linea-aura[data-aura-color="info"] {
+    --linea-aura-1: var(--color-info);
+    --linea-aura-2: var(--color-info-focus);
+  }
+
+  .linea-aura[data-aura-color="success"] {
+    --linea-aura-1: var(--color-success);
+    --linea-aura-2: var(--color-success-focus);
+  }
+
+  .linea-aura[data-aura-color="warning"] {
+    --linea-aura-1: var(--color-warning);
+    --linea-aura-2: var(--color-warning-focus);
+  }
+
+  .linea-aura[data-aura-color="error"] {
+    --linea-aura-1: var(--color-error);
+    --linea-aura-2: var(--color-error-focus);
+  }
+
+  .linea-aura:is([data-aura="default"], [data-aura="dual"])::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    padding: var(--linea-aura-w);
+    border-radius: inherit;
+    pointer-events: none;
+    background: conic-gradient(
+      from var(--linea-aura-angle),
+      transparent 0 60%,
+      var(--linea-aura-1) 76%,
+      var(--linea-aura-2) 84%,
+      transparent 94%
+    );
+    mask-image: linear-gradient(#000 0 0), linear-gradient(#000 0 0);
+    mask-clip: content-box, border-box;
+    mask-composite: exclude;
+    -webkit-mask-composite: xor;
+    animation: linea-aura-spin 2.6s linear infinite;
+  }
+
+  .linea-aura[data-aura="dual"]::before {
+    background: conic-gradient(
+      from var(--linea-aura-angle),
+      transparent 0 10%,
+      var(--linea-aura-1) 22%,
+      transparent 34% 60%,
+      var(--linea-aura-3) 72%,
+      transparent 84%
+    );
+    animation-duration: 3.2s;
+  }
+
+  .linea-aura[data-aura="glow"] {
+    --linea-aura-glow: color-mix(in oklab, var(--color-error) 55%, transparent);
+    animation: linea-aura-glow 2s ease-in-out infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .linea-aura,
+    .linea-aura::before {
+      animation: none;
+    }
+  }
+}
+
+@property --linea-aura-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+@keyframes linea-aura-spin {
+  to {
+    --linea-aura-angle: 360deg;
+  }
+}
+
+@keyframes linea-aura-glow {
+  0%,
+  100% {
+    box-shadow:
+      0 0 0 1px var(--linea-aura-glow),
+      0 0 10px -2px var(--linea-aura-glow);
+  }
+
+  50% {
+    box-shadow:
+      0 0 0 1px var(--linea-aura-glow),
+      0 0 26px 2px var(--linea-aura-glow);
+  }
+}
+
+.drawer.drawer-float {
+  --drawer-from: translate(calc(-100% - 0.75rem));
+}
+
+.drawer.drawer-float.drawer-right {
+  --drawer-from: translate(calc(100% + 0.75rem));
+}
+
+.drawer.drawer-bottom {
+  --drawer-from: translateY(100%);
+  --drawer-to: translateY(0%);
+}
+
+.drawer.drawer-float.drawer-bottom {
+  --drawer-from: translateY(calc(100% + 0.75rem));
 }

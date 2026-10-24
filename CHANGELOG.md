@@ -1,5 +1,22 @@
 # Changelog
 
+## Unreleased
+
+- `toast`: `aura` (`true`, `:dual`, `:glow`; `aura_size` `xs sm lg`; `aura_color`) runs a ring of light around a toast,
+  `aura/1` does the same around any element, and a toast with a `value` is a progress toast that fills, turns into a
+  success at 100 and leaves by itself (`update_toast(socket, id, value: 64)`).
+- `drawer`: a sheet is `variant="float"` by default (12px margins, 16px corners, the whole height, a fixed footer);
+  `variant="flush"` keeps the panel against the edge. `placement="bottom"` is the phone's sheet with a grab handle.
+  `sheet_header/1`, `sheet_body/1` and `sheet_footer/1` lay a sheet out by hand.
+- `avatar`: `name` (initials, `color="auto"` for a color that is stable per name), pixel sizes `24 32 40 48 64`,
+  presence dots (`online away busy offline`), `kind` (`company customer supplier assistant invite`) and
+  `avatar_group` `more` for the "+N".
+- `text_editor`: `slash` menu, `variables` chips, an `:ai` button (`on_ai`, `insert_html/3`), a `footer` with the word
+  count, and `variant="comment"` with `mentions`, `on_submit` and Ctrl+Enter.
+- `app_shell`: `layout="framed"` with `framed_sidebar/1`, `rail_link/1`, `rail_module/1`, `rail_toggle/1` and
+  `rail_user/1` (a menu that collapses to a 60px rail and is a top bar below 768px); `page_header` `variant="page"`
+  with `description`, `clock`, `bell` and the `:badge`, `:notifications` and `:tabs` slots.
+
 ## 0.3.1
 
 - `dropdown` (with `dropdown_submenu`), `popover`: the panel is no longer cut off or covered inside a box that

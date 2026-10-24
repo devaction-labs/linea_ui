@@ -99,24 +99,70 @@ const KIND_COLORS = {info: "info", success: "success", warning: "warning", error
 /** The kind, or `null` for a plain toast (no kind, or one LineaUI does not know). */
 export const kindOf = (kind) => (KINDS.includes(kind) ? kind : null)
 
-/** The color a toast is drawn in: its own `color`, else its kind's, else `neutral`. */
-export const colorFor = ({color, kind}) => colorOf(color ?? KIND_COLORS[kind] ?? "neutral")
+/** How long a finished progress toast stays before it leaves. */
+export const PROGRESS_DONE_MS = 1600
+
+/** The fill of a progress toast, 0 to 100, or `null` for a toast without `value` (an error never shows progress). */
+export const progressOf = ({kind, value}) =>
+  kind === "error" || value === null || value === undefined || value === "" || !Number.isFinite(Number(value))
+    ? null
+    : Math.min(Math.max(Number(value), 0), 100)
+
+/** The kind a toast is drawn with: a progress toast spins while it runs and turns into a success at 100. */
+export const progressKind = (input) => {
+  const progress = progressOf(input)
+  return progress === null ? input.kind : progress >= 100 ? "success" : (input.kind ?? "loading")
+}
+
+/** The color a toast is drawn in: its own `color`, else its kind's, else `neutral`; a progress toast is a neutral card. */
+export const colorFor = (input) =>
+  progressOf(input) === null ? colorOf(input.color ?? KIND_COLORS[input.kind] ?? "neutral") : "neutral"
 
 /** Whether a toast takes the layout with icon, title, description and actions instead of LineOne's one line. */
-export const isRich = ({kind, description, actions}) => Boolean(kindOf(kind) || description || actions?.length)
+export const isRich = (input) =>
+  Boolean(kindOf(input.kind) || input.description || input.actions?.length || progressOf(input) !== null)
 
 /**
- * How long a toast stays: a `loading` one until it changes, an error without a duration until it is closed when
- * the toaster persists errors, the others their own duration or the toaster's.
+ * How long a toast stays: a `loading` one until it changes, a progress one until it reaches 100 and then
+ * `PROGRESS_DONE_MS`, an error without a duration until it is closed when the toaster persists errors, the others
+ * their own duration or the toaster's.
  */
-export const durationFor = ({kind, duration}, fallback = DURATION_MS, persistErrors = false) =>
-  kind === "loading" || (kind === "error" && persistErrors && (duration === null || duration === undefined))
-    ? Infinity
-    : durationOf(duration, fallback)
+export const durationFor = (input, fallback = DURATION_MS, persistErrors = false) => {
+  const {kind, duration} = input
+  const progress = progressOf(input)
+  return progress !== null
+    ? progress >= 100
+      ? durationOf(duration, PROGRESS_DONE_MS)
+      : Infinity
+    : kind === "loading" || (kind === "error" && persistErrors && (duration === null || duration === undefined))
+      ? Infinity
+      : durationOf(duration, fallback)
+}
 
-/** Whether a toast gets a close button: asked for, or a rich toast that stays (except while loading). */
+/** Whether a toast gets a close button: asked for, or a rich toast that stays (except while loading or progressing). */
 export const closeFor = (input, duration) =>
-  input.kind !== "loading" && Boolean(input.close || (isRich(input) && !Number.isFinite(duration)))
+  progressOf(input) !== null
+    ? Boolean(input.close)
+    : input.kind !== "loading" && Boolean(input.close || (isRich(input) && !Number.isFinite(duration)))
+
+export const AURA_VARIANTS = ["default", "dual", "glow"]
+export const AURA_SIZES = ["xs", "sm", "lg"]
+export const AURA_COLORS = ["assistant", "primary", "secondary", "info", "success", "warning", "error"]
+
+/**
+ * The light that runs around a toast, or `null` for a toast without `aura`. Unknown values fall back to the
+ * rotating `default`, the `sm` thickness and the assistant's color.
+ *
+ * @returns {{variant: string, size: string, color: string} | null}
+ */
+export const auraOf = ({aura, aura_size: size, aura_color: color}) =>
+  aura
+    ? {
+        variant: AURA_VARIANTS.includes(aura) ? aura : "default",
+        size: AURA_SIZES.includes(size) ? size : "sm",
+        color: AURA_COLORS.includes(color) ? color : "assistant",
+      }
+    : null
 
 /** The toast with `changes` applied; what the changes do not say (null or undefined) stays as it was. */
 export const mergeToast = (toast, changes) =>

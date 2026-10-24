@@ -61,6 +61,32 @@ defmodule LineaUI.Components.Toast do
   (`send_toast(socket, id: "x", kind: :loading, title: "Working…")`). Errors stay until closed when
   the toaster has `persist_errors`.
 
+  ## Aura
+
+  `aura` runs a ring of light around the toast while the assistant (or the SEFAZ) works. `true` or
+  `:default` rotates it, `:dual` rotates two lights (the assistant's and green, for a result that is
+  ready) and `:glow` pulses red instead of rotating (for something that needs the user). `aura_size`
+  (`xs sm lg`, `sm` by default) sets the thickness and `aura_color` (`assistant primary secondary
+  info success warning error`, `assistant` by default) the light:
+
+      send_toast(socket, "The assistant is reading NF 88.530",
+        id: "ai-1", kind: :info, aura: true, description: "Suggesting product, CFOP and markup.")
+
+      send_toast(socket, "Manifestation is due today", kind: :warning, aura: :glow, aura_size: :lg)
+
+  The same ring goes around any element with `aura/1`.
+
+  ## Progress
+
+  A toast with a `value` (0 to 100) is a progress toast: a fill grows behind it, a spinner turns and the
+  percentage shows. At 100 it becomes a success and leaves by itself after 1.6 s (or its `duration`);
+  below 100 it stays and has no close button unless `close: true`. Move it with `update_toast/3`:
+
+      socket = send_toast(socket, "Issuing the NF-e", id: "nfe-42", value: 0, description: "Validating…")
+      # later, in handle_info/2
+      update_toast(socket, "nfe-42", value: 64, description: "Sending to SEFAZ…")
+      update_toast(socket, "nfe-42", value: 100, title: "NF-e authorized", description: "Protocol 1292…")
+
   The toasts of a corner are stacked: the newest is shown in full and the older ones sit behind it,
   smaller, as slivers (three at most). With the pointer over the stack it opens, every toast in its own
   size, and their timers wait; when the pointer leaves they go on with the time they had left. Set
@@ -85,6 +111,9 @@ defmodule LineaUI.Components.Toast do
     "error" => "error",
     "loading" => "neutral"
   }
+  @aura_variants ~w(default dual glow)
+  @aura_sizes ~w(xs sm lg)
+  @aura_colors ~w(assistant primary secondary info success warning error)
   @kind_icons %{
     "info" => :info_circle,
     "success" => :check_circle,
@@ -161,6 +190,49 @@ defmodule LineaUI.Components.Toast do
       <template data-toast-icon="loading">
         <.spinner color="current" size="xs" label={@loading_label} class="size-4.5" />
       </template>
+    </div>
+    """
+  end
+
+  @doc """
+  The ring of light of a toast, around any element: a box that runs a light along its border. Give the
+  child its own `rounded-*` (the ring follows the box's radius); the ring is drawn over the border and
+  takes no space.
+
+      <.aura size="lg" class="w-80 rounded-xl">
+        <div class="rounded-xl bg-white p-4 dark:bg-navy-700">Assistant checking the taxes…</div>
+      </.aura>
+  """
+  attr :variant, :string,
+    default: "default",
+    values: @aura_variants,
+    doc:
+      "`default` rotates one light, `dual` two (assistant and green), `glow` pulses instead of rotating."
+
+  attr :size, :string,
+    default: "sm",
+    values: @aura_sizes,
+    doc: "The thickness: 1px, 1.5px, 2.5px."
+
+  attr :color, :string,
+    default: "assistant",
+    values: @aura_colors,
+    doc: "The light; `assistant` is the indigo to purple of the assistant."
+
+  attr :class, :any, default: nil
+  attr :rest, :global
+  slot :inner_block, required: true
+
+  def aura(assigns) do
+    ~H"""
+    <div
+      class={merge(["linea-aura", @class])}
+      data-aura={@variant}
+      data-aura-size={@size}
+      data-aura-color={@color}
+      {@rest}
+    >
+      {render_slot(@inner_block)}
     </div>
     """
   end
@@ -276,7 +348,11 @@ defmodule LineaUI.Components.Toast do
       "duration" => opts |> Keyword.get(:duration) |> duration(),
       "close" => Keyword.get(opts, :close, false),
       "template" => Keyword.get(opts, :template),
-      "actions" => opts |> Keyword.get(:actions, []) |> Enum.map(&action!/1)
+      "actions" => opts |> Keyword.get(:actions, []) |> Enum.map(&action!/1),
+      "aura" => opts |> Keyword.get(:aura) |> aura!(),
+      "aura_size" => opts |> Keyword.get(:aura_size) |> aura_size!(),
+      "aura_color" => opts |> Keyword.get(:aura_color) |> aura_color!(),
+      "value" => opts |> Keyword.get(:value) |> value!()
     }
   end
 
@@ -297,12 +373,34 @@ defmodule LineaUI.Components.Toast do
   defp change({:duration, value}), do: {"duration", duration(value)}
   defp change({:close, value}), do: {"close", value}
   defp change({:actions, value}), do: {"actions", Enum.map(value, &action!/1)}
+  defp change({:aura, value}), do: {"aura", aura!(value)}
+  defp change({:aura_size, value}), do: {"aura_size", aura_size!(value)}
+  defp change({:aura_color, value}), do: {"aura_color", aura_color!(value)}
+  defp change({:value, value}), do: {"value", value!(value)}
 
   defp change({key, _value}),
     do: raise(ArgumentError, "update_toast/3 does not change #{inspect(key)}")
 
   defp kind!(nil), do: nil
   defp kind!(kind), do: check!(to_string(kind), @kinds, :kind)
+
+  defp aura!(nil), do: nil
+  defp aura!(false), do: nil
+  defp aura!(true), do: "default"
+  defp aura!(variant), do: check!(to_string(variant), @aura_variants, :aura)
+
+  defp aura_size!(nil), do: nil
+  defp aura_size!(size), do: check!(to_string(size), @aura_sizes, :aura_size)
+
+  defp aura_color!(nil), do: nil
+  defp aura_color!(color), do: check!(to_string(color), @aura_colors, :aura_color)
+
+  defp value!(nil), do: nil
+  defp value!(value) when is_number(value), do: value
+
+  defp value!(value),
+    do:
+      raise(ArgumentError, "a toast value must be a number from 0 to 100, got #{inspect(value)}")
 
   defp kind_color(nil), do: "neutral"
   defp kind_color(kind), do: Map.fetch!(@kind_colors, kind)

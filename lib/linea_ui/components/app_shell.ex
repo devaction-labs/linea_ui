@@ -77,7 +77,42 @@ defmodule LineaUI.Components.AppShell do
 
   `layout="sidebar"` (the default) takes a `main_sidebar/1` and a `sidebar_panel/1`; `"minimal"` adds a
   `sidebar_panel_min/1`; `"sideblock"` takes a `sideblock/1`; `"horizontal"` keeps the main sidebar and panel
-  for phones and puts `horizontal_nav_menu/1`s in the `:nav` slot of `header/1`.
+  for phones and puts `horizontal_nav_menu/1`s in the `:nav` slot of `header/1`; `"framed"` is the app
+  frame described below.
+
+  ## The framed shell
+
+  `layout="framed"` is an app in a frame: the menu sits on the grey frame, 10px from the edges, and the page
+  is a rounded white panel beside it. The menu is `framed_sidebar/1` with `rail_link/1`s and `rail_module/1`s
+  (a module opens the pages under it; the module of the current page starts open). It collapses to a 60px rail
+  of icons (tooltips on hover, badges turned into dots; a click on a module opens it again) and the choice is
+  kept per person. Below 768px the menu becomes a top bar with a hamburger. The page's title block is
+  `page_header/1` with `variant="page"`.
+
+      <.app_shell id="shell" layout="framed">
+        <:sidebar>
+          <.framed_sidebar id="menu" on_collapse="collapse" collapsed={@collapsed}>
+            <:brand><img src={~p"/images/mark.svg"} class="size-5" alt="" /></:brand>
+            <:wordmark>Signetum</:wordmark>
+            <.rail_link navigate={~p"/today"} label="Today" current={@current_path}><.icon name="huge-home-01" /></.rail_link>
+            <.rail_module id="sales" label="Sales" badge="3" current={@current_path}>
+              <:icon><.icon name="huge-shopping-cart-01" /></:icon>
+              <:item navigate={~p"/orders"}>Orders</:item>
+              <:item navigate={~p"/products"}>Products</:item>
+            </.rail_module>
+            <:bottom>
+              <.rail_user name="Ana Souza" subtitle="Admin"><.avatar name="Ana Souza" color="auto" size="32" /></.rail_user>
+            </:bottom>
+          </.framed_sidebar>
+        </:sidebar>
+        <.page_header variant="page" title="Order PV-1283" description="Clinica Santa Monica" clock>
+          <:crumb navigate={~p"/orders"}>Orders</:crumb>
+          <:crumb>PV-1283</:crumb>
+          <:badge><.badge color="info">Approved</.badge></:badge>
+          <:actions><.button color="primary">Issue NF-e</.button></:actions>
+        </.page_header>
+        …
+      </.app_shell>
   """
 
   use LineaUI.Component
@@ -86,6 +121,7 @@ defmodule LineaUI.Components.AppShell do
   @link_attrs ~w(href navigate patch method replace)
 
   @layouts %{
+    "framed" => "linea-frame",
     "sidebar" => "",
     "minimal" => "has-min-sidebar",
     "sideblock" => "navigation:sideblock",
@@ -93,6 +129,7 @@ defmodule LineaUI.Components.AppShell do
   }
 
   @default_open %{
+    "framed" => false,
     "sidebar" => true,
     "minimal" => false,
     "sideblock" => true,
@@ -121,9 +158,9 @@ defmodule LineaUI.Components.AppShell do
 
   attr :layout, :string,
     default: "sidebar",
-    values: ~w(sidebar minimal sideblock horizontal),
+    values: ~w(sidebar minimal sideblock horizontal framed),
     doc:
-      "`sidebar` is the main sidebar with its panel, `minimal` shows the minimized panel while the panel is closed, `sideblock` is one wide sidebar, `horizontal` puts the navigation in the header."
+      "`sidebar` is the main sidebar with its panel, `minimal` shows the minimized panel while the panel is closed, `sideblock` is one wide sidebar, `horizontal` puts the navigation in the header, `framed` is the grey frame with a `framed_sidebar/1` and a rounded main panel."
 
   attr :sidebar_open, :boolean,
     default: nil,
@@ -150,6 +187,33 @@ defmodule LineaUI.Components.AppShell do
   slot :header, doc: "The `header/1`."
   slot :aside, doc: "Fixed parts: the right sidebar, drawers."
   slot :inner_block
+
+  def app_shell(%{layout: "framed"} = assigns) do
+    ~H"""
+    <div
+      id={@id}
+      class={
+        merge([
+          "linea-frame flex h-dvh flex-col gap-2.5 bg-slate-150 max-md:pt-14 md:flex-row md:p-2.5 dark:bg-navy-900",
+          @class
+        ])
+      }
+      {@rest}
+    >
+      {render_slot(@sidebar)}
+      {render_slot(@header)}
+      {render_slot(@aside)}
+      <main class={
+        merge([
+          "flex min-w-0 flex-1 flex-col gap-[18px] overflow-y-auto bg-white px-4 py-5 shadow-[0_3px_10px_rgb(48_46_56/.06)] md:rounded-xl md:px-7 md:py-[22px] dark:bg-navy-700 dark:shadow-none dark:md:ring-1 dark:md:ring-navy-500",
+          @main_class
+        ])
+      }>
+        {render_slot(@inner_block)}
+      </main>
+    </div>
+    """
+  end
 
   def app_shell(assigns) do
     assigns = assign_new(assigns, :open, fn -> open?(assigns) end)
@@ -1387,6 +1451,296 @@ defmodule LineaUI.Components.AppShell do
   end
 
   @doc """
+  The menu of the framed shell (`<.app_shell layout="framed">`): the brand, an optional workspace and search,
+  the navigation (`rail_link/1`, `rail_module/1`) and the bottom items. It collapses to a 60px rail of
+  icons: the labels (any element with the class `rail-label`) go away, badges become dots and a tooltip shows
+  the label on hover. The choice is kept in `localStorage` (`persist`); a `collapsed` the server changes wins
+  over it. Below 768px it is a top bar with a hamburger that opens the menu under it.
+
+      <.framed_sidebar id="menu" collapsed={@collapsed} on_collapse="collapse">
+        <:brand><img src={~p"/images/mark.svg"} alt="" class="size-5" /></:brand>
+        <:wordmark>Signetum</:wordmark>
+        <.rail_link navigate={~p"/today"} label="Today"><svg>…</svg></.rail_link>
+      </.framed_sidebar>
+
+      def handle_event("collapse", %{"collapsed" => collapsed}, socket),
+        do: {:noreply, assign(socket, :collapsed, collapsed)}
+
+  Put `<.rail_toggle for="menu" />` anywhere (the header, the bottom of the menu) for the button that collapses it.
+  """
+  attr :id, :string, required: true
+  attr :collapsed, :boolean, default: false, doc: "Whether the menu starts as a rail."
+
+  attr :persist, :boolean,
+    default: true,
+    doc: "Keep the choice in `localStorage[\"linea-rail\"]`."
+
+  attr :on_collapse, :string,
+    default: nil,
+    doc:
+      "An event pushed with `%{\"id\" => id, \"collapsed\" => boolean}` when the choice changes."
+
+  attr :target, :any, default: nil, doc: "The `phx-target` of `on_collapse`."
+  attr :label, :string, default: "Main menu", doc: "The accessible name of the menu."
+  attr :mobile_label, :string, default: "Menu", doc: "The accessible name of the hamburger."
+  attr :class, :any, default: nil
+  attr :rest, :global
+
+  slot :brand, doc: "The mark in its rounded box (a logo image)."
+  slot :wordmark, doc: "The name next to the mark; hidden in the rail."
+  slot :workspace, doc: "The workspace switcher under the brand; hidden in the rail."
+  slot :search, doc: "The search box; mark what the rail hides with `rail-label`."
+  slot :bottom, doc: "Items under the navigation: settings, the person."
+  slot :inner_block, required: true, doc: "The navigation: `rail_link/1` and `rail_module/1`."
+
+  def framed_sidebar(assigns) do
+    ~H"""
+    <aside
+      id={@id}
+      class={merge(["linea-rail", @class])}
+      aria-label={@label}
+      phx-hook="LineaUI.ShellRail"
+      phx-mounted={JS.ignore_attributes(["data-collapsed", "data-mobile-open"])}
+      data-collapsed={bool(@collapsed)}
+      data-server-collapsed={bool(@collapsed)}
+      data-mobile-open="false"
+      data-persist={bool(@persist)}
+      data-on-collapse={@on_collapse}
+      data-target={@target}
+      {@rest}
+    >
+      <div class="rail-bar">
+        <div class="rail-brand">
+          <span :if={@brand != []} class="rail-mark">{render_slot(@brand)}</span>
+          <span :if={@wordmark != []} class="rail-label rail-wordmark">{render_slot(@wordmark)}</span>
+        </div>
+        <button
+          type="button"
+          class="rail-burger"
+          aria-expanded="false"
+          aria-controls={@id <> "-body"}
+          aria-label={@mobile_label}
+          data-mobile-toggle
+        >
+          <svg
+            class="size-5"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            aria-hidden="true"
+          >
+            <path d="M4 7h16M4 12h16M4 17h16" />
+          </svg>
+        </button>
+      </div>
+      <div id={@id <> "-body"} class="rail-body">
+        <div :if={@workspace != []} class="rail-label">{render_slot(@workspace)}</div>
+        <div :if={@search != []} class="rail-search">{render_slot(@search)}</div>
+        <nav class="rail-nav" aria-label={@label}>{render_slot(@inner_block)}</nav>
+        {render_slot(@bottom)}
+      </div>
+    </aside>
+    """
+  end
+
+  @doc """
+  A button that collapses and expands the `framed_sidebar/1` with that id, from anywhere on the page. It is
+  pressed (`aria-pressed`) while the menu is a rail.
+
+      <.rail_toggle for="menu" label="Collapse menu" />
+  """
+  attr :for, :string, required: true, doc: "The id of the `framed_sidebar/1`."
+  attr :label, :string, default: "Collapse menu"
+  attr :class, :any, default: nil
+  attr :rest, :global
+  slot :inner_block, doc: "The icon; the default is a panel with its sidebar."
+
+  def rail_toggle(assigns) do
+    ~H"""
+    <button
+      type="button"
+      class={merge([icon_button(), @class])}
+      aria-label={@label}
+      aria-pressed="false"
+      data-rail-toggle={@for}
+      {@rest}
+    >
+      {render_slot(@inner_block) || rail_toggle_icon(assigns)}
+    </button>
+    """
+  end
+
+  defp rail_toggle_icon(assigns) do
+    ~H"""
+    <svg
+      class="size-4.5"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-hidden="true"
+    >
+      <rect x="3" y="4" width="18" height="16" rx="3" />
+      <path d="M9 4v16" />
+    </svg>
+    """
+  end
+
+  @doc """
+  A page of the framed menu: the icon, the label, an optional badge and a tooltip with the label for the rail.
+
+      <.rail_link navigate={~p"/today"} label="Today" current={@current_path}><svg>…</svg></.rail_link>
+      <.rail_link navigate={~p"/chat"} label="Chat" badge="2">…</.rail_link>
+  """
+  attr :label, :string, required: true
+  attr :badge, :string, default: nil, doc: "A count; a red dot in the rail."
+  attr :active, :boolean, default: false
+
+  attr :current, :string,
+    default: nil,
+    doc: "The current path; the link is active when it matches."
+
+  attr :class, :any, default: nil
+  attr :rest, :global, include: @link_attrs
+  slot :inner_block, required: true, doc: "The icon."
+
+  def rail_link(assigns) do
+    assigns = assign(assigns, :active, assigns.active or active?(assigns.rest, assigns.current))
+
+    ~H"""
+    <.link
+      class={merge(["rail-item", @active && "is-active", @class])}
+      aria-label={@label}
+      aria-current={@active && "page"}
+      {@rest}
+    >
+      <span class="rail-icon" aria-hidden="true">{render_slot(@inner_block)}</span>
+      <span class="rail-label rail-text">{@label}</span>
+      <span :if={@badge} class="rail-badge">{@badge}</span>
+      <span class="rail-tip" role="tooltip">{@label}</span>
+    </.link>
+    """
+  end
+
+  @doc """
+  A module of the framed menu: a button that opens the pages under it. The module of the current page
+  starts open; opening and closing it needs no round trip, and a patch keeps what the person chose. In the
+  rail a click on it expands the menu and opens the module.
+
+      <.rail_module id="sales" label="Sales" badge="3" current={@current_path}>
+        <:icon><svg>…</svg></:icon>
+        <:item navigate={~p"/orders"}>Orders</:item>
+        <:item navigate={~p"/products"}>Products</:item>
+      </.rail_module>
+  """
+  attr :id, :string, required: true
+  attr :label, :string, required: true
+  attr :badge, :string, default: nil, doc: "A count; a red dot in the rail."
+  attr :open, :boolean, default: nil, doc: "Defaults to whether one of the pages is active."
+  attr :current, :string, default: nil, doc: "The current path; the matching page is active."
+  attr :class, :any, default: nil
+  attr :rest, :global
+  slot :icon, required: true
+
+  slot :item, required: true, doc: "A page: `navigate`, `patch` or `href`, and `active`." do
+    attr :navigate, :string
+    attr :patch, :string
+    attr :href, :string
+    attr :active, :boolean
+  end
+
+  def rail_module(assigns) do
+    items = Enum.map(assigns.item, &Map.put(&1, :active, active?(&1, assigns.current)))
+    open = group_open?(assigns.open, items)
+
+    assigns =
+      assigns
+      |> assign(:items, items)
+      |> assign(:module_open, open)
+      |> assign(:module_active, Enum.any?(items, & &1.active))
+
+    ~H"""
+    <div
+      id={@id}
+      class={merge(["rail-module", @class])}
+      data-open={bool(@module_open)}
+      phx-mounted={JS.ignore_attributes(["data-open"])}
+      {@rest}
+    >
+      <button
+        type="button"
+        class={["rail-item", @module_active && "is-active"]}
+        aria-label={@label}
+        aria-expanded={bool(@module_open)}
+        aria-controls={@id <> "-pages"}
+        aria-current={@module_active && "true"}
+        phx-mounted={JS.ignore_attributes(["aria-expanded"])}
+        phx-click={
+          JS.toggle_attribute({"data-open", "true", "false"}, to: "##{@id}")
+          |> JS.toggle_attribute({"aria-expanded", "true", "false"})
+        }
+        data-module
+      >
+        <span class="rail-icon" aria-hidden="true">{render_slot(@icon)}</span>
+        <span class="rail-label rail-text">{@label}</span>
+        <span :if={@badge} class="rail-badge">{@badge}</span>
+        <svg
+          class="rail-label rail-chev"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <path d="m9 6 6 6-6 6" />
+        </svg>
+        <span class="rail-tip" role="tooltip">{@label}</span>
+      </button>
+      <div id={@id <> "-pages"} class="rail-sub">
+        <.link
+          :for={item <- @items}
+          aria-current={item.active && "page"}
+          {link_attrs(item)}
+        >
+          {render_slot(item)}
+        </.link>
+      </div>
+    </div>
+    """
+  end
+
+  @doc """
+  The person at the bottom of the framed menu: their picture and, outside the rail, their name and subtitle.
+
+      <.rail_user name="Ana Souza" subtitle="Admin"><.avatar name="Ana Souza" color="auto" size="32" /></.rail_user>
+  """
+  attr :name, :string, required: true
+  attr :subtitle, :string, default: nil
+  attr :class, :any, default: nil
+  attr :rest, :global
+  slot :inner_block, required: true, doc: "The picture."
+
+  def rail_user(assigns) do
+    ~H"""
+    <div class={merge(["rail-user", @class])} {@rest}>
+      {render_slot(@inner_block)}
+      <span class="rail-label min-w-0">
+        <span class="block truncate text-sm font-medium text-slate-800 dark:text-navy-50">{@name}</span>
+        <span :if={@subtitle} class="block truncate text-xs text-slate-400 dark:text-navy-300">
+          {@subtitle}
+        </span>
+      </span>
+    </div>
+    """
+  end
+
+  @doc """
   The title of a page with LineOne's breadcrumb next to it: the crumbs with a link are followed by a
   chevron, the last one is plain text.
 
@@ -1397,6 +1751,31 @@ defmodule LineaUI.Components.AppShell do
       </.page_header>
   """
   attr :title, :string, required: true
+
+  attr :variant, :string,
+    default: "inline",
+    values: ~w(inline page),
+    doc:
+      "`inline` is LineOne's row, the title with its crumbs beside it. `page` is the framed shell's title block: the crumbs with the clock and the bell on top, then the badge, the 28px title with a context line and the actions, and the tabs."
+
+  attr :description, :string,
+    default: nil,
+    doc: "The context line under the title (`variant=\"page\"`)."
+
+  attr :clock, :boolean,
+    default: false,
+    doc: "The date and time at the end of the top row, kept current (`variant=\"page\"`)."
+
+  attr :locale, :string,
+    default: nil,
+    doc: "The language of the clock (`pt-BR`); the browser's when not given."
+
+  attr :bell, :boolean,
+    default: false,
+    doc: "A bell button at the end of the top row (`variant=\"page\"`)."
+
+  attr :bell_label, :string, default: "Notifications"
+  attr :on_bell, :any, default: nil, doc: "An event name or a `%JS{}` for the bell's click."
   attr :class, :any, default: nil
   attr :rest, :global
 
@@ -1408,6 +1787,79 @@ defmodule LineaUI.Components.AppShell do
 
   slot :actions, doc: "Buttons or filters at the right end of the row."
   slot :inner_block, doc: "Content after the breadcrumb."
+  slot :badge, doc: "The status badge above the title (`variant=\"page\"`)."
+  slot :notifications, doc: "Replaces the bell with your own button or menu (`variant=\"page\"`)."
+  slot :tabs, doc: "The page's tabs under the title, over a rule (`variant=\"page\"`)."
+
+  def page_header(%{variant: "page"} = assigns) do
+    assigns = assign(assigns, :crumbs, mark_last(assigns.crumb))
+
+    ~H"""
+    <header class={merge(["flex flex-col gap-[18px]", @class])} {@rest}>
+      <div class="flex items-center gap-2.5">
+        <nav
+          :if={@crumb != []}
+          aria-label="Breadcrumb"
+          class="flex min-w-0 flex-wrap items-center gap-2.5 text-sm text-slate-500 dark:text-navy-200"
+        >
+          <%= for {crumb, last} <- @crumbs do %>
+            <.link
+              :if={link?(crumb)}
+              class="text-primary transition-colors hover:text-primary-focus dark:text-accent-light dark:hover:text-accent"
+              {link_attrs(crumb)}
+            >
+              {render_slot(crumb)}
+            </.link>
+            <span
+              :if={!link?(crumb)}
+              aria-current={last && "page"}
+              class={last && "text-slate-800 dark:text-navy-50"}
+            >
+              {render_slot(crumb)}
+            </span>
+            <span :if={!last} aria-hidden="true">/</span>
+          <% end %>
+        </nav>
+        {render_slot(@inner_block)}
+        <div class="ml-auto flex items-center gap-2.5">
+          <span
+            :if={@clock}
+            id={"#{@rest[:id] || "page-header"}-clock"}
+            class="hidden text-sm text-slate-400 sm:inline dark:text-navy-300"
+            phx-hook="LineaUI.ShellClock"
+            data-locale={@locale}
+          ></span>
+          {render_slot(@notifications)}
+          <button
+            :if={@bell and @notifications == []}
+            type="button"
+            class={icon_button()}
+            aria-label={@bell_label}
+            phx-click={@on_bell}
+          >
+            <.glyph name={:bell} class="size-5" />
+          </button>
+        </div>
+      </div>
+      <div class="flex flex-wrap items-end justify-between gap-5">
+        <div class="min-w-0">
+          <div :if={@badge != []} class="flex items-center gap-2.5">{render_slot(@badge)}</div>
+          <h1 class="mt-1.5 mb-1 text-[28px] leading-9 font-semibold tracking-[-0.02em] text-slate-800 dark:text-navy-50">
+            {@title}
+          </h1>
+          <p :if={@description} class="text-sm text-slate-500 dark:text-navy-200">{@description}</p>
+        </div>
+        <div :if={@actions != []} class="flex items-center gap-2.5">{render_slot(@actions)}</div>
+      </div>
+      <div
+        :if={@tabs != []}
+        class="-mb-px flex items-end gap-2.5 border-b border-slate-150 dark:border-navy-600"
+      >
+        {render_slot(@tabs)}
+      </div>
+    </header>
+    """
+  end
 
   def page_header(assigns) do
     assigns = assign(assigns, :crumbs, mark_last(assigns.crumb))
@@ -1569,6 +2021,8 @@ defmodule LineaUI.Components.AppShell do
     </script>
     """
   end
+
+  defp icon_button, do: @icon_button
 
   defp link_attrs(entry), do: Map.take(entry, [:href, :navigate, :patch, :method, :replace])
 

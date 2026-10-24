@@ -363,4 +363,171 @@ defmodule LineaUI.Components.AppShellTest do
     assert "py-0" in classes(html, "div")
     refute "py-5" in classes(html, "div")
   end
+
+  describe "the framed shell" do
+    defp attr_of(html, selector, name), do: html |> find(selector) |> LazyHTML.attribute(name)
+
+    test "a grey frame with the menu and a rounded main panel" do
+      html =
+        render(~H"""
+        <.app_shell id="s" layout="framed">
+          <:sidebar>
+            <aside id="menu">m</aside>
+          </:sidebar>
+          <p id="page">Page</p>
+        </.app_shell>
+        """)
+
+      assert ["linea-frame", "bg-slate-150", "md:flex-row", "md:p-2.5"] --
+               classes(html, "#s") == []
+
+      refute "is-sidebar-open" in classes(html, "#s")
+      assert [_] = find(html, "#s > #menu") |> Enum.to_list()
+      assert ["md:rounded-xl", "bg-white"] -- classes(html, "#s > main") == []
+      assert [_] = find(html, "#s > main > #page") |> Enum.to_list()
+    end
+
+    test "the menu is a rail that remembers its state and turns into a top bar" do
+      html =
+        render(~H"""
+        <.framed_sidebar id="menu" collapsed on_collapse="collapse" mobile_label="Menu">
+          <:brand><img id="mark" alt="" src="/m.svg" /></:brand>
+          <:wordmark>Signetum</:wordmark>
+          <:workspace>Farmacia</:workspace>
+          <:bottom>
+            <div id="me">me</div>
+          </:bottom>
+          <a id="x" href="/">x</a>
+        </.framed_sidebar>
+        """)
+
+      assert attr_of(html, "#menu", "phx-hook") == ["LineaUI.ShellRail"]
+      assert attr_of(html, "#menu", "data-collapsed") == ["true"]
+      assert attr_of(html, "#menu", "data-server-collapsed") == ["true"]
+      assert attr_of(html, "#menu", "data-persist") == ["true"]
+      assert attr_of(html, "#menu", "data-on-collapse") == ["collapse"]
+      assert attr_of(html, "#menu", "data-mobile-open") == ["false"]
+      assert attr_of(html, "#menu", "phx-mounted") |> hd() =~ "data-collapsed"
+      assert [_] = find(html, "#menu .rail-mark #mark") |> Enum.to_list()
+      assert "rail-label" in classes(html, "#menu .rail-wordmark")
+
+      assert [_] =
+               find(html, "#menu button[data-mobile-toggle][aria-label=Menu]") |> Enum.to_list()
+
+      assert [_] = find(html, "#menu #menu-body nav.rail-nav > #x") |> Enum.to_list()
+      assert [_] = find(html, "#menu #menu-body > #me") |> Enum.to_list()
+
+      open = render(~H|<.framed_sidebar id="m" persist={false}>x</.framed_sidebar>|)
+      assert attr_of(open, "#m", "data-collapsed") == ["false"]
+      assert attr_of(open, "#m", "data-persist") == ["false"]
+    end
+
+    test "the toggle points at the menu" do
+      html = render(~H|<.rail_toggle for="menu" label="Recolher" />|)
+
+      assert attr_of(html, "button", "data-rail-toggle") == ["menu"]
+      assert attr_of(html, "button", "aria-label") == ["Recolher"]
+      assert attr_of(html, "button", "aria-pressed") == ["false"]
+      assert [_] = find(html, "button svg") |> Enum.to_list()
+    end
+
+    test "a link has its icon, label, badge and tooltip, and follows the current path" do
+      html =
+        render(~H"""
+        <.rail_link id="a" navigate="/orders" label="Orders" badge="3" current="/orders"><i id="i" /></.rail_link>
+        <.rail_link id="b" navigate="/chat" label="Chat" current="/orders"><i /></.rail_link>
+        """)
+
+      assert "is-active" in classes(html, "#a")
+      assert attr_of(html, "#a", "aria-current") == ["page"]
+      refute "is-active" in classes(html, "#b")
+      assert [_] = find(html, "#a .rail-icon > #i") |> Enum.to_list()
+      assert find(html, "#a .rail-badge") |> LazyHTML.text() == "3"
+      assert find(html, "#a .rail-tip[role=tooltip]") |> LazyHTML.text() == "Orders"
+      assert find(html, "#b .rail-badge") |> Enum.to_list() == []
+    end
+
+    test "a module opens the pages under it, and starts open on the current page" do
+      html =
+        render(~H"""
+        <.rail_module id="sales" label="Sales" badge="2" current="/orders">
+          <:icon><i id="ic" /></:icon>
+          <:item navigate="/orders">Orders</:item>
+          <:item navigate="/products">Products</:item>
+        </.rail_module>
+        <.rail_module id="buy" label="Purchases" current="/orders">
+          <:icon><i /></:icon>
+          <:item navigate="/suppliers">Suppliers</:item>
+        </.rail_module>
+        """)
+
+      assert attr_of(html, "#sales", "data-open") == ["true"]
+      assert attr_of(html, "#buy", "data-open") == ["false"]
+      assert attr_of(html, "#sales > button", "aria-expanded") == ["true"]
+      assert attr_of(html, "#sales > button", "data-module") == [""]
+      assert "is-active" in classes(html, "#sales > button")
+      refute "is-active" in classes(html, "#buy > button")
+      assert attr_of(html, "#sales > button", "phx-click") |> hd() =~ "data-open"
+      assert attr_of(html, "#sales", "phx-mounted") |> hd() =~ "data-open"
+      assert [_, _] = find(html, "#sales-pages > a") |> Enum.to_list()
+      assert attr_of(html, "#sales-pages > a", "aria-current") == ["page"]
+      assert attr_of(html, "#sales-pages > a", "href") == ["/orders", "/products"]
+
+      closed = render(~H|<.rail_module id="m" label="M" open={false} current="/x">
+  <:icon>i</:icon><:item navigate="/x">X</:item>
+</.rail_module>|)
+      assert attr_of(closed, "#m", "data-open") == ["false"]
+    end
+
+    test "the person at the bottom" do
+      html =
+        render(~H|<.rail_user name="Ana Souza" subtitle="Admin"><b id="av">AS</b></.rail_user>|)
+
+      assert [_] = find(html, ".rail-user > #av") |> Enum.to_list()
+      assert find(html, ".rail-user .rail-label") |> LazyHTML.text() =~ "Ana Souza"
+      assert find(html, ".rail-user .rail-label") |> LazyHTML.text() =~ "Admin"
+    end
+
+    test "the page variant of the header: crumbs, clock, bell, badge, title, context, actions and tabs" do
+      html =
+        render(~H"""
+        <.page_header
+          id="ph"
+          variant="page"
+          title="Order PV-1283"
+          description="Clinica"
+          clock
+          locale="pt-BR"
+          bell
+        >
+          <:crumb navigate="/orders">Orders</:crumb>
+          <:crumb>PV-1283</:crumb>
+          <:badge><span id="b">Approved</span></:badge>
+          <:actions><button id="go">Issue</button></:actions>
+          <:tabs><button id="t">Items</button></:tabs>
+        </.page_header>
+        """)
+
+      assert "text-[28px]" in classes(html, "h1")
+      assert find(html, "h1") |> LazyHTML.text() =~ "Order PV-1283"
+      assert find(html, "header > div p") |> LazyHTML.text() == "Clinica"
+      assert attr_of(html, "nav a", "href") == ["/orders"]
+      assert attr_of(html, "nav [aria-current=page]", "aria-current") == ["page"]
+      assert attr_of(html, "#ph-clock", "phx-hook") == ["LineaUI.ShellClock"]
+      assert attr_of(html, "#ph-clock", "data-locale") == ["pt-BR"]
+      assert [_] = find(html, "button[aria-label=Notifications] svg") |> Enum.to_list()
+      assert [_] = find(html, "#b") |> Enum.to_list()
+      assert [_] = find(html, "#go") |> Enum.to_list()
+      assert [_] = find(html, "header > div.border-b > #t") |> Enum.to_list()
+
+      own = render(~H|<.page_header variant="page" title="T" bell>
+  <:notifications><i id="own" /></:notifications>
+</.page_header>|)
+      assert [_] = find(own, "#own") |> Enum.to_list()
+      assert find(own, "button[aria-label=Notifications]") |> Enum.to_list() == []
+
+      inline = render(~H|<.page_header title="T" />|)
+      assert find(inline, "h2") |> Enum.count() == 1
+    end
+  end
 end

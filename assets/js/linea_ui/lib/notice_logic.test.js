@@ -1,6 +1,6 @@
 import test from "node:test"
 import assert from "node:assert/strict"
-import {actionPayload, closeFor, colorFor, colorOf, durationFor, durationOf, encodedJS, isRich, kindOf, mergeToast, offsets, positionOf, resumeAfter, stack, timeLeft, unseen} from "./notice_logic.js"
+import {PROGRESS_DONE_MS, actionPayload, auraOf, closeFor, colorFor, colorOf, durationFor, durationOf, encodedJS, isRich, kindOf, mergeToast, offsets, positionOf, progressKind, progressOf, resumeAfter, stack, timeLeft, unseen} from "./notice_logic.js"
 
 test("an unknown color is neutral", () => {
   assert.equal(colorOf("success"), "success")
@@ -103,4 +103,33 @@ test("an action pushes its value with the toast's id, and its JS as a string", (
   assert.equal(encodedJS([["push", {event: "x"}]]), '[["push",{"event":"x"}]]')
   assert.equal(encodedJS("[]"), "[]")
   assert.equal(encodedJS(null), null)
+})
+
+test("a toast with a value is a progress toast that spins, then succeeds at 100", () => {
+  assert.equal(progressOf({value: 64}), 64)
+  assert.equal(progressOf({value: 140}), 100)
+  assert.equal(progressOf({value: -3}), 0)
+  assert.equal(progressOf({}), null)
+  assert.equal(progressOf({kind: "error", value: 50}), null)
+  assert.equal(progressKind({value: 10}), "loading")
+  assert.equal(progressKind({value: 100}), "success")
+  assert.equal(progressKind({kind: "info", value: 10}), "info")
+  assert.equal(colorFor({color: "primary", value: 10}), "neutral")
+  assert.equal(isRich({value: 0}), true)
+})
+
+test("a progress toast stays until it is full, leaves after a moment and closes only when asked", () => {
+  assert.equal(durationFor({value: 40}), Infinity)
+  assert.equal(durationFor({value: 100}), PROGRESS_DONE_MS)
+  assert.equal(durationFor({value: 100, duration: 3000}), 3000)
+  assert.equal(closeFor({value: 40}, Infinity), false)
+  assert.equal(closeFor({value: 40, close: true}, Infinity), true)
+})
+
+test("an aura falls back to the rotating light of the assistant", () => {
+  assert.equal(auraOf({}), null)
+  assert.equal(auraOf({aura: null}), null)
+  assert.deepEqual(auraOf({aura: "default"}), {variant: "default", size: "sm", color: "assistant"})
+  assert.deepEqual(auraOf({aura: "glow", aura_size: "lg", aura_color: "error"}), {variant: "glow", size: "lg", color: "error"})
+  assert.deepEqual(auraOf({aura: "weird", aura_size: "xl", aura_color: "pink"}), {variant: "default", size: "sm", color: "assistant"})
 })

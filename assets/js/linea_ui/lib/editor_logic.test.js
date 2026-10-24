@@ -1,6 +1,6 @@
 import test from "node:test"
 import assert from "node:assert/strict"
-import {blocks, commands, currentStyle, filterItems, imageProblem, names, nextIndex, rowParts, safeHref, sends, styles, textboxAttributes, uploadError, wordCount} from "./editor_logic.js"
+import {blocks, commands, currentStyle, filterItems, imageProblem, mentionsIn, names, nextIndex, rowParts, safeHref, sends, slashActions, styles, textboxAttributes, tokenize, triggerOf, uploadError, wordCount, wordsLabel} from "./editor_logic.js"
 
 const chain = () => {
   const calls = []
@@ -126,4 +126,32 @@ test("the text area is named by its label, or by the visible label when there is
 test("a menu row has the label, and the icon and the hint when the item has them", () => {
   assert.deepEqual(rowParts({label: "Heading"}).map((part) => part.text), ["Heading"])
   assert.deepEqual(rowParts({label: "Heading", icon: "H", hint: "#"}).map((part) => part.text), ["H", "Heading", "#"])
+})
+
+test("the caret after a / or an @ asks for its menu", () => {
+  assert.deepEqual(triggerOf("Hello /ti", ["slash", "mention"]), {kind: "slash", query: "ti", length: 3})
+  assert.deepEqual(triggerOf("/", ["slash"]), {kind: "slash", query: "", length: 1})
+  assert.deepEqual(triggerOf("ask @jul", ["slash", "mention"]), {kind: "mention", query: "jul", length: 4})
+  assert.equal(triggerOf("a/b", ["slash"]), null)
+  assert.equal(triggerOf("mail@x", ["mention"]), null)
+  assert.equal(triggerOf("/x", ["mention"]), null)
+})
+
+test("known variables and mentions become tokens, the rest stays text", () => {
+  const parts = tokenize("Hi {cliente}, ask @ana-s and @bob; {other}", {variables: ["cliente"], mentions: ["ana-s"]})
+  assert.deepEqual(parts, [
+    {text: "Hi "},
+    {kind: "variable", name: "cliente", text: "{cliente}"},
+    {text: ", ask "},
+    {kind: "mention", name: "ana-s", text: "@ana-s"},
+    {text: " and @bob; {other}"},
+  ])
+  assert.deepEqual(tokenize("plain", {}), [{text: "plain"}])
+  assert.deepEqual(tokenize("", {variables: ["a"]}), [])
+  assert.deepEqual(mentionsIn("@ana-s @ana-s @bob @ana-sx", ["ana-s", "bob"]), ["ana-s", "bob"])
+})
+
+test("the slash menu knows its commands and the footer its words", () => {
+  assert.deepEqual(slashActions.h2, ["formatBlock", "h2"])
+  assert.equal(wordsLabel("one two  three", "words"), "3 words")
 })

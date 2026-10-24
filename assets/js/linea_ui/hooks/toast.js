@@ -2,6 +2,7 @@ import {glyphElement, iconSet} from "../lib/glyphs.js"
 import {
   LEAVE_MS,
   actionPayload,
+  auraOf,
   closeFor,
   colorFor,
   durationFor,
@@ -10,6 +11,8 @@ import {
   kindOf,
   mergeToast,
   positionOf,
+  progressKind,
+  progressOf,
   resumeAfter,
   stack,
   timeLeft,
@@ -34,6 +37,10 @@ const FLASH_KEY = "linea_toast"
  * only the keys it carries, `linea:toast-dismiss` removes one toast (`id`) or all (`all`), from the server or as a
  * DOM event. An action pushes its `event` (to its `target` when given) with `value` and `toast_id`, runs its `js`,
  * or follows its `href`, then closes the toast unless `dismiss` is false.
+ *
+ * `aura` (with `aura_size`, `aura_color`) puts the rotating light of `.linea-aura` around the toast. A numeric `value`
+ * makes a progress toast: a fill grows behind it, a spinner turns until 100, then it becomes a success and leaves by
+ * itself; `linea:toast-update` with a new `value` moves it.
  */
 const COLLAPSE_MS = 150
 
@@ -146,10 +153,30 @@ export default {
       el.setAttribute("role", color === "error" ? "alert" : "status")
       const fill = template ? () => this.fillTemplate(el, template) : isRich(input) ? () => this.fillRich(el, input, toast) : () => this.fillText(el, input)
       fill()
+      this.decorate(el, input, toast)
       el.querySelectorAll("[data-toast-dismiss]").forEach((button) => button.addEventListener("click", () => this.remove(toast)))
       el.addEventListener("mouseenter", () => this.hover(toast.position.key, true))
       el.addEventListener("mouseleave", () => this.hover(toast.position.key, false))
       return el
+    },
+
+    decorate(el, input, toast) {
+      const aura = auraOf(input)
+      const progress = progressOf(input)
+      el.classList.toggle("linea-aura", aura !== null)
+      aura ? Object.assign(el.dataset, {aura: aura.variant, auraSize: aura.size, auraColor: aura.color}) : ["aura", "auraSize", "auraColor"].forEach((key) => delete el.dataset[key])
+      progress === null || this.fillProgress(el, progress, toast)
+    },
+
+    fillProgress(el, progress, toast) {
+      const fill = this.part("span", "toast-fill")
+      fill.setAttribute("aria-hidden", "true")
+      fill.style.width = `${toast.progress ?? 0}%`
+      el.classList.add("has-progress")
+      el.dataset.state = progress >= 100 ? "done" : "running"
+      el.prepend(fill)
+      requestAnimationFrame(() => (fill.style.width = `${progress}%`))
+      toast.progress = progress
     },
 
     fillText(el, input) {
@@ -160,7 +187,8 @@ export default {
     },
 
     fillRich(el, input, toast) {
-      const kind = kindOf(input.kind)
+      const kind = kindOf(progressKind(input))
+      const progress = progressOf(input)
       el.classList.add("rich")
       kind && el.setAttribute("aria-busy", String(kind === "loading"))
       const icon = kind && this.el.querySelector(`template[data-toast-icon="${kind}"]`)
@@ -171,6 +199,7 @@ export default {
       const actions = (input.actions ?? []).map((action) => this.action(action, toast))
       actions.length > 0 && body.append(this.part("div", "toast-actions", ...actions))
       el.append(body)
+      progress === null || el.append(this.part("span", "toast-pct", `${Math.round(progress)}%`))
       closeFor(input, toast.duration) && el.append(this.closeButton())
     },
 

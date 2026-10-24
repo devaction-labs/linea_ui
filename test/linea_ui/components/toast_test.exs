@@ -123,6 +123,39 @@ defmodule LineaUI.Components.ToastTest do
     assert_raise ArgumentError, ~r/position/, fn -> Toast.changes("t", position: "left-top") end
   end
 
+  test "an aura and a progress value ride along and are checked" do
+    assert %{"aura" => "default", "aura_size" => nil, "aura_color" => nil, "value" => nil} =
+             Toast.payload("x", aura: true)
+
+    assert %{"aura" => "glow", "aura_size" => "lg", "aura_color" => "error", "value" => 40} =
+             Toast.payload("x", aura: :glow, aura_size: :lg, aura_color: :error, value: 40)
+
+    assert %{"aura" => nil} = Toast.payload("x", aura: false)
+    assert_raise ArgumentError, ~r/aura/, fn -> Toast.payload("x", aura: :rainbow) end
+    assert_raise ArgumentError, ~r/aura_size/, fn -> Toast.payload("x", aura_size: :xl) end
+    assert_raise ArgumentError, ~r/aura_color/, fn -> Toast.payload("x", aura_color: :pink) end
+    assert_raise ArgumentError, ~r/value/, fn -> Toast.payload("x", value: "half") end
+
+    assert %{"id" => "t", "value" => 64, "aura" => "dual"} =
+             Toast.changes("t", value: 64, aura: :dual)
+  end
+
+  test "aura wraps any content in the ring of light" do
+    html =
+      render(~H"""
+      <.aura variant="dual" size="lg" color="success" class="rounded-xl">
+        <p>Inside</p>
+      </.aura>
+      """)
+
+    assert "linea-aura" in classes(html, "div")
+    assert "rounded-xl" in classes(html, "div")
+    assert attr_of(html, "div", "data-aura") == ["dual"]
+    assert attr_of(html, "div", "data-aura-size") == ["lg"]
+    assert attr_of(html, "div", "data-aura-color") == ["success"]
+    assert [_] = find(html, "p") |> Enum.to_list()
+  end
+
   test "dismiss_toast and clear_toasts dispatch to the toaster in the browser" do
     %JS{ops: [["dispatch", one]]} = Toast.dismiss_toast("t")
     assert one.event == "linea:toast-dismiss"

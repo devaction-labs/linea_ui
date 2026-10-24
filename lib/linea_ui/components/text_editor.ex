@@ -13,6 +13,31 @@ defmodule LineaUI.Components.TextEditor do
   and the HTML it pastes (only formatting tags and safe links stay), but the server should still
   sanitize what it stores. A value sent by the server replaces the text; the same value echoed
   back does not touch it.
+
+  ## Commands, variables, the assistant and a footer
+
+  `slash` opens a menu of blocks when "/" is typed at the start of a word (text, headings, lists,
+  quote, code, divider) and `variables` adds the placeholders of a template to it: `{cliente}` is
+  drawn as a chip in the editor and goes to the server as the plain text `{cliente}`. The `:ai` slot
+  is a button at the end of the toolbar (`on_ai` is pushed with the HTML and the selected text; answer
+  with `insert_html/3`), and `footer` draws a bar with a hint and the word count:
+
+      <.text_editor field={@form[:description]} slash variables={~w(cliente preço)} footer
+        hint="Markdown shortcuts work. / opens the commands" on_ai="write">
+        <:ai>Write with the assistant</:ai>
+      </.text_editor>
+
+  ## Comments
+
+  `variant="comment"` is the compact editor of a thread: no toolbar, a bar with a "mention" button,
+  the `:actions` slot (an attach button) and the submit button; Ctrl+Enter (or Cmd+Enter) submits,
+  and "@" opens the list of `mentions`, each drawn as a chip and sent as `@handle`:
+
+      <.text_editor name="comment" variant="comment" on_submit="comment"
+        mentions={[%{handle: "juliana-moraes", label: "Juliana Moraes"}]}
+        placeholder="Write a comment" />
+
+      def handle_event("comment", %{"value" => html, "mentions" => handles}, socket), do: ...
   """
 
   use LineaUI.Component
@@ -36,6 +61,26 @@ defmodule LineaUI.Components.TextEditor do
     ~w(align),
     ~w(clean)
   ]
+
+  @slash_items [
+    %{key: "paragraph", label: "Text", hint: "Plain paragraph", icon: "¶"},
+    %{key: "h1", label: "Heading 1", hint: "Big section title", icon: "H1"},
+    %{key: "h2", label: "Heading 2", hint: "Medium section title", icon: "H2"},
+    %{key: "bullet", label: "Bulleted list", hint: "A simple list", icon: "•"},
+    %{key: "ordered", label: "Numbered list", hint: "A list with order", icon: "1."},
+    %{key: "quote", label: "Quote", hint: "Highlight a passage", icon: "❝"},
+    %{key: "code", label: "Code block", hint: "Monospaced text", icon: "</>"},
+    %{key: "divider", label: "Divider", hint: "A horizontal rule", icon: "—"}
+  ]
+
+  @doc """
+  Pushes `html` to the editor `id`, inserted at the caret (replacing the selection): the answer to
+  `on_ai`, from `handle_event/3` or `handle_info/2`. The editor cleans it like pasted text.
+  """
+  @spec insert_html(Phoenix.LiveView.Socket.t(), String.t(), String.t()) ::
+          Phoenix.LiveView.Socket.t()
+  def insert_html(%Phoenix.LiveView.Socket{} = socket, id, html),
+    do: Phoenix.LiveView.push_event(socket, "linea:editor-insert", %{id: id, html: html})
 
   @buttons ~w(bold italic underline strike blockquote code-block code header-1 header-2 list-ordered list-bullet script-sub script-super indent-minus1 indent-plus1 direction-rtl link clean)
 
@@ -76,8 +121,73 @@ defmodule LineaUI.Components.TextEditor do
   attr :on_change, :string, default: nil
   attr :debounce, :integer, default: 300
   attr :target, :any, default: nil
+
+  attr :variant, :string,
+    default: "default",
+    values: ~w(default comment),
+    doc:
+      "`comment` is the compact editor of a thread: no toolbar, a bar under the text with the mention button, the `:actions` and the submit button."
+
+  attr :slash, :boolean,
+    default: false,
+    doc: "Typing \"/\" at the start of a word opens the menu of blocks (and the `variables`)."
+
+  attr :slash_items, :list,
+    default: @slash_items,
+    doc:
+      "The entries of the menu: maps with `key` (`paragraph h1 h2 bullet ordered quote code divider`), `label`, and optionally `hint` and `icon` (a short text)."
+
+  attr :slash_title, :string, default: "Insert", doc: "The caption of the \"/\" menu."
+
+  attr :variables, :list,
+    default: [],
+    doc:
+      "Names of the placeholders of a template (`[\"cliente\"]`): `{cliente}` is shown as a chip, sent as plain text, and offered in the \"/\" menu."
+
+  attr :variable_label, :string, default: "Variable", doc: "The hint of a variable in the menu."
+
+  attr :mentions, :list,
+    default: [],
+    doc:
+      "People that \"@\" can mention: maps with `handle` and `label`. A mention is a chip, sent as `@handle`."
+
+  attr :mention_title, :string, default: "Mention someone", doc: "The caption of the \"@\" menu."
+
+  attr :mention_label, :string,
+    default: "Mention",
+    doc: "The label of the mention button of a comment."
+
+  attr :on_ai, :string,
+    default: nil,
+    doc:
+      "The event the `:ai` button pushes, with `%{\"id\" => id, \"value\" => html, \"selection\" => text}`; answer with `insert_html/3`."
+
+  attr :on_submit, :string,
+    default: nil,
+    doc:
+      "The event Ctrl+Enter (and a comment's button) pushes, with `%{\"id\" => id, \"value\" => html, \"mentions\" => handles}`."
+
+  attr :submit_label, :string, default: "Comment"
+
+  attr :submit_key, :string,
+    default: "Ctrl ↵",
+    doc: "The shortcut shown next to a comment's button."
+
+  attr :clear_on_submit, :boolean, default: true, doc: "Empties the editor after it submits."
+
+  attr :footer, :boolean,
+    default: false,
+    doc: "A bar under the text with the `hint` and the word count."
+
+  attr :hint, :string, default: nil, doc: "The text at the start of the footer."
+  attr :words_label, :string, default: "words", doc: "The word after the count in the footer."
   attr :class, :any, default: nil
   attr :rest, :global
+
+  slot :ai,
+    doc: "The content of a button at the end of the toolbar that asks the assistant (`on_ai`)."
+
+  slot :actions, doc: "The buttons at the start of a comment's bar (attach...)."
 
   def text_editor(assigns) do
     assigns
@@ -86,8 +196,12 @@ defmodule LineaUI.Components.TextEditor do
     |> then(&assign_new(&1, :name, fn -> &1.id end))
     |> assign_new(:value, fn -> nil end)
     |> then(&assign(&1, :value, &1.value || ""))
+    |> then(&assign(&1, :content_class, content_class(&1.variant, &1.content_class)))
     |> render_editor()
   end
+
+  defp content_class("comment", "h-48"), do: "min-h-16"
+  defp content_class(_variant, content_class), do: content_class
 
   defp render_editor(assigns) do
     ~H"""
@@ -96,13 +210,32 @@ defmodule LineaUI.Components.TextEditor do
         id={@id}
         phx-hook="LineaUI.TextEditor"
         phx-target={@target}
-        class={merge(["w-full", @label && "mt-1.5", @filled && "ql-header-filled", @class])}
+        class={
+          merge([
+            "relative w-full",
+            @label && "mt-1.5",
+            @filled && "ql-header-filled",
+            @variant == "comment" && "ql-comment",
+            @class
+          ])
+        }
         data-value={@value}
         data-on-change={@on_change}
         data-debounce={@debounce}
+        data-slash={@slash && Jason.encode!(@slash_items)}
+        data-slash-title={@slash_title}
+        data-variables={Jason.encode!(@variables)}
+        data-variable-label={@variable_label}
+        data-mentions={Jason.encode!(@mentions)}
+        data-mention-title={@mention_title}
+        data-on-ai={@on_ai}
+        data-on-submit={@on_submit}
+        data-clear-on-submit={to_string(@clear_on_submit)}
+        data-words-label={@words_label}
         {@rest}
       >
         <div
+          :if={@variant == "default"}
           class={[
             "ql-toolbar ql-snow",
             @errors != [] && "border-error",
@@ -115,6 +248,18 @@ defmodule LineaUI.Components.TextEditor do
           <span :for={group <- @toolbar} class="ql-formats">
             <.tool :for={tool <- group} tool={tool} id={@id} disabled={@disabled} />
           </span>
+          <button :if={@ai != []} type="button" class="ql-ai" disabled={@disabled} data-ai>
+            <svg
+              class="size-3.5"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              stroke="none"
+              aria-hidden="true"
+            >
+              <path d="M12 3l1.8 4.2L18 9l-4.2 1.8L12 15l-1.8-4.2L6 9l4.2-1.8z" />
+            </svg>
+            {render_slot(@ai)}
+          </button>
         </div>
         <div
           id={@id <> "-container"}
@@ -123,6 +268,7 @@ defmodule LineaUI.Components.TextEditor do
               "ql-container ql-snow",
               @errors != [] && "border-error",
               @disabled && "cursor-not-allowed bg-slate-50 opacity-60 dark:bg-navy-800",
+              @footer && "ql-has-footer",
               @content_class
             ])
           }
@@ -144,6 +290,38 @@ defmodule LineaUI.Components.TextEditor do
             <button type="button" data-link-save>{@save_label}</button>
           </div>
           <input type="hidden" id={@id <> "-input"} name={@name} value={@value} data-input />
+        </div>
+        <div :if={@footer} class="ql-footer" data-footer>
+          <span>{@hint}</span>
+          <span data-count></span>
+        </div>
+        <div :if={@variant == "comment"} class="ql-comment-bar" data-comment-bar>
+          {render_slot(@actions)}
+          <button
+            :if={@mentions != []}
+            type="button"
+            class="ql-comment-tool"
+            aria-label={@mention_label}
+            title={@mention_label}
+            disabled={@disabled}
+            data-mention-button
+          >
+            @
+          </button>
+          <kbd :if={@on_submit} class="ql-kbd">{@submit_key}</kbd>
+          <button type="button" class="ql-submit" disabled={@disabled} data-submit>
+            {@submit_label}
+          </button>
+        </div>
+        <div
+          id={@id <> "-menu"}
+          class="ql-menu"
+          role="listbox"
+          phx-update="ignore"
+          hidden
+          data-menu
+          aria-label={@slash_title}
+        >
         </div>
       </div>
     </Pickers.field>

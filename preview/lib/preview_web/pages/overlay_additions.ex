@@ -12,6 +12,32 @@ defmodule PreviewWeb.Pages.OverlayAdditions do
   def handle_event("undo", _params, socket),
     do: {:noreply, send_toast(socket, "Undone", kind: :info)}
 
+  def handle_event("progress", _params, socket) do
+    send(self(), {:progress, 0})
+
+    {:noreply,
+     send_toast(socket,
+       id: "emit",
+       value: 0,
+       title: "Issuing the NF-e",
+       description: "Validating the order…"
+     )}
+  end
+
+  def handle_info({:progress, value}, socket) when value >= 100 do
+    {:noreply,
+     update_toast(socket, "emit",
+       value: 100,
+       title: "NF-e 1284 authorized",
+       description: "Protocol 129261234567890"
+     )}
+  end
+
+  def handle_info({:progress, value}, socket) do
+    Process.send_after(self(), {:progress, value + 12}, 250)
+    {:noreply, update_toast(socket, "emit", value: value)}
+  end
+
   def handle_info(:authorized, socket) do
     {:noreply,
      send_toast(socket, "Invoice authorized",
@@ -39,6 +65,8 @@ defmodule PreviewWeb.Pages.OverlayAdditions do
     <.example title="Sheet" text="A drawer with a title, a scrolling body and a footer, stacked.">
       <.button color="primary" phx-click={LineaUI.open("detail")} id="open-detail">Detail</.button>
       <.button phx-click={LineaUI.open("small")} id="open-small">Small, left</.button>
+      <.button phx-click={LineaUI.open("flush")} id="open-flush">Flush</.button>
+      <.button phx-click={LineaUI.open("bottom")} id="open-bottom">Bottom</.button>
     </.example>
 
     <.example title="Toasts" text="Kinds, a description, actions, loading then the answer.">
@@ -51,6 +79,33 @@ defmodule PreviewWeb.Pages.OverlayAdditions do
       </.button>
       <.button id="toast-send" color="primary" phx-click="send">Send invoice</.button>
       <.button id="toast-clear" phx-click={clear_toasts()}>Clear</.button>
+    </.example>
+
+    <.example title="Aura and progress" text="A light around a toast, and a toast that fills.">
+      <.button
+        id="toast-aura"
+        phx-click={
+          show_toast("The assistant is reading NF 88.530",
+            kind: :info,
+            aura: true,
+            description: "Suggesting product, CFOP and markup."
+          )
+        }
+      >
+        Aura
+      </.button>
+      <.button
+        id="toast-aura-glow"
+        phx-click={
+          show_toast("Manifestation is due today", kind: :warning, aura: :glow, aura_size: :lg)
+        }
+      >
+        Glow
+      </.button>
+      <.button id="toast-progress" color="primary" phx-click="progress">Progress</.button>
+      <.aura size="lg" class="w-72 rounded-xl">
+        <div class="rounded-xl bg-white p-4 dark:bg-navy-700">Assistant checking the taxes…</div>
+      </.aura>
     </.example>
 
     <.example
@@ -181,6 +236,27 @@ defmodule PreviewWeb.Pages.OverlayAdditions do
           <.button phx-click={LineaUI.close("inner-confirm")}>Back</.button>
         </:footer>
       </.modal>
+    </.drawer>
+
+    <.drawer
+      id="flush"
+      placement="right"
+      variant="flush"
+      title="Flush sheet"
+      description="Glued to the edge."
+    >
+      <p>Body.</p>
+      <:footer><.button color="primary" phx-click={LineaUI.close("flush")}>Done</.button></:footer>
+    </.drawer>
+
+    <.drawer id="bottom" placement="bottom" variant="float">
+      <.sheet_header title="Filters" description="The phone's sheet." />
+      <.sheet_body>
+        <p :for={n <- 1..20}>Option {n}</p>
+      </.sheet_body>
+      <.sheet_footer>
+        <.button color="primary" phx-click={LineaUI.close("bottom")}>Apply</.button>
+      </.sheet_footer>
     </.drawer>
 
     <.modal id="confirm">
