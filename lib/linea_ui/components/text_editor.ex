@@ -215,6 +215,8 @@ defmodule LineaUI.Components.TextEditor do
             "relative w-full",
             @label && "mt-1.5",
             @filled && "ql-header-filled",
+            @variant == "default" && "ql-box",
+            @variant == "default" && @errors != [] && "border-error",
             @variant == "comment" && "ql-comment",
             @class
           ])
@@ -238,7 +240,6 @@ defmodule LineaUI.Components.TextEditor do
           :if={@variant == "default"}
           class={[
             "ql-toolbar ql-snow",
-            @errors != [] && "border-error",
             @disabled && "pointer-events-none opacity-60"
           ]}
           role="toolbar"
@@ -252,8 +253,11 @@ defmodule LineaUI.Components.TextEditor do
             <svg
               class="size-3.5"
               viewBox="0 0 24 24"
-              fill="currentColor"
-              stroke="none"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.6"
+              stroke-linecap="round"
+              stroke-linejoin="round"
               aria-hidden="true"
             >
               <path d="M12 3l1.8 4.2L18 9l-4.2 1.8L12 15l-1.8-4.2L6 9l4.2-1.8z" />
@@ -266,7 +270,6 @@ defmodule LineaUI.Components.TextEditor do
           class={
             merge([
               "ql-container ql-snow",
-              @errors != [] && "border-error",
               @disabled && "cursor-not-allowed bg-slate-50 opacity-60 dark:bg-navy-800",
               @footer && "ql-has-footer",
               @content_class
