@@ -156,6 +156,7 @@
 
   .rail-search {
     display: flex;
+    flex: none;
     align-items: center;
     gap: 0.625rem;
     height: 2.5rem;
@@ -367,7 +368,7 @@
     }
 
     .linea-rail[data-collapsed="true"] :is(.rail-label, .rail-sub) {
-      display: none;
+      display: none !important;
     }
 
     .linea-rail[data-collapsed="true"] .rail-search,
@@ -377,7 +378,7 @@
     }
 
     .linea-rail[data-collapsed="true"] .rail-search > :not(:first-child) {
-      display: none;
+      display: none !important;
     }
 
     .linea-rail[data-collapsed="true"] .rail-bar {

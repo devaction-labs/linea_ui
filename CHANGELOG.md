@@ -2,6 +2,8 @@
 
 ## 0.4.0
 
+- `framed_sidebar`: in the collapsed rail the search box is a square with the icon centered; what it hides (`rail-label`, the search text and shortcut) wins over utility classes such as the `kbd`'s own `display`.
+
 - `page_header` `variant="page"` has a `:leading` slot before the breadcrumb, where `rail_toggle/1` collapses the menu from
   the panel's corner. A `rail_module` that is open but does not hold the current page no longer gets the selected pill.
 - `page_header` with `clock`: two headers on one page no longer share the clock's id (it comes from `id`, or from the
