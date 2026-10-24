@@ -17,6 +17,17 @@ defmodule LineaUI.SkillTest do
     assert files["SKILL.md"] =~ ~S|<.icon name="huge-search-01"|
   end
 
+  test "the app shell reference carries the whole framed screen and its rules", %{files: files} do
+    shell = files["references/app_shell.md"]
+
+    for part <-
+          ~w(<.framed_sidebar <.rail_module <.rail_toggle <:leading> <:search> rail-label <:bottom>) do
+      assert shell =~ part
+    end
+
+    assert files["SKILL.md"] =~ "references/app_shell.md"
+  end
+
   test "a reference lists attrs in declaration order with their values, without Phoenix's generated sections",
        %{files: files} do
     button = files["references/button.md"]

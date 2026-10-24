@@ -91,28 +91,68 @@ defmodule LineaUI.Components.AppShell do
 
       <.app_shell id="shell" layout="framed">
         <:sidebar>
-          <.framed_sidebar id="menu" on_collapse="collapse" collapsed={@collapsed}>
+          <.framed_sidebar id="menu" collapsed={@collapsed} on_collapse="collapse" label="Main menu">
             <:brand><img src={~p"/images/mark.svg"} class="size-5" alt="" /></:brand>
             <:wordmark>Signetum</:wordmark>
+            <:workspace>
+              <.avatar size="2xs" initials="FS" color="primary" />
+              <span class="flex-1 text-sm">My Company Ltd</span>
+            </:workspace>
+            <:search>
+              <.icon name="huge-search-01" class="size-4 shrink-0" />
+              <span class="flex-1">Search</span>
+              <.kbd>Ctrl K</.kbd>
+            </:search>
             <.rail_link navigate={~p"/today"} label="Today" current={@current_path}><.icon name="huge-home-01" /></.rail_link>
             <.rail_module id="sales" label="Sales" badge="3" current={@current_path}>
               <:icon><.icon name="huge-shopping-cart-01" /></:icon>
               <:item navigate={~p"/orders"}>Orders</:item>
               <:item navigate={~p"/products"}>Products</:item>
             </.rail_module>
+            <.rail_link navigate={~p"/chat"} label="Chat" badge="2" current={@current_path}><.icon name="huge-message-01" /></.rail_link>
             <:bottom>
+              <.rail_link navigate={~p"/settings"} label="Settings" current={@current_path}><.icon name="huge-settings-02" /></.rail_link>
               <.rail_user name="Ana Souza" subtitle="Admin"><.avatar name="Ana Souza" color="auto" size="32" /></.rail_user>
             </:bottom>
           </.framed_sidebar>
         </:sidebar>
-        <.page_header variant="page" title="Order PV-1283" description="Clinica Santa Monica" clock>
+
+        <.page_header variant="page" title="Order PV-1283" description="Clinica Santa Monica" clock bell>
+          <:leading><.rail_toggle for="menu" label="Collapse menu" /></:leading>
           <:crumb navigate={~p"/orders"}>Orders</:crumb>
           <:crumb>PV-1283</:crumb>
-          <:badge><.badge color="info">Approved</.badge></:badge>
-          <:actions><.button color="primary">Issue NF-e</.button></:actions>
+          <:badge><.badge variant="soft" color="info">Approved</.badge></:badge>
+          <:actions>
+            <.button variant="outline">Duplicate</.button>
+            <.button color="primary">Issue NF-e</.button>
+          </:actions>
+          <:tabs>
+            <.tabs id="order-tabs" selected={@tab} on_change="tab">
+              <:tab name="items">Items</:tab>
+              <:tab name="payment">Payment</:tab>
+            </.tabs>
+          </:tabs>
         </.page_header>
-        …
+
+        <div class="grid flex-1 gap-4 lg:grid-cols-3">…the page…</div>
       </.app_shell>
+
+  Rules the markup needs, each one a thing that renders wrong when missed:
+
+    * The collapse button is `rail_toggle/1` in the `:leading` slot of the page header (the corner of the
+      panel), not inside the menu. It finds the menu by its `id`. `on_collapse` receives `%{"id" => id,
+      "collapsed" => boolean}`; assign `collapsed` back so the server knows, or leave it out and let the
+      browser keep the choice.
+    * The children of `:search` are laid out as the direct children of the search box: the icon first, then
+      the text and the shortcut. In the rail only the first child stays, centered. Do not wrap them in one
+      element, and put `class="rail-label"` on anything else that must disappear in the rail (the workspace
+      block does it by itself).
+    * `rail_module/1` is highlighted only when the current page is one of its items (pass `current` or mark
+      one `:item` `active`); opening a module by hand only shows its pages. Give every link `current={@current_path}`
+      or `active` so the right one is selected.
+    * `:bottom` is for what stays at the foot of the menu: settings and the person.
+    * Use `layout="framed"` on `app_shell` and put the page content after `page_header/1`; the panel is a
+      flex column, so a child with `flex-1` fills the rest.
   """
 
   use LineaUI.Component

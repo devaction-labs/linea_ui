@@ -109,6 +109,8 @@ defmodule LineaUI.Skill do
       `LineaUI.toggle(%JS{}, "id")` in a pipeline. `on_close`/`on_open` report back to the server.
     - Events a component emits go to the LiveView, or to a LiveComponent with `target={@myself}`.
       Lists (table, data_table, timeline...) accept `@streams.x` with `row_id`.
+    - A whole app screen (menu, page header, tabs, content) is one recipe: read the "framed shell" example in
+      references/app_shell.md and follow its rules instead of assembling the pieces from their separate references.
     - Every component forwards unknown attributes (`id`, `phx-*`, `data-*`, `aria-*`) to its root.
     - Icons: components draw their small glyphs (chevrons, close, check, arrows...) as LineOne's
       SVGs, or as Hugeicons when the app sets `config :linea_ui, :icons, :hugeicons` (with the
