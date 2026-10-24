@@ -10,7 +10,12 @@
   `version/0`, `installed_version/1` and `write!/1`.
 - `toast`: `aura` (`true`, `:dual`, `:glow`; `aura_size` `xs sm lg`; `aura_color`) runs a ring of light around a toast,
   `aura/1` does the same around any element, and a toast with a `value` is a progress toast that fills, turns into a
-  success at 100 and leaves by itself (`update_toast(socket, id, value: 64)`).
+  success at 100 and leaves by itself (`update_toast(socket, id, value: 64)`). A toast with a `kind`, `description`,
+  `actions`, `aura` or `value` is drawn as a surface card (white, `navy-700` in dark, `rounded-xl`, soft shadow) with a
+  36px icon tile tinted by the kind, its actions on the right (`variant` `outline solid soft`, `color` `primary error`
+  per action), the aura as a 1.5px ring on a track around the card, `bar: true` for a 3px progress bar, and a progress
+  toast turned into `kind: :error` as a failure. `color: "dark"` makes the card dark. LineOne's plain colored toast
+  (`color:` alone) is unchanged.
 - `drawer`: a sheet is `variant="float"` by default (12px margins, 16px corners, the whole height, a fixed footer);
   `variant="flush"` keeps the panel against the edge. `placement="bottom"` is the phone's sheet with a grab handle.
   `sheet_header/1`, `sheet_body/1` and `sheet_footer/1` lay a sheet out by hand.

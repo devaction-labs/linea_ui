@@ -123,6 +123,33 @@ defmodule LineaUI.Components.ToastTest do
     assert_raise ArgumentError, ~r/position/, fn -> Toast.changes("t", position: "left-top") end
   end
 
+  test "an action takes a variant and a color, and a toast a progress bar" do
+    assert [
+             %{"variant" => "solid", "color" => nil},
+             %{"variant" => "soft", "color" => "error"},
+             %{"variant" => nil, "color" => nil}
+           ] =
+             Toast.payload("x",
+               actions: [
+                 [label: "A", variant: :solid],
+                 [label: "B", variant: "soft", color: :error],
+                 [label: "C"]
+               ]
+             )["actions"]
+
+    assert_raise ArgumentError, ~r/action variant/, fn ->
+      Toast.payload("x", actions: [[label: "A", variant: :loud]])
+    end
+
+    assert_raise ArgumentError, ~r/action color/, fn ->
+      Toast.payload("x", actions: [[label: "A", color: :pink]])
+    end
+
+    assert %{"bar" => true} = Toast.payload("x", value: 10, bar: true)
+    assert %{"bar" => false} = Toast.payload("x", value: 10)
+    assert %{"bar" => true} = Toast.changes("t", bar: true)
+  end
+
   test "an aura and a progress value ride along and are checked" do
     assert %{"aura" => "default", "aura_size" => nil, "aura_color" => nil, "value" => nil} =
              Toast.payload("x", aura: true)

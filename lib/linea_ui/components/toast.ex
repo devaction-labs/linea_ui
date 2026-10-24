@@ -27,9 +27,10 @@ defmodule LineaUI.Components.Toast do
 
   ## Kinds, descriptions and actions
 
-  `kind` (`neutral info success warning error loading`) draws the toast with an icon and a title,
-  in the color of the kind unless `color` says otherwise; `description` adds a second line and
-  `actions` a row of buttons:
+  `kind` (`neutral info success warning error loading`) draws the toast as a card (white, `navy-700`
+  in dark) with the icon in a tile tinted by the kind (or by `color`, `dark` makes the whole card dark)
+  and a title; `description` adds a second line and `actions` put buttons on the right. A toast with
+  none of `kind`, `description`, `actions`, `aura` or `value` stays LineOne's plain colored note:
 
       send_toast(socket, "Invoice sent",
         kind: :success,
@@ -44,7 +45,9 @@ defmodule LineaUI.Components.Toast do
   An action takes `label` and one of `event` (pushed to the LiveView with `value` merged with
   `%{"toast_id" => id}`, to `target` when given), `js` (a `%JS{}` run in the browser) or `href`
   (a link). It closes the toast unless `dismiss: false`; `[label: "Close", dismiss: true]` alone
-  only closes it.
+  only closes it. `variant` (`outline` by default, `solid`, `soft`) and `color` (`primary`, `error`)
+  set the look of the button: `[label: "Review", variant: :solid]`, `[label: "Retry", variant: :soft,
+  color: :error]`.
 
   ## Loading, then the answer
 
@@ -79,8 +82,10 @@ defmodule LineaUI.Components.Toast do
   ## Progress
 
   A toast with a `value` (0 to 100) is a progress toast: a fill grows behind it, a spinner turns and the
-  percentage shows. At 100 it becomes a success and leaves by itself after 1.6 s (or its `duration`);
-  below 100 it stays and has no close button unless `close: true`. Move it with `update_toast/3`:
+  percentage shows (`bar: true` draws a 3px bar at the bottom instead, without the percentage). At 100 it
+  becomes a success and leaves by itself after 1.6 s (or its `duration`); below 100 it stays and has no
+  close button unless `close: true`. Turning it into `kind: :error` makes it a failure: a red card that
+  stays, with the reason in the `description` and, say, a retry action. Move it with `update_toast/3`:
 
       socket = send_toast(socket, "Issuing the NF-e", id: "nfe-42", value: 0, description: "Validating…")
       # later, in handle_info/2
@@ -114,6 +119,8 @@ defmodule LineaUI.Components.Toast do
   @aura_variants ~w(default dual glow)
   @aura_sizes ~w(xs sm lg)
   @aura_colors ~w(assistant primary secondary info success warning error)
+  @action_variants ~w(outline solid soft)
+  @action_colors ~w(primary error)
   @kind_icons %{
     "info" => :info_circle,
     "success" => :check_circle,
@@ -185,10 +192,10 @@ defmodule LineaUI.Components.Toast do
       {@rest}
     >
       <template :for={{kind, name} <- @icons} data-toast-icon={kind}>
-        <.glyph name={name} class="size-5" />
+        <.glyph name={name} class="size-4.5" />
       </template>
       <template data-toast-icon="loading">
-        <.spinner color="current" size="xs" label={@loading_label} class="size-4.5" />
+        <.spinner color="current" size="xs" label={@loading_label} class="size-4" />
       </template>
     </div>
     """
@@ -352,7 +359,8 @@ defmodule LineaUI.Components.Toast do
       "aura" => opts |> Keyword.get(:aura) |> aura!(),
       "aura_size" => opts |> Keyword.get(:aura_size) |> aura_size!(),
       "aura_color" => opts |> Keyword.get(:aura_color) |> aura_color!(),
-      "value" => opts |> Keyword.get(:value) |> value!()
+      "value" => opts |> Keyword.get(:value) |> value!(),
+      "bar" => Keyword.get(opts, :bar, false)
     }
   end
 
@@ -377,6 +385,7 @@ defmodule LineaUI.Components.Toast do
   defp change({:aura_size, value}), do: {"aura_size", aura_size!(value)}
   defp change({:aura_color, value}), do: {"aura_color", aura_color!(value)}
   defp change({:value, value}), do: {"value", value!(value)}
+  defp change({:bar, value}), do: {"bar", value}
 
   defp change({key, _value}),
     do: raise(ArgumentError, "update_toast/3 does not change #{inspect(key)}")
@@ -418,12 +427,17 @@ defmodule LineaUI.Components.Toast do
       "target" => Map.get(action, :target),
       "js" => Map.get(action, :js),
       "href" => Map.get(action, :href),
-      "dismiss" => Map.get(action, :dismiss, true)
+      "dismiss" => Map.get(action, :dismiss, true),
+      "variant" => action |> Map.get(:variant) |> action_option!(@action_variants, :variant),
+      "color" => action |> Map.get(:color) |> action_option!(@action_colors, :color)
     }
   end
 
   defp action!(action),
     do: raise(ArgumentError, "a toast action needs a :label, got #{inspect(action)}")
+
+  defp action_option!(nil, _allowed, _key), do: nil
+  defp action_option!(value, allowed, key), do: check!(to_string(value), allowed, "action #{key}")
 
   defp check!(value, allowed, key) do
     case value in allowed do

@@ -1,6 +1,6 @@
 import test from "node:test"
 import assert from "node:assert/strict"
-import {PROGRESS_DONE_MS, actionPayload, auraOf, closeFor, colorFor, colorOf, durationFor, durationOf, encodedJS, isRich, kindOf, mergeToast, offsets, positionOf, progressKind, progressOf, resumeAfter, stack, timeLeft, unseen} from "./notice_logic.js"
+import {PROGRESS_DONE_MS, actionPayload, auraOf, closeFor, colorFor, colorOf, durationFor, durationOf, encodedJS, failedOf, isRich, kindOf, mergeToast, offsets, positionOf, progressKind, progressOf, resumeAfter, stack, timeLeft, unseen, withKindColor} from "./notice_logic.js"
 
 test("an unknown color is neutral", () => {
   assert.equal(colorOf("success"), "success")
@@ -72,6 +72,7 @@ test("a kind, a description or actions make the rich layout; a plain message kee
   assert.equal(isRich({kind: "info"}), true)
   assert.equal(isRich({description: "More"}), true)
   assert.equal(isRich({actions: [{label: "Undo"}]}), true)
+  assert.equal(isRich({message: "Reading", aura: "default"}), true)
 })
 
 test("loading stays until it changes, errors stay when the toaster persists them", () => {
@@ -97,6 +98,13 @@ test("an update keeps what it does not say", () => {
   assert.deepEqual(mergeToast(toast, undefined), toast)
 })
 
+test("an update to a kind takes the kind's color unless it brings one", () => {
+  assert.deepEqual(withKindColor({id: "t", kind: "error"}), {id: "t", kind: "error", color: "error"})
+  assert.deepEqual(withKindColor({id: "t", kind: "loading"}), {id: "t", kind: "loading", color: "neutral"})
+  assert.deepEqual(withKindColor({id: "t", kind: "error", color: "dark"}), {id: "t", kind: "error", color: "dark"})
+  assert.deepEqual(withKindColor({id: "t", description: "d"}), {id: "t", description: "d"})
+})
+
 test("an action pushes its value with the toast's id, and its JS as a string", () => {
   assert.deepEqual(actionPayload({value: {id: 1}}, "t"), {id: 1, toast_id: "t"})
   assert.deepEqual(actionPayload({}, "t"), {toast_id: "t"})
@@ -115,7 +123,15 @@ test("a toast with a value is a progress toast that spins, then succeeds at 100"
   assert.equal(progressKind({value: 100}), "success")
   assert.equal(progressKind({kind: "info", value: 10}), "info")
   assert.equal(colorFor({color: "primary", value: 10}), "neutral")
+  assert.equal(colorFor({color: "dark", value: 10}), "dark")
   assert.equal(isRich({value: 0}), true)
+})
+
+test("a progress toast that turned into an error is a failure", () => {
+  assert.equal(failedOf({kind: "error", value: 40}), true)
+  assert.equal(failedOf({kind: "error"}), false)
+  assert.equal(failedOf({kind: "error", value: null}), false)
+  assert.equal(failedOf({kind: "info", value: 40}), false)
 })
 
 test("a progress toast stays until it is full, leaves after a moment and closes only when asked", () => {

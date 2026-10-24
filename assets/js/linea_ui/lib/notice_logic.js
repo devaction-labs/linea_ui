@@ -108,19 +108,23 @@ export const progressOf = ({kind, value}) =>
     ? null
     : Math.min(Math.max(Number(value), 0), 100)
 
+/** Whether a progress toast failed: it has a `value` and became an `error`. */
+export const failedOf = ({kind, value}) =>
+  kind === "error" && value !== null && value !== undefined && value !== "" && Number.isFinite(Number(value))
+
 /** The kind a toast is drawn with: a progress toast spins while it runs and turns into a success at 100. */
 export const progressKind = (input) => {
   const progress = progressOf(input)
   return progress === null ? input.kind : progress >= 100 ? "success" : (input.kind ?? "loading")
 }
 
-/** The color a toast is drawn in: its own `color`, else its kind's, else `neutral`; a progress toast is a neutral card. */
+/** The color a toast is drawn in: its own `color`, else its kind's, else `neutral`; a progress toast is a neutral card, or a dark one. */
 export const colorFor = (input) =>
-  progressOf(input) === null ? colorOf(input.color ?? KIND_COLORS[input.kind] ?? "neutral") : "neutral"
+  progressOf(input) === null ? colorOf(input.color ?? KIND_COLORS[input.kind] ?? "neutral") : input.color === "dark" ? "dark" : "neutral"
 
 /** Whether a toast takes the layout with icon, title, description and actions instead of LineOne's one line. */
 export const isRich = (input) =>
-  Boolean(kindOf(input.kind) || input.description || input.actions?.length || progressOf(input) !== null)
+  Boolean(kindOf(input.kind) || input.description || input.actions?.length || input.aura || progressOf(input) !== null)
 
 /**
  * How long a toast stays: a `loading` one until it changes, a progress one until it reaches 100 and then
@@ -170,6 +174,10 @@ export const mergeToast = (toast, changes) =>
     (merged, [key, value]) => (value === null || value === undefined ? merged : {...merged, [key]: value}),
     toast,
   )
+
+/** An update that changes the `kind` without a `color` takes the new kind's color. */
+export const withKindColor = (changes) =>
+  changes.kind && !changes.color ? {...changes, color: KIND_COLORS[changes.kind] ?? "neutral"} : changes
 
 /** What an action's event pushes: its `value` with the id of the toast. */
 export const actionPayload = (action, id) => ({...(action.value ?? {}), toast_id: id})

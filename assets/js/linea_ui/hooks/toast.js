@@ -7,6 +7,7 @@ import {
   colorFor,
   durationFor,
   encodedJS,
+  failedOf,
   isRich,
   kindOf,
   mergeToast,
@@ -17,6 +18,7 @@ import {
   stack,
   timeLeft,
   unseen,
+  withKindColor,
 } from "../lib/notice_logic.js"
 
 const FLASH_KEY = "linea_toast"
@@ -38,9 +40,11 @@ const FLASH_KEY = "linea_toast"
  * DOM event. An action pushes its `event` (to its `target` when given) with `value` and `toast_id`, runs its `js`,
  * or follows its `href`, then closes the toast unless `dismiss` is false.
  *
- * `aura` (with `aura_size`, `aura_color`) puts the rotating light of `.linea-aura` around the toast. A numeric `value`
- * makes a progress toast: a fill grows behind it, a spinner turns until 100, then it becomes a success and leaves by
- * itself; `linea:toast-update` with a new `value` moves it.
+ * A rich toast is a surface card with a tile for the icon (tinted by the color or kind) and its actions on the right.
+ * `aura` (with `aura_size`, `aura_color`) runs a ring of light around the card. A numeric `value` makes a progress
+ * toast: a fill grows behind it (a 3px bar at the bottom with `bar`), a spinner turns until 100, then it becomes a
+ * success and leaves by itself; `linea:toast-update` with a new `value` moves it, and a `kind` of `error` on a toast that
+ * had a `value` turns it into a failure.
  */
 const COLLAPSE_MS = 150
 
@@ -99,7 +103,7 @@ export default {
 
     change(changes) {
       const toast = this.find(changes.id)
-      toast && this.replace(toast, mergeToast(toast.input, changes))
+      toast && this.replace(toast, mergeToast(toast.input, withKindColor(changes)))
     },
 
     dismiss({id, all}) {
@@ -146,12 +150,13 @@ export default {
     render(input, toast) {
       const el = document.createElement("div")
       const template = input.template && document.getElementById(input.template)
+      const rich = !template && isRich(input)
       const color = colorFor(input)
       el.className = `toastify toastify-${toast.position.x} toastify-${toast.position.y}`
       el.dataset.toastId = toast.id
-      color === "neutral" || el.classList.add(color)
+      rich ? (el.dataset.tone = color) : color === "neutral" || el.classList.add(color)
       el.setAttribute("role", color === "error" ? "alert" : "status")
-      const fill = template ? () => this.fillTemplate(el, template) : isRich(input) ? () => this.fillRich(el, input, toast) : () => this.fillText(el, input)
+      const fill = template ? () => this.fillTemplate(el, template) : rich ? () => this.fillRich(el, input, toast) : () => this.fillText(el, input)
       fill()
       this.decorate(el, input, toast)
       el.querySelectorAll("[data-toast-dismiss]").forEach((button) => button.addEventListener("click", () => this.remove(toast)))
@@ -165,18 +170,30 @@ export default {
       const progress = progressOf(input)
       el.classList.toggle("linea-aura", aura !== null)
       aura ? Object.assign(el.dataset, {aura: aura.variant, auraSize: aura.size, auraColor: aura.color}) : ["aura", "auraSize", "auraColor"].forEach((key) => delete el.dataset[key])
-      progress === null || this.fillProgress(el, progress, toast)
+      progress === null || this.fillProgress(el, progress, toast, Boolean(input.bar))
+      failedOf(input) && this.fillFailed(el)
     },
 
-    fillProgress(el, progress, toast) {
-      const fill = this.part("span", "toast-fill")
-      fill.setAttribute("aria-hidden", "true")
-      fill.style.width = `${toast.progress ?? 0}%`
+    fillProgress(el, progress, toast, bar) {
+      const meter = bar ? document.createElement("i") : this.part("span", "toast-fill")
+      const track = bar ? this.part("span", "toast-bar", meter) : meter
+      track.setAttribute("aria-hidden", "true")
+      meter.style.width = `${toast.progress ?? 0}%`
       el.classList.add("has-progress")
       el.dataset.state = progress >= 100 ? "done" : "running"
-      el.prepend(fill)
-      requestAnimationFrame(() => (fill.style.width = `${progress}%`))
+      bar && (el.dataset.bar = "")
+      el.prepend(track)
+      requestAnimationFrame(() => (meter.style.width = `${progress}%`))
       toast.progress = progress
+    },
+
+    fillFailed(el) {
+      const fill = this.part("span", "toast-fill")
+      fill.setAttribute("aria-hidden", "true")
+      fill.style.width = "100%"
+      el.classList.add("has-progress")
+      el.dataset.state = "failed"
+      el.prepend(fill)
     },
 
     fillText(el, input) {
@@ -197,9 +214,9 @@ export default {
       input.message && body.append(this.part("p", "toast-title", input.message))
       input.description && body.append(this.part("p", "toast-desc", input.description))
       const actions = (input.actions ?? []).map((action) => this.action(action, toast))
-      actions.length > 0 && body.append(this.part("div", "toast-actions", ...actions))
       el.append(body)
-      progress === null || el.append(this.part("span", "toast-pct", `${Math.round(progress)}%`))
+      actions.length > 0 && el.append(this.part("div", "toast-actions", ...actions))
+      progress === null || input.bar || el.append(this.part("span", "toast-pct", `${Math.round(progress)}%`))
       closeFor(input, toast.duration) && el.append(this.closeButton())
     },
 
@@ -213,6 +230,8 @@ export default {
     action(action, toast) {
       const node = document.createElement(action.href ? "a" : "button")
       node.className = "toast-action"
+      action.variant && (node.dataset.variant = action.variant)
+      action.color && (node.dataset.color = action.color)
       node.textContent = action.label ?? ""
       action.href ? (node.href = action.href) : (node.type = "button")
       node.addEventListener("click", () => this.runAction(action, toast))

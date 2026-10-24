@@ -249,92 +249,274 @@
     @apply bg-slate-100 text-slate-800 dark:bg-navy-600 dark:text-navy-100;
   }
 
-  /* toasts with a kind, a description or actions */
   .toastify.rich {
-    @apply flex items-start gap-3 py-3 pr-4 pl-3.5 font-normal;
-    min-width: 18rem;
-    max-width: min(26rem, calc(100vw - 30px));
+    --toast-ai: var(--color-primary);
+    --toast-ok: var(--color-emerald-600);
+    --toast-bad: var(--color-error-focus);
+    --toast-bg: #fff;
+    --toast-ring: transparent;
+    --toast-track: var(--color-indigo-100);
+    --toast-shadow: 0 12px 30px rgb(15 23 42 / 0.1);
+    @apply flex items-center gap-3 rounded-xl px-4 py-3.5 font-normal text-slate-800;
+    width: 26.25rem;
+    max-width: calc(100vw - 30px);
+    background: var(--toast-bg);
+    box-shadow: var(--toast-shadow), 0 0 0 1px var(--toast-ring);
+  }
+
+  .dark .toastify.rich {
+    --toast-ai: var(--color-indigo-300);
+    --toast-ok: var(--color-success);
+    --toast-bad: var(--color-error);
+    --toast-bg: var(--color-navy-700);
+    --toast-ring: var(--color-navy-500);
+    --toast-track: var(--color-navy-500);
+    --toast-shadow: 0 12px 30px rgb(0 0 0 / 0.35);
+    @apply text-navy-50;
+  }
+
+  .toastify.rich[data-tone="dark"] {
+    --toast-bg: var(--color-navy-900);
+    --toast-ring: transparent;
+    --toast-track: #2c3a55;
+    @apply text-white;
+  }
+
+  .dark .toastify.rich[data-tone="dark"] {
+    --toast-bg: #0f1522;
   }
 
   .toastify.rich .toast-icon {
-    @apply mt-px flex size-5 shrink-0 items-center justify-center;
+    @apply flex size-9 shrink-0 items-center justify-center rounded-[10px] bg-slate-150 text-slate-500 dark:bg-navy-600 dark:text-navy-200;
+  }
+
+  .toastify.rich .toast-icon > svg {
+    @apply size-4.5;
+  }
+
+  .toastify.rich[data-tone="primary"] .toast-icon,
+  .toastify.rich[data-state="running"] .toast-icon,
+  .toastify.rich[aria-busy="true"] .toast-icon {
+    background-color: color-mix(in oklab, var(--color-primary) 8%, white);
+    color: var(--toast-ai);
+  }
+
+  .dark .toastify.rich[data-tone="primary"] .toast-icon,
+  .dark .toastify.rich[data-state="running"] .toast-icon,
+  .dark .toastify.rich[aria-busy="true"] .toast-icon {
+    background-color: color-mix(in oklab, var(--color-accent) 20%, transparent);
+  }
+
+  .toastify.rich[data-tone="secondary"] .toast-icon {
+    background-color: color-mix(in oklab, var(--color-secondary) 10%, transparent);
+    color: var(--color-secondary);
+  }
+
+  .toastify.rich[data-tone="info"] .toast-icon {
+    background-color: color-mix(in oklab, var(--color-info) 10%, transparent);
+    color: var(--color-sky-600);
+  }
+
+  .toastify.rich[data-tone="success"] .toast-icon,
+  .toastify.rich[data-state="done"] .toast-icon {
+    background-color: color-mix(in oklab, var(--color-success) 10%, transparent);
+    color: var(--toast-ok);
+  }
+
+  .toastify.rich[data-tone="warning"] .toast-icon {
+    background-color: color-mix(in oklab, var(--color-warning) 10%, transparent);
+    color: var(--color-warning-focus);
+  }
+
+  .toastify.rich[data-tone="error"] .toast-icon,
+  .toastify.rich[data-state="failed"] .toast-icon {
+    background-color: color-mix(in oklab, var(--color-error) 10%, transparent);
+    color: var(--toast-bad);
+  }
+
+  .dark .toastify.rich:is([data-tone="secondary"], [data-tone="success"], [data-state="done"], [data-tone="warning"], [data-tone="error"], [data-state="failed"]) .toast-icon {
+    background-color: color-mix(in oklab, currentColor 15%, transparent);
+  }
+
+  .dark .toastify.rich[data-tone="info"] .toast-icon {
+    background-color: color-mix(in oklab, var(--color-info) 15%, transparent);
+    color: var(--color-info);
+  }
+
+  .toastify.rich[data-tone="info"][data-aura-color="assistant"] .toast-icon {
+    background: linear-gradient(135deg, var(--linea-aura-1), var(--linea-aura-2));
+    color: #fff;
+  }
+
+  .toastify.rich[data-tone="dark"]:not([data-state], [aria-busy="true"]) .toast-icon {
+    background-color: rgb(255 255 255 / 0.12);
+    color: var(--color-navy-100);
+  }
+
+  .toastify.rich[data-tone="dark"][aria-busy="true"] .toast-icon,
+  .toastify.rich[data-tone="dark"][data-state="running"] .toast-icon {
+    background-color: color-mix(in oklab, var(--color-accent) 25%, transparent);
+    color: var(--toast-ai);
   }
 
   .toastify.rich .toast-body {
-    @apply min-w-0 flex-1;
+    @apply flex min-w-0 flex-1 flex-col gap-px;
   }
 
   .toastify.rich .toast-title {
-    @apply font-medium;
+    @apply text-sm font-semibold text-slate-800 dark:text-navy-50;
   }
 
   .toastify.rich .toast-desc {
-    @apply mt-0.5 text-xs-plus opacity-85;
+    @apply text-xs-plus text-slate-500 dark:text-navy-200;
+  }
+
+  .toastify.rich[data-tone="dark"] .toast-title {
+    @apply text-white;
+  }
+
+  .toastify.rich[data-tone="dark"] .toast-desc {
+    @apply text-navy-200;
   }
 
   .toastify.rich .toast-actions {
-    @apply mt-2.5 flex flex-wrap gap-2;
+    @apply flex shrink-0 gap-2;
   }
 
   .toastify.rich .toast-action {
-    @apply inline-flex h-7 cursor-pointer items-center rounded-sm px-2.5 text-xs-plus font-medium transition-colors;
-    background-color: color-mix(in oklab, currentColor 14%, transparent);
+    @apply inline-flex h-8 cursor-pointer items-center rounded-lg px-3.5 text-xs-plus font-medium whitespace-nowrap text-slate-800 transition-colors dark:text-navy-50;
+    box-shadow: inset 0 0 0 1px var(--color-slate-300);
   }
 
-  .toastify.rich .toast-action:hover,
-  .toastify.rich .toast-action:focus-visible {
-    background-color: color-mix(in oklab, currentColor 24%, transparent);
-    outline: none;
+  .dark .toastify.rich .toast-action {
+    box-shadow: inset 0 0 0 1px var(--color-navy-450);
+  }
+
+  .toastify.rich .toast-action:is(:hover, :focus-visible) {
+    @apply bg-slate-150 outline-none dark:bg-navy-600;
+  }
+
+  .toastify.rich .toast-action[data-color="error"] {
+    color: var(--toast-bad);
+  }
+
+  .toastify.rich .toast-action[data-variant="solid"] {
+    @apply bg-primary text-white dark:bg-accent;
+    box-shadow: none;
+  }
+
+  .toastify.rich .toast-action[data-variant="solid"]:is(:hover, :focus-visible) {
+    @apply bg-primary-focus dark:bg-accent-focus;
+  }
+
+  .toastify.rich .toast-action[data-variant="soft"] {
+    background-color: color-mix(in oklab, var(--color-primary) 10%, transparent);
+    color: var(--toast-ai);
+    box-shadow: none;
+  }
+
+  .toastify.rich .toast-action[data-variant="soft"][data-color="error"] {
+    background-color: color-mix(in oklab, var(--color-error) 10%, transparent);
+    color: var(--toast-bad);
+  }
+
+  .dark .toastify.rich .toast-action[data-variant="soft"] {
+    background-color: color-mix(in oklab, var(--color-accent) 20%, transparent);
+  }
+
+  .dark .toastify.rich .toast-action[data-variant="soft"][data-color="error"] {
+    background-color: color-mix(in oklab, var(--color-error) 15%, transparent);
+  }
+
+  .toastify.rich .toast-action[data-variant="soft"]:is(:hover, :focus-visible) {
+    background-color: color-mix(in oklab, currentColor 18%, transparent);
+  }
+
+  .toastify.rich[data-tone="dark"] .toast-action:not([data-variant]) {
+    @apply bg-[#2c3a55] text-white;
+    box-shadow: none;
   }
 
   .toastify.rich .toast-close {
-    margin: -2px -6px 0 0;
+    @apply text-slate-400 dark:text-navy-300;
+    margin: 0 -6px 0 0;
+  }
+
+  .toastify.rich .toast-close:is(:hover, :focus-visible) {
+    @apply bg-slate-150 text-slate-600 dark:bg-navy-600 dark:text-navy-100;
   }
 
   .toastify.has-progress {
-    @apply items-center bg-white text-slate-800 dark:bg-navy-700 dark:text-navy-50;
+    --toast-border: color-mix(in oklab, var(--toast-ai) 30%, transparent);
     box-shadow:
-      0 12px 30px rgb(15 23 42 / 0.1),
-      inset 0 0 0 1px color-mix(in oklab, var(--linea-aura-1) 30%, transparent);
+      var(--toast-shadow),
+      inset 0 0 0 1px var(--toast-border);
   }
 
   .toastify.has-progress[data-state="done"] {
-    box-shadow:
-      0 12px 30px rgb(15 23 42 / 0.1),
-      inset 0 0 0 1px color-mix(in oklab, var(--color-success) 35%, transparent);
+    --toast-border: color-mix(in oklab, var(--toast-ok) 35%, transparent);
   }
 
-  .toastify.has-progress > :not(.toast-fill) {
+  .toastify.has-progress[data-state="failed"] {
+    --toast-border: color-mix(in oklab, var(--toast-bad) 35%, transparent);
+  }
+
+  .toastify.has-progress > :not(.toast-fill, .toast-bar) {
     @apply relative;
-  }
-
-  .toastify.has-progress .toast-icon {
-    color: var(--linea-aura-1);
-  }
-
-  .toastify.has-progress[data-state="done"] .toast-icon {
-    color: var(--color-success);
   }
 
   .toastify .toast-fill {
     @apply pointer-events-none absolute inset-y-0 left-0;
-    background-color: color-mix(in oklab, var(--linea-aura-1) 14%, transparent);
+    background-color: color-mix(in oklab, var(--toast-ai) 14%, transparent);
     transition:
       width 0.15s linear,
       background-color 0.3s;
   }
 
   .toastify[data-state="done"] .toast-fill {
-    background-color: color-mix(in oklab, var(--color-success) 12%, transparent);
+    background-color: color-mix(in oklab, var(--toast-ok) 12%, transparent);
+  }
+
+  .toastify[data-state="failed"] .toast-fill {
+    background-color: color-mix(in oklab, var(--color-error) 10%, transparent);
+  }
+
+  .dark .toastify[data-state="failed"] .toast-fill {
+    background-color: color-mix(in oklab, var(--color-error) 15%, transparent);
+  }
+
+  .toastify.rich[data-bar] {
+    padding-bottom: calc(0.875rem + 3px);
+  }
+
+  .toastify .toast-bar {
+    @apply pointer-events-none absolute inset-x-0 bottom-0 h-[3px];
+    background-color: color-mix(in oklab, var(--toast-ai) 15%, transparent);
+  }
+
+  .toastify[data-tone="dark"] .toast-bar {
+    background-color: rgb(255 255 255 / 0.12);
+  }
+
+  .toastify .toast-bar > i {
+    @apply block h-[3px];
+    background: linear-gradient(90deg, var(--color-accent-light), #c084fc);
+    transition:
+      width 0.15s linear,
+      background 0.3s;
+  }
+
+  .toastify[data-state="done"] .toast-bar > i {
+    background: var(--color-emerald-400);
   }
 
   .toastify .toast-pct {
-    @apply font-mono text-sm font-medium;
-    color: var(--linea-aura-1);
+    @apply font-mono text-xs-plus font-medium;
+    color: var(--toast-ai);
   }
 
   .toastify[data-state="done"] .toast-pct {
-    color: var(--color-success);
+    color: var(--toast-ok);
   }
 
   :root {
@@ -394,7 +576,7 @@
     --linea-aura-2: var(--color-error-focus);
   }
 
-  .linea-aura:is([data-aura="default"], [data-aura="dual"])::before {
+  .linea-aura:not(.rich):is([data-aura="default"], [data-aura="dual"])::before {
     content: "";
     position: absolute;
     inset: 0;
@@ -429,8 +611,45 @@
   }
 
   .linea-aura[data-aura="glow"] {
-    --linea-aura-glow: color-mix(in oklab, var(--color-error) 55%, transparent);
+    --linea-aura-glow: color-mix(in oklab, var(--color-error-focus) 50%, transparent);
     animation: linea-aura-glow 2s ease-in-out infinite;
+  }
+
+  .dark .linea-aura[data-aura="glow"] {
+    --linea-aura-glow: color-mix(in oklab, var(--color-error) 55%, transparent);
+  }
+
+  .toastify.rich:is([data-aura="default"], [data-aura="dual"]) {
+    border: var(--linea-aura-w) solid transparent;
+    border-radius: calc(0.75rem + var(--linea-aura-w));
+    background:
+      linear-gradient(var(--toast-bg) 0 0) padding-box,
+      conic-gradient(
+          from var(--linea-aura-angle),
+          transparent 0 60%,
+          var(--linea-aura-1) 76%,
+          var(--linea-aura-2) 84%,
+          transparent 94%
+        )
+        border-box,
+      var(--toast-track);
+    animation: linea-aura-spin 2.6s linear infinite;
+  }
+
+  .toastify.rich[data-aura="dual"] {
+    background:
+      linear-gradient(var(--toast-bg) 0 0) padding-box,
+      conic-gradient(
+          from var(--linea-aura-angle),
+          transparent 0 10%,
+          var(--linea-aura-1) 22%,
+          transparent 34% 60%,
+          var(--linea-aura-3) 72%,
+          transparent 84%
+        )
+        border-box,
+      var(--toast-track);
+    animation-duration: 3.2s;
   }
 
   @media (prefers-reduced-motion: reduce) {
