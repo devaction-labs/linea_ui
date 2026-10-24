@@ -115,17 +115,17 @@ defmodule LineaUI.Components.Card do
     "colored" => "text-lg font-medium tracking-wide line-clamp-1"
   }
 
-  @heading_color "[--card-hd:var(--color-slate-700)] dark:[--card-hd:var(--color-navy-100)]"
+  @heading_color "[--card-hd:var(--color-slate-700)] dark:[--card-hd:var(--color-navy-100)] [--card-panel:#fff] dark:[--card-panel:var(--color-navy-700)]"
 
   @sizes %{
     "xs" =>
       "text-xs [--card-px:0.625rem] [--card-py:0.625rem] [--card-gap:0.5rem] [--card-inset:0.125rem] [--card-h:0.8125rem] [--card-s:0.6875rem]",
     "sm" =>
-      "text-xs-plus [--card-px:0.875rem] [--card-py:0.875rem] [--card-gap:0.625rem] [--card-inset:0.1875rem] [--card-h:0.9375rem] [--card-s:0.75rem]",
+      "text-xs-plus [--card-px:0.875rem] [--card-py:0.875rem] [--card-gap:0.625rem] [--card-inset:0.1875rem] [--card-h:0.875rem] [--card-s:0.75rem]",
     "md" =>
-      "[--card-px:1rem] sm:[--card-px:1.25rem] [--card-py:1rem] [--card-gap:0.75rem] [--card-inset:0.25rem] [--card-h:1.125rem] [--card-s:0.8125rem]",
+      "[--card-px:1rem] sm:[--card-px:1.25rem] [--card-py:1rem] [--card-gap:0.75rem] [--card-inset:0.25rem] [--card-h:0.9375rem] [--card-s:0.8125rem]",
     "lg" =>
-      "text-base [--card-px:1.25rem] sm:[--card-px:1.5rem] [--card-py:1.25rem] sm:[--card-py:1.5rem] [--card-gap:1rem] [--card-inset:0.375rem] [--card-h:1.25rem] [--card-s:0.9375rem]"
+      "text-base [--card-px:1.25rem] sm:[--card-px:1.5rem] [--card-py:1.25rem] sm:[--card-py:1.5rem] [--card-gap:1rem] [--card-inset:0.375rem] [--card-h:1.0625rem] [--card-s:0.875rem]"
   }
 
   @corners %{
@@ -146,13 +146,13 @@ defmodule LineaUI.Components.Card do
     "seamless" =>
       "[--p-mx:0px] [--p-mt:0px] [--p-px:0px] [--p-py:0px] [--p-gap:var(--card-gap)] [--p-line:0px] [--p-band:transparent] [--b-mx:0px] [--b-mt:0px] [--b-px:0px] [--b-py:0px] [--b-bg:transparent] [--b-r:var(--card-r)] [--b-line:0px]",
     "divided" =>
-      "[--p-mx:calc(var(--card-px)*-1)] [--p-mt:calc(var(--card-py)*-1)] [--p-px:var(--card-px)] [--p-py:var(--card-py)] [--p-gap:0px] [--p-line:1px] [--p-band:transparent] [--b-mx:calc(var(--card-px)*-1)] [--b-mt:calc(var(--card-py)*-1)] [--b-px:var(--card-px)] [--b-py:var(--card-py)] [--b-bg:transparent] [--b-r:var(--card-r)] [--b-line:0px]",
+      "[--p-mx:calc(var(--card-px)*-1)] [--p-mt:calc(var(--card-py)*-1)] [--p-px:var(--card-px)] [--p-py:var(--card-py)] [--p-gap:0px] [--p-line:1px] [--p-band:transparent] [--b-mx:calc(var(--card-px)*-1)] [--b-mt:calc(var(--card-py)*-1)] [--b-px:var(--card-px)] [--b-py:var(--card-py)] [--b-bg:var(--card-panel,transparent)] [--b-r:var(--card-r)] [--b-line:0px]",
     "separated" =>
-      "[--p-mx:calc(var(--card-px)*-1)] [--p-mt:calc(var(--card-py)*-1)] [--p-px:var(--card-px)] [--p-py:var(--card-py)] [--p-gap:0px] [--p-line:0px] [--p-band:rgb(15_23_42/0.04)] dark:[--p-band:rgb(255_255_255/0.05)] [--b-mx:calc(var(--card-px)*-1)] [--b-mt:calc(var(--card-py)*-1)] [--b-px:var(--card-px)] [--b-py:var(--card-py)] [--b-bg:transparent] [--b-r:var(--card-r)] [--b-line:0px]",
+      "[--p-mx:calc(var(--card-px)*-1)] [--p-mt:calc(var(--card-py)*-1)] [--p-px:var(--card-px)] [--p-py:var(--card-py)] [--p-gap:0px] [--p-line:0px] [--p-band:rgb(15_23_42/0.04)] dark:[--p-band:rgb(255_255_255/0.05)] [--b-mx:calc(var(--card-px)*-1)] [--b-mt:calc(var(--card-py)*-1)] [--b-px:var(--card-px)] [--b-py:var(--card-py)] [--b-bg:var(--card-panel,transparent)] [--b-r:var(--card-r)] [--b-line:0px]",
     "inset" =>
-      "p-(--card-inset) [--p-mx:0px] [--p-mt:0px] [--p-px:var(--card-px)] [--p-py:var(--card-py)] [--p-gap:0px] [--p-line:0px] [--p-band:transparent] [--b-mx:0px] [--b-mt:0px] [--b-px:var(--card-px)] [--b-py:var(--card-py)] [--b-bg:rgb(15_23_42/0.05)] dark:[--b-bg:rgb(0_0_0/0.25)] [--b-r:calc(var(--card-r)_-_var(--card-inset))] [--b-line:0px]",
+      "p-(--card-inset) [--p-mx:0px] [--p-mt:0px] [--p-px:var(--card-px)] [--p-py:var(--card-py)] [--p-gap:0px] [--p-line:0px] [--p-band:transparent] [--b-mx:0px] [--b-mt:0px] [--b-px:var(--card-px)] [--b-py:var(--card-py)] [--b-bg:var(--card-panel,transparent)] [--b-r:calc(var(--card-r)_-_var(--card-inset))] [--b-line:1px] [--b-lx:1px] [--b-sh:0_1px_2px_rgb(15_23_42/0.06)]",
     "flush" =>
-      "[--p-mx:calc(var(--card-px)*-1)] [--p-mt:calc(var(--card-py)*-1)] [--p-px:var(--card-px)] [--p-py:var(--card-py)] [--p-gap:0px] [--p-line:0px] [--p-band:transparent] [--b-mx:calc(var(--card-px)*-1)] [--b-mt:calc(var(--card-py)*-1)] [--b-px:var(--card-px)] [--b-py:var(--card-py)] [--b-bg:rgb(15_23_42/0.04)] dark:[--b-bg:rgb(0_0_0/0.2)] [--b-r:0px] [--b-line:1px]"
+      "[--p-mx:calc(var(--card-px)*-1)] [--p-mt:calc(var(--card-py)*-1)] [--p-px:var(--card-px)] [--p-py:var(--card-py)] [--p-gap:0px] [--p-line:0px] [--p-band:transparent] [--b-mx:calc(var(--card-px)*-1)] [--b-mt:calc(var(--card-py)*-1)] [--b-px:var(--card-px)] [--b-py:var(--card-py)] [--b-bg:var(--card-panel,transparent)] [--b-r:var(--card-r)] [--b-line:1px] [--b-sh:0_1px_2px_rgb(15_23_42/0.06)]"
   }
 
   @unpadded "[--p-mx:0px] [--p-mt:0px] [--p-px:1rem] [--p-py:1rem] [--p-gap:0px] [--p-line:0px] [--p-band:transparent] [--b-mx:0px] [--b-mt:0px] [--b-px:0px] [--b-py:0px] [--b-bg:transparent] [--b-r:var(--card-r)] [--b-line:0px]"
@@ -165,7 +165,7 @@ defmodule LineaUI.Components.Card do
 
   @actions "col-start-3 row-start-1 self-center -my-1.5 ms-3 flex items-center gap-2 first:col-start-1 first:ms-0 first:me-3"
 
-  @body "border-slate-150 bg-[color:var(--b-bg,transparent)] mx-[var(--b-mx,0px)] px-[var(--b-px,0px)] py-[var(--b-py,0px)] rounded-[var(--b-r,0px)] border-y-[length:var(--b-line,0px)] first:mt-[var(--b-mt,0px)] last:mb-[var(--b-mt,0px)] not-last:mb-[var(--p-gap,0px)] [--p-mx:0px] [--p-mt:0px] [--p-px:0px] [--p-py:0px] [--p-gap:var(--card-gap,0px)] [--p-line:0px] [--p-band:transparent] dark:border-navy-500"
+  @body "border-slate-150 bg-[color:var(--b-bg,transparent)] mx-[var(--b-mx,0px)] px-[var(--b-px,0px)] py-[var(--b-py,0px)] rounded-[var(--b-r,0px)] border-x-[length:var(--b-lx,0px)] border-y-[length:var(--b-line,0px)] [box-shadow:var(--b-sh,none)] first:mt-[var(--b-mt,0px)] last:mb-[var(--b-mt,0px)] not-last:mb-[var(--p-gap,0px)] [--p-mx:0px] [--p-mt:0px] [--p-px:0px] [--p-py:0px] [--p-gap:var(--card-gap,0px)] [--p-line:0px] [--p-band:transparent] dark:border-navy-500"
 
   @footer "flex flex-wrap items-center gap-2 rounded-b-[inherit] border-slate-150 bg-[color:var(--p-band,transparent)] mx-[var(--p-mx,0px)] px-[var(--p-px,1rem)] py-[var(--p-py,1rem)] last:mb-[var(--p-mt,0px)] not-first:border-t-[length:var(--p-line,0px)] dark:border-navy-500"
 
@@ -199,7 +199,7 @@ defmodule LineaUI.Components.Card do
     values:
       ~w(default flat bordered outline muted soft filled solid glow gradient gradient_outline),
     doc:
-      "`default` is LineOne's white panel with a soft shadow (elevation in dark); `flat` is the same panel without the shadow; `bordered` adds a border; `outline` is the border only; `muted` and `soft` are quiet tints (neutral and primary) that adapt to the background; `filled` is a solid fill without border; `solid` and `glow` use `color`; `gradient` and `gradient_outline` use `gradient`."
+      "`default` is LineOne's white panel with a soft shadow (elevation in dark); `flat` is the same panel without the shadow; `bordered` adds a border; `outline` is the border only; `muted` and `soft` are quiet neutral tints, `muted` the stronger that adapt to the background; `filled` is a solid fill without border; `solid` and `glow` use `color`; `gradient` and `gradient_outline` use `gradient`."
   )
 
   attr(:size, :string,
@@ -432,13 +432,19 @@ defmodule LineaUI.Components.Card do
     ]
 
   defp surface("muted", _color, _gradient),
-    do: ["card bg-slate-900/[0.04] shadow-none dark:bg-white/[0.05]", @heading_color]
+    do: [
+      "card border border-slate-200/70 bg-slate-100 shadow-none dark:border-navy-500 dark:bg-navy-600/50",
+      @heading_color
+    ]
 
   defp surface("soft", _color, _gradient),
-    do: ["card bg-primary/10 shadow-none dark:bg-accent/15", @heading_color]
+    do: [
+      "card border border-slate-150 bg-slate-50 shadow-none dark:border-navy-600 dark:bg-navy-700/60",
+      @heading_color
+    ]
 
   defp surface("filled", _color, _gradient),
-    do: ["card bg-slate-150 shadow-none dark:bg-navy-600", @heading_color]
+    do: ["card bg-slate-100 shadow-none dark:bg-navy-600/50", @heading_color]
 
   defp surface("solid", color, _gradient), do: @solid[color]
   defp surface("glow", color, _gradient), do: @glow[color]

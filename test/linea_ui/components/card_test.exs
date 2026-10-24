@@ -83,9 +83,12 @@ defmodule LineaUI.Components.CardTest do
 
       assert "bg-transparent" in classes(html, "#o")
       assert "border" in classes(html, "#o")
-      assert "dark:bg-white/[0.05]" in classes(html, "#m")
-      assert "dark:bg-accent/15" in classes(html, "#s")
-      assert "dark:bg-navy-600" in classes(html, "#f")
+      assert "bg-slate-100" in classes(html, "#m")
+      assert "border" in classes(html, "#m")
+      assert "bg-slate-50" in classes(html, "#s")
+      assert "border" in classes(html, "#s")
+      assert "bg-slate-100" in classes(html, "#f")
+      assert "dark:bg-navy-600/50" in classes(html, "#f")
       refute "border" in classes(html, "#f")
       assert "shadow-none" in classes(html, "#f")
     end
