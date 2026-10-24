@@ -1,0 +1,16 @@
+<%!-- title: Body treatments | text: body="seamless", "divided", "separated", "inset" and "flush" tell the parts apart. --%>
+<div class="grid grid-cols-1 gap-4 rounded-lg bg-slate-50 p-4 dark:bg-navy-900 sm:gap-5 lg:grid-cols-3">
+  <.card :for={body <- ~w(seamless divided separated inset flush)} body={body}>
+    <.card_header>
+      <.card_heading>{String.capitalize(body)}</.card_heading>
+      <.card_subheading>body="{body}"</.card_subheading>
+    </.card_header>
+    <.card_body>
+      <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit.</p>
+    </.card_body>
+    <.card_footer>
+      <.button size="sm" variant="flat">Cancel</.button>
+      <.button size="sm">Save</.button>
+    </.card_footer>
+  </.card>
+</div>

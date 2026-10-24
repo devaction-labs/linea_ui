@@ -78,6 +78,18 @@ defmodule LineaUI.Components.Table do
   free cells, custom checkboxes and expandable rows; `table_skeleton/1` is the loading state.
   A class given to a cell always wins over the table's look (the look lives in the CSS
   `components` layer).
+
+  Inside a card, `bleed` runs the table edge to edge: the wrapper takes the card's side padding
+  as a negative margin and the first and last cells get it back as their own padding, so the
+  rows (hover, zebra, rules) reach the card's sides while the content stays aligned with the
+  rest of the card. The `bordered` frame is dropped.
+
+      <.card>
+        <.card_header><.card_heading>Team</.card_heading></.card_header>
+        <.table id="team" rows={@team} bleed>
+          <:col :let={person} label="Name">{person.name}</:col>
+        </.table>
+      </.card>
   """
 
   use LineaUI.Component
@@ -162,6 +174,8 @@ defmodule LineaUI.Components.Table do
     "zebra" => "sticky top-0 z-10",
     "grid" => "sticky top-0 z-10"
   }
+
+  @bleed "min-w-[calc(100%+var(--card-px,1rem)*2)] mx-[calc(var(--card-px,1rem)*-1)] rounded-none border-x-0 [&_tr>:first-child]:pl-[var(--card-px,1rem)] [&_tr>:last-child]:pr-[var(--card-px,1rem)]"
 
   @slot_defaults %{row_class: nil, row_attrs: nil, sticky_header: false, foot: []}
 
@@ -286,6 +300,12 @@ defmodule LineaUI.Components.Table do
     doc: "Removes the rules between rows, and the cell borders of the `bordered` variant."
   )
 
+  attr(:bleed, :boolean,
+    default: false,
+    doc:
+      "Runs the table edge to edge of the card it sits in (the card's side padding as a negative margin, given back to the first and last cells)."
+  )
+
   attr(:target, :any, default: nil, doc: "`phx-target` of the events.")
   attr(:expand_label, :string, default: nil, doc: "Header of the expand column.")
   attr(:wrapper_class, :any, default: nil, doc: "Classes of the scrolling wrapper.")
@@ -330,7 +350,7 @@ defmodule LineaUI.Components.Table do
 
   def table(%{rows: nil} = assigns) do
     assigns
-    |> assign(:wrapper, merge([@wrapper[assigns.variant], assigns.wrapper_class]))
+    |> assign(:wrapper, merge([@wrapper[assigns.variant], bleed(assigns), assigns.wrapper_class]))
     |> assign(:table_class, merge(["linea-table", table_class(assigns), assigns.class]))
     |> render_composable()
   end
@@ -358,7 +378,7 @@ defmodule LineaUI.Components.Table do
     |> assign(:body_row_class, merge([@body_row[assigns.variant], no_border(assigns)]))
     |> assign(
       :wrapper,
-      merge([@wrapper[assigns.variant], no_border(assigns), assigns.wrapper_class])
+      merge([@wrapper[assigns.variant], no_border(assigns), bleed(assigns), assigns.wrapper_class])
     )
     |> assign(:table_class, merge([table_class(assigns), assigns.class]))
     |> assign(:checkbox, @checkbox)
@@ -383,6 +403,9 @@ defmodule LineaUI.Components.Table do
 
   defp compact(%{compact: true}), do: @compact
   defp compact(%{compact: false}), do: nil
+
+  defp bleed(%{bleed: true}), do: @bleed
+  defp bleed(%{bleed: false}), do: nil
 
   defp no_border(%{borderless: true}), do: "border-0"
   defp no_border(%{borderless: false}), do: nil

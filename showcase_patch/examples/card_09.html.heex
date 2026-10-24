@@ -1,0 +1,20 @@
+<%!-- title: Surfaces | text: variant="default", "outline", "muted", "soft", "filled" and "bordered"; the tints adapt to the background, in light and dark. --%>
+<div class="grid grid-cols-1 gap-4 rounded-lg bg-slate-50 p-4 dark:bg-navy-900 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3">
+  <.card
+    :for={variant <- ~w(default outline muted soft filled bordered)}
+    variant={variant}
+    body="divided"
+  >
+    <.card_header>
+      <.card_heading>{String.capitalize(variant)}</.card_heading>
+      <.card_actions><.button size="xs" variant="flat">Edit</.button></.card_actions>
+    </.card_header>
+    <.card_body>
+      <p>variant="{variant}"</p>
+    </.card_body>
+    <.card_footer align="between">
+      <span class="text-xs">Updated today</span>
+      <.button size="xs">Open</.button>
+    </.card_footer>
+  </.card>
+</div>

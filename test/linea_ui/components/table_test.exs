@@ -27,6 +27,45 @@ defmodule LineaUI.Components.TableTest do
     assert "px-3" in classes(html, "th")
   end
 
+  test "bleed runs the table edge to edge of the card and gives the padding back to the edge cells" do
+    html =
+      render(~H"""
+      <.table id="t" rows={[%{n: 1}]} variant="bordered" bleed>
+        <:col :let={row} label="N">{row.n}</:col>
+      </.table>
+      """)
+
+    wrapper = classes(html, "div")
+    assert "mx-[calc(var(--card-px,1rem)*-1)]" in wrapper
+    assert "min-w-[calc(100%+var(--card-px,1rem)*2)]" in wrapper
+    assert "[&_tr>:first-child]:pl-[var(--card-px,1rem)]" in wrapper
+    assert "[&_tr>:last-child]:pr-[var(--card-px,1rem)]" in wrapper
+    assert "rounded-none" in wrapper
+    refute "rounded-lg" in wrapper
+    refute "min-w-full" in wrapper
+  end
+
+  test "bleed also applies to a hand-written table" do
+    html =
+      render(~H"""
+      <.table id="t" bleed>
+        <.table_body id="b">
+          <.table_row>
+            <:cell>x</:cell>
+          </.table_row>
+        </.table_body>
+      </.table>
+      """)
+
+    assert "mx-[calc(var(--card-px,1rem)*-1)]" in classes(html, "div")
+  end
+
+  test "without bleed the wrapper is untouched" do
+    html = render_table(%{})
+    assert "min-w-full" in classes(html, "div")
+    refute "mx-[calc(var(--card-px,1rem)*-1)]" in classes(html, "div")
+  end
+
   test "bordered draws cell borders inside a bordered wrapper" do
     html = render_table(%{variant: "bordered"})
     assert "rounded-lg" in classes(html, "div")
