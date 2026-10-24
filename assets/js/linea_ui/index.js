@@ -31,6 +31,7 @@ import TagsInput from "./hooks/tags_input.js"
 import TextEditor from "./hooks/text_editor.js"
 import Theme from "./hooks/theme.js"
 import TimePicker from "./hooks/time_picker.js"
+import Timer from "./hooks/timer.js"
 import Toast from "./hooks/toast.js"
 import Tooltip from "./hooks/tooltip.js"
 import Treeview from "./hooks/treeview.js"
@@ -62,6 +63,7 @@ export const Hooks = {
   ...TextEditor,
   ...Theme,
   ...TimePicker,
+  ...Timer,
   ...Toast,
   ...Tooltip,
   ...Treeview,
