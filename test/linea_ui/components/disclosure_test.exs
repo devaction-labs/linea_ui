@@ -86,4 +86,21 @@ defmodule LineaUI.Components.DisclosureTest do
     refute "border-info" in classes(html, "#c")
     assert [] = find(html, "#c[data-color]") |> Enum.to_list()
   end
+
+  test "collapse chevron rotates with the open state" do
+    html =
+      render(~H"""
+      <.collapse id="a" chevron="down"><:trigger>A</:trigger>x</.collapse>
+      <.collapse id="b" chevron="right" chevron_class="size-4"><:trigger>B</:trigger>x</.collapse>
+      <.collapse id="c"><:trigger>C</:trigger>x</.collapse>
+      """)
+
+    assert "group/collapse" in classes(html, "#a")
+    assert ["flex", "justify-between"] -- classes(html, "#a > summary") == []
+    assert "group-open/collapse:rotate-180" in classes(html, "#a > summary > svg")
+    assert "group-open/collapse:rotate-90" in classes(html, "#b > summary > svg")
+    assert "size-4" in classes(html, "#b > summary > svg")
+    assert [] = find(html, "#c svg") |> Enum.to_list()
+    refute "group/collapse" in classes(html, "#c")
+  end
 end
