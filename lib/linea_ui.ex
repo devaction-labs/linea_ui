@@ -50,6 +50,7 @@ defmodule LineaUI do
     color_picker: LineaUI.Components.ColorPicker,
     data_table: LineaUI.Components.DataTable,
     date_picker: LineaUI.Components.DatePicker,
+    datetime_picker: LineaUI.Components.DatetimePicker,
     divider: LineaUI.Components.Divider,
     drawer: LineaUI.Components.Drawer,
     dropdown: LineaUI.Components.Dropdown,

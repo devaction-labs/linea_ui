@@ -1,0 +1,21 @@
+<%!-- title: Range | text: mode="range" shows two months, a start and an end with their own time, and applies on Select range. default_time takes "start/end". The form gets name[] twice (start, end); start_name and end_name submit two fields instead. --%>
+<div class="grid max-w-3xl grid-cols-1 gap-4 sm:grid-cols-2">
+  <.datetime_picker
+    id="dtp4"
+    name="dtp4_shift"
+    mode="range"
+    label="Shift"
+    default_time="09:00/17:00"
+    today={~D[2026-10-14]}
+  />
+  <.datetime_picker
+    id="dtp4-split"
+    start_name="dtp4_from"
+    end_name="dtp4_to"
+    label="Booking, two fields"
+    value={["2026-10-14T09:00", "2026-10-16T18:00"]}
+    time="input"
+    min="today"
+    today={~D[2026-10-14]}
+  />
+</div>

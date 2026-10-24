@@ -100,22 +100,6 @@ defmodule LineaUI.Components.DatePickerTest do
     assert find(html, "#x-calendar.open") |> Enum.count() == 1
   end
 
-  test "datetime_picker carries the time rules" do
-    html = render(~H|<.datetime_picker
-  id="t"
-  name="t"
-  value={~N[2026-10-03 16:30:00]}
-  min_time="16:00"
-  max_time="22:00"
-/>|)
-    assert html |> find("#t-display") |> LazyHTML.attribute("value") == ["2026-10-03 16:30"]
-
-    assert find(html, "#t[data-kind=datetime][data-min-time='16:00'][data-max-time='22:00']")
-           |> Enum.count() == 1
-
-    assert find(html, "#t-calendar.hasTime") |> Enum.count() == 1
-  end
-
   test "field wiring, label and errors" do
     assigns = %{
       __changed__: nil,
@@ -166,12 +150,6 @@ defmodule LineaUI.Components.DatePickerTest do
       assert html |> find("#d") |> LazyHTML.attribute("data-value") == ["[]"]
       assert html |> find("#d-display") |> LazyHTML.attribute("value") == [""]
     end
-
-    html = render(~H|<.datetime_picker id="dt" name="at" value="2026-10-24 25:99" />|)
-    assert html |> find("#dt") |> LazyHTML.attribute("data-value") == ["[]"]
-
-    html = render(~H|<.datetime_picker id="dt" name="at" value="2026-10-24T09:30:00Z" />|)
-    assert html |> find("#dt") |> LazyHTML.attribute("data-value") == [~s(["2026-10-24 09:30"])]
 
     html =
       render(~H|<.date_picker id="r" name="r" mode="range" value={["2026-10-01", "garbage"]} />|)

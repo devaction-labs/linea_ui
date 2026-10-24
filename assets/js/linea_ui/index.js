@@ -15,6 +15,7 @@ import CommandPalette from "./hooks/command_palette.js"
 import ColorPicker from "./hooks/color_picker.js"
 import DataTable from "./hooks/data_table.js"
 import DatePicker from "./hooks/date_picker.js"
+import DatetimePicker from "./hooks/datetime_picker.js"
 import Dialog from "./hooks/dialog.js"
 import Dropdown from "./hooks/dropdown.js"
 import Fab from "./hooks/fab.js"
@@ -47,6 +48,7 @@ export const Hooks = {
   ...ColorPicker,
   ...DataTable,
   ...DatePicker,
+  ...DatetimePicker,
   ...Dialog,
   ...Dropdown,
   ...Fab,

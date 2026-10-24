@@ -30,7 +30,23 @@ defmodule LineaUI.Components.Strings do
       signature_empty: "No signature",
       filter_label: "Filters",
       filter_clear: "Clear",
-      filter_apply: "Apply"
+      filter_apply: "Apply",
+      datetime_select: "Select",
+      datetime_select_range: "Select range",
+      datetime_start: "Start",
+      datetime_end: "End",
+      datetime_time: "Time",
+      datetime_times: "Times",
+      datetime_no_times: "No times available",
+      datetime_time_placeholder: "hh:mm",
+      datetime_previous: "Previous month",
+      datetime_next: "Next month",
+      datetime_day: "%{weekday}, %{month} %{day}, %{year}",
+      datetime_title: "%{month} %{year}",
+      datetime_dialog: "Choose date and time",
+      datetime_dialog_range: "Choose a date and time range",
+      datetime_placeholder: "Select date and time",
+      datetime_placeholder_range: "Select date range"
     },
     "pt_BR" => %{
       color_area: "Saturação e brilho",
@@ -60,7 +76,23 @@ defmodule LineaUI.Components.Strings do
       signature_empty: "Sem assinatura",
       filter_label: "Filtros",
       filter_clear: "Limpar",
-      filter_apply: "Aplicar"
+      filter_apply: "Aplicar",
+      datetime_select: "Selecionar",
+      datetime_select_range: "Selecionar período",
+      datetime_start: "Início",
+      datetime_end: "Fim",
+      datetime_time: "Hora",
+      datetime_times: "Horários",
+      datetime_no_times: "Nenhum horário disponível",
+      datetime_time_placeholder: "hh:mm",
+      datetime_previous: "Mês anterior",
+      datetime_next: "Próximo mês",
+      datetime_day: "%{weekday}, %{day} de %{month} de %{year}",
+      datetime_title: "%{month} de %{year}",
+      datetime_dialog: "Escolher data e hora",
+      datetime_dialog_range: "Escolher período com data e hora",
+      datetime_placeholder: "Selecionar data e hora",
+      datetime_placeholder_range: "Selecionar período"
     }
   }
 

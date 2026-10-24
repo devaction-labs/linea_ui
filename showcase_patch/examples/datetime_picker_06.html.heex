@@ -1,0 +1,17 @@
+<%!-- title: Server side | text: on_change pushes each change with the wall-clock text (a list of two for a range), shown here in the toast. In a form the change runs phx-change like any input, and field={@form[:starts_at]} fills the id, name, value and errors. --%>
+<div class="grid max-w-3xl grid-cols-1 gap-4 sm:grid-cols-2">
+  <.datetime_picker
+    field={@form[:starts_at]}
+    label="Starts at"
+    on_change="booking:picked"
+    today={~D[2026-10-14]}
+  />
+  <.datetime_picker
+    id="dtp6-range"
+    name="dtp6_range"
+    mode="range"
+    label="Window"
+    on_change="booking:picked"
+    today={~D[2026-10-14]}
+  />
+</div>
