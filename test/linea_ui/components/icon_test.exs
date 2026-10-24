@@ -1,6 +1,8 @@
 defmodule LineaUI.Components.IconTest do
   use LineaUI.ComponentCase, async: false
 
+  alias LineaUI.Components.Icon
+
   setup do
     on_exit(fn -> Application.delete_env(:linea_ui, :icons) end)
   end
@@ -41,5 +43,38 @@ defmodule LineaUI.Components.IconTest do
 
       Application.delete_env(:linea_ui, :icons)
     end
+  end
+
+  test "both sets cover the same glyphs and every Hugeicons class is written in full" do
+    lineone = Icon.glyph_table(:lineone)
+    hugeicons = Icon.glyph_table(:hugeicons)
+
+    assert Map.keys(lineone) |> Enum.sort() == Map.keys(hugeicons) |> Enum.sort()
+    assert Icon.glyph_names() == Map.keys(lineone) |> Enum.sort()
+    assert Enum.all?(Map.values(hugeicons), &(&1 =~ ~r/^huge-[a-z0-9]+(-[a-z0-9]+)*$/))
+  end
+
+  test "stroked glyphs take a stroke width, filled ones draw currentColor, bare ones carry no paint" do
+    stroked = render(~H|<.glyph name={:calendar} stroke_width="1.5" />|)
+    assert [svg] = find(stroked, "svg") |> Enum.to_list()
+    assert LazyHTML.attribute(svg, "stroke-width") == ["1.5"]
+    assert LazyHTML.attribute(svg, "fill") == ["none"]
+
+    filled = render(~H|<.glyph name={:search_solid} />|)
+    assert [filled_svg] = find(filled, "svg") |> Enum.to_list()
+    assert LazyHTML.attribute(filled_svg, "fill") == ["currentColor"]
+    assert LazyHTML.attribute(filled_svg, "stroke") == []
+
+    bare = render(~H|<.glyph name={:editor_bold} class={nil} />|)
+    assert [bare_svg] = find(bare, "svg") |> Enum.to_list()
+    assert LazyHTML.attribute(bare_svg, "viewBox") == ["0 0 18 18"]
+    assert LazyHTML.attribute(bare_svg, "class") in [[], [""]]
+    assert LazyHTML.attribute(bare_svg, "fill") == []
+    assert find(bare, "svg path.ql-stroke") |> Enum.count() == 2
+  end
+
+  test "multi-path glyphs keep every path" do
+    html = render(~H|<.glyph name={:editor_picker_background} class={nil} />|)
+    assert find(html, "svg g.ql-fill rect") |> Enum.count() > 10
   end
 end

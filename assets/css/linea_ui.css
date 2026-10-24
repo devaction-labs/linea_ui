@@ -12,8 +12,10 @@
 @import "./parts/forms.css";
 @import "./parts/pickers.css";
 @import "./parts/layout.css";
+@import "./parts/icons.css";
 
 @source "../../lib";
+@source "../js";
 
 @custom-variant dark (&:where(.dark, .dark *));
 
