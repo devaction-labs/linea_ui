@@ -162,4 +162,64 @@ defmodule LineaUI.Components.TableTest do
     assert [_] = html |> find("td[phx-click]") |> Enum.to_list()
     assert "cursor-pointer" in classes(html, "td")
   end
+
+  test "compact tightens the cells" do
+    html =
+      render(~H"""
+      <.table id="t" rows={[1]} compact>
+        <:col :let={row} label="N">{row}</:col>
+      </.table>
+      """)
+
+    assert ["px-3", "py-2", "lg:px-3"] -- classes(html, "td") == []
+    assert ["px-3", "py-2", "lg:px-3"] -- classes(html, "th") == []
+    refute "py-3" in classes(html, "td")
+  end
+
+  test "headless renders no thead" do
+    html =
+      render(~H"""
+      <.table id="t" rows={[1]} headless>
+        <:col :let={row} label="N">{row}</:col>
+      </.table>
+      """)
+
+    assert [] = find(html, "thead") |> Enum.to_list()
+    assert [_] = find(html, "tbody td") |> Enum.to_list()
+  end
+
+  test "borderless drops the row rules and the cell borders" do
+    html =
+      render(~H"""
+      <.table id="a" rows={[1]} borderless>
+        <:col :let={row}>{row}</:col>
+      </.table>
+      <.table id="b" rows={[1]} variant="bordered" borderless>
+        <:col :let={row}>{row}</:col>
+      </.table>
+      <.table id="c" rows={[1]}>
+        <:col :let={row}>{row}</:col>
+      </.table>
+      """)
+
+    assert "border-0" in classes(html, "#a tbody tr")
+    assert "border-0" in classes(html, "#b td")
+    refute "border-0" in classes(html, "#c tbody tr")
+  end
+
+  test "col align aligns header and cells" do
+    html =
+      render(~H"""
+      <.table id="t" rows={[1]}>
+        <:col :let={row} label="A" align="right">{row}</:col>
+        <:col :let={row} label="B" align="center">{row}</:col>
+        <:col :let={row} label="C">{row}</:col>
+      </.table>
+      """)
+
+    assert "text-right" in classes(html, "th:nth-child(1)")
+    assert "text-right" in classes(html, "td:nth-child(1)")
+    assert "text-center" in classes(html, "td:nth-child(2)")
+    refute Enum.any?(classes(html, "td:nth-child(3)"), &String.starts_with?(&1, "text-"))
+  end
 end
