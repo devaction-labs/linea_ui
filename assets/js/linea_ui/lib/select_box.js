@@ -20,10 +20,10 @@ export const highlight = (label, term) => {
 
 /**
  * Whether an option shows: a multiple listbox hides what is already chosen, and the typed term filters the rest
- * unless the server does the search (`local` false).
+ * (by the label or by the option's `keywords`) unless the server does the search (`local` false).
  */
-export const shows = ({value, label}, {values, multiple, term, local}) =>
-  !(multiple && values.includes(value)) && (!local || matches(label, term))
+export const shows = ({value, label, keywords = ""}, {values, multiple, term, local}) =>
+  !(multiple && values.includes(value)) && (!local || matches(label, term) || (keywords !== "" && matches(keywords, term)))
 
 /** The row the arrow keys move to among `count` rows, from `index` (-1 for none); it stops at both ends. */
 export const moveIndex = (index, key, count) =>

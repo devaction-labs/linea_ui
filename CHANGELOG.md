@@ -2,6 +2,8 @@
 
 ## 0.4.4
 
+- `select` (listbox): an option map takes `keywords:` (a string or a list), extra terms the search matches though the list does not show them.
+- `heading`: `size` (`sm base lg xl 2xl 3xl`) sets the type size apart from the level.
 - Toasts: every toast leaves by itself after its `duration` and draws a thin countdown line at its bottom (`timer: false` on a toast or `timer={false}` on the toaster turns it off; the pointer over the stack holds it). A toast that depends on the person now stays until it is closed, with a close button and no line: one with `actions`, one with a `template`, one with `aura: :glow` (a `loading` or running progress toast already did). An explicit `duration` wins. A plain toast that stays now gets its close button too.
 - Framed shell (`framed_sidebar`): the collapsed rail scrolls when its icons do not fit the window height, so the user and the settings stay reachable on a short screen. Its tooltips are positioned on the screen (`position: fixed`, set by the `LineaUI.ShellRail` hook on hover and focus) and are no longer clipped by the scrolling list.
 - `dropdown` and `dropdown_submenu`: the panel no longer has vertical padding of its own; the items sit flush to its top and bottom (the first and last follow the panel's rounded corners).

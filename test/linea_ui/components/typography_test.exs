@@ -17,6 +17,18 @@ defmodule LineaUI.Components.TypographyTest do
     assert "text-2xl" in classes(html, "h2")
   end
 
+  test "a heading takes its type size apart from its level" do
+    html =
+      render(~H"""
+      <.heading level={2} size="2xl">Overview</.heading>
+      <.heading level={4} size="xl" weight="semibold">Detail</.heading>
+      """)
+
+    assert "text-2xl" in classes(html, "h2")
+    assert "text-xl" in classes(html, "h4")
+    assert "text-lg" not in classes(html, "h4")
+  end
+
   test "text, gradients and decorations" do
     html =
       render(~H"""

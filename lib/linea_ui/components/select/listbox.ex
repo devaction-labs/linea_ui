@@ -237,6 +237,7 @@ defmodule LineaUI.Components.Select.Listbox do
       id={option_id(@id, @entry.value)}
       data-value={@entry.value}
       data-label={@entry.label}
+      data-keywords={Options.keywords(@entry) != "" && Options.keywords(@entry)}
       data-selectable={not @entry.disabled && "true"}
       data-disabled={@entry.disabled && "true"}
       aria-disabled={@entry.disabled && "true"}
@@ -255,6 +256,7 @@ defmodule LineaUI.Components.Select.Listbox do
       id={option_id(@id, @entry.value)}
       data-value={@entry.value}
       data-label={@entry.label}
+      data-keywords={Options.keywords(@entry) != "" && Options.keywords(@entry)}
       data-selectable={not @entry.disabled && "true"}
       data-disabled={@entry.disabled && "true"}
       aria-disabled={@entry.disabled && "true"}

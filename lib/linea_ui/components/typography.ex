@@ -25,6 +25,15 @@ defmodule LineaUI.Components.Typography do
     6 => "text-sm"
   }
 
+  @named_sizes %{
+    "sm" => "text-sm",
+    "base" => "text-base",
+    "lg" => "text-lg",
+    "xl" => "text-xl",
+    "2xl" => "text-2xl",
+    "3xl" => "text-3xl"
+  }
+
   @display_sizes %{
     1 => "text-8xl",
     2 => "text-7xl",
@@ -108,8 +117,12 @@ defmodule LineaUI.Components.Typography do
 
       <.heading level={3} weight="semibold" color="primary">Orders</.heading>
       <.heading display={1}>Welcome</.heading>
+
+  `size` sets the type size apart from the level, so a heading keeps its place in the outline and looks as
+  large as the design asks: `<.heading level={2} size="2xl">Overview</.heading>`.
   """
   attr(:level, :integer, default: nil, values: [nil, 1, 2, 3, 4, 5, 6])
+  attr(:size, :string, default: nil, values: [nil | Map.keys(@named_sizes)])
   attr(:display, :integer, default: nil, values: [nil, 1, 2, 3, 4, 5])
   attr(:weight, :string, default: "normal", values: ~w(normal light medium semibold bold))
   attr(:color, :string, default: "default", values: @text_colors)
@@ -121,12 +134,12 @@ defmodule LineaUI.Components.Typography do
     assigns =
       assigns
       |> assign(:tag, "h#{heading_level(assigns)}")
-      |> assign(:size, heading_size(assigns))
+      |> assign(:type_size, heading_size(assigns))
 
     ~H"""
     <.dynamic_tag
       tag_name={@tag}
-      class={merge([@size, weight(@weight), color(@color), @class])}
+      class={merge([@type_size, weight(@weight), color(@color), @class])}
       {@rest}
     >
       {render_slot(@inner_block)}
@@ -138,6 +151,7 @@ defmodule LineaUI.Components.Typography do
   defp heading_level(%{display: display}) when is_integer(display), do: 1
   defp heading_level(_assigns), do: 2
 
+  defp heading_size(%{size: size}) when is_binary(size), do: @named_sizes[size]
   defp heading_size(%{display: display}) when is_integer(display), do: @display_sizes[display]
   defp heading_size(assigns), do: @heading_sizes[heading_level(assigns)]
 

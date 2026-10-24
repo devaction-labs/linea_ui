@@ -22,6 +22,14 @@ test("shows hides chosen options of a multiple listbox and filters locally", () 
   assert.equal(shows({value: "AK", label: "Alaska"}, {...base, term: "bam", local: false}), true)
 })
 
+test("shows also matches the keywords of an option", () => {
+  const base = {values: [], multiple: false, term: "ca", local: true}
+  assert.equal(shows({value: "BR", label: "Brazil", keywords: "brasil"}, {...base, term: "bra"}), true)
+  assert.equal(shows({value: "BR", label: "Brazil", keywords: "brasil tupiniquim"}, {...base, term: "tupi"}), true)
+  assert.equal(shows({value: "BR", label: "Brazil", keywords: "brasil"}, {...base, term: "zzz"}), false)
+  assert.equal(shows({value: "BR", label: "Brazil"}, {...base, term: "bas"}), false)
+})
+
 test("moveIndex stops at the ends", () => {
   assert.equal(moveIndex(-1, "ArrowDown", 3), 0)
   assert.equal(moveIndex(2, "ArrowDown", 3), 2)

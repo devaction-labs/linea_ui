@@ -4,7 +4,8 @@ defmodule LineaUI.Components.Select.Options do
 
   An option is a string or number (label and value alike), a `{label, value}` tuple, a
   keyword entry `label: value`, or a map with `:label` and `:value` (and optionally
-  `:disabled`; any other keys are kept for the `:option` and `:item` slots). A group is
+  `:disabled` and `:keywords`, extra terms the search matches though the list does not show them: a
+  string or a list of strings; any other keys are kept for the `:option` and `:item` slots). A group is
   `{group_label, [options]}`.
 
       iex> LineaUI.Components.Select.Options.normalize(["Wedding", {"Other", "other"}])
@@ -40,6 +41,14 @@ defmodule LineaUI.Components.Select.Options do
     do: list |> Enum.reject(&(&1 in [nil, ""])) |> Enum.map(&text/1)
 
   def values(value), do: [text(value)]
+
+  @doc "The extra search terms of an option (`keywords:` of a map entry, a string or a list), as one string; empty when it has none."
+  @spec keywords(option()) :: String.t()
+  def keywords(%{data: %{keywords: keywords}}) when is_list(keywords),
+    do: keywords |> Enum.map(&text/1) |> Enum.join(" ")
+
+  def keywords(%{data: %{keywords: keywords}}) when is_binary(keywords), do: keywords
+  def keywords(_option), do: ""
 
   @doc "The option whose value is `value`, among `options`; a value that is not one of them becomes its own option."
   @spec find([option()], String.t()) :: option()

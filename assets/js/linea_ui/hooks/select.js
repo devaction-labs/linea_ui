@@ -334,7 +334,7 @@ export const Listbox = {
     const state = {values: this.values, multiple: this.multiple(), term: this.term, local: this.local()}
     const options = this.options()
     options.forEach((row) => {
-      const visible = shows({value: row.dataset.value, label: row.dataset.label}, state)
+      const visible = shows({value: row.dataset.value, label: row.dataset.label, keywords: row.dataset.keywords}, state)
       const text = row.querySelector("[data-text]")
       row.hidden = !visible
       row.classList.toggle("selected", this.values.includes(row.dataset.value))
