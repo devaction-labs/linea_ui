@@ -17,6 +17,9 @@ defmodule LineaUI.Components.EmptyState do
         Try another term or clear the filters.
       </.empty_state>
 
+  `icon` is a Hugeicons name (`huge-*`), which needs the Tailwind plugin of the Icons section of the README;
+  leave it out, or pass the `illustration` slot, to draw something else.
+
   The `card` variant is a centered block for a whole area; the `inline` one is a compact notice for inside
   tables, lists and search results, in a neutral, success or error color.
   """

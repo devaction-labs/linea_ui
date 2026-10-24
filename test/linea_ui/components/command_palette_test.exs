@@ -153,7 +153,8 @@ defmodule LineaUI.Components.CommandPaletteTest do
     assert attr_of(html, "[data-assistant]", "data-template") == ["Ask: %{query}"]
     assert attr_of(html, "[data-assistant]", "hidden") == [""]
     assert attr_of(html, "#palette-palette", "data-assistant-mode") == ["always"]
-    assert [_] = find(html, "[data-assistant] span.huge-ai-magic") |> Enum.to_list()
+    assert [_] = find(html, "[data-assistant] svg") |> Enum.to_list()
+    assert [] = find(html, "[data-assistant] span.huge-ai-magic") |> Enum.to_list()
     assert html |> find("[data-assistant]") |> LazyHTML.text() =~ "Uses your data"
   end
 

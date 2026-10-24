@@ -19,6 +19,9 @@ defmodule LineaUI.Components.CommandPalette do
 
       <.button phx-click={LineaUI.open("palette")}>Search</.button>
 
+  Item and assistant `icon`s are Hugeicons names (`huge-*`), which need the Tailwind plugin of the Icons
+  section of the README; without `icon`, the item shows no icon and the assistant row a sparkle.
+
   The palette is a modal, so `LineaUI.open/close/toggle` (in the browser or from the server) and the `open`,
   `on_open` and `on_close` attrs work as they do for `modal`. `shortcut` (Ctrl K / ⌘ K by default) toggles it from
   anywhere in the page.
@@ -252,7 +255,20 @@ defmodule LineaUI.Components.CommandPalette do
             hidden
           >
             <span class={assistant_icon()}>
-              <.icon name={@assistant_row.icon} class="size-4.5" />
+              <.icon :if={@assistant_row.icon} name={@assistant_row.icon} class="size-4.5" />
+              <svg
+                :if={!@assistant_row.icon}
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.6"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="size-4.5"
+                aria-hidden="true"
+              >
+                <path d="M12 3l1.8 4.2L18 9l-4.2 1.8L12 15l-1.8-4.2L6 9l4.2-1.8z" />
+              </svg>
             </span>
             <span class="min-w-0">
               <span
@@ -400,7 +416,7 @@ defmodule LineaUI.Components.CommandPalette do
     %{
       label: Map.fetch!(row, :label),
       sub: Map.get(row, :sub),
-      icon: Map.get(row, :icon, "huge-ai-magic")
+      icon: Map.get(row, :icon)
     }
   end
 end
