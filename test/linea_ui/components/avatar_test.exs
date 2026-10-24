@@ -19,7 +19,14 @@ defmodule LineaUI.Components.AvatarTest do
       <.avatar id="c" initials="jd" color="error" variant="bordered" shape="squircle" />
       """)
 
-    assert ["is-initial", "uppercase", "rounded-full", "text-base" | _] =
+    assert [
+             "is-initial",
+             "font-inter",
+             "font-semibold",
+             "uppercase",
+             "rounded-full",
+             "text-[17px]" | _
+           ] =
              classes(html, "#a > div")
 
     assert "bg-primary" in classes(html, "#a > div")
@@ -85,7 +92,7 @@ defmodule LineaUI.Components.AvatarTest do
 
     assert "size-6" in classes(html, "#a")
     assert "size-7" in classes(html, "#b")
-    assert "text-xs-plus" in classes(html, "#b > div")
+    assert "text-[10px]" in classes(html, "#b > div")
     assert "size-9" in classes(html, "#c")
     assert "size-2.5" in classes(html, "#c > div")
   end
@@ -207,9 +214,10 @@ defmodule LineaUI.Components.AvatarTest do
       <.avatar id="e" initials="a" status="online" status_position="top-left" />
       """)
 
-    assert ["bg-success", "bottom-0", "right-0"] -- classes(html, "#a > div:last-child") == []
-    assert "bg-warning" in classes(html, "#b > div:last-child")
-    assert "bg-error" in classes(html, "#c > div:last-child")
+    assert "bg-success-focus" in classes(html, "#a > div:last-child")
+    assert "-bottom-px" in classes(html, "#a > div:last-child")
+    assert "bg-warning-focus" in classes(html, "#b > div:last-child")
+    assert "bg-error-focus" in classes(html, "#c > div:last-child")
     assert "bg-slate-400" in classes(html, "#d > div:last-child")
     assert "left-0" in classes(html, "#e > div:last-child")
   end
@@ -225,14 +233,14 @@ defmodule LineaUI.Components.AvatarTest do
       """)
 
     assert "bg-navy-900" in classes(html, "#a > div")
-    assert "rounded-xl" in classes(html, "#a > div")
+    assert "rounded-[10px]" in classes(html, "#a > div")
     assert find(html, "#a > div") |> LazyHTML.text() =~ "FS"
     assert "bg-success-focus" in classes(html, "#b > div")
     assert "bg-warning-focus" in classes(html, "#c > div")
     assert "from-primary" in classes(html, "#d > div")
     assert "rounded-full" in classes(html, "#d > div")
     assert [_] = find(html, "#d > div > svg") |> Enum.to_list()
-    assert "border-dashed" in classes(html, "#e > div")
+    assert "border-[1.5px]" in classes(html, "#e > div")
     assert [_] = find(html, "#e > div > svg") |> Enum.to_list()
   end
 
