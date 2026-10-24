@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.2.0
 
 - `table`: hand-written tables. Without `rows`, `table/1` renders its inner block and new `table_head`,
   `table_body`, `table_row`, `table_cell`, `table_foot`, `table_empty`, `table_checkbox`,
