@@ -23,6 +23,11 @@ defmodule LineaUI.Components.Toast do
   milliseconds (`0` keeps it until closed), `close` (a close button) and `template`, the id of a
   `<template>` on the page whose first element is shown instead of the message (an element with
   `data-toast-dismiss` inside it closes the toast).
+
+  The toasts of a corner are stacked: the newest is shown in full and the older ones sit behind it,
+  smaller, as slivers (three at most). With the pointer over the stack it opens, every toast in its own
+  size, and their timers wait; when the pointer leaves they go on with the time they had left. Set
+  `stack={false}` on the toaster to keep them always open, one above the other.
   """
 
   use LineaUI.Component
@@ -52,6 +57,11 @@ defmodule LineaUI.Components.Toast do
     doc: "The default position."
 
   attr :duration, :integer, default: 5000, doc: "The default duration, in milliseconds."
+
+  attr :stack, :boolean,
+    default: true,
+    doc: "Pile the toasts of a corner behind the newest and open the pile under the pointer."
+
   attr :close_label, :string, default: "Close"
   attr :rest, :global
 
@@ -69,6 +79,7 @@ defmodule LineaUI.Components.Toast do
       data-flash={Jason.encode!(@toasts)}
       data-position={@position}
       data-duration={@duration}
+      data-stack={to_string(@stack)}
       data-close-label={@close_label}
       {@rest}
     >

@@ -1,4 +1,4 @@
-import {LEAVE_MS, colorOf, durationOf, offsets, positionOf, unseen} from "../lib/notice_logic.js"
+import {LEAVE_MS, colorOf, durationOf, positionOf, resumeAfter, stack, timeLeft, unseen} from "../lib/notice_logic.js"
 
 const FLASH_KEY = "linea_toast"
 
@@ -6,16 +6,22 @@ const FLASH_KEY = "linea_toast"
  * `Toaster`: LineOne's notifications (Toastify's look). A toast comes from the flash (`put_toast`, read from
  * `data-flash` on mount and on every patch, then cleared with `lv:clear-flash`), from a server push
  * (`send_toast`, the `linea:toast` event) or from the page (`show_toast`, the DOM event `linea:toast` on the
- * toaster or on `window`). It slides in from its edge, the toasts of a corner pile up 15px apart, the pointer
- * over a toast stops its timer, and a click on its close button (or on `[data-toast-dismiss]` in a custom
- * template) removes it.
+ * toaster or on `window`). It slides in from its edge. The toasts of a corner are stacked: the newest in full,
+ * the others behind it, smaller, showing as slivers (`data-stack="false"` lays them out one above the other
+ * instead). The pointer over any toast of a corner opens its stack and stops the timers of the whole stack;
+ * when it leaves they go on with the time they had left. A click on a close button (or on
+ * `[data-toast-dismiss]` in a custom template) removes a toast.
  */
+const COLLAPSE_MS = 150
+
 export default {
   "LineaUI.Toast": {
     mounted() {
       this.seen = new Set()
       this.toasts = []
       this.seq = 0
+      this.expanded = new Set()
+      this.collapsing = {}
       this.onLocal = (event) => this.show(event.detail ?? {})
       window.addEventListener("linea:toast", this.onLocal)
       this.handleEvent("linea:toast", (toast) => this.show(toast))
@@ -29,6 +35,7 @@ export default {
     destroyed() {
       window.removeEventListener("linea:toast", this.onLocal)
       this.toasts.forEach((toast) => clearTimeout(toast.timer))
+      Object.values(this.collapsing).forEach(clearTimeout)
       this.toasts.forEach((toast) => toast.el.remove())
     },
 
@@ -47,8 +54,11 @@ export default {
         duration: durationOf(input.duration, Number(this.el.dataset.duration || 5000)),
         timer: null,
       }
+      toast.left = toast.duration
       toast.el = this.render(input, toast)
       this.el.prepend(toast.el)
+      const box = toast.el.getBoundingClientRect()
+      toast.size = {width: Math.ceil(box.width) + 1, height: Math.ceil(box.height)}
       this.toasts.unshift(toast)
       this.start(toast)
       requestAnimationFrame(() => (toast.el.classList.add("on"), this.layout()))
@@ -63,8 +73,8 @@ export default {
       el.setAttribute("role", input.color === "error" ? "alert" : "status")
       template ? this.fillTemplate(el, template) : this.fillText(el, input)
       el.querySelectorAll("[data-toast-dismiss]").forEach((button) => button.addEventListener("click", () => this.remove(toast)))
-      el.addEventListener("mouseenter", () => clearTimeout(toast.timer))
-      el.addEventListener("mouseleave", () => this.start(toast))
+      el.addEventListener("mouseenter", () => this.hover(toast.position.key, true))
+      el.addEventListener("mouseleave", () => this.hover(toast.position.key, false))
       return el
     },
 
@@ -92,7 +102,40 @@ export default {
 
     start(toast) {
       clearTimeout(toast.timer)
-      toast.timer = Number.isFinite(toast.duration) ? setTimeout(() => this.remove(toast), toast.duration) : null
+      toast.startedAt = Date.now()
+      toast.timer = Number.isFinite(toast.duration) ? setTimeout(() => this.remove(toast), toast.left) : null
+    },
+
+    pause(toast) {
+      clearTimeout(toast.timer)
+      toast.timer = null
+      toast.left = Number.isFinite(toast.duration) ? timeLeft(toast.left, Date.now() - toast.startedAt) : toast.left
+    },
+
+    resume(toast) {
+      toast.left = Number.isFinite(toast.duration) ? resumeAfter(toast.left) : toast.left
+      this.start(toast)
+    },
+
+    group(key) {
+      return this.toasts.filter((toast) => toast.position.key === key)
+    },
+
+    hover(key, inside) {
+      clearTimeout(this.collapsing[key])
+      inside ? this.open(key) : (this.collapsing[key] = setTimeout(() => this.close(key), COLLAPSE_MS))
+    },
+
+    open(key) {
+      this.expanded.has(key) || (this.expanded.add(key), this.group(key).forEach((toast) => this.pause(toast)), this.layout())
+    },
+
+    close(key) {
+      this.expanded.has(key) && (this.expanded.delete(key), this.group(key).forEach((toast) => this.resume(toast)), this.layout())
+    },
+
+    settle(key) {
+      setTimeout(() => this.group(key).some((toast) => toast.el.matches(":hover")) || this.close(key), COLLAPSE_MS)
     },
 
     remove(toast) {
@@ -104,15 +147,29 @@ export default {
       clearTimeout(toast.timer)
       this.toasts.splice(index, 1)
       toast.el.classList.remove("on")
-      setTimeout(() => (toast.el.remove(), this.layout()), LEAVE_MS)
+      this.layout()
+      this.settle(toast.position.key)
+      setTimeout(() => toast.el.remove(), LEAVE_MS)
     },
 
     layout() {
+      const stacked = this.el.dataset.stack !== "false"
       const groups = Object.groupBy(this.toasts.filter((toast) => toast.el.isConnected), (toast) => toast.position.key)
-      Object.values(groups).forEach((group) => {
-        const at = offsets(group.map((toast) => toast.el.offsetHeight))
-        group.forEach((toast, index) => (toast.el.style[toast.position.y] = `${at[index]}px`))
+      Object.entries(groups).forEach(([key, group]) => {
+        const plan = stack(group.map((toast) => toast.size), !stacked || this.expanded.has(key))
+        group.forEach((toast, index) => this.place(toast, plan[index], index))
       })
+    },
+
+    place({el, position}, {offset, scale, width, height, hidden}, index) {
+      el.style[position.y] = `${offset}px`
+      el.style.width = `${width}px`
+      el.style.height = `${height}px`
+      el.style.transform = `scale(${scale})`
+      el.style.transformOrigin = `${position.y} ${position.x}`
+      el.style.zIndex = String(10010 - index)
+      el.style.opacity = hidden ? "0" : ""
+      el.style.pointerEvents = hidden ? "none" : ""
     },
   },
 }

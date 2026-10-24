@@ -49,3 +49,44 @@ export const offsets = (heights, gap = EDGE_PX) =>
 
 /** Whether a toast has been seen already: the flash is read again on every patch of the toaster. */
 export const unseen = (toasts, seen) => toasts.filter((toast) => !seen.has(String(toast.id)))
+
+/** The part of the front toast that stays visible of each toast behind it, in pixels. */
+export const PEEK_PX = 12
+
+/** How much smaller each toast behind the front one is drawn, and how many toasts a closed stack shows. */
+export const SCALE_STEP = 0.05
+export const VISIBLE = 3
+
+/** The least a paused timer waits after the pointer leaves, so a toast does not vanish the moment it is released. */
+export const RESUME_MIN_MS = 1000
+
+/**
+ * How the toasts of one corner are drawn, newest first. A closed stack shows the newest at full size
+ * and the others behind it, each 12px further from the edge, a little smaller and as wide and tall as the
+ * newest, so only a sliver shows; past `VISIBLE` they are hidden. An open stack (the pointer is over it)
+ * lays them out one above the other with their own sizes.
+ *
+ * @param {{width: number, height: number}[]} sizes the natural size of each toast
+ * @param {boolean} expanded
+ * @returns {{offset: number, scale: number, width: number, height: number, hidden: boolean}[]}
+ */
+export const stack = (sizes, expanded) => {
+  const opened = offsets(sizes.map((size) => size.height))
+  return sizes.map((size, index) =>
+    expanded
+      ? {offset: opened[index], scale: 1, width: size.width, height: size.height, hidden: false}
+      : {
+          offset: EDGE_PX + index * PEEK_PX,
+          scale: Math.max(1 - index * SCALE_STEP, 0.8),
+          width: sizes[0].width,
+          height: sizes[0].height,
+          hidden: index >= VISIBLE,
+        },
+  )
+}
+
+/** How long a toast has left after it was shown for `shown` ms of its `left` ms. */
+export const timeLeft = (left, shown) => Math.max(left - shown, 0)
+
+/** How long a released toast waits before it leaves. */
+export const resumeAfter = (left) => Math.max(left, RESUME_MIN_MS)

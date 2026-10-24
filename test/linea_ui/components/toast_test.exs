@@ -23,6 +23,15 @@ defmodule LineaUI.Components.ToastTest do
     assert [%{"message" => "Saved", "color" => "success"}] = Jason.decode!(json)
   end
 
+  test "the toaster stacks its toasts unless told not to" do
+    assigns = %{}
+    stacked = Phoenix.LiveViewTest.rendered_to_string(~H"<.toaster />")
+    open = Phoenix.LiveViewTest.rendered_to_string(~H"<.toaster stack={false} />")
+
+    assert attr_of(stacked, "#linea-toaster", "data-stack") == ["true"]
+    assert attr_of(open, "#linea-toaster", "data-stack") == ["false"]
+  end
+
   test "put_toast piles toasts up in the flash of a conn" do
     conn =
       Phoenix.ConnTest.build_conn()
