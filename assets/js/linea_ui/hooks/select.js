@@ -4,6 +4,7 @@
  * options and the chips it knows; the hook keeps the choice, filters, creates and tells the form.
  */
 import {canCreate} from "../lib/listbox_logic.js"
+import {fillQuery} from "../lib/autocomplete_logic.js"
 import {notify} from "../lib/dom.js"
 import {choose, highlight, isFull, moveIndex, removeLast, removeValue, sameValues, shows, splitTags} from "../lib/select_box.js"
 import {escapeHtml} from "../lib/date_picker_view.js"
@@ -329,11 +330,11 @@ export const Listbox = {
   paintNoResults() {
     const extra = this.q("[data-extra]")
     const shown = this.rows().length > 0
-    const message = this.q("[data-no-results]").textContent
+    const message = fillQuery(this.q("[data-no-results]").textContent, this.term)
     const row = extra.querySelector(".no-results")
     const wanted = !shown && this.term.trim() !== "" && this.el.dataset.create !== "true"
-    row && !wanted && row.remove()
-    !row && wanted && extra.insertAdjacentHTML("beforeend", `<div class="no-results">${escapeHtml(message)}</div>`)
+    row && (!wanted || row.textContent !== message) && row.remove()
+    ;(!row || row.textContent !== message) && wanted && extra.insertAdjacentHTML("beforeend", `<div class="no-results">${escapeHtml(message)}</div>`)
   },
 
   paintWrapper() {

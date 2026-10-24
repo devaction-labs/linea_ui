@@ -6,6 +6,7 @@
  *
  * Every hook is registered as `LineaUI.<Name>`, the value the components put in `phx-hook`.
  */
+import Autocomplete from "./hooks/autocomplete.js"
 import Carousel from "./hooks/carousel.js"
 import Chart from "./hooks/chart.js"
 import Clipboard from "./hooks/clipboard.js"
@@ -14,6 +15,7 @@ import DatePicker from "./hooks/date_picker.js"
 import Dialog from "./hooks/dialog.js"
 import Dropdown from "./hooks/dropdown.js"
 import InputMask from "./hooks/input_mask.js"
+import NumberInput from "./hooks/number_input.js"
 import Popover from "./hooks/popover.js"
 import Range from "./hooks/range.js"
 import Select from "./hooks/select.js"
@@ -29,6 +31,7 @@ import Treeview from "./hooks/treeview.js"
 import Upload from "./hooks/upload.js"
 
 export const Hooks = {
+  ...Autocomplete,
   ...Carousel,
   ...Chart,
   ...Clipboard,
@@ -37,6 +40,7 @@ export const Hooks = {
   ...Dialog,
   ...Dropdown,
   ...InputMask,
+  ...NumberInput,
   ...Popover,
   ...Range,
   ...Select,

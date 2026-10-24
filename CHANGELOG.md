@@ -13,6 +13,16 @@
 - `pagination`: `total_entries`/`page_size` add a "Showing 1–15 of 128" summary (text set by `summary`) and
   work out `total_pages`; `page_sizes` adds a rows-per-page select pushing `on_page_size` with
   `%{"page_size" => "30"}`.
+- `number_input`: a locale-aware numeric field (pt-BR `1.234,56` by default, `en`, or explicit separators) with
+  fixed (`decimals`) or maximum (`max_decimals`) decimals, `min`/`max`/`step`, optional `steppers`, `prefix`/`suffix`
+  boxes; it shows the formatted number and submits the machine value (`1234.56`) through a hidden input, and takes
+  integers, floats, numeric strings and `Decimal`s (`LineaUI.NumberInput` hook).
+- `autocomplete`: a text input with suggestions in the Tom Select look: client filtering or server search
+  (`on_search`, debounced, `target`, `search_threshold`, loading row), `:option` slot, keyboard navigation,
+  `clearable`, `open_on_focus`, `free_text`, `display_value`, and a `no_results` text with `%{query}`
+  (`LineaUI.Autocomplete` hook).
+- `select`: the listbox's `id` falls back to `name` before a generated one, and `no_results` replaces `%{query}`
+  with the search text.
 
 ## 0.1.1
 
