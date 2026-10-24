@@ -75,6 +75,26 @@ defmodule LineaUI.Components.MenuListTest do
     assert [click] = find(html, "a") |> LazyHTML.attribute("phx-click")
     assert click =~ "go"
   end
+
+  test "icon and count slots, and the count attr of a list item" do
+    html =
+      render(~H"""
+      <.menu_item id="x" navigate="/inbox" variant="solid">
+        <:icon><svg id="ic"></svg></:icon>
+        Inbox
+        <:count>12</:count>
+      </.menu_item>
+      <.menu_list id="l">
+        <:item href="#" count="3">Drafts</:item>
+        <:item href="#">Sent</:item>
+      </.menu_list>
+      """)
+
+    assert [_] = find(html, "a#x > svg#ic") |> Enum.to_list()
+    assert find(html, "a#x > span.ml-auto") |> LazyHTML.text() =~ "12"
+    assert [_] = find(html, "#l span.ml-auto") |> Enum.to_list()
+    assert find(html, "#l span.ml-auto") |> LazyHTML.text() == "3"
+  end
 end
 
 defmodule LineaUI.Components.MenuListLiveTest do

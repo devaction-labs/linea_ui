@@ -12,6 +12,15 @@ defmodule LineaUI.Components.MenuList do
 
       <:item href="#"><svg class="size-5">…</svg><span>Payments</span></:item>
 
+  A trailing count (a badge, a number) goes in the `:count` slot of a `menu_item`, or in the
+  `count` attr of an `:item`; it is pushed to the end of the row:
+
+      <.menu_item navigate="/inbox" variant="solid">
+        <:icon><svg class="size-5">…</svg></:icon>
+        Inbox
+        <:count><.badge size="sm" shape="pill">12</.badge></:count>
+      </.menu_item>
+
   `variant` follows LineOne's examples: `link` (text only), `solid` (filled; `color` picks
   primary or neutral), `pill` (rounded-full with a tinted hover), `gradient` and `bordered`.
 
@@ -133,6 +142,7 @@ defmodule LineaUI.Components.MenuList do
     attr(:patch, :string)
     attr(:active, :boolean)
     attr(:value, :string)
+    attr(:count, :string, doc: "Text pushed to the end of the row.")
   end
 
   slot(:row, doc: "Renders one row; takes the row (`{dom_id, item}` for a stream).")
@@ -167,9 +177,10 @@ defmodule LineaUI.Components.MenuList do
           value={Map.get(item, :value)}
           on_select={@on_select}
           target={@target}
-          {Map.drop(item, [:__slot__, :inner_block, :active, :value])}
+          {Map.drop(item, [:__slot__, :inner_block, :active, :value, :count])}
         >
           {render_slot(item)}
+          <:count :if={Map.get(item, :count)}>{Map.get(item, :count)}</:count>
         </.menu_item>
       </li>
       <li :for={row <- @rows || []} id={@row_id && @row_id.(row)}>
@@ -195,6 +206,8 @@ defmodule LineaUI.Components.MenuList do
   attr(:target, :any, default: nil)
   attr(:class, :any, default: nil)
   attr(:rest, :global, include: ~w(href navigate patch method download replace))
+  slot(:icon, doc: "Drawn before the text; an `<svg>` gets LineOne's icon size and colors.")
+  slot(:count, doc: "Pushed to the end of the row (a number, a badge).")
   slot(:inner_block, required: true)
 
   def menu_item(assigns) do
@@ -229,7 +242,10 @@ defmodule LineaUI.Components.MenuList do
       phx-target={@value && @target}
       {@rest}
     >
-      {render_slot(@inner_block)}
+      {render_slot(@icon)}{render_slot(@inner_block)}<span
+        :for={count <- @count}
+        class="ml-auto shrink-0 pl-2 text-xs"
+      >{render_slot(count)}</span>
     </.link>
     """
   end
@@ -246,7 +262,10 @@ defmodule LineaUI.Components.MenuList do
       phx-target={@target}
       {@rest}
     >
-      {render_slot(@inner_block)}
+      {render_slot(@icon)}{render_slot(@inner_block)}<span
+        :for={count <- @count}
+        class="ml-auto shrink-0 pl-2 text-xs"
+      >{render_slot(count)}</span>
     </a>
     """
   end
