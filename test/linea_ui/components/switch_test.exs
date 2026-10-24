@@ -45,4 +45,17 @@ defmodule LineaUI.Components.SwitchTest do
     html = rendered_to_string(~H'<.switch field={@field} />')
     assert [_] = find(html, "input#p_public[name='p[public]'][checked]") |> Enum.to_list()
   end
+
+  test "label_position left puts the caption before the switch" do
+    html =
+      render(~H"""
+      <.switch id="a" name="a" label="A" label_position="left" wrapper_class="w-full justify-between" />
+      <.switch id="b" name="b" label="B" />
+      """)
+
+    assert ["flex-row-reverse", "space-x-reverse", "w-full"] -- classes(html, "label:has(#a)") ==
+             []
+
+    refute "flex-row-reverse" in classes(html, "label:has(#b)")
+  end
 end
