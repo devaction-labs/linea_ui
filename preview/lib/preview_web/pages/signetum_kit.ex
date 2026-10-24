@@ -56,13 +56,26 @@ defmodule PreviewWeb.Pages.SignetumKit do
     }
   ]
 
-  def mount(socket), do: assign(socket, items: @items, picked: nil)
+  def mount(socket),
+    do:
+      assign(socket,
+        items: @items,
+        picked: nil,
+        form: to_form(%{"regime" => "simples"}, as: :company),
+        status: "all"
+      )
 
   def handle_event("palette-select", %{"value" => value, "new_tab" => new_tab}, socket),
     do: {:noreply, assign(socket, picked: "#{value} (new tab: #{new_tab})")}
 
   def handle_event("palette-assistant", %{"query" => query}, socket),
     do: {:noreply, assign(socket, picked: "assistant: #{query}")}
+
+  def handle_event("validate", %{"company" => params}, socket),
+    do: {:noreply, assign(socket, form: to_form(params, as: :company))}
+
+  def handle_event("set-status", %{"value" => value}, socket),
+    do: {:noreply, assign(socket, status: value)}
 
   def render(assigns) do
     ~H"""
@@ -89,6 +102,41 @@ defmodule PreviewWeb.Pages.SignetumKit do
         on_select="palette-select"
         on_assistant="palette-assistant"
       />
+    </.example>
+
+    <.example
+      title="Segmented"
+      text="Toggle buttons with aria-pressed; counts, form field and server value."
+      class="mt-5 flex flex-col gap-5"
+    >
+      <.segmented
+        id="seg-status"
+        label="Status do pedido"
+        value={@status}
+        on_change="set-status"
+        options={[
+          %{label: "Todos", value: "all", count: 128},
+          %{label: "Rascunho", value: "draft", count: 9},
+          %{label: "Aprovado", value: "approved", count: 31},
+          %{label: "Faturado", value: "billed", count: 88}
+        ]}
+      />
+      <p class="text-sm">status: {@status}</p>
+      <.segmented
+        id="seg-period"
+        label="Período"
+        value="month"
+        options={["Semana", "Mês", "Trimestre"]}
+      />
+      <.form for={@form} phx-change="validate">
+        <.segmented
+          field={@form[:regime]}
+          label="Regime tributário"
+          options={[{"Simples Nacional", "simples"}, {"Regime normal", "normal"}]}
+        />
+      </.form>
+      <p class="text-sm">regime: {@form[:regime].value}</p>
+      <.segmented id="seg-lg" size="lg" full value="a" options={["Lista", "Kanban"]} />
     </.example>
     """
   end

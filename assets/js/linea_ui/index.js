@@ -19,6 +19,7 @@ import InputMask from "./hooks/input_mask.js"
 import NumberInput from "./hooks/number_input.js"
 import Popover from "./hooks/popover.js"
 import Range from "./hooks/range.js"
+import Segmented from "./hooks/segmented.js"
 import Select from "./hooks/select.js"
 import Sidebar from "./hooks/sidebar.js"
 import Tabs from "./hooks/tabs.js"
@@ -45,6 +46,7 @@ export const Hooks = {
   ...NumberInput,
   ...Popover,
   ...Range,
+  ...Segmented,
   ...Select,
   ...Sidebar,
   ...Tabs,
