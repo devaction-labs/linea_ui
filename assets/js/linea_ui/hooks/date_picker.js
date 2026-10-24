@@ -7,6 +7,7 @@ import {monthOf, shiftMonth} from "../lib/dates.js"
 import {notify} from "../lib/dom.js"
 import {clampTime, formatDate, isDisabled, pickDate, readTime, renderDays, renderTime, setUnit, stepTime, timeText} from "../lib/calendar_view.js"
 import {escapeHtml} from "../lib/date_picker_view.js"
+import {presetActive, presetDates, rangeInputs} from "../lib/date_range.js"
 import {iconSet} from "../lib/glyphs.js"
 import {sameValues} from "../lib/select_box.js"
 
@@ -130,7 +131,29 @@ export const Picker = {
       kind === "date"
         ? ""
         : renderTime({...time, twentyFour: this.el.dataset.time24 === "true", ...this.timeRules()})
-    this.q("[data-calendar]").innerHTML = days + clock
+    this.q("[data-calendar]").innerHTML = days + clock + this.presetsHtml()
+    this.paintPresets()
+  },
+
+  presetsHtml() {
+    const template = this.q("template[data-presets]")
+    return template ? template.innerHTML : ""
+  },
+
+  paintPresets() {
+    const mode = this.mode()
+    this.el.querySelectorAll("[data-calendar] [data-preset]").forEach((button) => {
+      const active = presetActive({from: button.dataset.from, to: button.dataset.to}, this.dates, mode)
+      button.toggleAttribute("data-active", active)
+      button.setAttribute("aria-pressed", String(active))
+    })
+  },
+
+  pickPreset(button) {
+    this.dates = presetDates({from: button.dataset.from, to: button.dataset.to}, this.mode())
+    this.view = monthOf(this.dates.at(-1))
+    this.commit()
+    this.el.dataset.inline === "true" ? this.render() : this.close()
   },
 
   open() {
@@ -179,12 +202,14 @@ export const Picker = {
   },
 
   click(event) {
+    const preset = event.target.closest("[data-calendar] [data-preset]")
     const day = event.target.closest("[data-date]")
     const month = event.target.closest("[data-month]")
     const arrow = event.target.closest(".numInputWrapper [data-step]")
     const ampm = event.target.closest("[data-ampm]")
     const display = event.target.closest("[data-display]")
     const action =
+      (preset && (() => this.pickPreset(preset))) ||
       (day && (() => this.pickDay(day))) ||
       (month && (() => this.moveMonth(Number(month.dataset.month)))) ||
       (arrow && (() => this.stepArrow(arrow))) ||
@@ -199,6 +224,7 @@ export const Picker = {
     const mode = this.mode()
     !blocked && ((this.dates = pickDate(this.dates, iso, mode)), this.kind() === "datetime" && !this.time && (this.time = this.defaultTime()))
     !blocked && this.commit()
+    !blocked && this.paintPresets()
     const done = !blocked && this.kind() === "date" && (mode === "single" || (mode === "range" && this.dates.length === 2))
     done ? this.close() : this.isOpen && this.render()
   },
@@ -278,7 +304,7 @@ export const Picker = {
   displayText() {
     const format = this.el.dataset.format
     const names = this.names()
-    const joiner = this.mode() === "range" ? " to " : ", "
+    const joiner = this.mode() === "range" ? (this.el.dataset.separator ?? " to ") : ", "
     return {
       date: () => this.hiddenValues().map((iso) => formatDate(iso, null, format, names)).join(joiner),
       datetime: () => this.dates.slice(0, 1).map((iso) => formatDate(iso, this.currentTime(), format, names)).join(""),
@@ -287,6 +313,19 @@ export const Picker = {
   },
 
   write() {
+    const {startName, endName} = this.el.dataset
+    startName && endName ? this.writeSplit(startName, endName) : this.writeList()
+    this.q("[data-display]").value = this.displayText()
+  },
+
+  writeSplit(startName, endName) {
+    const disabled = this.q("[data-display]").disabled ? " disabled" : ""
+    this.q("[data-hidden]").innerHTML = rangeInputs(this.hiddenValues(), startName, endName)
+      .map(({name, value}) => `<input type="hidden" name="${escapeHtml(name)}" value="${escapeHtml(value)}"${disabled}>`)
+      .join("")
+  },
+
+  writeList() {
     const name = this.el.dataset.name
     const values = this.hiddenValues()
     const list = name.endsWith("[]")
@@ -294,7 +333,6 @@ export const Picker = {
     const empty = list || values.length === 0 ? `<input type="hidden" name="${escapeHtml(name)}" value=""${disabled}>` : ""
     this.q("[data-hidden]").innerHTML =
       empty + values.map((value) => `<input type="hidden" name="${escapeHtml(name)}" value="${escapeHtml(value)}"${disabled}>`).join("")
-    this.q("[data-display]").value = this.displayText()
   },
 
   commit() {

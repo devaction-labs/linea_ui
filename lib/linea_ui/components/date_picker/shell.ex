@@ -9,6 +9,24 @@ defmodule LineaUI.Components.DatePicker.Shell do
   @months ~w(January February March April May June July August September October November December)
   @weekdays ~w(Sunday Monday Tuesday Wednesday Thursday Friday Saturday)
 
+  @locales %{
+    "en" => %{
+      months: @months,
+      weekdays: @weekdays,
+      separator: " to ",
+      formats: %{date: "Y-m-d", datetime: "Y-m-d H:i", time: "H:i"}
+    },
+    "pt_BR" => %{
+      months:
+        ~w(Janeiro Fevereiro Março Abril Maio Junho Julho Agosto Setembro Outubro Novembro Dezembro),
+      weekdays: ~w(Domingo Segunda Terça Quarta Quinta Sexta Sábado),
+      separator: " até ",
+      formats: %{date: "d/m/Y", datetime: "d/m/Y H:i", time: "H:i"}
+    }
+  }
+
+  @preset "rounded-full bg-slate-150 px-2.5 py-1 text-xs-plus font-medium text-slate-600 transition-colors hover:bg-slate-200 hover:text-slate-800 focus-visible:outline-2 focus-visible:outline-primary/50 data-active:bg-primary data-active:text-white dark:bg-navy-500 dark:text-navy-100 dark:hover:bg-navy-450 dark:hover:text-navy-50 dark:data-active:bg-accent dark:data-active:text-white"
+
   @input "form-input flatpickr-input peer w-full rounded-lg border border-slate-300 bg-transparent px-3 py-2 placeholder:text-slate-400/70 hover:border-slate-400 focus:border-primary dark:border-navy-450 dark:hover:border-navy-400 dark:focus:border-accent"
   @input_grouped "form-input flatpickr-input w-full rounded-l-lg border border-slate-300 bg-transparent px-3 py-2 placeholder:text-slate-400/70 hover:z-10 hover:border-slate-400 focus:z-10 focus:border-primary dark:border-navy-450 dark:hover:border-navy-400 dark:focus:border-accent"
 
@@ -17,6 +35,9 @@ defmodule LineaUI.Components.DatePicker.Shell do
 
   @doc false
   def weekdays, do: @weekdays
+
+  @doc false
+  def locales, do: Map.keys(@locales)
 
   @doc false
   @spec prepare(map(), :date | :datetime | :time) :: map()
@@ -29,23 +50,37 @@ defmodule LineaUI.Components.DatePicker.Shell do
       |> assign_new(:value, fn -> nil end)
       |> assign(:kind, kind)
 
+    locale = @locales[Map.get(assigns, :locale, "en")]
     values = hidden_values(assigns.value, kind, assigns.mode)
-    format = assigns.display_format || default_format(kind)
-    names = %{months: assigns.months || @months, weekdays: assigns.weekdays || @weekdays}
+    format = assigns.display_format || locale.formats[kind]
+    separator = Map.get(assigns, :range_separator) || locale.separator
+
+    names = %{
+      months: assigns.months || locale.months,
+      weekdays: assigns.weekdays || locale.weekdays
+    }
 
     assign(assigns,
       values: values,
       format: format,
       names: names,
-      display: display(values, kind, assigns.mode, format, names),
+      separator: separator,
+      display: display(values, kind, assigns.mode, format, names, separator),
       input_name: input_name(assigns.name, assigns.mode),
+      split: split(Map.get(assigns, :start_name), Map.get(assigns, :end_name), values),
+      presets: Map.get(assigns, :presets, []),
+      preset_class: @preset,
       grouped: assigns.trailing != []
     )
   end
 
-  defp default_format(:date), do: "Y-m-d"
-  defp default_format(:datetime), do: "Y-m-d H:i"
-  defp default_format(:time), do: "H:i"
+  defp split(start, finish, values) when is_binary(start) and is_binary(finish),
+    do: [{start, Enum.at(values, 0, "")}, {finish, Enum.at(values, 1, "")}]
+
+  defp split(_start, _finish, _values), do: nil
+
+  defp split_name(nil, _index), do: nil
+  defp split_name(split, index), do: split |> Enum.at(index) |> elem(0)
 
   defp input_name(name, mode) when mode in ["multiple", "range"], do: name <> "[]"
   defp input_name(name, _mode), do: name
@@ -82,13 +117,13 @@ defmodule LineaUI.Components.DatePicker.Shell do
 
   defp hm(at), do: at |> Calendar.strftime("%H:%M")
 
-  defp display(values, :time, _mode, format, names),
+  defp display(values, :time, _mode, format, names, _separator),
     do: values |> Enum.map(&format(nil, &1, format, names)) |> Enum.join(", ")
 
-  defp display(values, kind, "range", format, names),
-    do: values |> Enum.map(&format_value(&1, kind, format, names)) |> Enum.join(" to ")
+  defp display(values, kind, "range", format, names, separator),
+    do: values |> Enum.map(&format_value(&1, kind, format, names)) |> Enum.join(separator)
 
-  defp display(values, kind, _mode, format, names),
+  defp display(values, kind, _mode, format, names, _separator),
     do: values |> Enum.map(&format_value(&1, kind, format, names)) |> Enum.join(", ")
 
   defp format_value(value, :datetime, format, names) do
@@ -190,6 +225,9 @@ defmodule LineaUI.Components.DatePicker.Shell do
         data-name={@input_name}
         data-format={@format}
         data-names={Pickers.json(@names)}
+        data-separator={@separator}
+        data-start-name={split_name(@split, 0)}
+        data-end-name={split_name(@split, 1)}
         data-today={iso(@today)}
         data-min={iso(@min)}
         data-max={iso(@max)}
@@ -229,7 +267,16 @@ defmodule LineaUI.Components.DatePicker.Shell do
             {render_slot(@icon) || default_icon(@kind)}
           </span>
           {render_slot(@trailing)}
-          <div data-hidden>
+          <div :if={@split} data-hidden>
+            <input
+              :for={{name, value} <- @split}
+              type="hidden"
+              name={name}
+              value={value}
+              disabled={@disabled}
+            />
+          </div>
+          <div :if={!@split} data-hidden>
             <input
               :if={@values == [] or @input_name != @name}
               type="hidden"
@@ -256,6 +303,20 @@ defmodule LineaUI.Components.DatePicker.Shell do
           data-calendar
         >
         </div>
+        <template :if={@presets != []} data-presets>
+          <div class="flatpickr-presets flex flex-wrap gap-1.5 rounded-b border-t border-slate-150 bg-white p-2 dark:border-navy-500 dark:bg-navy-700">
+            <button
+              :for={preset <- @presets}
+              type="button"
+              class={@preset_class}
+              data-preset
+              data-from={preset.from}
+              data-to={preset.to}
+            >
+              {preset.label}
+            </button>
+          </div>
+        </template>
       </div>
     </Pickers.field>
     """
