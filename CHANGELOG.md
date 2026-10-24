@@ -2,6 +2,7 @@
 
 ## 0.4.4
 
+- New `phone_input/1`: a phone number field with a country picker (flag and calling code) beside the number. The picker is a searchable list (by name in pt-BR or English, ISO code and calling code, ignoring accents) with the arrows, Enter and Esc; the number is shown in the national format as it is typed (`(11) 91234-5678`) and the form submits the E.164 number through a hidden input, while an international number typed or pasted switches the country. `country` (default `"BR"`), `country_order`, `countries`, `except`, `locale`, `variant`, `size`, `shape`, `clearable`, `on_country_change`. New `LineaUI.Components.PhoneInput.Format` with `e164/2`, `parse/2`, `national/2` for validating the submitted value on the server; the country table lives in `assets/js/linea_ui/lib/phone_countries.js` and is read by both sides. Hook `LineaUI.PhoneInput`.
 - Framed shell (`framed_sidebar`): the collapsed rail scrolls when its icons do not fit the window height, so the user and the settings stay reachable on a short screen. Its tooltips are positioned on the screen (`position: fixed`, set by the `LineaUI.ShellRail` hook on hover and focus) and are no longer clipped by the scrolling list.
 - `dropdown` and `dropdown_submenu`: the panel no longer has vertical padding of its own; the items sit flush to its top and bottom (the first and last follow the panel's rounded corners).
 - `number_input` with `steppers`: the field now has the same height as the minus and plus buttons. The mono text made it 2px taller than they were.

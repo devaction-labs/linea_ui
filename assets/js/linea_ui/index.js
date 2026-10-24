@@ -20,6 +20,7 @@ import Dropdown from "./hooks/dropdown.js"
 import Fab from "./hooks/fab.js"
 import InputMask from "./hooks/input_mask.js"
 import NumberInput from "./hooks/number_input.js"
+import PhoneInput from "./hooks/phone_input.js"
 import Popover from "./hooks/popover.js"
 import Range from "./hooks/range.js"
 import Segmented from "./hooks/segmented.js"
@@ -52,6 +53,7 @@ export const Hooks = {
   ...Fab,
   ...InputMask,
   ...NumberInput,
+  ...PhoneInput,
   ...Popover,
   ...Range,
   ...Segmented,
