@@ -52,7 +52,7 @@ defmodule LineaUI.MixProject do
 
   defp package do
     [
-      licenses: ["Proprietary"],
+      licenses: ["LicenseRef-LineaUI"],
       links: %{
         "GitHub" => @source_url,
         "Changelog" => @source_url <> "/blob/main/CHANGELOG.md"
