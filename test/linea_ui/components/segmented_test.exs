@@ -114,9 +114,9 @@ defmodule LineaUI.Components.SegmentedTest do
       <.segmented id="lg" value="A" options={["A"]} size="lg" full />
       """)
 
-    assert "h-6.5" in classes(html, "#sm button")
+    assert "h-6" in classes(html, "#sm button")
     assert "inline-flex" in classes(html, "#sm")
-    assert "h-10" in classes(html, "#lg button")
+    assert "h-9.5" in classes(html, "#lg button")
     assert "flex-1" in classes(html, "#lg button")
     assert "w-full" in classes(html, "#lg")
   end

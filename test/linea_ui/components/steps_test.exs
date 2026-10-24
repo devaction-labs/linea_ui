@@ -219,7 +219,7 @@ defmodule LineaUI.Components.StepsTest do
     assert "flex-col" in classes(html, "ol")
     refute html |> find("ol") |> LazyHTML.attribute("style") |> Enum.join() =~ "grid-template"
     assert "before:bg-primary" in classes(html, "li:nth-child(1)")
-    assert "before:bg-slate-200" in classes(html, "li:nth-child(2)")
+    assert "before:bg-slate-150" in classes(html, "li:nth-child(2)")
     assert "last:before:hidden" in classes(html, "li:nth-child(3)")
     assert find(html, "li > span.h-1") |> Enum.count() == 0
     assert stepper_texts(html, "li:nth-child(2) button") == ["Import"]
