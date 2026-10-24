@@ -81,4 +81,46 @@ defmodule LineaUI.Components.DropdownTest do
     assert attr_of(html, "input", "name") == ["q"]
     assert attr_of(html, "input", "phx-debounce") == ["300"]
   end
+
+  test "toggle_icon draws the flat round dots button" do
+    html =
+      render(~H"""
+      <.dropdown id="a" toggle_icon="dots" toggle_class="-mr-2 size-7">
+        <.dropdown_item href="#">Action</.dropdown_item>
+      </.dropdown>
+      <.dropdown id="b" toggle_icon="dots-vertical" shape="square" toggle_label="Row actions">
+        <.dropdown_item href="#">Action</.dropdown_item>
+      </.dropdown>
+      """)
+
+    a = classes(html, "#a-button")
+    assert ["text-current", "rounded-full", "size-7", "-mr-2"] -- a == []
+    refute "size-8" in a
+    assert attr_of(html, "#a-button", "aria-label") == ["Menu"]
+    assert [_] = find(html, "#a-button svg path[d^='M5 12h.01']") |> Enum.to_list()
+    assert "rounded-none" in classes(html, "#b-button")
+    assert attr_of(html, "#b-button", "aria-label") == ["Row actions"]
+    assert [_] = find(html, "#b-button svg path[d^='M12 5v.01']") |> Enum.to_list()
+    assert attr_of(html, "#a-menu [role=menu]", "aria-labelledby") == ["a-button"]
+  end
+
+  test "shape applies to the label button, rounded by default" do
+    html =
+      render(~H"""
+      <.dropdown id="a" label="A">
+        <.dropdown_item href="#">x</.dropdown_item>
+      </.dropdown>
+      <.dropdown id="b" label="B" shape="square">
+        <.dropdown_item href="#">x</.dropdown_item>
+      </.dropdown>
+      <.dropdown id="c" label="C" shape="pill">
+        <.dropdown_item href="#">x</.dropdown_item>
+      </.dropdown>
+      """)
+
+    refute "rounded-full" in classes(html, "#a-button")
+    refute "rounded-none" in classes(html, "#a-button")
+    assert "rounded-none" in classes(html, "#b-button")
+    assert "rounded-full" in classes(html, "#c-button")
+  end
 end

@@ -13,6 +13,12 @@ defmodule LineaUI.Components.Dropdown do
         </.dropdown_item>
       </.dropdown>
 
+  `toggle_icon` draws LineOne's flat round icon button with the three dots (the menu of a card):
+
+      <.dropdown id="card-menu" toggle_icon="dots" placement="bottom-end">
+        <.dropdown_item href="#">Action</.dropdown_item>
+      </.dropdown>
+
   `label` draws LineOne's button with its turning chevron (`color` and `shape` style it); any
   other trigger goes in the `:toggle` slot:
 
@@ -46,7 +52,26 @@ defmodule LineaUI.Components.Dropdown do
     values: ~w(neutral primary secondary info success warning error),
     doc: "The color of the `label` button."
 
-  attr :shape, :string, default: "rounded", values: ~w(rounded pill square)
+  attr :toggle_icon, :string,
+    default: nil,
+    values: [nil, "dots", "dots-vertical"],
+    doc:
+      "Draws LineOne's flat icon-button trigger with three dots, horizontal (`dots`) or vertical (`dots-vertical`). It inherits the parent's text color and is `size-8` and round; `label` and the `:toggle` slot win over it."
+
+  attr :toggle_class, :any,
+    default: nil,
+    doc: "Merged into the `toggle_icon` button (`-mr-2 size-7`...)."
+
+  attr :toggle_label, :string,
+    default: "Menu",
+    doc: "The accessible name of the `toggle_icon` button."
+
+  attr :shape, :string,
+    default: nil,
+    values: [nil, "rounded", "pill", "square"],
+    doc:
+      "The shape of the trigger button. `nil` is `rounded` for the `label` button and `pill` for the `toggle_icon` one."
+
   attr :open, :boolean, default: false
   attr :placement, :string, default: "bottom-start", values: @placements
   attr :offset, :integer, default: 4, doc: "Pixels between the trigger and the menu."
@@ -85,14 +110,26 @@ defmodule LineaUI.Components.Dropdown do
     >
       <div data-trigger class="inline-flex">
         <Button.button
-          :if={@toggle == []}
+          :if={@toggle == [] and @toggle_icon == nil}
           color={@color}
-          shape={@shape}
+          shape={@shape || "rounded"}
           class="space-x-2"
           id={"#{@id}-button"}
         >
           <span>{@label}</span>
           <Overlay.chevron_icon />
+        </Button.button>
+        <Button.button
+          :if={@toggle == [] and @toggle_icon != nil}
+          icon
+          variant="flat"
+          color="current"
+          shape={@shape || "pill"}
+          class={merge(["size-8", @toggle_class])}
+          id={"#{@id}-button"}
+          aria-label={@toggle_label}
+        >
+          <.dots_icon name={@toggle_icon} />
         </Button.button>
         {render_slot(@toggle)}
       </div>
@@ -117,6 +154,48 @@ defmodule LineaUI.Components.Dropdown do
         </div>
       </div>
     </div>
+    """
+  end
+
+  attr :name, :string, required: true
+
+  defp dots_icon(%{name: "dots"} = assigns) do
+    ~H"""
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="size-5"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      stroke-width="2"
+      aria-hidden="true"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z"
+      />
+    </svg>
+    """
+  end
+
+  defp dots_icon(%{name: "dots-vertical"} = assigns) do
+    ~H"""
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="size-5"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      stroke-width="2"
+      aria-hidden="true"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"
+      />
+    </svg>
     """
   end
 
