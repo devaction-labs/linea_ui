@@ -326,6 +326,18 @@ defmodule LineaUI.Components.AppShellTest do
     assert [_] = find(html, "li svg") |> Enum.to_list()
   end
 
+  test "page_header puts its actions at the right end and omits the box without them" do
+    with_actions =
+      render(~H"""
+      <.page_header title="Invoice">
+        <:actions><button id="new">New</button></:actions>
+      </.page_header>
+      """)
+
+    assert [_] = find(with_actions, ".ml-auto #new") |> Enum.to_list()
+    refute render(~H|<.page_header title="Invoice" />|) =~ "ml-auto"
+  end
+
   test "theme_toggle, monochrome_toggle and theme_script" do
     html =
       render(~H"""

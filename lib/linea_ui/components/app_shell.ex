@@ -1455,6 +1455,7 @@ defmodule LineaUI.Components.AppShell do
       <.page_header title="Avatar">
         <:crumb navigate={~p"/elements"}>Elements</:crumb>
         <:crumb>Avatar</:crumb>
+        <:actions><.button color="primary">New</.button></:actions>
       </.page_header>
   """
   attr :title, :string, required: true
@@ -1467,6 +1468,7 @@ defmodule LineaUI.Components.AppShell do
     attr :patch, :string
   end
 
+  slot :actions, doc: "Buttons or filters at the right end of the row."
   slot :inner_block, doc: "Content after the breadcrumb."
 
   def page_header(assigns) do
@@ -1501,6 +1503,9 @@ defmodule LineaUI.Components.AppShell do
         </li>
       </ul>
       {render_slot(@inner_block)}
+      <div :if={@actions != []} class="ml-auto flex items-center space-x-2">
+        {render_slot(@actions)}
+      </div>
     </div>
     """
   end
