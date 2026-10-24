@@ -29,6 +29,7 @@ defmodule LineaUI.Components.SignaturePad do
   alias LineaUI.Components.Form
   alias LineaUI.Components.Input
   alias LineaUI.Components.Pickers
+  alias LineaUI.Components.Segments
   alias LineaUI.Components.Strings
 
   @doc """
@@ -129,20 +130,19 @@ defmodule LineaUI.Components.SignaturePad do
         {@root_rest}
       >
         <div :if={length(@modes) > 1} class="flex justify-end">
-          <Button.button_group aria-label={@text.signature_area}>
-            <Button.button
+          <div role="group" aria-label={@text.signature_area} class={Segments.group()}>
+            <button
               :for={{mode, label} <- [{"draw", @text.signature_draw}, {"type", @text.signature_type}]}
               :if={mode in @modes}
-              size="sm"
-              variant="outline"
-              class="aria-pressed:border-primary aria-pressed:bg-primary/10 aria-pressed:text-primary dark:aria-pressed:border-accent dark:aria-pressed:bg-accent/10 dark:aria-pressed:text-accent-light"
+              type="button"
+              class={Segments.item()}
               aria-pressed={bool(@mode == mode)}
               data-mode-button={mode}
               disabled={@disabled}
             >
               {label}
-            </Button.button>
-          </Button.button_group>
+            </button>
+          </div>
         </div>
         <div
           id={@id <> "-pad"}
@@ -154,17 +154,18 @@ defmodule LineaUI.Components.SignaturePad do
           style={"height: #{@height}px"}
           class={
             merge([
-              "relative w-full touch-none overflow-hidden rounded-lg border border-slate-300 bg-white select-none data-[mode=draw]:cursor-crosshair dark:border-navy-450",
+              "relative w-full touch-none overflow-hidden rounded-lg border border-slate-300 bg-white select-none data-[mode=draw]:cursor-crosshair dark:border-navy-450 dark:bg-navy-700",
               @disabled && "pointer-events-none opacity-60",
               @class
             ])
           }
         >
-          <span class="pointer-events-none absolute inset-x-6 bottom-10 border-t border-dashed border-slate-300"></span>
-          <span class="pointer-events-none absolute bottom-12 left-6 text-sm text-slate-400">×</span>
+          <span class="pointer-events-none absolute inset-x-6 bottom-10.5 border-t border-dashed border-slate-300 dark:border-navy-450"></span>
+          <span class="pointer-events-none absolute bottom-12 left-6 font-inter text-sm font-medium text-slate-400 dark:text-navy-300">×</span>
           <svg aria-hidden="true" class="pointer-events-none absolute inset-0 size-full">
             <path
               data-path
+              class="dark:stroke-navy-50"
               fill="none"
               stroke={@ink}
               stroke-width="2.4"
@@ -176,11 +177,11 @@ defmodule LineaUI.Components.SignaturePad do
             data-existing
             hidden
             alt=""
-            class="pointer-events-none absolute inset-0 size-full object-contain object-left-bottom"
+            class="pointer-events-none absolute inset-0 size-full object-contain object-left-bottom dark:invert"
           />
           <span
             data-typed
-            class="pointer-events-none absolute bottom-11 left-11 text-4xl text-slate-900 italic [font-family:'Brush_Script_MT','Segoe_Script','Snell_Roundhand',cursive]"
+            class="pointer-events-none absolute bottom-11.5 left-11 text-4xl text-slate-800 italic dark:text-navy-50 [font-family:'Brush_Script_MT','Segoe_Script','Snell_Roundhand',cursive]"
           ></span>
           <span
             data-hint
@@ -204,10 +205,23 @@ defmodule LineaUI.Components.SignaturePad do
         </div>
         <div class="flex items-center justify-between gap-2">
           <span>
-            <Badge.badge data-status-ready color="success" variant="soft" size="sm" hidden>
+            <Badge.badge
+              data-status-ready
+              color="success"
+              variant="soft"
+              size="sm"
+              class="font-inter text-tiny-plus"
+              hidden
+            >
               {@text.signature_ready}
             </Badge.badge>
-            <Badge.badge data-status-empty color="neutral" variant="soft" size="sm">
+            <Badge.badge
+              data-status-empty
+              color="neutral"
+              variant="soft"
+              size="sm"
+              class="font-inter text-tiny-plus"
+            >
               {@text.signature_empty}
             </Badge.badge>
           </span>

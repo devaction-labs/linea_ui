@@ -44,6 +44,7 @@ defmodule LineaUI.Components.Calendar do
   alias LineaUI.Components.Button
   alias LineaUI.Components.Calendar.Grid
   alias LineaUI.Components.DatePicker.Shell
+  alias LineaUI.Components.Segments
   alias LineaUI.Components.Strings
 
   @colors %{
@@ -59,8 +60,6 @@ defmodule LineaUI.Components.Calendar do
 
   @cell "relative border-t border-l border-slate-150 bg-white outline-hidden first:border-l-0 focus-visible:z-10 focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:ring-inset dark:border-navy-600 dark:bg-navy-700 dark:focus-visible:ring-accent/60"
   @head "bg-slate-200 px-2.5 py-2 font-inter text-tiny-plus font-semibold tracking-wider text-slate-500 uppercase dark:bg-navy-800 dark:text-navy-200"
-  @switch "inline-flex gap-0.5 rounded-lg bg-slate-150 p-0.5 dark:bg-navy-800"
-  @switch_item "inline-flex h-7.5 items-center justify-center rounded-md px-3 text-xs-plus font-medium whitespace-nowrap text-slate-500 outline-hidden transition-colors duration-200 hover:text-slate-700 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-primary/50 disabled:pointer-events-none disabled:opacity-60 aria-pressed:bg-white aria-pressed:text-slate-800 aria-pressed:shadow-soft dark:text-navy-200 dark:hover:text-navy-50 dark:focus-visible:outline-accent/50 dark:aria-pressed:bg-navy-500 dark:aria-pressed:text-navy-50 dark:aria-pressed:shadow-none"
   @chip "block w-full truncate rounded px-1.5 py-0.5 text-left font-inter text-tiny-plus font-medium"
   @chip_button "outline-hidden transition-opacity hover:opacity-80 focus-visible:ring-2 focus-visible:ring-primary/60 dark:focus-visible:ring-accent/60"
 
@@ -336,8 +335,8 @@ defmodule LineaUI.Components.Calendar do
       assign(assigns,
         cell: @cell,
         head: @head,
-        switch: @switch,
-        switch_item: @switch_item,
+        switch: Segments.group(),
+        switch_item: Segments.item(),
         row_px: Grid.row_px()
       )
 
