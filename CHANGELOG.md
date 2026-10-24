@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- `signature_pad`: sign with pointer events (mouse, touch, pen) or type a name; the signature leaves as SVG text in a
+  hidden input (`field`, `phx-change`, `on_change`), with a Clear button, a ready/empty status, a stored SVG shown
+  from `value` and `locale="pt_BR"`.
 - `calendar`: a month or week grid (`role="grid"`) with colored event chips and hour blocks, a toolbar with
   previous, today, next and month/week switch, roving-tabindex keyboard navigation (arrows, Home, End, Page Up and
   Page Down, Enter), and `locale="pt_BR"`. The server holds `view` and `date`; the toolbar and the keyboard push

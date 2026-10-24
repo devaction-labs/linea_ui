@@ -67,6 +67,7 @@ defmodule LineaUI do
     range: LineaUI.Components.Range,
     scroll_area: LineaUI.Components.ScrollArea,
     select: LineaUI.Components.Select,
+    signature_pad: LineaUI.Components.SignaturePad,
     skeleton: LineaUI.Components.Skeleton,
     spinner: LineaUI.Components.Spinner,
     steps: LineaUI.Components.Steps,

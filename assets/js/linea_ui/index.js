@@ -22,6 +22,7 @@ import Popover from "./hooks/popover.js"
 import Range from "./hooks/range.js"
 import Select from "./hooks/select.js"
 import Sidebar from "./hooks/sidebar.js"
+import SignaturePad from "./hooks/signature_pad.js"
 import Tabs from "./hooks/tabs.js"
 import TagsInput from "./hooks/tags_input.js"
 import TextEditor from "./hooks/text_editor.js"
@@ -49,6 +50,7 @@ export const Hooks = {
   ...Range,
   ...Select,
   ...Sidebar,
+  ...SignaturePad,
   ...Tabs,
   ...TagsInput,
   ...TextEditor,

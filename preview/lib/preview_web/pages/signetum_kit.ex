@@ -47,12 +47,16 @@ defmodule PreviewWeb.Pages.SignetumKit do
       cal_date: @today,
       cal_view: "month",
       cal_events: @events,
-      cal_last: nil
+      cal_last: nil,
+      signature: ""
     )
   end
 
   def handle_event("color", %{"stage" => %{"color" => color}}, socket),
     do: {:noreply, assign(socket, color: color)}
+
+  def handle_event("sign", %{"receipt" => %{"signature" => svg}}, socket),
+    do: {:noreply, assign(socket, signature: svg)}
 
   def handle_event("cal_navigate", %{"date" => date, "view" => view}, socket),
     do: {:noreply, assign(socket, cal_date: Date.from_iso8601!(date), cal_view: view)}
@@ -103,6 +107,22 @@ defmodule PreviewWeb.Pages.SignetumKit do
         ]}
       />
       <p class="mt-2 text-xs-plus">Last: <span id="cal-last">{@cal_last}</span></p>
+    </.example>
+    <.example
+      title="Signature pad"
+      text="Draw with the pointer or type a name; it exports SVG."
+      class="mt-5 block"
+    >
+      <form id="receipt-form" phx-change="sign" class="max-w-xl">
+        <.signature_pad
+          id="receipt-signature"
+          name="receipt[signature]"
+          label="Comprovante"
+          locale="pt_BR"
+          text="Marcos Oliveira"
+        />
+      </form>
+      <p class="mt-2 text-xs-plus">SVG: <span id="sign-size">{byte_size(@signature)}</span> bytes</p>
     </.example>
     """
   end
