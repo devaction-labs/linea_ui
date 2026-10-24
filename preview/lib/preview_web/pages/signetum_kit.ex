@@ -58,6 +58,7 @@ defmodule PreviewWeb.Pages.SignetumKit do
       cal_events: @events,
       cal_last: nil,
       signature: "",
+      markup: 60,
       orders: @orders,
       pending: %{"status" => ["Aprovado", "Faturado"], "channel" => [], "sort" => "recent"},
       applied: %{"status" => ["Aprovado", "Faturado"], "channel" => [], "sort" => "recent"}
@@ -77,6 +78,11 @@ defmodule PreviewWeb.Pages.SignetumKit do
     params = Map.merge(%{"status" => [], "channel" => []}, params)
     {:noreply, assign(socket, pending: params, applied: params)}
   end
+
+  def handle_event("range", %{"markup" => markup}, socket),
+    do: {:noreply, assign(socket, markup: String.to_integer(markup))}
+
+  def handle_event("range", _params, socket), do: {:noreply, socket}
 
   def handle_event("cal_navigate", %{"date" => date, "view" => view}, socket),
     do: {:noreply, assign(socket, cal_date: Date.from_iso8601!(date), cal_view: view)}
@@ -201,6 +207,62 @@ defmodule PreviewWeb.Pages.SignetumKit do
           />
         </.dropdown>
         <span class="text-xs-plus">Aplicado: <span id="applied">{inspect(@applied)}</span></span>
+      </form>
+    </.example>
+    <.example title="Range" text="Value, marks, two thumbs, steps and vertical." class="mt-5 block">
+      <form id="range-form" phx-change="range" class="grid max-w-3xl gap-8 md:grid-cols-2">
+        <.range
+          name="markup"
+          value={@markup}
+          label="Markup padrão"
+          min={0}
+          max={200}
+          step={5}
+          color="primary"
+          show_value
+          value_format="%{value}%"
+          filled
+          marks={[{0, "0%"}, {50, "50%"}, {100, "100%"}, {150, "150%"}, {200, "200%"}]}
+          help="Preço de venda sugerido = custo × (1 + markup)."
+        />
+        <.range
+          start_name="from"
+          end_name="to"
+          value={{40, 280}}
+          label="Faixa de preço"
+          min={0}
+          max={500}
+          step={10}
+          color="primary"
+          show_value
+          value_format="R$ %{value}"
+          help="Dois polegares para filtrar por valor."
+        />
+        <.range
+          name="tolerance"
+          value={1}
+          label="Tolerância da conciliação"
+          min={0}
+          max={3}
+          color="primary"
+          filled
+          marks={[{0, "R$ 0,00"}, {1, "R$ 0,01"}, {2, "R$ 0,10"}, {3, "R$ 1,00"}]}
+        />
+        <div class="flex gap-8">
+          <.range
+            :for={{name, value} <- [{"price", 40}, {"term", 30}, {"quality", 20}]}
+            name={name}
+            value={value}
+            label={String.capitalize(name)}
+            orientation="vertical"
+            color="primary"
+            filled
+            show_value
+            value_format="%{value}%"
+            steppers
+            step={5}
+          />
+        </div>
       </form>
     </.example>
     """

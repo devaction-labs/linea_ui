@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- `range`: `show_value` and `value_format` write the value beside the label, `filled` paints the track up to the thumb,
+  `marks` label the track (a click sets the value), `steppers` add minus and plus buttons, `start_field`/`end_field`
+  (or `start_name`/`end_name`, `value={{from, to}}`) give two thumbs on one track, and `orientation="vertical"` stands
+  it up. The browser keeps all of it in step between round trips (`LineaUI.Range`, `LineaUI.RangePair`); a slider
+  without these attrs renders as before.
 - `dropdown` filter menu: `dropdown_checkbox` and `dropdown_radio` (`menuitemcheckbox` / `menuitemradio`) toggle without
   closing the menu, with a real input beside them when given a `name` (so `phx-change` and `phx-submit` see them),
   `data-server-checked` so the server wins only when it changes the state, and a muted `count`. `dropdown_submenu`
