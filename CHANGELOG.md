@@ -16,6 +16,11 @@
   per action), the aura as a 1.5px ring on a track around the card, `bar: true` for a 3px progress bar, and a progress
   toast turned into `kind: :error` as a failure. `color: "dark"` makes the card dark. LineOne's plain colored toast
   (`color:` alone) is unchanged.
+- `select`: the list of the listbox (and of `tags_input`) is the surface of the dropdown menu, not Tom Select's flat bar:
+  a floating panel (`rounded-lg`, border, soft shadow, 6px padding) with rounded rows, a `slate-100` / `navy-600` hover,
+  the chosen option in the primary tone with a check, and headed groups; light and dark. `search` (`control` by default,
+  `panel`, `none`) says where the person searches: in the control, in a field on top of the list (`search_placeholder`),
+  or nowhere. A click inside the control no longer reaches the listbox twice through its `<label>`.
 - `drawer`: a sheet is `variant="float"` by default (12px margins, 16px corners, the whole height, a fixed footer);
   `variant="flush"` keeps the panel against the edge. `placement="bottom"` is the phone's sheet with a grab handle.
   `sheet_header/1`, `sheet_body/1` and `sheet_footer/1` lay a sheet out by hand.

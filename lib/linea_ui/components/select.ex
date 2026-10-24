@@ -55,7 +55,7 @@ defmodule LineaUI.Components.Select do
 
   ## Fixed choices, no search
 
-  The listbox always has a search box. For a short, fixed list (a status, a period, a unit,
+  The listbox searches by default (see `search`). For a short, fixed list (a status, a period, a unit,
   yes/no) use `native`: the browser's own `<select>`, with no hook and no search, that submits
   like any input, opens the system picker on a phone and works with the keyboard as a plain
   select does. `prompt` adds a first, empty option; `{group, options}` entries become
@@ -71,6 +71,19 @@ defmodule LineaUI.Components.Select do
   Only `variant`, `size`, `shape`, `inline` and `prompt` apply to it; `multiple` renders a
   `form-multiselect` box. The listbox-only attrs (`removable`, `clearable`, `create`,
   `on_search`, the slots...) are ignored.
+
+  ## Search
+
+  `search` sets where the person searches the options of the listbox, always in the tonality of
+  the component:
+
+    * `"control"` (default): types in the control itself, as in LineOne's Tom Select.
+    * `"panel"`: the control is a plain trigger and the list opens with a search field on top
+      (`search_placeholder` is its text). Arrow keys, Enter and Esc work from that field.
+    * `"none"`: no search, the control is a plain trigger (a short list that fits the screen).
+
+      <.select field={@form[:state]} options={@states} search="panel" search_placeholder="Find a state" />
+      <.select field={@form[:status]} options={@statuses} search="none" placeholder="Any status" />
 
   Events: with `on_search` the listbox stops filtering on its own and pushes
   `on_search` with `%{"id" => id, "query" => text}` as the person types (after `debounce`
@@ -131,6 +144,16 @@ defmodule LineaUI.Components.Select do
   attr :no_results, :string,
     default: "No results found",
     doc: "Shown when the search matches nothing; `%{query}` is replaced by what was typed."
+
+  attr :search, :string,
+    default: "control",
+    values: ~w(control panel none),
+    doc:
+      "Listbox only: `control` types in the control, `panel` opens the list with a search field on top, `none` has no search."
+
+  attr :search_placeholder, :string,
+    default: "Search…",
+    doc: "Listbox only: the placeholder of the `panel` search field."
 
   attr :on_search, :string, default: nil
   attr :debounce, :integer, default: 300

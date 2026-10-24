@@ -27,9 +27,10 @@ export const Listbox = {
     )
 
     this.onClick = (event) => this.click(event)
-    this.onPointerDown = (event) => event.target.closest("[data-dropdown], [data-clear], [data-remove]") && event.preventDefault()
-    this.onFocusIn = (event) => event.target.matches("[data-search]") && this.focus()
-    this.onFocusOut = (event) => event.target.matches("[data-search]") && this.blur()
+    this.onPointerDown = (event) =>
+      event.target.closest("[data-dropdown], [data-clear], [data-remove]") && !event.target.closest("[data-panel-search]") && event.preventDefault()
+    this.onFocusIn = (event) => event.target.matches("[data-search]") && this.focus(event.target)
+    this.onFocusOut = (event) => event.target.matches("[data-search]") && !this.el.contains(event.relatedTarget) && this.blur()
     this.onInput = (event) => event.target.matches("[data-search]") && this.typed(event.target.value)
     this.onKeyDown = (event) => event.target.matches("[data-search]") && this.key(event)
     this.onMouseOver = (event) => {
@@ -71,8 +72,20 @@ export const Listbox = {
     return this.el.querySelector(selector)
   },
 
+  control() {
+    return this.q(".ts-control [data-search]")
+  },
+
   input() {
-    return this.q("[data-search]")
+    return this.q("[data-panel-search]") ?? this.control()
+  },
+
+  searchMode() {
+    return this.el.dataset.searchMode ?? "control"
+  },
+
+  typesInControl() {
+    return this.searchMode() === "control"
   },
 
   multiple() {
@@ -114,22 +127,24 @@ export const Listbox = {
 
   open() {
     const disabled = this.el.classList.contains("disabled") || isFull(this.values.length, this.multiple(), this.max()) && this.multiple()
-    !disabled && ((this.isOpen = true), this.input().focus(), this.refresh())
+    !disabled && ((this.isOpen = true), this.refresh(), this.input().focus())
   },
 
   close() {
+    const inPanel = this.q("[data-dropdown]").contains(document.activeElement)
     this.isOpen = false
     this.active = -1
     this.refresh()
+    inPanel && this.control().focus()
   },
 
   toggle() {
     this.isOpen ? this.close() : this.open()
   },
 
-  focus() {
+  focus(target) {
     this.el.classList.add("focus", "input-active")
-    this.open()
+    ;(this.typesInControl() || target !== this.control()) && this.open()
   },
 
   blur() {
@@ -147,8 +162,8 @@ export const Listbox = {
       (remove && (() => this.remove(remove.closest("[data-ts-item]").dataset.value))) ||
       (clear && (() => this.change([]))) ||
       (row && (() => this.pickRow(row))) ||
-      (control && (() => (this.input().focus(), this.open())))
-    action && (event.stopPropagation(), action())
+      (control && (() => (this.isOpen && !this.typesInControl() ? this.close() : this.open())))
+    action && (event.preventDefault(), event.stopPropagation(), action())
   },
 
   key(event) {
@@ -156,15 +171,23 @@ export const Listbox = {
     const handlers = {
       ArrowDown: () => (this.isOpen ? this.setActive(moveIndex(this.active, "ArrowDown", rows.length)) : this.open()),
       ArrowUp: () => this.setActive(moveIndex(this.active, "ArrowUp", rows.length)),
-      Enter: () => (rows[this.active] ? this.pickRow(rows[this.active]) : this.createTyped()),
+      Enter: () => (!this.isOpen ? this.open() : rows[this.active] ? this.pickRow(rows[this.active]) : this.createTyped()),
+      " ": () => !this.typesInControl() && !this.isOpen && this.open(),
       Escape: () => this.close(),
       Tab: () => this.el.dataset.mode === "tags" && this.term.trim() && this.createTyped(),
-      Backspace: () => this.input().value === "" && this.values.length > 0 && this.backspace(),
+      Backspace: () => this.erases() && this.backspace(),
     }
     const handler = handlers[event.key]
-    const prevents = ["ArrowDown", "ArrowUp", "Enter", "Escape"].includes(event.key) || (event.key === "Backspace" && this.input().value === "" && this.values.length > 0)
+    const prevents =
+      ["ArrowDown", "ArrowUp", "Enter", "Escape"].includes(event.key) ||
+      (event.key === "Backspace" && this.erases()) ||
+      (event.key === " " && !this.typesInControl())
     prevents && event.preventDefault()
     handler && handler()
+  },
+
+  erases() {
+    return this.typesInControl() && this.input().value === "" && this.values.length > 0
   },
 
   typed(text) {
@@ -175,7 +198,7 @@ export const Listbox = {
     this.term = rest
     this.isOpen = true
     this.active = -1
-    this.el.classList.toggle("input-hidden", !this.multiple() && this.values.length > 0 && rest === "")
+    this.el.classList.toggle("input-hidden", this.hidesControl(rest))
     this.local() ? this.refresh() : this.search(rest)
   },
 
@@ -186,6 +209,10 @@ export const Listbox = {
       this.pushEventTo(target || this.el, this.el.dataset.onSearch, {id: this.el.id, query})
     }, Number(this.el.dataset.debounce || 0))
     this.refresh()
+  },
+
+  hidesControl(text) {
+    return !this.multiple() && this.values.length > 0 && (text === "" || !this.typesInControl())
   },
 
   setTerm(text) {
@@ -256,7 +283,7 @@ export const Listbox = {
   renderChips() {
     const control = this.q(".ts-control")
     control.querySelectorAll("[data-ts-item]").forEach((chip) => chip.remove())
-    const input = this.input()
+    const input = this.control()
     this.values.forEach((value) => input.insertAdjacentElement("beforebegin", this.chip(value)))
   },
 
@@ -357,7 +384,7 @@ export const Listbox = {
     const full = isFull(this.values.length, this.multiple(), this.max())
     this.el.classList.toggle("has-items", this.values.length > 0)
     this.el.classList.toggle("full", full)
-    this.el.classList.toggle("input-hidden", !this.multiple() && full && this.term === "")
+    this.el.classList.toggle("input-hidden", !this.multiple() && full && this.hidesControl(this.term))
   },
 
   paintOpen(rows) {
@@ -366,7 +393,7 @@ export const Listbox = {
     const shown = this.isOpen && hasContent
     dropdown.hidden = !shown
     this.el.classList.toggle("dropdown-active", shown)
-    this.input().setAttribute("aria-expanded", String(shown))
+    this.control().setAttribute("aria-expanded", String(shown))
   },
 }
 

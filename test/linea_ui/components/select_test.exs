@@ -222,4 +222,30 @@ defmodule LineaUI.Components.SelectTest do
     assert id =~ "select-"
     assert html |> find("select") |> LazyHTML.attribute("name") == [id]
   end
+
+  test "the search is in the control by default, in a panel on top of the list, or off" do
+    control = render(~H|<.select id="s" name="e" options={~w(A B)} />|)
+    assert control |> find("#s") |> LazyHTML.attribute("data-search-mode") == ["control"]
+    assert control |> find(".ts-control [data-search]") |> LazyHTML.attribute("readonly") == []
+    assert find(control, "[data-panel-search]") |> Enum.count() == 0
+
+    panel =
+      render(
+        ~H|<.select id="s" name="e" options={~w(A B)} search="panel" search_placeholder="Find" />|
+      )
+
+    assert panel |> find("#s") |> LazyHTML.attribute("data-search-mode") == ["panel"]
+    assert panel |> find(".ts-control [data-search]") |> LazyHTML.attribute("readonly") == [""]
+
+    assert panel
+           |> find(".ts-dropdown .ts-search input[data-panel-search]")
+           |> LazyHTML.attribute("placeholder") == ["Find"]
+
+    assert find(panel, ".ts-dropdown .ts-search svg") |> Enum.count() == 1
+
+    none = render(~H|<.select id="s" name="e" options={~w(A B)} search="none" />|)
+    assert none |> find("#s") |> LazyHTML.attribute("data-search-mode") == ["none"]
+    assert none |> find(".ts-control [data-search]") |> LazyHTML.attribute("readonly") == [""]
+    assert find(none, "[data-panel-search]") |> Enum.count() == 0
+  end
 end

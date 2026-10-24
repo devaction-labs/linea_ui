@@ -3,6 +3,8 @@ defmodule LineaUI.Components.Select.Listbox do
 
   use LineaUI.Component
 
+  import LineaUI.Components.Icon, only: [glyph: 1]
+
   alias LineaUI.Components.Pickers
   alias LineaUI.Components.Select.Options
 
@@ -17,6 +19,8 @@ defmodule LineaUI.Components.Select.Listbox do
     count = length(values)
 
     assigns
+    |> assign_new(:search, fn -> "control" end)
+    |> assign_new(:search_placeholder, fn -> "Search…" end)
     |> assign(
       mode: mode,
       multiple: multiple,
@@ -83,6 +87,7 @@ defmodule LineaUI.Components.Select.Listbox do
           ])
         }
         data-mode={@mode}
+        data-search-mode={@search}
         data-multiple={bool(@multiple)}
         data-create={bool(@create)}
         data-persist={bool(@persist)}
@@ -131,6 +136,7 @@ defmodule LineaUI.Components.Select.Listbox do
             autocomplete="off"
             placeholder={@placeholder}
             disabled={@disabled}
+            readonly={@search != "control"}
             data-search
           />
           <div :if={@clearable} class="clear-button" title={@clear_label} data-clear>⨯</div>
@@ -142,6 +148,20 @@ defmodule LineaUI.Components.Select.Listbox do
           hidden
           data-dropdown
         >
+          <div :if={@search == "panel"} class="ts-search" phx-update="ignore" id={@id <> "-panel"}>
+            <.glyph name={:search} class="size-4 shrink-0" />
+            <input
+              type="text"
+              id={@id <> "-panel-search"}
+              role="searchbox"
+              autocomplete="off"
+              placeholder={@search_placeholder}
+              aria-controls={@id <> "-listbox"}
+              aria-label={@search_placeholder}
+              data-search
+              data-panel-search
+            />
+          </div>
           <div
             id={@id <> "-listbox"}
             class="ts-dropdown-content"
