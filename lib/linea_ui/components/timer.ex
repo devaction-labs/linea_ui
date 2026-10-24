@@ -11,9 +11,14 @@ defmodule LineaUI.Components.Timer do
         </:actions>
       </.timer>
 
-      <.timer id="shift-mini" variant="mini" elapsed={@shift_seconds} format="hm" label="Shift time" />
-
       <.timer id="break" direction="down" total={900} elapsed={0} color="warning" on_finish="break_over" />
+
+  The `mini` variant is the pill for the top bar of a screen, with a pulsing dot while it runs:
+
+      <header class="flex h-14 items-center justify-between px-5">
+        <span>PDV</span>
+        <.timer id="shift-mini" variant="mini" elapsed={@shift_seconds} running={@running} label="Shift time" />
+      </header>
 
   The server owns the time: `elapsed` is the seconds counted so far, `running` whether it counts, and `total` the
   seconds the ring stands for (8 hours by default). The browser counts from there without a round trip, from a
@@ -40,7 +45,10 @@ defmodule LineaUI.Components.Timer do
       LineaUI.Timer.add(socket, "shift", 900)
 
   `pause`, `resume` and `toggle` push `on_toggle` when the state changes; `add` takes time away with a negative number.
-  Keep a server `running` assign in step with `on_toggle` so a later patch does not undo the choice.
+  Keep a server `running` assign in step with `on_toggle` so a later patch does not undo the choice:
+
+      def handle_event("shift_toggled", %{"running" => running, "elapsed" => elapsed}, socket),
+        do: {:noreply, assign(socket, running: running, shift_seconds: elapsed)}
 
   ## Events
 
@@ -77,9 +85,24 @@ defmodule LineaUI.Components.Timer do
   @ring_paused "group-data-[state=paused]:stroke-warning-focus dark:group-data-[state=paused]:stroke-warning"
 
   @ring_sizes %{
-    "sm" => %{box: "size-32", time: "text-base", kicker: "text-[10px]", label: "text-[11px]"},
-    "md" => %{box: "size-42", time: "text-[22px]", kicker: "text-[11px]", label: "text-xs"},
-    "lg" => %{box: "size-52", time: "text-[28px]", kicker: "text-xs", label: "text-[13px]"}
+    "sm" => %{
+      box: "size-32",
+      time: "text-base leading-6",
+      kicker: "text-[10px]",
+      label: "text-[11px]"
+    },
+    "md" => %{
+      box: "size-42",
+      time: "text-[22px] leading-8",
+      kicker: "text-[11px]",
+      label: "text-xs"
+    },
+    "lg" => %{
+      box: "size-52",
+      time: "text-[28px] leading-10",
+      kicker: "text-xs",
+      label: "text-[13px]"
+    }
   }
 
   @mini_sizes %{
@@ -132,10 +155,10 @@ defmodule LineaUI.Components.Timer do
     doc: "The ring while it runs (`ring` only); paused is always warning."
 
   attr :format, :string,
-    default: nil,
-    values: [nil, "hms", "hm"],
+    default: "auto",
+    values: ~w(auto hms hm),
     doc:
-      "`hms` is `03:12:45`, `hm` is `3h12`. The default is `hms` for the ring and `hm` for the pill."
+      "`hms` is `03:12:45`, `hm` is `3h12`, `auto` is `hms` for the ring and `hm` for the pill."
 
   attr :kicker, :string,
     default: nil,
@@ -301,8 +324,8 @@ defmodule LineaUI.Components.Timer do
 
   defp callback(event, assigns), do: Overlay.callback(event, assigns.id, assigns.target)
 
-  defp format_of(nil, "mini"), do: "hm"
-  defp format_of(nil, _variant), do: "hms"
+  defp format_of("auto", "mini"), do: "hm"
+  defp format_of("auto", _variant), do: "hms"
   defp format_of(format, _variant), do: format
 
   defp state(true), do: "running"

@@ -2,6 +2,7 @@
 
 ## 0.4.2
 
+- New `timer/1`: a shift timer that ticks in the browser from a monotonic clock (hook `LineaUI.Timer`, no round trips, no drift in a background tab). `variant="ring"` is the checker card with the progress ring, the state kicker, the mono time and the `actions` slot; `variant="mini"` is the pill with a pulsing dot for a top bar. `direction` up or down, `format` `hms` or `hm`, `elapsed`/`total`/`running` from the server win over the browser's count, `on_toggle`, `on_tick`, `on_finish` events. New `LineaUI.Timer.pause/resume/toggle/add` commands for the buttons, as `%JS{}` or pushed from the socket.
 - New `fab/1`: a floating action button that retracts from a navy pill (icon tile and label) to the round bubble.
   `retract` is `hover` (default), `auto` (retracts after `retract_after` ms or on scroll, hook `LineaUI.Fab`), `never` or
   `always`; touch devices show the bubble; `expanded` forces it open from the server. Four corners via `position`,
