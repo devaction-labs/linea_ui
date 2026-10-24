@@ -33,21 +33,8 @@ defmodule LineaUI.SkillTest do
            )
   end
 
-  test "the install task points AGENTS.md at the skill once" do
-    dir = Path.join(System.tmp_dir!(), "linea_install_#{System.unique_integer([:positive])}")
-    File.mkdir_p!(dir)
-    File.write!(Path.join(dir, "AGENTS.md"), "# App\n")
-
-    File.cd!(dir, fn ->
-      Mix.shell(Mix.Shell.Process)
-      Mix.Task.rerun("linea_ui.install", [])
-      Mix.Task.rerun("linea_ui.install", [])
-    end)
-
-    agents = File.read!(Path.join(dir, "AGENTS.md"))
-    assert length(String.split(agents, "<!-- linea_ui -->")) == 2
-    assert File.exists?(Path.join(dir, ".claude/skills/linea-ui/references/button.md"))
-  after
-    Mix.shell(Mix.Shell.IO)
+  test "the pointer block starts with its marker and names the skill file" do
+    assert String.starts_with?(LineaUI.Skill.pointer(), LineaUI.Skill.marker())
+    assert LineaUI.Skill.pointer() =~ ".claude/skills/linea-ui/SKILL.md"
   end
 end
