@@ -58,7 +58,7 @@ defmodule LineaUI.Components.Select do
   ms), to `target` or to the LiveView/LiveComponent the select is in; the server answers by
   re-rendering `options`.
   """
-  attr :id, :string, doc: "Defaults to the field id, or a generated one."
+  attr :id, :string, doc: "Defaults to the field id, then `name`, then a generated one."
   attr :name, :string, doc: "Defaults to the field name (with `[]` when several values)."
   attr :value, :any, doc: "Defaults to the field value."
 
@@ -108,7 +108,11 @@ defmodule LineaUI.Components.Select do
     doc: "Backspace puts the last chip back into the input as text."
 
   attr :max, :integer, default: nil, doc: "How many options can be chosen."
-  attr :no_results, :string, default: "No results found"
+
+  attr :no_results, :string,
+    default: "No results found",
+    doc: "Shown when the search matches nothing; `%{query}` is replaced by what was typed."
+
   attr :on_search, :string, default: nil
   attr :debounce, :integer, default: 300
   attr :target, :any, default: nil
@@ -134,8 +138,9 @@ defmodule LineaUI.Components.Select do
   def select(assigns) do
     assigns
     |> assign_field()
-    |> assign_new(:id, fn -> gen_id("select") end)
-    |> then(&assign_new(&1, :name, fn -> &1.id end))
+    |> assign_new(:name, fn -> nil end)
+    |> then(&assign_new(&1, :id, fn -> &1.name || gen_id("select") end))
+    |> then(&assign(&1, :name, &1.name || &1.id))
     |> assign_new(:value, fn -> nil end)
     |> LineaUI.Components.Select.Listbox.prepare(:select)
     |> LineaUI.Components.Select.Listbox.listbox()

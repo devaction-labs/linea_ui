@@ -210,4 +210,16 @@ defmodule LineaUI.Components.SelectTest do
     assert "pr-9" in classes(html, "#a")
     assert "w-full" in classes(html, "#b")
   end
+
+  test "the listbox id falls back to the name, and the no-results text keeps its %{query}" do
+    html = render(~H|<.select name="state" options={["A"]} no_results="None for %{query}" />|)
+    assert find(html, "#state[phx-hook='LineaUI.Select']") |> Enum.count() == 1
+    assert html |> find("select[name=state]") |> LazyHTML.attribute("id") == ["state-input"]
+    assert html |> find("[data-no-results]") |> LazyHTML.text() == "None for %{query}"
+
+    html = render(~H|<.select options={["A"]} />|)
+    assert [id] = html |> find("[phx-hook='LineaUI.Select']") |> LazyHTML.attribute("id")
+    assert id =~ "select-"
+    assert html |> find("select") |> LazyHTML.attribute("name") == [id]
+  end
 end
