@@ -65,6 +65,7 @@ defmodule LineaUI do
     modal: LineaUI.Components.Modal,
     number_input: LineaUI.Components.NumberInput,
     pagination: LineaUI.Components.Pagination,
+    phone_input: LineaUI.Components.PhoneInput,
     popover: LineaUI.Components.Popover,
     progress: LineaUI.Components.Progress,
     radio: LineaUI.Components.Radio,

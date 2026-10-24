@@ -1,0 +1,13 @@
+<%!-- title: Pasting an international number | text: Paste +1 876 555 0123 or +351 912 345 678 into the field: the country switches to the one the calling code belongs to. on_country_change tells the server. --%>
+<.form for={@form} id="pi5-form" phx-change="demo:validate" class="max-w-xl">
+  <.phone_input
+    field={@form[:pi5_phone]}
+    label="Phone number"
+    help="Try pasting +1 876 555 0123, +44 7911 123456 or +55 11 91234-5678."
+    on_country_change="demo:country"
+  />
+  <p class="mt-2 text-xs-plus text-slate-400 dark:text-navy-300">
+    Server has
+    <.inline_code>{inspect(@form[:pi5_phone].value)}</.inline_code>
+  </p>
+</.form>

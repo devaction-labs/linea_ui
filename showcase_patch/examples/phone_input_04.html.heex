@@ -1,0 +1,23 @@
+<%!-- title: Help, errors, clearable and disabled | text: label, help and errors come from the field as in input. clearable empties the number and keeps the country. --%>
+<div class="grid max-w-3xl grid-cols-1 gap-4 sm:grid-cols-2">
+  <.phone_input
+    name="pi4_help"
+    label="With help"
+    help="Include the area code."
+    placeholder="(11) 91234-5678"
+  />
+  <.phone_input
+    name="pi4_error"
+    label="With an error"
+    value="123"
+    errors={["is not a valid phone number"]}
+  />
+  <.phone_input
+    name="pi4_clear"
+    label="Clearable"
+    value="+5521998765432"
+    clearable
+    clear_label="Clear the number"
+  />
+  <.phone_input name="pi4_disabled" label="Disabled" value="+351912345678" disabled />
+</div>
