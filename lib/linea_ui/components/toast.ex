@@ -64,6 +64,16 @@ defmodule LineaUI.Components.Toast do
       send_toast(socket, "Invoice sent", actions: [[label: "Undo", event: "undo"]])
       send_toast(socket, "Invoice sent", actions: [[label: "Undo", event: "undo"]], duration: 8000)
 
+  ## Inverted toasts
+
+  `invert` reverses the colors of the cards: a dark card on a light page and a light one on a dark page, so
+  the message stands out. The kind still tells the message (the green check of a success keeps its tint).
+  Put it on the toaster for all of them, or on one toast; the plain colored notes are not affected:
+
+      <.toaster flash={@flash} invert />
+
+      send_toast(socket, "Changes saved", kind: :success, invert: true)
+
   ## Loading, then the answer
 
   A toast with a fixed `id` is updated in place when another one comes with the same `id`:
@@ -183,6 +193,10 @@ defmodule LineaUI.Components.Toast do
     default: true,
     doc: "Draws a thin countdown line on the toasts that leave by themselves; a toast turns it off with `timer: false`."
 
+  attr :invert, :boolean,
+    default: false,
+    doc: "Draws the toasts with the colors reversed: a dark card on a light page and a light card on a dark one. A toast sets it with `invert: true` or `invert: false`."
+
   attr :close_label, :string, default: "Close"
   attr :loading_label, :string, default: "Loading"
   attr :rest, :global
@@ -207,6 +221,7 @@ defmodule LineaUI.Components.Toast do
       data-stack={to_string(@stack)}
       data-persist-errors={bool(@persist_errors)}
       data-timer={bool(@timer)}
+      data-invert={bool(@invert)}
       data-close-label={@close_label}
       data-icons={icon_set()}
       {@rest}
@@ -375,6 +390,7 @@ defmodule LineaUI.Components.Toast do
       "duration" => opts |> Keyword.get(:duration) |> duration(),
       "close" => Keyword.get(opts, :close, false),
       "timer" => Keyword.get(opts, :timer),
+      "invert" => Keyword.get(opts, :invert),
       "template" => Keyword.get(opts, :template),
       "actions" => opts |> Keyword.get(:actions, []) |> Enum.map(&action!/1),
       "aura" => opts |> Keyword.get(:aura) |> aura!(),
@@ -402,6 +418,7 @@ defmodule LineaUI.Components.Toast do
   defp change({:duration, value}), do: {"duration", duration(value)}
   defp change({:close, value}), do: {"close", value}
   defp change({:timer, value}), do: {"timer", value}
+  defp change({:invert, value}), do: {"invert", value}
   defp change({:actions, value}), do: {"actions", Enum.map(value, &action!/1)}
   defp change({:aura, value}), do: {"aura", aura!(value)}
   defp change({:aura_size, value}), do: {"aura_size", aura_size!(value)}

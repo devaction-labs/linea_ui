@@ -8,6 +8,7 @@ import {
   durationFor,
   encodedJS,
   failedOf,
+  invertFor,
   isRich,
   kindOf,
   mergeToast,
@@ -16,6 +17,7 @@ import {
   progressOf,
   resumeAfter,
   stack,
+  surfaceFor,
   timeLeft,
   timerFor,
   unseen,
@@ -160,6 +162,7 @@ export default {
       const fill = template ? () => this.fillTemplate(el, template) : rich ? () => this.fillRich(el, input, toast) : () => this.fillText(el, input, toast)
       fill()
       this.decorate(el, input, toast)
+      rich && this.invert(el, input)
       this.fillTimer(el, input, toast)
       el.querySelectorAll("[data-toast-dismiss]").forEach((button) => button.addEventListener("click", () => this.remove(toast)))
       el.addEventListener("mouseenter", () => this.hover(toast.position.key, true))
@@ -174,6 +177,11 @@ export default {
       aura ? Object.assign(el.dataset, {aura: aura.variant, auraSize: aura.size, auraColor: aura.color}) : ["aura", "auraSize", "auraColor"].forEach((key) => delete el.dataset[key])
       progress === null || this.fillProgress(el, progress, toast, Boolean(input.bar))
       failedOf(input) && this.fillFailed(el)
+    },
+
+    invert(el, input) {
+      const surface = surfaceFor(invertFor(input, this.el.dataset.invert === "true"), this.el.closest(".dark") !== null)
+      surface ? (el.dataset.surface = surface) : delete el.dataset.surface
     },
 
     fillTimer(el, input, toast) {

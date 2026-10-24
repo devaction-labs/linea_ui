@@ -71,6 +71,18 @@ defmodule LineaUI.Components.ToastTest do
     assert attr_of(off, "#linea-toaster", "data-timer") == ["false"]
   end
 
+  test "the toaster and a toast can invert the colors" do
+    assigns = %{}
+    on = Phoenix.LiveViewTest.rendered_to_string(~H"<.toaster invert />")
+    off = Phoenix.LiveViewTest.rendered_to_string(~H"<.toaster />")
+
+    assert attr_of(on, "#linea-toaster", "data-invert") == ["true"]
+    assert attr_of(off, "#linea-toaster", "data-invert") == ["false"]
+    assert %{"invert" => true} = LineaUI.Components.Toast.payload("x", invert: true)
+    assert %{"invert" => nil} = LineaUI.Components.Toast.payload("x", [])
+    assert %{"invert" => false} = LineaUI.Components.Toast.changes("x", invert: false)
+  end
+
   test "a toast carries its own timer choice" do
     assert %{"timer" => false} = LineaUI.Components.Toast.payload("x", timer: false)
     assert %{"timer" => nil} = LineaUI.Components.Toast.payload("x", [])

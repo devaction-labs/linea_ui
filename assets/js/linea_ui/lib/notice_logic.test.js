@@ -1,6 +1,6 @@
 import test from "node:test"
 import assert from "node:assert/strict"
-import {PROGRESS_DONE_MS, actionPayload, auraOf, closeFor, colorFor, colorOf, durationFor, durationOf, encodedJS, failedOf, isRich, kindOf, mergeToast, needsAction, offsets, positionOf, progressKind, progressOf, resumeAfter, stack, timeLeft, timerFor, unseen, withKindColor} from "./notice_logic.js"
+import {PROGRESS_DONE_MS, actionPayload, auraOf, closeFor, colorFor, colorOf, durationFor, durationOf, encodedJS, failedOf, invertFor, isRich, kindOf, mergeToast, needsAction, offsets, positionOf, progressKind, progressOf, resumeAfter, stack, surfaceFor, timeLeft, timerFor, unseen, withKindColor} from "./notice_logic.js"
 
 test("an unknown color is neutral", () => {
   assert.equal(colorOf("success"), "success")
@@ -176,4 +176,14 @@ test("the countdown line is for the toasts that leave by themselves", () => {
   assert.equal(timerFor({kind: "success", timer: true}, 5000, false), true)
   assert.equal(timerFor({kind: "success"}, 5000, false), false)
   assert.equal(timerFor({kind: "info", value: 100}, 1600), false)
+})
+
+test("an inverted toast takes the opposite surface of the page", () => {
+  assert.equal(invertFor({}), false)
+  assert.equal(invertFor({}, true), true)
+  assert.equal(invertFor({invert: false}, true), false)
+  assert.equal(invertFor({invert: true}), true)
+  assert.equal(surfaceFor(true, false), "dark")
+  assert.equal(surfaceFor(true, true), "light")
+  assert.equal(surfaceFor(false, true), null)
 })

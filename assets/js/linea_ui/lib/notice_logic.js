@@ -148,6 +148,12 @@ export const durationFor = (input, fallback = DURATION_MS, persistErrors = false
 export const closeFor = (input, duration) =>
   progressOf(input) !== null ? Boolean(input.close) : input.kind !== "loading" && Boolean(input.close || !Number.isFinite(duration))
 
+/** Whether a toast is drawn inverted (a dark card on a light page, a light one on a dark page): its own `invert`, else the toaster's. */
+export const invertFor = (input, fallback = false) => (unset(input.invert) ? fallback : Boolean(input.invert))
+
+/** The surface an inverted rich toast takes: the opposite of the page's. */
+export const surfaceFor = (inverted, dark) => (inverted ? (dark ? "light" : "dark") : null)
+
 /** Whether a toast draws its countdown line: it leaves by itself, is not a progress toast, and did not turn it off. */
 export const timerFor = (input, duration, fallback = true) =>
   Number.isFinite(duration) && progressOf(input) === null && (unset(input.timer) ? fallback : Boolean(input.timer))
