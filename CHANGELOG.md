@@ -2,6 +2,14 @@
 
 ## 0.2.0
 
+- One-command installer: `mix igniter.install linea_ui` adds the dependency and sets the app up, with the
+  diff confirmed by the user. `mix linea_ui.install` is now an Igniter task (`igniter` is an optional
+  dependency; without it the task keeps writing the skill and printing the setup lines). It imports the
+  fonts and styles in `app.css` (with `@source` for `source(none)`), registers `LineaHooks` in `app.js`,
+  adds the fonts' `Plug.Static` to the endpoint, adds `use LineaUI, avoid_conflicts: true` to
+  `html_helpers/0`, writes the Claude Code skill and the `AGENTS.md`/`CLAUDE.md` pointer (creating
+  `AGENTS.md` when neither exists). Idempotent. Flags: `--hugeicons`, `--replace-daisyui`, `--no-skill`.
+- `avoid_conflicts: true` also drops `theme_toggle`, which Phoenix 1.8's generated `Layouts` defines.
 - `table`: hand-written tables. Without `rows`, `table/1` renders its inner block and new `table_head`,
   `table_body`, `table_row`, `table_cell`, `table_foot`, `table_empty`, `table_checkbox`,
   `table_expand_toggle` and `table_detail_row` take its look: per-row attributes and `on_click`, streams,

@@ -10,8 +10,8 @@ defmodule LineaUI do
       use LineaUI, only: [:button, :modal]
       use LineaUI, except: [:table]
 
-  `avoid_conflicts: true` drops the names Phoenix's generated `CoreComponents` also defines
-  (`button`, `input`, `table`, `label`, `error`, `header`).
+  `avoid_conflicts: true` drops the names Phoenix's generated `CoreComponents` and `Layouts` also define
+  (`button`, `input`, `table`, `label`, `error`, `header`, `icon` and `theme_toggle`).
 
   ## Overlays
 
@@ -89,7 +89,7 @@ defmodule LineaUI do
     input: [input: 1],
     table: [table: 1],
     form: [label: 1, error: 1],
-    app_shell: [header: 1],
+    app_shell: [header: 1, theme_toggle: 1],
     icon: [icon: 1]
   }
 

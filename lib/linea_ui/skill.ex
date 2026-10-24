@@ -7,8 +7,26 @@ defmodule LineaUI.Skill do
   that hold for every component, and `references/<component>.md` holds the attrs, slots and
   examples of one component, read only when that component is used.
 
-  `mix linea_ui.gen.skill` writes it; `mix linea_ui.install` runs that task.
+  `mix linea_ui.install` writes it when it sets the app up and `mix linea_ui.gen.skill` refreshes
+  it after an upgrade.
   """
+
+  @marker "<!-- linea_ui -->"
+  @pointer """
+  #{@marker}
+  ## UI
+
+  UI is LineaUI. Load `.claude/skills/linea-ui/SKILL.md` before writing or changing HEEx, and read
+  the component's reference before using it. Regenerate it with `mix linea_ui.install` after upgrading.
+  """
+
+  @doc "The comment that marks the pointer block in `AGENTS.md` and `CLAUDE.md`."
+  @spec marker() :: String.t()
+  def marker, do: @marker
+
+  @doc "The block `AGENTS.md` and `CLAUDE.md` carry to send an agent to the skill."
+  @spec pointer() :: String.t()
+  def pointer, do: @pointer
 
   @doc "The files of the skill, as `{relative_path, contents}`."
   @spec files() :: [{String.t(), String.t()}]

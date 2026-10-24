@@ -38,6 +38,7 @@ defmodule LineaUI.MixProject do
       {:phoenix_live_view, "~> 1.1"},
       {:phoenix_html, "~> 4.1"},
       {:jason, "~> 1.2"},
+      {:igniter, "~> 0.6", optional: true},
       {:lazy_html, ">= 0.1.0", only: :test},
       {:ex_doc, "~> 0.34", only: :dev, runtime: false}
     ]
