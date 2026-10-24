@@ -39,6 +39,7 @@ defmodule LineaUI do
     badge: LineaUI.Components.Badge,
     breadcrumb: LineaUI.Components.Breadcrumb,
     button: LineaUI.Components.Button,
+    calendar: LineaUI.Components.Calendar,
     card: LineaUI.Components.Card,
     carousel: LineaUI.Components.Carousel,
     chart: LineaUI.Components.Chart,

@@ -40,6 +40,10 @@ defmodule LineaUI.Components.DatePicker.Shell do
   def locales, do: Map.keys(@locales)
 
   @doc false
+  @spec names(String.t()) :: %{months: [String.t()], weekdays: [String.t()]}
+  def names(locale), do: Map.take(Map.fetch!(@locales, locale), [:months, :weekdays])
+
+  @doc false
   @spec prepare(map(), :date | :datetime | :time) :: map()
   def prepare(assigns, kind) do
     assigns =

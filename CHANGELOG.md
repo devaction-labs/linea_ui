@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- `calendar`: a month or week grid (`role="grid"`) with colored event chips and hour blocks, a toolbar with
+  previous, today, next and month/week switch, roving-tabindex keyboard navigation (arrows, Home, End, Page Up and
+  Page Down, Enter), and `locale="pt_BR"`. The server holds `view` and `date`; the toolbar and the keyboard push
+  `on_navigate`, `on_view`, `on_select` and `on_event`. `calendar_range/3` and `calendar_shift/3` help the handlers.
 - `color_picker`: a saturation and brightness area (drag or arrow keys), hue and optional opacity sliders, a hex
   field and preset swatches; the form gets `#RRGGBB` (`#RRGGBBAA` with `alpha`) through a hidden input, with
   `field`, `phx-change`, `on_change` and `locale="pt_BR"`.

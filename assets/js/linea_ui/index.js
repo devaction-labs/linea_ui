@@ -7,6 +7,7 @@
  * Every hook is registered as `LineaUI.<Name>`, the value the components put in `phx-hook`.
  */
 import Autocomplete from "./hooks/autocomplete.js"
+import Calendar from "./hooks/calendar.js"
 import Carousel from "./hooks/carousel.js"
 import Chart from "./hooks/chart.js"
 import Clipboard from "./hooks/clipboard.js"
@@ -33,6 +34,7 @@ import Upload from "./hooks/upload.js"
 
 export const Hooks = {
   ...Autocomplete,
+  ...Calendar,
   ...Carousel,
   ...Chart,
   ...Clipboard,
