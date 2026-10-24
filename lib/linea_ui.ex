@@ -44,6 +44,7 @@ defmodule LineaUI do
     chart: LineaUI.Components.Chart,
     checkbox: LineaUI.Components.Checkbox,
     clipboard: LineaUI.Components.Clipboard,
+    command_palette: LineaUI.Components.CommandPalette,
     collapse: LineaUI.Components.Collapse,
     data_table: LineaUI.Components.DataTable,
     date_picker: LineaUI.Components.DatePicker,
