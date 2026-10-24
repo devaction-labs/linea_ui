@@ -1824,7 +1824,7 @@ defmodule LineaUI.Components.AppShell do
         <div class="ml-auto flex items-center gap-2.5">
           <span
             :if={@clock}
-            id={"#{@rest[:id] || "page-header"}-clock"}
+            id={"#{@rest[:id] || "page-header-#{:erlang.phash2(@title)}"}-clock"}
             class="hidden text-sm text-slate-400 sm:inline dark:text-navy-300"
             phx-hook="LineaUI.ShellClock"
             data-locale={@locale}

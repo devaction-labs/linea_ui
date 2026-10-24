@@ -2,6 +2,8 @@
 
 ## 0.4.0
 
+- `page_header` with `clock`: two headers on one page no longer share the clock's id (it comes from `id`, or from the
+  title when there is none). `command_palette` `shortcut` accepts `nil` without a compile warning.
 - The skill keeps itself current: `mix linea_ui.install` adds the `:linea_ui_skill` compiler to the app's `mix.exs`, and
   a compile after `mix deps.update linea_ui` regenerates `.claude/skills/linea-ui/` when its version is not the
   installed one (nothing happens without a skill, when it is current, or in `:prod`). `LineaUI.Skill` gained

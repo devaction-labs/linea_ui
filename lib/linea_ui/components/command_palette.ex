@@ -132,7 +132,7 @@ defmodule LineaUI.Components.CommandPalette do
   attr :on_close, :any, default: nil
   attr :target, :any, default: nil, doc: "The `phx-target` of every event."
 
-  attr :shortcut, :string,
+  attr :shortcut, :any,
     default: "Mod+k",
     doc:
       "The key that toggles the palette from anywhere: `Mod` is Ctrl or ⌘. `nil` leaves it to `LineaUI.open/1`."
