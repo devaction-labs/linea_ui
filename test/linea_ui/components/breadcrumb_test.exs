@@ -33,4 +33,23 @@ defmodule LineaUI.Components.BreadcrumbTest do
     assert [] = find(html, "li > svg") |> Enum.to_list()
     assert "border-slate-200" in classes(html, "a")
   end
+
+  test "items with phx-click are buttons and pass their attributes on" do
+    assigns = %{path: [%{id: "1", name: "Docs"}, %{id: "2", name: "Pics"}]}
+
+    html =
+      rendered_to_string(~H"""
+      <.breadcrumb>
+        <:item :for={f <- @path} phx-click="open" phx-value-id={f.id} phx-target="#fm">{f.name}</:item>
+        <:item id="now" data-kind="current">Now</:item>
+      </.breadcrumb>
+      """)
+
+    assert [_, _] =
+             find(html, "button[type=button][phx-click=open][phx-target='#fm']") |> Enum.to_list()
+
+    assert ["1", "2"] = find(html, "button") |> LazyHTML.attribute("phx-value-id")
+    assert "text-primary" in classes(html, "button")
+    assert [_] = find(html, "div#now[data-kind=current][aria-current=page]") |> Enum.to_list()
+  end
 end
