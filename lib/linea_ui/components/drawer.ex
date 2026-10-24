@@ -92,16 +92,17 @@ defmodule LineaUI.Components.Drawer do
     {"flush", "bottom"} => "inset-x-0 bottom-0 h-[78dvh]"
   }
 
-  @floating "overflow-hidden rounded-2xl shadow-[0_24px_48px_-12px_rgb(15_23_42/.35)] ring-1 ring-slate-150 dark:ring-navy-500"
+  @floating "overflow-hidden rounded-2xl shadow-[0_24px_48px_-12px_rgb(15_23_42/.35)] ring-1 ring-slate-150 dark:shadow-[0_24px_48px_-12px_rgb(0_0_0/.5)] dark:ring-navy-500"
+
+  @flush "shadow-[0_0_40px_rgb(15_23_42/.2)] dark:shadow-[0_24px_48px_-12px_rgb(0_0_0/.5)] dark:ring-1 dark:ring-navy-500"
 
   @panels %{
     {"float", "left"} => @floating,
     {"float", "right"} => @floating,
     {"float", "bottom"} => @floating,
-    {"flush", "left"} => "shadow-[-12px_0_40px_-12px_rgb(15_23_42/.35)]",
-    {"flush", "right"} => "shadow-[-12px_0_40px_-12px_rgb(15_23_42/.35)]",
-    {"flush", "bottom"} =>
-      "overflow-hidden rounded-t-2xl shadow-[0_-12px_40px_-12px_rgb(15_23_42/.35)]"
+    {"flush", "left"} => @flush,
+    {"flush", "right"} => @flush,
+    {"flush", "bottom"} => "overflow-hidden rounded-t-2xl #{@flush}"
   }
 
   @doc """
@@ -229,7 +230,7 @@ defmodule LineaUI.Components.Drawer do
     >
       <div
         :if={@overlay}
-        class="drawer-overlay fixed inset-0 hidden bg-slate-900/60"
+        class="drawer-overlay fixed inset-0 hidden bg-slate-900/45"
         phx-mounted={JS.ignore_attributes(["class"])}
         data-backdrop
       >
@@ -252,7 +253,7 @@ defmodule LineaUI.Components.Drawer do
         >
           <span
             :if={@variant && @side == "bottom"}
-            class="mx-auto mt-2.5 -mb-1 h-1 w-10 shrink-0 rounded-full bg-slate-300 dark:bg-navy-400"
+            class="mx-auto mt-2.5 h-1 w-10 shrink-0 rounded-full bg-slate-300 dark:bg-navy-450"
             aria-hidden="true"
             data-drawer-grab
           ></span>
@@ -362,7 +363,7 @@ defmodule LineaUI.Components.Drawer do
     <header
       class={
         merge([
-          "flex shrink-0 items-start gap-3 border-b border-slate-150 px-4 pt-5 pb-4 dark:border-navy-600 sm:px-6",
+          "flex shrink-0 items-start gap-3 border-b border-slate-150 px-4 pt-5 pb-4 dark:border-navy-700 sm:px-5.5",
           @class
         ])
       }
@@ -418,7 +419,7 @@ defmodule LineaUI.Components.Drawer do
     <div
       class={
         merge([
-          "scrollbar-sm flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto px-4 py-5 sm:px-6",
+          "scrollbar-sm flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto px-4 py-5 sm:px-5.5",
           @class
         ])
       }
@@ -448,7 +449,7 @@ defmodule LineaUI.Components.Drawer do
     <footer
       class={
         merge([
-          "flex shrink-0 items-center justify-end gap-2 border-t border-slate-150 bg-slate-50 px-4 py-3.5 dark:border-navy-600 dark:bg-navy-750 sm:px-6",
+          "flex shrink-0 items-center justify-end gap-2 border-t border-slate-150 bg-slate-50 px-4 py-3.5 dark:border-navy-700 dark:bg-navy-750 sm:px-5.5",
           @class
         ])
       }
