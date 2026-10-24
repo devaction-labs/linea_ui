@@ -508,6 +508,16 @@
     background-color: color-mix(in oklab, var(--toast-ai) 15%, transparent);
   }
 
+  .toastify .toast-timer {
+    @apply pointer-events-none absolute inset-x-3 bottom-1 h-0.5 overflow-hidden rounded-full;
+    background-color: color-mix(in oklab, currentColor 10%, transparent);
+  }
+
+  .toastify .toast-timer > i {
+    @apply block h-full w-full origin-left rounded-full;
+    background-color: color-mix(in oklab, currentColor 35%, transparent);
+  }
+
   .toastify[data-tone="dark"] .toast-bar {
     background-color: rgb(255 255 255 / 0.12);
   }
@@ -678,6 +688,15 @@
   syntax: "<angle>";
   inherits: false;
   initial-value: 0deg;
+}
+
+@keyframes linea-toast-timer {
+  from {
+    transform: scaleX(var(--timer-from, 1));
+  }
+  to {
+    transform: scaleX(0);
+  }
 }
 
 @keyframes linea-aura-spin {

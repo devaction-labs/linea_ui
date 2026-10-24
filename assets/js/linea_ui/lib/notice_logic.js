@@ -126,28 +126,31 @@ export const colorFor = (input) =>
 export const isRich = (input) =>
   Boolean(kindOf(input.kind) || input.description || input.actions?.length || input.aura || progressOf(input) !== null)
 
+/** Whether a toast waits for the person: it has buttons, a template of its own, or an aura that asks for attention. */
+export const needsAction = ({actions, template, aura}) => Boolean(actions?.length || template || aura === "glow")
+
+const unset = (value) => value === null || value === undefined
+
 /**
  * How long a toast stays: a `loading` one until it changes, a progress one until it reaches 100 and then
- * `PROGRESS_DONE_MS`, an error without a duration until it is closed when the toaster persists errors, the others
- * their own duration or the toaster's.
+ * `PROGRESS_DONE_MS`, one that waits for the person (actions, a template, a `glow` aura) until it is closed, an error
+ * without a duration until it is closed when the toaster persists errors, the others their own duration or the
+ * toaster's. A `duration` given always wins over what the toast would do by itself.
  */
 export const durationFor = (input, fallback = DURATION_MS, persistErrors = false) => {
   const {kind, duration} = input
   const progress = progressOf(input)
-  return progress !== null
-    ? progress >= 100
-      ? durationOf(duration, PROGRESS_DONE_MS)
-      : Infinity
-    : kind === "loading" || (kind === "error" && persistErrors && (duration === null || duration === undefined))
-      ? Infinity
-      : durationOf(duration, fallback)
+  const stays = kind === "loading" || (unset(duration) && (needsAction(input) || (kind === "error" && persistErrors)))
+  return progress !== null ? (progress >= 100 ? durationOf(duration, PROGRESS_DONE_MS) : Infinity) : stays ? Infinity : durationOf(duration, fallback)
 }
 
-/** Whether a toast gets a close button: asked for, or a rich toast that stays (except while loading or progressing). */
+/** Whether a toast gets a close button: asked for, or one that stays (except while loading or progressing). */
 export const closeFor = (input, duration) =>
-  progressOf(input) !== null
-    ? Boolean(input.close)
-    : input.kind !== "loading" && Boolean(input.close || (isRich(input) && !Number.isFinite(duration)))
+  progressOf(input) !== null ? Boolean(input.close) : input.kind !== "loading" && Boolean(input.close || !Number.isFinite(duration))
+
+/** Whether a toast draws its countdown line: it leaves by itself, is not a progress toast, and did not turn it off. */
+export const timerFor = (input, duration, fallback = true) =>
+  Number.isFinite(duration) && progressOf(input) === null && (unset(input.timer) ? fallback : Boolean(input.timer))
 
 export const AURA_VARIANTS = ["default", "dual", "glow"]
 export const AURA_SIZES = ["xs", "sm", "lg"]

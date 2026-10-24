@@ -49,6 +49,21 @@ defmodule LineaUI.Components.Toast do
   set the look of the button: `[label: "Review", variant: :solid]`, `[label: "Retry", variant: :soft,
   color: :error]`.
 
+  ## The timer and the toasts that wait
+
+  Every toast leaves by itself after `duration` (5000 ms on the toaster by default), and a thin line at its
+  bottom counts the time down; the pointer over the stack holds both. `timer: false` hides the line of one toast
+  and `timer={false}` on the toaster of all.
+
+  A toast that depends on the person stays until it is closed, with a close button and no line: one with
+  `actions`, one with a `template` of its own, one with `aura: :glow`, a `loading` one, and a progress one until
+  it reaches 100. An explicit `duration` wins over all of this, so `duration: 8000` makes a toast with buttons
+  leave after 8 s and `duration: :infinity` keeps any toast until closed.
+
+      send_toast(socket, "Invoice sent")
+      send_toast(socket, "Invoice sent", actions: [[label: "Undo", event: "undo"]])
+      send_toast(socket, "Invoice sent", actions: [[label: "Undo", event: "undo"]], duration: 8000)
+
   ## Loading, then the answer
 
   A toast with a fixed `id` is updated in place when another one comes with the same `id`:
@@ -164,6 +179,10 @@ defmodule LineaUI.Components.Toast do
     default: false,
     doc: "Toasts of `kind: :error` without a `duration` stay until closed."
 
+  attr :timer, :boolean,
+    default: true,
+    doc: "Draws a thin countdown line on the toasts that leave by themselves; a toast turns it off with `timer: false`."
+
   attr :close_label, :string, default: "Close"
   attr :loading_label, :string, default: "Loading"
   attr :rest, :global
@@ -187,6 +206,7 @@ defmodule LineaUI.Components.Toast do
       data-duration={@duration}
       data-stack={to_string(@stack)}
       data-persist-errors={bool(@persist_errors)}
+      data-timer={bool(@timer)}
       data-close-label={@close_label}
       data-icons={icon_set()}
       {@rest}
@@ -354,6 +374,7 @@ defmodule LineaUI.Components.Toast do
       "position" => position && check!(position, @positions, :position),
       "duration" => opts |> Keyword.get(:duration) |> duration(),
       "close" => Keyword.get(opts, :close, false),
+      "timer" => Keyword.get(opts, :timer),
       "template" => Keyword.get(opts, :template),
       "actions" => opts |> Keyword.get(:actions, []) |> Enum.map(&action!/1),
       "aura" => opts |> Keyword.get(:aura) |> aura!(),
@@ -380,6 +401,7 @@ defmodule LineaUI.Components.Toast do
   defp change({:color, value}), do: {"color", check!(to_string(value), @colors, :color)}
   defp change({:duration, value}), do: {"duration", duration(value)}
   defp change({:close, value}), do: {"close", value}
+  defp change({:timer, value}), do: {"timer", value}
   defp change({:actions, value}), do: {"actions", Enum.map(value, &action!/1)}
   defp change({:aura, value}), do: {"aura", aura!(value)}
   defp change({:aura_size, value}), do: {"aura_size", aura_size!(value)}

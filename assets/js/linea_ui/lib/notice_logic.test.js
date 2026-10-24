@@ -1,6 +1,6 @@
 import test from "node:test"
 import assert from "node:assert/strict"
-import {PROGRESS_DONE_MS, actionPayload, auraOf, closeFor, colorFor, colorOf, durationFor, durationOf, encodedJS, failedOf, isRich, kindOf, mergeToast, offsets, positionOf, progressKind, progressOf, resumeAfter, stack, timeLeft, unseen, withKindColor} from "./notice_logic.js"
+import {PROGRESS_DONE_MS, actionPayload, auraOf, closeFor, colorFor, colorOf, durationFor, durationOf, encodedJS, failedOf, isRich, kindOf, mergeToast, needsAction, offsets, positionOf, progressKind, progressOf, resumeAfter, stack, timeLeft, timerFor, unseen, withKindColor} from "./notice_logic.js"
 
 test("an unknown color is neutral", () => {
   assert.equal(colorOf("success"), "success")
@@ -88,7 +88,8 @@ test("a rich toast that stays gets a close button, a loading one never does", ()
   assert.equal(closeFor({kind: "error"}, Infinity), true)
   assert.equal(closeFor({kind: "error"}, 5000), false)
   assert.equal(closeFor({kind: "loading", close: true}, Infinity), false)
-  assert.equal(closeFor({message: "x"}, Infinity), false)
+  assert.equal(closeFor({message: "x"}, Infinity), true)
+  assert.equal(closeFor({message: "x"}, 5000), false)
   assert.equal(closeFor({message: "x", close: true}, 5000), true)
 })
 
@@ -148,4 +149,31 @@ test("an aura falls back to the rotating light of the assistant", () => {
   assert.deepEqual(auraOf({aura: "default"}), {variant: "default", size: "sm", color: "assistant"})
   assert.deepEqual(auraOf({aura: "glow", aura_size: "lg", aura_color: "error"}), {variant: "glow", size: "lg", color: "error"})
   assert.deepEqual(auraOf({aura: "weird", aura_size: "xl", aura_color: "pink"}), {variant: "default", size: "sm", color: "assistant"})
+})
+
+test("a toast that waits for the person stays until closed, unless it was given a duration", () => {
+  const actions = [{label: "Undo"}]
+  assert.equal(durationFor({kind: "success", actions}, 5000), Infinity)
+  assert.equal(durationFor({template: "tpl"}, 5000), Infinity)
+  assert.equal(durationFor({aura: "glow"}, 5000), Infinity)
+  assert.equal(durationFor({aura: true}, 5000), 5000)
+  assert.equal(durationFor({kind: "success", actions, duration: 8000}, 5000), 8000)
+  assert.equal(durationFor({kind: "success", actions: []}, 5000), 5000)
+})
+
+test("what a toast needs the person for", () => {
+  assert.equal(needsAction({actions: [{label: "Undo"}]}), true)
+  assert.equal(needsAction({template: "tpl"}), true)
+  assert.equal(needsAction({aura: "glow"}), true)
+  assert.equal(needsAction({aura: "dual"}), false)
+  assert.equal(needsAction({}), false)
+})
+
+test("the countdown line is for the toasts that leave by themselves", () => {
+  assert.equal(timerFor({kind: "success"}, 5000), true)
+  assert.equal(timerFor({kind: "success"}, Infinity), false)
+  assert.equal(timerFor({kind: "success", timer: false}, 5000), false)
+  assert.equal(timerFor({kind: "success", timer: true}, 5000, false), true)
+  assert.equal(timerFor({kind: "success"}, 5000, false), false)
+  assert.equal(timerFor({kind: "info", value: 100}, 1600), false)
 })

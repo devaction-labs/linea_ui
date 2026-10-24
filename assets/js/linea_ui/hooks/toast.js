@@ -17,6 +17,7 @@ import {
   resumeAfter,
   stack,
   timeLeft,
+  timerFor,
   unseen,
   withKindColor,
 } from "../lib/notice_logic.js"
@@ -156,9 +157,10 @@ export default {
       el.dataset.toastId = toast.id
       rich ? (el.dataset.tone = color) : color === "neutral" || el.classList.add(color)
       el.setAttribute("role", color === "error" ? "alert" : "status")
-      const fill = template ? () => this.fillTemplate(el, template) : rich ? () => this.fillRich(el, input, toast) : () => this.fillText(el, input)
+      const fill = template ? () => this.fillTemplate(el, template) : rich ? () => this.fillRich(el, input, toast) : () => this.fillText(el, input, toast)
       fill()
       this.decorate(el, input, toast)
+      this.fillTimer(el, input, toast)
       el.querySelectorAll("[data-toast-dismiss]").forEach((button) => button.addEventListener("click", () => this.remove(toast)))
       el.addEventListener("mouseenter", () => this.hover(toast.position.key, true))
       el.addEventListener("mouseleave", () => this.hover(toast.position.key, false))
@@ -172,6 +174,30 @@ export default {
       aura ? Object.assign(el.dataset, {aura: aura.variant, auraSize: aura.size, auraColor: aura.color}) : ["aura", "auraSize", "auraColor"].forEach((key) => delete el.dataset[key])
       progress === null || this.fillProgress(el, progress, toast, Boolean(input.bar))
       failedOf(input) && this.fillFailed(el)
+    },
+
+    fillTimer(el, input, toast) {
+      const show = timerFor(input, toast.duration, this.el.dataset.timer !== "false")
+      show && el.append(this.part("span", "toast-timer", document.createElement("i")))
+      show && el.querySelector(":scope > .toast-timer").setAttribute("aria-hidden", "true")
+    },
+
+    timerBar(toast) {
+      return toast.el.querySelector(":scope > .toast-timer > i")
+    },
+
+    runTimer(toast) {
+      const bar = this.timerBar(toast)
+      const ratio = toast.left / toast.duration
+      bar && Object.assign(bar.style, {animation: "none", transform: `scaleX(${ratio})`})
+      bar && bar.style.setProperty("--timer-from", String(ratio))
+      bar && bar.getBoundingClientRect()
+      bar && (bar.style.animation = `linea-toast-timer ${toast.left}ms linear forwards`)
+    },
+
+    holdTimer(toast) {
+      const bar = this.timerBar(toast)
+      bar && Object.assign(bar.style, {animation: "none", transform: `scaleX(${toast.left / toast.duration})`})
     },
 
     fillProgress(el, progress, toast, bar) {
@@ -196,11 +222,11 @@ export default {
       el.prepend(fill)
     },
 
-    fillText(el, input) {
+    fillText(el, input, toast) {
       const text = document.createElement("span")
       text.textContent = input.message ?? ""
       el.append(text)
-      closeFor(input, Infinity) && el.append(this.closeButton())
+      closeFor(input, toast.duration) && el.append(this.closeButton())
     },
 
     fillRich(el, input, toast) {
@@ -269,12 +295,14 @@ export default {
       clearTimeout(toast.timer)
       toast.startedAt = Date.now()
       toast.timer = Number.isFinite(toast.duration) ? setTimeout(() => this.remove(toast), toast.left) : null
+      Number.isFinite(toast.duration) && this.runTimer(toast)
     },
 
     pause(toast) {
       clearTimeout(toast.timer)
       toast.timer = null
       toast.left = Number.isFinite(toast.duration) ? timeLeft(toast.left, Date.now() - toast.startedAt) : toast.left
+      Number.isFinite(toast.duration) && this.holdTimer(toast)
     },
 
     resume(toast) {

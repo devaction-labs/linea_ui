@@ -62,6 +62,21 @@ defmodule LineaUI.Components.ToastTest do
     assert_raise ArgumentError, ~r/position/, fn -> Toast.payload("x", position: "middle") end
   end
 
+  test "the toaster draws the countdown line by default and can turn it off" do
+    assigns = %{}
+    on = Phoenix.LiveViewTest.rendered_to_string(~H"<.toaster />")
+    off = Phoenix.LiveViewTest.rendered_to_string(~H"<.toaster timer={false} />")
+
+    assert attr_of(on, "#linea-toaster", "data-timer") == ["true"]
+    assert attr_of(off, "#linea-toaster", "data-timer") == ["false"]
+  end
+
+  test "a toast carries its own timer choice" do
+    assert %{"timer" => false} = LineaUI.Components.Toast.payload("x", timer: false)
+    assert %{"timer" => nil} = LineaUI.Components.Toast.payload("x", [])
+    assert %{"timer" => false} = LineaUI.Components.Toast.changes("x", timer: false)
+  end
+
   test "the toaster carries an icon template per kind and the persist_errors flag" do
     assigns = %{}
     html = Phoenix.LiveViewTest.rendered_to_string(~H"<.toaster persist_errors />")
