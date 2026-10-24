@@ -59,4 +59,31 @@ defmodule LineaUI.Components.DisclosureTest do
     assert attr_of(html, "#i .ac-trigger", "aria-label") == ["Open Simon"]
     assert find(html, "#i > summary") |> LazyHTML.text() =~ "Simon"
   end
+
+  test "the primary accordion style takes any theme color" do
+    html =
+      render(~H"""
+      <.accordion id="a" variant="primary">
+        <.accordion_item id="a1" title="T">x</.accordion_item>
+      </.accordion>
+      <.accordion id="b" variant="primary" color="warning">
+        <.accordion_item id="b1" title="T">x</.accordion_item>
+      </.accordion>
+      <.accordion id="c" variant="bordered" color="info">
+        <.accordion_item id="c1" title="T">x</.accordion_item>
+      </.accordion>
+      """)
+
+    assert ["border-primary", "divide-indigo-400", "dark:border-accent"] -- classes(html, "#a") ==
+             []
+
+    assert [_] = find(html, "#a[data-color=primary]") |> Enum.to_list()
+
+    assert ["border-warning", "divide-yellow-400", "dark:border-warning"] -- classes(html, "#b") ==
+             []
+
+    assert [_] = find(html, "#b[data-color=warning]") |> Enum.to_list()
+    refute "border-info" in classes(html, "#c")
+    assert [] = find(html, "#c[data-color]") |> Enum.to_list()
+  end
 end

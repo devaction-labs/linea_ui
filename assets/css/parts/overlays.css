@@ -115,6 +115,26 @@
     @apply bg-primary px-4 text-white dark:bg-accent dark:text-white sm:px-5;
   }
 
+  [data-accordion][data-variant="primary"][data-color="secondary"] > .ac > .ac-trigger {
+    @apply bg-secondary dark:bg-secondary;
+  }
+
+  [data-accordion][data-variant="primary"][data-color="info"] > .ac > .ac-trigger {
+    @apply bg-info dark:bg-info;
+  }
+
+  [data-accordion][data-variant="primary"][data-color="success"] > .ac > .ac-trigger {
+    @apply bg-success dark:bg-success;
+  }
+
+  [data-accordion][data-variant="primary"][data-color="warning"] > .ac > .ac-trigger {
+    @apply bg-warning dark:bg-warning;
+  }
+
+  [data-accordion][data-variant="primary"][data-color="error"] > .ac > .ac-trigger {
+    @apply bg-error dark:bg-error;
+  }
+
   [data-accordion][data-variant="primary"] > .ac > .ac-trigger .ac-icon {
     @apply text-indigo-100 dark:text-indigo-100;
   }
