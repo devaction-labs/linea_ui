@@ -1,3 +1,4 @@
+import {nextValue} from "../lib/input_sync.js"
 import {format, raw, caretFor, significantBefore, dropBefore} from "../lib/mask_logic.js"
 
 /**
@@ -9,8 +10,35 @@ import {format, raw, caretFor, significantBefore, dropBefore} from "../lib/mask_
  * `input` event is re-dispatched from it only when that value actually changed. A server re-render
  * reformats what it shows without firing anything, so echoes never loop.
  */
+/**
+ * `LineaUI.InputSync` (and the mask hook when `data-clear-on-submit` is set): LiveView keeps what is
+ * typed in a focused input, so after the surrounding form is submitted the next server render
+ * (`data-value`) is written to the input even though it has focus, e.g. to clear a todo field.
+ * Typing cancels the pending submit.
+ */
+const attachSync = (hook) => {
+  hook.pending = false
+  hook.syncForm = hook.el.dataset.clearOnSubmit === undefined ? null : hook.el.form
+  hook.onSubmit = () => (hook.pending = true)
+  hook.onType = () => (hook.pending = false)
+  hook.syncForm?.addEventListener("submit", hook.onSubmit)
+  hook.el.addEventListener("input", hook.onType)
+}
+
+const applySync = (hook) => {
+  const next = nextValue({pending: hook.pending, current: hook.el.value, server: hook.el.dataset.value})
+  hook.pending = false
+  next === null || (hook.el.value = next)
+}
+
+const detachSync = (hook) => {
+  hook.syncForm?.removeEventListener("submit", hook.onSubmit)
+  hook.el.removeEventListener("input", hook.onType)
+}
+
 const InputMask = {
   mounted() {
+    attachSync(this)
     this.read()
     this.onInput = (event) => this.handleInput(event)
     this.el.addEventListener("input", this.onInput)
@@ -18,11 +46,13 @@ const InputMask = {
   },
 
   updated() {
+    applySync(this)
     this.read()
     this.show(this.el.value, null)
   },
 
   destroyed() {
+    detachSync(this)
     this.el.removeEventListener("input", this.onInput)
   },
 
@@ -77,4 +107,18 @@ const InputMask = {
   },
 }
 
-export default {"LineaUI.InputMask": InputMask}
+const InputSync = {
+  mounted() {
+    attachSync(this)
+  },
+
+  updated() {
+    applySync(this)
+  },
+
+  destroyed() {
+    detachSync(this)
+  },
+}
+
+export default {"LineaUI.InputMask": InputMask, "LineaUI.InputSync": InputSync}

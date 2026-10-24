@@ -32,6 +32,18 @@ defmodule LineaUI.Components.ChartTest do
     assert "h-80" in classes(html, "#c")
     assert find(html, "#c") |> LazyHTML.attribute("data-test") == ["x"]
   end
+
+  test "formatters become data-formatters and are omitted when empty" do
+    html =
+      render(~H"""
+      <.chart id="a" options={%{}} formatters={%{"yaxis.labels.formatter" => "thousands"}} />
+      <.chart id="b" options={%{}} />
+      """)
+
+    assert [json] = find(html, "#a") |> LazyHTML.attribute("data-formatters")
+    assert Jason.decode!(json) == %{"yaxis.labels.formatter" => "thousands"}
+    assert [] = find(html, "#b[data-formatters]") |> Enum.to_list()
+  end
 end
 
 defmodule LineaUI.Components.ChartLiveTest do

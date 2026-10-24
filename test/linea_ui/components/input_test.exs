@@ -149,4 +149,37 @@ defmodule LineaUI.Components.InputTest do
              )
              |> Enum.to_list()
   end
+
+  test "align right" do
+    html =
+      render(~H"""
+      <.input id="a" name="a" align="right" />
+      <.input id="b" name="b" />
+      """)
+
+    assert "text-right" in classes(html, "#a")
+    refute "text-right" in classes(html, "#b")
+  end
+
+  test "clear_on_submit wires the sync hook and the server value" do
+    html =
+      render(~H"""
+      <.input id="todo" name="title" value="" clear_on_submit />
+      <.input id="m" name="m" value="12" mask="numeral" clear_on_submit />
+      <.input id="plain" name="p" />
+      """)
+
+    assert [_] =
+             find(
+               html,
+               "#todo[phx-hook='LineaUI.InputSync'][data-clear-on-submit][data-value='']"
+             )
+             |> Enum.to_list()
+
+    assert [_] =
+             find(html, "#m[phx-hook='LineaUI.InputMask'][data-clear-on-submit][data-value='12']")
+             |> Enum.to_list()
+
+    assert [] = find(html, "#plain[phx-hook]") |> Enum.to_list()
+  end
 end

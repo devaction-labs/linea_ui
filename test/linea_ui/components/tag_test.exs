@@ -42,4 +42,20 @@ defmodule LineaUI.Components.TagTest do
     assert "-space-x-px" in classes
     assert "[&>*:not(:first-child)]:rounded-l-none" in classes
   end
+
+  test "active takes the primary color of the variant" do
+    html =
+      render(~H"""
+      <.tag id="a" variant="soft" color="info" active phx-click="x">A</.tag>
+      <.tag id="b" variant="soft" color="info" phx-click="x">B</.tag>
+      <.tag id="c" href="#" active>C</.tag>
+      """)
+
+    assert "bg-primary/10" in classes(html, "#a")
+    refute "bg-info/10" in classes(html, "#a")
+    assert [_] = find(html, "#a[aria-pressed=true]") |> Enum.to_list()
+    assert "bg-info/10" in classes(html, "#b")
+    assert [] = find(html, "#b[aria-pressed]") |> Enum.to_list()
+    assert [_] = find(html, "a#c[aria-current=true]") |> Enum.to_list()
+  end
 end

@@ -20,6 +20,9 @@ defmodule LineaUI.Components.Modal do
   `on_close` runs however the modal closed (Esc, the backdrop, the close button, a command), so
   the server can keep `@confirming` in sync. With an event name the LiveView (or `target`) gets
   `handle_event("cancel-confirm", %{"id" => "confirm"}, socket)`; a `%JS{}` is run as is.
+  Without a `:header` the close × sits in the card's corner above the content; give wide content
+  (an image) a `close_variant="chip"` so the button keeps a backdrop.
+
   `prevent_close` keeps Esc and the backdrop from closing it.
   """
 
@@ -48,6 +51,13 @@ defmodule LineaUI.Components.Modal do
     "lg" => "max-w-lg",
     "xl" => "max-w-2xl",
     "full" => "max-w-full"
+  }
+
+  @close_variants %{
+    "plain" =>
+      "hover:bg-slate-300/20 focus:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25",
+    "chip" =>
+      "bg-white/80 text-slate-700 shadow-sm backdrop-blur-sm hover:bg-white focus:bg-white dark:bg-navy-700/80 dark:text-navy-100 dark:hover:bg-navy-700 dark:focus:bg-navy-700"
   }
 
   @origins %{"center" => "", "top" => "origin-top", "bottom" => "origin-bottom"}
@@ -82,6 +92,12 @@ defmodule LineaUI.Components.Modal do
   attr :close_button, :boolean,
     default: true,
     doc: "The × in the header; without a header it sits in the card's corner."
+
+  attr :close_variant, :string,
+    default: "plain",
+    values: ~w(plain chip),
+    doc:
+      "The corner × of a modal without a header: `plain` is a bare icon button, `chip` gives it a translucent backdrop so it stays legible over wide content such as an image."
 
   attr :on_open, :any, default: nil, doc: "An event name or a `%JS{}`."
   attr :on_close, :any, default: nil, doc: "An event name or a `%JS{}`."
@@ -170,7 +186,12 @@ defmodule LineaUI.Components.Modal do
         <button
           :if={@header == [] and @close_button}
           type="button"
-          class="btn absolute right-3 top-3 size-7 rounded-full p-0 hover:bg-slate-300/20 focus:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25"
+          class={
+            merge([
+              "btn absolute right-3 top-3 z-10 size-7 rounded-full p-0",
+              close_variant_class(@close_variant)
+            ])
+          }
           aria-label={@close_label}
           phx-click={LineaUI.close(@id)}
         >
@@ -269,6 +290,7 @@ defmodule LineaUI.Components.Modal do
   defp panel_class(:bar), do: "overflow-hidden"
   defp panel_class(_layout), do: "scrollbar-sm overflow-y-auto"
 
+  defp close_variant_class(variant), do: Map.fetch!(@close_variants, variant)
   defp animation_class(animation), do: Map.fetch!(@animations, animation)
   defp placement_class(placement), do: Map.fetch!(@placements, placement)
   defp size_class(size), do: Map.fetch!(@sizes, size)

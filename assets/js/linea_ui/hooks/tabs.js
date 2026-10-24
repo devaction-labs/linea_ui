@@ -67,9 +67,9 @@ export default {
     notify(value) {
       const {event, onChange} = this.el.dataset
       const target = this.el.getAttribute("phx-target") || this.el
-      this.el.dispatchEvent(new CustomEvent("linea:change", {bubbles: true, detail: {id: this.el.id, value}}))
-      event && this.pushEventTo(target, event, {id: this.el.id, value})
-      execWithPayload(this.liveSocket, this.el, onChange, {id: this.el.id, value})
+      this.el.dispatchEvent(new CustomEvent("linea:change", {bubbles: true, detail: {id: this.el.id, value, tab: value}}))
+      event && this.pushEventTo(target, event, {id: this.el.id, value, tab: value})
+      execWithPayload(this.liveSocket, this.el, onChange, {id: this.el.id, value, tab: value})
     },
 
     apply(value) {

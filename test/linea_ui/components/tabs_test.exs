@@ -89,4 +89,32 @@ defmodule LineaUI.Components.TabsTest do
     assert [js] = html |> find("#t") |> LazyHTML.attribute("data-on-change")
     assert js =~ "pick"
   end
+
+  test "boxed size" do
+    md = classes(render_tabs(%{variant: "boxed"}), "#t-tab-home")
+    sm = classes(render_tabs(%{variant: "boxed", size: "sm"}), "#t-tab-home")
+    xs = classes(render_tabs(%{variant: "boxed", size: "xs"}), "#t-tab-home")
+    line = classes(render_tabs(%{size: "sm"}), "#t-tab-home")
+
+    assert "py-1.5" in md
+    assert ["px-3", "py-1", "text-xs-plus"] -- sm == []
+    refute "py-1.5" in sm
+    assert ["px-2.5", "py-0.5", "text-xs"] -- xs == []
+    assert "px-3" in line and "py-2" in line
+  end
+
+  test "text variant has no chrome" do
+    html = render_tabs(%{variant: "text"})
+    tab = classes(html, "#t-tab-home")
+
+    assert ["p-0", "aria-selected:text-primary", "rounded-none"] -- tab == []
+    refute Enum.any?(tab, &String.starts_with?(&1, "border"))
+    refute Enum.any?(tab, &String.contains?(&1, "aria-selected:bg"))
+    assert "space-x-4" in classes(html, "[role=tablist]")
+
+    assert "aria-selected:text-slate-800" in classes(
+             render_tabs(%{variant: "text", color: "neutral"}),
+             "#t-tab-home"
+           )
+  end
 end

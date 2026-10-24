@@ -8,6 +8,8 @@ defmodule LineaUI.Components.Badge do
       <.badge color="primary" variant="soft" dot>Online</.badge>
       <.badge color="error" variant="outline" shape="pill">Error</.badge>
       <.badge on_remove={JS.hide()}>Filter</.badge>
+      <.badge color="success" variant="soft" size="sm">UI/UX</.badge>
+      <.badge color="white" variant="outline" shape="pill">Tag</.badge>
   """
 
   use LineaUI.Component
@@ -22,7 +24,8 @@ defmodule LineaUI.Components.Badge do
       "warning" => "bg-warning text-white",
       "error" => "bg-error text-white",
       "dark" => "bg-navy-700 text-white dark:bg-navy-900",
-      "light" => "bg-slate-150 text-slate-800"
+      "light" => "bg-slate-150 text-slate-800",
+      "white" => "bg-white text-slate-800"
     },
     "glow" => %{
       "neutral" =>
@@ -36,7 +39,8 @@ defmodule LineaUI.Components.Badge do
       "error" => "bg-error text-white shadow-soft shadow-error/50",
       "dark" =>
         "bg-navy-700 text-white shadow-soft shadow-navy-700/50 dark:bg-navy-900 dark:shadow-navy-900/50",
-      "light" => "bg-slate-150 text-slate-800 shadow-soft shadow-slate-200/50"
+      "light" => "bg-slate-150 text-slate-800 shadow-soft shadow-slate-200/50",
+      "white" => "bg-white text-slate-800 shadow-soft shadow-white/50"
     },
     "soft" => %{
       "neutral" => "bg-slate-150/60 text-slate-700 dark:bg-navy-500/40 dark:text-navy-100",
@@ -48,7 +52,8 @@ defmodule LineaUI.Components.Badge do
       "warning" => "bg-warning/10 text-warning dark:bg-warning/15",
       "error" => "bg-error/10 text-error dark:bg-error/15",
       "dark" => "bg-navy-700/10 text-navy-700 dark:bg-navy-900/40 dark:text-navy-100",
-      "light" => "bg-slate-150/60 text-slate-700"
+      "light" => "bg-slate-150/60 text-slate-700",
+      "white" => "bg-white/20 text-white"
     },
     "outline" => %{
       "neutral" =>
@@ -62,7 +67,8 @@ defmodule LineaUI.Components.Badge do
       "warning" => "border border-warning text-warning",
       "error" => "border border-error text-error",
       "dark" => "border border-navy-700 text-navy-700 dark:border-navy-900 dark:text-navy-100",
-      "light" => "border border-slate-150 text-slate-800"
+      "light" => "border border-slate-150 text-slate-800",
+      "white" => "border border-white text-white"
     },
     "flat" => %{
       "neutral" => "text-slate-800 dark:text-navy-100",
@@ -73,8 +79,16 @@ defmodule LineaUI.Components.Badge do
       "warning" => "text-warning",
       "error" => "text-error",
       "dark" => "text-navy-700 dark:text-navy-100",
-      "light" => "text-slate-150"
+      "light" => "text-slate-150",
+      "white" => "text-white"
     }
+  }
+
+  @sizes %{
+    "xs" => "h-4.5 px-1.5 py-0 text-tiny-plus",
+    "sm" => "h-5 px-1.5 py-0",
+    "md" => "h-5.5 px-2 py-0 text-xs-plus",
+    "lg" => "h-6 px-2 py-0"
   }
 
   @shapes %{"rounded" => "", "pill" => "rounded-full", "square" => "rounded-none"}
@@ -86,13 +100,22 @@ defmodule LineaUI.Components.Badge do
   """
   attr(:color, :string,
     default: "neutral",
-    values: ~w(neutral primary secondary info success warning error dark light)
+    values: ~w(neutral primary secondary info success warning error dark light white),
+    doc:
+      "`white` is for badges on colored or gradient cards: `variant=\"outline\"` is a white outline, `soft` a translucent white chip."
   )
 
   attr(:variant, :string,
     default: "solid",
     values: ~w(solid glow soft outline flat),
     doc: "`flat` is only the colored text, as LineOne's badges with dots."
+  )
+
+  attr(:size, :string,
+    default: nil,
+    values: [nil | ~w(xs sm md lg)],
+    doc:
+      "Fixed heights as LineOne's compact badges: `xs` h-4.5, `sm` h-5, `md` h-5.5 with larger text, `lg` h-6. Without it the badge keeps its padding-based height."
   )
 
   attr(:shape, :string, default: "rounded", values: ~w(rounded pill square))
@@ -124,6 +147,7 @@ defmodule LineaUI.Components.Badge do
         merge([
           "badge",
           spacing(@dot),
+          size_class(@size),
           variant_class(@variant, @color),
           shape_class(@shape),
           @class
@@ -165,6 +189,9 @@ defmodule LineaUI.Components.Badge do
 
   defp spacing(true), do: "gap-2.5"
   defp spacing(false), do: "gap-2"
+
+  defp size_class(nil), do: nil
+  defp size_class(size), do: @sizes[size]
 
   defp variant_class(variant, color), do: @variants[variant][color]
   defp shape_class(shape), do: @shapes[shape]

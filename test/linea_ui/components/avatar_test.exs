@@ -74,4 +74,84 @@ defmodule LineaUI.Components.AvatarTest do
     assert "animate-pulse" in classes(html, "div")
     assert "ring-2" in classes(html, "img")
   end
+
+  test "extra sizes cover size-6, size-7 and size-9" do
+    html =
+      render(~H"""
+      <.avatar id="a" src="/a.jpg" size="3xs" />
+      <.avatar id="b" initials="jd" size="2xs" />
+      <.avatar id="c" src="/a.jpg" size="xs-plus" status="success" />
+      """)
+
+    assert "size-6" in classes(html, "#a")
+    assert "size-7" in classes(html, "#b")
+    assert "text-xs-plus" in classes(html, "#b > div")
+    assert "size-9" in classes(html, "#c")
+    assert "size-2.5" in classes(html, "#c > div")
+  end
+
+  test "ring takes a width and a color" do
+    html =
+      render(~H"""
+      <.avatar id="a" src="/a.jpg" ring={1} ring_color="primary" />
+      <.avatar id="b" initials="jd" ring="4" />
+      <.avatar id="c" src="/a.jpg" ring />
+      <.avatar id="d" src="/a.jpg" />
+      """)
+
+    assert "ring-1" in classes(html, "#a > img")
+    assert "ring-primary" in classes(html, "#a > img")
+    assert "dark:ring-accent" in classes(html, "#a > img")
+    assert "ring-4" in classes(html, "#b > div")
+    assert "ring-white" in classes(html, "#b > div")
+    assert "ring-2" in classes(html, "#c > img")
+    refute Enum.any?(classes(html, "#d > img"), &String.starts_with?(&1, "ring"))
+  end
+
+  test "face_class reaches the face, class the wrapper" do
+    html =
+      render(~H"""
+      <.avatar id="a" src="/a.jpg" class="-mt-12" face_class="border-2 border-white" />
+      <.avatar id="b" initials="jd" face_class="border-2" />
+      <.avatar id="c" src="/a.jpg" gradient="sky-blue" face_class="shadow-lg" />
+      """)
+
+    assert "-mt-12" in classes(html, "#a")
+    refute "border-2" in classes(html, "#a")
+    assert "border-white" in classes(html, "#a > img")
+    assert "border-2" in classes(html, "#b > div")
+    assert "shadow-lg" in classes(html, "#c img")
+  end
+
+  test "an online dot on a plain image sits at the bottom right, and false hides it" do
+    html =
+      render(~H"""
+      <.avatar id="a" src="/a.jpg" status="primary" status_position="bottom-right" />
+      <.avatar id="b" src="/a.jpg" status={false} />
+      """)
+
+    assert "bottom-0" in classes(html, "#a > div")
+    assert "right-0" in classes(html, "#a > div")
+    assert "bg-primary" in classes(html, "#a > div")
+    assert [] = find(html, "#b > div") |> Enum.to_list()
+  end
+
+  test "avatar_group overlap" do
+    html =
+      render(~H"""
+      <.avatar_group id="a" overlap="3"><.avatar src="/a.jpg" /></.avatar_group>
+      """)
+
+    assert "-space-x-3" in classes(html, "#a")
+    refute "-space-x-2" in classes(html, "#a")
+  end
+
+  test "a neutral status is LineOne's slate offline dot" do
+    html =
+      render(~H"""
+      <.avatar src="/a.jpg" status="neutral" status_position="bottom-right" />
+      """)
+
+    assert "bg-slate-300" in classes(html, "div.avatar > div")
+  end
 end

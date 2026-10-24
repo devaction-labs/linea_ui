@@ -6,6 +6,7 @@ defmodule LineaUI.Components.Switch do
       <.switch name="notify" label="Notifications" color="primary" />
       <.switch field={@form[:public]} label="Public" variant="outline" color="success" />
       <.switch name="dense" size="sm" shape="squircle" thumb_inset={4} checked />
+      <.switch name="email" label="Email" label_position="left" wrapper_class="w-full justify-between" />
   """
 
   use LineaUI.Component
@@ -74,6 +75,8 @@ defmodule LineaUI.Components.Switch do
     6 => "[--thumb-border:6px]"
   }
 
+  @label_positions %{"right" => nil, "left" => "flex-row-reverse space-x-reverse"}
+
   @disabled "disabled:pointer-events-none disabled:select-none disabled:opacity-60"
 
   @doc """
@@ -106,6 +109,14 @@ defmodule LineaUI.Components.Switch do
   )
 
   attr(:label, :string, default: nil, doc: "The caption.")
+
+  attr(:label_position, :string,
+    default: "right",
+    values: ~w(right left),
+    doc:
+      "Which side of the switch the caption sits on. `left` puts the caption before the switch; add `wrapper_class=\"w-full justify-between\"` to push them to opposite ends."
+  )
+
   attr(:label_class, :any, default: nil, doc: "Classes of the caption text.")
   attr(:description, :string, default: nil, doc: "A smaller grey line under the label.")
 
@@ -148,6 +159,8 @@ defmodule LineaUI.Components.Switch do
     ])
   end
 
+  defp label_position(position), do: @label_positions[position]
+
   defp render_switch(assigns) do
     ~H"""
     <input
@@ -164,7 +177,7 @@ defmodule LineaUI.Components.Switch do
       text_class={@text_class}
       description={@description}
       content={@inner_block}
-      class={@wrapper_class}
+      class={merge([label_position(@label_position), @wrapper_class])}
     >
       <input
         type="checkbox"

@@ -31,6 +31,15 @@ defmodule LineaUI.Components.Table do
   checked. The key is `row_key.(row)`, or the row's DOM id when `row_key` is not given; keys
   are compared as given, so pass strings or convert the `"id"` back.
 
+  Density and chrome: `compact` tightens the cell padding, `borderless` drops the row rules (and
+  the cell borders of `bordered`), `headless` leaves out the `<thead>` altogether. A column's
+  `align` (`left`, `center`, `right`) aligns its header and cells.
+
+      <.table id="stats" rows={@rows} compact borderless headless>
+        <:col :let={row}>{row.label}</:col>
+        <:col :let={row} align="right">{row.count}</:col>
+      </.table>
+
   Every event attr takes an event name or a `%JS{}`; `target` sets `phx-target`.
 
   Expandable rows: an `:expand` slot adds a last column with a chevron that shows a detail
@@ -112,6 +121,10 @@ defmodule LineaUI.Components.Table do
 
   @filled ~w(hoverable zebra)
 
+  @compact "px-3 py-2 sm:px-3 lg:px-3"
+
+  @aligns %{"left" => "text-left", "center" => "text-center", "right" => "text-right"}
+
   @checkbox "form-checkbox is-basic size-5 rounded-sm border-slate-400/70 checked:border-primary checked:bg-primary hover:border-primary focus:border-primary dark:border-navy-400 dark:checked:border-accent dark:checked:bg-accent dark:hover:border-accent dark:focus:border-accent"
 
   @expand_button "btn size-8 rounded-full p-0 hover:bg-slate-300/20 focus:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25"
@@ -186,6 +199,21 @@ defmodule LineaUI.Components.Table do
     doc: "Highlights the hovered row. Defaults to the variant's own behavior."
   )
 
+  attr(:compact, :boolean,
+    default: false,
+    doc: "Tighter cells: `px-3 py-2` instead of the variant's padding."
+  )
+
+  attr(:headless, :boolean,
+    default: false,
+    doc: "Renders no `<thead>` at all (not hidden columns), for list-like tables."
+  )
+
+  attr(:borderless, :boolean,
+    default: false,
+    doc: "Removes the rules between rows, and the cell borders of the `bordered` variant."
+  )
+
   attr(:target, :any, default: nil, doc: "`phx-target` of the events.")
   attr(:expand_label, :string, default: nil, doc: "Header of the expand column.")
   attr(:wrapper_class, :any, default: nil, doc: "Classes of the scrolling wrapper.")
@@ -194,8 +222,18 @@ defmodule LineaUI.Components.Table do
 
   slot :col, required: true, doc: "A column; receives the row (after `row_item`)." do
     attr(:label, :string, doc: "Header text.")
-    attr(:class, :any, doc: "Extra classes of the column's cells.")
+
+    attr(:class, :any,
+      doc: "Extra classes of the column's cells (the header takes `head_class`)."
+    )
+
     attr(:head_class, :any, doc: "Extra classes of the column's header.")
+
+    attr(:align, :string,
+      values: ~w(left center right),
+      doc: "Text alignment of the column's header and cells."
+    )
+
     attr(:sort_key, :string, doc: "Makes the header sortable; sent as `\"column\"` in `on_sort`.")
   end
 
@@ -207,16 +245,34 @@ defmodule LineaUI.Components.Table do
     assigns
     |> assign_row_id()
     |> assign_selection()
-    |> assign(:th_class, merge([@th[assigns.variant], th_rounded(assigns)]))
-    |> assign(:td_class, merge([@td[assigns.variant], td_rounded(assigns)]))
-    |> assign(:head_row_class, @head_row[assigns.variant])
-    |> assign(:body_row_class, @body_row[assigns.variant])
-    |> assign(:wrapper, merge([@wrapper[assigns.variant], assigns.wrapper_class]))
+    |> assign(
+      :th_class,
+      merge([@th[assigns.variant], th_rounded(assigns), compact(assigns), no_border(assigns)])
+    )
+    |> assign(
+      :td_class,
+      merge([@td[assigns.variant], td_rounded(assigns), compact(assigns), no_border(assigns)])
+    )
+    |> assign(:head_row_class, merge([@head_row[assigns.variant], no_border(assigns)]))
+    |> assign(:body_row_class, merge([@body_row[assigns.variant], no_border(assigns)]))
+    |> assign(
+      :wrapper,
+      merge([@wrapper[assigns.variant], no_border(assigns), assigns.wrapper_class])
+    )
     |> assign(:table_class, merge([table_class(assigns), assigns.class]))
     |> assign(:checkbox, @checkbox)
     |> assign(:expand_button, @expand_button)
     |> render_table()
   end
+
+  defp compact(%{compact: true}), do: @compact
+  defp compact(%{compact: false}), do: nil
+
+  defp no_border(%{borderless: true}), do: "border-0"
+  defp no_border(%{borderless: false}), do: nil
+
+  defp align(nil), do: nil
+  defp align(align), do: @aligns[align]
 
   defp table_class(%{hoverable: nil, variant: variant}), do: @table[variant]
   defp table_class(%{hoverable: true}), do: "is-hoverable w-full text-left"
@@ -270,7 +326,7 @@ defmodule LineaUI.Components.Table do
     ~H"""
     <div class={@wrapper}>
       <table id={@id} class={@table_class} {@rest}>
-        <.table_head {assigns} />
+        <.table_head :if={!@headless} {assigns} />
         <tbody :for={{dom_id, row} <- expand_rows(assigns)} id={dom_id}>
           <tr class="border-y border-transparent">
             <.table_cells {assigns} row={row} />
@@ -313,7 +369,7 @@ defmodule LineaUI.Components.Table do
     ~H"""
     <div class={@wrapper}>
       <table id={@id} class={@table_class} {@rest}>
-        <.table_head {assigns} />
+        <.table_head :if={!@headless} {assigns} />
         <tbody
           id={@id <> "-body"}
           phx-update={match?(%LiveStream{}, @rows) && "stream"}
@@ -357,7 +413,7 @@ defmodule LineaUI.Components.Table do
         </th>
         <th
           :for={col <- @col}
-          class={merge([@th_class, col[:head_class]])}
+          class={merge([@th_class, align(col[:align]), col[:head_class]])}
           aria-sort={aria_sort(col[:sort_key], @sort_by, @sort_dir)}
         >
           <.sort_header
@@ -410,7 +466,7 @@ defmodule LineaUI.Components.Table do
     </td>
     <td
       :for={col <- @col}
-      class={merge([@td_class, @row_click && "cursor-pointer", col[:class]])}
+      class={merge([@td_class, align(col[:align]), @row_click && "cursor-pointer", col[:class]])}
       phx-click={@row_click && @row_click.(@row)}
     >
       {render_slot(col, @row_item.(@row))}

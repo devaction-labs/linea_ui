@@ -56,4 +56,23 @@ defmodule LineaUI.Components.TimelineTest do
     assert html |> find("li#ev-1, li#ev-2") |> Enum.count() == 2
     assert html |> find("ol[phx-update]") |> Enum.count() == 0
   end
+
+  test "avatar points: bigger sizes, no disc, point_class" do
+    html =
+      render(~H"""
+      <.timeline id="t" size="xl">
+        <.timeline_item id="a" variant="avatar" title="Mores" point_class="ring-2">
+          <:point><.avatar src="/a.jpg" class="size-full" /></:point>
+        </.timeline_item>
+      </.timeline>
+      <.timeline id="u" size="2xl"></.timeline>
+      """)
+
+    assert "[--size:2rem]" in classes(html, "#t")
+    assert "[--size:2.5rem]" in classes(html, "#u")
+    point = classes(html, "#a .timeline-item-point")
+    assert ["rounded-full", "ring-2"] -- point == []
+    refute Enum.any?(point, &String.starts_with?(&1, "bg-"))
+    assert "size-full" in classes(html, "#a .timeline-item-point .avatar")
+  end
 end

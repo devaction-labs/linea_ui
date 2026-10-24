@@ -8,8 +8,18 @@ defmodule LineaUI.Components.Breadcrumb do
         <:item>Breadcrumb</:item>
       </.breadcrumb>
 
-  An item with `href`, `navigate` or `patch` is a link; the others are plain text (the current
-  page is the last one). The separator is LineOne's chevron unless a `:separator` is given:
+  An item with `href`, `navigate` or `patch` is a link; one with `phx-click` is a button that
+  looks like a link, so a crumb can navigate through a server event; the others are plain text
+  (the current page is the last one). Any other attribute of the item (`phx-target`,
+  `phx-value-*`, `id`, `data-*`, `aria-*`) is passed on to the link or button.
+
+      <.breadcrumb>
+        <:item :for={folder <- @path} phx-click="open_folder" phx-value-id={folder.id}>
+          {folder.name}
+        </:item>
+      </.breadcrumb>
+
+  The separator is LineOne's chevron unless a `:separator` is given:
 
       <.breadcrumb variant="bordered">
         <:separator><span class="text-xs font-light">/</span></:separator>
@@ -50,6 +60,14 @@ defmodule LineaUI.Components.Breadcrumb do
     attr(:navigate, :string)
     attr(:patch, :string)
     attr(:class, :any)
+
+    attr(:"phx-click", :any,
+      doc: "Makes the item a button that sends this event or runs this `JS`."
+    )
+
+    attr(:"phx-target", :any)
+    attr(:"phx-value-id", :any)
+    attr(:id, :string)
   end
 
   slot(:separator, doc: "What goes between two steps, LineOne's chevron by default.")
@@ -78,8 +96,25 @@ defmodule LineaUI.Components.Breadcrumb do
   attr(:link_class, :string, required: true)
   attr(:current, :boolean, required: true)
 
+  defp crumb(%{item: item} = assigns) when is_map_key(item, :"phx-click") do
+    assigns = assign(assigns, :extra, extra(item))
+
+    ~H"""
+    <button
+      type="button"
+      class={merge([@link_class, "cursor-pointer outline-hidden", @item[:class]])}
+      aria-current={@current && "page"}
+      {@extra}
+    >
+      {render_slot(@item)}
+    </button>
+    """
+  end
+
   defp crumb(%{item: item} = assigns)
        when is_map_key(item, :href) or is_map_key(item, :navigate) or is_map_key(item, :patch) do
+    assigns = assign(assigns, :extra, extra(item))
+
     ~H"""
     <.link
       href={@item[:href]}
@@ -87,6 +122,7 @@ defmodule LineaUI.Components.Breadcrumb do
       patch={@item[:patch]}
       class={merge([@link_class, @item[:class]])}
       aria-current={@current && "page"}
+      {@extra}
     >
       {render_slot(@item)}
     </.link>
@@ -94,15 +130,21 @@ defmodule LineaUI.Components.Breadcrumb do
   end
 
   defp crumb(assigns) do
+    assigns = assign(assigns, :extra, extra(assigns.item))
+
     ~H"""
     <div
       class={merge(["flex items-center space-x-1.5", @item[:class]])}
       aria-current={@current && "page"}
+      {@extra}
     >
       {render_slot(@item)}
     </div>
     """
   end
+
+  defp extra(item),
+    do: Map.drop(item, [:inner_block, :__slot__, :href, :navigate, :patch, :class])
 
   attr(:separator, :list, required: true)
 

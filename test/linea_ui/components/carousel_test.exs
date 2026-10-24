@@ -98,6 +98,27 @@ defmodule LineaUI.Components.CarouselTest do
     assert LazyHTML.attribute(find(html, "#c"), "data-on-change") == ["slid"]
     assert LazyHTML.attribute(find(html, "#c"), "phx-target") == ["#x"]
   end
+
+  test "navigation=outside pads the carousel and keeps the arrows" do
+    html =
+      render(~H"""
+      <.carousel id="o" navigation="outside">
+        <.carousel_slide>x</.carousel_slide>
+      </.carousel>
+      <.carousel id="i" navigation="inside">
+        <.carousel_slide>x</.carousel_slide>
+      </.carousel>
+      <.carousel id="n">
+        <.carousel_slide>x</.carousel_slide>
+      </.carousel>
+      """)
+
+    assert [_] = find(html, "#o[data-navigation=outside]") |> Enum.to_list()
+    assert [_, _] = find(html, "#o .carousel-button") |> Enum.to_list()
+    assert [] = find(html, "#i[data-navigation]") |> Enum.to_list()
+    assert [_, _] = find(html, "#i .carousel-button") |> Enum.to_list()
+    assert [] = find(html, "#n .carousel-button") |> Enum.to_list()
+  end
 end
 
 defmodule LineaUI.Components.CarouselLiveTest do

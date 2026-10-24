@@ -6,6 +6,12 @@ defmodule LineaUI.Components.Tag do
       <.tag navigate={~p"/tags/elixir"} color="primary" shape="pill">Elixir</.tag>
       <.tag color="info" variant="bordered" shape="pill" phx-click="filter">Info</.tag>
 
+  A filter chip that can be selected takes `active`:
+
+      <.tag :for={tag <- @tags} variant="soft" active={tag in @selected} phx-click="toggle" phx-value-tag={tag}>
+        {tag}
+      </.tag>
+
   `tag_group/1` joins tags (and badges) side by side:
 
       <.tag_group>
@@ -106,6 +112,13 @@ defmodule LineaUI.Components.Tag do
   )
 
   attr(:variant, :string, default: "solid", values: ~w(solid soft bordered outline))
+
+  attr(:active, :boolean,
+    default: false,
+    doc:
+      "The selected state of a filter chip: the tag takes the `primary` color of its `variant` (and `aria-pressed=\"true\"`) whatever its `color`, so a list of chips only toggles this."
+  )
+
   attr(:shape, :string, default: "rounded", values: ~w(rounded pill square))
   attr(:type, :string, default: "button")
   attr(:class, :any, default: nil)
@@ -118,7 +131,7 @@ defmodule LineaUI.Components.Tag do
       :classes,
       merge([
         @base,
-        @variants[assigns.variant][assigns.color],
+        @variants[assigns.variant][active_color(assigns)],
         @shapes[assigns.shape],
         assigns.class
       ])
@@ -126,16 +139,23 @@ defmodule LineaUI.Components.Tag do
     |> render_tag()
   end
 
+  defp active_color(%{active: true}), do: "primary"
+  defp active_color(%{color: color}), do: color
+
   defp render_tag(%{rest: rest} = assigns)
        when is_map_key(rest, :href) or is_map_key(rest, :navigate) or is_map_key(rest, :patch) do
     ~H"""
-    <.link class={@classes} {@rest}>{render_slot(@inner_block)}</.link>
+    <.link class={@classes} aria-current={@active && "true"} {@rest}>
+      {render_slot(@inner_block)}
+    </.link>
     """
   end
 
   defp render_tag(assigns) do
     ~H"""
-    <button type={@type} class={@classes} {@rest}>{render_slot(@inner_block)}</button>
+    <button type={@type} class={@classes} aria-pressed={@active && "true"} {@rest}>
+      {render_slot(@inner_block)}
+    </button>
     """
   end
 

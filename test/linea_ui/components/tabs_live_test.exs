@@ -5,7 +5,11 @@ defmodule LineaUI.Components.TabsLiveTest do
 
   test "the hook's on_change reaches the LiveView", %{conn: conn} do
     {:ok, view, _html} = live_isolated(conn, TabsLive)
-    view |> element("#t") |> render_hook("pick", %{"id" => "t", "value" => "profile"})
+
+    view
+    |> element("#t")
+    |> render_hook("pick", %{"id" => "t", "value" => "profile", "tab" => "profile"})
+
     assert view |> element("#picked") |> render() =~ "profile"
   end
 

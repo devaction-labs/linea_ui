@@ -27,7 +27,33 @@ defmodule LineaUI.Components.Chart do
 
   `series` and/or `options` in the payload are applied with `updateSeries`/`updateOptions`.
 
-  JSON has no functions, so formatters are attached in the browser: before rendering, the
+  JSON has no functions, so formatters are named and resolved in the browser. `formatters` maps
+  an options path to a built-in formatter, and a bare `formatter: "name"` string inside the
+  options works too:
+
+      <.chart
+        id="sales"
+        formatters={%{"yaxis.labels.formatter" => "thousands", "tooltip.y.formatter" => "dollars"}}
+        options={%{series: [...], plotOptions: %{radialBar: %{dataLabels: %{total: %{formatter: "total"}}}}}}
+      />
+
+  | name | `value` becomes |
+  |---|---|
+  | `thousands` | `2500` -> `2.5k` (value / 1000, no rounding) |
+  | `thousands_round` | `2500` -> `3k` |
+  | `thousands_fixed` | `2500` -> `2.50k`, values under 1000 unchanged |
+  | `kilo` | `1499` -> `1k`, values under 1000 unchanged |
+  | `dollars` | `5` -> `$5` |
+  | `dollars_thousands` | `5000` -> `$5k` |
+  | `percent` | `12.5` -> `12.5%` |
+  | `percent_round` | `12.5` -> `13%` |
+  | `round` | `2.6` -> `3` |
+  | `hours` | `3` -> `3h` |
+  | `minutes` | `45` -> `45 min` |
+  | `none` | hides the label (empty text) |
+  | `total` | for gauges: the sum of the series (takes ApexCharts' `w`, not a value) |
+
+  Names not in the table are left as they are. For anything else, before rendering, the
   chart element dispatches a bubbling `linea:chart:options` event whose `detail.options` may
   be changed.
 
@@ -70,11 +96,20 @@ defmodule LineaUI.Components.Chart do
     doc: "ApexCharts options, a map (encoded to JSON) or an already encoded JSON string."
   )
 
+  attr(:formatters, :map,
+    default: %{},
+    doc:
+      "Options path to built-in formatter name, e.g. `%{\"yaxis.labels.formatter\" => \"thousands\"}`; see the table in the module doc. Applied before every draw."
+  )
+
   attr(:class, :any, default: nil)
   attr(:rest, :global)
 
   def chart(assigns) do
-    assigns = assign(assigns, :json, encode(assigns.options))
+    assigns =
+      assigns
+      |> assign(:json, encode(assigns.options))
+      |> assign(:formatters_json, formatters_json(assigns.formatters))
 
     ~H"""
     <div
@@ -82,12 +117,16 @@ defmodule LineaUI.Components.Chart do
       class={merge(["linea-chart", @class])}
       phx-hook="LineaUI.Chart"
       data-options={@json}
+      data-formatters={@formatters_json}
       {@rest}
     >
       <div id={@id <> "-canvas"} phx-update="ignore" data-chart-canvas></div>
     </div>
     """
   end
+
+  defp formatters_json(formatters) when map_size(formatters) == 0, do: nil
+  defp formatters_json(formatters), do: Jason.encode!(formatters)
 
   defp encode(options) when is_binary(options), do: options
   defp encode(options), do: Jason.encode!(options)

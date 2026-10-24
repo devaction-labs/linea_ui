@@ -10,6 +10,8 @@ defmodule LineaUI.Components.Accordion do
         <.accordion_item id="faq-2" title="Accordion Item 2">…</.accordion_item>
       </.accordion>
 
+      <.accordion id="help" variant="primary" color="warning">…</.accordion>
+
   One section is open at a time; `multiple` lets them open independently (LineOne's Collapse
   page). The `advanced` style puts a header of your own in each item, with the chevron button
   at its end:
@@ -36,9 +38,17 @@ defmodule LineaUI.Components.Accordion do
     "bordered" =>
       "flex flex-col divide-y divide-slate-150 rounded-lg border border-slate-150 dark:divide-navy-500 dark:border-navy-500",
     "divided" => "flex flex-col space-y-4 rounded-lg sm:space-y-5 lg:space-y-6",
-    "primary" =>
-      "flex flex-col divide-y divide-indigo-400 overflow-hidden rounded-lg border border-primary dark:border-accent",
+    "primary" => "flex flex-col divide-y overflow-hidden rounded-lg border",
     "advanced" => "flex flex-col space-y-4 sm:space-y-5 lg:space-y-6"
+  }
+
+  @frames %{
+    "primary" => "divide-indigo-400 border-primary dark:border-accent",
+    "secondary" => "divide-violet-400 border-secondary dark:border-secondary",
+    "info" => "divide-sky-400 border-info dark:border-info",
+    "success" => "divide-emerald-400 border-success dark:border-success",
+    "warning" => "divide-yellow-400 border-warning dark:border-warning",
+    "error" => "divide-rose-400 border-error dark:border-error"
   }
 
   @doc """
@@ -56,6 +66,12 @@ defmodule LineaUI.Components.Accordion do
     doc:
       "LineOne's sections: `basic`, `border-bottom`, `bordered` (full bordered), `divided` (items apart), `primary`, `advanced` (a header slot per item)."
 
+  attr :color, :string,
+    default: "primary",
+    values: ~w(primary secondary info success warning error),
+    doc:
+      "The `primary` style's frame, dividers and header fill: LineOne's blue by default, or any theme color (the Help page's yellow and sky frames)."
+
   attr :multiple, :boolean,
     default: false,
     doc: "Sections open independently (LineOne's Collapse)."
@@ -68,9 +84,10 @@ defmodule LineaUI.Components.Accordion do
     ~H"""
     <div
       id={@id}
-      class={merge([variant_class(@variant), @class])}
+      class={merge([variant_class(@variant), frame_class(@variant, @color), @class])}
       data-accordion
       data-variant={@variant}
+      data-color={@variant == "primary" && @color}
       data-exclusive={bool(!@multiple)}
       {@rest}
     >
@@ -173,4 +190,7 @@ defmodule LineaUI.Components.Accordion do
   end
 
   defp variant_class(variant), do: Map.fetch!(@variants, variant)
+
+  defp frame_class("primary", color), do: Map.fetch!(@frames, color)
+  defp frame_class(_variant, _color), do: nil
 end

@@ -14,6 +14,10 @@ defmodule LineaUI.Components.Avatar do
         <.avatar :for={user <- @users} src={user.photo} size="xs" ring />
       </.avatar_group>
 
+      <.avatar src="/images/jane.jpg" size="2xs" ring={1} ring_color="primary" />
+      <.avatar src="/images/jane.jpg" size="lg" face_class="border-2 border-white dark:border-navy-700" />
+      <.avatar src="/images/jane.jpg" status="success" status_position="bottom-right" />
+
   The inner block, when given, replaces the initials (an icon, a counter).
   """
 
@@ -22,7 +26,10 @@ defmodule LineaUI.Components.Avatar do
   alias LineaUI.Components.Mask
 
   @sizes %{
+    "3xs" => "size-6",
+    "2xs" => "size-7",
     "xs" => "size-8",
+    "xs-plus" => "size-9",
     "sm" => "size-10",
     "md" => "size-12",
     "lg" => "size-16",
@@ -31,7 +38,10 @@ defmodule LineaUI.Components.Avatar do
   }
 
   @text_sizes %{
+    "3xs" => "text-tiny",
+    "2xs" => "text-xs-plus",
     "xs" => "text-xs-plus",
+    "xs-plus" => "text-xs-plus",
     "sm" => "",
     "md" => "text-base",
     "lg" => "text-lg",
@@ -110,6 +120,9 @@ defmodule LineaUI.Components.Avatar do
 
   @dot_sizes %{
     "round" => %{
+      "3xs" => "size-2 border",
+      "2xs" => "size-2 border",
+      "xs-plus" => "size-2.5 border",
       "xs" => "size-2.5 border",
       "sm" => "size-3 border-2",
       "md" => "size-3.5 border-2",
@@ -118,6 +131,9 @@ defmodule LineaUI.Components.Avatar do
       "2xl" => "m-1.5 size-4 border-2"
     },
     "mask" => %{
+      "3xs" => "-m-px size-2 border",
+      "2xs" => "-m-px size-2 border",
+      "xs-plus" => "-m-px size-2.5 border",
       "xs" => "-m-px size-2.5 border",
       "sm" => "-m-0.5 size-3 border-2",
       "md" => "-m-0.5 size-3.5 border-2",
@@ -146,11 +162,36 @@ defmodule LineaUI.Components.Avatar do
 
   @colors ~w(neutral primary secondary info success warning error)
 
+  @ring_widths %{
+    "1" => "ring-1",
+    "2" => "ring-2",
+    "4" => "ring-4"
+  }
+
+  @ring_colors %{
+    "white" => "ring-white dark:ring-navy-700",
+    "neutral" => "ring-slate-300 dark:ring-navy-450",
+    "primary" => "ring-primary dark:ring-accent",
+    "secondary" => "ring-secondary dark:ring-secondary-light",
+    "info" => "ring-info",
+    "success" => "ring-success",
+    "warning" => "ring-warning",
+    "error" => "ring-error"
+  }
+
+  @overlaps %{"2" => "-space-x-2", "3" => "-space-x-3"}
+
   @doc "Renders an avatar."
   attr(:src, :string, default: nil)
   attr(:alt, :string, default: "avatar")
   attr(:initials, :string, default: nil, doc: "Shown (upper-cased) when there is no `src`.")
-  attr(:size, :string, default: "sm", values: ~w(xs sm md lg xl 2xl))
+
+  attr(:size, :string,
+    default: "sm",
+    values: ~w(3xs 2xs xs xs-plus sm md lg xl 2xl),
+    doc:
+      "`3xs` is size-6, `2xs` size-7, `xs` size-8, `xs-plus` size-9, `sm` size-10 (default), `md` size-12, `lg` size-16, `xl` size-20, `2xl` size-24."
+  )
 
   attr(:shape, :string,
     default: "circle",
@@ -167,7 +208,12 @@ defmodule LineaUI.Components.Avatar do
     doc: "How the initials are painted; `skeleton` is the grey placeholder."
   )
 
-  attr(:status, :string, default: nil, values: [nil | @colors], doc: "A status dot's color.")
+  attr(:status, :any,
+    default: nil,
+    values: [nil, false | @colors],
+    doc:
+      "A status dot's color; `nil` or `false` shows no dot. Works the same on an image and on initials. Use `status_position=\"bottom-right\"` for LineOne's online dot."
+  )
 
   attr(:status_position, :string,
     default: "top-right",
@@ -175,7 +221,25 @@ defmodule LineaUI.Components.Avatar do
   )
 
   attr(:ping, :boolean, default: false, doc: "Animates the status dot with a ping.")
-  attr(:ring, :boolean, default: false, doc: "The white ring avatars wear inside a group.")
+
+  attr(:ring, :any,
+    default: false,
+    values: [true, false, 1, 2, 4, "1", "2", "4"],
+    doc:
+      "The ring avatars wear inside a group. `true` is a 2px ring; `1`, `2` or `4` pick the width."
+  )
+
+  attr(:ring_color, :string,
+    default: "white",
+    values: ~w(white neutral primary secondary info success warning error),
+    doc: "`white` is white in light mode and the card color in dark mode."
+  )
+
+  attr(:face_class, :any,
+    default: nil,
+    doc:
+      "Classes merged into the picture or initials face itself (a border, a shadow), while `class` goes on the wrapper."
+  )
 
   attr(:gradient, :string,
     default: nil,
@@ -221,19 +285,22 @@ defmodule LineaUI.Components.Avatar do
 
   defp face(%{src: src} = assigns) when is_binary(src) do
     ~H"""
-    <img class={[shape(@shape), ring(@ring)]} src={@src} alt={@alt} />
+    <img class={merge([shape(@shape), ring(@ring, @ring_color), @face_class])} src={@src} alt={@alt} />
     """
   end
 
   defp face(assigns) do
     ~H"""
-    <div class={[
-      "is-initial uppercase",
-      shape(@shape),
-      text_size(@size),
-      initials(@variant, @color),
-      ring(@ring)
-    ]}>
+    <div class={
+      merge([
+        "is-initial uppercase",
+        shape(@shape),
+        text_size(@size),
+        initials(@variant, @color),
+        ring(@ring, @ring_color),
+        @face_class
+      ])
+    }>
       {render_slot(@inner_block) || @initials}
     </div>
     """
@@ -272,8 +339,9 @@ defmodule LineaUI.Components.Avatar do
   defp dot_size(shape, size) when is_map_key(@shapes, shape), do: @dot_sizes["round"][size]
   defp dot_size(_shape, size), do: @dot_sizes["mask"][size]
 
-  defp ring(true), do: "ring-2 ring-white dark:ring-navy-700"
-  defp ring(false), do: nil
+  defp ring(false, _color), do: nil
+  defp ring(true, color), do: ring(2, color)
+  defp ring(width, color), do: "#{@ring_widths[to_string(width)]} #{@ring_colors[color]}"
 
   @doc """
   Stacks avatars so they overlap, as LineOne's avatar group. Give the avatars `ring` so each
@@ -285,15 +353,27 @@ defmodule LineaUI.Components.Avatar do
       </.avatar_group>
   """
   attr(:pulse, :boolean, default: false, doc: "Pulses the whole group, for skeletons.")
+
+  attr(:overlap, :string,
+    default: "2",
+    values: ~w(2 3),
+    doc: "How far the avatars overlap: `2` is `-space-x-2`, `3` is `-space-x-3`."
+  )
+
   attr(:class, :any, default: nil)
   attr(:rest, :global)
   slot(:inner_block, required: true)
 
   def avatar_group(assigns) do
     ~H"""
-    <div class={merge(["flex flex-wrap -space-x-2", @pulse && "animate-pulse", @class])} {@rest}>
+    <div
+      class={merge(["flex flex-wrap", overlap(@overlap), @pulse && "animate-pulse", @class])}
+      {@rest}
+    >
       {render_slot(@inner_block)}
     </div>
     """
   end
+
+  defp overlap(overlap), do: @overlaps[overlap]
 end

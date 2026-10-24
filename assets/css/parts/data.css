@@ -202,6 +202,15 @@
     cursor: pointer;
   }
 
+  .carousel[data-navigation="outside"] {
+    padding-inline: 32px;
+  }
+
+  .carousel[data-navigation="outside"][data-direction="vertical"] {
+    padding-inline: 0;
+    padding-block: 32px;
+  }
+
   .carousel-button:disabled {
     opacity: 0.35;
     cursor: auto;

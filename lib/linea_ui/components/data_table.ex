@@ -126,7 +126,8 @@ defmodule LineaUI.Components.DataTable do
   * `on_select` — a row checkbox: `%{"id" => key, "selected" => "true" | "false"}`.
   * `on_select_all` — the header checkbox: `%{"selected" => "true" | "false"}`.
 
-  The footer shows when `on_page` or `page_path` is given; the search when `on_search` is.
+  The footer shows when `on_page` or `page_path` is given (unless `footer={false}`); the search
+  when `on_search` is.
   """
   attr(:id, :string, required: true)
   attr(:rows, :any, required: true, doc: "The rows of the current page, a list or a stream.")
@@ -168,6 +169,16 @@ defmodule LineaUI.Components.DataTable do
   attr(:total, :integer, default: nil, doc: "Rows across every page. Defaults to the row count.")
   attr(:on_page, :any, default: nil, doc: "See the events above.")
   attr(:page_path, :any, default: nil, doc: "A function of the page number returning a path.")
+
+  attr(:footer, :boolean,
+    default: true,
+    doc:
+      "`false` leaves out the footer (pager, summary and page-size select) even when `on_page` is given, for a table with only a search."
+  )
+
+  attr(:compact, :boolean, default: false, doc: "Tighter cells, see `table/1`.")
+  attr(:headless, :boolean, default: false, doc: "No `<thead>`, see `table/1`.")
+  attr(:borderless, :boolean, default: false, doc: "No row rules, see `table/1`.")
   attr(:page_sizes, :list, default: [], doc: "Options of the \"Show N entries\" select.")
   attr(:on_page_size, :any, default: nil, doc: "See the events above.")
 
@@ -197,8 +208,18 @@ defmodule LineaUI.Components.DataTable do
 
   slot :col, required: true, doc: "A column; receives the row (after `row_item`)." do
     attr(:label, :string, doc: "Header text.")
-    attr(:class, :any, doc: "Extra classes of the column's cells.")
+
+    attr(:class, :any,
+      doc: "Extra classes of the column's cells (the header takes `head_class`)."
+    )
+
     attr(:head_class, :any, doc: "Extra classes of the column's header.")
+
+    attr(:align, :string,
+      values: ~w(left center right),
+      doc: "Text alignment of the column's header and cells."
+    )
+
     attr(:sort_key, :string, doc: "Makes the header sortable; sent as `\"column\"` in `on_sort`.")
   end
 
@@ -222,7 +243,7 @@ defmodule LineaUI.Components.DataTable do
     assigns
     |> assign(:total, total(assigns))
     |> assign_pages()
-    |> assign(:paginated, assigns.on_page != nil or assigns.page_path != nil)
+    |> assign(:paginated, assigns.footer and (assigns.on_page != nil or assigns.page_path != nil))
     |> assign(:icon_button, @icon_button)
     |> render_data_table()
   end
@@ -327,50 +348,14 @@ defmodule LineaUI.Components.DataTable do
           {render_slot(@title)}
         </h2>
         <div class="flex">
-          <form
+          <.table_search
             :if={@on_search}
-            id={@id <> "-search-form"}
-            class="flex items-center"
-            phx-change={@on_search}
-            phx-submit={@on_search}
-            phx-target={@target}
-          >
-            <label class="block">
-              <input
-                id={@id <> "-search"}
-                type="text"
-                name="search"
-                value={@search}
-                placeholder={@search_placeholder || "Search here..."}
-                aria-label={@search_placeholder || "Search here..."}
-                autocomplete="off"
-                phx-debounce="300"
-                class={search_input_class(@search)}
-              />
-            </label>
-            <button
-              type="button"
-              class={@icon_button}
-              aria-label={@search_placeholder || "Search here..."}
-              aria-controls={@id <> "-search"}
-              phx-click={toggle_search(@id)}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="size-4.5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="1.5"
-                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                />
-              </svg>
-            </button>
-          </form>
+            id={@id}
+            value={@search}
+            on_search={@on_search}
+            target={@target}
+            placeholder={@search_placeholder}
+          />
           <button
             :if={@filters != []}
             type="button"
@@ -433,7 +418,8 @@ defmodule LineaUI.Components.DataTable do
   end
 
   @table_keys ~w(row_id row_key row_item row_click sort_by sort_dir on_sort on_select on_select_all
-                 selected all_selected expand_label target col action expand empty)a
+                 selected all_selected expand_label target col action expand empty compact headless
+                 borderless)a
 
   defp data_table_body(assigns) do
     assigns =
@@ -588,6 +574,90 @@ defmodule LineaUI.Components.DataTable do
     >
       {render_slot(@inner_block)}
     </.link>
+    """
+  end
+
+  @doc """
+  LineOne's collapsing search: a magnifier button that slides a borderless input open, as in the
+  title bar of the Table Advanced page. `data_table/1` uses it, and it works on its own next to
+  any title.
+
+      <div class="flex items-center justify-between">
+        <h2>Users</h2>
+        <.table_search id="users" value={@search} on_search="search" />
+      </div>
+
+  Events: `on_search` (an event name or `%JS{}`, sent to `target` when given) receives
+  `%{"search" => query}` on every change (debounced 300ms) and on submit. The input has the
+  DOM id `\#{id}-search` and the form `\#{id}-search-form`. The input starts open when `value`
+  is not empty.
+  """
+  attr(:id, :string, required: true)
+  attr(:value, :string, default: "", doc: "The current query.")
+  attr(:on_search, :any, default: nil, doc: "Event name or `%JS{}` for the query changes.")
+  attr(:target, :any, default: nil, doc: "`phx-target` of `on_search`.")
+
+  attr(:placeholder, :string,
+    default: nil,
+    doc: "Placeholder and label; \"Search here...\" by default."
+  )
+
+  attr(:class, :any, default: nil)
+  attr(:rest, :global)
+
+  def table_search(assigns) do
+    assigns
+    |> assign(:icon_button, @icon_button)
+    |> assign(:label, assigns.placeholder || "Search here...")
+    |> render_table_search()
+  end
+
+  defp render_table_search(assigns) do
+    ~H"""
+    <form
+      id={@id <> "-search-form"}
+      class={merge(["flex items-center", @class])}
+      phx-change={@on_search}
+      phx-submit={@on_search}
+      phx-target={@target}
+      {@rest}
+    >
+      <label class="block">
+        <input
+          id={@id <> "-search"}
+          type="text"
+          name="search"
+          value={@value}
+          placeholder={@label}
+          aria-label={@label}
+          autocomplete="off"
+          phx-debounce="300"
+          class={search_input_class(@value)}
+        />
+      </label>
+      <button
+        type="button"
+        class={@icon_button}
+        aria-label={@label}
+        aria-controls={@id <> "-search"}
+        phx-click={toggle_search(@id)}
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="size-4.5"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="1.5"
+            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+          />
+        </svg>
+      </button>
+    </form>
     """
   end
 

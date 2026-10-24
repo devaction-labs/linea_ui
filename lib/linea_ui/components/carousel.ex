@@ -8,6 +8,7 @@ defmodule LineaUI.Components.Carousel do
         <.carousel_slide><img class="h-full w-full object-cover" src="/b.jpg" alt="" /></.carousel_slide>
       </.carousel>
 
+      <.carousel id="beside" navigation="outside">…</.carousel>
       <.carousel id="promo" pagination="bullets" autoplay={2000} loop>…</.carousel>
       <.carousel id="tall" direction="vertical" pagination="bullets" class="h-64">…</.carousel>
       <.carousel id="flip" effect="flip" navigation pagination="bullets">…</.carousel>
@@ -65,7 +66,13 @@ defmodule LineaUI.Components.Carousel do
   )
 
   attr(:direction, :string, default: "horizontal", values: ~w(horizontal vertical))
-  attr(:navigation, :boolean, default: false, doc: "The previous and next arrows.")
+
+  attr(:navigation, :any,
+    default: false,
+    values: [true, false, "inside", "outside"],
+    doc:
+      "The previous and next arrows. `true` or `\"inside\"` lays them over the track; `\"outside\"` pads the carousel and puts them beside the track (the `slide` effect)."
+  )
 
   attr(:pagination, :string,
     default: nil,
@@ -110,6 +117,7 @@ defmodule LineaUI.Components.Carousel do
       data-server-index={@index}
       data-effect={@effect}
       data-direction={@direction}
+      data-navigation={@navigation == "outside" && "outside"}
       data-loop={bool(@loop)}
       data-autoplay={@autoplay}
       data-zoom={@zoom}
@@ -123,7 +131,7 @@ defmodule LineaUI.Components.Carousel do
         {render_slot(@inner_block)}
       </div>
       <button
-        :if={@navigation}
+        :if={@navigation not in [false, nil]}
         type="button"
         class="carousel-button"
         data-carousel-next
@@ -133,7 +141,7 @@ defmodule LineaUI.Components.Carousel do
         <svg viewBox="0 0 11 20" fill="none" aria-hidden="true"><path d={@arrow} /></svg>
       </button>
       <button
-        :if={@navigation}
+        :if={@navigation not in [false, nil]}
         type="button"
         class="carousel-button"
         data-carousel-prev

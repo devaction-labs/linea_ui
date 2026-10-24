@@ -7,6 +7,8 @@ defmodule LineaUI.Components.Progress do
       <.progress value={70} color="success" variant="soft" />
       <.progress value={50} color="primary" active />
       <.progress indeterminate color="info" size="sm" />
+      <.progress value={30} color="warning" variant="soft" height="1.5" />
+      <.progress value={60} color="white" />
 
   `value` is read against `max` (100 by default) and updates with the assign.
   """
@@ -21,7 +23,8 @@ defmodule LineaUI.Components.Progress do
       "info" => "bg-slate-150 dark:bg-navy-500",
       "success" => "bg-slate-150 dark:bg-navy-500",
       "warning" => "bg-slate-150 dark:bg-navy-500",
-      "error" => "bg-slate-150 dark:bg-navy-500"
+      "error" => "bg-slate-150 dark:bg-navy-500",
+      "white" => "bg-white/30"
     },
     "soft" => %{
       "neutral" => "bg-slate-500/15 dark:bg-navy-400/25",
@@ -30,7 +33,8 @@ defmodule LineaUI.Components.Progress do
       "info" => "bg-info/15 dark:bg-info/25",
       "success" => "bg-success/15 dark:bg-success/25",
       "warning" => "bg-warning/15 dark:bg-warning/25",
-      "error" => "bg-error/15 dark:bg-error/25"
+      "error" => "bg-error/15 dark:bg-error/25",
+      "white" => "bg-white/30"
     }
   }
 
@@ -41,10 +45,13 @@ defmodule LineaUI.Components.Progress do
     "info" => "bg-info",
     "success" => "bg-success",
     "warning" => "bg-warning",
-    "error" => "bg-error"
+    "error" => "bg-error",
+    "white" => "bg-white"
   }
 
   @sizes %{"sm" => "h-1", "md" => "h-2", "lg" => "h-3", "xl" => "h-4"}
+
+  @heights %{"1" => "h-1", "1.5" => "h-1.5", "2" => "h-2", "3" => "h-3", "4" => "h-4"}
 
   @doc """
   Renders a progress bar.
@@ -56,16 +63,26 @@ defmodule LineaUI.Components.Progress do
 
   attr(:color, :string,
     default: "neutral",
-    values: ~w(neutral primary secondary info success warning error)
+    values: ~w(neutral primary secondary info success warning error white),
+    doc: "The bar's color; `white` is a white bar on a translucent track, for colored cards."
   )
 
   attr(:variant, :string,
     default: "solid",
     values: ~w(solid soft),
-    doc: "`soft` tints the track with the bar's color."
+    doc:
+      "`soft` tints the track with the bar's color (`bg-{color}/15`); `solid` uses the gray track."
   )
 
   attr(:size, :string, default: "md", values: ~w(sm md lg xl))
+
+  attr(:height, :string,
+    default: nil,
+    values: [nil, "1", "1.5", "2", "3", "4"],
+    doc:
+      "A Tailwind height step (`h-1`, `h-1.5`...) that wins over `size`; `1.5` is the one `size` lacks."
+  )
+
   attr(:active, :boolean, default: false, doc: "A light sweeping over the bar.")
 
   attr(:indeterminate, :boolean,
@@ -88,7 +105,7 @@ defmodule LineaUI.Components.Progress do
       aria-valuemin="0"
       aria-valuemax={@max}
       aria-valuenow={!@indeterminate && @value}
-      class={merge(["progress", track(@variant, @color), size(@size), @class])}
+      class={merge(["progress", track(@variant, @color), size(@size), height(@height), @class])}
       {@rest}
     >
       <div
@@ -116,4 +133,6 @@ defmodule LineaUI.Components.Progress do
   defp track(variant, color), do: @tracks[variant][color]
   defp bar(color), do: @bars[color]
   defp size(size), do: @sizes[size]
+  defp height(nil), do: nil
+  defp height(height), do: @heights[height]
 end

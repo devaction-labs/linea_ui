@@ -85,4 +85,20 @@ defmodule LineaUI.Components.ModalTest do
     assert close =~ ~s("id":"m")
     assert attr_of(html, "#m", "data-on-open") |> hd() =~ "add_class"
   end
+
+  test "the corner close button of a headerless modal sits above the content, optionally on a chip" do
+    html =
+      render(~H"""
+      <.modal id="a">x</.modal>
+      <.modal id="b" close_variant="chip">x</.modal>
+      """)
+
+    assert ["absolute", "z-10", "hover:bg-slate-300/20"] -- classes(html, "#a-panel > button") ==
+             []
+
+    assert ["absolute", "z-10", "bg-white/80", "backdrop-blur-sm"] --
+             classes(html, "#b-panel > button") == []
+
+    refute "hover:bg-slate-300/20" in classes(html, "#b-panel > button")
+  end
 end

@@ -1,7 +1,8 @@
 import {parseOptions, targets, updatesFor} from "../lib/chart_logic.js"
+import {parseSpec, resolveFormatters} from "../lib/chart_formatters.js"
 
 const prepared = (el, options) => {
-  const detail = {options}
+  const detail = {options: resolveFormatters(options, parseSpec(el.dataset.formatters))}
   el.dispatchEvent(new CustomEvent("linea:chart:options", {bubbles: true, detail}))
   return detail.options
 }
@@ -9,7 +10,7 @@ const prepared = (el, options) => {
 export default {
   "LineaUI.Chart": {
     mounted() {
-      this.json = this.el.dataset.options
+      this.json = this.key()
       this.canvas = this.el.querySelector("[data-chart-canvas]")
       this.onLoad = () => this.draw()
       this.handleEvent("linea:chart", (payload) => this.apply(payload))
@@ -17,8 +18,12 @@ export default {
     },
 
     updated() {
-      const json = this.el.dataset.options
-      json !== this.json && ((this.json = json), this.redraw())
+      const key = this.key()
+      key !== this.json && ((this.json = key), this.redraw())
+    },
+
+    key() {
+      return `${this.el.dataset.options}|${this.el.dataset.formatters ?? ""}`
     },
 
     destroyed() {
@@ -28,7 +33,7 @@ export default {
     },
 
     draw() {
-      const options = parseOptions(this.json)
+      const options = parseOptions(this.el.dataset.options)
       const ApexCharts = window.ApexCharts
       this.el.dataset.state = ApexCharts ? "ready" : "waiting"
       ApexCharts || window.addEventListener("load", this.onLoad, {once: true})
@@ -42,7 +47,7 @@ export default {
     },
 
     redraw() {
-      const options = parseOptions(this.json)
+      const options = parseOptions(this.el.dataset.options)
       this.chart && options ? this.chart.updateOptions(prepared(this.el, options)) : this.draw()
     },
 

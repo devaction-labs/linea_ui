@@ -10,6 +10,7 @@ defmodule LineaUI.Components.Input do
         <:prefix><svg>…</svg></:prefix>
       </.input>
       <.input name="username" value="taken" state="error" help="Username is invalid" />
+      <.input name="amount" size="sm" align="right" />
 
   Without a caption, help or errors it renders the bare `<input>` (wrapped in a positioning
   span when it has icons), so it can sit inside an `input_group`.
@@ -40,6 +41,15 @@ defmodule LineaUI.Components.Input do
   the field's name; `phx-debounce`/`phx-throttle` are copied onto it.
 
       <.input field={@form[:amount]} mask="numeral" mask_submit="raw" phx-debounce="300" />
+
+  ## Clearing a focused input
+
+  `clear_on_submit` makes the field take the server's `value` after its form is submitted even
+  while it has focus:
+
+      <.form for={@form} phx-submit="add">
+        <.input id="todo" name="title" value={@title} clear_on_submit />
+      </.form>
 
   The mask runs in the `LineaUI.InputMask` hook, so a masked input needs a stable `id` (it gets
   one from `field`; pass one otherwise when the input re-renders).
@@ -80,6 +90,8 @@ defmodule LineaUI.Components.Input do
     "pill" => "rounded-full px-4"
   }
 
+  @aligns %{"left" => nil, "right" => "text-right"}
+
   @icon "pointer-events-none absolute flex h-full w-10 items-center justify-center text-slate-400 peer-focus:text-primary dark:text-navy-300 dark:peer-focus:text-accent"
 
   @doc """
@@ -103,6 +115,12 @@ defmodule LineaUI.Components.Input do
 
   attr(:size, :string, default: "md", values: ~w(sm md lg))
   attr(:shape, :string, default: "rounded", values: ~w(rounded pill))
+
+  attr(:align, :string,
+    default: "left",
+    values: ~w(left right),
+    doc: "`right` aligns the typed text to the right, for amounts."
+  )
 
   attr(:state, :string,
     default: nil,
@@ -139,6 +157,12 @@ defmodule LineaUI.Components.Input do
     doc: "`raw` submits the unmasked value (digits, a plain number) through a hidden input."
   )
 
+  attr(:clear_on_submit, :boolean,
+    default: false,
+    doc:
+      "LiveView never overwrites the value of a focused input, so a field that keeps focus after `phx-submit` (a todo or chat box) would keep its text. With this, the first server render after the surrounding form is submitted writes `value` into the input even while it has focus; render `value=\"\"` to clear it. Needs a stable `id`."
+  )
+
   attr(:wrapper_class, :any, default: nil, doc: "Classes of the block around a captioned input.")
   attr(:class, :any, default: nil)
 
@@ -161,7 +185,7 @@ defmodule LineaUI.Components.Input do
     |> render_input()
   end
 
-  defp assign_mask_id(%{mask: nil} = assigns), do: assigns
+  defp assign_mask_id(%{mask: nil, clear_on_submit: false} = assigns), do: assigns
   defp assign_mask_id(%{id: nil} = assigns), do: assign(assigns, :id, gen_id("input"))
   defp assign_mask_id(assigns), do: assigns
 
@@ -197,7 +221,9 @@ defmodule LineaUI.Components.Input do
         disabled: assigns.disabled,
         list: assigns.list_id,
         "aria-invalid": assigns.state == "error" && "true",
-        "phx-hook": assigns.mask && "LineaUI.InputMask",
+        "phx-hook": hook(assigns),
+        "data-clear-on-submit": assigns.clear_on_submit && "",
+        "data-value": assigns.clear_on_submit && sync_value(assigns),
         "data-mask": assigns.mask,
         "data-mask-submit": assigns.raw && "raw",
         "data-mask-options": assigns.mask && JSON.encode!(assigns.mask_options)
@@ -206,11 +232,19 @@ defmodule LineaUI.Components.Input do
     )
   end
 
+  defp hook(%{mask: mask}) when is_binary(mask), do: "LineaUI.InputMask"
+  defp hook(%{clear_on_submit: true}), do: "LineaUI.InputSync"
+  defp hook(_assigns), do: nil
+
+  defp sync_value(assigns),
+    do: Phoenix.HTML.Form.normalize_value(assigns.type, assigns.value) || ""
+
   defp classes(assigns) do
     merge([
       @variants[assigns.variant],
       @sizes[assigns.size],
       @shapes[assigns.shape],
+      @aligns[assigns.align],
       icon_padding(assigns),
       @states[{assigns.variant, assigns.state}],
       assigns.class

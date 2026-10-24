@@ -7,6 +7,8 @@ defmodule LineaUI.Components.Button do
       <.button color="error" variant="outline" shape="pill">Delete</.button>
       <.button color="info" icon aria-label="Search"><svg>…</svg></.button>
       <.button navigate={~p"/orders"} color="primary" variant="soft">Orders</.button>
+      <.button icon variant="flat" color="current" aria-label="Menu"><svg>…</svg></.button>
+      <.button variant="glass">On a gradient card</.button>
 
   With `href`, `navigate` or `patch` it renders a link that looks the same.
   """
@@ -30,7 +32,9 @@ defmodule LineaUI.Components.Button do
       "warning" =>
         "bg-warning text-white hover:bg-warning-focus focus:bg-warning-focus active:bg-warning-focus/90",
       "error" =>
-        "bg-error text-white hover:bg-error-focus focus:bg-error-focus active:bg-error-focus/90"
+        "bg-error text-white hover:bg-error-focus focus:bg-error-focus active:bg-error-focus/90",
+      "white" =>
+        "bg-white text-slate-800 hover:bg-slate-100 focus:bg-slate-100 active:bg-slate-100/80"
     },
     "glow" => %{
       "neutral" =>
@@ -46,7 +50,9 @@ defmodule LineaUI.Components.Button do
       "warning" =>
         "bg-warning text-white shadow-lg shadow-warning/50 hover:bg-warning-focus focus:bg-warning-focus active:bg-warning-focus/90",
       "error" =>
-        "bg-error text-white hover:bg-error-focus hover:shadow-lg hover:shadow-error/50 focus:bg-error-focus focus:shadow-lg focus:shadow-error/50 active:bg-error-focus/90"
+        "bg-error text-white hover:bg-error-focus hover:shadow-lg hover:shadow-error/50 focus:bg-error-focus focus:shadow-lg focus:shadow-error/50 active:bg-error-focus/90",
+      "white" =>
+        "bg-white text-slate-800 hover:bg-slate-100 hover:shadow-lg hover:shadow-white/50 focus:bg-slate-100 focus:shadow-lg focus:shadow-white/50 active:bg-slate-100/80"
     },
     "outline" => %{
       "neutral" =>
@@ -62,7 +68,11 @@ defmodule LineaUI.Components.Button do
       "warning" =>
         "border border-warning text-warning hover:bg-warning hover:text-white focus:bg-warning focus:text-white active:bg-warning/90",
       "error" =>
-        "border border-error text-error hover:bg-error hover:text-white focus:bg-error focus:text-white active:bg-error/90"
+        "border border-error text-error hover:bg-error hover:text-white focus:bg-error focus:text-white active:bg-error/90",
+      "white" =>
+        "border border-white text-white hover:bg-white hover:text-slate-800 focus:bg-white focus:text-slate-800 active:bg-white/90",
+      "current" =>
+        "border border-current text-current hover:bg-current/10 focus:bg-current/10 active:bg-current/15"
     },
     "soft" => %{
       "neutral" =>
@@ -76,7 +86,10 @@ defmodule LineaUI.Components.Button do
         "bg-success/10 text-success hover:bg-success/20 focus:bg-success/20 active:bg-success/25",
       "warning" =>
         "bg-warning/10 text-warning hover:bg-warning/20 focus:bg-warning/20 active:bg-warning/25",
-      "error" => "bg-error/10 text-error hover:bg-error/20 focus:bg-error/20 active:bg-error/25"
+      "error" => "bg-error/10 text-error hover:bg-error/20 focus:bg-error/20 active:bg-error/25",
+      "white" => "bg-white/10 text-white hover:bg-white/20 focus:bg-white/20 active:bg-white/25",
+      "current" =>
+        "bg-slate-150/60 text-current hover:bg-slate-150 focus:bg-slate-150 active:bg-slate-150/80 dark:bg-navy-500/40 dark:text-current dark:hover:bg-navy-500 dark:focus:bg-navy-500 dark:active:bg-navy-500/90"
     },
     "bordered" => %{
       "neutral" =>
@@ -92,7 +105,11 @@ defmodule LineaUI.Components.Button do
       "warning" =>
         "border border-warning/30 bg-warning/10 text-warning hover:bg-warning/20 focus:bg-warning/20 active:bg-warning/25",
       "error" =>
-        "border border-error/30 bg-error/10 text-error hover:bg-error/20 focus:bg-error/20 active:bg-error/25"
+        "border border-error/30 bg-error/10 text-error hover:bg-error/20 focus:bg-error/20 active:bg-error/25",
+      "white" =>
+        "border border-white/30 bg-white/10 text-white hover:bg-white/20 focus:bg-white/20 active:bg-white/25",
+      "current" =>
+        "border border-current/30 bg-current/10 text-current hover:bg-current/20 focus:bg-current/20 active:bg-current/25"
     },
     "flat" => %{
       "neutral" =>
@@ -104,9 +121,14 @@ defmodule LineaUI.Components.Button do
       "info" => "text-info hover:bg-info/20 focus:bg-info/20 active:bg-info/25",
       "success" => "text-success hover:bg-success/20 focus:bg-success/20 active:bg-success/25",
       "warning" => "text-warning hover:bg-warning/20 focus:bg-warning/20 active:bg-warning/25",
-      "error" => "text-error hover:bg-error/20 focus:bg-error/20 active:bg-error/25"
+      "error" => "text-error hover:bg-error/20 focus:bg-error/20 active:bg-error/25",
+      "white" => "text-white hover:bg-white/20 focus:bg-white/20 active:bg-white/25",
+      "current" =>
+        "text-current hover:bg-slate-300/20 focus:bg-slate-300/20 active:bg-slate-300/25 dark:text-current dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25"
     }
   }
+
+  @glass "border border-white/10 bg-white/20 text-white hover:bg-white/30 focus:bg-white/30 active:bg-white/40 dark:bg-white/20 dark:text-white dark:hover:bg-white/30 dark:focus:bg-white/30"
 
   @sizes %{
     "xs" => "h-6 rounded-sm px-3 text-xs",
@@ -135,14 +157,16 @@ defmodule LineaUI.Components.Button do
   """
   attr(:color, :string,
     default: "neutral",
-    values: ~w(neutral primary secondary info success warning error)
+    values: ~w(neutral primary secondary info success warning error white current),
+    doc:
+      "`white` is for buttons on colored or gradient surfaces; `current` takes the parent's text color (`solid` and `glow` have no `current`)."
   )
 
   attr(:variant, :string,
     default: "solid",
-    values: ~w(solid glow outline soft bordered flat),
+    values: ~w(solid glow outline soft bordered flat glass),
     doc:
-      "`solid` is filled, `glow` adds the colored shadow, `bordered` is soft with a tinted border, `flat` has no background until hovered."
+      "`solid` is filled, `glow` adds the colored shadow, `bordered` is soft with a tinted border, `flat` has no background until hovered, `glass` is translucent white with white text for gradient and colored cards (it ignores `color`)."
   )
 
   attr(:size, :string, default: "md", values: ~w(xs sm md lg xl))
@@ -167,12 +191,15 @@ defmodule LineaUI.Components.Button do
   defp classes(assigns) do
     merge([
       @base,
-      @variants[assigns.variant][assigns.color],
+      variant_class(assigns.variant, assigns.color),
       size_class(assigns),
       @shapes[assigns.shape],
       assigns.class
     ])
   end
+
+  defp variant_class("glass", _color), do: @glass
+  defp variant_class(variant, color), do: @variants[variant][color]
 
   defp size_class(%{icon: true, size: size}), do: @icon_sizes[size]
   defp size_class(%{size: size}), do: @sizes[size]
