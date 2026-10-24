@@ -8,7 +8,8 @@ defmodule Mix.Tasks.LineaUi.Install do
 
   It writes the Claude Code skill (`mix linea_ui.gen.skill`), points `AGENTS.md` and
   `CLAUDE.md` (those that exist) at it, and prints the lines to add to `app.css`, `app.js`
-  and the endpoint. Running it twice changes nothing the second time.
+  and the endpoint, and the lines for the optional Hugeicons icon set. Running it twice changes nothing the
+  second time.
   """
 
   use Mix.Task
@@ -62,6 +63,18 @@ defmodule Mix.Tasks.LineaUi.Install do
 
       lib/<app>_web.ex, in html_helpers/0:
         use LineaUI, avoid_conflicts: true
+
+    Optional: Hugeicons instead of LineOne's glyphs (the README, section "Icons"):
+
+      mix.exs, in deps:
+        {:hugeicons, github: "hugeicons/hugeicons", ref: "3365154e0ae2461fbfb6249b89649127207a4f9e",
+         sparse: "icons", app: false, compile: false, depth: 1}
+
+      config/config.exs:
+        config :linea_ui, :icons, :hugeicons
+
+      assets/css/app.css, after the linea_ui.css import:
+        @plugin "../../deps/linea_ui/assets/css/hugeicons.cjs" { dir: "deps/hugeicons/icons"; }
     """
   end
 end

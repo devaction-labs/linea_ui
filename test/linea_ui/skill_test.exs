@@ -12,6 +12,11 @@ defmodule LineaUI.SkillTest do
     assert index =~ "`<.button>` `<.button_group>`"
   end
 
+  test "SKILL.md tells how the icon set is chosen", %{files: files} do
+    assert files["SKILL.md"] =~ "config :linea_ui, :icons, :hugeicons"
+    assert files["SKILL.md"] =~ ~S|<.icon name="huge-search-01"|
+  end
+
   test "a reference lists attrs in declaration order with their values, without Phoenix's generated sections",
        %{files: files} do
     button = files["references/button.md"]
