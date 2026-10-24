@@ -154,4 +154,105 @@ defmodule LineaUI.Components.AvatarTest do
 
     assert "bg-slate-300" in classes(html, "div.avatar > div")
   end
+
+  test "a name gives the initials, the alt and a color that never changes" do
+    html =
+      render(~H"""
+      <.avatar id="a" name="Ana Souza" color="auto" />
+      <.avatar id="b" name="Ana Souza" color="auto" />
+      <.avatar id="c" name="Hospital Dom Pedro de Alcântara" />
+      <.avatar id="d" name="Madonna" src="/m.jpg" />
+      """)
+
+    assert find(html, "#a > div") |> LazyHTML.text() =~ "AS"
+    assert classes(html, "#a > div") == classes(html, "#b > div")
+    assert find(html, "#c > div") |> LazyHTML.text() =~ "HA"
+    assert "bg-slate-200" in classes(html, "#c > div")
+    assert LazyHTML.attribute(find(html, "#d > img"), "alt") == ["Madonna"]
+
+    colors =
+      for name <- ~w(Ana Carlos Juliana Marcos Patricia Beto Lia Rui Zeca) do
+        assigns = %{name: name}
+
+        Phoenix.LiveViewTest.rendered_to_string(~H|<.avatar name={@name} color="auto" />|)
+        |> then(&classes(&1, "div.avatar > div"))
+        |> Enum.find(&String.starts_with?(&1, "bg-"))
+      end
+
+    assert length(Enum.uniq(colors)) > 2
+  end
+
+  test "the pixel sizes are the canvas sizes" do
+    html =
+      render(~H"""
+      <.avatar id="a" initials="a" size="24" />
+      <.avatar id="b" initials="a" size="32" />
+      <.avatar id="c" initials="a" size="40" />
+      <.avatar id="d" initials="a" size="48" />
+      <.avatar id="e" initials="a" size="64" />
+      """)
+
+    for {id, size} <- [a: "size-6", b: "size-8", c: "size-10", d: "size-12", e: "size-16"] do
+      assert size in classes(html, "##{id}")
+    end
+  end
+
+  test "a presence is a dot at the bottom right" do
+    html =
+      render(~H"""
+      <.avatar id="a" initials="a" status="online" />
+      <.avatar id="b" initials="a" status="away" />
+      <.avatar id="c" initials="a" status="busy" />
+      <.avatar id="d" initials="a" status="offline" />
+      <.avatar id="e" initials="a" status="online" status_position="top-left" />
+      """)
+
+    assert ["bg-success", "bottom-0", "right-0"] -- classes(html, "#a > div:last-child") == []
+    assert "bg-warning" in classes(html, "#b > div:last-child")
+    assert "bg-error" in classes(html, "#c > div:last-child")
+    assert "bg-slate-400" in classes(html, "#d > div:last-child")
+    assert "left-0" in classes(html, "#e > div:last-child")
+  end
+
+  test "kinds draw a company, a customer, a supplier, the assistant and the invite" do
+    html =
+      render(~H"""
+      <.avatar id="a" kind="company" name="Farmácia Signetum" />
+      <.avatar id="b" kind="customer" initials="df" />
+      <.avatar id="c" kind="supplier" initials="nf" />
+      <.avatar id="d" kind="assistant" />
+      <.avatar id="e" kind="invite" />
+      """)
+
+    assert "bg-navy-900" in classes(html, "#a > div")
+    assert "rounded-xl" in classes(html, "#a > div")
+    assert find(html, "#a > div") |> LazyHTML.text() =~ "FS"
+    assert "bg-success-focus" in classes(html, "#b > div")
+    assert "bg-warning-focus" in classes(html, "#c > div")
+    assert "from-primary" in classes(html, "#d > div")
+    assert "rounded-full" in classes(html, "#d > div")
+    assert [_] = find(html, "#d > div > svg") |> Enum.to_list()
+    assert "border-dashed" in classes(html, "#e > div")
+    assert [_] = find(html, "#e > div > svg") |> Enum.to_list()
+  end
+
+  test "a group closes with the +N of the people that did not fit" do
+    html =
+      render(~H"""
+      <.avatar_group id="g" more={3} size="32">
+        <.avatar name="Ana Souza" size="32" ring />
+      </.avatar_group>
+      """)
+
+    assert [_, _] = find(html, "#g > .avatar") |> Enum.to_list()
+    assert "size-8" in classes(html, "#g > .avatar:last-child")
+    assert find(html, "#g > .avatar:last-child") |> LazyHTML.text() =~ "+3"
+
+    assert [_] =
+             find(
+               render(~H|<.avatar_group id="h"><.avatar initials="a" /></.avatar_group>|),
+               "#h > .avatar"
+             )
+             |> Enum.to_list()
+  end
 end

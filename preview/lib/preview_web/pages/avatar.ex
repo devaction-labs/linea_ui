@@ -247,6 +247,32 @@ defmodule PreviewWeb.Pages.Avatar do
         </.avatar>
       </.avatar_group>
     </.example>
+
+    <.example
+      title="Names, presence and kinds"
+      text="Initials and a stable color from the name, a presence dot, a +N group and the kinds of Signetum."
+      class="mt-5 flex flex-wrap items-end gap-4"
+    >
+      <.avatar :for={size <- ~w(24 32 40 48 64)} name="Ana Souza" color="auto" size={size} />
+      <.avatar name="Ana Souza" color="auto" size="40" status="online" />
+      <.avatar name="Carlos Lima" color="auto" size="40" status="away" />
+      <.avatar name="Juliana Moraes" color="auto" size="40" status="busy" />
+      <.avatar name="Marcos Oliveira" color="auto" size="40" status="offline" />
+      <.avatar_group more={3} size="32">
+        <.avatar
+          :for={name <- ["Ana Souza", "Carlos Lima", "Juliana Moraes"]}
+          name={name}
+          color="auto"
+          size="32"
+          ring
+        />
+      </.avatar_group>
+      <.avatar kind="company" name="Farmácia Signetum" size="48" />
+      <.avatar kind="customer" name="Drogaria Feira" size="48" />
+      <.avatar kind="supplier" name="Nordeste Farma" size="48" />
+      <.avatar kind="assistant" size="48" />
+      <.avatar kind="invite" size="48" />
+    </.example>
     """
   end
 
