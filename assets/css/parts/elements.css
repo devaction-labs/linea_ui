@@ -127,3 +127,43 @@
     }
   }
 }
+
+@layer components {
+  .linea-fab-label {
+    display: grid;
+    grid-template-columns: 0fr;
+    opacity: 0;
+    transition:
+      grid-template-columns 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      opacity 0.2s ease;
+  }
+
+  .linea-fab-label > span {
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .linea-fab[data-state="expanded"] .linea-fab-label {
+    grid-template-columns: 1fr;
+    opacity: 1;
+  }
+
+  @media (hover: hover) {
+    .linea-fab:is([data-retract="hover"], [data-retract="auto"]):hover .linea-fab-label {
+      grid-template-columns: 1fr;
+      opacity: 1;
+    }
+  }
+
+  .linea-fab:is([data-retract="hover"], [data-retract="auto"]):has(:focus-visible) .linea-fab-label,
+  .linea-fab:is([data-retract="hover"], [data-retract="auto"]):focus-visible .linea-fab-label {
+    grid-template-columns: 1fr;
+    opacity: 1;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .linea-fab-label {
+      transition: none;
+    }
+  }
+}

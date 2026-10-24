@@ -17,6 +17,7 @@ import DataTable from "./hooks/data_table.js"
 import DatePicker from "./hooks/date_picker.js"
 import Dialog from "./hooks/dialog.js"
 import Dropdown from "./hooks/dropdown.js"
+import Fab from "./hooks/fab.js"
 import InputMask from "./hooks/input_mask.js"
 import NumberInput from "./hooks/number_input.js"
 import Popover from "./hooks/popover.js"
@@ -47,6 +48,7 @@ export const Hooks = {
   ...DatePicker,
   ...Dialog,
   ...Dropdown,
+  ...Fab,
   ...InputMask,
   ...NumberInput,
   ...Popover,
