@@ -31,6 +31,93 @@
   }
 }
 
+/* hand-written tables (table/1 without rows): the cells take the variant from the table */
+@layer components {
+  .linea-table > thead > tr > th {
+    @apply whitespace-nowrap px-3 py-3 font-semibold uppercase text-slate-800 dark:text-navy-100 lg:px-5;
+  }
+
+  .linea-table > tbody > tr > td,
+  .linea-table > tbody > tr > th,
+  .linea-table > tfoot > tr > td {
+    @apply whitespace-nowrap px-4 py-3 sm:px-5;
+  }
+
+  .linea-table:is([data-variant="basic"], [data-variant="hoverable"], [data-variant="grid"]) > :is(thead, tbody) > tr {
+    @apply border-y border-transparent border-b-slate-200 dark:border-b-navy-500;
+  }
+
+  .linea-table[data-variant="hoverable"] > thead > tr,
+  .linea-table[data-variant="zebra"] > thead > tr {
+    @apply border-0;
+  }
+
+  .linea-table[data-variant="bordered"] > thead > tr > th {
+    @apply border border-t-0 border-slate-200 first:border-l-0 last:border-r-0 dark:border-navy-500;
+  }
+
+  .linea-table[data-variant="bordered"] > :is(tbody, tfoot) > tr > :is(td, th) {
+    @apply border border-slate-200 px-3 first:border-l-0 last:border-r-0 dark:border-navy-500 lg:px-5;
+  }
+
+  .linea-table[data-variant="bordered"] > tbody > tr:last-child > :is(td, th) {
+    @apply border-b-0;
+  }
+
+  .linea-table:is([data-variant="hoverable"], [data-variant="zebra"], [data-variant="grid"]) > thead > tr > th {
+    @apply bg-slate-200 px-4 dark:bg-navy-800;
+  }
+
+  .linea-table[data-variant="grid"] > thead > tr > th {
+    @apply px-3 lg:px-4;
+  }
+
+  .linea-table[data-variant="grid"] > tbody > tr > :is(td, th) {
+    @apply px-4 sm:px-4;
+  }
+
+  .linea-table:is([data-variant="hoverable"], [data-variant="zebra"])[data-rounded="row"] > thead > tr > th {
+    @apply first:rounded-l-lg first:px-3 last:rounded-r-lg last:px-3;
+  }
+
+  .linea-table:is([data-variant="hoverable"], [data-variant="zebra"])[data-rounded="row"] > tbody > tr > td {
+    @apply first:rounded-l-lg last:rounded-r-lg;
+  }
+
+  .linea-table:is([data-variant="hoverable"], [data-variant="zebra"])[data-rounded="top"] > thead > tr > th {
+    @apply first:rounded-tl-lg last:rounded-tr-lg;
+  }
+
+  .linea-table[data-compact] > :is(thead, tbody, tfoot) > tr > :is(th, td) {
+    @apply px-3 py-2 first:px-3 last:px-3 sm:px-3 lg:px-3;
+  }
+
+  .linea-table[data-borderless] > :is(thead, tbody, tfoot) > tr,
+  .linea-table[data-borderless] > :is(thead, tbody, tfoot) > tr > :is(th, td) {
+    @apply border-0;
+  }
+
+  .linea-table > tfoot > tr > td {
+    @apply border-t border-slate-200 font-semibold text-slate-700 dark:border-navy-500 dark:text-navy-100;
+  }
+
+  .linea-table[data-sticky] > thead > tr > th {
+    @apply sticky top-0 z-10;
+  }
+
+  .linea-table[data-sticky]:is([data-variant="basic"], [data-variant="bordered"]) > thead > tr > th {
+    @apply bg-white dark:bg-navy-700;
+  }
+
+  table > tbody > tr[data-selected="true"] > td {
+    @apply bg-primary/5 dark:bg-accent/10;
+  }
+
+  table > tbody > tr[data-selected="true"] > td:first-child {
+    @apply shadow-[inset_3px_0_0_var(--color-primary)] dark:shadow-[inset_3px_0_0_var(--color-accent)];
+  }
+}
+
 /* tree-menu-carousel */
 @layer components {
   .tree-item {

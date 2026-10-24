@@ -78,4 +78,77 @@ defmodule LineaUI.Components.PaginationTest do
     assert "h-7" in classes(html, "button")
     assert count(html, "li") == 2
   end
+
+  test "total_entries and page_size add the summary and work out the pages" do
+    html =
+      render(~H"""
+      <.pagination
+        id="p"
+        page={2}
+        page_size={15}
+        total_entries={128}
+        on_change="go"
+        summary="Mostrando %{first}–%{last} de %{total}"
+      />
+      """)
+
+    assert "Mostrando 16–30 de 128" =
+             html |> find("[role=status]") |> LazyHTML.text() |> String.trim()
+
+    assert [_] = html |> find("button[phx-value-page='9']") |> Enum.to_list()
+    assert [] = html |> find("button[phx-value-page='10']") |> Enum.to_list()
+    assert [] = html |> find("form") |> Enum.to_list()
+    assert ["p"] = html |> find("nav") |> LazyHTML.attribute("id")
+
+    html = render(~H|<.pagination page={9} page_size={15} total_entries={128} on_change="go" />|)
+
+    assert "Showing 121–128 of 128" =
+             html |> find("[role=status]") |> LazyHTML.text() |> String.trim()
+
+    html = render(~H|<.pagination page={1} page_size={15} total_entries={0} on_change="go" />|)
+    assert "Showing 0–0 of 0" = html |> find("[role=status]") |> LazyHTML.text() |> String.trim()
+
+    html = render(~H|<.pagination page={1} total_pages={1} total_entries={4} on_change="go" />|)
+    assert "Showing 1–4 of 4" = html |> find("[role=status]") |> LazyHTML.text() |> String.trim()
+  end
+
+  test "page_sizes add a rows-per-page select in its own form" do
+    html =
+      render(~H"""
+      <.pagination
+        id="p"
+        page={1}
+        page_size={30}
+        total_entries={100}
+        page_sizes={[15, 30, 50]}
+        on_change="go"
+        on_page_size="per_page"
+        target="#c"
+        page_size_label="%{size} / página"
+        page_size_aria="Linhas por página"
+        class="px-4"
+      />
+      """)
+
+    assert ["p-page-size"] = html |> find("form") |> LazyHTML.attribute("id")
+    assert ["per_page"] = html |> find("form") |> LazyHTML.attribute("phx-change")
+    assert ["#c"] = html |> find("form") |> LazyHTML.attribute("phx-target")
+    assert ["page_size"] = html |> find("select") |> LazyHTML.attribute("name")
+    assert ["Linhas por página"] = html |> find("select") |> LazyHTML.attribute("aria-label")
+
+    assert ["15 / página", "30 / página", "50 / página"] =
+             html |> find("option") |> Enum.map(&String.trim(LazyHTML.text(&1)))
+
+    assert ["30"] = html |> find("option[selected]") |> LazyHTML.attribute("value")
+    assert "px-4" in classes(html, "div")
+
+    html = render(~H|<.pagination page={1} total_pages={3} page_sizes={[10]} on_change="go" />|)
+    assert [] = html |> find("[role=status]") |> Enum.to_list()
+    assert [] = html |> find("form[id]") |> Enum.to_list()
+  end
+
+  test "without total_pages or entries there is a single page" do
+    html = render(~H|<.pagination page={1} on_change="go" />|)
+    assert [_] = html |> find("[aria-current=page]") |> Enum.to_list()
+  end
 end

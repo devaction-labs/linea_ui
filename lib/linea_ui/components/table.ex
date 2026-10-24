@@ -46,10 +46,43 @@ defmodule LineaUI.Components.Table do
   row under each row (`expand_label` names that column). The slot receives
   `%{row: row, toggle: js}`, `toggle` being the `JS` that opens and closes it. Expandable
   rows render one `<tbody>` per row, so they take a list, not a stream.
+
+  Per-row markup: `row_class` and `row_attrs` are functions of the row giving extra classes
+  and attributes (`phx-click`, `data-*`) of its `<tr>`; `:foot` cells make a totals row in a
+  `<tfoot>`; `sticky_header` pins the header inside a height-bound wrapper.
+
+  ## Hand-written tables
+
+  Without `rows`, the table renders its inner block and its cells take the look of `variant`,
+  `rounded`, `compact`, `borderless` and `sticky_header` from it, so rows can carry any markup:
+  per-row attributes, colspans, detail rows, a totals footer.
+
+      <.table id="orders" variant="hoverable" rounded="top" class="min-w-[760px]">
+        <.table_head on_sort="sort" sort_by={@sort_by} sort_dir={@sort_dir}
+          on_select_all="select_all" all_selected={@all?} some_selected={@some?}>
+          <:col sort_key="number">Number</:col>
+          <:col align="right">Total</:col>
+        </.table_head>
+        <.table_body id="orders-body" phx-update="stream">
+          <.table_row :for={{id, o} <- @streams.orders} id={id} on_click="open" phx-value-id={o.id}
+            selected={o.id in @selected} on_select="select" select_value={o.id}>
+            <:cell>{o.number}</:cell>
+            <:cell align="right">{o.total}</:cell>
+          </.table_row>
+          <.table_empty id="orders-empty">No orders.</.table_empty>
+        </.table_body>
+        <.table_foot><:cell>Total</:cell><:cell align="right">{@sum}</:cell></.table_foot>
+      </.table>
+
+  `table_cell/1`, `table_checkbox/1`, `table_expand_toggle/1` and `table_detail_row/1` cover
+  free cells, custom checkboxes and expandable rows; `table_skeleton/1` is the loading state.
+  A class given to a cell always wins over the table's look (the look lives in the CSS
+  `components` layer).
   """
 
   use LineaUI.Component
   import LineaUI.Components.Icon, only: [glyph: 1]
+  import LineaUI.Components.Skeleton, only: [skeleton: 1]
 
   alias Phoenix.LiveView.LiveStream
 
@@ -122,6 +155,18 @@ defmodule LineaUI.Components.Table do
 
   @filled ~w(hoverable zebra)
 
+  @sticky %{
+    "basic" => "sticky top-0 z-10 bg-white dark:bg-navy-700",
+    "bordered" => "sticky top-0 z-10 bg-white dark:bg-navy-700",
+    "hoverable" => "sticky top-0 z-10",
+    "zebra" => "sticky top-0 z-10",
+    "grid" => "sticky top-0 z-10"
+  }
+
+  @slot_defaults %{row_class: nil, row_attrs: nil, sticky_header: false, foot: []}
+
+  @foot_td "whitespace-nowrap border-t border-slate-200 px-4 py-3 font-semibold text-slate-700 dark:border-navy-500 dark:text-navy-100 sm:px-5"
+
   @compact "px-3 py-2 sm:px-3 lg:px-3"
 
   @aligns %{"left" => "text-left", "center" => "text-center", "right" => "text-right"}
@@ -152,7 +197,12 @@ defmodule LineaUI.Components.Table do
   rows whose selection changed, and give `all_selected` for the header checkbox.
   """
   attr(:id, :string, required: true)
-  attr(:rows, :any, required: true, doc: "A list or a `@streams.x` stream.")
+
+  attr(:rows, :any,
+    default: nil,
+    doc:
+      "A list or a `@streams.x` stream. Leave it out to write the table by hand with `table_head/1`, `table_body/1` and `table_row/1`."
+  )
 
   attr(:row_id, :any,
     default: nil,
@@ -160,6 +210,17 @@ defmodule LineaUI.Components.Table do
   )
 
   attr(:row_click, :any, default: nil, doc: "A function of the row returning a `JS` or an event.")
+
+  attr(:row_class, :any,
+    default: nil,
+    doc: "A function of the row returning extra classes of its `<tr>`."
+  )
+
+  attr(:row_attrs, :any,
+    default: nil,
+    doc:
+      "A function of the row returning a map of extra attributes of its `<tr>` (`phx-click`, `data-*`...)."
+  )
 
   attr(:row_item, :any,
     default: &Function.identity/1,
@@ -210,6 +271,12 @@ defmodule LineaUI.Components.Table do
     doc: "Renders no `<thead>` at all (not hidden columns), for list-like tables."
   )
 
+  attr(:sticky_header, :boolean,
+    default: false,
+    doc:
+      "Keeps the header row at the top while the body scrolls. The wrapper is the scroll container, so bound its height with `wrapper_class` (`max-h-96`)."
+  )
+
   attr(:borderless, :boolean,
     default: false,
     doc: "Removes the rules between rows, and the cell borders of the `bordered` variant."
@@ -221,7 +288,7 @@ defmodule LineaUI.Components.Table do
   attr(:class, :any, default: nil)
   attr(:rest, :global)
 
-  slot :col, required: true, doc: "A column; receives the row (after `row_item`)." do
+  slot :col, doc: "A column; receives the row (after `row_item`)." do
     attr(:label, :string, doc: "Header text.")
 
     attr(:class, :any,
@@ -240,15 +307,44 @@ defmodule LineaUI.Components.Table do
 
   slot(:action, doc: "Cells appended to every row, after the columns.")
   slot(:expand, doc: "Detail shown under a row; receives `%{row: row, toggle: js}`.")
-  slot(:empty, doc: "Shown in a full-width row when `rows` is an empty list.")
+
+  slot(:empty,
+    doc:
+      "Shown in a full-width row when there are no rows (a stream shows it whenever its body is empty)."
+  )
+
+  slot :foot, doc: "A cell of the `<tfoot>` row, for totals; one entry per cell." do
+    attr(:class, :any, doc: "Extra classes of the cell.")
+    attr(:align, :string, values: ~w(left center right), doc: "Text alignment of the cell.")
+    attr(:colspan, :any, doc: "Columns the cell spans.")
+  end
+
+  slot(:inner_block,
+    doc:
+      "The hand-written table (`table_head/1`, `table_body/1`, `table_foot/1`) when `rows` is not given."
+  )
+
+  def table(%{rows: nil} = assigns) do
+    assigns
+    |> assign(:wrapper, merge([@wrapper[assigns.variant], assigns.wrapper_class]))
+    |> assign(:table_class, merge(["linea-table", table_class(assigns), assigns.class]))
+    |> render_composable()
+  end
 
   def table(assigns) do
     assigns
+    |> Map.merge(Map.drop(@slot_defaults, Map.keys(assigns)))
     |> assign_row_id()
     |> assign_selection()
     |> assign(
       :th_class,
-      merge([@th[assigns.variant], th_rounded(assigns), compact(assigns), no_border(assigns)])
+      merge([
+        @th[assigns.variant],
+        th_rounded(assigns),
+        compact(assigns),
+        no_border(assigns),
+        sticky(assigns)
+      ])
     )
     |> assign(
       :td_class,
@@ -265,6 +361,21 @@ defmodule LineaUI.Components.Table do
     |> assign(:expand_button, @expand_button)
     |> render_table()
   end
+
+  defp sticky(%{sticky_header: true, variant: variant}), do: @sticky[variant]
+  defp sticky(_assigns), do: nil
+
+  defp row_class(%{row_class: nil}, _row), do: nil
+  defp row_class(%{row_class: fun, row_item: row_item}, row), do: fun.(row_item.(row))
+
+  defp row_attrs(%{row_attrs: nil}, _row), do: %{}
+  defp row_attrs(%{row_attrs: fun, row_item: row_item}, row), do: fun.(row_item.(row))
+
+  defp stream?(%LiveStream{}), do: true
+  defp stream?(_rows), do: false
+
+  defp empty_row_class(%LiveStream{}), do: "hidden only:table-row"
+  defp empty_row_class(_rows), do: nil
 
   defp compact(%{compact: true}), do: @compact
   defp compact(%{compact: false}), do: nil
@@ -327,10 +438,13 @@ defmodule LineaUI.Components.Table do
     ~H"""
     <div class={@wrapper}>
       <table id={@id} class={@table_class} {@rest}>
-        <.table_head :if={!@headless} {assigns} />
+        <.slot_head :if={!@headless} {assigns} />
         <tbody :for={{dom_id, row} <- expand_rows(assigns)} id={dom_id}>
-          <tr class="border-y border-transparent">
-            <.table_cells {assigns} row={row} />
+          <tr
+            class={merge(["border-y border-transparent", row_class(assigns, row)])}
+            {row_attrs(assigns, row)}
+          >
+            <.slot_cells {assigns} row={row} />
             <td class={@td_class}>
               <button
                 type="button"
@@ -356,6 +470,7 @@ defmodule LineaUI.Components.Table do
             </td>
           </tr>
         </tbody>
+        <.slot_foot foot={@foot} td_class={@td_class} />
       </table>
     </div>
     """
@@ -365,7 +480,7 @@ defmodule LineaUI.Components.Table do
     ~H"""
     <div class={@wrapper}>
       <table id={@id} class={@table_class} {@rest}>
-        <.table_head :if={!@headless} {assigns} />
+        <.slot_head :if={!@headless} {assigns} />
         <tbody
           id={@id <> "-body"}
           phx-update={match?(%LiveStream{}, @rows) && "stream"}
@@ -373,21 +488,27 @@ defmodule LineaUI.Components.Table do
           <tr
             :for={row <- @rows}
             id={@row_id && @row_id.(row)}
-            class={@body_row_class}
+            class={merge([@body_row_class, row_class(assigns, row)])}
             data-selected={@selectable && bool(key(assigns, row) in @selected)}
+            {row_attrs(assigns, row)}
           >
-            <.table_cells {assigns} row={row} />
+            <.slot_cells {assigns} row={row} />
           </tr>
-          <tr :if={@rows == [] and @empty != []} id={@id <> "-empty"}>
+          <tr
+            :if={(@rows == [] or stream?(@rows)) and @empty != []}
+            id={@id <> "-empty"}
+            class={empty_row_class(@rows)}
+          >
             <td colspan="100" class={@td_class}>{render_slot(@empty)}</td>
           </tr>
         </tbody>
+        <.slot_foot foot={@foot} td_class={@td_class} />
       </table>
     </div>
     """
   end
 
-  defp table_head(assigns) do
+  defp slot_head(assigns) do
     ~H"""
     <thead>
       <tr class={@head_row_class}>
@@ -444,7 +565,27 @@ defmodule LineaUI.Components.Table do
     """
   end
 
-  defp table_cells(assigns) do
+  defp slot_foot(%{foot: []} = assigns), do: ~H""
+
+  defp slot_foot(assigns) do
+    assigns = assign(assigns, :foot_td, @foot_td)
+
+    ~H"""
+    <tfoot>
+      <tr>
+        <td
+          :for={cell <- @foot}
+          colspan={cell[:colspan]}
+          class={merge([@td_class, @foot_td, align(cell[:align]), cell[:class]])}
+        >
+          {render_slot(cell)}
+        </td>
+      </tr>
+    </tfoot>
+    """
+  end
+
+  defp slot_cells(assigns) do
     ~H"""
     <td :if={@selectable} class={@td_class}>
       <label class="flex">
@@ -483,6 +624,538 @@ defmodule LineaUI.Components.Table do
   defp aria_sort(key, key, "asc"), do: "ascending"
   defp aria_sort(key, key, "desc"), do: "descending"
   defp aria_sort(_key, _sort_by, _dir), do: "none"
+
+  defp render_composable(assigns) do
+    ~H"""
+    <div class={@wrapper}>
+      <table
+        id={@id}
+        class={@table_class}
+        data-variant={@variant}
+        data-rounded={@rounded}
+        data-compact={@compact}
+        data-borderless={@borderless}
+        data-sticky={@sticky_header}
+        {@rest}
+      >
+        {render_slot(@inner_block)}
+      </table>
+    </div>
+    """
+  end
+
+  @doc """
+  The `<thead>` of a hand-written table: one header cell per `:col`, after an optional
+  select-all checkbox. Takes the look (`variant`, `compact`, `sticky_header`) from the
+  `table/1` around it.
+
+      <.table id="orders" variant="hoverable" rounded="top">
+        <.table_head on_sort="sort" sort_by={@sort_by} sort_dir={@sort_dir}>
+          <:col sort_key="number">Number</:col>
+          <:col>Customer</:col>
+          <:col align="right" class="w-32">Total</:col>
+        </.table_head>
+        <.table_body id="orders-body" phx-update="stream">
+          ...
+        </.table_body>
+      </.table>
+
+  Events (each an event name or a `%JS{}`, sent to `target` when given):
+
+  * `on_sort` — a header with `sort_key` was clicked:
+    `%{"column" => sort_key, "direction" => "asc" | "desc"}` (the direction to sort by next).
+    The header cell carries `aria-sort` (`ascending`, `descending` or `none`).
+  * `on_select_all` — the header checkbox: `%{"selected" => "true" | "false"}`, the state to
+    move every row to. `all_selected` checks it and `some_selected` draws it indeterminate.
+  """
+  attr(:sort_by, :string, default: nil, doc: "The `sort_key` of the sorted column.")
+  attr(:sort_dir, :string, default: "asc", values: ~w(asc desc), doc: "Direction of `sort_by`.")
+  attr(:on_sort, :any, default: nil, doc: "Event sent when a sortable header is clicked.")
+
+  attr(:on_select_all, :any,
+    default: nil,
+    doc: "Adds a select-all checkbox cell first; the event it sends."
+  )
+
+  attr(:all_selected, :boolean, default: false, doc: "Whether every row is selected.")
+
+  attr(:some_selected, :boolean,
+    default: false,
+    doc: "Whether some rows are selected; with `all_selected` false the box is indeterminate."
+  )
+
+  attr(:select_all_id, :string,
+    default: nil,
+    doc: "Id of the select-all checkbox (its hook needs one). Generated when not given."
+  )
+
+  attr(:select_all_label, :string, default: "Select all rows")
+  attr(:target, :any, default: nil, doc: "`phx-target` of the events.")
+  attr(:class, :any, default: nil, doc: "Classes of the `<tr>`.")
+  attr(:rest, :global)
+
+  slot :col, doc: "A header cell; its content is the label (or give `label`)." do
+    attr(:label, :string, doc: "Header text, when the slot has no content.")
+    attr(:class, :any, doc: "Extra classes of the cell.")
+    attr(:align, :string, values: ~w(left center right), doc: "Text alignment of the cell.")
+    attr(:colspan, :any, doc: "Columns the cell spans.")
+    attr(:sort_key, :string, doc: "Makes the header sortable; sent as `\"column\"` in `on_sort`.")
+  end
+
+  slot(:inner_block, doc: "Extra `<th>` cells after the columns, or further header rows.")
+
+  def table_head(assigns) do
+    assigns =
+      assign(assigns, :select_all_id, assigns.select_all_id || gen_id("table-select-all"))
+
+    ~H"""
+    <thead {@rest}>
+      <tr class={@class}>
+        <th :if={@on_select_all} class="w-px">
+          <.table_checkbox
+            id={@select_all_id}
+            checked={@all_selected}
+            indeterminate={@some_selected and not @all_selected}
+            label={@select_all_label}
+            on_click={@on_select_all}
+            values={%{"selected" => bool(!@all_selected)}}
+            target={@target}
+          />
+        </th>
+        <th
+          :for={col <- @col}
+          colspan={col[:colspan]}
+          class={merge([align(col[:align]), col[:class]])}
+          aria-sort={aria_sort(col[:sort_key], @sort_by, @sort_dir)}
+        >
+          <button
+            :if={col[:sort_key] && @on_sort}
+            type="button"
+            class="flex w-full cursor-pointer items-center justify-between space-x-2 text-left font-semibold uppercase outline-hidden"
+            phx-click={@on_sort}
+            phx-value-column={col.sort_key}
+            phx-value-direction={next_dir(sort_state(col.sort_key, @sort_by, @sort_dir))}
+            phx-target={@target}
+          >
+            <span class="overflow-hidden text-ellipsis">
+              <.col_label col={col} />
+            </span>
+            <span
+              class="table-sort-icon"
+              data-sort={sort_state(col.sort_key, @sort_by, @sort_dir)}
+              aria-hidden="true"
+            ></span>
+          </button>
+          <.col_label :if={!(col[:sort_key] && @on_sort)} col={col} />
+        </th>
+        {render_slot(@inner_block)}
+      </tr>
+    </thead>
+    """
+  end
+
+  defp col_label(%{col: %{inner_block: nil}} = assigns), do: ~H"{@col[:label]}"
+  defp col_label(assigns), do: ~H"{render_slot(@col)}"
+
+  @doc """
+  The `<tbody>` of a hand-written table. Attributes pass through, so a stream is
+  `id` plus `phx-update="stream"`, each row taking its stream DOM id.
+
+      <.table_body id="orders-body" phx-update="stream">
+        <.table_row :for={{dom_id, order} <- @streams.orders} id={dom_id}>
+          <:cell>{order.number}</:cell>
+        </.table_row>
+        <.table_empty id="orders-empty">No orders yet.</.table_empty>
+      </.table_body>
+  """
+  attr(:class, :any, default: nil)
+  attr(:rest, :global)
+  slot(:inner_block, required: true)
+
+  def table_body(assigns) do
+    ~H"""
+    <tbody class={@class} {@rest}>{render_slot(@inner_block)}</tbody>
+    """
+  end
+
+  @doc """
+  A row of a hand-written table: one `<td>` per `:cell`, then the inner content (free `<td>`s
+  or `table_cell/1`). Any attribute (`id`, `phx-click`, `phx-value-*`, `data-*`) lands on the
+  `<tr>`.
+
+      <.table_row
+        :for={{dom_id, order} <- @streams.orders}
+        id={dom_id}
+        selected={order.id in @selected}
+        on_select="select"
+        select_value={order.id}
+        on_click={JS.patch(~p"/orders/\#{order.id}")}
+        class={order.canceled && "opacity-60"}
+      >
+        <:cell class="font-medium">{order.number}</:cell>
+        <:cell colspan="2">{order.customer}</:cell>
+        <:cell align="right">{order.total}</:cell>
+      </.table_row>
+
+  Events (each an event name or a `%JS{}`, sent to `target` when given):
+
+  * `on_click` — the row was clicked; `phx-value-*` attributes ride along.
+  * `on_select` — adds a checkbox cell first; clicking it sends
+    `%{"id" => select_value, "selected" => "true" | "false"}` (the row's new state).
+
+  `selected` checks the box and marks the row (`data-selected`, a tinted background with a
+  primary bar on its first cell).
+  """
+  attr(:selected, :boolean,
+    default: nil,
+    doc: "Whether the row is selected. `nil` leaves the row unmarked."
+  )
+
+  attr(:on_click, :any, default: nil, doc: "Event or `%JS{}` run when the row is clicked.")
+
+  attr(:on_select, :any,
+    default: nil,
+    doc: "Adds a selection checkbox cell first; the event it sends."
+  )
+
+  attr(:select_value, :any, default: nil, doc: "Sent as `\"id\"` by the checkbox.")
+  attr(:select_label, :string, default: "Select row")
+  attr(:target, :any, default: nil, doc: "`phx-target` of the events.")
+  attr(:class, :any, default: nil)
+  attr(:rest, :global)
+
+  slot :cell, doc: "A `<td>` of the row." do
+    attr(:class, :any, doc: "Extra classes of the cell.")
+    attr(:align, :string, values: ~w(left center right), doc: "Text alignment of the cell.")
+    attr(:colspan, :any, doc: "Columns the cell spans.")
+    attr(:rowspan, :any, doc: "Rows the cell spans.")
+  end
+
+  slot(:inner_block, doc: "Free cells after the `:cell` ones.")
+
+  def table_row(assigns) do
+    ~H"""
+    <tr
+      class={merge([@on_click && "cursor-pointer", @class])}
+      data-selected={is_boolean(@selected) && bool(@selected)}
+      aria-selected={is_boolean(@selected) && bool(@selected)}
+      phx-click={@on_click}
+      phx-target={@on_click && @target}
+      {@rest}
+    >
+      <td :if={@on_select} class="w-px">
+        <.table_checkbox
+          checked={@selected == true}
+          label={@select_label}
+          on_click={@on_select}
+          values={%{"id" => @select_value, "selected" => bool(@selected != true)}}
+          target={@target}
+        />
+      </td>
+      <td
+        :for={cell <- @cell}
+        colspan={cell[:colspan]}
+        rowspan={cell[:rowspan]}
+        class={merge([align(cell[:align]), cell[:class]])}
+      >
+        {render_slot(cell)}
+      </td>
+      {render_slot(@inner_block)}
+    </tr>
+    """
+  end
+
+  @doc """
+  A cell of a hand-written table, for rows written with free markup: `<td>`, or `<th>` with
+  `header` (a row header, `scope="row"`).
+
+      <.table_row id="total">
+        <.table_cell colspan="3" align="right">Total</.table_cell>
+        <.table_cell align="right">{@total}</.table_cell>
+      </.table_row>
+  """
+  attr(:header, :boolean, default: false, doc: "Renders a `<th scope=\"row\">`.")
+  attr(:align, :string, default: nil, values: [nil | ~w(left center right)])
+  attr(:colspan, :any, default: nil)
+  attr(:rowspan, :any, default: nil)
+  attr(:class, :any, default: nil)
+  attr(:rest, :global)
+  slot(:inner_block)
+
+  def table_cell(%{header: true} = assigns) do
+    ~H"""
+    <th
+      scope="row"
+      colspan={@colspan}
+      rowspan={@rowspan}
+      class={merge([align(@align), @class])}
+      {@rest}
+    >
+      {render_slot(@inner_block)}
+    </th>
+    """
+  end
+
+  def table_cell(assigns) do
+    ~H"""
+    <td colspan={@colspan} rowspan={@rowspan} class={merge([align(@align), @class])} {@rest}>
+      {render_slot(@inner_block)}
+    </td>
+    """
+  end
+
+  @doc """
+  The `<tfoot>` of a hand-written table, for totals: one row of `:cell`s in bold over a rule,
+  then any free rows.
+
+      <.table_foot>
+        <:cell colspan="3">Total</:cell>
+        <:cell align="right">{@total}</:cell>
+      </.table_foot>
+  """
+  attr(:class, :any, default: nil, doc: "Classes of the `:cell` row.")
+  attr(:rest, :global)
+
+  slot :cell, doc: "A `<td>` of the totals row." do
+    attr(:class, :any, doc: "Extra classes of the cell.")
+    attr(:align, :string, values: ~w(left center right), doc: "Text alignment of the cell.")
+    attr(:colspan, :any, doc: "Columns the cell spans.")
+  end
+
+  slot(:inner_block, doc: "Free `<tr>` rows after the `:cell` row.")
+
+  def table_foot(assigns) do
+    ~H"""
+    <tfoot {@rest}>
+      <tr :if={@cell != []} class={@class}>
+        <td
+          :for={cell <- @cell}
+          colspan={cell[:colspan]}
+          class={merge([align(cell[:align]), cell[:class]])}
+        >
+          {render_slot(cell)}
+        </td>
+      </tr>
+      {render_slot(@inner_block)}
+    </tfoot>
+    """
+  end
+
+  @doc """
+  The empty state of a hand-written table: a full-width row shown only when it is the only
+  row of its `<tbody>`, so it works for lists and streams alike (put it last in the body;
+  a stream needs its `id`).
+
+      <.table_body id="orders-body" phx-update="stream">
+        <.table_row :for={{id, order} <- @streams.orders} id={id}>...</.table_row>
+        <.table_empty id="orders-empty">No orders in this filter.</.table_empty>
+      </.table_body>
+  """
+  attr(:id, :string, required: true)
+  attr(:class, :any, default: nil, doc: "Classes of the cell.")
+  attr(:rest, :global)
+  slot(:inner_block, required: true)
+
+  def table_empty(assigns) do
+    ~H"""
+    <tr id={@id} class="hidden only:table-row" {@rest}>
+      <td
+        colspan="100"
+        class={merge(["px-4 py-12 text-center text-slate-400 dark:text-navy-300", @class])}
+      >
+        {render_slot(@inner_block)}
+      </td>
+    </tr>
+    """
+  end
+
+  @doc """
+  The selection checkbox the table draws, for a header or row written by hand.
+  `indeterminate` draws the dash of a partial selection (it needs an `id`, for its hook).
+
+      <.table_checkbox
+        checked={row.id in @selected}
+        on_click="select"
+        values={%{"id" => row.id, "selected" => to_string(row.id not in @selected)}}
+      />
+
+  `on_click` (an event name or a `%JS{}`) is sent with `values` as `phx-value-*`, to
+  `target` when given.
+  """
+  attr(:id, :string, default: nil)
+  attr(:checked, :boolean, default: false)
+  attr(:indeterminate, :boolean, default: false)
+  attr(:label, :string, required: true, doc: "The `aria-label` of the box.")
+  attr(:on_click, :any, default: nil)
+  attr(:values, :map, default: %{}, doc: "Sent as `phx-value-*` with `on_click`.")
+  attr(:target, :any, default: nil)
+  attr(:class, :any, default: nil)
+  attr(:rest, :global)
+
+  def table_checkbox(assigns) do
+    assigns =
+      assigns
+      |> assign(:value_attrs, Map.new(assigns.values, fn {k, v} -> {"phx-value-#{k}", v} end))
+      |> assign(:checkbox, @checkbox)
+
+    ~H"""
+    <label class="flex">
+      <input
+        id={@id}
+        type="checkbox"
+        class={merge([@checkbox, "table-select-all", @class])}
+        checked={@checked}
+        aria-label={@label}
+        phx-hook={@id && "LineaUI.TableSelectAll"}
+        data-indeterminate={bool(@indeterminate)}
+        phx-click={@on_click}
+        phx-target={@target}
+        {@value_attrs}
+        {@rest}
+      />
+    </label>
+    """
+  end
+
+  @doc """
+  The chevron button that opens and closes the detail row of the row with DOM id `row_id`,
+  for hand-written expandable rows (pair it with `table_detail_row/1`).
+
+      <.table_row id={"order-\#{order.id}"}>
+        <:cell>{order.number}</:cell>
+        <:cell><.table_expand_toggle row_id={"order-\#{order.id}"} /></:cell>
+      </.table_row>
+      <.table_detail_row row_id={"order-\#{order.id}"}>{order.notes}</.table_detail_row>
+
+  The toggle runs on the client (`table_toggle_row/2`); `open` sets the starting state.
+  Rows that come in pairs need a list, not a stream.
+  """
+  attr(:row_id, :string, required: true)
+  attr(:open, :boolean, default: false)
+  attr(:label, :string, default: "Toggle details")
+  attr(:class, :any, default: nil)
+  attr(:rest, :global)
+
+  def table_expand_toggle(assigns) do
+    assigns = assign(assigns, :expand_button, @expand_button)
+
+    ~H"""
+    <button
+      type="button"
+      class={merge([@expand_button, @class])}
+      aria-label={@label}
+      aria-expanded={bool(@open)}
+      aria-controls={@row_id <> "-detail"}
+      phx-click={table_toggle_row(@row_id)}
+      {@rest}
+    >
+      <.glyph
+        name={:chevron_down}
+        class={["size-3.5 transition-transform", @open && "rotate-180"]}
+        stroke_width="2.5"
+        data-expand-icon
+      />
+    </button>
+    """
+  end
+
+  @doc """
+  The detail row under the row with DOM id `row_id`: one cell spanning every column,
+  hidden until `table_expand_toggle/1` (or `table_toggle_row/2`) opens it.
+
+      <.table_detail_row row_id="order-1" class="bg-slate-50">Notes...</.table_detail_row>
+  """
+  attr(:row_id, :string, required: true)
+  attr(:open, :boolean, default: false)
+  attr(:class, :any, default: nil, doc: "Classes of the detail panel.")
+  attr(:rest, :global)
+  slot(:inner_block, required: true)
+
+  def table_detail_row(assigns) do
+    ~H"""
+    <tr id={@row_id <> "-detail-row"} {@rest}>
+      <td colspan="100" class="p-0">
+        <div
+          id={@row_id <> "-detail"}
+          class={merge([!@open && "hidden", "px-4 pb-4 sm:px-5", @class])}
+        >
+          {render_slot(@inner_block)}
+        </div>
+      </td>
+    </tr>
+    """
+  end
+
+  @skeleton_widths ~w(w-8/12 w-5/12 w-10/12 w-6/12 w-9/12 w-4/12 w-7/12)
+
+  @doc """
+  A table of placeholder rows shown while the real one loads, in the same look.
+
+      <.table_skeleton id="orders-loading" columns={["Number", "Customer", "Total"]} rows={8} variant="hoverable" />
+      <.table_skeleton id="loading" cols={4} compact />
+
+  `columns` gives the header labels; without them `cols` header cells are placeholders too.
+  """
+  attr(:id, :string, required: true)
+  attr(:rows, :integer, default: 5, doc: "How many placeholder rows.")
+  attr(:columns, :list, default: [], doc: "Header labels; one column each.")
+  attr(:cols, :integer, default: 4, doc: "How many columns when `columns` is empty.")
+
+  attr(:variant, :string,
+    default: "basic",
+    values: ~w(basic bordered hoverable zebra grid)
+  )
+
+  attr(:rounded, :string, default: "row", values: ~w(row top none))
+  attr(:compact, :boolean, default: false)
+  attr(:headless, :boolean, default: false)
+  attr(:label, :string, default: "Loading", doc: "The table's `aria-label`.")
+  attr(:class, :any, default: nil)
+  attr(:rest, :global)
+
+  def table_skeleton(assigns) do
+    count = skeleton_columns(assigns)
+
+    assigns =
+      assigns
+      |> assign(:column_indexes, Enum.to_list(0..(count - 1)//1))
+      |> assign(:row_indexes, Enum.to_list(0..(assigns.rows - 1)//1))
+
+    ~H"""
+    <.table
+      id={@id}
+      variant={@variant}
+      rounded={@rounded}
+      compact={@compact}
+      class={@class}
+      aria-busy="true"
+      aria-label={@label}
+      {@rest}
+    >
+      <thead :if={!@headless}>
+        <tr>
+          <th :for={index <- @column_indexes}>
+            <span :if={@columns != []}>{Enum.at(@columns, index)}</span>
+            <.skeleton :if={@columns == []} class="h-3 w-16" />
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr :for={row <- @row_indexes}>
+          <td :for={column <- @column_indexes}>
+            <.skeleton class={["h-3", skeleton_width(row, column)]} />
+          </td>
+        </tr>
+      </tbody>
+    </.table>
+    """
+  end
+
+  defp skeleton_columns(%{columns: [], cols: cols}), do: max(cols, 1)
+  defp skeleton_columns(%{columns: columns}), do: length(columns)
+
+  defp skeleton_width(row, column),
+    do: Enum.at(@skeleton_widths, rem(row * 3 + column, length(@skeleton_widths)))
 
   @doc """
   The `JS` that shows or hides the detail panel of the expandable row with DOM id `row_id`

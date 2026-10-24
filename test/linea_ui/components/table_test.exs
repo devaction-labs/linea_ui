@@ -222,4 +222,94 @@ defmodule LineaUI.Components.TableTest do
     assert "text-center" in classes(html, "td:nth-child(2)")
     refute Enum.any?(classes(html, "td:nth-child(3)"), &String.starts_with?(&1, "text-"))
   end
+
+  test "row_class and row_attrs reach each row's tr" do
+    html =
+      render(~H"""
+      <.table
+        id="t"
+        rows={[%{id: 1, late: true}, %{id: 2, late: false}]}
+        row_id={&"r-#{&1.id}"}
+        row_class={&(&1.late && "text-error")}
+        row_attrs={&%{"phx-click" => "open", "phx-value-id" => &1.id}}
+      >
+        <:col :let={row}>{row.id}</:col>
+      </.table>
+      """)
+
+    assert "text-error" in classes(html, "#r-1")
+    refute "text-error" in classes(html, "#r-2")
+    assert ["open", "open"] = html |> find("tbody tr") |> LazyHTML.attribute("phx-click")
+    assert ["1", "2"] = html |> find("tbody tr") |> LazyHTML.attribute("phx-value-id")
+  end
+
+  test "the foot slot renders a totals row" do
+    html =
+      render(~H"""
+      <.table id="t" rows={[%{n: 1}]}>
+        <:col :let={row}>{row.n}</:col>
+        <:col :let={row}>{row.n}</:col>
+        <:foot>Total</:foot>
+        <:foot align="right" class="text-primary" colspan="1">R$ 1</:foot>
+      </.table>
+      """)
+
+    assert ["Total", "R$ 1"] =
+             html |> find("tfoot td") |> Enum.map(&String.trim(LazyHTML.text(&1)))
+
+    assert "font-semibold" in classes(html, "tfoot td")
+    assert "text-right" in classes(html, "tfoot td:last-child")
+    assert "text-primary" in classes(html, "tfoot td:last-child")
+
+    html = render(~H|<.table id="t" rows={[]}>
+  <:col>x</:col>
+</.table>|)
+    assert [] = html |> find("tfoot") |> Enum.to_list()
+  end
+
+  test "the foot slot also closes an expandable table" do
+    html =
+      render(~H"""
+      <.table id="t" rows={[%{n: 1}]} row_class={fn _ -> "italic" end}>
+        <:col :let={row}>{row.n}</:col>
+        <:expand :let={%{row: row}}>{row.n}</:expand>
+        <:foot>Sum</:foot>
+      </.table>
+      """)
+
+    assert "Sum" = html |> find("tfoot td") |> LazyHTML.text() |> String.trim()
+    assert "italic" in classes(html, "tbody tr:first-child")
+  end
+
+  test "sticky_header pins the header cells" do
+    html = render(~H|<.table id="t" rows={[]} sticky_header><:col label="A" /></.table>|)
+    assert "sticky" in classes(html, "th")
+    assert "bg-white" in classes(html, "th")
+
+    html =
+      render(
+        ~H|<.table id="t" rows={[]} sticky_header variant="zebra"><:col label="A" /></.table>|
+      )
+
+    assert "sticky" in classes(html, "th")
+    assert "bg-slate-200" in classes(html, "th")
+  end
+
+  test "a stream renders the empty row hidden until the body is empty" do
+    assigns = %{
+      __changed__: nil,
+      stream: Phoenix.LiveView.LiveStream.new(:people, make_ref(), [], [])
+    }
+
+    html =
+      rendered_to_string(~H"""
+      <.table id="t" rows={@stream}>
+        <:col :let={{_id, row}}>{row.name}</:col>
+        <:empty>None</:empty>
+      </.table>
+      """)
+
+    assert "only:table-row" in classes(html, "#t-empty")
+    assert "hidden" in classes(html, "#t-empty")
+  end
 end

@@ -10,6 +10,21 @@ defmodule LineaUI.Components.Pagination do
   number to the path. Otherwise it is a button pushing `on_change` with `%{"page" => "3"}`
   (to `target` when given). Pages far from the current one collapse into an ellipsis:
   `siblings` pages are kept on each side of the current one and `boundaries` at each end.
+
+  A list footer: `total_entries` and `page_size` add the "Showing 1–15 of 128" summary on
+  the left (and work out `total_pages`), `page_sizes` a rows-per-page select pushing
+  `on_page_size`.
+
+      <.pagination
+        page={@page}
+        page_size={@per_page}
+        total_entries={@total}
+        page_sizes={[15, 30, 50]}
+        on_change="paginate"
+        on_page_size="per_page"
+        summary="Mostrando %{first}–%{last} de %{total}"
+        page_size_label="%{size} / página"
+      />
   """
 
   use LineaUI.Component
@@ -45,6 +60,8 @@ defmodule LineaUI.Components.Pagination do
 
   @disabled "pointer-events-none opacity-60"
 
+  @page_size_select "form-select h-8 rounded-lg border border-slate-300 bg-white px-2.5 pr-8 text-xs-plus hover:border-slate-400 focus:border-primary dark:border-navy-450 dark:bg-navy-700 dark:hover:border-navy-400 dark:focus:border-accent"
+
   @joined_ends %{
     {"rounded", :first} => "rounded-l-lg",
     {"rounded", :last} => "rounded-r-lg",
@@ -67,9 +84,47 @@ defmodule LineaUI.Components.Pagination do
         do: {:noreply, assign(socket, page: String.to_integer(page))}
 
   The arrow at either end and the ellipsis are inert `<span>`s.
+
+  With `total_entries` or `page_sizes` the bar becomes a footer row: the summary
+  (`role="status"`) on the left, the select and the pages on the right. The select sits in
+  its own `<form>` and pushes `on_page_size` with `%{"page_size" => "30"}` (to `target`),
+  so do not put the pagination inside another form.
+
+      def handle_event("per_page", %{"page_size" => size}, socket),
+        do: {:noreply, assign(socket, per_page: String.to_integer(size), page: 1)}
   """
   attr(:page, :integer, required: true, doc: "The current page, from 1.")
-  attr(:total_pages, :integer, required: true, doc: "How many pages there are.")
+
+  attr(:total_pages, :integer,
+    default: nil,
+    doc:
+      "How many pages there are. Worked out from `total_entries` and `page_size` when not given."
+  )
+
+  attr(:total_entries, :integer,
+    default: nil,
+    doc: "Rows across every page; shows the summary."
+  )
+
+  attr(:page_size, :integer, default: nil, doc: "Rows per page; the select's current value.")
+  attr(:page_sizes, :list, default: [], doc: "Options of the rows-per-page select.")
+
+  attr(:on_page_size, :any,
+    default: nil,
+    doc: ~S|Event name or `%JS{}` of the select's form, pushed with `%{"page_size" => "30"}`.|
+  )
+
+  attr(:summary, :string,
+    default: "Showing %{first}–%{last} of %{total}",
+    doc: "The summary text; `%{first}`, `%{last}` and `%{total}` are replaced."
+  )
+
+  attr(:page_size_label, :string,
+    default: "%{size} / page",
+    doc: "Text of each select option; `%{size}` is replaced."
+  )
+
+  attr(:page_size_aria, :string, default: "Rows per page", doc: "`aria-label` of the select.")
   attr(:siblings, :integer, default: 1, doc: "Pages kept on each side of the current one.")
   attr(:boundaries, :integer, default: 1, doc: "Pages kept at each end.")
   attr(:patch, :any, default: nil, doc: "A function from a page number to a path to patch to.")
@@ -100,7 +155,7 @@ defmodule LineaUI.Components.Pagination do
   attr(:rest, :global, default: %{"aria-label": "Pagination"})
 
   def pagination(assigns) do
-    total = max(assigns.total_pages, 1)
+    total = max(total_pages(assigns), 1)
     page = assigns.page |> max(1) |> min(total)
 
     items =
@@ -116,8 +171,45 @@ defmodule LineaUI.Components.Pagination do
     |> assign(:icon, @icon)
     |> assign(:items, Enum.with_index(items))
     |> assign(:last, length(items) - 1)
+    |> assign(:footer, footer?(assigns))
     |> render_pagination()
   end
+
+  defp total_pages(%{total_pages: pages}) when is_integer(pages), do: pages
+
+  defp total_pages(%{total_entries: total, page_size: size})
+       when is_integer(total) and is_integer(size) and size > 0,
+       do: div(total + size - 1, size)
+
+  defp total_pages(_assigns), do: 1
+
+  defp footer?(%{total_entries: nil, page_sizes: []}), do: false
+  defp footer?(_assigns), do: true
+
+  defp summary(%{total_entries: total, page_size: size, page: page, summary: text})
+       when is_integer(size) do
+    first = first_entry(total, page, size)
+
+    text
+    |> String.replace("%{first}", Integer.to_string(first))
+    |> String.replace("%{last}", Integer.to_string(min(page * size, total)))
+    |> String.replace("%{total}", Integer.to_string(total))
+  end
+
+  defp summary(%{total_entries: total, summary: text}) do
+    text
+    |> String.replace("%{first}", Integer.to_string(min(total, 1)))
+    |> String.replace("%{last}", Integer.to_string(total))
+    |> String.replace("%{total}", Integer.to_string(total))
+  end
+
+  defp first_entry(0, _page, _size), do: 0
+  defp first_entry(_total, page, size), do: (page - 1) * size + 1
+
+  defp size_label(label, size), do: String.replace(label, "%{size}", to_string(size))
+
+  defp form_id(%{rest: %{id: id}}) when is_binary(id), do: id <> "-page-size"
+  defp form_id(_assigns), do: nil
 
   defp to_item(:gap), do: {:gap, nil, true}
   defp to_item(number), do: {:page, number, false}
@@ -147,7 +239,42 @@ defmodule LineaUI.Components.Pagination do
   defp gap(n, [prev | _] = acc) when n > prev + 2, do: [n, :gap | acc]
   defp gap(n, acc), do: [n | acc]
 
-  defp render_pagination(assigns) do
+  defp render_pagination(%{footer: true} = assigns) do
+    assigns = assign(assigns, :select_class, @page_size_select)
+
+    ~H"""
+    <div class={merge(["flex flex-wrap items-center justify-between gap-3 text-xs-plus", @class])}>
+      <span
+        :if={@total_entries}
+        role="status"
+        aria-live="polite"
+        class="text-slate-500 dark:text-navy-200"
+      >
+        {summary(assigns)}
+      </span>
+      <span :if={!@total_entries}></span>
+      <div class="flex flex-wrap items-center gap-3">
+        <form
+          :if={@page_sizes != []}
+          id={form_id(assigns)}
+          phx-change={@on_page_size}
+          phx-target={@target}
+        >
+          <select name="page_size" aria-label={@page_size_aria} class={@select_class}>
+            <option :for={size <- @page_sizes} value={size} selected={size == @page_size}>
+              {size_label(@page_size_label, size)}
+            </option>
+          </select>
+        </form>
+        <.pager_nav {assigns} class={nil} />
+      </div>
+    </div>
+    """
+  end
+
+  defp render_pagination(assigns), do: pager_nav(assigns)
+
+  defp pager_nav(assigns) do
     ~H"""
     <nav class={@class} {@rest}>
       <ol class={["pagination", @divided && "space-x-1.5"]}>
