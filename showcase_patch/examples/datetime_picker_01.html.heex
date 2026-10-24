@@ -1,0 +1,18 @@
+<%!-- title: Date and time | text: A calendar with the times beside it, the chosen time highlighted. A new day updates the value at once; choosing a time updates it and closes the panel. The form gets wall-clock text, 2026-10-14T10:30, with no time zone. --%>
+<div class="grid max-w-3xl grid-cols-1 gap-4 sm:grid-cols-2">
+  <.datetime_picker
+    id="dtp1"
+    name="dtp1_starts"
+    label="Starts at"
+    help="Local time, no conversion."
+    value={~N[2026-10-14 10:30:00]}
+    today={~D[2026-10-14]}
+  />
+  <.datetime_picker
+    id="dtp1-empty"
+    name="dtp1_empty"
+    label="Filled, small"
+    variant="filled"
+    size="sm"
+  />
+</div>

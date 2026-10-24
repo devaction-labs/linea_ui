@@ -1,0 +1,19 @@
+<%!-- title: Type the time | text: time="input" lets a person type an exact time (9:30, 930, 9:30 pm, 21:15) with the suggested times in a dropdown. interval sets their step in minutes, time_format the 12 or 24-hour clock. --%>
+<div class="grid max-w-3xl grid-cols-1 gap-4 sm:grid-cols-2">
+  <.datetime_picker
+    id="dtp2"
+    name="dtp2_typed"
+    label="Typed time, every 15 minutes"
+    time="input"
+    interval={15}
+    default_time="09:00"
+  />
+  <.datetime_picker
+    id="dtp2-24"
+    name="dtp2_24"
+    label="24-hour list, every 10 minutes"
+    time_format="24"
+    interval={10}
+    value="2026-10-14T14:20"
+  />
+</div>
