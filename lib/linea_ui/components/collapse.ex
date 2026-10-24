@@ -23,6 +23,7 @@ defmodule LineaUI.Components.Collapse do
   """
 
   use LineaUI.Component
+  import LineaUI.Components.Icon, only: [glyph: 1]
 
   alias LineaUI.Components.Overlay
 
@@ -99,33 +100,21 @@ defmodule LineaUI.Components.Collapse do
 
   defp chevron_icon(%{kind: "right"} = assigns) do
     ~H"""
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
+    <.glyph
+      name={:chevron_right}
       class={merge(["size-3.5 shrink-0 transition-transform group-open/collapse:rotate-90", @class])}
-      fill="none"
-      viewBox="0 0 24 24"
-      stroke="currentColor"
-      stroke-width="2.5"
-      aria-hidden="true"
-    >
-      <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-    </svg>
+      stroke_width="2.5"
+    />
     """
   end
 
   defp chevron_icon(assigns) do
     ~H"""
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
+    <.glyph
+      name={:chevron_down}
       class={merge(["size-3.5 shrink-0 transition-transform group-open/collapse:rotate-180", @class])}
-      fill="none"
-      viewBox="0 0 24 24"
-      stroke="currentColor"
-      stroke-width="2.5"
-      aria-hidden="true"
-    >
-      <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
-    </svg>
+      stroke_width="2.5"
+    />
     """
   end
 end

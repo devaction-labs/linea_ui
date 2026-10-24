@@ -38,6 +38,7 @@ defmodule LineaUI.Components.DataTable do
   """
 
   use LineaUI.Component
+  import LineaUI.Components.Icon, only: [glyph: 1]
 
   alias LineaUI.Components.Table
 
@@ -364,14 +365,7 @@ defmodule LineaUI.Components.DataTable do
             aria-expanded="false"
             phx-click={data_table_toggle_filters(@id)}
           >
-            <svg xmlns="http://www.w3.org/2000/svg" class="size-4.5" fill="none" viewBox="0 0 24 24">
-              <path
-                stroke="currentColor"
-                stroke-linecap="round"
-                stroke-width="2"
-                d="M18 11.5H6M21 4H3m6 15h6"
-              />
-            </svg>
+            <.glyph name={:filter} class="size-4.5" />
           </button>
           {render_slot(@actions)}
         </div>
@@ -480,16 +474,7 @@ defmodule LineaUI.Components.DataTable do
           class={@arrow}
           label={@prev_label}
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="size-4"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            stroke-width="2"
-          >
-            <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
-          </svg>
+          <.glyph name={:chevron_left} class="size-4" />
         </.pager_link>
       </li>
       <li :for={n <- @window} class={elem(@li, 1)}>
@@ -511,15 +496,7 @@ defmodule LineaUI.Components.DataTable do
           class={@arrow}
           label={@next_label}
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="size-4"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-          </svg>
+          <.glyph name={:chevron_right} class="size-4" />
         </.pager_link>
       </li>
     </ol>
@@ -642,20 +619,7 @@ defmodule LineaUI.Components.DataTable do
         aria-controls={@id <> "-search"}
         phx-click={toggle_search(@id)}
       >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="size-4.5"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="1.5"
-            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-          />
-        </svg>
+        <.glyph name={:search} class="size-4.5" stroke_width="1.5" />
       </button>
     </form>
     """

@@ -37,8 +37,7 @@ defmodule LineaUI.Components.Carousel do
   """
 
   use LineaUI.Component
-
-  @arrow "M0.38296 20.0762C0.111788 19.805 0.111788 19.3654 0.38296 19.0942L9.19758 10.2796L0.38296 1.46497C0.111788 1.19379 0.111788 0.754138 0.38296 0.482966C0.654131 0.211794 1.09379 0.211794 1.36496 0.482966L10.4341 9.55214C10.8359 9.9539 10.8359 10.6053 10.4341 11.007L1.36496 20.0762C1.09379 20.3474 0.654131 20.3474 0.38296 20.0762Z"
+  import LineaUI.Components.Icon, only: [glyph: 1]
 
   @doc """
   Renders the carousel. Its children are `carousel_slide/1`s.
@@ -102,8 +101,6 @@ defmodule LineaUI.Components.Carousel do
   slot(:background, doc: "Behind the track, for the parallax background.")
 
   def carousel(assigns) do
-    assigns = assign(assigns, :arrow, @arrow)
-
     ~H"""
     <div
       id={@id}
@@ -138,7 +135,7 @@ defmodule LineaUI.Components.Carousel do
         aria-label={@next_label}
         aria-controls={@id}
       >
-        <svg viewBox="0 0 11 20" fill="none" aria-hidden="true"><path d={@arrow} /></svg>
+        <.glyph name={:carousel_arrow} class={nil} />
       </button>
       <button
         :if={@navigation not in [false, nil]}
@@ -149,7 +146,7 @@ defmodule LineaUI.Components.Carousel do
         aria-controls={@id}
         disabled={!@loop && @index == 0}
       >
-        <svg viewBox="0 0 11 20" fill="none" aria-hidden="true"><path d={@arrow} /></svg>
+        <.glyph name={:carousel_arrow} class={nil} />
       </button>
       <div
         :if={@pagination in ~w(bullets fraction progress)}

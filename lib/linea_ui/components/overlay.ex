@@ -1,10 +1,11 @@
 defmodule LineaUI.Components.Overlay do
   @moduledoc """
   What the overlays share: the `on_open` / `on_close` callbacks, which take an event name or a `%JS{}`,
-  and LineOne's close glyph.
+  and the close glyph.
   """
 
   use LineaUI.Component
+  import LineaUI.Components.Icon, only: [glyph: 1]
 
   @doc """
   The `%JS{}` an overlay runs when it opens or closes. An event name becomes `JS.push/2` with
@@ -25,17 +26,7 @@ defmodule LineaUI.Components.Overlay do
 
   def close_icon(assigns) do
     ~H"""
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      class={@class}
-      fill="none"
-      viewBox="0 0 24 24"
-      stroke="currentColor"
-      stroke-width="2"
-      aria-hidden="true"
-    >
-      <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-    </svg>
+    <.glyph name={:close} class={@class} />
     """
   end
 
@@ -44,22 +35,15 @@ defmodule LineaUI.Components.Overlay do
 
   def chevron_icon(assigns) do
     ~H"""
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
+    <.glyph
+      name={:chevron_down}
       class={
         merge([
           "size-4 transition-transform duration-200 [[aria-expanded=true]>&]:rotate-180",
           @class
         ])
       }
-      fill="none"
-      viewBox="0 0 24 24"
-      stroke="currentColor"
-      stroke-width="2"
-      aria-hidden="true"
-    >
-      <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
-    </svg>
+    />
     """
   end
 end
