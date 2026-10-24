@@ -37,7 +37,7 @@ const liveSocket = new LiveSocket("/live", Socket, {
 plug Plug.Static, at: "/linea_ui", from: {:linea_ui, "priv/static"}
 
 # lib/my_app_web.ex, inside html_helpers/0
-use LineaUI, avoid_conflicts: true   # keeps CoreComponents' button/input/table/label/error/header
+use LineaUI, avoid_conflicts: true   # keeps CoreComponents' button/input/table/label/error/header/icon and Layouts' theme_toggle
 ```
 
 Dark mode is LineOne's: the `dark` class on `<html>`, remembered in `localStorage["dark-mode"]`.
