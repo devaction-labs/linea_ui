@@ -70,4 +70,80 @@ defmodule LineaUI.Components.TextEditorTest do
     assert find(html, "input[type=hidden][name='post[body]']") |> Enum.count() == 1
     assert html |> find("label > span") |> LazyHTML.text() == "Body"
   end
+
+  defp attr_of(html, selector, name), do: html |> find(selector) |> LazyHTML.attribute(name)
+
+  test "the slash menu, variables, the assistant button and the footer" do
+    html =
+      render(~H"""
+      <.text_editor
+        id="e"
+        name="b"
+        slash
+        variables={~w(cliente preço)}
+        footer
+        hint="Markdown works"
+        on_ai="write"
+        slash_title="Inserir"
+      >
+        <:ai>Write with the assistant</:ai>
+      </.text_editor>
+      """)
+
+    assert [slash] = attr_of(html, "#e", "data-slash")
+    assert [%{"key" => "paragraph"} | _] = Jason.decode!(slash)
+    assert attr_of(html, "#e", "data-variables") == [~s(["cliente","preço"])]
+    assert attr_of(html, "#e", "data-slash-title") == ["Inserir"]
+    assert attr_of(html, "#e", "data-on-ai") == ["write"]
+    assert find(html, "#e .ql-toolbar button.ql-ai[data-ai]") |> LazyHTML.text() =~ "Write with"
+    assert find(html, "#e .ql-footer") |> LazyHTML.text() =~ "Markdown works"
+    assert [_] = find(html, "#e .ql-footer [data-count]") |> Enum.to_list()
+    assert [_] = find(html, "#e #e-menu[phx-update=ignore][data-menu][hidden]") |> Enum.to_list()
+  end
+
+  test "without slash there is no slash menu, and no assistant button without its slot" do
+    html = render(~H|<.text_editor id="e" name="b" />|)
+
+    assert attr_of(html, "#e", "data-slash") == []
+    assert find(html, "#e .ql-ai") |> Enum.to_list() == []
+    assert find(html, "#e .ql-footer") |> Enum.to_list() == []
+  end
+
+  test "a comment has no toolbar, a bar with mention and submit, and the mentions" do
+    html =
+      render(~H"""
+      <.text_editor
+        id="c"
+        name="c"
+        variant="comment"
+        on_submit="comment"
+        mentions={[%{handle: "juliana", label: "Juliana Moraes"}]}
+        submit_label="Comentar"
+      >
+        <:actions><button id="attach" type="button">Attach</button></:actions>
+      </.text_editor>
+      """)
+
+    assert find(html, "#c [data-toolbar]") |> Enum.to_list() == []
+    assert "ql-comment" in classes(html, "#c")
+    assert "min-h-16" in classes(html, "#c-container")
+    assert attr_of(html, "#c", "data-on-submit") == ["comment"]
+
+    assert attr_of(html, "#c", "data-mentions") == [
+             ~s([{"handle":"juliana","label":"Juliana Moraes"}])
+           ]
+
+    assert [_] = find(html, "#c [data-comment-bar] > #attach") |> Enum.to_list()
+    assert [_] = find(html, "#c [data-comment-bar] [data-mention-button]") |> Enum.to_list()
+    assert find(html, "#c [data-comment-bar] .ql-kbd") |> LazyHTML.text() == "Ctrl ↵"
+    assert find(html, "#c [data-submit]") |> LazyHTML.text() =~ "Comentar"
+  end
+
+  test "insert_html pushes the answer to the editor" do
+    socket =
+      LineaUI.Components.TextEditor.insert_html(%Phoenix.LiveView.Socket{}, "e", "<p>x</p>")
+
+    assert %{"linea:editor-insert" => _} =
+             Map.new(socket.private.live_temp.push_events, fn [e, p] -> {e, p} end)
+  end
 end

@@ -51,6 +51,38 @@ defmodule PreviewWeb.Pages.TextEditor do
         />
       </div>
     </.example>
+
+    <.example
+      title="Commands, variables and comments"
+      text="The / menu, {variables} as chips, the assistant, a footer with the word count, and the compact comment editor."
+      class="mt-5 grid items-start gap-6 lg:grid-cols-2"
+    >
+      <.text_editor
+        id="signetum-editor"
+        name="description"
+        label="Product description"
+        slash
+        variables={~w(cliente preço)}
+        footer
+        hint="Type / for the commands"
+        on_ai="write"
+        value="<p>Price for {cliente}: {preço} a box</p>"
+        content_class="h-40"
+      >
+        <:ai>Write with the assistant</:ai>
+      </.text_editor>
+      <.text_editor
+        id="signetum-comment"
+        name="comment"
+        variant="comment"
+        on_submit="comment"
+        placeholder="Write a comment. @ mentions, Ctrl+Enter sends"
+        mentions={[
+          %{handle: "juliana-moraes", label: "Juliana Moraes"},
+          %{handle: "carlos-lima", label: "Carlos Lima"}
+        ]}
+      />
+    </.example>
     """
   end
 
