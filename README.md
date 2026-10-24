@@ -52,6 +52,39 @@ Errors are translated with the app's own function:
 config :linea_ui, :translate_error, &MyAppWeb.CoreComponents.translate_error/1
 ```
 
+## Icons
+
+The small glyphs the components draw themselves (the chevron of a select, the cross of a toast, the
+check of a checkbox, the arrows of a pager, the tools of the text editor...) are LineOne's own SVGs
+by default. An app can have them drawn with [Hugeicons](https://hugeicons.com) (the free Stroke
+Rounded set) instead:
+
+```elixir
+# mix.exs: the SVGs are vendored, not compiled
+{:hugeicons, github: "hugeicons/hugeicons", ref: "3365154e0ae2461fbfb6249b89649127207a4f9e",
+ sparse: "icons", app: false, compile: false, depth: 1}
+
+# config/config.exs
+config :linea_ui, :icons, :hugeicons   # :lineone is the default
+```
+
+```css
+/* assets/css/app.css, after the linea_ui.css import: turns every huge-* class into a CSS mask */
+@plugin "../../deps/linea_ui/assets/css/hugeicons.cjs" {
+  dir: "deps/hugeicons/icons";
+}
+```
+
+`dir` is the folder of the SVGs, relative to where Tailwind runs (the app's root). The setting is read when
+the page renders; the components whose hooks draw glyphs in the browser (toast, date picker) get it from a
+`data-icons` attribute. Restart the app after changing it. Glyphs that are artwork (the two-tone icons of the
+sidebar, the arrows of tooltips and popovers, the spinner) and the carets and check marks LineOne bakes into
+its CSS (native select, tom-select, checkbox, radio, switch, table sorting) stay LineOne's in both sets.
+
+For your own icons use `<.icon name="huge-search-01" class="size-5" />` (any other class name, such as
+`fa-solid fa-house`, passes through). Write the name in full in the source, never interpolated: Tailwind
+only sees what is written, and a name that is not in the set renders nothing.
+
 ## Claude Code skill
 
 ```bash

@@ -19,6 +19,7 @@ defmodule LineaUI.Components.Upload do
   """
 
   use LineaUI.Component
+  import LineaUI.Components.Icon, only: [glyph: 1]
 
   @error_texts %{
     too_large: "File is too large",
@@ -125,13 +126,7 @@ defmodule LineaUI.Components.Upload do
               phx-value-ref={entry.ref}
               phx-target={@target}
             >
-              <svg width="26" height="26" viewBox="0 0 26 26" xmlns="http://www.w3.org/2000/svg">
-                <path
-                  d="M11.586 13l-2.293 2.293a1 1 0 0 0 1.414 1.414L13 14.414l2.293 2.293a1 1 0 0 0 1.414-1.414L14.414 13l2.293-2.293a1 1 0 0 0-1.414-1.414L13 11.586l-2.293-2.293a1 1 0 0 0-1.414 1.414L11.586 13z"
-                  fill="currentColor"
-                  fill-rule="nonzero"
-                />
-              </svg>
+              <.glyph name={:close_solid} class={nil} />
             </button>
             <.live_img_preview
               :if={@previews and image?(entry)}

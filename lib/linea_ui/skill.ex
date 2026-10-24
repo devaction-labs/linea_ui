@@ -59,6 +59,11 @@ defmodule LineaUI.Skill do
     - Events a component emits go to the LiveView, or to a LiveComponent with `target={@myself}`.
       Lists (table, data_table, timeline...) accept `@streams.x` with `row_id`.
     - Every component forwards unknown attributes (`id`, `phx-*`, `data-*`, `aria-*`) to its root.
+    - Icons: components draw their small glyphs (chevrons, close, check, arrows...) as LineOne's
+      SVGs, or as Hugeicons when the app sets `config :linea_ui, :icons, :hugeicons` (with the
+      `hugeicons.cjs` Tailwind plugin in app.css, see the README). For your own icons write
+      `<.icon name="huge-search-01" class="size-5" />`: the `huge-*` name in full, never
+      interpolated, and only names of the free Stroke Rounded set (an unknown name renders nothing).
 
     ## Components
 

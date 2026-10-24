@@ -7,6 +7,7 @@ import {monthOf, shiftMonth} from "../lib/dates.js"
 import {notify} from "../lib/dom.js"
 import {clampTime, formatDate, isDisabled, pickDate, readTime, renderDays, renderTime, setUnit, stepTime, timeText} from "../lib/calendar_view.js"
 import {escapeHtml} from "../lib/date_picker_view.js"
+import {iconSet} from "../lib/glyphs.js"
 import {sameValues} from "../lib/select_box.js"
 
 const COMMANDS = ["open", "close", "toggle", "clear"]
@@ -111,6 +112,7 @@ export const Picker = {
       hover: this.hover,
       weekStart: Number(data.weekStart || 0),
       names: this.names(),
+      icons: iconSet(this.el),
       rules: {
         min: data.min || null,
         max: data.max || null,

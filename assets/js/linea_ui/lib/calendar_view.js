@@ -5,6 +5,7 @@
  */
 import {addDays, daysInMonth, leadingDays, toIso} from "./dates.js"
 import {escapeHtml} from "./date_picker_view.js"
+import {glyphHtml} from "./glyphs.js"
 
 export const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
 export const WEEKDAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
@@ -80,11 +81,6 @@ export const monthDays = (view, weekStart) => {
   return [...Array(42)].map((_, index) => addDays(start, index))
 }
 
-const PREV =
-  '<svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 17 17"><g></g><path d="M5.207 8.471l7.146 7.147-0.707 0.707-7.853-7.854 7.854-7.853 0.707 0.707-7.147 7.146z"></path></svg>'
-const NEXT =
-  '<svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 17 17"><g></g><path d="M13.207 8.472l-7.854 7.854-0.707-0.707 7.146-7.146-7.146-7.148 0.707-0.707 7.854 7.854z"></path></svg>'
-
 const numInput = (className, value, label, extra = "") =>
   `<div class="numInputWrapper"><input class="numInput ${className}" type="number" tabindex="-1" aria-label="${label}" value="${value}" ${extra}><span class="arrowUp" data-step="1"></span><span class="arrowDown" data-step="-1"></span></div>`
 
@@ -105,11 +101,11 @@ export const renderDays = (state) => {
     })
     .join("")
   return (
-    `<div class="flatpickr-months"><span class="flatpickr-prev-month" data-month="-1">${PREV}</span>` +
+    `<div class="flatpickr-months"><span class="flatpickr-prev-month" data-month="-1">${glyphHtml("angle_left", state.icons)}</span>` +
     `<div class="flatpickr-month"><div class="flatpickr-current-month">` +
     `<select class="flatpickr-monthDropdown-months" aria-label="Month" tabindex="-1" data-month-select>${monthOptions}</select>` +
     numInput("cur-year", view.year, "Year", "data-year") +
-    `</div></div><span class="flatpickr-next-month" data-month="1">${NEXT}</span></div>` +
+    `</div></div><span class="flatpickr-next-month" data-month="1">${glyphHtml("angle_right", state.icons)}</span></div>` +
     `<div class="flatpickr-innerContainer"><div class="flatpickr-rContainer">` +
     `<div class="flatpickr-weekdays"><div class="flatpickr-weekdaycontainer">${order.map((day) => `<span class="flatpickr-weekday">${escapeHtml(day)}</span>`).join("")}</div></div>` +
     `<div class="flatpickr-days" tabindex="-1"><div class="dayContainer">${days}</div></div>` +

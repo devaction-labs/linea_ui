@@ -13,6 +13,7 @@ defmodule LineaUI.Components.Badge do
   """
 
   use LineaUI.Component
+  import LineaUI.Components.Icon, only: [glyph: 1]
 
   @variants %{
     "solid" => %{
@@ -164,20 +165,7 @@ defmodule LineaUI.Components.Badge do
         phx-click={remove_js(@on_remove, @target, @id)}
         class="btn size-4.5 rounded-full bg-black/20 p-0 hover:bg-black/30 focus:bg-black/30 dark:bg-white/20 dark:hover:bg-white/30 dark:focus:bg-white/30"
       >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="size-3 dark:text-navy-50"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="3"
-            d="M6 18L18 6M6 6l12 12"
-          />
-        </svg>
+        <.glyph name={:close} class="size-3 dark:text-navy-50" stroke_width="3" />
       </button>
     </span>
     """

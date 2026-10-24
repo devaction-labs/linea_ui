@@ -19,6 +19,7 @@ defmodule LineaUI.Components.Alert do
   """
 
   use LineaUI.Component
+  import LineaUI.Components.Icon, only: [glyph: 1]
 
   @base "alert flex"
 
@@ -282,20 +283,7 @@ defmodule LineaUI.Components.Alert do
       phx-click={dismiss_alert(@on_dismiss)}
       class={["btn size-7 shrink-0 rounded-full p-0 font-medium", close_classes(@color)]}
     >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        class="size-4"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-      >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="2"
-          d="M6 18L18 6M6 6l12 12"
-        />
-      </svg>
+      <.glyph name={:close} class="size-4" />
     </button>
     """
   end

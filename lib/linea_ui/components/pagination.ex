@@ -13,6 +13,7 @@ defmodule LineaUI.Components.Pagination do
   """
 
   use LineaUI.Component
+  import LineaUI.Components.Icon, only: [glyph: 1]
 
   @item %{
     "sm" =>
@@ -260,31 +261,13 @@ defmodule LineaUI.Components.Pagination do
 
   defp entry_content(%{kind: :prev} = assigns) do
     ~H"""
-    <svg
-      class={@icon_class}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      stroke-width="2"
-      aria-hidden="true"
-    >
-      <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
-    </svg>
+    <.glyph name={:chevron_left} class={@icon_class} />
     """
   end
 
   defp entry_content(%{kind: :next} = assigns) do
     ~H"""
-    <svg
-      class={@icon_class}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      stroke-width="2"
-      aria-hidden="true"
-    >
-      <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-    </svg>
+    <.glyph name={:chevron_right} class={@icon_class} />
     """
   end
 

@@ -31,6 +31,7 @@ defmodule LineaUI.Components.Toast do
   """
 
   use LineaUI.Component
+  import LineaUI.Components.Icon, only: [icon_set: 0]
 
   @flash_key "linea_toast"
   @colors ~w(neutral primary secondary info success warning error light dark)
@@ -81,6 +82,7 @@ defmodule LineaUI.Components.Toast do
       data-duration={@duration}
       data-stack={to_string(@stack)}
       data-close-label={@close_label}
+      data-icons={icon_set()}
       {@rest}
     >
     </div>

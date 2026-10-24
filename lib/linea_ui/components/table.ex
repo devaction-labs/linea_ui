@@ -49,6 +49,7 @@ defmodule LineaUI.Components.Table do
   """
 
   use LineaUI.Component
+  import LineaUI.Components.Icon, only: [glyph: 1]
 
   alias Phoenix.LiveView.LiveStream
 
@@ -338,17 +339,12 @@ defmodule LineaUI.Components.Table do
                 aria-controls={dom_id <> "-detail"}
                 phx-click={table_toggle_row(dom_id)}
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
+                <.glyph
+                  name={:chevron_down}
                   class="size-3.5 transition-transform"
+                  stroke_width="2.5"
                   data-expand-icon
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  stroke-width="2.5"
-                >
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
-                </svg>
+                />
               </button>
             </td>
           </tr>

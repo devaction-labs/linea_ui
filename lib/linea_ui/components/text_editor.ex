@@ -16,6 +16,7 @@ defmodule LineaUI.Components.TextEditor do
   """
 
   use LineaUI.Component
+  import LineaUI.Components.Icon, only: [glyph: 1]
 
   alias LineaUI.Components.Pickers
   alias LineaUI.Components.TextEditor.Icons
@@ -163,7 +164,8 @@ defmodule LineaUI.Components.TextEditor do
       disabled={@disabled}
       data-tool={@tool}
     >
-      {Icons.svg(icon(@tool))}
+      <.glyph name={Icons.glyph(icon(@tool))} class={nil} />
+      <.glyph :if={@tool == "direction-rtl"} name={:editor_direction_active} class={nil} />
     </button>
     """
   end
@@ -181,7 +183,7 @@ defmodule LineaUI.Components.TextEditor do
         aria-label={@tool}
         data-picker-label
       >
-        {Icons.svg("picker-" <> @tool)}
+        <.glyph name={Icons.glyph("picker-" <> @tool)} class={nil} />
       </span>
       <span class="ql-picker-options" aria-hidden="true" tabindex="-1">
         <span
@@ -214,7 +216,7 @@ defmodule LineaUI.Components.TextEditor do
         aria-label="align"
         data-picker-label
       >
-        {Icons.svg("picker-align")}
+        <.glyph name={Icons.glyph("picker-align")} class={nil} />
       </span>
       <span class="ql-picker-options" aria-hidden="true" tabindex="-1">
         <span
@@ -226,7 +228,7 @@ defmodule LineaUI.Components.TextEditor do
           data-item
           aria-label={"align " <> (value_or_left(value))}
         >
-          {Icons.svg("align-" <> value_or_left(value))}
+          <.glyph name={Icons.glyph("align-" <> value_or_left(value))} class={nil} />
         </span>
       </span>
     </span>
@@ -246,7 +248,7 @@ defmodule LineaUI.Components.TextEditor do
         aria-label={@tool}
         data-picker-label
       >
-        {Icons.svg("dropdown")}
+        <.glyph name={Icons.glyph("dropdown")} class={nil} />
       </span>
       <span class="ql-picker-options" aria-hidden="true" tabindex="-1">
         <span

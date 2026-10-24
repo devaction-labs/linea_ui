@@ -81,6 +81,7 @@ defmodule LineaUI.Components.AppShell do
   """
 
   use LineaUI.Component
+  import LineaUI.Components.Icon, only: [glyph: 1]
 
   @link_attrs ~w(href navigate patch method replace)
 
@@ -540,9 +541,7 @@ defmodule LineaUI.Components.AppShell do
         ])
       }
     >
-      <svg class="size-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-      </svg>
+      <.glyph name={:chevron_left} class="size-6" />
     </button>
     """
   end
@@ -659,15 +658,10 @@ defmodule LineaUI.Components.AppShell do
       >
         <summary class="ac-trigger flex w-full cursor-pointer list-none items-center justify-between py-2 text-xs-plus tracking-wide text-slate-600 outline-hidden transition-[color,padding-left] duration-300 ease-in-out hover:text-slate-800 dark:text-navy-200 dark:hover:text-navy-50">
           <span>{@label}</span>
-          <svg
+          <.glyph
+            name={:chevron_right}
             class="size-4 text-slate-400 transition-transform ease-in-out"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            aria-hidden="true"
-          >
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-          </svg>
+          />
         </summary>
         <ul class="ac-panel">
           <li :for={item <- @item}>
@@ -974,20 +968,11 @@ defmodule LineaUI.Components.AppShell do
               phx-click={show_mobile_search(@id)}
               class={["mobile-searchbar-show sm:hidden", @icon_button]}
             >
-              <svg
+              <.glyph
+                name={:search}
                 class="size-5.5 text-slate-500 dark:text-navy-100"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                stroke-width="1.5"
-                aria-hidden="true"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                />
-              </svg>
+                stroke_width="1.5"
+              />
             </button>
             <div
               :if={@search}
@@ -1049,20 +1034,11 @@ defmodule LineaUI.Components.AppShell do
                 aria-label={notifications[:label] || "Notifications"}
                 class={["relative", @icon_button]}
               >
-                <svg
+                <.glyph
+                  name={:bell}
                   class="size-5 text-slate-500 dark:text-navy-100"
-                  stroke="currentColor"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="1.5"
-                    d="M15.375 17.556h-6.75m6.75 0H21l-1.58-1.562a2.254 2.254 0 01-.67-1.596v-3.51a6.612 6.612 0 00-1.238-3.85 6.744 6.744 0 00-3.262-2.437v-.379c0-.59-.237-1.154-.659-1.571A2.265 2.265 0 0012 2c-.597 0-1.169.234-1.591.65a2.208 2.208 0 00-.659 1.572v.38c-2.621.915-4.5 3.385-4.5 6.287v3.51c0 .598-.24 1.172-.67 1.595L3 17.556h12.375zm0 0v1.11c0 .885-.356 1.733-.989 2.358A3.397 3.397 0 0112 22a3.397 3.397 0 01-2.386-.976 3.313 3.313 0 01-.989-2.357v-1.111h6.75z"
-                  />
-                </svg>
+                  stroke_width="1.5"
+                />
                 <span
                   :if={Map.get(notifications, :dot, true)}
                   class="absolute -top-px -right-px flex size-3 items-center justify-center"
@@ -1109,16 +1085,7 @@ defmodule LineaUI.Components.AppShell do
           phx-click={hide_mobile_search(@id)}
           class="mobile-searchbar-hide btn -ml-1.5 size-7 shrink-0 rounded-full p-0 text-slate-600 hover:bg-slate-300/20 active:bg-slate-300/25 dark:text-navy-100 dark:hover:bg-navy-300/20 dark:active:bg-navy-300/25"
         >
-          <svg
-            class="size-5"
-            fill="none"
-            stroke-width="1.5"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            aria-hidden="true"
-          >
-            <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
-          </svg>
+          <.glyph name={:chevron_left} class="size-5" stroke_width="1.5" />
         </button>
         <input
           id={@id <> "-mobile-search-input"}
@@ -1145,14 +1112,7 @@ defmodule LineaUI.Components.AppShell do
 
   defp search_glyph(assigns) do
     ~H"""
-    <svg
-      class="size-4.5 transition-colors duration-200"
-      fill="currentColor"
-      viewBox="0 0 24 24"
-      aria-hidden="true"
-    >
-      <path d="M3.316 13.781l.73-.171-.73.171zm0-5.457l.73.171-.73-.171zm15.473 0l.73-.171-.73.171zm0 5.457l.73.171-.73-.171zm-5.008 5.008l-.171-.73.171.73zm-5.457 0l-.171.73.171-.73zm0-15.473l-.171-.73.171.73zm5.457 0l.171-.73-.171.73zM20.47 21.53a.75.75 0 101.06-1.06l-1.06 1.06zM4.046 13.61a11.198 11.198 0 010-5.115l-1.46-.342a12.698 12.698 0 000 5.8l1.46-.343zm14.013-5.115a11.196 11.196 0 010 5.115l1.46.342a12.698 12.698 0 000-5.8l-1.46.343zm-4.45 9.564a11.196 11.196 0 01-5.114 0l-.342 1.46c1.907.448 3.892.448 5.8 0l-.343-1.46zM8.496 4.046a11.198 11.198 0 015.115 0l.342-1.46a12.698 12.698 0 00-5.8 0l.343 1.46zm0 14.013a5.97 5.97 0 01-4.45-4.45l-1.46.343a7.47 7.47 0 005.568 5.568l.342-1.46zm5.457 1.46a7.47 7.47 0 005.568-5.567l-1.46-.342a5.97 5.97 0 01-4.45 4.45l.342 1.46zM13.61 4.046a5.97 5.97 0 014.45 4.45l1.46-.343a7.47 7.47 0 00-5.568-5.567l-.342 1.46zm-5.457-1.46a7.47 7.47 0 00-5.567 5.567l1.46.342a5.97 5.97 0 014.45-4.45l-.343-1.46zm8.652 15.28l3.665 3.664 1.06-1.06-3.665-3.665-1.06 1.06z" />
-    </svg>
+    <.glyph name={:search_solid} class="size-4.5 transition-colors duration-200" />
     """
   end
 
@@ -1388,16 +1348,7 @@ defmodule LineaUI.Components.AppShell do
               aria-label="Close"
               class="btn -mr-1 size-6 rounded-full p-0 hover:bg-slate-300/20 focus:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25"
             >
-              <svg
-                class="size-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                stroke-width="2"
-                aria-hidden="true"
-              >
-                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-              </svg>
+              <.glyph name={:close} class="size-4" />
             </button>
           </div>
           {render_slot(@inner_block)}
@@ -1430,20 +1381,7 @@ defmodule LineaUI.Components.AppShell do
       class={merge([@icon_button, @class])}
       {@rest}
     >
-      <svg
-        class="size-5.5 text-slate-500 dark:text-navy-100"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-        aria-hidden="true"
-      >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="1.5"
-          d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"
-        />
-      </svg>
+      <.glyph name={:apps} class="size-5.5 text-slate-500 dark:text-navy-100" stroke_width="1.5" />
     </button>
     """
   end
@@ -1490,16 +1428,7 @@ defmodule LineaUI.Components.AppShell do
             {render_slot(crumb)}
           </.link>
           <span :if={!link?(crumb)} aria-current={last && "page"}>{render_slot(crumb)}</span>
-          <svg
-            :if={!last}
-            class="size-4"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            aria-hidden="true"
-          >
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-          </svg>
+          <.glyph :if={!last} name={:chevron_right} class="size-4" />
         </li>
       </ul>
       {render_slot(@inner_block)}
@@ -1544,16 +1473,8 @@ defmodule LineaUI.Components.AppShell do
       class={merge(["darkmode-toggle", @icon_button, @class])}
       {@rest}
     >
-      <svg class="darkmode-moon size-6 text-amber-400" fill="currentColor" viewBox="0 0 24 24">
-        <path d="M11.75 3.412a.818.818 0 01-.07.917 6.332 6.332 0 00-1.4 3.971c0 3.564 2.98 6.494 6.706 6.494a6.86 6.86 0 002.856-.617.818.818 0 011.1 1.047C19.593 18.614 16.218 21 12.283 21 7.18 21 3 16.973 3 11.956c0-4.563 3.46-8.31 7.925-8.948a.818.818 0 01.826.404z" />
-      </svg>
-      <svg class="darkmode-sun size-6 text-amber-400" viewBox="0 0 20 20" fill="currentColor">
-        <path
-          fill-rule="evenodd"
-          d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"
-          clip-rule="evenodd"
-        />
-      </svg>
+      <.glyph name={:moon} class="darkmode-moon size-6 text-amber-400" />
+      <.glyph name={:sun} class="darkmode-sun size-6 text-amber-400" />
     </button>
     """
   end
