@@ -51,6 +51,7 @@ defmodule LineaUI do
     divider: LineaUI.Components.Divider,
     drawer: LineaUI.Components.Drawer,
     dropdown: LineaUI.Components.Dropdown,
+    empty_state: LineaUI.Components.EmptyState,
     form: LineaUI.Components.Form,
     icon: LineaUI.Components.Icon,
     input: LineaUI.Components.Input,

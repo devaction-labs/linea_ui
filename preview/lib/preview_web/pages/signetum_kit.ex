@@ -138,6 +138,53 @@ defmodule PreviewWeb.Pages.SignetumKit do
       <p class="text-sm">regime: {@form[:regime].value}</p>
       <.segmented id="seg-lg" size="lg" full value="a" options={["Lista", "Kanban"]} />
     </.example>
+
+    <.example
+      title="Empty state"
+      text="The card for a whole area and the inline notice for tables, lists and search."
+      class="mt-5 grid gap-5 md:grid-cols-2"
+    >
+      <.empty_state icon="huge-package" kicker="Contas a receber" title="Nenhum título ainda">
+        Um título nasce quando uma nota com pagamento a prazo é autorizada.
+        <:action>
+          <.button color="primary">Novo pedido</.button>
+          <.button variant="flat">Ver notas emitidas</.button>
+        </:action>
+      </.empty_state>
+      <.empty_state
+        icon="huge-ai-magic"
+        tone="gradient"
+        kicker="Assistente"
+        title="Pergunte sobre a sua empresa"
+      >
+        Vendas da semana, notas para manifestar, clientes em atraso.
+        <:action><.button color="primary">Fazer uma pergunta</.button></:action>
+      </.empty_state>
+      <div class="flex flex-col gap-3 md:col-span-2">
+        <.empty_state variant="inline" icon="huge-search-01" title="Nada para “dipirona 1 g”">
+          Tente outro termo ou limpe os filtros.
+        </.empty_state>
+        <.empty_state
+          variant="inline"
+          color="success"
+          icon="huge-checkmark-circle-02"
+          title="Nenhuma nota para manifestar"
+        >
+          Todas as notas recebidas já têm manifestação.
+        </.empty_state>
+        <.empty_state
+          variant="inline"
+          color="error"
+          icon="huge-alert-02"
+          title="Não deu para falar com a SEFAZ"
+        >
+          A consulta de notas recebidas não respondeu.
+          <:action>
+            <.button size="sm" variant="outline" color="error">Tentar de novo</.button>
+          </:action>
+        </.empty_state>
+      </div>
+    </.example>
     """
   end
 end
