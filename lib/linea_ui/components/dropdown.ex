@@ -388,8 +388,8 @@ defmodule LineaUI.Components.Dropdown do
         class={
           merge([
             @item_class,
-            "w-full pr-3 text-left",
-            @icon != [] && "space-x-3",
+            "h-9 w-full gap-2.5 pr-3 font-inter text-sm font-normal tracking-normal text-slate-600 dark:text-navy-100",
+            "text-left",
             @disabled && "pointer-events-none opacity-60",
             @trigger_class
           ])
@@ -408,18 +408,18 @@ defmodule LineaUI.Components.Dropdown do
         <span
           data-submenu-count
           hidden={@count in [nil, 0]}
-          class="ml-3 inline-flex h-4.5 min-w-4.5 items-center justify-center rounded-full bg-primary px-1.5 text-xs font-medium text-white dark:bg-accent"
+          class="inline-flex h-4.5 min-w-4.5 items-center justify-center rounded-full bg-primary px-1.5 font-inter text-tiny-plus text-white dark:bg-accent"
         >
           {@count}
         </span>
-        <.glyph name={:chevron_right} class="ml-3 size-4 shrink-0 text-slate-400 dark:text-navy-300" />
+        <.glyph name={:chevron_right} class="size-4 shrink-0 text-slate-400 dark:text-navy-300" />
       </button>
       <div class="linea-submenu" data-submenu-panel>
         <div
           id={"#{@id}-menu"}
           class={
             merge([
-              "w-max min-w-40 rounded-md border border-slate-150 bg-white py-1.5 font-inter shadow-soft dark:border-navy-500 dark:bg-navy-700 dark:shadow-soft-dark",
+              "w-max min-w-40 rounded-md border border-slate-150 bg-white py-1.5 font-inter shadow-[0_10px_30px_-8px_rgb(48_46_56/0.18)] dark:border-navy-500 dark:bg-navy-700 dark:shadow-soft-dark",
               @class
             ])
           }
@@ -497,9 +497,9 @@ defmodule LineaUI.Components.Dropdown do
     """
   end
 
-  @choice_item "group flex h-8 w-full items-center space-x-3 px-3 pr-4 text-left font-medium tracking-wide outline-hidden transition-all hover:bg-slate-100 hover:text-slate-800 focus:bg-slate-100 focus:text-slate-800 dark:hover:bg-navy-600 dark:hover:text-navy-100 dark:focus:bg-navy-600 dark:focus:text-navy-100"
+  @choice_item "group flex h-9 w-full items-center gap-2.5 px-3 text-left font-inter text-sm font-normal text-slate-600 outline-hidden transition-colors hover:bg-slate-100 hover:text-slate-800 focus:bg-slate-100 focus:text-slate-800 dark:text-navy-100 dark:hover:bg-navy-600 dark:hover:text-navy-50 dark:focus:bg-navy-600 dark:focus:text-navy-50"
 
-  @check_box "flex size-4 shrink-0 items-center justify-center rounded-sm border border-slate-400 text-white transition-colors group-aria-checked:border-primary group-aria-checked:bg-primary dark:border-navy-300 dark:group-aria-checked:border-accent dark:group-aria-checked:bg-accent"
+  @check_box "flex size-4 shrink-0 items-center justify-center rounded border border-slate-400 text-white transition-colors group-aria-checked:border-primary group-aria-checked:bg-primary dark:border-navy-300 dark:group-aria-checked:border-accent dark:group-aria-checked:bg-accent"
 
   @radio_box "size-4 shrink-0 rounded-full border border-slate-400 bg-white transition-all group-aria-checked:border-[5px] group-aria-checked:border-primary dark:border-navy-300 dark:bg-navy-700 dark:group-aria-checked:border-accent"
 
@@ -617,7 +617,7 @@ defmodule LineaUI.Components.Dropdown do
           />
         </span>
         <span class="flex-1">{render_slot(@inner_block)}</span>
-        <span :if={@count != nil} class="ml-4 text-xs text-slate-400 dark:text-navy-300">
+        <span :if={@count != nil} class="ml-4 font-inter text-xs text-slate-400 dark:text-navy-300">
           {@count}
         </span>
       </button>
@@ -636,7 +636,7 @@ defmodule LineaUI.Components.Dropdown do
       role="presentation"
       class={
         merge([
-          "px-3 pt-2 pb-1 text-xs font-medium tracking-wide text-slate-400 dark:text-navy-300",
+          "px-3 pt-2 pb-1 font-inter text-tiny-plus font-semibold tracking-widest text-slate-400 uppercase dark:text-navy-300",
           @class
         ])
       }

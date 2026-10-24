@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.4.1
+
+Visual parity with the Signetum canvas (markup and classes only; attrs, slots and events are unchanged).
+
+- `calendar`: the toolbar is Today, ghost arrows around the title and a segmented Month/Week switch; Inter 11px weekday heads (`slate-200` / `navy-800`), chips with 4px radius, day numbers aligned left with the round today marker, dark grid lines softened (`navy-600`), tinted legend swatches.
+- `signature_pad`: dark pad (`navy-700`) with light ink on screen (the export keeps `ink`), baseline and cross at the canvas offsets, segmented Draw/Type switch, Inter status badge.
+- `number_input`: with `steppers`, flat stepper cells with the canvas hover, a mono medium value and the `suffix` drawn inline in the field instead of an addon box.
+- `range`: the thumb is white with a 2px ring in the color and a soft shadow, marks are Inter 11px and the chosen one is a tinted pill, more room between track and marks.
+- `color_picker`: the hex field has the standard height and an ink-colored value.
+- `dropdown`: checkbox, radio and submenu rows are 36px Inter 14px regular with 10px gaps, 4px checkboxes, an uppercase tracked `dropdown_label`, the count badge in Inter 11px and a larger submenu shadow.
+
 ## 0.4.0
 
 - `framed_sidebar`: in the collapsed rail the search box is a square with the icon centered; what it hides (`rail-label`, the search text and shortcut) wins over utility classes such as the `kbd`'s own `display`.
