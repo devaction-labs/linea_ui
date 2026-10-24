@@ -51,4 +51,30 @@ defmodule LineaUI.Components.BadgeTest do
     assert button |> LazyHTML.attribute("phx-click") |> hd() =~ "hide"
     assert [] = render(~H"<.badge>Tag</.badge>") |> find("button") |> Enum.to_list()
   end
+
+  test "size sets LineOne's compact heights and the default is unchanged" do
+    html =
+      render(~H"""
+      <.badge id="a" size="xs">A</.badge>
+      <.badge id="b" size="sm">B</.badge>
+      <.badge id="c" size="md">C</.badge>
+      <.badge id="d">D</.badge>
+      """)
+
+    assert "h-4.5" in classes(html, "#a")
+    assert "h-5" in classes(html, "#b")
+    assert ["h-5.5", "text-xs-plus"] -- classes(html, "#c") == []
+    refute Enum.any?(classes(html, "#d"), &String.starts_with?(&1, "h-"))
+  end
+
+  test "white badges for colored cards" do
+    html =
+      render(~H"""
+      <.badge id="a" color="white" variant="outline" shape="pill">A</.badge>
+      <.badge id="b" color="white" variant="soft">B</.badge>
+      """)
+
+    assert ["border", "border-white", "text-white"] -- classes(html, "#a") == []
+    assert ["bg-white/20", "text-white"] -- classes(html, "#b") == []
+  end
 end
