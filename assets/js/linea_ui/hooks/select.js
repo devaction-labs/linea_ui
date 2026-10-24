@@ -20,6 +20,10 @@ export const Listbox = {
     this.active = -1
     this.isOpen = false
     this.serial = 0
+    this.remembered = new Map()
+    this.el.querySelectorAll(".ts-control [data-ts-item]").forEach((chip) =>
+      this.remembered.set(chip.dataset.value, {label: chip.firstChild?.textContent?.trim() || chip.dataset.value, chip: chip.cloneNode(true)}),
+    )
 
     this.onClick = (event) => this.click(event)
     this.onPointerDown = (event) => event.target.closest("[data-dropdown], [data-clear], [data-remove]") && event.preventDefault()
@@ -94,7 +98,17 @@ export const Listbox = {
 
   labelOf(value) {
     const option = this.options().find((row) => row.dataset.value === value)
-    return option?.dataset.label ?? value
+    return option?.dataset.label ?? this.remembered.get(value)?.label ?? value
+  },
+
+  template(value) {
+    return [...this.el.querySelectorAll("[data-templates] template")].find((t) => t.dataset.value === value)
+  },
+
+  remember(value) {
+    const template = this.template(value)
+    const chip = template && template.content.firstElementChild.cloneNode(true)
+    this.remembered.set(value, {label: this.labelOf(value), chip})
   },
 
   open() {
@@ -153,7 +167,7 @@ export const Listbox = {
   },
 
   typed(text) {
-    const tags = this.el.dataset.mode === "tags"
+    const tags = this.el.dataset.mode === "tags" && this.el.dataset.create === "true"
     const {done, rest} = tags ? splitTags(text) : {done: [], rest: text}
     done.forEach((tag) => this.create(tag))
     done.length > 0 && (this.input().value = rest)
@@ -192,6 +206,7 @@ export const Listbox = {
   },
 
   pick(value) {
+    this.remember(value)
     this.setTerm("")
     this.change(choose(this.values, value, {multiple: this.multiple(), max: this.max()}))
     !this.multiple() && this.close()
@@ -245,8 +260,9 @@ export const Listbox = {
   },
 
   chip(value) {
-    const template = [...this.el.querySelectorAll("[data-templates] template")].find((t) => t.dataset.value === value)
-    return template ? template.content.firstElementChild.cloneNode(true) : this.defaultChip(value)
+    const template = this.template(value)
+    const chip = this.remembered.get(value)?.chip
+    return template ? template.content.firstElementChild.cloneNode(true) : chip ? chip.cloneNode(true) : this.defaultChip(value)
   },
 
   defaultChip(value) {

@@ -11,6 +11,7 @@ defmodule LineaUI.Components.Select.Listbox do
   def prepare(assigns, mode) do
     entries = Options.normalize(assigns.options)
     options = Options.flat(entries)
+    known = known(options, Map.get(assigns, :selected_options, []))
     values = values(assigns.value, mode)
     multiple = mode == :tags or assigns.multiple
     count = length(values)
@@ -22,11 +23,20 @@ defmodule LineaUI.Components.Select.Listbox do
       entries: entries,
       options: options,
       values: values,
-      chosen: Enum.map(values, &Options.find(options, &1)),
+      chosen: Enum.map(values, &Options.find(known, &1)),
+      known: known,
       name: field_name(assigns.name, multiple),
       full: full?(multiple, count, assigns.max),
       forwarded: Pickers.forwarded(assigns.rest)
     )
+  end
+
+  defp known(options, []), do: options
+
+  defp known(options, selected) do
+    listed = MapSet.new(options, & &1.value)
+    extra = selected |> Options.normalize() |> Options.flat()
+    options ++ Enum.reject(extra, &MapSet.member?(listed, &1.value))
   end
 
   defp values(value, :tags) when is_binary(value),
@@ -144,7 +154,7 @@ defmodule LineaUI.Components.Select.Listbox do
           </div>
         </div>
         <div hidden data-templates>
-          <template :for={option <- @options} data-value={option.value}>
+          <template :for={option <- @known} data-value={option.value}>
             <.chip option={option} item={@item} removable={@removable} remove_label={@remove_label} />
           </template>
         </div>
