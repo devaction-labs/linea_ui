@@ -18,7 +18,7 @@ defmodule LineaUI.Test.TabsLive do
     """
   end
 
-  def handle_event("pick", %{"id" => "t", "value" => value}, socket),
+  def handle_event("pick", %{"id" => "t", "value" => value, "tab" => value}, socket),
     do: {:noreply, assign(socket, picked: value)}
 
   def handle_event("server_pick", _params, socket), do: {:noreply, assign(socket, tab: "profile")}

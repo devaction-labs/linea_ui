@@ -1,6 +1,6 @@
 defmodule LineaUI.Components.Tabs do
   @moduledoc """
-  LineOne's tabs: underlined (`line`), on a gray track (`boxed`) and rounded (`pill`), laid out
+  LineOne's tabs: underlined (`line`), on a gray track (`boxed`), rounded (`pill`) and plain text (`text`), laid out
   horizontally or vertically, with or without icons.
 
       <.tabs id="profile-tabs" selected="home">
@@ -22,12 +22,14 @@ defmodule LineaUI.Components.Tabs do
   `on_change` tells the server what was chosen:
 
       <.tabs id="server-tabs" selected={@tab} on_change="select_tab">…</.tabs>
+      <.tabs id="period" variant="boxed" size="sm"><:tab name="month">Last month</:tab></.tabs>
+      <.tabs id="range" variant="text"><:tab name="week">Last 7 days</:tab><:tab name="all">All time</:tab></.tabs>
 
       def handle_event("select_tab", %{"id" => "server-tabs", "value" => tab}, socket),
         do: {:noreply, assign(socket, tab: tab)}
 
   Every selection also dispatches a bubbling `linea:change` DOM event with
-  `detail: %{id: id, value: name}`.
+  `detail: %{id: id, value: name, tab: name}`.
   """
 
   use LineaUI.Component
@@ -47,11 +49,29 @@ defmodule LineaUI.Components.Tabs do
       "btn h-8 justify-start space-x-2 rounded-full text-left text-xs-plus font-medium not-aria-selected:hover:bg-slate-300/20 not-aria-selected:focus:bg-slate-300/20 not-aria-selected:active:bg-slate-300/25 not-aria-selected:hover:text-slate-800 not-aria-selected:focus:text-slate-800 dark:not-aria-selected:hover:bg-navy-300/20 dark:not-aria-selected:focus:bg-navy-300/20 dark:not-aria-selected:active:bg-navy-300/25 dark:not-aria-selected:hover:text-navy-100 dark:not-aria-selected:focus:text-navy-100"
   }
 
+  @text_base "btn space-x-2 rounded-none p-0 font-medium tracking-wide not-aria-selected:hover:text-slate-800 not-aria-selected:focus:text-slate-800 dark:not-aria-selected:hover:text-navy-100 dark:not-aria-selected:focus:text-navy-100"
+
+  @boxed_sizes %{
+    "xs" => "px-2.5 py-0.5 text-xs",
+    "sm" => "px-3 py-1 text-xs-plus",
+    "md" => nil
+  }
+
+  @text_colors %{
+    "primary" => "aria-selected:text-primary dark:aria-selected:text-accent-light",
+    "neutral" => "aria-selected:text-slate-800 dark:aria-selected:text-navy-50"
+  }
+
   @pill_colors %{
     "primary" =>
       "aria-selected:bg-primary/10 aria-selected:text-primary dark:aria-selected:bg-accent-light/10 dark:aria-selected:text-accent-light",
     "neutral" =>
       "aria-selected:bg-slate-150 aria-selected:text-slate-800 dark:aria-selected:bg-navy-600 dark:aria-selected:text-navy-50"
+  }
+
+  @text_tabs %{
+    "horizontal" => @text_base,
+    "vertical" => "justify-start text-left " <> @text_base
   }
 
   @root %{"horizontal" => "flex flex-col", "vertical" => "flex"}
@@ -64,7 +84,9 @@ defmodule LineaUI.Components.Tabs do
     {"boxed", "vertical"} =>
       "shrink-0 self-start rounded-lg bg-slate-200 text-slate-600 dark:bg-navy-800 dark:text-navy-200",
     {"pill", "horizontal"} => "is-scrollbar-hidden overflow-x-auto",
-    {"pill", "vertical"} => "shrink-0"
+    {"pill", "vertical"} => "shrink-0",
+    {"text", "horizontal"} => "is-scrollbar-hidden overflow-x-auto",
+    {"text", "vertical"} => "shrink-0"
   }
 
   @track %{
@@ -80,7 +102,9 @@ defmodule LineaUI.Components.Tabs do
     {"boxed", "horizontal"} => "flex px-1.5 py-1",
     {"boxed", "vertical"} => "flex flex-col px-1.5 py-1",
     {"pill", "horizontal"} => "flex space-x-2",
-    {"pill", "vertical"} => "flex flex-col space-y-2"
+    {"pill", "vertical"} => "flex flex-col space-y-2",
+    {"text", "horizontal"} => "flex space-x-4",
+    {"text", "vertical"} => "flex flex-col space-y-2"
   }
 
   @overlap %{
@@ -109,9 +133,9 @@ defmodule LineaUI.Components.Tabs do
       </.tabs>
 
   Events: with `on_change="tab_changed"` the hook pushes `"tab_changed"` with
-  `%{"id" => "settings", "value" => "general"}` (to `target` or the closest LiveComponent)
+  `%{"id" => "settings", "value" => "general", "tab" => "general"}` (to `target` or the closest LiveComponent)
   after the browser switched; with `on_change={%JS{}}` the commands run on the tabs element.
-  Either way a bubbling `linea:change` DOM event carries `detail: %{id, value}`.
+  Either way a bubbling `linea:change` DOM event carries `detail: %{id, value, tab}`; `tab` repeats `value`.
   """
   attr(:id, :string, required: true, doc: "Needed by the hook and for the tab/panel ids.")
 
@@ -122,15 +146,22 @@ defmodule LineaUI.Components.Tabs do
 
   attr(:variant, :string,
     default: "line",
-    values: ~w(line boxed pill),
+    values: ~w(line boxed pill text),
     doc:
-      "`line` underlines the selected tab, `boxed` lifts it off a gray track, `pill` fills a rounded tab."
+      "`line` underlines the selected tab, `boxed` lifts it off a gray track, `pill` fills a rounded tab, `text` is plain text that only changes color (no border or background; spacing comes from `list_class`, `space-x-4` by default)."
+  )
+
+  attr(:size, :string,
+    default: "md",
+    values: ~w(xs sm md),
+    doc:
+      "For `boxed`: `md` is `px-3 py-1.5`, `sm` is LineOne's compact `px-3 py-1 text-xs-plus`, `xs` is `px-2.5 py-0.5 text-xs`."
   )
 
   attr(:color, :string,
     default: "primary",
     values: ~w(primary neutral),
-    doc: "The fill of the selected `pill` tab."
+    doc: "The fill of the selected `pill` tab and the text color of the selected `text` tab."
   )
 
   attr(:orientation, :string, default: "horizontal", values: ~w(horizontal vertical))
@@ -158,7 +189,7 @@ defmodule LineaUI.Components.Tabs do
     default: nil,
     doc: """
     Run when a tab is chosen in the browser. An event name is pushed with
-    `%{"id" => id, "value" => name}`; a `%JS{}` is executed on the tabs element.
+    `%{"id" => id, "value" => name, "tab" => name}`; a `%JS{}` is executed on the tabs element.
     """
   )
 
@@ -209,11 +240,23 @@ defmodule LineaUI.Components.Tabs do
   end
 
   defp tab_class(assigns, key) do
-    [@tab_base[key], pill_color(assigns), grow_class(assigns.grow)]
+    [
+      tab_base(assigns.variant, key),
+      boxed_size(assigns),
+      variant_color(assigns),
+      grow_class(assigns.grow)
+    ]
   end
 
-  defp pill_color(%{variant: "pill", color: color}), do: @pill_colors[color]
-  defp pill_color(_assigns), do: nil
+  defp tab_base("text", {_variant, orientation}), do: @text_tabs[orientation]
+  defp tab_base(_variant, key), do: @tab_base[key]
+
+  defp boxed_size(%{variant: "boxed", size: size}), do: @boxed_sizes[size]
+  defp boxed_size(_assigns), do: nil
+
+  defp variant_color(%{variant: "pill", color: color}), do: @pill_colors[color]
+  defp variant_color(%{variant: "text", color: color}), do: @text_colors[color]
+  defp variant_color(_assigns), do: nil
 
   defp grow_class(true), do: "flex-1"
   defp grow_class(false), do: "shrink-0"
