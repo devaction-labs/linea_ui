@@ -13,6 +13,21 @@ export const stackWithout = (stack, id) => stack.filter((open) => open !== id)
 /** Whether `id` is the overlay on top, the only one that answers Esc. */
 export const isTop = (stack, id) => stack.at(-1) === id
 
+/** The layer of `id`: its place in the stack from the bottom (0 for the first open), `-1` when it is not open. */
+export const layerOf = (stack, id) => stack.indexOf(id)
+
+/**
+ * Whether a click on `target` falls on the backdrop of `root` itself, and not on the backdrop of another overlay
+ * rendered inside it.
+ *
+ * @param {Element} root the overlay
+ * @param {Element} target the element clicked
+ */
+export const ownsBackdrop = (root, target) => {
+  const backdrop = target?.closest?.("[data-backdrop]")
+  return Boolean(backdrop) && backdrop.parentElement === root
+}
+
 /** How many overlays hold `key` (an element) inert; a copy of the counts with one more. */
 export const retain = (counts, key) => new Map(counts).set(key, (counts.get(key) ?? 0) + 1)
 

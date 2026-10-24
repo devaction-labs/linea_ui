@@ -517,7 +517,7 @@ code.inline-code {
 
 /* popper */
 .popper-root {
-  @apply invisible z-[1000];
+  @apply invisible z-(--linea-z-popover);
 }
 
 .popper-root.show {
@@ -864,7 +864,7 @@ code.inline-code {
 
 /* notification */
 .toastify {
-  @apply z-[10010] rounded-sm bg-slate-200 bg-none font-medium text-slate-800 shadow-none dark:bg-navy-600 dark:text-navy-50;
+  @apply z-(--linea-z-toast) rounded-sm bg-slate-200 bg-none font-medium text-slate-800 shadow-none dark:bg-navy-600 dark:text-navy-50;
 }
 
 .toastify.html {

@@ -123,4 +123,56 @@ defmodule LineaUI.Components.DropdownTest do
     assert "rounded-none" in classes(html, "#b-button")
     assert "rounded-full" in classes(html, "#c-button")
   end
+
+  test "a submenu: an item that opens a nested menu to its side" do
+    html =
+      render(~H"""
+      <.dropdown id="dd" label="Menu">
+        <.dropdown_item>Edit</.dropdown_item>
+        <.dropdown_submenu id="move" label="Move to" class="w-48">
+          <:icon><i id="ic"></i></:icon>
+          <.dropdown_item id="archive">Archive</.dropdown_item>
+        </.dropdown_submenu>
+      </.dropdown>
+      """)
+
+    assert [sub] = find(html, "#dd [role=menu] > #move[data-submenu]") |> Enum.to_list()
+    assert LazyHTML.attribute(sub, "data-open") == ["false"]
+    assert LazyHTML.attribute(sub, "data-placement") == ["right"]
+    assert LazyHTML.attribute(sub, "phx-mounted") |> hd() =~ "data-open"
+
+    trigger = find(html, "#move-trigger")
+    assert LazyHTML.attribute(trigger, "role") == ["menuitem"]
+    assert LazyHTML.attribute(trigger, "aria-haspopup") == ["menu"]
+    assert LazyHTML.attribute(trigger, "aria-expanded") == ["false"]
+    assert LazyHTML.attribute(trigger, "aria-controls") == ["move-menu"]
+    assert LazyHTML.attribute(trigger, "data-submenu-trigger") == [""]
+    assert LazyHTML.text(trigger) =~ "Move to"
+    assert [_] = find(html, "#move-trigger > #ic") |> Enum.to_list()
+    assert [_] = find(html, "#move-trigger > svg") |> Enum.to_list()
+
+    assert "linea-submenu" in classes(html, "#move > [data-submenu-panel]")
+    menu = find(html, "#move [data-submenu-panel] > #move-menu")
+    assert LazyHTML.attribute(menu, "role") == ["menu"]
+    assert LazyHTML.attribute(menu, "aria-labelledby") == ["move-trigger"]
+    assert "w-48" in classes(html, "#move-menu")
+    assert [_] = find(html, "#move-menu > #archive") |> Enum.to_list()
+  end
+
+  test "a submenu opening left, disabled, with a generated id" do
+    html =
+      render(~H"""
+      <.dropdown_submenu label="More" placement="left" disabled trigger_class="text-error">
+        <.dropdown_item>X</.dropdown_item>
+      </.dropdown_submenu>
+      """)
+
+    assert [id] = find(html, "[data-submenu]") |> LazyHTML.attribute("id")
+    assert id =~ "submenu"
+    assert find(html, "[data-submenu]") |> LazyHTML.attribute("data-side") == ["left"]
+    trigger = find(html, "[data-submenu-trigger]")
+    assert LazyHTML.attribute(trigger, "disabled") == [""]
+    assert LazyHTML.attribute(trigger, "aria-disabled") == ["true"]
+    assert ["opacity-60", "text-error"] -- classes(html, "[data-submenu-trigger]") == []
+  end
 end

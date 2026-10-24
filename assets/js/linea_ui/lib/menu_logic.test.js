@@ -1,6 +1,6 @@
 import assert from "node:assert/strict"
 import test from "node:test"
-import {asksForContextMenu, buttonView, closesOnSelect, counts, extendBuffer, isExpanded, isTypeahead, keyboardAnchor, matchIndex, pendingCount, placeFixed, resetAction, selectedStates} from "./menu_logic.js"
+import {asksForContextMenu, buttonView, closesOnSelect, counts, extendBuffer, isExpanded, isTypeahead, keyboardAnchor, matchIndex, pendingCount, placeFixed, resetAction, selectedStates, submenuKey, submenuSide} from "./menu_logic.js"
 
 const key = (key, extra = {}) => ({key, ctrlKey: false, metaKey: false, altKey: false, ...extra})
 
@@ -154,4 +154,23 @@ test("a fixed menu opens above the button when there is no room below", () => {
 test("a fixed menu never leaves the screen", () => {
   assert.equal(placeFixed("start", buttonAt(960, 100), menuBox, screen).left, 1000 - 8 - 190)
   assert.equal(placeFixed("end", buttonAt(0, 100), menuBox, screen).left, 8)
+})
+
+test("a submenu opens on its side when there is room, else on the other", () => {
+  const anchor = {left: 300, right: 500}
+  assert.equal(submenuSide("right", anchor, 200, 1000), "right")
+  assert.equal(submenuSide("right", anchor, 200, 600), "left")
+  assert.equal(submenuSide("left", anchor, 200, 1000), "left")
+  assert.equal(submenuSide("left", anchor, 400, 1000), "right")
+  assert.equal(submenuSide(undefined, anchor, 900, 1000), "right")
+  assert.equal(submenuSide("left", anchor, 900, 1000), "left")
+})
+
+test("→ opens a submenu from its item, ← and Esc go back from inside one", () => {
+  assert.equal(submenuKey({key: "ArrowRight", onTrigger: true, nested: false}), "open")
+  assert.equal(submenuKey({key: "ArrowRight", onTrigger: false, nested: true}), null)
+  assert.equal(submenuKey({key: "ArrowLeft", onTrigger: false, nested: true}), "back")
+  assert.equal(submenuKey({key: "Escape", onTrigger: true, nested: true}), "back")
+  assert.equal(submenuKey({key: "Escape", onTrigger: false, nested: false}), null)
+  assert.equal(submenuKey({key: "ArrowDown", onTrigger: true, nested: true}), null)
 })

@@ -130,3 +130,33 @@ export const placeFixed = (align, anchor, panel, screen) => {
   const {top, left} = fixedCorner({side, align, anchor, panel, screen})
   return {side, top: Math.round(top), left: Math.round(left)}
 }
+
+/**
+ * The side a submenu opens to: `preferred` (`right` unless it says `left`) when the screen has room for it there,
+ * else the other side when that one has room, else `preferred` anyway.
+ *
+ * @param {string | undefined} preferred
+ * @param {{left: number, right: number}} anchor the item that opens it (its menu's edges)
+ * @param {number} width the submenu
+ * @param {number} screenWidth
+ * @returns {"left" | "right"}
+ */
+export const submenuSide = (preferred, anchor, width, screenWidth) => {
+  const room = {right: anchor.right + width <= screenWidth, left: anchor.left - width >= 0}
+  const first = preferred === "left" ? "left" : "right"
+  const other = first === "left" ? "right" : "left"
+  return room[first] || !room[other] ? first : other
+}
+
+/**
+ * What a key does to submenus: `open` (→ on an item that opens one), `back` (← or Esc inside a submenu, which
+ * closes it and goes back to its item), or `null` for the menu's other keys.
+ *
+ * @param {{key: string, onTrigger: boolean, nested: boolean}} state
+ * @returns {"open" | "back" | null}
+ */
+export const submenuKey = ({key, onTrigger, nested}) =>
+  [
+    [key === "ArrowRight" && onTrigger, "open"],
+    [(key === "ArrowLeft" || key === "Escape") && nested, "back"],
+  ].find(([hit]) => hit)?.[1] ?? null

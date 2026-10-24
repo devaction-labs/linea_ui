@@ -116,6 +116,25 @@ remaining setup lines. `mix linea_ui.gen.skill --path <dir>` writes only the ski
 {:noreply, LineaUI.close(socket, "new-order")}
 ```
 
+### Overlay layers
+
+The overlays take their `z-index` from CSS custom properties, so an app can raise them (above another kit's
+overlays during a migration, say) in its own `app.css`, after the import:
+
+```css
+:root {
+  --linea-z-overlay: 100;   /* drawers */
+  --linea-z-modal: 100;     /* modals */
+  --linea-z-popover: 1000;  /* dropdowns, popovers, select and picker panels */
+  --linea-z-tooltip: 10003;
+  --linea-z-toast: 10010;
+}
+```
+
+The values above are the defaults. Drawers and modals stack in the order they open: each one already open adds
+10 to the next (`--linea-layer`), so a modal opened from a drawer, or a drawer opened from another, is drawn on
+top, and Esc closes only the top one.
+
 ## Development
 
 ```bash

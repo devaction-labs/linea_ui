@@ -24,6 +24,10 @@ defmodule LineaUI.Components.Modal do
   (an image) a `close_variant="chip"` so the button keeps a backdrop.
 
   `prevent_close` keeps Esc and the backdrop from closing it.
+
+  A modal opened from a drawer (or from another modal) is drawn above it, and Esc closes only
+  the one on top; render it next to the drawer, not inside its markup. Its layer is the CSS
+  custom property `--linea-z-modal` (see the README).
   """
 
   use LineaUI.Component
@@ -136,7 +140,7 @@ defmodule LineaUI.Components.Modal do
     <div
       id={@id}
       class={[
-        "modal fixed inset-0 z-[100] flex flex-col items-center overflow-hidden px-4 py-6 sm:px-5",
+        "modal fixed inset-0 flex flex-col items-center overflow-hidden px-4 py-6 sm:px-5",
         animation_class(@animation),
         placement_class(@placement)
       ]}
@@ -145,7 +149,7 @@ defmodule LineaUI.Components.Modal do
       aria-hidden="true"
       aria-labelledby={@header != [] && "#{@id}-title"}
       phx-hook="LineaUI.Dialog"
-      phx-mounted={JS.ignore_attributes(["class", "data-state", "aria-hidden"])}
+      phx-mounted={JS.ignore_attributes(["class", "data-state", "aria-hidden", "style"])}
       data-state="closed"
       data-open={bool(@open)}
       data-kind="modal"

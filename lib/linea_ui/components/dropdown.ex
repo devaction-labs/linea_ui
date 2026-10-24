@@ -27,6 +27,20 @@ defmodule LineaUI.Components.Dropdown do
         …
       </.dropdown>
 
+  A `dropdown_submenu` nests a menu that opens to the side, on hover, on click, or with → (←
+  or Esc goes back to its parent):
+
+      <.dropdown id="row" toggle_icon="dots">
+        <.dropdown_item phx-click="edit">Edit</.dropdown_item>
+        <.dropdown_submenu label="Move to">
+          <.dropdown_item phx-click="move" phx-value-to="archive">Archive</.dropdown_item>
+          <.dropdown_item phx-click="move" phx-value-to="trash">Trash</.dropdown_item>
+        </.dropdown_submenu>
+      </.dropdown>
+
+  A long menu scrolls inside a `scroll_area` (`LineaUI.Components.ScrollArea`); keep submenus out
+  of a scrolling box, which would clip them.
+
   The keyboard works as in a menu (↑ ↓ Home End, letters, Esc, Tab). It opens and closes from
   the browser (`LineaUI.toggle("actions")`), from the server (`LineaUI.close(socket, "actions")`)
   or from `open`; `on_open` / `on_close` run whoever opened or closed it.
@@ -254,6 +268,94 @@ defmodule LineaUI.Components.Dropdown do
     >
       {render_slot(@icon)}{render_slot(@inner_block)}
     </button>
+    """
+  end
+
+  @doc """
+  An item that opens a nested menu to its side, holding `dropdown_item`s (and separators,
+  headers, or further submenus). It opens when the pointer rests on it, on click, and with →,
+  Enter or Space, which also move the focus into it; ← and Esc close it and give the focus back.
+  It opens on the `placement` side, or the other one when the screen has no room there.
+
+      <.dropdown_submenu label="Export">
+        <:icon><.icon name="huge-download-04" class="size-4.5" /></:icon>
+        <.dropdown_item phx-click="export" phx-value-format="csv">CSV</.dropdown_item>
+        <.dropdown_item phx-click="export" phx-value-format="pdf">PDF</.dropdown_item>
+      </.dropdown_submenu>
+  """
+  attr :id, :string, default: nil, doc: "Generated when not given."
+  attr :label, :string, required: true
+
+  attr :placement, :string,
+    default: "right",
+    values: ~w(right left),
+    doc: "The side it opens to, when there is room."
+
+  attr :disabled, :boolean, default: false
+  attr :class, :any, default: nil, doc: "Merged into the nested menu box (`w-48`...)."
+  attr :trigger_class, :any, default: nil, doc: "Merged into the item that opens it."
+  attr :rest, :global
+  slot :icon, doc: "Drawn before the label."
+  slot :inner_block, required: true
+
+  def dropdown_submenu(assigns) do
+    assigns =
+      assigns
+      |> assign(:id, assigns.id || gen_id("submenu"))
+      |> assign(:item_class, @item_styles["default"]["neutral"])
+
+    ~H"""
+    <div
+      id={@id}
+      class="relative"
+      data-submenu
+      data-open="false"
+      data-placement={@placement}
+      data-side={@placement}
+      phx-mounted={JS.ignore_attributes(["data-open", "data-side"])}
+      {@rest}
+    >
+      <button
+        id={"#{@id}-trigger"}
+        type="button"
+        class={
+          merge([
+            @item_class,
+            "w-full pr-3 text-left",
+            @icon != [] && "space-x-3",
+            @disabled && "pointer-events-none opacity-60",
+            @trigger_class
+          ])
+        }
+        role="menuitem"
+        tabindex="-1"
+        aria-haspopup="menu"
+        aria-expanded="false"
+        aria-controls={"#{@id}-menu"}
+        aria-disabled={@disabled && "true"}
+        disabled={@disabled}
+        phx-mounted={JS.ignore_attributes(["aria-expanded"])}
+        data-submenu-trigger
+      >
+        {render_slot(@icon)}<span class="flex-1">{@label}</span>
+        <.glyph name={:chevron_right} class="ml-4 size-4 shrink-0 text-slate-400 dark:text-navy-300" />
+      </button>
+      <div class="linea-submenu" data-submenu-panel>
+        <div
+          id={"#{@id}-menu"}
+          class={
+            merge([
+              "w-max min-w-40 rounded-md border border-slate-150 bg-white py-1.5 font-inter shadow-soft dark:border-navy-500 dark:bg-navy-700 dark:shadow-soft-dark",
+              @class
+            ])
+          }
+          role="menu"
+          aria-labelledby={"#{@id}-trigger"}
+        >
+          {render_slot(@inner_block)}
+        </div>
+      </div>
+    </div>
     """
   end
 

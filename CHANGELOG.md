@@ -34,6 +34,22 @@
   `presets` under the calendar (named periods computed from `today` by the new `date_range_preset/3`, or
   explicit `{from, to}`), and `locale="pt_BR"` (month and weekday names, `dd/mm/aaaa`, "até"), with
   `range_separator`; `datetime_picker` takes `locale` too.
+- `drawer`: the design's sheet — `title`, `description` and a `:header` slot with a close button, `:back` and
+  `:actions` slots, a scrolling body (`body_class`), a `:footer` slot (end-aligned, top border, tinted bar),
+  `size` (`sm` 400px, `md` 560px, `lg` 760px, `xl` 1080px, full width on phones), `placement`, `lock_scroll`.
+  A bare drawer renders as before.
+- Overlay layers are CSS custom properties (`--linea-z-overlay`, `--linea-z-modal`, `--linea-z-popover`,
+  `--linea-z-tooltip`, `--linea-z-toast`) with today's values as defaults; drawers and modals stack in the order
+  they open (a modal opened from a drawer is above it), and Esc or a backdrop click closes only the top one.
+- `toaster`/toasts: `kind` (`neutral info success warning error loading`) with an icon, `description`, `actions`
+  (event, `%JS{}`, link or dismiss), a toast with a known `id` is replaced in place (loading, then the answer),
+  `update_toast/3`, `dismiss_toast/1,2`, `clear_toasts/0,1`, `send_toast/2` with the title in the options,
+  `duration: :infinity`, `persist_errors` on the toaster. Existing calls are unchanged.
+- `dropdown_submenu`: a nested menu that opens to the side on hover, click or →, back with ← or Esc, flipping
+  side when the screen has no room.
+- `scroll_area`: a box with LineOne's thin scrollbar (6px, transparent track, thumb on hover), vertical,
+  horizontal or both; `scrollbar-sm` now also styles Firefox, and `scrollbar-always` keeps the thumb shown.
+- `glyph`: `info_circle`, `warning`, `check_circle` and `error_circle`.
 
 ## 0.1.1
 

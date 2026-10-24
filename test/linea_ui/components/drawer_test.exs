@@ -37,4 +37,96 @@ defmodule LineaUI.Components.DrawerTest do
     html = render(~H|<.drawer id="d" on_close="closed" target="#comp">x</.drawer>|)
     assert attr_of(html, "#d", "data-on-close") |> hd() =~ ~s("target":"#comp")
   end
+
+  test "a bare drawer has no header, body or footer of its own" do
+    html = render(~H|<.drawer id="d">
+  <nav id="nav">x</nav>
+</.drawer>|)
+    assert find(html, "#d [data-drawer-header], #d [data-drawer-body]") |> Enum.to_list() == []
+    assert [_] = find(html, "#d-panel > #nav") |> Enum.to_list()
+    refute attr_of(html, "#d", "aria-labelledby") |> List.first()
+  end
+
+  test "a sheet: title, description, close button, scrolling body and footer" do
+    html =
+      render(~H"""
+      <.drawer id="s" placement="right" size="md" title="New customer" description="Who buys">
+        <p id="body">Form</p>
+        <:footer class="gap-3"><button id="save">Save</button></:footer>
+      </.drawer>
+      """)
+
+    assert "drawer-right" in classes(html, "#s")
+    assert ["right-0", "w-full", "max-w-[560px]"] -- classes(html, ".drawer-content") == []
+    refute "w-72" in classes(html, ".drawer-content")
+    assert attr_of(html, "#s", "aria-labelledby") == ["s-title"]
+    assert find(html, "#s-title") |> LazyHTML.text() =~ "New customer"
+    assert find(html, "[data-drawer-header] p") |> LazyHTML.text() =~ "Who buys"
+    assert [close] = find(html, "[data-drawer-close]") |> Enum.to_list()
+    assert LazyHTML.attribute(close, "aria-label") == ["Close"]
+    assert LazyHTML.attribute(close, "phx-click") |> hd() =~ "linea:close"
+
+    assert ["overflow-y-auto", "flex-1", "scrollbar-sm"] -- classes(html, "[data-drawer-body]") ==
+             []
+
+    assert [_] = find(html, "[data-drawer-body] > #body") |> Enum.to_list()
+
+    assert ["justify-end", "border-t", "bg-slate-50", "gap-3"] --
+             classes(html, "[data-drawer-footer]") == []
+
+    assert [_] = find(html, "[data-drawer-footer] > #save") |> Enum.to_list()
+  end
+
+  test "each size sets the sheet's width" do
+    for {size, width} <- [
+          {"sm", "max-w-[400px]"},
+          {"md", "max-w-[560px]"},
+          {"lg", "max-w-[760px]"},
+          {"xl", "max-w-[1080px]"}
+        ] do
+      assigns = %{size: size}
+
+      html =
+        Phoenix.LiveViewTest.rendered_to_string(~H|<.drawer id="d" size={@size}>x</.drawer>|)
+
+      assert width in classes(html, ".drawer-content")
+    end
+  end
+
+  test "placement wins over side" do
+    html = render(~H|<.drawer id="d" side="right" placement="left">x</.drawer>|)
+    refute "drawer-right" in classes(html, "#d")
+    assert "left-0" in classes(html, ".drawer-content")
+  end
+
+  test "back, actions and a custom header; the close button can go" do
+    html =
+      render(~H"""
+      <.drawer id="c" title="ignored" close_button={false}>
+        <:back><button id="back">Back</button></:back>
+        <:header class="pb-2"><span id="custom">Combine line</span></:header>
+        <:actions><button id="approve">Approve</button></:actions>
+        x
+      </.drawer>
+      """)
+
+    assert [_] = find(html, "[data-drawer-header] > div > #back") |> Enum.to_list()
+    assert [_] = find(html, "#c-title > #custom") |> Enum.to_list()
+    refute LazyHTML.text(find(html, "[data-drawer-header]")) =~ "ignored"
+    assert [_] = find(html, "[data-drawer-header] #approve") |> Enum.to_list()
+    assert find(html, "[data-drawer-close]") |> Enum.to_list() == []
+    assert "pb-2" in classes(html, "[data-drawer-header]")
+  end
+
+  test "lock_scroll locks the page, and the root keeps its layer through patches" do
+    html = render(~H|<.drawer id="d" lock_scroll title="T">x</.drawer>|)
+    assert attr_of(html, "#d", "data-lock") == ["true"]
+    assert attr_of(html, "#d", "phx-mounted") |> hd() =~ "style"
+  end
+
+  test "the layers come from CSS, not from z utilities" do
+    html = render(~H|<.drawer id="d">x</.drawer>|)
+    refute Enum.any?(classes(html, ".drawer-overlay"), &String.starts_with?(&1, "z-"))
+    refute Enum.any?(classes(html, ".drawer-content"), &String.starts_with?(&1, "z-"))
+  end
 end
