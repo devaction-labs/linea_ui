@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.4.1
+
+- Visual parity with the Signetum canvas, no API changes. `command_palette`: key caps are filled with an inset bottom edge, icon tiles and dividers
+  follow the canvas tokens in dark, group labels track `.08em`. `segmented`: 3px tray, the active segment is ink on white
+  (`navy-500` in dark) and its count takes the primary color. `empty_state`: 17px title, `slate-800` ink, softer dark rings
+  and icon tile. `stepper`: dark to-do markers and bars use `navy-800`, vertical connectors are `slate-150`. `progress`:
+  dark track is `navy-800` and the light `warning` fill is `#e68200`.
+
 ## 0.4.0
 
 - `framed_sidebar`: in the collapsed rail the search box is a square with the icon centered; what it hides (`rail-label`, the search text and shortcut) wins over utility classes such as the `kbd`'s own `display`.
