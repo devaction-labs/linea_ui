@@ -78,12 +78,21 @@
   }
 
   .toastify .toast-close {
-    @apply cursor-pointer border-0 bg-transparent;
+    @apply inline-flex size-6 cursor-pointer items-center justify-center rounded-full border-0 bg-transparent p-0 align-middle transition-colors;
     color: inherit;
-    font-family: inherit;
-    font-size: 1em;
-    opacity: 0.4;
-    padding: 0 5px;
+    margin: -4px -8px -4px 12px;
+    opacity: 0.8;
+  }
+
+  .toastify .toast-close svg {
+    @apply size-4;
+  }
+
+  .toastify .toast-close:hover,
+  .toastify .toast-close:focus-visible {
+    background-color: color-mix(in oklab, currentColor 20%, transparent);
+    opacity: 1;
+    outline: none;
   }
 
 }
