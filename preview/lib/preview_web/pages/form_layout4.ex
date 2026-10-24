@@ -12,7 +12,7 @@ defmodule PreviewWeb.Pages.FormLayout4 do
     ~H"""
     <div class="flex flex-col items-center justify-between space-y-4 sm:flex-row sm:space-y-0">
       <div class="flex items-center space-x-1">
-        <.icon name="doc-plus" class="size-6" stroke="2" />
+        <.lineone_icon name="doc-plus" class="size-6" stroke="2" />
         <h2 class="text-xl font-medium text-slate-700 line-clamp-1 dark:text-navy-50">New Post</h2>
       </div>
       <div class="flex justify-center space-x-2">
@@ -92,7 +92,7 @@ defmodule PreviewWeb.Pages.FormLayout4 do
             label_class={@caption}
             placeholder="Choose date..."
           >
-            <:prefix><.icon name="calendar" class="size-5 transition-colors duration-200" /></:prefix>
+            <:prefix><.lineone_icon name="calendar" class="size-5 transition-colors duration-200" /></:prefix>
           </.input>
         </div>
       </div>
@@ -115,7 +115,7 @@ defmodule PreviewWeb.Pages.FormLayout4 do
           "border-transparent hover:text-slate-800 focus:text-slate-800 dark:hover:text-navy-100 dark:focus:text-navy-100"
       ]}
     >
-      <.icon name={@icon} class="size-4.5" stroke="2" /><span>{@label}</span>
+      <.lineone_icon name={@icon} class="size-4.5" stroke="2" /><span>{@label}</span>
     </button>
     """
   end

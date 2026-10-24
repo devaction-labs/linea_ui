@@ -7,6 +7,13 @@
 # General application configuration
 import Config
 
+config :linea_ui,
+  :icons,
+  (case System.get_env("LINEA_ICONS") do
+     "hugeicons" -> :hugeicons
+     _ -> :lineone
+   end)
+
 config :preview,
   generators: [timestamp_type: :utc_datetime]
 

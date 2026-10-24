@@ -97,7 +97,7 @@ defmodule PreviewWeb.Pages.Textarea do
     </label>
     <div class="p-2">
       <.button variant="flat" icon shape="pill" class="size-8 text-current" aria-label="More">
-        <.icon name="dots" class="size-5" stroke="2" />
+        <.lineone_icon name="dots" class="size-5" stroke="2" />
       </.button>
     </div>
     """
@@ -115,7 +115,7 @@ defmodule PreviewWeb.Pages.Textarea do
       class={["size-8 text-current", @class]}
       aria-label={@icon}
     >
-      <.icon name={@icon} class="size-5" />
+      <.lineone_icon name={@icon} class="size-5" />
     </.button>
     """
   end

@@ -1,6 +1,9 @@
 @import "tailwindcss" source(none);
 @import "../../../assets/css/fonts.css";
 @import "../../../assets/css/linea_ui.css";
+@plugin "../../../assets/css/hugeicons.cjs" {
+  dir: "preview/deps/hugeicons/icons";
+}
 @source "../js";
 @source "../../lib/preview_web";
 @source "../../../lib";

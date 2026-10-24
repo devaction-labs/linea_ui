@@ -42,6 +42,13 @@ defmodule Preview.MixProject do
     [
       {:phoenix, "~> 1.8.16"},
       {:phoenix_html, "~> 4.1"},
+      {:hugeicons,
+       github: "hugeicons/hugeicons",
+       ref: "3365154e0ae2461fbfb6249b89649127207a4f9e",
+       sparse: "icons",
+       app: false,
+       compile: false,
+       depth: 1},
       {:linea_ui, path: ".."},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
       {:phoenix_live_view, "~> 1.2.0"},

@@ -46,11 +46,11 @@ defmodule PreviewWeb.Pages.FormLayout1 do
           <p class="text-base font-medium text-slate-700 dark:text-navy-100">Shipping Address</p>
           <div class="mt-4 space-y-4">
             <.input field={@form[:company]} label="Company name" placeholder="Your Company">
-              <:prefix><.icon name="building" /></:prefix>
+              <:prefix><.lineone_icon name="building" /></:prefix>
             </.input>
             <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <.input field={@form[:client]} label="Client name" placeholder="Your Name">
-                <:prefix><.icon name="user" /></:prefix>
+                <:prefix><.lineone_icon name="user" /></:prefix>
               </.input>
               <.input
                 field={@form[:phone]}
@@ -59,7 +59,7 @@ defmodule PreviewWeb.Pages.FormLayout1 do
                 mask="blocks"
                 mask_options={%{blocks: [0, 3, 3, 4], delimiters: ["(", ") ", "-"], numeric: true}}
               >
-                <:prefix><.icon name="phone" class="size-4" /></:prefix>
+                <:prefix><.lineone_icon name="phone" class="size-4" /></:prefix>
               </.input>
             </div>
             <div class="grid grid-cols-1 gap-4 sm:grid-cols-12">
@@ -70,7 +70,7 @@ defmodule PreviewWeb.Pages.FormLayout1 do
                 placeholder="Email address"
                 wrapper_class="sm:col-span-8"
               >
-                <:prefix><.icon name="envelope" /></:prefix>
+                <:prefix><.lineone_icon name="envelope" /></:prefix>
               </.input>
               <.input
                 field={@form[:pincode]}
@@ -78,7 +78,7 @@ defmodule PreviewWeb.Pages.FormLayout1 do
                 placeholder="Pincode"
                 wrapper_class="sm:col-span-4"
               >
-                <:prefix><.icon name="pin" /></:prefix>
+                <:prefix><.lineone_icon name="pin" /></:prefix>
               </.input>
             </div>
             <.textarea
@@ -89,10 +89,10 @@ defmodule PreviewWeb.Pages.FormLayout1 do
             />
             <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <.input field={@form[:city]} label="City" placeholder="Your City/Town">
-                <:prefix><.icon name="city" /></:prefix>
+                <:prefix><.lineone_icon name="city" /></:prefix>
               </.input>
               <.input field={@form[:state]} label="State" placeholder="Your State">
-                <:prefix><.icon name="flag" class="size-4" /></:prefix>
+                <:prefix><.lineone_icon name="flag" class="size-4" /></:prefix>
               </.input>
             </div>
             <.textarea
@@ -104,10 +104,10 @@ defmodule PreviewWeb.Pages.FormLayout1 do
             />
             <div class="flex justify-end space-x-2">
               <.button class="space-x-2">
-                <.icon name="prev" class="size-5" /><span>Prev</span>
+                <.lineone_icon name="prev" class="size-5" /><span>Prev</span>
               </.button>
               <.button type="submit" color="primary" class="space-x-2">
-                <span>Next</span><.icon name="next" class="size-5" />
+                <span>Next</span><.lineone_icon name="next" class="size-5" />
               </.button>
             </div>
           </div>
@@ -134,7 +134,7 @@ defmodule PreviewWeb.Pages.FormLayout1 do
         (@done || @current) && "bg-primary text-white dark:bg-accent",
         !(@done || @current) && "bg-slate-200 text-slate-800 dark:bg-navy-500 dark:text-white"
       ]}>
-        <.icon :if={@done} name="done" class="size-5" />
+        <.lineone_icon :if={@done} name="done" class="size-5" />
         {@number}
       </div>
       <h3 class="ml-4 text-slate-700 dark:text-navy-100">{@title}</h3>

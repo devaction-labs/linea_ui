@@ -81,7 +81,7 @@ defmodule PreviewWeb.Pages.InputGroup do
       </.input_group>
       <.input_group>
         <.input name="dropdown-search" placeholder="Search...">
-          <:prefix><.icon name="location" class="size-5 transition-colors duration-200" /></:prefix>
+          <:prefix><.lineone_icon name="location" class="size-5 transition-colors duration-200" /></:prefix>
         </.input>
         <.button color="primary">Dropdown</.button>
       </.input_group>

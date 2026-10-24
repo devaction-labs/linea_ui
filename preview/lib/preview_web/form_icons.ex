@@ -73,7 +73,7 @@ defmodule PreviewWeb.FormIcons do
   attr :class, :any, default: "size-4.5"
   attr :stroke, :string, default: "1.5"
 
-  def icon(%{name: name} = assigns) when is_map_key(@solid, name) do
+  def lineone_icon(%{name: name} = assigns) when is_map_key(@solid, name) do
     assigns = assign(assigns, :d, @solid[name])
 
     ~H"""
@@ -83,7 +83,7 @@ defmodule PreviewWeb.FormIcons do
     """
   end
 
-  def icon(assigns) do
+  def lineone_icon(assigns) do
     assigns = assign(assigns, :d, @paths[assigns.name])
 
     ~H"""

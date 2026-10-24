@@ -67,7 +67,7 @@ defmodule PreviewWeb.Pages.Tab do
         <div class="mt-5">
           <.tabs id="tab-wrapper-3" selected="profile" bordered overlap>
             <:tab :for={{name, label, _} <- @three} name={name}>
-              {icon(%{d: @icons[name]})}<span>{label}</span>
+              {lineone_icon(%{d: @icons[name]})}<span>{label}</span>
             </:tab>
             <:panel :for={{name, _, body} <- @three} name={name}>{panel(%{body: body})}</:panel>
           </.tabs>
@@ -91,7 +91,7 @@ defmodule PreviewWeb.Pages.Tab do
         <div class="mt-5">
           <.tabs id="tab-wrapper-5" variant="boxed">
             <:tab :for={{name, label, _} <- @three} name={name}>
-              {icon(%{d: @icons[name]})}<span>{label}</span>
+              {lineone_icon(%{d: @icons[name]})}<span>{label}</span>
             </:tab>
             <:panel :for={{name, _, body} <- @three} name={name}>{panel(%{body: body})}</:panel>
           </.tabs>
@@ -119,7 +119,7 @@ defmodule PreviewWeb.Pages.Tab do
         <div class="mt-5 space-y-6">
           <.tabs id="tab-wrapper-8" orientation="vertical" bordered overlap>
             <:tab :for={{name, label, _} <- @panels} name={name}>
-              {icon(%{d: @icons[name] || @icons["home"]})}<span>{label}</span>
+              {lineone_icon(%{d: @icons[name] || @icons["home"]})}<span>{label}</span>
             </:tab>
             <:panel :for={{name, _, body} <- @panels} name={name}>{panel(%{body: body})}</:panel>
           </.tabs>
@@ -155,7 +155,7 @@ defmodule PreviewWeb.Pages.Tab do
     """
   end
 
-  defp icon(assigns) do
+  defp lineone_icon(assigns) do
     ~H"""
     <svg
       xmlns="http://www.w3.org/2000/svg"

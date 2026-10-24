@@ -39,7 +39,7 @@ defmodule PreviewWeb.Pages.MenuList do
                 value={"#{n}:#{label}"}
                 active={Map.get(@active, "#{n}", "Getting start") == label}
               >
-                <.icon :if={icons} name={label} />
+                <.lineone_icon :if={icons} name={label} />
                 <span>{label}</span>
               </:item>
             </.menu_list>
@@ -72,7 +72,7 @@ defmodule PreviewWeb.Pages.MenuList do
 
   attr :name, :string, required: true
 
-  defp icon(%{name: "Copyright & Legal"} = assigns) do
+  defp lineone_icon(%{name: "Copyright & Legal"} = assigns) do
     ~H"""
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none">
       <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.5" />
@@ -84,7 +84,7 @@ defmodule PreviewWeb.Pages.MenuList do
     """
   end
 
-  defp icon(assigns) do
+  defp lineone_icon(assigns) do
     assigns = assign(assigns, :paths, Map.fetch!(@paths, assigns.name))
 
     ~H"""

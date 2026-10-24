@@ -44,7 +44,7 @@ defmodule PreviewWeb.Pages.FormLayout5 do
                 class="flex items-center space-x-2 rounded-lg bg-primary px-4 py-2.5 tracking-wide text-white outline-hidden transition-all dark:bg-accent"
                 href="#"
               >
-                <.icon name="account" class="size-5" /><span>Account</span>
+                <.lineone_icon name="account" class="size-5" /><span>Account</span>
               </a>
             </li>
             <li :for={{icon, label} <- @menu}>
@@ -52,7 +52,7 @@ defmodule PreviewWeb.Pages.FormLayout5 do
                 class="group flex space-x-2 rounded-lg px-4 py-2.5 tracking-wide outline-hidden transition-all hover:bg-slate-100 hover:text-slate-800 focus:bg-slate-100 focus:text-slate-800 dark:hover:bg-navy-600 dark:hover:text-navy-100 dark:focus:bg-navy-600 dark:focus:text-navy-100"
                 href="#"
               >
-                <.icon
+                <.lineone_icon
                   name={icon}
                   class="size-5 text-slate-400 transition-colors group-hover:text-slate-500 group-focus:text-slate-500 dark:text-navy-300 dark:group-hover:text-navy-200 dark:group-focus:text-navy-200"
                 />
@@ -92,7 +92,7 @@ defmodule PreviewWeb.Pages.FormLayout5 do
                     class="size-6 border border-slate-200 text-current dark:border-navy-500"
                     aria-label="Edit avatar"
                   >
-                    <.icon name="pencil" class="size-3.5" />
+                    <.lineone_icon name="pencil" class="size-3.5" />
                   </.button>
                 </div>
               </div>
@@ -106,7 +106,7 @@ defmodule PreviewWeb.Pages.FormLayout5 do
                 class="px-3 pl-9"
                 placeholder="Enter name"
               >
-                <:prefix><.icon name="user" /></:prefix>
+                <:prefix><.lineone_icon name="user" /></:prefix>
               </.input>
               <.input
                 field={@form[:full_name]}
@@ -115,7 +115,7 @@ defmodule PreviewWeb.Pages.FormLayout5 do
                 class="px-3 pl-9"
                 placeholder="Enter full name"
               >
-                <:prefix><.icon name="user" /></:prefix>
+                <:prefix><.lineone_icon name="user" /></:prefix>
               </.input>
               <.input
                 field={@form[:email]}
@@ -124,7 +124,7 @@ defmodule PreviewWeb.Pages.FormLayout5 do
                 class="px-3 pl-9"
                 placeholder="Enter email address"
               >
-                <:prefix><.icon name="envelope" /></:prefix>
+                <:prefix><.lineone_icon name="envelope" /></:prefix>
               </.input>
               <.input
                 field={@form[:phone]}
@@ -135,7 +135,7 @@ defmodule PreviewWeb.Pages.FormLayout5 do
                 placeholder="Enter phone number"
                 mask="phone"
               >
-                <:prefix><.icon name="phone" class="size-4" /></:prefix>
+                <:prefix><.lineone_icon name="phone" class="size-4" /></:prefix>
               </.input>
             </div>
             <div class="my-7 h-px bg-slate-200 dark:bg-navy-500"></div>

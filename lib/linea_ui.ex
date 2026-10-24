@@ -50,6 +50,7 @@ defmodule LineaUI do
     drawer: LineaUI.Components.Drawer,
     dropdown: LineaUI.Components.Dropdown,
     form: LineaUI.Components.Form,
+    icon: LineaUI.Components.Icon,
     input: LineaUI.Components.Input,
     input_group: LineaUI.Components.InputGroup,
     mask: LineaUI.Components.Mask,
@@ -85,7 +86,8 @@ defmodule LineaUI do
     input: [input: 1],
     table: [table: 1],
     form: [label: 1, error: 1],
-    app_shell: [header: 1]
+    app_shell: [header: 1],
+    icon: [icon: 1]
   }
 
   @doc "The component modules `use LineaUI` imports, by key."

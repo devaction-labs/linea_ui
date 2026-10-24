@@ -179,7 +179,7 @@ defmodule PreviewWeb.Pages.Timeline do
         time="12 minute ago"
         description="John Doe changed his avatar photo"
       >
-        <:point>{icon(%{d: @icons["user"]})}</:point>
+        <:point>{lineone_icon(%{d: @icons["user"]})}</:point>
         <div class="avatar mt-2 size-20">
           <img class="mask is-squircle" src="/lineone/images/avatar/avatar-19.jpg" alt="avatar" />
         </div>
@@ -191,7 +191,7 @@ defmodule PreviewWeb.Pages.Timeline do
         time="1 hour ago"
         description="Mores Clarke added new image gallery"
       >
-        <:point>{icon(%{d: @icons["image"]})}</:point>
+        <:point>{lineone_icon(%{d: @icons["image"]})}</:point>
         <div class="mt-4 grid grid-cols-3 gap-3">
           <img
             :for={n <- 1..6}
@@ -223,7 +223,7 @@ defmodule PreviewWeb.Pages.Timeline do
         time="3 hours ago"
         description="Robert Nolan completed the design of the CRM application"
       >
-        <:point>{icon(%{d: @icons["leaf"]})}</:point>
+        <:point>{lineone_icon(%{d: @icons["leaf"]})}</:point>
         <a
           href="#"
           class="inline-flex items-center space-x-1 pt-2 text-slate-600 transition-colors hover:text-primary dark:text-navy-100 dark:hover:text-accent"
@@ -257,7 +257,7 @@ defmodule PreviewWeb.Pages.Timeline do
         time="a day ago"
         description="Team completed the ER diagram app"
       >
-        <:point>{icon(%{d: @icons["diagram"]})}</:point>
+        <:point>{lineone_icon(%{d: @icons["diagram"]})}</:point>
         <div>
           <p class="text-xs text-slate-400 dark:text-navy-300">Members:</p>
           <div class="mt-2 flex justify-between">
@@ -308,13 +308,13 @@ defmodule PreviewWeb.Pages.Timeline do
         time="a day ago"
         description="The weekly report was uploaded"
       >
-        <:point>{icon(%{d: @icons["history"]})}</:point>
+        <:point>{lineone_icon(%{d: @icons["history"]})}</:point>
       </.timeline_item>
     </.timeline>
     """
   end
 
-  defp icon(assigns) do
+  defp lineone_icon(assigns) do
     ~H"""
     <svg
       xmlns="http://www.w3.org/2000/svg"

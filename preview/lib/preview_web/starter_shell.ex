@@ -122,11 +122,11 @@ defmodule PreviewWeb.StarterShell do
           <.main_sidebar :if={@layout != "sideblock"} current={@current} centered={@centered}>
             <:logo navigate="/" src={@logo} />
             <:item :for={{name, label} <- @rail} href="#" label={label} active={name == "pages"}>
-              <.icon name={name} class="size-7" />
+              <.lineone_icon name={name} class="size-7" />
             </:item>
             <:bottom>
               <.main_sidebar_link href="#" label="Settings">
-                <.icon name="settings" class="size-7" />
+                <.lineone_icon name="settings" class="size-7" />
               </.main_sidebar_link>
               <.profile avatar={@avatar} />
             </:bottom>
@@ -137,7 +137,7 @@ defmodule PreviewWeb.StarterShell do
           <.sidebar_panel_min :if={@layout == "minimal"}>
             <:header>
               <div class="avatar flex size-10 rounded-full bg-info/10 text-info">
-                <div class="is-initial"><.icon name="min-0" class="size-5" /></div>
+                <div class="is-initial"><.lineone_icon name="min-0" class="size-5" /></div>
               </div>
             </:header>
             <.sidebar_min_group>
@@ -148,7 +148,7 @@ defmodule PreviewWeb.StarterShell do
                 active={index == 1}
                 label={"Link #{index}"}
               >
-                <.icon name={"min-#{index}"} class="size-5.5" />
+                <.lineone_icon name={"min-#{index}"} class="size-5.5" />
               </.sidebar_min_link>
             </.sidebar_min_group>
             <.sidebar_min_divider />
@@ -159,7 +159,7 @@ defmodule PreviewWeb.StarterShell do
                 color={color}
                 label={"List #{index}"}
               >
-                <.icon name={"min-#{index}"} class="size-5.5" />
+                <.lineone_icon name={"min-#{index}"} class="size-5.5" />
               </.sidebar_min_link>
             </.sidebar_min_group>
             <:footer>
@@ -170,7 +170,7 @@ defmodule PreviewWeb.StarterShell do
                 class="size-10 font-medium"
                 aria-label="More"
               >
-                <.icon name="min-10" class="size-6" />
+                <.lineone_icon name="min-10" class="size-6" />
               </.button>
             </:footer>
           </.sidebar_panel_min>
@@ -192,7 +192,7 @@ defmodule PreviewWeb.StarterShell do
                 label={label}
                 active={name == "pages"}
               >
-                <:icon><.icon name={name} class="size-6" /></:icon>
+                <:icon><.lineone_icon name={name} class="size-6" /></:icon>
                 <:item href="#">Link</:item>
                 <:item href="#">Another Link</:item>
                 <:item href="#">Something else</:item>
@@ -267,23 +267,23 @@ defmodule PreviewWeb.StarterShell do
       href="#"
     >
       <:item href="#" color="warning" title="Profile" description="Your profile setting">
-        <.icon name="profile" class="size-4.5" />
+        <.lineone_icon name="profile" class="size-4.5" />
       </:item>
       <:item href="#" color="info" title="Messages" description="Your messages and tasks">
-        <.icon name="messages" class="size-4.5" />
+        <.lineone_icon name="messages" class="size-4.5" />
       </:item>
       <:item href="#" color="secondary" title="Team" description="Your team activity">
-        <.icon name="team" class="size-4.5" />
+        <.lineone_icon name="team" class="size-4.5" />
       </:item>
       <:item href="#" color="error" title="Activity" description="Your activity and events">
-        <.icon name="activity" class="size-4.5" />
+        <.lineone_icon name="activity" class="size-4.5" />
       </:item>
       <:item href="#" color="success" title="Settings" description="Webapp settings">
-        <.icon name="app-settings" class="size-4.5" />
+        <.lineone_icon name="app-settings" class="size-4.5" />
       </:item>
       <:footer>
         <.button color="primary" class="h-9 w-full space-x-2">
-          <.icon name="logout" class="size-5" />
+          <.lineone_icon name="logout" class="size-5" />
           <span>Logout</span>
         </.button>
       </:footer>
@@ -352,7 +352,7 @@ defmodule PreviewWeb.StarterShell do
           href="#"
           class="group flex items-center space-x-2 px-2.5 py-2 tracking-wide outline-hidden transition-all hover:bg-slate-100 hover:text-slate-800 focus:bg-slate-100 focus:text-slate-800 dark:hover:bg-navy-600 dark:hover:text-navy-100 dark:focus:bg-navy-600 dark:focus:text-navy-100"
         >
-          <.icon
+          <.lineone_icon
             name="apps"
             class="size-4.5 text-slate-400 transition-colors group-hover:text-slate-500 group-focus:text-slate-500 dark:text-navy-300 dark:group-hover:text-navy-200 dark:group-focus:text-navy-200"
           />
@@ -374,7 +374,7 @@ defmodule PreviewWeb.StarterShell do
           </div>
         </div>
         <.button variant="flat" shape="pill" icon size="sm" class="-mr-1.5" aria-label="Settings">
-          <.icon name="app-settings" class="size-4.5" />
+          <.lineone_icon name="app-settings" class="size-4.5" />
         </.button>
       </div>
       <div class="is-scrollbar-hidden flex shrink-0 overflow-x-auto px-3">
@@ -409,7 +409,7 @@ defmodule PreviewWeb.StarterShell do
         class="flex items-center space-x-3"
       >
         <div class={["flex size-10 shrink-0 items-center justify-center rounded-lg", tone]}>
-          <.icon name="activity" class="size-5" />
+          <.lineone_icon name="activity" class="size-5" />
         </div>
         <div>
           <p class="font-medium text-slate-600 dark:text-navy-100">{title}</p>
@@ -430,7 +430,7 @@ defmodule PreviewWeb.StarterShell do
           type="text"
         />
         <span class="pointer-events-none absolute flex h-full w-10 items-center justify-center text-slate-400 peer-focus:text-primary dark:text-navy-300 dark:peer-focus:text-accent">
-          <.icon name="dashboards" class="size-4.5" />
+          <.lineone_icon name="dashboards" class="size-4.5" />
         </span>
       </label>
       <div class="mt-3">
@@ -457,7 +457,7 @@ defmodule PreviewWeb.StarterShell do
   attr :name, :string, required: true
   attr :class, :string, default: nil
 
-  defp icon(%{name: "dashboards"} = assigns) do
+  defp lineone_icon(%{name: "dashboards"} = assigns) do
     ~H"""
     <svg aria-hidden="true" class={@class} fill="none" viewBox="0 0 24 24"><path
       fill="currentColor"
@@ -473,7 +473,7 @@ defmodule PreviewWeb.StarterShell do
     """
   end
 
-  defp icon(%{name: "apps"} = assigns) do
+  defp lineone_icon(%{name: "apps"} = assigns) do
     ~H"""
     <svg aria-hidden="true" class={@class} viewBox="0 0 24 24" fill="none"><path
       d="M5 8H19V16C19 17.8856 19 18.8284 18.4142 19.4142C17.8284 20 16.8856 20 15 20H9C7.11438 20 6.17157 20 5.58579 19.4142C5 18.8284 5 17.8856 5 16V8Z"
@@ -495,7 +495,7 @@ defmodule PreviewWeb.StarterShell do
     """
   end
 
-  defp icon(%{name: "pages"} = assigns) do
+  defp lineone_icon(%{name: "pages"} = assigns) do
     ~H"""
     <svg aria-hidden="true" class={@class} viewBox="0 0 24 24" fill="none"><path
       d="M9.85714 3H4.14286C3.51167 3 3 3.51167 3 4.14286V9.85714C3 10.4883 3.51167 11 4.14286 11H9.85714C10.4883 11 11 10.4883 11 9.85714V4.14286C11 3.51167 10.4883 3 9.85714 3Z"
@@ -516,7 +516,7 @@ defmodule PreviewWeb.StarterShell do
     """
   end
 
-  defp icon(%{name: "forms"} = assigns) do
+  defp lineone_icon(%{name: "forms"} = assigns) do
     ~H"""
     <svg aria-hidden="true" class={@class} viewBox="0 0 24 24" fill="none"><path
       fill-opacity="0.25"
@@ -533,7 +533,7 @@ defmodule PreviewWeb.StarterShell do
     """
   end
 
-  defp icon(%{name: "components"} = assigns) do
+  defp lineone_icon(%{name: "components"} = assigns) do
     ~H"""
     <svg aria-hidden="true" class={@class} viewBox="0 0 24 24" fill="none"><path
       fill-opacity="0.5"
@@ -550,7 +550,7 @@ defmodule PreviewWeb.StarterShell do
     """
   end
 
-  defp icon(%{name: "elements"} = assigns) do
+  defp lineone_icon(%{name: "elements"} = assigns) do
     ~H"""
     <svg aria-hidden="true" class={@class} viewBox="0 0 24 24" fill="none"><path
       d="M13.3111 14.75H5.03356C3.36523 14.75 2.30189 12.9625 3.10856 11.4958L5.24439 7.60911L7.24273 3.96995C8.07689 2.45745 10.2586 2.45745 11.0927 3.96995L13.1002 7.60911L14.0627 9.35995L15.2361 11.4958C16.0427 12.9625 14.9794 14.75 13.3111 14.75Z"
@@ -563,7 +563,7 @@ defmodule PreviewWeb.StarterShell do
     """
   end
 
-  defp icon(%{name: "settings"} = assigns) do
+  defp lineone_icon(%{name: "settings"} = assigns) do
     ~H"""
     <svg aria-hidden="true" class={@class} viewBox="0 0 24 24" fill="none"><path
       fill-opacity="0.3"
@@ -576,7 +576,7 @@ defmodule PreviewWeb.StarterShell do
     """
   end
 
-  defp icon(%{name: "profile"} = assigns) do
+  defp lineone_icon(%{name: "profile"} = assigns) do
     ~H"""
     <svg
       aria-hidden="true"
@@ -593,7 +593,7 @@ defmodule PreviewWeb.StarterShell do
     """
   end
 
-  defp icon(%{name: "messages"} = assigns) do
+  defp lineone_icon(%{name: "messages"} = assigns) do
     ~H"""
     <svg
       aria-hidden="true"
@@ -610,7 +610,7 @@ defmodule PreviewWeb.StarterShell do
     """
   end
 
-  defp icon(%{name: "team"} = assigns) do
+  defp lineone_icon(%{name: "team"} = assigns) do
     ~H"""
     <svg
       aria-hidden="true"
@@ -627,7 +627,7 @@ defmodule PreviewWeb.StarterShell do
     """
   end
 
-  defp icon(%{name: "activity"} = assigns) do
+  defp lineone_icon(%{name: "activity"} = assigns) do
     ~H"""
     <svg
       aria-hidden="true"
@@ -644,7 +644,7 @@ defmodule PreviewWeb.StarterShell do
     """
   end
 
-  defp icon(%{name: "app-settings"} = assigns) do
+  defp lineone_icon(%{name: "app-settings"} = assigns) do
     ~H"""
     <svg
       aria-hidden="true"
@@ -661,7 +661,7 @@ defmodule PreviewWeb.StarterShell do
     """
   end
 
-  defp icon(%{name: "logout"} = assigns) do
+  defp lineone_icon(%{name: "logout"} = assigns) do
     ~H"""
     <svg aria-hidden="true" class={@class} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path
       stroke-linecap="round"
@@ -672,7 +672,7 @@ defmodule PreviewWeb.StarterShell do
     """
   end
 
-  defp icon(%{name: "min-0"} = assigns) do
+  defp lineone_icon(%{name: "min-0"} = assigns) do
     ~H"""
     <svg aria-hidden="true" class={@class} viewBox="0 0 24 24" fill="none" stroke="currentColor"><path
       d="M12.5293 18L20.9999 8.40002"
@@ -688,7 +688,7 @@ defmodule PreviewWeb.StarterShell do
     """
   end
 
-  defp icon(%{name: "min-1"} = assigns) do
+  defp lineone_icon(%{name: "min-1"} = assigns) do
     ~H"""
     <svg
       aria-hidden="true"
@@ -705,7 +705,7 @@ defmodule PreviewWeb.StarterShell do
     """
   end
 
-  defp icon(%{name: "min-2"} = assigns) do
+  defp lineone_icon(%{name: "min-2"} = assigns) do
     ~H"""
     <svg
       aria-hidden="true"
@@ -722,7 +722,7 @@ defmodule PreviewWeb.StarterShell do
     """
   end
 
-  defp icon(%{name: "min-3"} = assigns) do
+  defp lineone_icon(%{name: "min-3"} = assigns) do
     ~H"""
     <svg
       aria-hidden="true"
@@ -739,7 +739,7 @@ defmodule PreviewWeb.StarterShell do
     """
   end
 
-  defp icon(%{name: "min-4"} = assigns) do
+  defp lineone_icon(%{name: "min-4"} = assigns) do
     ~H"""
     <svg
       aria-hidden="true"
@@ -756,7 +756,7 @@ defmodule PreviewWeb.StarterShell do
     """
   end
 
-  defp icon(%{name: "min-5"} = assigns) do
+  defp lineone_icon(%{name: "min-5"} = assigns) do
     ~H"""
     <svg
       aria-hidden="true"
@@ -773,7 +773,7 @@ defmodule PreviewWeb.StarterShell do
     """
   end
 
-  defp icon(%{name: "min-6"} = assigns) do
+  defp lineone_icon(%{name: "min-6"} = assigns) do
     ~H"""
     <svg
       aria-hidden="true"
@@ -790,7 +790,7 @@ defmodule PreviewWeb.StarterShell do
     """
   end
 
-  defp icon(%{name: "min-7"} = assigns) do
+  defp lineone_icon(%{name: "min-7"} = assigns) do
     ~H"""
     <svg
       aria-hidden="true"
@@ -807,7 +807,7 @@ defmodule PreviewWeb.StarterShell do
     """
   end
 
-  defp icon(%{name: "min-8"} = assigns) do
+  defp lineone_icon(%{name: "min-8"} = assigns) do
     ~H"""
     <svg
       aria-hidden="true"
@@ -824,7 +824,7 @@ defmodule PreviewWeb.StarterShell do
     """
   end
 
-  defp icon(%{name: "min-9"} = assigns) do
+  defp lineone_icon(%{name: "min-9"} = assigns) do
     ~H"""
     <svg
       aria-hidden="true"
@@ -841,7 +841,7 @@ defmodule PreviewWeb.StarterShell do
     """
   end
 
-  defp icon(%{name: "min-10"} = assigns) do
+  defp lineone_icon(%{name: "min-10"} = assigns) do
     ~H"""
     <svg
       aria-hidden="true"
