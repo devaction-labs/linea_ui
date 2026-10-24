@@ -50,7 +50,9 @@ defmodule LineaUI.Components.CommandPalette do
 
   @item_row "group/item flex w-full cursor-pointer items-center gap-3 px-4.5 py-2 text-left no-underline outline-hidden aria-selected:bg-primary/10 dark:aria-selected:bg-accent/15"
 
-  @item_icon "flex size-8 shrink-0 items-center justify-center rounded-lg bg-slate-150 text-slate-500 group-aria-selected/item:bg-primary group-aria-selected/item:text-white dark:bg-navy-600 dark:text-navy-200 dark:group-aria-selected/item:bg-accent"
+  @item_icon "flex size-8 shrink-0 items-center justify-center rounded-lg bg-slate-150 text-slate-600 group-aria-selected/item:bg-primary group-aria-selected/item:text-white dark:bg-navy-800 dark:text-navy-100 dark:group-aria-selected/item:bg-accent"
+
+  @key "rounded-[4px] border-0 bg-slate-150 px-1.5 text-slate-500 shadow-[inset_0_-1px_0_var(--color-slate-300)] dark:bg-navy-800 dark:text-navy-200 dark:shadow-[inset_0_-1px_0_var(--color-navy-450)]"
 
   @assistant_icon "flex size-8 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-600 to-purple-500 text-white"
 
@@ -186,7 +188,7 @@ defmodule LineaUI.Components.CommandPalette do
         data-on-assistant={@on_assistant_js}
         data-assistant-mode={@assistant_mode}
       >
-        <div class="flex h-14 items-center gap-3 border-b border-slate-150 px-4.5 dark:border-navy-500">
+        <div class="flex h-14 items-center gap-3 border-b border-slate-150 px-4.5 dark:border-navy-700">
           <.glyph name={:search} class="size-4.5 shrink-0 text-slate-400 dark:text-navy-300" />
           <input
             type="text"
@@ -199,14 +201,14 @@ defmodule LineaUI.Components.CommandPalette do
             autofocus
             placeholder={@placeholder}
             phx-mounted={JS.ignore_attributes(["value"])}
-            class="h-full min-w-0 flex-1 bg-transparent text-sm-plus text-slate-700 outline-hidden placeholder:font-light placeholder:text-slate-400 dark:text-navy-50 dark:placeholder:text-navy-300"
+            class="h-full min-w-0 flex-1 bg-transparent text-sm-plus text-slate-800 outline-hidden placeholder:font-light placeholder:text-slate-400 dark:text-navy-50 dark:placeholder:text-navy-300"
             data-query
           />
-          <.kbd>Esc</.kbd>
+          <.kbd class={key()}>Esc</.kbd>
         </div>
         <div
           :if={@chips != []}
-          class="flex flex-wrap gap-1.5 border-b border-slate-150 px-3.5 py-2.5 dark:border-navy-500"
+          class="flex flex-wrap gap-1.5 border-b border-slate-150 px-3.5 py-2.5 dark:border-navy-700"
           role="group"
           aria-label={@scopes_label}
         >
@@ -237,7 +239,7 @@ defmodule LineaUI.Components.CommandPalette do
             <div
               :if={group.label}
               id={group.id}
-              class="px-4.5 pb-1 pt-2.5 text-tiny-plus font-semibold uppercase tracking-wider text-slate-400 dark:text-navy-300"
+              class="px-4.5 pb-1 pt-2.5 text-tiny-plus font-semibold uppercase tracking-[.08em] text-slate-400 dark:text-navy-300"
             >
               {group.label}
             </div>
@@ -272,7 +274,7 @@ defmodule LineaUI.Components.CommandPalette do
             </span>
             <span class="min-w-0">
               <span
-                class="block truncate text-sm text-slate-700 dark:text-navy-50"
+                class="block truncate text-sm text-slate-800 dark:text-navy-50"
                 data-assistant-text
               ></span>
               <span
@@ -282,7 +284,7 @@ defmodule LineaUI.Components.CommandPalette do
                 {@assistant_row.sub}
               </span>
             </span>
-            <span class="ml-auto flex gap-1"><.kbd>↵</.kbd></span>
+            <span class="ml-auto flex gap-1"><.kbd class={key()}>↵</.kbd></span>
           </button>
           <div
             data-empty
@@ -292,10 +294,10 @@ defmodule LineaUI.Components.CommandPalette do
             {@empty}
           </div>
         </div>
-        <div class="flex items-center gap-4 border-t border-slate-150 bg-slate-50 px-4.5 py-2.5 text-xs text-slate-400 dark:border-navy-500 dark:bg-navy-800 dark:text-navy-300">
-          <span class="inline-flex items-center gap-1.5"><.kbd>↑↓</.kbd>{@hint_navigate}</span>
-          <span class="inline-flex items-center gap-1.5"><.kbd>↵</.kbd>{@hint_open}</span>
-          <span class="inline-flex items-center gap-1.5"><.kbd>Ctrl ↵</.kbd>{@hint_new_tab}</span>
+        <div class="flex items-center gap-4 border-t border-slate-150 bg-slate-50 px-4.5 py-2.5 text-xs text-slate-400 dark:border-navy-700 dark:bg-navy-750 dark:text-navy-300">
+          <span class="inline-flex items-center gap-1.5"><.kbd class={key()}>↑↓</.kbd>{@hint_navigate}</span>
+          <span class="inline-flex items-center gap-1.5"><.kbd class={key()}>↵</.kbd>{@hint_open}</span>
+          <span class="inline-flex items-center gap-1.5"><.kbd class={key()}>Ctrl ↵</.kbd>{@hint_new_tab}</span>
           <span
             :if={@footer != []}
             class="ml-auto text-primary dark:text-accent-light"
@@ -357,17 +359,18 @@ defmodule LineaUI.Components.CommandPalette do
       <.icon :if={@item.icon} name={@item.icon} class="size-4.5" />
     </span>
     <span class="min-w-0">
-      <span class="block truncate text-sm text-slate-700 dark:text-navy-50">{@item.label}</span>
+      <span class="block truncate text-sm text-slate-800 dark:text-navy-50">{@item.label}</span>
       <span :if={@item.sub} class="block truncate text-xs text-slate-400 dark:text-navy-300">{@item.sub}</span>
     </span>
     <span :if={@item.keys != []} class="ml-auto flex gap-1">
-      <.kbd :for={key <- @item.keys}>{key}</.kbd>
+      <.kbd :for={name <- @item.keys} class={key()}>{name}</.kbd>
     </span>
     """
   end
 
   defp item_row, do: @item_row
   defp item_icon, do: @item_icon
+  defp key, do: @key
   defp assistant_icon, do: @assistant_icon
 
   defp item({entry, index}, id) do
