@@ -16,6 +16,15 @@ defmodule LineaUI.Components.Timeline do
         </.timeline_item>
       </.timeline>
 
+  An avatar can be the point: give the timeline `size="xl"` (2rem) or `"2xl"` and the item
+  `variant="avatar"`, with the avatar filling the point:
+
+      <.timeline size="xl">
+        <.timeline_item variant="avatar" title="Mores Clarke" time="1 hour ago">
+          <:point><.avatar src="/mores.jpg" class="size-full" /></:point>
+        </.timeline_item>
+      </.timeline>
+
   The inner block of an item comes after its description: images, links, tags, members.
 
   The items can come from a list or a stream through `rows` and the `:item` slot, which gets
@@ -67,7 +76,9 @@ defmodule LineaUI.Components.Timeline do
     "error" => "border border-current bg-white text-error dark:bg-navy-700"
   }
 
-  @variants %{"solid" => @solid, "outline" => @outline, "icon" => @icon}
+  @avatar Map.new(~w(neutral primary secondary accent info success warning error), &{&1, nil})
+
+  @variants %{"solid" => @solid, "outline" => @outline, "icon" => @icon, "avatar" => @avatar}
 
   @pings %{
     "neutral" => "bg-slate-300 dark:bg-navy-400",
@@ -80,7 +91,12 @@ defmodule LineaUI.Components.Timeline do
     "error" => "bg-error"
   }
 
-  @sizes %{"md" => nil, "lg" => "[--size:1.5rem]"}
+  @sizes %{
+    "md" => nil,
+    "lg" => "[--size:1.5rem]",
+    "xl" => "[--size:2rem]",
+    "2xl" => "[--size:2.5rem]"
+  }
 
   @doc """
   Renders the line the `timeline_item`s hang on, either from its inner block or from `rows`.
@@ -102,8 +118,9 @@ defmodule LineaUI.Components.Timeline do
 
   attr(:size, :string,
     default: "md",
-    values: ~w(md lg),
-    doc: "`lg` makes room for an icon in the points."
+    values: ~w(md lg xl 2xl),
+    doc:
+      "The width of the points (and where the line runs): `md` 12px, `lg` 1.5rem for an icon, `xl` 2rem and `2xl` 2.5rem for avatar points."
   )
 
   attr(:id, :string, default: nil, doc: "Required with a stream.")
@@ -173,9 +190,12 @@ defmodule LineaUI.Components.Timeline do
 
   attr(:variant, :string,
     default: "solid",
-    values: ~w(solid outline icon),
-    doc: "`icon` is a white point ringed in the color, holding the `:point` slot."
+    values: ~w(solid outline icon avatar),
+    doc:
+      "`icon` is a white point ringed in the color, holding the `:point` slot; `avatar` draws no disc, so the `:point` slot can hold an avatar."
   )
+
+  attr(:point_class, :any, default: nil, doc: "Merged into the point (`size-8` ...).")
 
   attr(:ping, :boolean, default: false, doc: "A pulsing ring around the point.")
   attr(:class, :any, default: nil)
@@ -186,12 +206,13 @@ defmodule LineaUI.Components.Timeline do
   def timeline_item(assigns) do
     assigns =
       assigns
+      |> assign(:point_extra, assigns.point_class)
       |> assign(:point_class, @variants[assigns.variant][assigns.color])
       |> assign(:ping_class, @pings[assigns.color])
 
     ~H"""
     <li class={merge(["timeline-item", @class])} {@rest}>
-      <div class={["timeline-item-point rounded-full", @point_class]}>
+      <div class={merge(["timeline-item-point rounded-full", @point_class, @point_extra])}>
         <span
           :if={@ping}
           class={["inline-flex h-full w-full animate-ping rounded-full opacity-80", @ping_class]}
