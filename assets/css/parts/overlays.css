@@ -250,6 +250,19 @@
     @apply bg-slate-100 text-slate-800 dark:bg-navy-600 dark:text-navy-100;
   }
 
+  /* filter menu: the group's panel starts at its row, and the count replaces the chevron */
+  [data-filter-group][data-submenu] > .linea-submenu {
+    @apply top-0 pl-1.5;
+  }
+
+  [data-filter-group][data-submenu][data-side="left"] > .linea-submenu {
+    @apply pr-1.5 pl-0;
+  }
+
+  [data-filter-group][data-submenu] > [data-submenu-trigger]:has([data-submenu-count]:not([hidden])) > :last-child {
+    display: none !important;
+  }
+
   .toastify.rich {
     --toast-ai: var(--color-primary);
     --toast-ok: var(--color-emerald-600);

@@ -6,6 +6,8 @@
   `retract` is `hover` (default), `auto` (retracts after `retract_after` ms or on scroll, hook `LineaUI.Fab`), `never` or
   `always`; touch devices show the bubble; `expanded` forces it open from the server. Four corners via `position`,
   colors `assistant`, `primary`, `dark`, `light`, `badge`, link or button. Sits on the new `--linea-z-fab` layer (90, under modals and drawers).
+- `filter_menu`: the canvas's filter menu as one component on top of the dropdown. A trigger with the applied count, a row per group that opens a panel of checkbox options with their record counts, flat sections (sort) with radios, and Clear / Apply (n). `mode="apply"` stages until Apply (closing the menu otherwise takes the ticks back), `mode="live"` pushes each tick. Inside a form every option is a real input, so `phx-submit` (and `phx-change` in live mode) get them; `on_change`, `on_apply`, `on_clear` and `target` push `%{"id", "values"}` without one. A `:group` slot takes your own items.
+- `dropdown_footer` takes `show_apply` (default `true`) and wraps the number after Apply in `[data-apply-count]`; a `dropdown_submenu` with `data-count-radios` also counts its checked radios. Nothing else in the dropdown changes.
 
 ## 0.4.1
 

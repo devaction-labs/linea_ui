@@ -671,6 +671,10 @@ defmodule LineaUI.Components.Dropdown do
 
   attr :close_on_apply, :boolean, default: true
 
+  attr :show_apply, :boolean,
+    default: true,
+    doc: "`false` leaves only Clear (a menu that applies as it is ticked)."
+
   attr :target, :any,
     default: nil,
     doc: "The `phx-target` of `on_clear` and `on_apply` when they are event names."
@@ -713,6 +717,7 @@ defmodule LineaUI.Components.Dropdown do
         {@clear}
       </Button.button>
       <Button.button
+        :if={@show_apply}
         size="sm"
         color="primary"
         type={@apply_type}
@@ -722,7 +727,7 @@ defmodule LineaUI.Components.Dropdown do
         data-close-on-apply={bool(@close_on_apply)}
         phx-click={@apply_js}
       >
-        {@apply}{@apply_suffix}
+        {@apply}<span data-apply-count class="whitespace-pre">{@apply_suffix}</span>
       </Button.button>
     </div>
     """
