@@ -145,4 +145,13 @@ defmodule LineaUI.Components.AvatarTest do
     assert "-space-x-3" in classes(html, "#a")
     refute "-space-x-2" in classes(html, "#a")
   end
+
+  test "a neutral status is LineOne's slate offline dot" do
+    html =
+      render(~H"""
+      <.avatar src="/a.jpg" status="neutral" status_position="bottom-right" />
+      """)
+
+    assert "bg-slate-300" in classes(html, "div.avatar > div")
+  end
 end
