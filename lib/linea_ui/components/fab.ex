@@ -245,15 +245,25 @@ defmodule LineaUI.Components.Fab do
     </span>
     <span class="linea-fab-label" aria-hidden="true">
       <span>
+        <% content = render_slot(@inner_block) %>
         <span class={
           merge(["block pr-4 pl-3 font-semibold whitespace-nowrap", @dims.label, @look.label])
         }>
-          {render_slot(@inner_block) || @label}
+          {label_or(content, @label)}
         </span>
       </span>
     </span>
     """
   end
+
+  defp label_or(content, label), do: label_or(content, blank?(content), label)
+  defp label_or(_content, true, label), do: label
+  defp label_or(content, false, _label), do: content
+
+  defp blank?(nil), do: true
+
+  defp blank?(content),
+    do: content |> Phoenix.HTML.Safe.to_iodata() |> IO.iodata_to_binary() |> String.trim() == ""
 
   defp sparkle(assigns) do
     ~H"""

@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.4.3
+
+- `fab`: a named slot such as `<:icon>` with no text around it no longer hides the label. The whitespace between the tags
+  counted as content and replaced the `label`; now only text that is not blank replaces it.
+
 ## 0.4.2
 
 - New `timer/1`: a shift timer that ticks in the browser from a monotonic clock (hook `LineaUI.Timer`, no round trips, no drift in a background tab). `variant="ring"` is the checker card with the progress ring, the state kicker, the mono time and the `actions` slot; `variant="mini"` is the pill with a pulsing dot for a top bar. `direction` up or down, `format` `hms` or `hm`, `elapsed`/`total`/`running` from the server win over the browser's count, `on_toggle`, `on_tick`, `on_finish` events. New `LineaUI.Timer.pause/resume/toggle/add` commands for the buttons, as `%JS{}` or pushed from the socket.

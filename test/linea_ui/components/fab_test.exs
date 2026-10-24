@@ -6,6 +6,27 @@ defmodule LineaUI.Components.FabTest do
   defp fab_html(attrs),
     do: Phoenix.LiveViewTest.render_component(&fab/1, Enum.into(attrs, %{id: "f", label: "Go"}))
 
+  test "a named slot with no text around it keeps the label visible" do
+    html =
+      render(~H"""
+      <.fab id="ask" label="Ask the assistant">
+        <:icon><span id="own-icon">i</span></:icon>
+      </.fab>
+      """)
+
+    assert find(html, "#ask #own-icon") |> Enum.count() == 1
+
+    assert String.trim(find(html, "#ask .linea-fab-label") |> LazyHTML.text()) ==
+             "Ask the assistant"
+  end
+
+  test "text inside replaces the visible label and keeps the aria-label" do
+    html = render(~H|<.fab id="ask" label="Ask the assistant">Perguntar</.fab>|)
+
+    assert String.trim(find(html, "#ask .linea-fab-label") |> LazyHTML.text()) == "Perguntar"
+    assert attr_of(html, "#ask", "aria-label") == ["Ask the assistant"]
+  end
+
   test "a button labelled for assistive tech, bubble at rest, with the sparkle" do
     html = render(~H|<.fab id="ask" label="Ask the assistant" phx-click="open" />|)
 
