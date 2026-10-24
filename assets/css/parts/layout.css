@@ -364,7 +364,14 @@
     }
 
     .linea-rail[data-collapsed="true"] .rail-nav {
-      overflow: visible;
+      overflow-x: hidden;
+      overflow-y: auto;
+    }
+
+    .linea-rail[data-collapsed="true"] .rail-tip {
+      position: fixed;
+      top: auto;
+      left: auto;
     }
 
     .linea-rail[data-collapsed="true"] :is(.rail-label, .rail-sub) {

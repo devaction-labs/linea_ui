@@ -6,7 +6,7 @@ import {execWithPayload} from "../lib/js_payload.js"
  * State the server renders (`data-open`) wins when it changes; a choice made in the browser survives patches that
  * did not change it, and live navigation (the choice is remembered per shell id for the life of the page).
  */
-import {RAIL_KEY, breakpointName, clockText, initialCollapsed, initialOpen, isMobile, place, railValue, smAndUp, storedValue} from "../lib/shell_logic.js"
+import {RAIL_KEY, breakpointName, clockText, initialCollapsed, initialOpen, isMobile, place, railValue, smAndUp, storedValue, tipSpot} from "../lib/shell_logic.js"
 
 const SIDEBAR_KEY = "linea-sidebar"
 const OPEN_CLASS = "is-sidebar-open"
@@ -403,6 +403,14 @@ const RightSidebar = {
  * rail again when it is clicked, and below 768px the menu is a top bar whose hamburger (`data-mobile-toggle`)
  * sets `data-mobile-open`. `on_collapse` is pushed with `%{"id" => id, "collapsed" => boolean}`.
  */
+const RAIL_TIP_GAP = 12
+
+const pinTip = (item) => {
+  const tip = item?.querySelector(":scope > .rail-tip")
+  const spot = tip && tipSpot(item.getBoundingClientRect(), RAIL_TIP_GAP)
+  spot && (tip.style.top = `${spot.top}px`, tip.style.left = `${spot.left}px`)
+}
+
 const ShellRail = {
   mounted() {
     this.server = this.el.dataset.serverCollapsed === "true"
@@ -417,9 +425,12 @@ const ShellRail = {
     this.onClick = (event) => this.click(event)
     this.onKey = (event) => event.key === "Escape" && this.el.dataset.mobileOpen === "true" && this.mobile(false)
     this.onResize = () => !isMobile(window.innerWidth) && this.mobile(false)
+    this.onTip = (event) => this.collapsed() && pinTip(event.target.closest?.(".rail-item"))
     document.addEventListener("click", this.onClick)
     document.addEventListener("keydown", this.onKey)
     window.addEventListener("resize", this.onResize, {passive: true})
+    this.el.addEventListener("mouseover", this.onTip)
+    this.el.addEventListener("focusin", this.onTip)
   },
 
   updated() {
@@ -434,6 +445,8 @@ const ShellRail = {
     document.removeEventListener("click", this.onClick)
     document.removeEventListener("keydown", this.onKey)
     window.removeEventListener("resize", this.onResize)
+    this.el.removeEventListener("mouseover", this.onTip)
+    this.el.removeEventListener("focusin", this.onTip)
   },
 
   collapsed() {

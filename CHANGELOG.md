@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.4
+
+- Framed shell (`framed_sidebar`): the collapsed rail scrolls when its icons do not fit the window height, so the user and the settings stay reachable on a short screen. Its tooltips are positioned on the screen (`position: fixed`, set by the `LineaUI.ShellRail` hook on hover and focus) and are no longer clipped by the scrolling list.
+
 ## 0.4.3
 
 - `fab`: a named slot such as `<:icon>` with no text around it no longer hides the label. The whitespace between the tags

@@ -1,6 +1,6 @@
 import test from "node:test"
 import assert from "node:assert/strict"
-import {breakpointName, clockText, initialCollapsed, initialOpen, isMobile, modeOn, modeValue, place, railValue, side, smAndUp, storedCollapsed, storedValue, xlAndUp} from "./shell_logic.js"
+import {breakpointName, clockText, initialCollapsed, initialOpen, isMobile, modeOn, modeValue, place, railValue, side, smAndUp, storedCollapsed, storedValue, tipSpot, xlAndUp} from "./shell_logic.js"
 
 test("the framed menu starts as the person left it, and never collapsed on a phone", () => {
   assert.equal(isMobile(767), true)
@@ -96,4 +96,8 @@ test("an unknown placement falls back to bottom-start", () => {
 test("the side of a placement", () => {
   assert.equal(side("bottom-end"), "bottom")
   assert.equal(side("right"), "right")
+})
+
+test("a collapsed item's tooltip is centred on it, to its right", () => {
+  assert.deepEqual(tipSpot({top: 100, height: 40, right: 60}, 12), {top: 120, left: 72})
 })

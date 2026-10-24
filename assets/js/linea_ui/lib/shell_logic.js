@@ -89,6 +89,9 @@ export const storedCollapsed = (stored) => ({collapsed: true, expanded: false})[
 /** Whether the menu starts collapsed: never on a phone, otherwise what the person chose, otherwise what the page rendered. */
 export const initialCollapsed = ({width, stored, rendered}) => !isMobile(width) && (storedCollapsed(stored) ?? rendered)
 
+/** Where a collapsed menu item's tooltip sits: centred on the item, `gap` pixels right of it, in viewport coordinates. */
+export const tipSpot = (rect, gap) => ({top: rect.top + rect.height / 2, left: rect.right + gap})
+
 /** The date and time of the page header's clock: `Sat, 24 Oct 2026 · 07:40`. */
 export const clockText = (date, locale) => {
   const parts = Object.fromEntries(
