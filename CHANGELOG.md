@@ -7,6 +7,9 @@
   (`navy-500` in dark) and its count takes the primary color. `empty_state`: 17px title, `slate-800` ink, softer dark rings
   and icon tile. `stepper`: dark to-do markers and bars use `navy-800`, vertical connectors are `slate-150`. `progress`:
   dark track is `navy-800` and the light `warning` fill is `#e68200`.
+- `avatar`: initials in Inter semibold on a size ladder of about 36% of the avatar; a presence dot is 30% of the avatar, ringed in the card color, with the success, warning and error shades of the canvas; the "+N" of `avatar_group` is opaque; company, customer and supplier have 10px corners and the company stays navy in dark; the assistant gradient is the same in both themes and its sparkle an outline; the invite placeholder is a solid 1.5px ring.
+- `text_editor`: one rounded box with a tinted toolbar of 32px buttons (hover and pressed in the primary soft), group separators, the assistant pill at the end, prose content (Poppins 14/23, headings, lists, code, spaced paragraphs), chips in the primary soft, the "/" menu with the hint under the label and the canvas shadow, a comment bar with a 32px submit; focus draws the primary border.
+- `drawer` sheet: 22px side padding, 45% backdrop, flush shadow all around, deep shadow and ring in dark, grab handle without the negative margin, header and footer lines as in the canvas in dark.
 
 ## 0.4.0
 

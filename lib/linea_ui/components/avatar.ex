@@ -54,15 +54,15 @@ defmodule LineaUI.Components.Avatar do
   }
 
   @text_sizes %{
-    "3xs" => "text-tiny",
-    "2xs" => "text-xs-plus",
-    "xs" => "text-xs-plus",
-    "xs-plus" => "text-xs-plus",
-    "sm" => "",
-    "md" => "text-base",
-    "lg" => "text-lg",
-    "xl" => "text-xl",
-    "2xl" => "text-2xl"
+    "3xs" => "text-[9px]",
+    "2xs" => "text-[10px]",
+    "xs" => "text-xs",
+    "xs-plus" => "text-[13px]",
+    "sm" => "text-sm",
+    "md" => "text-[17px]",
+    "lg" => "text-[23px]",
+    "xl" => "text-[29px]",
+    "2xl" => "text-[35px]"
   }
 
   @shapes %{
@@ -122,9 +122,9 @@ defmodule LineaUI.Components.Avatar do
     "success" => "bg-success",
     "warning" => "bg-warning",
     "error" => "bg-error",
-    "online" => "bg-success",
-    "away" => "bg-warning",
-    "busy" => "bg-error",
+    "online" => "bg-success-focus dark:bg-success",
+    "away" => "bg-warning-focus dark:bg-warning",
+    "busy" => "bg-error-focus dark:bg-error",
     "offline" => "bg-slate-400"
   }
 
@@ -167,6 +167,8 @@ defmodule LineaUI.Components.Avatar do
     }
   }
 
+  @presence_dot "-right-px -bottom-px size-[30%] min-h-2 min-w-2 ring-2 ring-white dark:ring-navy-700"
+
   @positions %{
     "top-right" => "right-0",
     "top-left" => "left-0",
@@ -203,13 +205,12 @@ defmodule LineaUI.Components.Avatar do
   ]
 
   @kind_faces %{
-    "company" => "bg-navy-900 text-white dark:bg-navy-500",
-    "customer" => "bg-success-focus text-white",
-    "supplier" => "bg-warning-focus text-white",
-    "assistant" =>
-      "bg-linear-to-br from-primary to-purple-500 text-white dark:from-accent dark:to-purple-400",
+    "company" => "rounded-[10px] bg-navy-900 text-white",
+    "customer" => "rounded-[10px] bg-success-focus text-white",
+    "supplier" => "rounded-[10px] bg-warning-focus text-white",
+    "assistant" => "bg-linear-to-br from-primary to-purple-500 text-white",
     "invite" =>
-      "border-[1.5px] border-dashed border-slate-300 bg-transparent text-slate-500 dark:border-navy-450 dark:text-navy-200"
+      "border-[1.5px] border-slate-300 bg-transparent text-slate-500 dark:border-navy-450 dark:text-navy-200"
   }
 
   @ring_widths %{
@@ -427,7 +428,7 @@ defmodule LineaUI.Components.Avatar do
     ~H"""
     <div class={
       merge([
-        "is-initial uppercase",
+        "is-initial font-inter font-semibold uppercase",
         shape(@shape),
         text_size(@size),
         initials(@variant, @color, @kind, @name),
@@ -445,11 +446,14 @@ defmodule LineaUI.Components.Avatar do
     <svg
       class="size-[45%]"
       viewBox="0 0 24 24"
-      fill="currentColor"
-      stroke="none"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.6"
+      stroke-linecap="round"
+      stroke-linejoin="round"
       aria-hidden="true"
     >
-      <path d="M12 3l1.8 4.2L18 9l-4.2 1.8L12 15l-1.8-4.2L6 9l4.2-1.8zM18 15l.9 2.1L21 18l-2.1.9L18 21l-.9-2.1L15 18l2.1-.9z" />
+      <path d="M12 3l1.8 4.2L18 9l-4.2 1.8L12 15l-1.8-4.2L6 9l4.2-1.8z" />
     </svg>
     """
   end
@@ -461,7 +465,7 @@ defmodule LineaUI.Components.Avatar do
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      stroke-width="2"
+      stroke-width="1.6"
       aria-hidden="true"
     >
       <path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14M5 12h14" />
@@ -471,12 +475,7 @@ defmodule LineaUI.Components.Avatar do
 
   defp status_dot(assigns) do
     ~H"""
-    <div class={[
-      "absolute rounded-full border-white dark:border-navy-700",
-      position(@status_position),
-      dot_size(@shape, @size),
-      dot(@status)
-    ]}>
+    <div class={["absolute rounded-full", dot_frame(assigns), dot(@status)]}>
       <span
         :if={@ping}
         class={[
@@ -487,6 +486,16 @@ defmodule LineaUI.Components.Avatar do
     </div>
     """
   end
+
+  defp dot_frame(%{status: status, status_position: "bottom-right"}) when status in @presences,
+    do: @presence_dot
+
+  defp dot_frame(assigns),
+    do: [
+      "border-white dark:border-navy-700",
+      position(assigns.status_position),
+      dot_size(assigns.shape, assigns.size)
+    ]
 
   defp size(size), do: @sizes[size]
   defp text_size(size), do: @text_sizes[size]
@@ -559,6 +568,7 @@ defmodule LineaUI.Components.Avatar do
         initials={"+#{@more}"}
         variant="soft"
         size={@size}
+        face_class="bg-slate-150 text-slate-500 dark:bg-navy-800 dark:text-navy-200"
         ring
       />
     </div>
