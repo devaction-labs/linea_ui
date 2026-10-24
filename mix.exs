@@ -2,6 +2,7 @@ defmodule LineaUI.MixProject do
   use Mix.Project
 
   @version "0.1.0"
+  @source_url "https://github.com/devaction-labs/linea_ui"
 
   def project do
     [
@@ -15,7 +16,12 @@ defmodule LineaUI.MixProject do
       aliases: aliases(),
       description: "Phoenix LiveView components with the LineOne design.",
       package: package(),
-      docs: [main: "LineaUI", extras: ["README.md"]]
+      source_url: @source_url,
+      docs: [
+        main: "LineaUI",
+        extras: ["README.md", "CHANGELOG.md", "LICENSE"],
+        source_ref: "v#{@version}"
+      ]
     ]
   end
 
@@ -47,7 +53,12 @@ defmodule LineaUI.MixProject do
   defp package do
     [
       licenses: ["Proprietary"],
-      files: ~w(lib assets/css assets/js priv package.json README.md mix.exs),
+      links: %{
+        "GitHub" => @source_url,
+        "Changelog" => @source_url <> "/blob/main/CHANGELOG.md"
+      },
+      files:
+        ~w(lib assets/css assets/js priv package.json README.md LICENSE CHANGELOG.md mix.exs),
       exclude_patterns: [~r/\.test\.js$/]
     ]
   end
