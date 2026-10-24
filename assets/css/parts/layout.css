@@ -211,7 +211,7 @@
   }
 
   .rail-item.is-active,
-  .rail-module[data-open="true"] > .rail-item {
+  .rail-module > .rail-item[aria-current="true"] {
     background: var(--rail-pill);
     box-shadow: var(--rail-shadow);
     color: var(--color-slate-800);
@@ -219,7 +219,7 @@
   }
 
   .dark .rail-item.is-active,
-  .dark .rail-module[data-open="true"] > .rail-item {
+  .dark .rail-module > .rail-item[aria-current="true"] {
     color: #fff;
   }
 

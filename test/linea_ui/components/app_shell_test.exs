@@ -526,6 +526,11 @@ defmodule LineaUI.Components.AppShellTest do
       assert [_] = find(own, "#own") |> Enum.to_list()
       assert find(own, "button[aria-label=Notifications]") |> Enum.to_list() == []
 
+      led = render(~H|<.page_header variant="page" title="T">
+  <:leading><i id="lead" /></:leading><:crumb>C</:crumb>
+</.page_header>|)
+      assert [_] = find(led, "header > div > #lead + nav") |> Enum.to_list()
+
       inline = render(~H|<.page_header title="T" />|)
       assert find(inline, "h2") |> Enum.count() == 1
     end

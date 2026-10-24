@@ -1787,6 +1787,11 @@ defmodule LineaUI.Components.AppShell do
 
   slot :actions, doc: "Buttons or filters at the right end of the row."
   slot :inner_block, doc: "Content after the breadcrumb."
+
+  slot :leading,
+    doc:
+      "Before the breadcrumb on the top row, where `rail_toggle/1` goes to collapse the menu (`variant=\"page\"`)."
+
   slot :badge, doc: "The status badge above the title (`variant=\"page\"`)."
   slot :notifications, doc: "Replaces the bell with your own button or menu (`variant=\"page\"`)."
   slot :tabs, doc: "The page's tabs under the title, over a rule (`variant=\"page\"`)."
@@ -1797,6 +1802,7 @@ defmodule LineaUI.Components.AppShell do
     ~H"""
     <header class={merge(["flex flex-col gap-[18px]", @class])} {@rest}>
       <div class="flex items-center gap-2.5">
+        {render_slot(@leading)}
         <nav
           :if={@crumb != []}
           aria-label="Breadcrumb"

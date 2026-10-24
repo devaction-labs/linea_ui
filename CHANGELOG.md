@@ -2,6 +2,8 @@
 
 ## 0.4.0
 
+- `page_header` `variant="page"` has a `:leading` slot before the breadcrumb, where `rail_toggle/1` collapses the menu from
+  the panel's corner. A `rail_module` that is open but does not hold the current page no longer gets the selected pill.
 - `page_header` with `clock`: two headers on one page no longer share the clock's id (it comes from `id`, or from the
   title when there is none). `command_palette` `shortcut` accepts `nil` without a compile warning.
 - The skill keeps itself current: `mix linea_ui.install` adds the `:linea_ui_skill` compiler to the app's `mix.exs`, and
