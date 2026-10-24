@@ -28,6 +28,7 @@ defmodule LineaUI.Components.Strings do
       signature_name: "Type your name",
       signature_ready: "Signature ready",
       signature_empty: "No signature",
+      filter_label: "Filters",
       filter_clear: "Clear",
       filter_apply: "Apply"
     },
@@ -57,6 +58,7 @@ defmodule LineaUI.Components.Strings do
       signature_name: "Digite o nome",
       signature_ready: "Assinatura pronta",
       signature_empty: "Sem assinatura",
+      filter_label: "Filtros",
       filter_clear: "Limpar",
       filter_apply: "Aplicar"
     }

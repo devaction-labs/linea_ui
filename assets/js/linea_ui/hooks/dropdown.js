@@ -1,6 +1,7 @@
 import {notify} from "../lib/dom.js"
 import {isTyping, runKey, wrap} from "../lib/keys.js"
 import {checkedTotal, choiceState, closesOnSelect, extendBuffer, isTypeahead, keepsSubmenus, matchIndex, serverChoice, submenuKey, submenuSide} from "../lib/menu_logic.js"
+import FilterMenu from "./filter_menu.js"
 import {Floating} from "./popover.js"
 
 const ITEM = '[role^="menuitem"]:not([aria-disabled="true"])'
@@ -27,11 +28,12 @@ const FOCUS_FRAMES = 12
  * (a radio unchecks the others of its `data-group`). One with a `name` has a real input beside it that follows the state
  * and fires a bubbling `input` event, so the surrounding form's `phx-change` hears it. A new `data-server-checked` from the
  * server wins; a patch that did not change it keeps what was chosen in the browser. A submenu's `[data-submenu-count]` shows
- * how many of its checkboxes are checked. The footer's buttons are `data-menu-action`: `clear` unchecks every checkbox,
+ * how many of its checkboxes (and radios, with `data-count-radios`) are checked. The footer's buttons are `data-menu-action`: `clear` unchecks every checkbox,
  * `apply` closes the menu (the button's own `phx-click` or form submit runs as usual). `data-keep-submenus="true"` leaves
  * open submenus open when the pointer moves to another item.
  */
 export default {
+  ...FilterMenu,
   "LineaUI.Dropdown": {
     ...Floating,
 
@@ -171,7 +173,8 @@ export default {
       this.panel().querySelectorAll("[data-submenu]").forEach((submenu) => {
         const badge = this.submenuTrigger(submenu)?.querySelector("[data-submenu-count]")
         const menu = this.submenuMenu(submenu)
-        const states = [...menu.querySelectorAll('[role="menuitemcheckbox"]')].filter((item) => item.closest(MENU) === menu).map((item) => item.getAttribute("aria-checked"))
+        const roles = submenu.hasAttribute("data-count-radios") ? CHOICE : '[role="menuitemcheckbox"]'
+        const states = [...menu.querySelectorAll(roles)].filter((item) => item.closest(MENU) === menu).map((item) => item.getAttribute("aria-checked"))
         const total = checkedTotal(states)
         badge && ((badge.textContent = String(total)), (badge.hidden = total === 0))
       })
