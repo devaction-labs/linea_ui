@@ -43,7 +43,7 @@ Without Igniter, `mix linea_ui.install` writes the skill and prints the lines to
 
 ```elixir
 # mix.exs
-{:linea_ui, "~> 0.1"}
+{:linea_ui, "~> 0.4"}
 ```
 
 ```css
