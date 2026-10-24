@@ -145,4 +145,16 @@ defmodule LineaUI.Components.DatePickerTest do
     assert Shell.format(nil, "00:05", "h:i K", names) == "12:05 AM"
     assert Shell.format(nil, "13:05", "H:i G", names) == "13:05 13"
   end
+
+  test "show_icon={false} leaves a bare input and display_format shapes the text" do
+    html =
+      render(
+        ~H|<.date_picker id="d" name="due" value={~D[2026-10-03]} show_icon={false} display_format="M j, Y" />|
+      )
+
+    assert [] = find(html, "#d-field span svg") |> Enum.to_list()
+    refute "pl-9" in classes(html, "#d-display")
+    assert LazyHTML.attribute(find(html, "#d-display"), "value") == ["Oct 3, 2026"]
+    assert find(html, "input[type=hidden][name=due][value='2026-10-03']") |> Enum.count() == 1
+  end
 end

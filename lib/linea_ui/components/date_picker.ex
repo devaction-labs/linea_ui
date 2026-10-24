@@ -8,6 +8,7 @@ defmodule LineaUI.Components.DatePicker do
       <.date_picker name="trip" mode="range" value={{~D[2026-10-10], ~D[2026-10-20]}} />
       <.date_picker name="days" mode="multiple" disabled_weekdays={[0, 6]} week_start={1} />
       <.datetime_picker field={@form[:starts_at]} min_time="16:00" max_time="22:00" />
+      <.date_picker name="due" display_format="M j, Y" show_icon={false} placeholder="Due date" />
 
   The input shows the date in `display_format` (flatpickr tokens: `Y-m-d`, `F j, Y`, `H:i`...);
   the form gets ISO text through hidden inputs named like the field: `2026-10-23` (one date),
@@ -56,7 +57,8 @@ defmodule LineaUI.Components.DatePicker do
 
   attr :display_format, :string,
     default: nil,
-    doc: "The text of the input in flatpickr tokens; `Y-m-d` by default."
+    doc:
+      "The text of the input in flatpickr tokens; `Y-m-d` by default. `M j, Y` reads `Oct 23, 2026`, `D, M j` reads `Fri, Oct 23`, `F j, Y` reads `October 23, 2026`. Only the shown text changes: the form still gets ISO."
 
   attr :months, :list, default: nil, doc: "The twelve month names, for another language."
 
@@ -69,7 +71,12 @@ defmodule LineaUI.Components.DatePicker do
     doc: "The day marked as today; the server's UTC day by default."
 
   attr :inline, :boolean, default: false, doc: "The calendar always shows, under the input."
-  attr :show_icon, :boolean, default: true, doc: "The calendar icon inside the input."
+
+  attr :show_icon, :boolean,
+    default: true,
+    doc:
+      "The calendar icon inside the input; `false` leaves a bare input (and drops the left padding)."
+
   attr :disabled, :boolean, default: false
   attr :on_change, :string, default: nil
   attr :target, :any, default: nil
