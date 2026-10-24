@@ -114,6 +114,71 @@
       linear-gradient(90deg, rgb(129 140 248 / 0.09) 1px, transparent 1px);
   }
 
+  .timer-checker {
+    background-image:
+      linear-gradient(rgb(79 70 229 / 0.08) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(79 70 229 / 0.08) 1px, transparent 1px);
+    background-size: 20px 20px;
+    background-position: -1px -1px;
+  }
+
+  .dark .timer-checker {
+    background-image:
+      linear-gradient(rgb(129 140 248 / 0.09) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(129 140 248 / 0.09) 1px, transparent 1px);
+  }
+
+  .timer-checker::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background: radial-gradient(closest-side, transparent 30%, #fff 100%);
+  }
+
+  .dark .timer-checker::after {
+    background: radial-gradient(closest-side, transparent 30%, var(--color-navy-700) 100%);
+  }
+
+  .timer-dot {
+    background-color: var(--color-success-focus);
+    box-shadow: 0 0 0 3px rgb(16 185 129 / 0.1);
+  }
+
+  .dark .timer-dot {
+    background-color: var(--color-success);
+    box-shadow: 0 0 0 3px rgb(16 185 129 / 0.15);
+  }
+
+  [data-state="paused"] > .timer-dot {
+    background-color: var(--color-warning-focus);
+    box-shadow: 0 0 0 3px rgb(255 152 0 / 0.1);
+  }
+
+  .dark [data-state="paused"] > .timer-dot {
+    background-color: var(--color-warning);
+    box-shadow: 0 0 0 3px rgb(255 152 0 / 0.15);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    [data-state="running"] > .timer-dot {
+      animation: timer-pulse 1.6s ease-out infinite;
+    }
+  }
+
+  @keyframes timer-pulse {
+    0% {
+      box-shadow: 0 0 0 3px rgb(16 185 129 / 0.25);
+    }
+    70% {
+      box-shadow: 0 0 0 7px rgb(16 185 129 / 0);
+    }
+    100% {
+      box-shadow: 0 0 0 3px rgb(16 185 129 / 0);
+    }
+  }
+
   .progress .is-shine {
     animation: progress-shine 1.4s ease-in-out infinite;
   }

@@ -84,6 +84,7 @@ defmodule LineaUI do
     textarea: LineaUI.Components.Textarea,
     time_picker: LineaUI.Components.TimePicker,
     timeline: LineaUI.Components.Timeline,
+    timer: LineaUI.Components.Timer,
     toast: LineaUI.Components.Toast,
     tooltip: LineaUI.Components.Tooltip,
     treeview: LineaUI.Components.Treeview,
