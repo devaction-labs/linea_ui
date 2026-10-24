@@ -67,6 +67,18 @@ defmodule LineaUI.Components.ChartLiveTest do
     |> get_in(["series", Access.at(0), "data"])
   end
 
+  test "formatters become data-formatters and are omitted when empty" do
+    html =
+      render(~H"""
+      <.chart id="a" options={%{}} formatters={%{"yaxis.labels.formatter" => "thousands"}} />
+      <.chart id="b" options={%{}} />
+      """)
+
+    assert [json] = find(html, "#a") |> LazyHTML.attribute("data-formatters")
+    assert Jason.decode!(json) == %{"yaxis.labels.formatter" => "thousands"}
+    assert [] = find(html, "#b[data-formatters]") |> Enum.to_list()
+  end
+
   test "options follow the assign so the hook's updated/0 redraws", %{conn: conn} do
     {:ok, view, html} = live_isolated(conn, ChartLive)
     assert series(html) == [1, 2, 3]
