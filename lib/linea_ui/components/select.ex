@@ -5,6 +5,7 @@ defmodule LineaUI.Components.Select do
 
       <.select native label="What type of event is it?" options={~w(Wedding Birthday Other)} />
       <.select native variant="filled" shape="pill" size="sm" field={@form[:kind]} options={@kinds} />
+      <.select native inline shape="pill" size="sm" name="period" options={~w(Week Month Year)} />
 
       <.select field={@form[:state]} options={[{"Alabama", "AL"}, {"Alaska", "AK"}]} multiple removable
                placeholder="Select a state..." />
@@ -82,6 +83,12 @@ defmodule LineaUI.Components.Select do
 
   attr :size, :string, default: "md", values: ~w(sm md lg), doc: "Native only."
   attr :shape, :string, default: "rounded", values: ~w(rounded pill), doc: "Native only."
+
+  attr :inline, :boolean,
+    default: false,
+    doc:
+      "Native only: the select is as wide as its content (`w-auto pr-9`) instead of filling its parent, for period pills in a card header."
+
   attr :removable, :boolean, default: false, doc: "A remove button on each chip."
   attr :clearable, :boolean, default: false, doc: "A button that removes every choice."
   attr :clear_label, :string, default: "Clear"
@@ -145,6 +152,7 @@ defmodule LineaUI.Components.Select do
           @native[assigns.variant],
           @native_sizes[{assigns.size, assigns.label != nil}],
           @native_shapes[assigns.shape],
+          inline_class(assigns.inline),
           @native_disabled,
           error_class(assigns.errors),
           assigns.class
@@ -168,6 +176,9 @@ defmodule LineaUI.Components.Select do
     </Pickers.field>
     """
   end
+
+  defp inline_class(true), do: "w-auto pr-9"
+  defp inline_class(false), do: nil
 
   defp native_base(true), do: "form-multiselect"
   defp native_base(false), do: "form-select"

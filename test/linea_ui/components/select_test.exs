@@ -197,4 +197,17 @@ defmodule LineaUI.Components.SelectTest do
     assert Options.values([1, "", nil, :a]) == ["1", "a"]
     assert Options.find([], "z").label == "z"
   end
+
+  test "native inline is as wide as its content" do
+    html =
+      render(~H"""
+      <.select native inline id="a" name="a" options={~w(x y)} />
+      <.select native id="b" name="b" options={~w(x y)} />
+      """)
+
+    assert "w-auto" in classes(html, "#a")
+    refute "w-full" in classes(html, "#a")
+    assert "pr-9" in classes(html, "#a")
+    assert "w-full" in classes(html, "#b")
+  end
 end
