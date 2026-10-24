@@ -11,6 +11,14 @@ defmodule LineaUI.Components.Checkbox do
   `checkbox_group` renders one checkbox per option for a list field:
 
       <.checkbox_group field={@form[:roles]} label="Roles" options={[{"Admin", "admin"}, {"Editor", "editor"}]} />
+
+  It takes `variant="card"` (a bordered card per option) and `variant="chip"` (a pill per
+  option, with an optional count), with a real checkbox underneath:
+
+      <.checkbox_group field={@form[:channels]} variant="chip" color="primary" options={[
+        %{label: "E-mail", value: "email", count: 3},
+        %{label: "WhatsApp", value: "whatsapp"}
+      ]} />
   """
 
   use LineaUI.Component
@@ -112,7 +120,12 @@ defmodule LineaUI.Components.Checkbox do
 
   @doc """
   Renders one checkbox per option, for a field that holds a list. Options are `{label, value}`
-  tuples, plain values, or `:checkbox` slots (which may set their own `color`).
+  tuples, plain values, maps with `:label`, `:value` and optionally `:description`, `:count`,
+  `:icon`, `:color`, `:disabled`, or `:checkbox` slots (which may set the same keys).
+
+  `variant` picks the look: `basic`/`outline` checkboxes, `card` cards, `chip` pill chips.
+  Each toggle fires the form's `phx-change`; the field gets `name[]` with every checked value
+  (and an empty one, so an empty choice still reaches the server).
 
       <.checkbox_group name="days[]" value={["mon"]} options={[{"Monday", "mon"}, {"Tuesday", "tue"}]} />
 
@@ -127,7 +140,13 @@ defmodule LineaUI.Components.Checkbox do
   attr(:value, :any)
   attr(:options, :list, default: [])
   attr(:color, :string, default: "neutral", values: @colors)
-  attr(:variant, :string, default: "basic", values: ~w(basic outline))
+
+  attr(:variant, :string,
+    default: "basic",
+    values: Choice.variants(),
+    doc: "`basic`/`outline` checkboxes, `card` cards, `chip` pill chips."
+  )
+
   attr(:filled, :boolean, default: false)
   attr(:shape, :string, default: "square", values: ~w(square circle))
   attr(:size, :string, default: "md", values: Choice.sizes())
@@ -156,6 +175,8 @@ defmodule LineaUI.Components.Checkbox do
     attr(:color, :string)
     attr(:disabled, :boolean)
     attr(:description, :string)
+    attr(:count, :any, doc: "A number shown in a small badge (chip and card).")
+    attr(:icon, :string, doc: "A `huge-*` icon name, shown in a card or a chip.")
   end
 
   def checkbox_group(assigns) do
@@ -177,14 +198,7 @@ defmodule LineaUI.Components.Checkbox do
       entry
       |> Map.put(:id, "#{assigns.id}-#{index}")
       |> Map.put(:checked, to_string(entry.value) in selected)
-      |> Map.put(
-        :classes,
-        classes(%{
-          assigns
-          | color: entry.color || assigns.color,
-            class: nil
-        })
-      )
+      |> Map.put(:classes, group_input_classes(%{assigns | color: entry.color || assigns.color}))
     end)
   end
 
@@ -196,6 +210,8 @@ defmodule LineaUI.Components.Checkbox do
         color: Map.get(slot, :color),
         disabled: Map.get(slot, :disabled),
         description: Map.get(slot, :description),
+        count: Map.get(slot, :count),
+        icon: Map.get(slot, :icon),
         content: [slot]
       }
     end)
@@ -203,17 +219,25 @@ defmodule LineaUI.Components.Checkbox do
 
   defp entries(%{options: options}), do: Enum.map(options, &option/1)
 
-  defp option({label, value}),
+  defp option(%{value: value} = option),
     do: %{
       value: value,
-      label: to_string(label),
-      color: nil,
-      disabled: nil,
-      description: nil,
+      label: option |> Map.get(:label, value) |> to_string(),
+      color: Map.get(option, :color),
+      disabled: Map.get(option, :disabled),
+      description: Map.get(option, :description),
+      count: Map.get(option, :count),
+      icon: Map.get(option, :icon),
       content: []
     }
 
+  defp option({label, value}), do: option(%{label: label, value: value})
+
   defp option(value), do: option({value, value})
+
+  defp group_input_classes(assigns) do
+    merge([Choice.input_classes("form-checkbox", assigns), @shapes[assigns.shape]])
+  end
 
   defp render_group(assigns) do
     ~H"""
@@ -231,13 +255,17 @@ defmodule LineaUI.Components.Checkbox do
         id={@id}
         role="group"
         aria-labelledby={@label && "#{@id}-label"}
-        class={merge(["inline-space flex flex-wrap", @label && "mt-1.5", @class])}
+        class={merge([Choice.layout(@variant), @label && "mt-1.5", @class])}
         {@rest}
       >
-        <Choice.label
+        <Choice.item
           :for={item <- @items}
+          variant={@variant}
+          color={item.color || @color}
           label={item.label}
           description={item.description}
+          count={item.count}
+          icon={item.icon}
           content={Choice.slot_content(item.content)}
         >
           <input
@@ -249,7 +277,7 @@ defmodule LineaUI.Components.Checkbox do
             disabled={@disabled || item.disabled}
             class={item.classes}
           />
-        </Choice.label>
+        </Choice.item>
       </div>
     </Form.field>
     """
