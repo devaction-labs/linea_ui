@@ -129,7 +129,7 @@ defmodule LineaUI.Components.NumberInputTest do
     assert attr_of(html, "button[data-step-by=up]", "aria-label") == ["Increase"]
     assert "h-8" in classes(html, "button[data-step-by=up]")
     assert html |> find("span.bg-slate-150") |> LazyHTML.text() =~ "R$"
-    assert html |> find("span.bg-slate-150") |> LazyHTML.text() =~ "un"
+    assert html |> find("span.pointer-events-none") |> LazyHTML.text() =~ "un"
     assert attr_of(html, "input[name=qty]", "phx-debounce") == ["200"]
     assert attr_of(html, "#q", "phx-debounce") == []
     assert attr_of(html, "#q", "placeholder") == ["0"]

@@ -10,6 +10,14 @@
 - `avatar`: initials in Inter semibold on a size ladder of about 36% of the avatar; a presence dot is 30% of the avatar, ringed in the card color, with the success, warning and error shades of the canvas; the "+N" of `avatar_group` is opaque; company, customer and supplier have 10px corners and the company stays navy in dark; the assistant gradient is the same in both themes and its sparkle an outline; the invite placeholder is a solid 1.5px ring.
 - `text_editor`: one rounded box with a tinted toolbar of 32px buttons (hover and pressed in the primary soft), group separators, the assistant pill at the end, prose content (Poppins 14/23, headings, lists, code, spaced paragraphs), chips in the primary soft, the "/" menu with the hint under the label and the canvas shadow, a comment bar with a 32px submit; focus draws the primary border.
 - `drawer` sheet: 22px side padding, 45% backdrop, flush shadow all around, deep shadow and ring in dark, grab handle without the negative margin, header and footer lines as in the canvas in dark.
+Visual parity with the Signetum canvas (markup and classes only; attrs, slots and events are unchanged).
+
+- `calendar`: the toolbar is Today, ghost arrows around the title and a segmented Month/Week switch; Inter 11px weekday heads (`slate-200` / `navy-800`), chips with 4px radius, day numbers aligned left with the round today marker, dark grid lines softened (`navy-600`), tinted legend swatches.
+- `signature_pad`: dark pad (`navy-700`) with light ink on screen (the export keeps `ink`), baseline and cross at the canvas offsets, segmented Draw/Type switch, Inter status badge.
+- `number_input`: with `steppers`, flat stepper cells with the canvas hover, a mono medium value and the `suffix` drawn inline in the field instead of an addon box.
+- `range`: the thumb is white with a 2px ring in the color and a soft shadow, marks are Inter 11px and the chosen one is a tinted pill, more room between track and marks.
+- `color_picker`: the hex field has the standard height and an ink-colored value.
+- `dropdown`: checkbox, radio and submenu rows are 36px Inter 14px regular with 10px gaps, 4px checkboxes, an uppercase tracked `dropdown_label`, the count badge in Inter 11px and a larger submenu shadow.
 
 ## 0.4.0
 

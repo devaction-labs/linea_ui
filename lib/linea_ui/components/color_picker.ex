@@ -185,14 +185,14 @@ defmodule LineaUI.Components.ColorPicker do
           type="text"
           id={@id}
           value={@hex}
-          size="sm"
+          size="md"
           state={@state}
           disabled={@disabled}
           maxlength="9"
           autocomplete="off"
           spellcheck="false"
           aria-label={@text.color_hex}
-          class="pl-10 font-mono uppercase"
+          class="pl-10 font-mono text-slate-800 uppercase dark:text-navy-50"
           data-hex
         >
           <:prefix>
