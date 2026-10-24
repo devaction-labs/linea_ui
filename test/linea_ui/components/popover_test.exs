@@ -19,6 +19,8 @@ defmodule LineaUI.Components.PopoverTest do
     assert attr_of(html, "#p", "data-offset") == ["12"]
     assert attr_of(html, "#p", "data-trigger-on") == ["click"]
     assert attr_of(html, "#p-panel", "role") == ["dialog"]
+    assert attr_of(html, "#p-panel", "popover") == ["manual"]
+    assert "fixed" in classes(html, "#p-panel")
     assert ["rounded-md", "p-4", "max-w-xs"] -- classes(html, "#p-panel .popper-box > div") == []
     assert find(html, "#p-panel h3") |> LazyHTML.text() =~ "UI/UX Design"
     assert [_] = find(html, "[data-popper-arrow] svg") |> Enum.to_list()

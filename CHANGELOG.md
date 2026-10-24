@@ -1,5 +1,23 @@
 # Changelog
 
+## Unreleased
+
+- `dropdown` (with `dropdown_submenu`), `popover`: the panel is no longer cut off or covered inside a box that
+  scrolls (every `table` sits in a horizontal scroll area, a `drawer` body scrolls) or under an ancestor with a
+  `z-index`, `transform` or `filter`. It carries `popover="manual"` and opening it puts it in the browser's top
+  layer (`showPopover()`), placed with `position: fixed` coordinates from the trigger's rectangle (flip and shift
+  as before), following the window's and every scrolling ancestor's scroll, the window's resize and its own size
+  (`ResizeObserver`); it closes when its trigger scrolls out of sight, as Popper's `hide` does. It stays in the
+  LiveView's DOM where it is rendered, so patches, `phx-click` on items, `on_open`/`on_close`, keys, outside
+  click and Esc are unchanged. Browsers without the Popover API get the same fixed box on `--linea-z-popover`.
+- `tooltip`: the hint goes to the top layer the same way, follows scrolling and hides when its trigger scrolls
+  out of sight.
+- `popover`: the arrow is positioned again (it is `position: absolute` next to the card, as Popper set it).
+- `dropdown`: opening it with the keyboard focuses the first (or last) item even while the items' entrance
+  transition still has them hidden.
+- New `lib/top_layer.js` (`canLift`, `lift`, `drop`, `clippingAncestors`) and, in `lib/anchor_logic.js`,
+  `clipsOverflow` and `referenceHidden`, with node tests.
+
 ## 0.3.0
 
 - `dropdown_item`: a link item takes `target`, `rel`, `download`, `hreflang`, `referrerpolicy` and `replace`, so

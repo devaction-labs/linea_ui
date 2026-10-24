@@ -38,8 +38,17 @@ defmodule LineaUI.Components.Dropdown do
         </.dropdown_submenu>
       </.dropdown>
 
+  The menu floats above the page: opened, it sits in the browser's top layer (`popover="manual"`,
+  `position: fixed`, placed from the trigger's rectangle), so a table's horizontal scroll area, a
+  drawer's scrolling body or an ancestor's `z-index` / `transform` neither cut it off nor cover it,
+  and the "…" menu in the last column of a table opens whole. It follows the page and any box
+  around the trigger as they scroll, flips to the other side when there is no room, and closes
+  when its trigger scrolls out of sight. It stays in the LiveView's DOM where it was rendered, so
+  patches and `phx-click` on items work as usual. Without the Popover API (old browsers) it is a
+  fixed box on `--linea-z-popover`.
+
   A long menu scrolls inside a `scroll_area` (`LineaUI.Components.ScrollArea`); keep submenus out
-  of a scrolling box, which would clip them.
+  of a scrolling box inside the menu, which would clip them.
 
   The keyboard works as in a menu (↑ ↓ Home End, letters, Esc, Tab). It opens and closes from
   the browser (`LineaUI.toggle("actions")`), from the server (`LineaUI.close(socket, "actions")`)
@@ -150,7 +159,8 @@ defmodule LineaUI.Components.Dropdown do
       </div>
       <div
         id={"#{@id}-menu"}
-        class="popper-root absolute left-0 top-0 w-max"
+        class="popper-root fixed left-0 top-0 w-max"
+        popover="manual"
         data-panel
         aria-hidden="true"
         phx-mounted={JS.ignore_attributes(["class", "style", "data-popper-placement", "aria-hidden"])}

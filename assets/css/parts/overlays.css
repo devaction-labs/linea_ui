@@ -219,6 +219,19 @@
     }
   }
 
+  /* floating panels in the top layer: undo the browser's own `[popover]` box (centered, bordered, padded,
+     Canvas colors), so the panel looks and sits as the fixed LineOne box it is; the hook sets left and top */
+  .popper-root[popover],
+  .linea-tip[popover] {
+    inset: 0 auto auto 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    overflow: visible;
+  }
+
   /* dropdown submenu: hidden until its item opens it, beside the item, with a 4px bridge the pointer crosses */
   .linea-submenu {
     @apply absolute top-[calc(-0.375rem-1px)] left-full z-10 hidden pl-1;

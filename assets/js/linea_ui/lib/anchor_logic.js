@@ -90,3 +90,22 @@ export const anchorBox = ({placement, anchor, panel, screen, offset = 0, padding
 
 /** The position of a box in coordinates of the screen, moved into the coordinates of an element that holds it. */
 export const toLocal = ({top, left}, origin) => ({top: top - origin.top, left: left - origin.left})
+
+const CLIPPING = ["hidden", "clip", "scroll", "auto"]
+
+/** Whether a box with these computed `overflow-x` / `overflow-y` values cuts off what overflows it. */
+export const clipsOverflow = ({overflowX, overflowY}) => CLIPPING.includes(overflowX) || CLIPPING.includes(overflowY)
+
+/**
+ * Whether the trigger can no longer be seen: it lies wholly outside the screen or outside one of the boxes that
+ * clip it (a table's scroll area, a drawer's body), so its floating panel would point at nothing. Popper's
+ * `hide` modifier, which tippy uses, makes the same call.
+ *
+ * @param {{left: number, top: number, right: number, bottom: number}} anchor
+ * @param {Array<{left: number, top: number, right: number, bottom: number}>} clips the boxes that clip it
+ * @param {{width: number, height: number}} screen
+ */
+export const referenceHidden = (anchor, clips, screen) =>
+  [{left: 0, top: 0, right: screen.width, bottom: screen.height}, ...clips].some(
+    (clip) => anchor.right <= clip.left || anchor.left >= clip.right || anchor.bottom <= clip.top || anchor.top >= clip.bottom,
+  )

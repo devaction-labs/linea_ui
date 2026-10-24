@@ -21,6 +21,10 @@ defmodule LineaUI.Components.Tooltip do
 
   A tooltip is an overlay: `LineaUI.open/close/toggle` show and hide it by `id`, and `open`
   drives it from the server (when the assign changes, the server wins).
+
+  The hint is shown in the browser's top layer (`popover="manual"`), so a table's scroll area, a
+  drawer's body or an ancestor's `z-index` / `transform` neither clip nor cover it; it follows
+  scrolling and hides when its trigger scrolls out of sight.
   """
 
   use LineaUI.Component
@@ -119,6 +123,7 @@ defmodule LineaUI.Components.Tooltip do
         id={"#{@id}-tip"}
         role="tooltip"
         data-tippy-root
+        popover="manual"
         hidden
         class="linea-tip"
         phx-mounted={JS.ignore_attributes(["hidden", "style"])}

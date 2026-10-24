@@ -18,6 +18,12 @@ defmodule LineaUI.Components.Popover do
   there is no room. It opens and closes from the browser (`LineaUI.toggle("lesson")`), from the
   server (`LineaUI.close(socket, "lesson")`) or from `open`; a click outside and Esc close it and
   `on_close` runs however it closed.
+
+  The card floats above the page: opened, it sits in the browser's top layer (`popover="manual"`,
+  `position: fixed`, placed from the trigger's rectangle), so a scroll area, a drawer's body or an
+  ancestor's `z-index` / `transform` neither clip nor cover it. It follows scrolling, flips when
+  there is no room and closes when its trigger scrolls out of sight; it stays in the LiveView's DOM,
+  so patches and events inside it work as usual.
   """
 
   use LineaUI.Component
@@ -76,7 +82,8 @@ defmodule LineaUI.Components.Popover do
       <div data-trigger class="flex">{render_slot(@trigger)}</div>
       <div
         id={"#{@id}-panel"}
-        class="popper-root absolute left-0 top-0 w-max"
+        class="popper-root fixed left-0 top-0 w-max"
+        popover="manual"
         role="dialog"
         data-panel
         aria-hidden="true"

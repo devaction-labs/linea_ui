@@ -5,6 +5,7 @@ import {Floating} from "./popover.js"
 const ITEM = '[role^="menuitem"]:not([aria-disabled="true"])'
 const MENU = '[role="menu"]'
 const HOVER_MS = 120
+const FOCUS_FRAMES = 12
 
 /**
  * `Dropdown`: the trigger toggles the menu; opened with the keyboard (Enter, Space, ↓ or ↑ on the trigger) the
@@ -17,6 +18,9 @@ const HOVER_MS = 120
  * rests on their item, on click, and with → / Enter / Space (the focus moves in); ← and Esc close the submenu and
  * give the focus back to its item. Each menu's keys only move among its own items. A submenu opens on its
  * `data-placement` side, or the other when the screen has no room (`data-side`). Closing the dropdown closes them.
+ *
+ * An item's `transition-all` keeps it `visibility: hidden` for the first frame of the menu's entrance, when
+ * `focus()` is refused, so when the focus did not take it is given again on the next frames, until it does (at most `FOCUS_FRAMES`).
  */
 export default {
   "LineaUI.Dropdown": {
@@ -68,8 +72,14 @@ export default {
     },
 
     focusItem(index, menu = this.rootMenu()) {
-      const items = this.items(menu)
-      items.at(index)?.focus({preventScroll: false})
+      const item = this.items(menu).at(index)
+      item?.focus({preventScroll: false})
+      const retry = (frames) => {
+        const pending = this.isOpen() && document.activeElement !== item
+        pending && item.focus({preventScroll: true})
+        pending && document.activeElement !== item && frames > 0 && requestAnimationFrame(() => retry(frames - 1))
+      }
+      item && document.activeElement !== item && requestAnimationFrame(() => retry(FOCUS_FRAMES))
     },
 
     openAt(index) {

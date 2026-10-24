@@ -583,7 +583,9 @@ code.inline-code {
 }
 
 .popper-root.show > .popper-box {
-  @apply opacity-100 ease-in translate-x-0 translate-y-0;
+  @apply opacity-100 ease-in;
+  translate: none;
+  transition-property: transform, opacity, translate;
 }
 
 /* form */

@@ -19,6 +19,8 @@ defmodule LineaUI.Components.DropdownTest do
     assert find(html, "#dd-button") |> LazyHTML.text() =~ "Dropdown"
     assert [_] = find(html, "#dd-button svg") |> Enum.to_list()
     assert "popper-root" in classes(html, "#dd-menu")
+    assert "fixed" in classes(html, "#dd-menu")
+    assert attr_of(html, "#dd-menu", "popover") == ["manual"]
     assert attr_of(html, "#dd-menu [role=menu]", "aria-labelledby") == ["dd-button"]
     assert [_, _] = find(html, "[role=menuitem][tabindex='-1']") |> Enum.to_list()
     assert [_] = find(html, "a[role=menuitem][href='#']") |> Enum.to_list()

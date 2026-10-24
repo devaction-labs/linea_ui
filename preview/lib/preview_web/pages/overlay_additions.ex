@@ -22,7 +22,19 @@ defmodule PreviewWeb.Pages.OverlayAdditions do
      )}
   end
 
+  @orders for n <- 1..4,
+              do: %{
+                id: n,
+                number: "PED-#{1040 + n}",
+                customer: "Cliente #{n} Comércio de Materiais Ltda",
+                city: "São Paulo · SP",
+                total: "R$ #{n * 1250},00",
+                status: "Aprovado"
+              }
+
   def render(assigns) do
+    assigns = assign(assigns, :orders, @orders)
+
     ~H"""
     <.example title="Sheet" text="A drawer with a title, a scrolling body and a footer, stacked.">
       <.button color="primary" phx-click={LineaUI.open("detail")} id="open-detail">Detail</.button>
@@ -63,6 +75,47 @@ defmodule PreviewWeb.Pages.OverlayAdditions do
         <p :for={n <- 1..20} class="py-1">Row {n}</p>
       </.scroll_area>
     </.example>
+
+    <.example
+      title="Menus in scrolling boxes"
+      text="The row menu in the last column of a table that scrolls sideways, inside a card that is its own stacking context, opens whole; so does the one in a drawer's scrolling body."
+      class="mt-5 space-y-4"
+    >
+      <div
+        id="clipped-card"
+        class="relative z-0 w-full max-w-2xl rounded-lg border border-slate-150 p-3 dark:border-navy-500"
+      >
+        <.orders_table id="clip-orders" orders={@orders} />
+      </div>
+      <.button id="open-orders-sheet" phx-click={LineaUI.open("orders-sheet")}>Orders sheet</.button>
+    </.example>
+
+    <.drawer
+      id="orders-sheet"
+      placement="right"
+      size="md"
+      title="Orders"
+      description="A sheet whose body scrolls."
+    >
+      <p :for={n <- 1..6} class="py-1">Line {n}</p>
+      <div class="shrink-0">
+        <.orders_table id="sheet-orders" orders={@orders} />
+      </div>
+      <div class="mt-4 flex items-center gap-3">
+        <.popover id="sheet-popover" placement="bottom-start">
+          <:trigger><.button size="sm" id="sheet-popover-trigger">Popover</.button></:trigger>
+          <:title>In the sheet</:title>
+          <p class="mt-2 max-w-48">Above the body's scroll and the sheet's footer.</p>
+        </.popover>
+        <.tooltip id="sheet-tip" text="A tooltip in the sheet" placement="bottom">
+          <.button size="sm">Tooltip</.button>
+        </.tooltip>
+      </div>
+      <p :for={n <- 7..30} class="py-1">Line {n}</p>
+      <:footer>
+        <.button phx-click={LineaUI.close("orders-sheet")}>Close</.button>
+      </:footer>
+    </.drawer>
 
     <.drawer
       id="detail"
@@ -137,6 +190,33 @@ defmodule PreviewWeb.Pages.OverlayAdditions do
         <.button phx-click={LineaUI.close("confirm")}>Back</.button>
       </:footer>
     </.modal>
+    """
+  end
+
+  attr :id, :string, required: true
+  attr :orders, :list, required: true
+
+  defp orders_table(assigns) do
+    ~H"""
+    <.table id={@id} rows={@orders} row_id={&"#{@id}-#{&1.id}"}>
+      <:col :let={order} label="Order">{order.number}</:col>
+      <:col :let={order} label="Customer" class="whitespace-nowrap">{order.customer}</:col>
+      <:col :let={order} label="City" class="whitespace-nowrap">{order.city}</:col>
+      <:col :let={order} label="Total" class="whitespace-nowrap">{order.total}</:col>
+      <:col :let={order} label="Status">{order.status}</:col>
+      <:col :let={order} label="">
+        <.dropdown id={"#{@id}-menu-#{order.id}"} toggle_icon="dots" placement="bottom-end">
+          <.dropdown_item>Open</.dropdown_item>
+          <.dropdown_item>Duplicate</.dropdown_item>
+          <.dropdown_submenu id={"#{@id}-move-#{order.id}"} label="Move to" placement="left">
+            <.dropdown_item>Archive</.dropdown_item>
+            <.dropdown_item>Trash</.dropdown_item>
+          </.dropdown_submenu>
+          <.dropdown_separator />
+          <.dropdown_item color="error">Cancel order</.dropdown_item>
+        </.dropdown>
+      </:col>
+    </.table>
     """
   end
 end

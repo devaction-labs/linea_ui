@@ -169,6 +169,13 @@ The values above are the defaults. Drawers and modals stack in the order they op
 10 to the next (`--linea-layer`), so a modal opened from a drawer, or a drawer opened from another, is drawn on
 top, and Esc closes only the top one.
 
+Dropdown menus, popovers and tooltips do not depend on these layers: an open one sits in the browser's top
+layer (`popover="manual"` and `showPopover()`), placed with `position: fixed` coordinates from its trigger, so
+no `overflow` (a table's horizontal scroll, a drawer's scrolling body) clips it and no ancestor's `z-index`,
+`transform` or `filter` covers or moves it. It stays in the LiveView's DOM where it was rendered, follows
+scrolling and closes when its trigger scrolls out of sight. Browsers without the Popover API get the fixed box
+on `--linea-z-popover` / `--linea-z-tooltip`.
+
 ## Development
 
 ```bash

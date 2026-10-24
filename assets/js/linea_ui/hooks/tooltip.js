@@ -1,7 +1,9 @@
+import {referenceHidden} from "../lib/anchor_logic.js"
 import {execWithPayload} from "../lib/js_payload.js"
 import {runKey} from "../lib/keys.js"
 import {cursorRect, placeTooltip} from "../lib/tip_place.js"
 import {FOCUSABLE, withDescription} from "../lib/tooltip_logic.js"
+import {clippingAncestors, drop, lift} from "../lib/top_layer.js"
 
 /**
  * LineOne's tippy.js tooltip without tippy: shows the hint on hover and focus, on click or on focus
@@ -10,6 +12,10 @@ import {FOCUSABLE, withDescription} from "../lib/tooltip_logic.js"
  * interactive hint (HTML content) open while the pointer is on it. It closes on Esc, on a click of the
  * trigger (hover) or outside it (click), answers `LineaUI.open/close/toggle` and `data-open` from the
  * server (the server wins when it changes it), and runs `data-on-open` / `data-on-close`.
+ *
+ * The hint (`popover="manual"`) is shown in the browser's top layer, like the dropdown and popover panels (see
+ * `lib/top_layer.js`), so a scroll area, a stacking context or a transformed ancestor around the trigger
+ * neither clips nor buries it; it follows scrolling and closes when the trigger scrolls out of sight.
  */
 
 const HIDE_GRACE = 100
@@ -97,7 +103,7 @@ const Tooltip = {
     )
     this.on(document, "keydown", (event) => this.open && runKey({Escape: () => (this.conceal(), false)}, event))
     this.on(document, "pointerdown", (event) => this.open && !this.el.contains(event.target) && this.conceal())
-    this.on(window, "scroll", () => this.open && this.place(), {capture: true, passive: true})
+    this.on(window, "scroll", () => this.open && this.followScroll(), {capture: true, passive: true})
     this.on(window, "resize", () => this.open && this.place())
   },
 
@@ -140,6 +146,8 @@ const Tooltip = {
     this.cancel("hide")
     this.cancel("unmount")
     tip.hidden = false
+    lift(tip)
+    this.clips = clippingAncestors(this.el, (node) => getComputedStyle(node))
     tip.style.pointerEvents = this.config.interactive ? "" : "none"
     box.style.transitionDuration = `${this.config.duration}ms`
     this.open = true
@@ -155,8 +163,20 @@ const Tooltip = {
     this.cancel("hide")
     this.open = false
     box && (box.dataset.state = "hidden")
-    this.later("unmount", this.config.duration, () => this.open || (this.tip().hidden = true))
+    this.later("unmount", this.config.duration, () => this.open || this.unmount())
     was && this.run("onClose")
+  },
+
+  unmount() {
+    const tip = this.tip()
+    tip.hidden = true
+    drop(tip)
+  },
+
+  followScroll() {
+    const clips = (this.clips ?? []).filter((node) => node.isConnected).map((node) => node.getBoundingClientRect())
+    const screen = {width: document.documentElement.clientWidth, height: window.innerHeight}
+    referenceHidden(this.el.getBoundingClientRect(), clips, screen) ? this.conceal() : this.place()
   },
 
   run(name) {
@@ -176,7 +196,12 @@ const Tooltip = {
       box: {width: box.offsetWidth, height: box.offsetHeight},
       viewport: {width: document.documentElement.clientWidth, height: window.innerHeight},
     })
-    tip.style.transform = `translate(${Math.round(placed.x)}px, ${Math.round(placed.y)}px)`
+    const x = Math.round(placed.x)
+    const y = Math.round(placed.y)
+    tip.style.transform = `translate(${x}px, ${y}px)`
+    const drawn = tip.getBoundingClientRect()
+    const fix = {x: 2 * x - Math.round(drawn.left), y: 2 * y - Math.round(drawn.top)}
+    ;(fix.x !== x || fix.y !== y) && (tip.style.transform = `translate(${fix.x}px, ${fix.y}px)`)
     box.dataset.placement = placed.placement
     const vertical = /^(top|bottom)/.test(placed.placement)
     arrow && (arrow.style.left = vertical ? `${placed.arrow}px` : "")

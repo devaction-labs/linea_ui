@@ -25,7 +25,7 @@ defmodule LineaUI.Components.TooltipTest do
     assert LazyHTML.attribute(root, "data-duration") == ["200"]
     assert LazyHTML.attribute(root, "data-follow-cursor") == ["horizontal"]
     assert LazyHTML.attribute(root, "data-interactive") == ["false"]
-    assert [_] = find(html, "#t-tip[role=tooltip][hidden]") |> Enum.to_list()
+    assert [_] = find(html, "#t-tip[role=tooltip][hidden][popover=manual]") |> Enum.to_list()
     assert [_] = find(html, ".tippy-box[data-theme=success][data-state=hidden]") |> Enum.to_list()
     assert [_] = find(html, ".tippy-svg-arrow > svg") |> Enum.to_list()
     assert html |> find(".tippy-content") |> LazyHTML.text() == "Hint"
