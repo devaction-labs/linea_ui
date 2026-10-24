@@ -6,7 +6,7 @@ import {execWithPayload} from "../lib/js_payload.js"
  * State the server renders (`data-open`) wins when it changes; a choice made in the browser survives patches that
  * did not change it, and live navigation (the choice is remembered per shell id for the life of the page).
  */
-import {breakpointName, initialOpen, place, smAndUp, storedValue} from "../lib/shell_logic.js"
+import {RAIL_KEY, breakpointName, clockText, initialCollapsed, initialOpen, isMobile, place, railValue, smAndUp, storedValue} from "../lib/shell_logic.js"
 
 const SIDEBAR_KEY = "linea-sidebar"
 const OPEN_CLASS = "is-sidebar-open"
@@ -395,7 +395,114 @@ const RightSidebar = {
   },
 }
 
+/**
+ * The framed shell's menu (`framed_sidebar/1`): collapsed to a 60px rail of icons or open with its labels. The
+ * state lives in `data-collapsed`, owned by the browser: the server's choice (`data-server-collapsed`) wins only
+ * when it changes, and the person's last choice is kept in `localStorage["linea-rail"]` (`data-persist`). Any
+ * element with `data-rail-toggle="<id of the menu>"` collapses and expands it, a module of the menu opens the
+ * rail again when it is clicked, and below 768px the menu is a top bar whose hamburger (`data-mobile-toggle`)
+ * sets `data-mobile-open`. `on_collapse` is pushed with `%{"id" => id, "collapsed" => boolean}`.
+ */
+const ShellRail = {
+  mounted() {
+    this.server = this.el.dataset.serverCollapsed === "true"
+    const collapsed = initialCollapsed({
+      width: window.innerWidth,
+      stored: this.el.dataset.persist === "true" ? read(RAIL_KEY) : null,
+      rendered: this.server,
+    })
+    this.apply(collapsed)
+    collapsed !== this.server && this.push(collapsed)
+
+    this.onClick = (event) => this.click(event)
+    this.onKey = (event) => event.key === "Escape" && this.el.dataset.mobileOpen === "true" && this.mobile(false)
+    this.onResize = () => !isMobile(window.innerWidth) && this.mobile(false)
+    document.addEventListener("click", this.onClick)
+    document.addEventListener("keydown", this.onKey)
+    window.addEventListener("resize", this.onResize, {passive: true})
+  },
+
+  updated() {
+    const server = this.el.dataset.serverCollapsed === "true"
+    const changed = server !== this.server
+    this.server = server
+    changed && this.apply(server)
+    this.paintToggles()
+  },
+
+  destroyed() {
+    document.removeEventListener("click", this.onClick)
+    document.removeEventListener("keydown", this.onKey)
+    window.removeEventListener("resize", this.onResize)
+  },
+
+  collapsed() {
+    return this.el.dataset.collapsed === "true"
+  },
+
+  apply(collapsed) {
+    this.el.dataset.collapsed = String(collapsed)
+    this.paintToggles()
+  },
+
+  paintToggles() {
+    document
+      .querySelectorAll(`[data-rail-toggle="${CSS.escape(this.el.id)}"]`)
+      .forEach((toggle) => toggle.setAttribute("aria-pressed", String(this.collapsed())))
+  },
+
+  choose(collapsed) {
+    this.apply(collapsed)
+    this.el.dataset.persist === "true" && write(RAIL_KEY, railValue(collapsed))
+    this.push(collapsed)
+  },
+
+  push(collapsed) {
+    const event = this.el.dataset.onCollapse
+    event && this.pushEventTo(this.el.dataset.target || this.el, event, {id: this.el.id, collapsed})
+  },
+
+  mobile(open) {
+    this.el.dataset.mobileOpen = String(open)
+    this.el.querySelector("[data-mobile-toggle]")?.setAttribute("aria-expanded", String(open))
+  },
+
+  click(event) {
+    const toggle = event.target.closest("[data-rail-toggle]")
+    const inside = this.el.contains(event.target)
+    const actions = [
+      [toggle?.dataset.railToggle === this.el.id, () => this.choose(!this.collapsed())],
+      [inside && event.target.closest("[data-mobile-toggle]"), () => this.mobile(this.el.dataset.mobileOpen !== "true")],
+      [inside && event.target.closest("[data-module]") && this.collapsed() && !isMobile(window.innerWidth), () => this.choose(false)],
+      [inside && event.target.closest("a[href]") && this.el.dataset.mobileOpen === "true", () => this.mobile(false)],
+    ]
+    actions.filter(([applies]) => applies).forEach(([, action]) => action())
+  },
+}
+
+/** The page header's clock: the date and time in the page's language, kept current every 30 seconds. */
+const ShellClock = {
+  mounted() {
+    this.tick()
+    this.timer = setInterval(() => this.tick(), 30000)
+  },
+
+  updated() {
+    this.tick()
+  },
+
+  destroyed() {
+    clearInterval(this.timer)
+  },
+
+  tick() {
+    this.el.textContent = clockText(new Date(), this.el.dataset.locale || undefined)
+  },
+}
+
 export default {
+  "LineaUI.ShellRail": ShellRail,
+  "LineaUI.ShellClock": ShellClock,
   "LineaUI.AppShell": AppShell,
   "LineaUI.SidebarGroup": SidebarGroup,
   "LineaUI.ShellPopper": ShellPopper,

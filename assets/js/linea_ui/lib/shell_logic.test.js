@@ -1,6 +1,24 @@
 import test from "node:test"
 import assert from "node:assert/strict"
-import {breakpointName, initialOpen, modeOn, modeValue, place, side, smAndUp, storedValue, xlAndUp} from "./shell_logic.js"
+import {breakpointName, clockText, initialCollapsed, initialOpen, isMobile, modeOn, modeValue, place, railValue, side, smAndUp, storedCollapsed, storedValue, xlAndUp} from "./shell_logic.js"
+
+test("the framed menu starts as the person left it, and never collapsed on a phone", () => {
+  assert.equal(isMobile(767), true)
+  assert.equal(isMobile(768), false)
+  assert.equal(storedCollapsed(railValue(true)), true)
+  assert.equal(storedCollapsed(railValue(false)), false)
+  assert.equal(storedCollapsed("junk"), null)
+  assert.equal(initialCollapsed({width: 1200, stored: "collapsed", rendered: false}), true)
+  assert.equal(initialCollapsed({width: 1200, stored: "expanded", rendered: true}), false)
+  assert.equal(initialCollapsed({width: 1200, stored: null, rendered: true}), true)
+  assert.equal(initialCollapsed({width: 500, stored: "collapsed", rendered: true}), false)
+})
+
+test("the clock reads the date and the time in the person's language", () => {
+  const date = new Date(2026, 9, 24, 7, 40)
+  assert.equal(clockText(date, "en-US"), "Sat, 24 Oct 2026 · 07:40")
+  assert.equal(clockText(date, "pt-BR"), "Sáb, 24 out 2026 · 07:40")
+})
 
 test("the breakpoint names follow LineOne's service", () => {
   assert.equal(breakpointName(320), "xs")
