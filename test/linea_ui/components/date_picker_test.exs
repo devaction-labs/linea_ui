@@ -157,4 +157,32 @@ defmodule LineaUI.Components.DatePickerTest do
     assert LazyHTML.attribute(find(html, "#d-display"), "value") == ["Oct 3, 2026"]
     assert find(html, "input[type=hidden][name=due][value='2026-10-03']") |> Enum.count() == 1
   end
+
+  defp picker_with(assigns), do: ~H|<.date_picker id="d" name="due" value={@value} />|
+
+  test "a value that does not parse renders as empty instead of raising" do
+    for value <- ["not a date", "24/10/2026", "2026-13-40", "   ", 42] do
+      html = rendered_to_string(picker_with(%{value: value, __changed__: nil}))
+      assert html |> find("#d") |> LazyHTML.attribute("data-value") == ["[]"]
+      assert html |> find("#d-display") |> LazyHTML.attribute("value") == [""]
+    end
+
+    html = render(~H|<.datetime_picker id="dt" name="at" value="2026-10-24 25:99" />|)
+    assert html |> find("#dt") |> LazyHTML.attribute("data-value") == ["[]"]
+
+    html = render(~H|<.datetime_picker id="dt" name="at" value="2026-10-24T09:30:00Z" />|)
+    assert html |> find("#dt") |> LazyHTML.attribute("data-value") == [~s(["2026-10-24 09:30"])]
+
+    html =
+      render(~H|<.date_picker id="r" name="r" mode="range" value={["2026-10-01", "garbage"]} />|)
+
+    assert html |> find("#r") |> LazyHTML.attribute("data-value") == [~s(["2026-10-01"])]
+  end
+
+  test "Shell.format gives an empty string for an invalid date or time" do
+    names = %{months: Shell.months(), weekdays: Shell.weekdays()}
+    assert Shell.format("nope", nil, "Y-m-d", names) == ""
+    assert Shell.format("2026-10-24", "x:y", "Y-m-d H:i", names) == ""
+    assert Shell.format("2026-10-24", "09:05", "Y-m-d H:i", names) == "2026-10-24 09:05"
+  end
 end

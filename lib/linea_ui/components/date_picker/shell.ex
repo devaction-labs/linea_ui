@@ -97,9 +97,9 @@ defmodule LineaUI.Components.DatePicker.Shell do
   def hidden_values(%{from: from, to: to}, kind, mode), do: hidden_values([from, to], kind, mode)
 
   def hidden_values(list, kind, _mode) when is_list(list),
-    do: list |> Enum.reject(&(&1 in [nil, ""])) |> Enum.map(&one(&1, kind))
+    do: list |> Enum.map(&one(&1, kind)) |> Enum.reject(&is_nil/1)
 
-  def hidden_values(value, kind, _mode), do: [one(value, kind)]
+  def hidden_values(value, kind, mode), do: hidden_values([value], kind, mode)
 
   defp one(%Date{} = date, _kind), do: Date.to_iso8601(date)
   defp one(%Time{} = time, _kind), do: hm(time)
@@ -109,7 +109,29 @@ defmodule LineaUI.Components.DatePicker.Shell do
   defp one(%DateTime{} = at, :time), do: hm(at)
   defp one(%NaiveDateTime{} = at, :date), do: Date.to_iso8601(at)
   defp one(%DateTime{} = at, :date), do: Date.to_iso8601(at)
-  defp one(text, kind) when is_binary(text), do: text |> String.replace("T", " ") |> trim(kind)
+
+  defp one(text, kind) when is_binary(text),
+    do: text |> String.trim() |> String.replace("T", " ") |> trim(kind) |> valid(kind)
+
+  defp one(_value, _kind), do: nil
+
+  defp valid(text, kind) do
+    case valid?(text, kind) do
+      true -> text
+      false -> nil
+    end
+  end
+
+  defp valid?(text, :date), do: match?({:ok, _date}, Date.from_iso8601(text))
+
+  defp valid?(text, :datetime) do
+    case String.split(text, " ", parts: 2) do
+      [date] -> valid?(date, :date)
+      [date, time] -> valid?(date, :date) and valid?(time, :time)
+    end
+  end
+
+  defp valid?(text, :time), do: clock(text) != :error
 
   defp trim(text, :date), do: String.slice(text, 0, 10)
   defp trim(text, :datetime), do: String.slice(text, 0, 16)
@@ -135,24 +157,32 @@ defmodule LineaUI.Components.DatePicker.Shell do
 
   @doc """
   A date and time written in flatpickr's tokens (`Y y m n d j F M l D H G h i K`), the same
-  the browser uses, so the first render already shows the text.
+  the browser uses, so the first render already shows the text. A date or a time that does
+  not parse gives `""`.
   """
   @spec format(String.t() | nil, String.t() | nil, String.t(), map()) :: String.t()
   def format(iso, time, format, names) do
-    date = Date.from_iso8601!(iso || "1970-01-01")
-    {hour, minute} = clock(time)
-
-    format
-    |> String.graphemes()
-    |> Enum.map_join(&token(&1, date, hour, minute, names))
+    with {:ok, date} <- Date.from_iso8601(iso || "1970-01-01"),
+         {hour, minute} <- clock(time) do
+      format
+      |> String.graphemes()
+      |> Enum.map_join(&token(&1, date, hour, minute, names))
+    else
+      _invalid -> ""
+    end
   end
 
   defp clock(nil), do: {0, 0}
 
   defp clock(text) do
-    [hour, minute] = text |> String.split(":") |> Enum.take(2) |> Enum.map(&String.to_integer/1)
-    {hour, minute}
+    case Regex.run(~r/\A(\d{1,2}):(\d{2})(?::\d{2}(?:\.\d+)?)?\z/, text) do
+      [_all, hour, minute] -> in_day(String.to_integer(hour), String.to_integer(minute))
+      nil -> :error
+    end
   end
+
+  defp in_day(hour, minute) when hour < 24 and minute < 60, do: {hour, minute}
+  defp in_day(_hour, _minute), do: :error
 
   defp token("Y", date, _h, _m, _n), do: Integer.to_string(date.year)
   defp token("y", date, _h, _m, _n), do: date.year |> Integer.to_string() |> String.slice(-2, 2)

@@ -182,4 +182,25 @@ defmodule LineaUI.Components.InputTest do
 
     assert [] = find(html, "#plain[phx-hook]") |> Enum.to_list()
   end
+
+  test "an interactive suffix or prefix takes clicks; a plain one lets them through" do
+    html =
+      render(~H"""
+      <.input name="message">
+        <:prefix><svg id="icon"></svg></:prefix>
+        <:suffix interactive class="w-12">
+          <button id="send" type="submit">Send</button>
+        </:suffix>
+      </.input>
+      """)
+
+    assert "pointer-events-none" in classes(html, "[data-prefix]")
+    suffix = classes(html, "[data-suffix]")
+    refute "pointer-events-none" in suffix
+    assert "right-0" in suffix
+    assert "w-12" in suffix
+    refute "w-10" in suffix
+    assert [_] = find(html, "[data-suffix] button#send") |> Enum.to_list()
+    assert "pr-9" in classes(html, "input") or "px-9" in classes(html, "input")
+  end
 end

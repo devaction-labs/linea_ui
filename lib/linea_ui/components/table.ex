@@ -171,6 +171,10 @@ defmodule LineaUI.Components.Table do
 
   @aligns %{"left" => "text-left", "center" => "text-center", "right" => "text-right"}
 
+  @head_col_keys ~w(__slot__ inner_block label class align colspan sort_key)a
+
+  @cell_keys ~w(__slot__ inner_block class align colspan rowspan)a
+
   @checkbox "form-checkbox is-basic size-5 rounded-sm border-slate-400/70 checked:border-primary checked:bg-primary hover:border-primary focus:border-primary dark:border-navy-400 dark:checked:border-accent dark:checked:bg-accent dark:hover:border-accent dark:focus:border-accent"
 
   @expand_button "btn size-8 rounded-full p-0 hover:bg-slate-300/20 focus:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25"
@@ -694,19 +698,19 @@ defmodule LineaUI.Components.Table do
   attr(:class, :any, default: nil, doc: "Classes of the `<tr>`.")
   attr(:rest, :global)
 
-  slot :col, doc: "A header cell; its content is the label (or give `label`)." do
-    attr(:label, :string, doc: "Header text, when the slot has no content.")
-    attr(:class, :any, doc: "Extra classes of the cell.")
-    attr(:align, :string, values: ~w(left center right), doc: "Text alignment of the cell.")
-    attr(:colspan, :any, doc: "Columns the cell spans.")
-    attr(:sort_key, :string, doc: "Makes the header sortable; sent as `\"column\"` in `on_sort`.")
-  end
+  slot(:col,
+    validate_attrs: false,
+    doc:
+      "A header cell; its content is the label (or give `label`). Takes `label` (text when the slot has no content), `class`, `align` (`left center right`), `colspan` and `sort_key` (makes it sortable; sent as `\"column\"` in `on_sort`). Any other attribute (`id`, `data-*`, `phx-*`, `title`, `aria-*`) lands on the `<th>`."
+  )
 
   slot(:inner_block, doc: "Extra `<th>` cells after the columns, or further header rows.")
 
   def table_head(assigns) do
     assigns =
-      assign(assigns, :select_all_id, assigns.select_all_id || gen_id("table-select-all"))
+      assigns
+      |> assign(:select_all_id, assigns.select_all_id || gen_id("table-select-all"))
+      |> assign(:head_col_keys, @head_col_keys)
 
     ~H"""
     <thead {@rest}>
@@ -727,6 +731,7 @@ defmodule LineaUI.Components.Table do
           colspan={col[:colspan]}
           class={merge([align(col[:align]), col[:class]])}
           aria-sort={aria_sort(col[:sort_key], @sort_by, @sort_dir)}
+          {slot_rest(col, @head_col_keys)}
         >
           <button
             :if={col[:sort_key] && @on_sort}
@@ -753,6 +758,8 @@ defmodule LineaUI.Components.Table do
     </thead>
     """
   end
+
+  defp slot_rest(entry, consumed), do: Map.drop(entry, consumed)
 
   defp col_label(%{col: %{inner_block: nil}} = assigns), do: ~H"{@col[:label]}"
   defp col_label(assigns), do: ~H"{render_slot(@col)}"
@@ -824,16 +831,17 @@ defmodule LineaUI.Components.Table do
   attr(:class, :any, default: nil)
   attr(:rest, :global)
 
-  slot :cell, doc: "A `<td>` of the row." do
-    attr(:class, :any, doc: "Extra classes of the cell.")
-    attr(:align, :string, values: ~w(left center right), doc: "Text alignment of the cell.")
-    attr(:colspan, :any, doc: "Columns the cell spans.")
-    attr(:rowspan, :any, doc: "Rows the cell spans.")
-  end
+  slot(:cell,
+    validate_attrs: false,
+    doc:
+      "A `<td>` of the row. Takes `class`, `align` (`left center right`), `colspan` and `rowspan`; any other attribute (`id`, `data-*`, `phx-*`, `title`, `aria-*`) lands on the `<td>`."
+  )
 
   slot(:inner_block, doc: "Free cells after the `:cell` ones.")
 
   def table_row(assigns) do
+    assigns = assign(assigns, :cell_keys, @cell_keys)
+
     ~H"""
     <tr
       class={merge([@on_click && "cursor-pointer", @class])}
@@ -857,6 +865,7 @@ defmodule LineaUI.Components.Table do
         colspan={cell[:colspan]}
         rowspan={cell[:rowspan]}
         class={merge([align(cell[:align]), cell[:class]])}
+        {slot_rest(cell, @cell_keys)}
       >
         {render_slot(cell)}
       </td>
@@ -916,15 +925,17 @@ defmodule LineaUI.Components.Table do
   attr(:class, :any, default: nil, doc: "Classes of the `:cell` row.")
   attr(:rest, :global)
 
-  slot :cell, doc: "A `<td>` of the totals row." do
-    attr(:class, :any, doc: "Extra classes of the cell.")
-    attr(:align, :string, values: ~w(left center right), doc: "Text alignment of the cell.")
-    attr(:colspan, :any, doc: "Columns the cell spans.")
-  end
+  slot(:cell,
+    validate_attrs: false,
+    doc:
+      "A `<td>` of the totals row. Takes `class`, `align` (`left center right`) and `colspan`; any other attribute (`id`, `data-*`, `phx-*`, `title`, `aria-*`) lands on the `<td>`."
+  )
 
   slot(:inner_block, doc: "Free `<tr>` rows after the `:cell` row.")
 
   def table_foot(assigns) do
+    assigns = assign(assigns, :cell_keys, @cell_keys)
+
     ~H"""
     <tfoot {@rest}>
       <tr :if={@cell != []} class={@class}>
@@ -932,6 +943,7 @@ defmodule LineaUI.Components.Table do
           :for={cell <- @cell}
           colspan={cell[:colspan]}
           class={merge([align(cell[:align]), cell[:class]])}
+          {slot_rest(cell, @cell_keys)}
         >
           {render_slot(cell)}
         </td>

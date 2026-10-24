@@ -51,6 +51,19 @@ defmodule LineaUI.Components.Input do
         <.input id="todo" name="title" value={@title} clear_on_submit />
       </.form>
 
+  ## Buttons inside the input
+
+  `:prefix` and `:suffix` hold icons and let clicks fall through to the input. Mark one
+  `interactive` to put a button there (send, clear, show the password):
+
+      <.input name="message" value={@message} placeholder="Message">
+        <:suffix interactive>
+          <.button variant="flat" class="size-7 rounded-full p-0" type="submit" aria-label="Send">
+            <.icon name="huge-sent" class="size-4" />
+          </.button>
+        </:suffix>
+      </.input>
+
   The mask runs in the `LineaUI.InputMask` hook, so a masked input needs a stable `id` (it gets
   one from `field`; pass one otherwise when the input re-renders).
   """
@@ -93,6 +106,8 @@ defmodule LineaUI.Components.Input do
   @aligns %{"left" => nil, "right" => "text-right"}
 
   @icon "pointer-events-none absolute flex h-full w-10 items-center justify-center text-slate-400 peer-focus:text-primary dark:text-navy-300 dark:peer-focus:text-accent"
+
+  @interactive_icon "absolute flex h-full w-10 items-center justify-center text-slate-400 dark:text-navy-300"
 
   @doc """
   Renders a text-like `<input>`, with its caption, help and errors when given.
@@ -171,8 +186,25 @@ defmodule LineaUI.Components.Input do
       ~w(accept autocomplete autofocus form list max maxlength min minlength multiple pattern placeholder readonly required size step inputmode)
   )
 
-  slot(:prefix, doc: "An icon inside the input, on the left.")
-  slot(:suffix, doc: "An icon inside the input, on the right.")
+  slot :prefix, doc: "An icon inside the input, on the left." do
+    attr(:interactive, :boolean,
+      doc:
+        "Its content takes clicks (a button): the box drops `pointer-events-none` and the focus color."
+    )
+
+    attr(:class, :any, doc: "Merged into the box around the content.")
+  end
+
+  slot :suffix,
+    doc:
+      "An icon inside the input, on the right; with `interactive`, a button (send, clear, show password)." do
+    attr(:interactive, :boolean,
+      doc:
+        "Its content takes clicks (a button): the box drops `pointer-events-none` and the focus color."
+    )
+
+    attr(:class, :any, doc: "Merged into the box around the content.")
+  end
 
   def input(assigns) do
     assigns
@@ -294,15 +326,23 @@ defmodule LineaUI.Components.Input do
   end
 
   defp control(assigns) do
-    assigns = assign(assigns, :icon, @icon)
-
     ~H"""
     <span class="relative flex w-full">
       <input {@attrs} />
       <input :if={@raw} type="hidden" {@raw} />
-      <span :for={prefix <- @prefix} class={@icon}>{render_slot(prefix)}</span>
-      <span :for={suffix <- @suffix} class={[@icon, "right-0"]}>{render_slot(suffix)}</span>
+      <span :for={prefix <- @prefix} class={adornment(prefix, "left-0")} data-prefix>
+        {render_slot(prefix)}
+      </span>
+      <span :for={suffix <- @suffix} class={adornment(suffix, "right-0")} data-suffix>
+        {render_slot(suffix)}
+      </span>
     </span>
     """
   end
+
+  defp adornment(entry, side),
+    do: merge([adornment_base(entry[:interactive] == true), side, entry[:class]])
+
+  defp adornment_base(true), do: @interactive_icon
+  defp adornment_base(false), do: @icon
 end

@@ -30,6 +30,23 @@ defmodule LineaUI.Components.Tabs do
 
   Every selection also dispatches a bubbling `linea:change` DOM event with
   `detail: %{id: id, value: name, tab: name}`.
+
+  ## Navigation tabs
+
+  Tabs without `:panel`s switch routes instead of panels: give each `:tab` a `patch`,
+  `navigate` or `href` and it renders as a `<.link>`, so the browser goes there with no
+  `handle_event` round trip, and `selected` (the current route's tab) carries
+  `aria-current="page"`:
+
+      <.tabs id="customer-tabs" variant="line" bordered selected={@live_action |> to_string()}>
+        <:tab name="show" patch={~p"/customers/\#{@customer}"}>Details</:tab>
+        <:tab name="orders" patch={~p"/customers/\#{@customer}/orders"}>Orders</:tab>
+        <:tab name="history" navigate={~p"/customers/\#{@customer}/history"}>History</:tab>
+      </.tabs>
+
+  A tab only points at a panel (`aria-controls`) when a `:panel` with its `name` exists, so
+  navigation tabs carry no dangling references. The arrow keys move the focus between link
+  tabs; Enter follows the focused one.
   """
 
   use LineaUI.Component
@@ -206,6 +223,10 @@ defmodule LineaUI.Components.Tabs do
     )
 
     attr(:disabled, :boolean, doc: "Skipped by clicks and the arrow keys.")
+    attr(:patch, :string, doc: "Renders the tab as a `<.link patch>` (navigation tabs).")
+    attr(:navigate, :string, doc: "Renders the tab as a `<.link navigate>` (navigation tabs).")
+    attr(:href, :string, doc: "Renders the tab as a `<.link href>` (navigation tabs).")
+    attr(:replace, :boolean, doc: "With `patch` or `navigate`: replaces the history entry.")
     attr(:class, :any)
   end
 
@@ -235,7 +256,11 @@ defmodule LineaUI.Components.Tabs do
     |> assign(:panel_class, @transitions[assigns.transition])
     |> assign(:event, event_name(assigns.on_change))
     |> assign(:on_change_js, on_change_js(assigns.on_change))
-    |> assign(:keep, JS.ignore_attributes(["aria-selected", "tabindex", "hidden"]))
+    |> assign(:panel_names, MapSet.new(assigns.panel, & &1.name))
+    |> assign(
+      :keep,
+      JS.ignore_attributes(["aria-selected", "aria-current", "tabindex", "hidden"])
+    )
     |> render_tabs()
   end
 
@@ -283,21 +308,15 @@ defmodule LineaUI.Components.Tabs do
       <div class={@scroll_class}>
         <div class={@track_class}>
           <div role="tablist" aria-orientation={@orientation} class={@list_classes}>
-            <button
+            <.tab_control
               :for={tab <- @tab}
-              type="button"
-              role="tab"
+              tab={tab}
               id={"#{@id}-tab-#{tab.name}"}
-              aria-controls={"#{@id}-panel-#{tab.name}"}
-              aria-selected={bool(tab.name == @selected)}
-              tabindex={tabindex(tab.name == @selected)}
-              data-value={tab.name}
-              disabled={tab[:disabled]}
-              phx-mounted={@keep}
+              controls={MapSet.member?(@panel_names, tab.name) && "#{@id}-panel-#{tab.name}"}
+              selected={tab.name == @selected}
+              keep={@keep}
               class={merge([@tab_class, tab[:class]])}
-            >
-              {render_slot(tab)}
-            </button>
+            />
           </div>
         </div>
       </div>
@@ -317,6 +336,60 @@ defmodule LineaUI.Components.Tabs do
         </div>
       </div>
     </div>
+    """
+  end
+
+  attr(:tab, :map, required: true)
+  attr(:id, :string, required: true)
+  attr(:controls, :any, required: true)
+  attr(:selected, :boolean, required: true)
+  attr(:keep, :any, required: true)
+  attr(:class, :any, required: true)
+
+  defp tab_control(%{tab: %{disabled: true}} = assigns), do: tab_button(assigns)
+
+  defp tab_control(%{tab: tab} = assigns)
+       when is_map_key(tab, :patch) or is_map_key(tab, :navigate) or is_map_key(tab, :href) do
+    ~H"""
+    <.link
+      role="tab"
+      id={@id}
+      patch={@tab[:patch]}
+      navigate={@tab[:navigate]}
+      href={@tab[:href]}
+      replace={@tab[:replace] || false}
+      aria-controls={@controls}
+      aria-selected={bool(@selected)}
+      aria-current={@selected && "page"}
+      tabindex={tabindex(@selected)}
+      data-value={@tab.name}
+      data-link
+      phx-mounted={@keep}
+      class={@class}
+    >
+      {render_slot(@tab)}
+    </.link>
+    """
+  end
+
+  defp tab_control(assigns), do: tab_button(assigns)
+
+  defp tab_button(assigns) do
+    ~H"""
+    <button
+      type="button"
+      role="tab"
+      id={@id}
+      aria-controls={@controls}
+      aria-selected={bool(@selected)}
+      tabindex={tabindex(@selected)}
+      data-value={@tab.name}
+      disabled={@tab[:disabled]}
+      phx-mounted={@keep}
+      class={@class}
+    >
+      {render_slot(@tab)}
+    </button>
     """
   end
 

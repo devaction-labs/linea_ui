@@ -175,4 +175,26 @@ defmodule LineaUI.Components.DropdownTest do
     assert LazyHTML.attribute(trigger, "aria-disabled") == ["true"]
     assert ["opacity-60", "text-error"] -- classes(html, "[data-submenu-trigger]") == []
   end
+
+  test "a link item forwards target, rel and download" do
+    html =
+      render(~H"""
+      <.dropdown id="dd" label="Files">
+        <.dropdown_item href="/danfe.pdf" target="_blank" rel="noopener noreferrer">
+          DANFE
+        </.dropdown_item>
+        <.dropdown_item href="/nfe.xml" download="nfe.xml">XML</.dropdown_item>
+      </.dropdown>
+      """)
+
+    assert [_] =
+             find(
+               html,
+               "a[role=menuitem][href='/danfe.pdf'][target=_blank][rel='noopener noreferrer']"
+             )
+             |> Enum.to_list()
+
+    assert [_] =
+             find(html, "a[role=menuitem][href='/nfe.xml'][download='nfe.xml']") |> Enum.to_list()
+  end
 end

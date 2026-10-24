@@ -117,4 +117,52 @@ defmodule LineaUI.Components.TabsTest do
              "#t-tab-home"
            )
   end
+
+  test "navigation tabs: links with aria-current and no dangling aria-controls" do
+    html =
+      render(~H"""
+      <.tabs id="nav" selected="orders">
+        <:tab name="show" patch="/customers/1">Details</:tab>
+        <:tab name="orders" patch="/customers/1/orders">Orders</:tab>
+        <:tab name="history" navigate="/customers/1/history" replace>History</:tab>
+        <:tab name="docs" href="/docs">Docs</:tab>
+        <:tab name="off" patch="/off" disabled>Off</:tab>
+      </.tabs>
+      """)
+
+    assert count(html, "[aria-controls]") == 0
+    assert count(html, "[role=tabpanel]") == 0
+
+    assert count(
+             html,
+             "a#nav-tab-show[role=tab][href='/customers/1'][data-phx-link=patch][aria-selected=false][tabindex='-1'][data-link]"
+           ) == 1
+
+    assert count(html, "a#nav-tab-orders[aria-selected=true][aria-current=page][tabindex='0']") ==
+             1
+
+    assert count(html, "#nav-tab-show[aria-current]") == 0
+
+    assert count(
+             html,
+             "a#nav-tab-history[data-phx-link=redirect][data-phx-link-state=replace]"
+           ) == 1
+
+    assert count(html, "a#nav-tab-docs[href='/docs']") == 1
+    assert count(html, "button#nav-tab-off[disabled]") == 1
+  end
+
+  test "a tab without a matching panel has no aria-controls, the others keep theirs" do
+    html =
+      render(~H"""
+      <.tabs id="mix">
+        <:tab name="a">A</:tab>
+        <:tab name="b">B</:tab>
+        <:panel name="a">Panel A</:panel>
+      </.tabs>
+      """)
+
+    assert count(html, "#mix-tab-a[aria-controls=mix-panel-a]") == 1
+    assert count(html, "#mix-tab-b[aria-controls]") == 0
+  end
 end

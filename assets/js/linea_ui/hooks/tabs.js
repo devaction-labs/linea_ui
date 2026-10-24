@@ -55,7 +55,7 @@ export default {
         rtl: getComputedStyle(this.el).direction === "rtl",
       })
       const target = at === null ? undefined : open[at]
-      target && (event.preventDefault(), target.focus(), this.choose(target))
+      target && (event.preventDefault(), target.focus(), "link" in target.dataset || this.choose(target))
     },
 
     choose(tab) {
@@ -77,6 +77,7 @@ export default {
         const on = tab.dataset.value === value
         tab.setAttribute("aria-selected", String(on))
         tab.setAttribute("tabindex", on ? "0" : "-1")
+        "link" in tab.dataset && (on ? tab.setAttribute("aria-current", "page") : tab.removeAttribute("aria-current"))
       })
       this.panels().forEach((panel) => panel.toggleAttribute("hidden", panel.dataset.value !== value))
     },

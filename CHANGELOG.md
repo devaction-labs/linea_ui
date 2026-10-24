@@ -1,5 +1,24 @@
 # Changelog
 
+## Unreleased
+
+- `dropdown_item`: a link item takes `target`, `rel`, `download`, `hreflang`, `referrerpolicy` and `replace`, so
+  it can open in a new tab or download a file.
+- `drawer`: the panel no longer carries `transform-gpu`, so an open drawer is not a containing block for
+  `position: fixed`; a modal or confirm rendered inside a drawer now covers the viewport and stacks above it
+  (it stays in the LiveView's DOM, so patches keep working).
+- `table_head` `:col`, `table_row` `:cell` and `table_foot` `:cell`: attributes they do not use (`id`, `data-*`,
+  `phx-*`, `aria-*`, `title`) land on the `<th>`/`<td>`; the slots no longer warn about undeclared attributes.
+- `table_skeleton`: covered by a test that its attributes (`data-role`, `phx-*`) reach the `<table>`.
+- `date_picker` / `datetime_picker` / `time_picker`: a value that does not parse (not ISO, blank, out of range, not
+  a string or date) renders as empty instead of raising; `DatePicker.Shell.format/4` returns `""` for it.
+- `tabs`: a `:tab` with `patch`, `navigate` or `href` (and `replace`) renders as a `<.link>` with
+  `aria-current="page"` when selected, for navigation tabs; a tab only gets `aria-controls` when a `:panel` with
+  its name exists.
+- `input`: `:prefix` and `:suffix` take `interactive` (the box takes clicks, for a send or clear button) and
+  `class`.
+- `select`: the `@doc` explains the native variant as the fixed-choice, non-searchable select.
+
 ## 0.2.0
 
 - One-command installer: `mix igniter.install linea_ui` adds the dependency and sets the app up, with the

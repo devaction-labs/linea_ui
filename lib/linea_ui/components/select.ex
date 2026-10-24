@@ -53,6 +53,25 @@ defmodule LineaUI.Components.Select do
 
   With `native` it is the browser's `<select>` in LineOne's look; otherwise the listbox.
 
+  ## Fixed choices, no search
+
+  The listbox always has a search box. For a short, fixed list (a status, a period, a unit,
+  yes/no) use `native`: the browser's own `<select>`, with no hook and no search, that submits
+  like any input, opens the system picker on a phone and works with the keyboard as a plain
+  select does. `prompt` adds a first, empty option; `{group, options}` entries become
+  `<optgroup>`s; `inline` shrinks it to its content for a card header.
+
+      <.select native field={@form[:status]} label="Status" prompt="Any status"
+               options={[{"Open", "open"}, {"Paid", "paid"}, {"Canceled", "canceled"}]} />
+      <form phx-change="period">
+        <.select native inline shape="pill" size="sm" name="period" value={@period}
+                 options={[{"This week", "week"}, {"This month", "month"}]} />
+      </form>
+
+  Only `variant`, `size`, `shape`, `inline` and `prompt` apply to it; `multiple` renders a
+  `form-multiselect` box. The listbox-only attrs (`removable`, `clearable`, `create`,
+  `on_search`, the slots...) are ignored.
+
   Events: with `on_search` the listbox stops filtering on its own and pushes
   `on_search` with `%{"id" => id, "query" => text}` as the person types (after `debounce`
   ms), to `target` or to the LiveView/LiveComponent the select is in; the server answers by

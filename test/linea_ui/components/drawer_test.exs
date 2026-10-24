@@ -129,4 +129,23 @@ defmodule LineaUI.Components.DrawerTest do
     refute Enum.any?(classes(html, ".drawer-overlay"), &String.starts_with?(&1, "z-"))
     refute Enum.any?(classes(html, ".drawer-content"), &String.starts_with?(&1, "z-"))
   end
+
+  test "the open panel carries no transform, so a modal inside it covers the viewport" do
+    html =
+      render(~H"""
+      <.drawer id="sheet" title="Order" open>
+        <p>Body</p>
+        <.modal id="confirm-delete">Sure?</.modal>
+      </.drawer>
+      """)
+
+    panel = classes(html, "#sheet-panel")
+
+    refute Enum.any?(
+             panel,
+             &(&1 =~ ~r/^(transform|translate|scale|rotate|filter|backdrop|will-change|contain)/)
+           )
+
+    assert [_] = find(html, "#sheet #confirm-delete[phx-hook='LineaUI.Dialog']") |> Enum.to_list()
+  end
 end

@@ -118,6 +118,16 @@ defmodule PreviewWeb.Pages.OverlayAdditions do
 
     <.drawer id="small" size="sm" title="Filters" lock_scroll>
       <p>Left, 400px.</p>
+      <.button phx-click={LineaUI.open("inner-confirm")} id="open-inner-confirm">
+        Clear filters
+      </.button>
+      <.modal id="inner-confirm">
+        <:header>Clear every filter?</:header>
+        <p>Rendered inside the drawer's markup, it still covers the whole screen.</p>
+        <:footer>
+          <.button phx-click={LineaUI.close("inner-confirm")}>Back</.button>
+        </:footer>
+      </.modal>
     </.drawer>
 
     <.modal id="confirm">

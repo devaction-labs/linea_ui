@@ -31,7 +31,13 @@ defmodule LineaUI.Components.Drawer do
 
   Drawers and modals stack in the order they open: a drawer opened from another (a detail, then
   its edit form), or a modal opened from a drawer, is drawn above it; Esc and the backdrop close
-  only the one on top. Render the second overlay next to the first, not inside its markup.
+  only the one on top. The second overlay may sit next to the first or inside its markup (a
+  confirm rendered in the sheet's body or footer): the open drawer carries no CSS `transform`
+  (the slide is an animation that only runs while it enters and leaves, with no fill), so it
+  is not a containing block for `position: fixed` and a modal inside it still covers the whole
+  viewport, above the drawer. Keep `panel_class` and `class` free of `transform`, `filter`,
+  `backdrop-filter`, `perspective` and `contain` for the same reason. Nothing is moved out of
+  the LiveView's DOM, so patches reach the nested modal as usual.
   The layers come from the CSS custom properties `--linea-z-overlay` (drawers) and
   `--linea-z-modal` (modals), see the README.
   """
@@ -174,7 +180,7 @@ defmodule LineaUI.Components.Drawer do
           id={"#{@id}-panel"}
           class={
             merge([
-              "flex h-full w-full transform-gpu flex-col bg-white outline-hidden transition-transform duration-200 dark:bg-navy-700",
+              "flex h-full w-full flex-col bg-white outline-hidden transition-transform duration-200 dark:bg-navy-700",
               @sheet && "shadow-[-12px_0_40px_-12px_rgb(15_23_42/.35)]",
               @panel_class
             ])

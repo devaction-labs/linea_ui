@@ -207,7 +207,11 @@ defmodule LineaUI.Components.Dropdown do
 
   @doc """
   An item of the menu: a link with `href`, `navigate` or `patch`, a button otherwise
-  (`phx-click`, `type="submit"`...).
+  (`phx-click`, `type="submit"`...). A link takes `target`, `rel`, `download`, `hreflang` and
+  `referrerpolicy`, so it can open in a new tab or download a file:
+
+      <.dropdown_item href={@danfe_url} target="_blank" rel="noopener">Open DANFE</.dropdown_item>
+      <.dropdown_item href={@xml_url} download="nfe.xml">Download XML</.dropdown_item>
   """
   attr :color, :string, default: "neutral", values: ~w(neutral primary error)
 
@@ -219,7 +223,11 @@ defmodule LineaUI.Components.Dropdown do
   attr :disabled, :boolean, default: false
   attr :type, :string, default: "button"
   attr :class, :any, default: nil
-  attr :rest, :global, include: ~w(href navigate patch method download form name value)
+
+  attr :rest, :global,
+    include:
+      ~w(href navigate patch method replace download target rel hreflang referrerpolicy form name value)
+
   slot :icon, doc: "Drawn before the text, as in LineOne's \"Dropdown Icons\"."
   slot :inner_block, required: true
 

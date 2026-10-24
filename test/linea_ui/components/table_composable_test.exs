@@ -256,4 +256,46 @@ defmodule LineaUI.Components.TableComposableTest do
     html = render(~H'<.table_skeleton id="s" headless rows={2} />')
     assert [] = html |> find("thead") |> Enum.to_list()
   end
+
+  test "table_head :col, table_row :cell and table_foot :cell forward the attributes they do not use" do
+    html =
+      render(~H"""
+      <.table id="t">
+        <.table_head on_sort="sort" sort_by="number">
+          <:col sort_key="number" data-col="number" id="th-number">Number</:col>
+          <:col label="Total" align="right" data-col="total" title="Order total" />
+        </.table_head>
+        <.table_body id="t-body">
+          <.table_row id="r1">
+            <:cell data-field="number" id="r1-number" phx-click="open">A-1</:cell>
+            <:cell align="right" colspan="2" aria-label="Total">10</:cell>
+          </.table_row>
+        </.table_body>
+        <.table_foot>
+          <:cell colspan="2" data-field="label">Total</:cell>
+        </.table_foot>
+      </.table>
+      """)
+
+    assert [_] =
+             find(html, "th#th-number[data-col=number][aria-sort=ascending]") |> Enum.to_list()
+
+    assert [_] =
+             find(html, "th.text-right[data-col=total][title='Order total']") |> Enum.to_list()
+
+    assert [_] = find(html, "td#r1-number[data-field=number][phx-click=open]") |> Enum.to_list()
+    assert [_] = find(html, "td.text-right[colspan='2'][aria-label=Total]") |> Enum.to_list()
+    assert [_] = find(html, "tfoot td[colspan='2'][data-field=label]") |> Enum.to_list()
+    refute html =~ "sort_key"
+    refute html =~ "inner_block"
+    refute html =~ ~s(align=)
+  end
+
+  test "table_skeleton forwards its attributes to the table" do
+    html = render(~H|<.table_skeleton id="loading" data-role="orders-loading" phx-mounted="x" />|)
+
+    assert [_] =
+             find(html, "table#loading[data-role=orders-loading][phx-mounted=x][aria-busy=true]")
+             |> Enum.to_list()
+  end
 end
