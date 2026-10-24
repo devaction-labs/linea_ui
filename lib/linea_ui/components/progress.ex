@@ -18,13 +18,13 @@ defmodule LineaUI.Components.Progress do
 
   @tracks %{
     "solid" => %{
-      "neutral" => "bg-slate-150 dark:bg-navy-500",
-      "primary" => "bg-slate-150 dark:bg-navy-500",
-      "secondary" => "bg-slate-150 dark:bg-navy-500",
-      "info" => "bg-slate-150 dark:bg-navy-500",
-      "success" => "bg-slate-150 dark:bg-navy-500",
-      "warning" => "bg-slate-150 dark:bg-navy-500",
-      "error" => "bg-slate-150 dark:bg-navy-500",
+      "neutral" => "bg-slate-150 dark:bg-navy-800",
+      "primary" => "bg-slate-150 dark:bg-navy-800",
+      "secondary" => "bg-slate-150 dark:bg-navy-800",
+      "info" => "bg-slate-150 dark:bg-navy-800",
+      "success" => "bg-slate-150 dark:bg-navy-800",
+      "warning" => "bg-slate-150 dark:bg-navy-800",
+      "error" => "bg-slate-150 dark:bg-navy-800",
       "white" => "bg-white/30"
     },
     "soft" => %{
@@ -45,7 +45,7 @@ defmodule LineaUI.Components.Progress do
     "secondary" => "bg-secondary",
     "info" => "bg-info",
     "success" => "bg-success",
-    "warning" => "bg-warning",
+    "warning" => "bg-[#e68200] dark:bg-warning",
     "error" => "bg-error",
     "white" => "bg-white"
   }
@@ -57,7 +57,8 @@ defmodule LineaUI.Components.Progress do
     "secondary" => "bg-gradient-to-r from-transparent via-secondary to-transparent",
     "info" => "bg-gradient-to-r from-transparent via-info to-transparent",
     "success" => "bg-gradient-to-r from-transparent via-success to-transparent",
-    "warning" => "bg-gradient-to-r from-transparent via-warning to-transparent",
+    "warning" =>
+      "bg-gradient-to-r from-transparent via-[#e68200] to-transparent dark:via-warning",
     "error" => "bg-gradient-to-r from-transparent via-error to-transparent",
     "white" => "bg-gradient-to-r from-transparent via-white to-transparent"
   }
