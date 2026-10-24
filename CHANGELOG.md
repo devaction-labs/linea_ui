@@ -2,6 +2,10 @@
 
 ## 0.4.0
 
+- The skill keeps itself current: `mix linea_ui.install` adds the `:linea_ui_skill` compiler to the app's `mix.exs`, and
+  a compile after `mix deps.update linea_ui` regenerates `.claude/skills/linea-ui/` when its version is not the
+  installed one (nothing happens without a skill, when it is current, or in `:prod`). `LineaUI.Skill` gained
+  `version/0`, `installed_version/1` and `write!/1`.
 - `toast`: `aura` (`true`, `:dual`, `:glow`; `aura_size` `xs sm lg`; `aura_color`) runs a ring of light around a toast,
   `aura/1` does the same around any element, and a toast with a `value` is a progress toast that fills, turns into a
   success at 100 and leaves by itself (`update_toast(socket, id, value: 64)`).

@@ -218,6 +218,41 @@ defmodule LineaUI.Installer.InstallTest do
       refute Igniter.exists?(igniter, "CLAUDE.md")
     end
 
+    test "registers the compiler that keeps the skill current in mix.exs" do
+      igniter = install(project())
+
+      assert content(igniter, "mix.exs") =~ "Mix.compilers() ++ [:linea_ui_skill]"
+    end
+
+    test "appends the compiler after the ones the app already lists" do
+      mix_exs = """
+      defmodule E2eApp.MixProject do
+        use Mix.Project
+
+        def project do
+          [app: :e2e_app, version: "0.1.0", compilers: [:phoenix_live_view] ++ Mix.compilers(), deps: []]
+        end
+      end
+      """
+
+      igniter = install(project(%{"mix.exs" => mix_exs}))
+
+      assert content(igniter, "mix.exs") =~
+               "[:phoenix_live_view] ++ Mix.compilers() ++ [:linea_ui_skill]"
+    end
+
+    test "registers the compiler once" do
+      once = project() |> install() |> settle() |> install()
+
+      assert length(String.split(content(once, "mix.exs"), ":linea_ui_skill")) == 2
+    end
+
+    test "--no-skill leaves mix.exs without the compiler" do
+      igniter = install(project(), ["--no-skill"])
+
+      refute content(igniter, "mix.exs") =~ ":linea_ui_skill"
+    end
+
     test "--no-skill writes neither the skill nor the pointer" do
       igniter = install(project(), ["--no-skill"])
 

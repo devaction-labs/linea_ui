@@ -119,8 +119,10 @@ only sees what is written, and a name that is not in the set renders nothing.
 
 ## Claude Code skill
 
-The installer writes the skill (`mix igniter.install linea_ui`, or `mix linea_ui.install` on its own, which
-you run again after every upgrade). To refresh only the skill after an upgrade:
+The installer writes the skill (`mix igniter.install linea_ui`, or `mix linea_ui.install` on its own) and adds the
+`:linea_ui_skill` compiler to the `compilers` of your `mix.exs`. After `mix deps.update linea_ui`, the next compile
+regenerates the skill for the new version by itself; it does nothing when the skill is already current, when the app
+has no skill, and in `:prod`. Without the compiler (`--no-skill`, or an installation by hand), refresh it with:
 
 ```bash
 mix linea_ui.gen.skill

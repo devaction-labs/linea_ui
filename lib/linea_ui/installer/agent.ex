@@ -10,8 +10,10 @@ if Code.ensure_loaded?(Igniter) do
     """
 
     alias LineaUI.Skill
+    alias Sourceror.Zipper
 
     @root ".claude/skills/linea-ui"
+    @compiler :linea_ui_skill
     @instruction_files ~w(AGENTS.md CLAUDE.md)
 
     @doc "Writes the skill and the pointer block."
@@ -24,7 +26,30 @@ if Code.ensure_loaded?(Igniter) do
       |> write(files)
       |> remove_stale(files)
       |> point()
+      |> keep_current()
     end
+
+    defp keep_current(igniter) do
+      Igniter.Project.MixProject.update(igniter, :project, [:compilers], &add_compiler/1)
+    end
+
+    defp add_compiler(nil), do: {:ok, {:code, quote(do: Mix.compilers() ++ [unquote(@compiler)])}}
+
+    defp add_compiler(zipper) do
+      node = Zipper.node(zipper)
+
+      cond do
+        Macro.to_string(node) =~ Atom.to_string(@compiler) -> {:ok, zipper}
+        Igniter.Code.List.list?(zipper) -> Igniter.Code.List.append_new_to_list(zipper, @compiler)
+        true -> {:ok, {:code, append_to_concatenation(node)}}
+      end
+    end
+
+    defp append_to_concatenation({:++, _meta, [left, right]}) do
+      quote do: unquote(left) ++ unquote(append_to_concatenation(right))
+    end
+
+    defp append_to_concatenation(node), do: quote(do: unquote(node) ++ [unquote(@compiler)])
 
     defp skill_path(relative), do: Path.join(@root, relative)
 

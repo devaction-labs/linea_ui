@@ -28,10 +28,43 @@ defmodule LineaUI.Skill do
   @spec pointer() :: String.t()
   def pointer, do: @pointer
 
+  @doc "The version of the installed package, which the generated `SKILL.md` carries in its heading."
+  @spec version() :: String.t()
+  def version do
+    Application.load(:linea_ui)
+    :linea_ui |> Application.spec(:vsn) |> to_string()
+  end
+
+  @doc "The version a skill directory was generated for, or `nil` when it has no `SKILL.md`."
+  @spec installed_version(Path.t()) :: String.t() | nil
+  def installed_version(path) do
+    with {:ok, contents} <- File.read(Path.join(path, "SKILL.md")),
+         [_, version] <- Regex.run(~r/^# LineaUI (\S+)$/m, contents) do
+      version
+    else
+      _ -> nil
+    end
+  end
+
+  @doc "Writes the skill under `path`, replacing the references of a previous run."
+  @spec write!(Path.t()) :: [{String.t(), String.t()}]
+  def write!(path) do
+    File.rm_rf!(Path.join(path, "references"))
+    files = files()
+
+    Enum.each(files, fn {relative, contents} ->
+      file = Path.join(path, relative)
+      File.mkdir_p!(Path.dirname(file))
+      File.write!(file, contents)
+    end)
+
+    files
+  end
+
   @doc "The files of the skill, as `{relative_path, contents}`."
   @spec files() :: [{String.t(), String.t()}]
   def files do
-    version = Application.spec(:linea_ui, :vsn) |> to_string()
+    version = version()
     documented = LineaUI.Docs.components()
 
     [{"SKILL.md", index(documented, version)} | Enum.map(documented, &reference/1)]

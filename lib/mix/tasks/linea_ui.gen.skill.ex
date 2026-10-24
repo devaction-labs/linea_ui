@@ -24,18 +24,10 @@ defmodule Mix.Tasks.LineaUi.Gen.Skill do
     Mix.Task.run("app.config")
     {:ok, _} = Application.ensure_all_started(:linea_ui)
 
-    File.rm_rf!(Path.join(path, "references"))
-    files = LineaUI.Skill.files()
-    Enum.each(files, &write(path, &1))
+    files = LineaUI.Skill.write!(path)
 
     Mix.shell().info(
       "LineaUI skill written to #{path} (#{length(files) - 1} component references)"
     )
-  end
-
-  defp write(path, {relative, contents}) do
-    file = Path.join(path, relative)
-    File.mkdir_p!(Path.dirname(file))
-    File.write!(file, contents)
   end
 end
