@@ -11,11 +11,39 @@ defmodule LineaUI.Components.TagsInput do
   `name[]` (plus an empty `name[]` so an empty list still reaches the server) through a
   hidden `<select multiple>`, and each change fires a bubbling `input` event for `phx-change`.
   `suggestions` are offered in the list while typing.
+
+  ## Picking from a server-searched list
+
+  With `create={false}` only listed options can be chosen, and with `on_search` the server
+  does the search: the typed text is pushed (debounced) and the LiveView answers by
+  re-rendering `options`. Chips show the labels; the form gets the values as `name[]`.
+  `selected_options` gives the labels of the chosen values that are not in the current
+  `options` (after a search narrowed them).
+
+      <.tags_input
+        field={@form[:tag_ids]}
+        options={@tag_results}
+        selected_options={@chosen_tags}
+        create={false}
+        on_search="search_tags"
+        target={@myself}
+        removable
+        placeholder="Search tags"
+      />
+
+      def handle_event("search_tags", %{"query" => query}, socket),
+        do: {:noreply, assign(socket, :tag_results, Tags.search(query))}
   """
 
   use LineaUI.Component
 
-  @doc "Renders a tag input."
+  @doc """
+  Renders a tag input.
+
+  Events: with `on_search`, `%{"id" => id, "query" => text}` is pushed to `target` (or the
+  LiveView) as the person types, `debounce` ms after the last key; the list then shows the
+  `options` the server renders, unfiltered.
+  """
   attr :id, :string, doc: "Defaults to the field id, or a generated one."
   attr :name, :string, doc: "Defaults to the field name (with `[]` when several values)."
   attr :value, :any, doc: "Defaults to the field value."
@@ -28,6 +56,26 @@ defmodule LineaUI.Components.TagsInput do
   attr :suggestions, :list,
     default: [],
     doc: "Options offered while typing, in any select option shape."
+
+  attr :options, :list,
+    default: nil,
+    doc: "The options to pick from (any select option shape); `suggestions` by another name."
+
+  attr :selected_options, :list,
+    default: [],
+    doc: "Options whose labels the chips of chosen values use when they are not in `options`."
+
+  attr :create, :boolean,
+    default: true,
+    doc: "Typed text becomes a tag; `false` allows only listed options (option-picking mode)."
+
+  attr :on_search, :string,
+    default: nil,
+    doc: "Event pushed with the typed text; the server then renders `options`."
+
+  attr :debounce, :integer,
+    default: 300,
+    doc: "Milliseconds between the last key and `on_search`."
 
   attr :removable, :boolean, default: false, doc: "A remove button on each tag."
   attr :clearable, :boolean, default: false, doc: "A button that removes every tag."
@@ -50,9 +98,13 @@ defmodule LineaUI.Components.TagsInput do
     |> assign_new(:id, fn -> gen_id("tags") end)
     |> then(&assign_new(&1, :name, fn -> &1.id end))
     |> assign_new(:value, fn -> nil end)
-    |> assign(options: assigns.suggestions, create: true, on_search: nil, debounce: 0)
+    |> assign(:options, assigns.options || assigns.suggestions)
+    |> then(&assign(&1, :debounce, debounce(&1.on_search, &1.debounce)))
     |> assign(option: [], item: [])
     |> LineaUI.Components.Select.Listbox.prepare(:tags)
     |> LineaUI.Components.Select.Listbox.listbox()
   end
+
+  defp debounce(nil, _debounce), do: 0
+  defp debounce(_event, debounce), do: debounce
 end

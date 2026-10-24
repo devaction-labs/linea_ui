@@ -23,6 +23,17 @@
   (`LineaUI.Autocomplete` hook).
 - `select`: the listbox's `id` falls back to `name` before a generated one, and `no_results` replaces `%{query}`
   with the search text.
+- `radio_group` and `checkbox_group`: `variant="card"` (a bordered card per option with title, description,
+  optional icon and count, ringed in `color` when chosen) and `variant="chip"` (pill chips with an optional
+  count badge, the status filter of a list), over real radio/checkbox inputs; options may also be maps with
+  `:description`, `:count`, `:icon`, `:color` and `:disabled`, and the slots take `count` and `icon`.
+- `tags_input`: an option-picking mode: `options`, `create={false}`, `on_search` (debounced by `debounce`,
+  sent to `target`) and `selected_options` for the labels of chosen values the current options no longer
+  hold; chosen chips keep their labels across server searches. The free-text mode is unchanged.
+- `date_picker`: a range submitted as two fields (`start_field`/`end_field` or `start_name`/`end_name`),
+  `presets` under the calendar (named periods computed from `today` by the new `date_range_preset/3`, or
+  explicit `{from, to}`), and `locale="pt_BR"` (month and weekday names, `dd/mm/aaaa`, "até"), with
+  `range_separator`; `datetime_picker` takes `locale` too.
 
 ## 0.1.1
 
