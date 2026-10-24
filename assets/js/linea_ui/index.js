@@ -10,6 +10,7 @@ import Autocomplete from "./hooks/autocomplete.js"
 import Carousel from "./hooks/carousel.js"
 import Chart from "./hooks/chart.js"
 import Clipboard from "./hooks/clipboard.js"
+import CommandPalette from "./hooks/command_palette.js"
 import DataTable from "./hooks/data_table.js"
 import DatePicker from "./hooks/date_picker.js"
 import Dialog from "./hooks/dialog.js"
@@ -18,6 +19,7 @@ import InputMask from "./hooks/input_mask.js"
 import NumberInput from "./hooks/number_input.js"
 import Popover from "./hooks/popover.js"
 import Range from "./hooks/range.js"
+import Segmented from "./hooks/segmented.js"
 import Select from "./hooks/select.js"
 import Sidebar from "./hooks/sidebar.js"
 import Tabs from "./hooks/tabs.js"
@@ -35,6 +37,7 @@ export const Hooks = {
   ...Carousel,
   ...Chart,
   ...Clipboard,
+  ...CommandPalette,
   ...DataTable,
   ...DatePicker,
   ...Dialog,
@@ -43,6 +46,7 @@ export const Hooks = {
   ...NumberInput,
   ...Popover,
   ...Range,
+  ...Segmented,
   ...Select,
   ...Sidebar,
   ...Tabs,

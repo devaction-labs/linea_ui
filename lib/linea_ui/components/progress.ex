@@ -7,6 +7,7 @@ defmodule LineaUI.Components.Progress do
       <.progress value={70} color="success" variant="soft" />
       <.progress value={50} color="primary" active />
       <.progress indeterminate color="info" size="sm" />
+      <.progress indeterminate shine color="primary" />
       <.progress value={30} color="warning" variant="soft" height="1.5" />
       <.progress value={60} color="white" />
 
@@ -47,6 +48,18 @@ defmodule LineaUI.Components.Progress do
     "warning" => "bg-warning",
     "error" => "bg-error",
     "white" => "bg-white"
+  }
+
+  @shines %{
+    "neutral" =>
+      "bg-gradient-to-r from-transparent via-slate-500 to-transparent dark:via-navy-400",
+    "primary" => "bg-gradient-to-r from-transparent via-primary to-transparent dark:via-accent",
+    "secondary" => "bg-gradient-to-r from-transparent via-secondary to-transparent",
+    "info" => "bg-gradient-to-r from-transparent via-info to-transparent",
+    "success" => "bg-gradient-to-r from-transparent via-success to-transparent",
+    "warning" => "bg-gradient-to-r from-transparent via-warning to-transparent",
+    "error" => "bg-gradient-to-r from-transparent via-error to-transparent",
+    "white" => "bg-gradient-to-r from-transparent via-white to-transparent"
   }
 
   @sizes %{"sm" => "h-1", "md" => "h-2", "lg" => "h-3", "xl" => "h-4"}
@@ -90,6 +103,12 @@ defmodule LineaUI.Components.Progress do
     doc: "A bar sliding across the track, when the end is not known."
   )
 
+  attr(:shine, :boolean,
+    default: false,
+    doc:
+      "With `indeterminate`, a light of the bar's color runs over the track instead of the bar sliding across it."
+  )
+
   attr(:label, :string, default: nil, doc: "The `aria-label` of the progress bar.")
   attr(:class, :any, default: nil)
   attr(:bar_class, :any, default: nil)
@@ -112,9 +131,10 @@ defmodule LineaUI.Components.Progress do
         class={
           merge([
             "rounded-full",
-            bar(@color),
+            bar(@color, @indeterminate and @shine),
             @active && "is-active relative overflow-hidden",
-            @indeterminate && "is-indeterminate relative w-4/12",
+            @indeterminate && !@shine && "is-indeterminate relative w-4/12",
+            @indeterminate && @shine && "is-shine absolute inset-y-0 w-[35%]",
             @bar_class
           ])
         }
@@ -131,7 +151,8 @@ defmodule LineaUI.Components.Progress do
   defp percent(_value, _max), do: 0
 
   defp track(variant, color), do: @tracks[variant][color]
-  defp bar(color), do: @bars[color]
+  defp bar(color, true), do: @shines[color]
+  defp bar(color, false), do: @bars[color]
   defp size(size), do: @sizes[size]
   defp height(nil), do: nil
   defp height(height), do: @heights[height]
