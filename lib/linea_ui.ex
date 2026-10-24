@@ -61,6 +61,7 @@ defmodule LineaUI do
     progress: LineaUI.Components.Progress,
     radio: LineaUI.Components.Radio,
     range: LineaUI.Components.Range,
+    scroll_area: LineaUI.Components.ScrollArea,
     select: LineaUI.Components.Select,
     skeleton: LineaUI.Components.Skeleton,
     spinner: LineaUI.Components.Spinner,

@@ -1,0 +1,75 @@
+defmodule LineaUI.Components.ScrollArea do
+  @moduledoc """
+  A box that scrolls with LineOne's thin scrollbar (`scrollbar-sm`): 6px, no arrows, a transparent
+  track and a thumb that shows when the pointer or the focus is inside. For long menus, lists in
+  a card, the body of a panel.
+
+      <.scroll_area class="max-h-64">
+        <.dropdown_item :for={city <- @cities}>{city}</.dropdown_item>
+      </.scroll_area>
+
+  The height comes from `class` (`max-h-64`, `h-full`...). Without the component, the same
+  scrollbar is the `scrollbar-sm` class on any box that overflows; `scrollbar-sm scrollbar-always`
+  keeps the thumb shown, and LineOne's `is-scrollbar-hidden` hides it.
+  """
+
+  use LineaUI.Component
+
+  @orientations %{
+    "vertical" => "overflow-x-hidden overflow-y-auto overscroll-contain",
+    "horizontal" => "overflow-x-auto overflow-y-hidden overscroll-x-contain",
+    "both" => "overflow-auto overscroll-contain"
+  }
+
+  @scrollbars %{
+    "hover" => "scrollbar-sm",
+    "always" => "scrollbar-sm scrollbar-always",
+    "hidden" => "is-scrollbar-hidden"
+  }
+
+  @doc """
+  Renders a scrolling box.
+  """
+  attr :orientation, :string,
+    default: "vertical",
+    values: Map.keys(@orientations),
+    doc: "The directions it scrolls in."
+
+  attr :scrollbar, :string,
+    default: "hover",
+    values: Map.keys(@scrollbars),
+    doc:
+      "`hover` shows the thumb under the pointer or the focus, `always` keeps it, `hidden` hides it."
+
+  attr :focusable, :boolean,
+    default: false,
+    doc:
+      "Makes the box reachable with Tab, so the keyboard can scroll it (when nothing inside takes focus)."
+
+  attr :class, :any, default: nil, doc: "Its size (`max-h-64`, `h-full`) and padding."
+  attr :rest, :global
+  slot :inner_block, required: true
+
+  def scroll_area(assigns) do
+    ~H"""
+    <div
+      class={
+        merge([
+          orientation_class(@orientation),
+          scrollbar_class(@scrollbar),
+          "min-h-0",
+          @class
+        ])
+      }
+      tabindex={@focusable && "0"}
+      data-scroll-area
+      {@rest}
+    >
+      {render_slot(@inner_block)}
+    </div>
+    """
+  end
+
+  defp orientation_class(orientation), do: Map.fetch!(@orientations, orientation)
+  defp scrollbar_class(scrollbar), do: Map.fetch!(@scrollbars, scrollbar)
+end

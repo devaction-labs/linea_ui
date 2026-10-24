@@ -90,3 +90,43 @@ export const timeLeft = (left, shown) => Math.max(left - shown, 0)
 
 /** How long a released toast waits before it leaves. */
 export const resumeAfter = (left) => Math.max(left, RESUME_MIN_MS)
+
+/** The kinds of toast: each draws an icon and a title, `loading` a spinner that stays until the toast changes. */
+export const KINDS = ["neutral", "info", "success", "warning", "error", "loading"]
+
+const KIND_COLORS = {info: "info", success: "success", warning: "warning", error: "error"}
+
+/** The kind, or `null` for a plain toast (no kind, or one LineaUI does not know). */
+export const kindOf = (kind) => (KINDS.includes(kind) ? kind : null)
+
+/** The color a toast is drawn in: its own `color`, else its kind's, else `neutral`. */
+export const colorFor = ({color, kind}) => colorOf(color ?? KIND_COLORS[kind] ?? "neutral")
+
+/** Whether a toast takes the layout with icon, title, description and actions instead of LineOne's one line. */
+export const isRich = ({kind, description, actions}) => Boolean(kindOf(kind) || description || actions?.length)
+
+/**
+ * How long a toast stays: a `loading` one until it changes, an error without a duration until it is closed when
+ * the toaster persists errors, the others their own duration or the toaster's.
+ */
+export const durationFor = ({kind, duration}, fallback = DURATION_MS, persistErrors = false) =>
+  kind === "loading" || (kind === "error" && persistErrors && (duration === null || duration === undefined))
+    ? Infinity
+    : durationOf(duration, fallback)
+
+/** Whether a toast gets a close button: asked for, or a rich toast that stays (except while loading). */
+export const closeFor = (input, duration) =>
+  input.kind !== "loading" && Boolean(input.close || (isRich(input) && !Number.isFinite(duration)))
+
+/** The toast with `changes` applied; what the changes do not say (null or undefined) stays as it was. */
+export const mergeToast = (toast, changes) =>
+  Object.entries(changes ?? {}).reduce(
+    (merged, [key, value]) => (value === null || value === undefined ? merged : {...merged, [key]: value}),
+    toast,
+  )
+
+/** What an action's event pushes: its `value` with the id of the toast. */
+export const actionPayload = (action, id) => ({...(action.value ?? {}), toast_id: id})
+
+/** An action's `%JS{}` as the string `liveSocket.execJS` takes, or `null` without one. */
+export const encodedJS = (js) => (js === null || js === undefined ? null : typeof js === "string" ? js : JSON.stringify(js))

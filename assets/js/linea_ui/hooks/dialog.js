@@ -1,11 +1,12 @@
 import {execWithPayload} from "../lib/js_payload.js"
 import {COMMANDS, commandOf} from "../lib/anchor_logic.js"
 import {runKey, tabExit} from "../lib/keys.js"
-import {isTop, lockStyle, stackWith, stackWithout} from "../lib/overlay_logic.js"
+import {isTop, layerOf, lockStyle, ownsBackdrop, stackWith, stackWithout} from "../lib/overlay_logic.js"
 import {FOCUSABLE} from "../lib/tooltip_logic.js"
 
 let stack = []
 let saved = null
+const handled = new WeakSet()
 
 const matches = (el, selector) => {
   try {
@@ -68,7 +69,9 @@ const reducedMotion = () => window.matchMedia?.("(prefers-reduced-motion: reduce
  * closes its own (neither with `data-prevent-close="true"`). A modal locks the scroll of the page as LineOne
  * does, focus moves in when it opens, Tab stays inside, and focus returns to what had it on close. The server's
  * `open` (`data-open`) wins when it changes; a close in the browser runs `data-on-close`, so the server can
- * keep its assign in sync.
+ * keep its assign in sync. Each open overlay gets its place in the stack as `--linea-layer` on its element, which the
+ * CSS adds to `--linea-z-modal` / `--linea-z-overlay`, so the one opened last is drawn on top whatever its place in
+ * the page. An Esc is handled once, by the overlay on top, even when several are mounted.
  */
 export default {
   /**
@@ -115,8 +118,8 @@ export default {
       this.serverOpen = this.el.dataset.open
       this.unlisten = listen(this, {open: () => this.open(), close: () => this.close(), toggle: () => this.toggle()})
       this.onKey = (event) => runKey({Escape: () => this.dismiss(event)}, event)
-      this.onTab = (event) => event.key === "Tab" && this.isOpen() && this.trap(event)
-      this.onBackdrop = (event) => event.target.closest("[data-backdrop]") && this.dismiss(event)
+      this.onTab = (event) => event.key === "Tab" && this.isOpen() && isTop(stack, this.el.id) && this.trap(event)
+      this.onBackdrop = (event) => ownsBackdrop(this.el, event.target) && this.dismiss(event)
       document.addEventListener("keydown", this.onKey)
       this.el.addEventListener("keydown", this.onTab)
       this.el.addEventListener("click", this.onBackdrop)
@@ -156,7 +159,10 @@ export default {
     },
 
     dismiss(event) {
-      const mine = this.isOpen() && isTop(stack, this.el.id) && this.el.dataset.preventClose !== "true"
+      const fresh = !handled.has(event)
+      const top = this.isOpen() && isTop(stack, this.el.id)
+      top && handled.add(event)
+      const mine = fresh && top && this.el.dataset.preventClose !== "true"
       mine && (event.stopPropagation(), this.close())
       return mine
     },
@@ -171,6 +177,7 @@ export default {
       this.returnTo = document.activeElement
       this.locks() && !stack.some((id) => document.getElementById(id)?.dataset.lock === "true") && lock()
       stack = stackWith(stack, this.el.id)
+      this.el.style.setProperty("--linea-layer", String(layerOf(stack, this.el.id)))
       this.paint("open")
       this.el.setAttribute("aria-hidden", "false")
       const panel = this.panel()
@@ -196,6 +203,7 @@ export default {
 
     finish() {
       this.paint("closed")
+      this.el.style.removeProperty("--linea-layer")
       const anyLocked = stack.some((id) => document.getElementById(id)?.dataset.lock === "true")
       this.locks() && !anyLocked && unlock()
     },

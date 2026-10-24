@@ -21,6 +21,18 @@ defmodule LineaUI.Components.OverlaysLiveTest do
     def handle_event("toast", _params, socket),
       do: {:noreply, send_toast(socket, "Saved", color: "success", position: "right-top")}
 
+    def handle_event("loading", _params, socket),
+      do: {:noreply, send_toast(socket, id: "nfe", kind: :loading, title: "Sending")}
+
+    def handle_event("resolve", _params, socket),
+      do: {:noreply, send_toast(socket, "Authorized", id: "nfe", kind: :success)}
+
+    def handle_event("describe", _params, socket),
+      do: {:noreply, update_toast(socket, "nfe", description: "SEFAZ")}
+
+    def handle_event("dismiss", _params, socket), do: {:noreply, dismiss_toast(socket, "nfe")}
+    def handle_event("clear", _params, socket), do: {:noreply, clear_toasts(socket)}
+
     def handle_event("flash-toast", _params, socket),
       do: {:noreply, put_toast(socket, "Kept", color: "info")}
 
@@ -120,5 +132,35 @@ defmodule LineaUI.Components.OverlaysLiveTest do
 
     html = view |> element("#expand") |> render_click()
     assert find(html, "#a1") |> LazyHTML.attribute("data-open") == ["true"]
+  end
+
+  test "a loading toast is resolved, updated and dismissed by its id", %{conn: conn} do
+    {:ok, view, _html} = live_isolated(conn, OverlaysLive)
+
+    render_click(view, "loading", %{})
+
+    assert_push_event(view, "linea:toast", %{
+      "id" => "nfe",
+      "kind" => "loading",
+      "message" => "Sending"
+    })
+
+    render_click(view, "resolve", %{})
+
+    assert_push_event(view, "linea:toast", %{
+      "id" => "nfe",
+      "kind" => "success",
+      "color" => "success",
+      "message" => "Authorized"
+    })
+
+    render_click(view, "describe", %{})
+    assert_push_event(view, "linea:toast-update", %{"id" => "nfe", "description" => "SEFAZ"})
+
+    render_click(view, "dismiss", %{})
+    assert_push_event(view, "linea:toast-dismiss", %{"id" => "nfe"})
+
+    render_click(view, "clear", %{})
+    assert_push_event(view, "linea:toast-dismiss", %{"all" => true})
   end
 end

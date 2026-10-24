@@ -27,6 +27,30 @@ defmodule LineaUI.Components.Icon do
   use LineaUI.Component
 
   @lineone %{
+    info_circle: %{
+      view: "0 0 24 24",
+      paint: :stroke,
+      body:
+        ~S|<path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />|
+    },
+    warning: %{
+      view: "0 0 24 24",
+      paint: :stroke,
+      body:
+        ~S|<path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />|
+    },
+    check_circle: %{
+      view: "0 0 24 24",
+      paint: :stroke,
+      body:
+        ~S|<path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />|
+    },
+    error_circle: %{
+      view: "0 0 24 24",
+      paint: :stroke,
+      body:
+        ~S|<path stroke-linecap="round" stroke-linejoin="round" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />|
+    },
     close: %{
       view: "0 0 24 24",
       paint: :stroke,
@@ -334,6 +358,10 @@ defmodule LineaUI.Components.Icon do
   }
 
   @hugeicons %{
+    info_circle: "huge-information-circle",
+    warning: "huge-alert-02",
+    check_circle: "huge-checkmark-circle-02",
+    error_circle: "huge-cancel-circle",
     close: "huge-cancel-01",
     check: "huge-tick-02",
     chevron_down: "huge-arrow-down-01",

@@ -1,6 +1,6 @@
 import assert from "node:assert/strict"
 import test from "node:test"
-import {dragOffset, dragStyle, exempt, isTop, lockStyle, release, retain, settleStyle, shouldClose, speed, stackWith, stackWithout} from "./overlay_logic.js"
+import {dragOffset, dragStyle, exempt, isTop, layerOf, lockStyle, ownsBackdrop, release, retain, settleStyle, shouldClose, speed, stackWith, stackWithout} from "./overlay_logic.js"
 
 test("the last overlay opened is the one on top, and an id is never repeated", () => {
   const stack = stackWith(stackWith([], "drawer"), "modal")
@@ -74,4 +74,25 @@ test("the drag has no transition and the settle has none for reduced motion", ()
   assert.equal(settleStyle(true).transition, "none")
   assert.match(settleStyle(false).transition, /transform/)
   assert.equal(settleStyle(false).transform, "")
+})
+
+test("each open overlay's layer is its place in the stack, so the last opened is drawn on top", () => {
+  const stack = stackWith(stackWith(stackWith([], "detail"), "edit"), "confirm")
+  assert.equal(layerOf(stack, "detail"), 0)
+  assert.equal(layerOf(stack, "edit"), 1)
+  assert.equal(layerOf(stack, "confirm"), 2)
+  assert.equal(layerOf(stack, "other"), -1)
+  assert.equal(layerOf(stackWith(stack, "detail"), "detail"), 2)
+})
+
+test("a backdrop belongs to the overlay it is a direct child of", () => {
+  const drawer = {}
+  const modal = {}
+  const own = {parentElement: drawer}
+  const nested = {parentElement: modal}
+  const click = (backdrop) => ({closest: () => backdrop})
+  assert.equal(ownsBackdrop(drawer, click(own)), true)
+  assert.equal(ownsBackdrop(drawer, click(nested)), false)
+  assert.equal(ownsBackdrop(drawer, click(null)), false)
+  assert.equal(ownsBackdrop(drawer, null), false)
 })

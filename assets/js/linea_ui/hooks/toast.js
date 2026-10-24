@@ -1,5 +1,20 @@
 import {glyphElement, iconSet} from "../lib/glyphs.js"
-import {LEAVE_MS, colorOf, durationOf, positionOf, resumeAfter, stack, timeLeft, unseen} from "../lib/notice_logic.js"
+import {
+  LEAVE_MS,
+  actionPayload,
+  closeFor,
+  colorFor,
+  durationFor,
+  encodedJS,
+  isRich,
+  kindOf,
+  mergeToast,
+  positionOf,
+  resumeAfter,
+  stack,
+  timeLeft,
+  unseen,
+} from "../lib/notice_logic.js"
 
 const FLASH_KEY = "linea_toast"
 
@@ -12,6 +27,13 @@ const FLASH_KEY = "linea_toast"
  * instead). The pointer over any toast of a corner opens its stack and stops the timers of the whole stack;
  * when it leaves they go on with the time they had left. A click on a close button (or on
  * `[data-toast-dismiss]` in a custom template) removes a toast.
+ *
+ * A toast with a `kind`, a `description` or `actions` is drawn with the kind's icon (cloned from the toaster's
+ * `<template data-toast-icon>`), a title, a second line and a row of buttons. A toast whose `id` is already on the
+ * screen replaces it in place (`send_toast` again, the loading-then-answer pattern); `linea:toast-update` changes
+ * only the keys it carries, `linea:toast-dismiss` removes one toast (`id`) or all (`all`), from the server or as a
+ * DOM event. An action pushes its `event` (to its `target` when given) with `value` and `toast_id`, runs its `js`,
+ * or follows its `href`, then closes the toast unless `dismiss` is false.
  */
 const COLLAPSE_MS = 150
 
@@ -24,8 +46,14 @@ export default {
       this.expanded = new Set()
       this.collapsing = {}
       this.onLocal = (event) => this.show(event.detail ?? {})
+      this.onLocalDismiss = (event) => this.dismiss(event.detail ?? {})
+      this.onLocalUpdate = (event) => this.change(event.detail ?? {})
       window.addEventListener("linea:toast", this.onLocal)
+      window.addEventListener("linea:toast-dismiss", this.onLocalDismiss)
+      window.addEventListener("linea:toast-update", this.onLocalUpdate)
       this.handleEvent("linea:toast", (toast) => this.show(toast))
+      this.handleEvent("linea:toast-dismiss", (payload) => this.dismiss(payload))
+      this.handleEvent("linea:toast-update", (payload) => this.change(payload))
       this.flash()
     },
 
@@ -35,6 +63,8 @@ export default {
 
     destroyed() {
       window.removeEventListener("linea:toast", this.onLocal)
+      window.removeEventListener("linea:toast-dismiss", this.onLocalDismiss)
+      window.removeEventListener("linea:toast-update", this.onLocalUpdate)
       this.toasts.forEach((toast) => clearTimeout(toast.timer))
       Object.values(this.collapsing).forEach(clearTimeout)
       this.toasts.forEach((toast) => toast.el.remove())
@@ -47,14 +77,55 @@ export default {
       fresh.length > 0 && this.pushEvent("lv:clear-flash", {key: FLASH_KEY})
     },
 
+    find(id) {
+      return this.toasts.find((toast) => toast.id === String(id))
+    },
+
+    durationOf(input) {
+      return durationFor(input, Number(this.el.dataset.duration || 5000), this.el.dataset.persistErrors === "true")
+    },
+
     show(input) {
+      const existing = input.id !== undefined && input.id !== null && this.find(input.id)
+      existing ? this.replace(existing, input) : this.add(input)
+    },
+
+    change(changes) {
+      const toast = this.find(changes.id)
+      toast && this.replace(toast, mergeToast(toast.input, changes))
+    },
+
+    dismiss({id, all}) {
+      const targets = all ? [...this.toasts] : [this.find(id)].filter(Boolean)
+      targets.forEach((toast) => this.remove(toast))
+    },
+
+    replace(toast, input) {
+      toast.input = input
+      toast.duration = this.durationOf(input)
+      toast.left = toast.duration
+      const el = this.render(input, toast)
+      el.style.cssText = toast.el.style.cssText
+      el.style.width = ""
+      el.style.height = ""
+      el.classList.add("on")
+      toast.el.replaceWith(el)
+      toast.el = el
+      const box = el.getBoundingClientRect()
+      toast.size = {width: Math.ceil(box.width) + 1, height: Math.ceil(box.height)}
+      this.expanded.has(toast.position.key) ? this.pause(toast) : this.start(toast)
+      this.layout()
+    },
+
+    add(input) {
       const position = positionOf(input.position, this.el.dataset.position)
       const toast = {
         id: String(input.id ?? `linea-toast-${++this.seq}`),
         position,
-        duration: durationOf(input.duration, Number(this.el.dataset.duration || 5000)),
+        input,
         timer: null,
       }
+      toast.duration = this.durationOf(input)
       toast.left = toast.duration
       toast.el = this.render(input, toast)
       this.el.prepend(toast.el)
@@ -68,11 +139,13 @@ export default {
     render(input, toast) {
       const el = document.createElement("div")
       const template = input.template && document.getElementById(input.template)
-      const color = colorOf(input.color)
+      const color = colorFor(input)
       el.className = `toastify toastify-${toast.position.x} toastify-${toast.position.y}`
+      el.dataset.toastId = toast.id
       color === "neutral" || el.classList.add(color)
-      el.setAttribute("role", input.color === "error" ? "alert" : "status")
-      template ? this.fillTemplate(el, template) : this.fillText(el, input)
+      el.setAttribute("role", color === "error" ? "alert" : "status")
+      const fill = template ? () => this.fillTemplate(el, template) : isRich(input) ? () => this.fillRich(el, input, toast) : () => this.fillText(el, input)
+      fill()
       el.querySelectorAll("[data-toast-dismiss]").forEach((button) => button.addEventListener("click", () => this.remove(toast)))
       el.addEventListener("mouseenter", () => this.hover(toast.position.key, true))
       el.addEventListener("mouseleave", () => this.hover(toast.position.key, false))
@@ -83,7 +156,46 @@ export default {
       const text = document.createElement("span")
       text.textContent = input.message ?? ""
       el.append(text)
-      input.close && el.append(this.closeButton())
+      closeFor(input, Infinity) && el.append(this.closeButton())
+    },
+
+    fillRich(el, input, toast) {
+      const kind = kindOf(input.kind)
+      el.classList.add("rich")
+      kind && el.setAttribute("aria-busy", String(kind === "loading"))
+      const icon = kind && this.el.querySelector(`template[data-toast-icon="${kind}"]`)
+      icon && el.append(this.part("span", "toast-icon", icon.content.firstElementChild.cloneNode(true)))
+      const body = this.part("div", "toast-body")
+      input.message && body.append(this.part("p", "toast-title", input.message))
+      input.description && body.append(this.part("p", "toast-desc", input.description))
+      const actions = (input.actions ?? []).map((action) => this.action(action, toast))
+      actions.length > 0 && body.append(this.part("div", "toast-actions", ...actions))
+      el.append(body)
+      closeFor(input, toast.duration) && el.append(this.closeButton())
+    },
+
+    part(tag, className, ...children) {
+      const node = document.createElement(tag)
+      node.className = className
+      node.append(...children)
+      return node
+    },
+
+    action(action, toast) {
+      const node = document.createElement(action.href ? "a" : "button")
+      node.className = "toast-action"
+      node.textContent = action.label ?? ""
+      action.href ? (node.href = action.href) : (node.type = "button")
+      node.addEventListener("click", () => this.runAction(action, toast))
+      return node
+    },
+
+    runAction(action, toast) {
+      const payload = actionPayload(action, toast.id)
+      const js = encodedJS(action.js)
+      action.event && (action.target ? this.pushEventTo(action.target, action.event, payload) : this.pushEvent(action.event, payload))
+      js && this.liveSocket.execJS(this.el, js)
+      action.dismiss === false || this.remove(toast)
     },
 
     fillTemplate(el, template) {
@@ -172,7 +284,7 @@ export default {
       el.style.height = `${height}px`
       el.style.transform = `scale(${scale})`
       el.style.transformOrigin = `${position.y} ${position.x}`
-      el.style.zIndex = String(10010 - index)
+      el.style.zIndex = `calc(var(--linea-z-toast, 10010) - ${index})`
       el.style.opacity = hidden ? "0" : ""
       el.style.pointerEvents = hidden ? "none" : ""
     },
