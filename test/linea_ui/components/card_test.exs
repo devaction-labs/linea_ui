@@ -45,4 +45,29 @@ defmodule LineaUI.Components.CardTest do
     assert "p-1" in classes(html, "#o")
     assert [_] = find(html, "#o > div.bg-slate-50") |> Enum.to_list()
   end
+
+  test "flat has no shadow" do
+    html =
+      render(~H"""
+      <.card id="f" variant="flat"><:title>T</:title>x</.card>
+      """)
+
+    assert ["card", "shadow-none"] -- classes(html, "#f") == []
+    assert "text-slate-700" in classes(html, "#f h2")
+  end
+
+  test "gradient_outline radius follows shape" do
+    html =
+      render(~H"""
+      <.card id="a" variant="gradient_outline">x</.card>
+      <.card id="b" variant="gradient_outline" shape="xl">x</.card>
+      """)
+
+    assert "rounded-lg" in classes(html, "#a")
+    assert "rounded-lg" in classes(html, "#a > div")
+    assert "rounded-2xl" in classes(html, "#b")
+    refute "rounded-lg" in classes(html, "#b")
+    assert "rounded-xl" in classes(html, "#b > div")
+    refute "rounded-lg" in classes(html, "#b > div")
+  end
 end

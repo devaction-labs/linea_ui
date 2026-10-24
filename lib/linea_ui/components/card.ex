@@ -8,6 +8,7 @@ defmodule LineaUI.Components.Card do
         Lorem ipsum dolor sit amet.
       </.card>
       <.card variant="bordered" shape="xl">…</.card>
+      <.card variant="flat">No shadow</.card>
       <.card variant="solid" color="primary"><:title>Primary Card</:title>…</.card>
       <.card variant="gradient" gradient="purple-indigo">…</.card>
       <.card variant="gradient_outline" gradient="sky-blue">…</.card>
@@ -56,6 +57,7 @@ defmodule LineaUI.Components.Card do
   }
 
   @shapes %{"rounded" => "", "xl" => "rounded-2xl"}
+  @outline_inner_shapes %{"rounded" => "", "xl" => "rounded-xl"}
 
   @titles %{
     "light" => "text-lg font-medium tracking-wide text-slate-700 line-clamp-1 dark:text-navy-100",
@@ -72,9 +74,9 @@ defmodule LineaUI.Components.Card do
   """
   attr(:variant, :string,
     default: "default",
-    values: ~w(default bordered solid glow gradient gradient_outline),
+    values: ~w(default flat bordered solid glow gradient gradient_outline),
     doc:
-      "`default` is LineOne's white panel with a soft shadow; `solid` and `glow` use `color`; `gradient` and `gradient_outline` use `gradient`."
+      "`default` is LineOne's white panel with a soft shadow; `flat` is the same panel without the shadow; `solid` and `glow` use `color`; `gradient` and `gradient_outline` use `gradient`."
   )
 
   attr(:color, :string,
@@ -87,7 +89,13 @@ defmodule LineaUI.Components.Card do
     values: ~w(purple-indigo fuchsia-pink amber-orange sky-blue green-fuchsia)
   )
 
-  attr(:shape, :string, default: "rounded", values: ~w(rounded xl))
+  attr(:shape, :string,
+    default: "rounded",
+    values: ~w(rounded xl),
+    doc:
+      "`xl` is `rounded-2xl`; on `gradient_outline` the outer edge and the inner panel follow it."
+  )
+
   attr(:padded, :boolean, default: true)
   attr(:class, :any, default: nil)
   attr(:rest, :global)
@@ -100,8 +108,14 @@ defmodule LineaUI.Components.Card do
 
   def card(%{variant: "gradient_outline"} = assigns) do
     ~H"""
-    <div class={merge([gradient_outline(@gradient), @class])} {@rest}>
-      <div class={merge(["rounded-lg bg-slate-50 dark:bg-navy-900", @padded && "px-4 py-4 sm:px-5"])}>
+    <div class={merge([gradient_outline(@gradient), shape(@shape), @class])} {@rest}>
+      <div class={
+        merge([
+          "rounded-lg bg-slate-50 dark:bg-navy-900",
+          outline_inner_shape(@shape),
+          @padded && "px-4 py-4 sm:px-5"
+        ])
+      }>
         <.card_body title={@title} title_class={title_class("default")}>
           {render_slot(@inner_block)}
         </.card_body>
@@ -134,7 +148,10 @@ defmodule LineaUI.Components.Card do
   defp shape(shape), do: @shapes[shape]
   defp gradient_outline(gradient), do: @gradient_outlines[gradient]
 
+  defp outline_inner_shape(shape), do: @outline_inner_shapes[shape]
+
   defp surface("default", _color, _gradient), do: "card"
+  defp surface("flat", _color, _gradient), do: "card shadow-none"
 
   defp surface("bordered", _color, _gradient),
     do: "card border border-slate-150 shadow-none dark:border-navy-600"
@@ -143,7 +160,7 @@ defmodule LineaUI.Components.Card do
   defp surface("glow", color, _gradient), do: @glow[color]
   defp surface("gradient", _color, gradient), do: @gradients[gradient]
 
-  defp title_class(variant) when variant in ~w(default bordered), do: @titles["light"]
+  defp title_class(variant) when variant in ~w(default flat bordered), do: @titles["light"]
   defp title_class(_variant), do: @titles["colored"]
 
   attr(:title, :list, required: true)
