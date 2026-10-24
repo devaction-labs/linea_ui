@@ -79,10 +79,11 @@ defmodule LineaUI.Components.Table do
   A class given to a cell always wins over the table's look (the look lives in the CSS
   `components` layer).
 
-  Inside a card, `bleed` runs the table edge to edge: the wrapper takes the card's side padding
-  as a negative margin and the first and last cells get it back as their own padding, so the
-  rows (hover, zebra, rules) reach the card's sides while the content stays aligned with the
-  rest of the card. The `bordered` frame is dropped.
+  Inside a card, `bleed` runs the table edge to edge: the wrapper cancels the padding of the
+  card's body (or of the card) as a negative margin and the first and last cells get it back as
+  their own padding, so the rows (hover, zebra, rules) reach the card's sides while the content
+  stays aligned with the rest of the card. As the only thing in a body it also reaches the
+  body's top and bottom and follows its rounded corners. The `bordered` frame is dropped.
 
       <.card>
         <.card_header><.card_heading>Team</.card_heading></.card_header>
@@ -175,7 +176,7 @@ defmodule LineaUI.Components.Table do
     "grid" => "sticky top-0 z-10"
   }
 
-  @bleed "min-w-[calc(100%+var(--card-px,1rem)*2)] mx-[calc(var(--card-px,1rem)*-1)] rounded-none border-x-0 [&_tr>:first-child]:pl-[var(--card-px,1rem)] [&_tr>:last-child]:pr-[var(--card-px,1rem)]"
+  @bleed "min-w-[calc(100%+var(--card-bleed-x,1rem)*2)] mx-[calc(var(--card-bleed-x,1rem)*-1)] rounded-none border-0 first:mt-[calc(var(--card-bleed-t,0px)*-1)] last:mb-[calc(var(--card-bleed-b,0px)*-1)] first:rounded-t-[var(--card-bleed-rt,0px)] last:rounded-b-[var(--card-bleed-rb,0px)] [&_tbody>tr:last-child]:border-b-transparent [&_tr>:first-child]:pl-[var(--card-bleed-x,1rem)] [&_tr>:last-child]:pr-[var(--card-bleed-x,1rem)]"
 
   @slot_defaults %{row_class: nil, row_attrs: nil, sticky_header: false, foot: []}
 
@@ -303,7 +304,7 @@ defmodule LineaUI.Components.Table do
   attr(:bleed, :boolean,
     default: false,
     doc:
-      "Runs the table edge to edge of the card it sits in (the card's side padding as a negative margin, given back to the first and last cells)."
+      "Runs the table edge to edge of the card it sits in (the body's padding as a negative margin, given back to the first and last cells), and to the top and bottom of the body when it is the only thing in it."
   )
 
   attr(:target, :any, default: nil, doc: "`phx-target` of the events.")
@@ -378,7 +379,12 @@ defmodule LineaUI.Components.Table do
     |> assign(:body_row_class, merge([@body_row[assigns.variant], no_border(assigns)]))
     |> assign(
       :wrapper,
-      merge([@wrapper[assigns.variant], no_border(assigns), bleed(assigns), assigns.wrapper_class])
+      merge([
+        @wrapper[assigns.variant],
+        no_border(assigns),
+        bleed(assigns),
+        assigns.wrapper_class
+      ])
     )
     |> assign(:table_class, merge([table_class(assigns), assigns.class]))
     |> assign(:checkbox, @checkbox)

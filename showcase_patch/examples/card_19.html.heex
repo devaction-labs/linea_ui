@@ -1,0 +1,30 @@
+<%!-- title: A card inside a body | text: A card_body may hold its own card_header and card_footer as sub-sections, and a card of its own. Here an inset, soft card inside the panel of another. --%>
+<div class="flex justify-center rounded-lg bg-slate-50 p-6 dark:bg-navy-900 sm:p-10">
+  <.card body="inset" class="w-full max-w-md">
+    <.card_header>
+      <.card_heading>Account</.card_heading>
+      <.card_subheading>Plan, usage and payment</.card_subheading>
+    </.card_header>
+    <.card_body>
+      <.card body="inset" variant="soft" size="sm">
+        <.card_header>
+          <.card_heading>Billing</.card_heading>
+          <.card_actions><.button size="xs" variant="outline">Manage</.button></.card_actions>
+        </.card_header>
+        <.card_body class="space-y-4">
+          <.card_header>
+            <.card_heading>Seats</.card_heading>
+            <.card_subheading>7 of 10 used</.card_subheading>
+          </.card_header>
+          <.progress value={70} />
+          <.divider />
+          <.card_header>
+            <.card_heading>Payment method</.card_heading>
+            <.card_subheading>Visa ending in 4242</.card_subheading>
+          </.card_header>
+        </.card_body>
+        <.card_footer><span class="text-xs">Next invoice on Oct 1</span></.card_footer>
+      </.card>
+    </.card_body>
+  </.card>
+</div>

@@ -1,0 +1,19 @@
+<%!-- title: Image bleed | text: card_bleed makes the image fill the panel to its sides and rounds only the corners it touches. The footer takes a heading, a subheading and actions like a header. --%>
+<div class="flex justify-center rounded-lg bg-slate-50 p-6 dark:bg-navy-900 sm:p-10">
+  <.card body="inset" class="w-full max-w-xs">
+    <.card_body>
+      <.card_bleed>
+        <div class="h-44 bg-gradient-to-b from-slate-200 via-emerald-300 to-emerald-900"></div>
+      </.card_bleed>
+    </.card_body>
+    <.card_footer>
+      <.card_heading>Morning hike</.card_heading>
+      <.card_subheading>Sept 12</.card_subheading>
+      <.card_actions>
+        <.button icon size="sm" variant="flat" aria-label="More">
+          <svg class="size-4" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.75" /><circle cx="12" cy="12" r="1.75" /><circle cx="19" cy="12" r="1.75" /></svg>
+        </.button>
+      </.card_actions>
+    </.card_footer>
+  </.card>
+</div>

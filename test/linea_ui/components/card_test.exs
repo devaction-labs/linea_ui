@@ -1,6 +1,10 @@
 defmodule LineaUI.Components.CardTest do
   use LineaUI.ComponentCase, async: true
 
+  defp attr_of(html, selector, name) do
+    html |> find(selector) |> LazyHTML.attribute(name) |> List.first()
+  end
+
   test "the white card with a title and a body" do
     html =
       render(~H"""
@@ -9,9 +13,7 @@ defmodule LineaUI.Components.CardTest do
       </.card>
       """)
 
-    classes = classes(html, "div")
-    assert "card" in classes
-    assert "px-4" in classes
+    assert "card" in classes(html, "div")
     assert [title] = find(html, "h2") |> Enum.to_list()
     assert String.trim(LazyHTML.text(title)) == "Simple Card"
     assert [_] = find(html, "div.pt-2 > p") |> Enum.to_list()
@@ -24,7 +26,7 @@ defmodule LineaUI.Components.CardTest do
       """)
 
     assert [_] = find(html, "div.card > span#x") |> Enum.to_list()
-    refute "px-4" in classes(html, "div")
+    assert attr_of(html, "div.card", "data-padded") == "false"
   end
 
   test "variants" do
@@ -72,25 +74,23 @@ defmodule LineaUI.Components.CardTest do
   end
 
   describe "surfaces" do
-    test "outline, muted, soft and filled" do
+    test "each surface is named for the stylesheet" do
       html =
         render(~H"""
+        <.card id="d">x</.card>
         <.card id="o" variant="outline">x</.card>
         <.card id="m" variant="muted">x</.card>
         <.card id="s" variant="soft">x</.card>
         <.card id="f" variant="filled">x</.card>
+        <.card id="c" variant="solid">x</.card>
         """)
 
-      assert "bg-transparent" in classes(html, "#o")
-      assert "border" in classes(html, "#o")
-      assert "bg-slate-100" in classes(html, "#m")
-      assert "border" in classes(html, "#m")
-      assert "bg-slate-50" in classes(html, "#s")
-      assert "border" in classes(html, "#s")
-      assert "bg-slate-100" in classes(html, "#f")
-      assert "dark:bg-navy-600/50" in classes(html, "#f")
-      refute "border" in classes(html, "#f")
-      assert "shadow-none" in classes(html, "#f")
+      assert attr_of(html, "#d", "data-variant") == "default"
+      assert attr_of(html, "#o", "data-variant") == "outline"
+      assert attr_of(html, "#m", "data-variant") == "muted"
+      assert attr_of(html, "#s", "data-variant") == "soft"
+      assert attr_of(html, "#f", "data-variant") == "filled"
+      assert attr_of(html, "#c", "data-variant") == nil
     end
 
     test "new surfaces take the light heading" do
@@ -101,69 +101,56 @@ defmodule LineaUI.Components.CardTest do
 
       assert "text-slate-700" in classes(html, "#m h2")
     end
-  end
 
-  describe "sizes" do
-    test "each size has its padding, corners and variables" do
+    test "highlight can be turned off" do
       html =
         render(~H"""
-        <.card id="xs" size="xs">x</.card>
-        <.card id="sm" size="sm">x</.card>
-        <.card id="md">x</.card>
-        <.card id="lg" size="lg">x</.card>
+        <.card id="a">x</.card>
+        <.card id="b" highlight={false}>x</.card>
         """)
 
-      assert "px-2.5" in classes(html, "#xs")
-      assert "rounded" in classes(html, "#xs")
-      assert "[--card-px:0.875rem]" in classes(html, "#sm")
-      assert "px-4" in classes(html, "#md")
-      assert "rounded-lg" in classes(html, "#md")
-      assert "sm:px-6" in classes(html, "#lg")
-      assert "rounded-xl" in classes(html, "#lg")
+      assert attr_of(html, "#a", "data-highlight") == "true"
+      assert attr_of(html, "#b", "data-highlight") == "false"
+    end
+  end
+
+  describe "sizes and treatments" do
+    test "the card names its size, body and divider for the stylesheet" do
+      html =
+        render(~H"""
+        <.card id="a">x</.card>
+        <.card id="b" size="lg" body="divided" divider="inset">x</.card>
+        <.card id="c" size="xs" body="flush">x</.card>
+        """)
+
+      assert attr_of(html, "#a", "data-size") == "md"
+      assert attr_of(html, "#a", "data-body") == "seamless"
+      assert attr_of(html, "#a", "data-divider") == "full"
+      assert attr_of(html, "#b", "data-size") == "lg"
+      assert attr_of(html, "#b", "data-body") == "divided"
+      assert attr_of(html, "#b", "data-divider") == "inset"
+      assert attr_of(html, "#c", "data-size") == "xs"
+      assert attr_of(html, "#c", "data-body") == "flush"
     end
 
-    test "shape xl wins over the size's corners and sets the radius variable" do
+    test "shape xl wins over the size's radius" do
       html =
         render(~H"""
         <.card id="x" size="sm" shape="xl">x</.card>
         """)
 
       assert "rounded-2xl" in classes(html, "#x")
-      refute "rounded-md" in classes(html, "#x")
       assert "[--card-r:1rem]" in classes(html, "#x")
-      refute "[--card-r:0.375rem]" in classes(html, "#x")
-    end
-  end
-
-  describe "body treatments" do
-    test "each treatment publishes its own variables" do
-      html =
-        render(~H"""
-        <.card id="a">x</.card>
-        <.card id="d" body="divided">x</.card>
-        <.card id="s" body="separated">x</.card>
-        <.card id="i" body="inset">x</.card>
-        <.card id="f" body="flush">x</.card>
-        """)
-
-      assert "[--p-line:0px]" in classes(html, "#a")
-      assert "[--p-line:1px]" in classes(html, "#d")
-      assert "dark:[--p-band:rgb(255_255_255/0.05)]" in classes(html, "#s")
-      assert "[--b-r:calc(var(--card-r)_-_var(--card-inset))]" in classes(html, "#i")
-      assert "p-(--card-inset)" in classes(html, "#i")
-      refute "px-4" in classes(html, "#i")
-      assert "[--b-line:1px]" in classes(html, "#f")
     end
 
-    test "an unpadded card has no padding and leaves the parts to pad themselves" do
+    test "colored cards keep their own corners" do
       html =
         render(~H"""
-        <.card id="u" padded={false} body="divided">x</.card>
+        <.card id="s" variant="solid" size="lg">x</.card>
         """)
 
-      refute "px-4" in classes(html, "#u")
-      assert "[--p-px:1rem]" in classes(html, "#u")
-      refute "[--p-line:1px]" in classes(html, "#u")
+      assert "rounded-lg" in classes(html, "#s")
+      assert "[--card-r:0.5rem]" in classes(html, "#s")
     end
 
     test "gradient_outline puts size and treatment on the inner panel" do
@@ -172,8 +159,9 @@ defmodule LineaUI.Components.CardTest do
         <.card id="o" variant="gradient_outline" size="lg" body="divided">x</.card>
         """)
 
-      assert "px-5" in classes(html, "#o > div")
-      assert "[--p-line:1px]" in classes(html, "#o > div")
+      assert attr_of(html, "#o > div", "data-size") == "lg"
+      assert attr_of(html, "#o > div", "data-body") == "divided"
+      assert "card" in classes(html, "#o > div")
     end
   end
 
@@ -192,25 +180,57 @@ defmodule LineaUI.Components.CardTest do
         </.card>
         """)
 
-      assert [_] = find(html, "#c > div.grid > h2") |> Enum.to_list()
-      assert [_] = find(html, "#c > div.grid > p") |> Enum.to_list()
-      assert [_] = find(html, "#c > div.grid > div.flex > button") |> Enum.to_list()
-      assert [_] = find(html, "#c > div.flex-wrap") |> Enum.to_list()
-      assert "justify-between" in classes(html, "#c > div.flex-wrap")
-      assert "col-start-2" in classes(html, "h2")
-      assert "col-start-3" in classes(html, "div.flex.items-center.gap-2.ms-3")
-      assert "first:col-start-1" in classes(html, "div.ms-3")
+      assert [_] = find(html, "#c > div.card-header > h2.card-heading") |> Enum.to_list()
+      assert [_] = find(html, "#c > div.card-header > p.card-subheading") |> Enum.to_list()
+
+      assert [_] =
+               find(html, "#c > div.card-header > div.card-actions > button") |> Enum.to_list()
+
+      assert [_] = find(html, "#c > div.card-body") |> Enum.to_list()
+      assert [_] = find(html, "#c > div.card-footer") |> Enum.to_list()
+      assert "justify-between" in classes(html, "#c > div.card-footer")
     end
 
-    test "actions do not make the header taller" do
+    test "the footer takes a heading, a subheading and actions like a header" do
       html =
         render(~H"""
-        <.card_header>
-          <.card_actions>a</.card_actions>
-        </.card_header>
+        <.card_footer>
+          <.card_heading>Morning hike</.card_heading>
+          <.card_subheading>Sept 12</.card_subheading>
+          <.card_actions><button>More</button></.card_actions>
+        </.card_footer>
         """)
 
-      assert "-my-1.5" in classes(html, "div > div")
+      assert [_] = find(html, "div.card-footer > h2.card-heading") |> Enum.to_list()
+      assert [_] = find(html, "div.card-footer > p.card-subheading") |> Enum.to_list()
+      assert [_] = find(html, "div.card-footer > div.card-actions") |> Enum.to_list()
+    end
+
+    test "the heading takes a size and a level" do
+      html =
+        render(~H"""
+        <.card_heading id="a" size="lg" level={3}>x</.card_heading>
+        <.card_heading id="b" size="xl">x</.card_heading>
+        <.card_heading id="c">x</.card_heading>
+        """)
+
+      assert [_] = find(html, "h3#a.text-base") |> Enum.to_list()
+      assert [_] = find(html, "h2#b.text-xl") |> Enum.to_list()
+      assert [_] = find(html, "h2#c.card-heading") |> Enum.to_list()
+      refute "text-base" in classes(html, "#c")
+    end
+
+    test "header and footer outside a card take the size" do
+      html =
+        render(~H"""
+        <.card_header id="h" size="lg">x</.card_header>
+        <.card_footer id="f" size="xs">x</.card_footer>
+        <.card_header id="n">x</.card_header>
+        """)
+
+      assert attr_of(html, "#h", "data-size") == "lg"
+      assert attr_of(html, "#f", "data-size") == "xs"
+      assert attr_of(html, "#n", "data-size") == nil
     end
 
     test "parts take class and rest" do
@@ -221,12 +241,12 @@ defmodule LineaUI.Components.CardTest do
         """)
 
       assert "px-2" in classes(html, "#h")
-      refute "px-[var(--p-px,1rem)]" in classes(html, "#h")
+      assert attr_of(html, "#h", "data-x") == "1"
       assert "justify-center" in classes(html, "#f")
       refute "justify-end" in classes(html, "#f")
     end
 
-    test "a header and footer nested in a body reset the part variables" do
+    test "a header and footer can be nested in a body" do
       html =
         render(~H"""
         <.card_body id="b">
@@ -235,8 +255,6 @@ defmodule LineaUI.Components.CardTest do
         </.card_body>
         """)
 
-      assert "[--p-px:0px]" in classes(html, "#b")
-      assert "[--p-line:0px]" in classes(html, "#b")
       assert [_, _] = find(html, "#b > div") |> Enum.to_list()
     end
 
@@ -254,23 +272,15 @@ defmodule LineaUI.Components.CardTest do
   end
 
   describe "card_bleed" do
-    test "bleed edges cancel the card padding on their sides" do
+    test "is a bleed for the stylesheet and takes class" do
       html =
         render(~H"""
-        <.card_bleed id="a"><img src="x.png" alt="" /></.card_bleed>
-        <.card_bleed id="t" edges="top">x</.card_bleed>
-        <.card_bleed id="b" edges="bottom">x</.card_bleed>
-        <.card_bleed id="x" edges="x">x</.card_bleed>
+        <.card_bleed id="a" class="h-32"><img src="x.png" alt="" /></.card_bleed>
         """)
 
-      assert "-my-[var(--card-py,1rem)]" in classes(html, "#a")
-      assert "rounded-[var(--b-r,0px)]" in classes(html, "#a")
-      assert "overflow-hidden" in classes(html, "#a")
-      assert "-mt-[var(--card-py,1rem)]" in classes(html, "#t")
-      assert "rounded-t-[var(--b-r,0px)]" in classes(html, "#t")
-      assert "-mb-[var(--card-py,1rem)]" in classes(html, "#b")
-      assert "-mx-[var(--card-px,1rem)]" in classes(html, "#x")
-      refute "rounded-[var(--b-r,0px)]" in classes(html, "#x")
+      assert "card-bleed" in classes(html, "#a")
+      assert "h-32" in classes(html, "#a")
+      assert [_] = find(html, "#a > img") |> Enum.to_list()
     end
   end
 end
