@@ -199,4 +199,133 @@ defmodule LineaUI.Components.DropdownTest do
     assert [_] =
              find(html, "a[role=menuitem][href='/nfe.xml'][download='nfe.xml']") |> Enum.to_list()
   end
+
+  describe "filter menu" do
+    test "a checkbox item is a menuitemcheckbox with its state and a real input beside it" do
+      html =
+        render(~H"""
+        <.dropdown id="dd" label="Filter">
+          <.dropdown_checkbox name="f[status][]" value="paid" checked count={3}>Paid</.dropdown_checkbox>
+          <.dropdown_checkbox name="f[status][]" value="open">Open</.dropdown_checkbox>
+        </.dropdown>
+        """)
+
+      assert attr_of(html, "[role=menuitemcheckbox]", "aria-checked") == ["true", "false"]
+      assert attr_of(html, "[role=menuitemcheckbox]", "data-server-checked") == ["true", "false"]
+      assert attr_of(html, "[role=menuitemcheckbox]", "tabindex") == ["-1", "-1"]
+      assert attr_of(html, "[role=menuitemcheckbox]", "phx-mounted") |> length() == 2
+      assert attr_of(html, "input[type=checkbox]", "name") == ["f[status][]", "f[status][]"]
+      assert attr_of(html, "input[type=checkbox]", "value") == ["paid", "open"]
+      assert attr_of(html, "input[type=checkbox]", "checked") == [""]
+      assert attr_of(html, "input[type=checkbox]", "phx-update") == ["ignore", "ignore"]
+      assert attr_of(html, "input[type=checkbox]", "id") |> Enum.uniq() |> length() == 2
+      assert find(html, "[role=menuitemcheckbox]") |> LazyHTML.text() =~ "3"
+    end
+
+    test "an item without a name has no input and forwards phx-click" do
+      html =
+        render(~H"""
+        <.dropdown_checkbox phx-click="toggle" phx-value-key="paid">Paid</.dropdown_checkbox>
+        """)
+
+      assert find(html, "input") |> Enum.to_list() == []
+      assert attr_of(html, "[role=menuitemcheckbox]", "phx-click") == ["toggle"]
+      assert attr_of(html, "[role=menuitemcheckbox]", "phx-value-key") == ["paid"]
+    end
+
+    test "a radio item is a menuitemradio grouped by its name" do
+      html =
+        render(~H"""
+        <.dropdown id="dd" label="Sort">
+          <.dropdown_radio name="f[sort]" value="recent" checked>Recent</.dropdown_radio>
+          <.dropdown_radio name="f[sort]" value="value">Value</.dropdown_radio>
+        </.dropdown>
+        """)
+
+      assert attr_of(html, "[role=menuitemradio]", "aria-checked") == ["true", "false"]
+      assert attr_of(html, "[role=menuitemradio]", "data-group") == ["f[sort]", "f[sort]"]
+      assert attr_of(html, "input[type=radio]", "value") == ["recent", "value"]
+      assert attr_of(html, "input[type=radio]", "checked") == [""]
+    end
+
+    test "a disabled choice cannot be chosen" do
+      html = render(~H|<.dropdown_checkbox name="f[x]" disabled>X</.dropdown_checkbox>|)
+
+      assert attr_of(html, "[role=menuitemcheckbox]", "disabled") == [""]
+      assert attr_of(html, "[role=menuitemcheckbox]", "aria-disabled") == ["true"]
+      assert attr_of(html, "input", "disabled") == [""]
+    end
+
+    test "a submenu shows how many of its items are checked and hides the badge at zero" do
+      html =
+        render(~H"""
+        <.dropdown_submenu id="status" label="Status" count={2}>
+          <.dropdown_checkbox>A</.dropdown_checkbox>
+        </.dropdown_submenu>
+        <.dropdown_submenu id="channel" label="Channel">
+          <.dropdown_checkbox>B</.dropdown_checkbox>
+        </.dropdown_submenu>
+        """)
+
+      assert attr_of(html, "#status [data-submenu-count]", "hidden") == []
+      assert find(html, "#status [data-submenu-count]") |> LazyHTML.text() |> String.trim() == "2"
+      assert attr_of(html, "#channel [data-submenu-count]", "hidden") == [""]
+    end
+
+    test "keep_submenus asks the hook to leave open submenus open" do
+      on = render(~H|<.dropdown id="a" label="A" keep_submenus>
+  <.dropdown_item>x</.dropdown_item>
+</.dropdown>|)
+      off = render(~H|<.dropdown id="b" label="B">
+  <.dropdown_item>x</.dropdown_item>
+</.dropdown>|)
+
+      assert attr_of(on, "#a", "data-keep-submenus") == ["true"]
+      assert attr_of(off, "#b", "data-keep-submenus") == ["false"]
+    end
+
+    test "the footer has Clear and Apply as menu items; Apply submits the form without on_apply" do
+      html = render(~H|<.dropdown_footer />|)
+
+      assert attr_of(html, "[data-menu-action=clear]", "role") == ["menuitem"]
+      assert attr_of(html, "[data-menu-action=apply]", "role") == ["menuitem"]
+      assert attr_of(html, "[data-menu-action=apply]", "type") == ["submit"]
+      assert attr_of(html, "[data-menu-action=clear]", "type") == ["button"]
+      assert find(html, "[data-menu-action=clear]") |> LazyHTML.text() |> String.trim() == "Clear"
+      assert find(html, "[data-menu-action=apply]") |> LazyHTML.text() |> String.trim() == "Apply"
+      assert attr_of(html, "[data-menu-action=apply]", "data-close-on-apply") == ["true"]
+    end
+
+    test "the footer speaks Portuguese, counts the pending choices and takes events" do
+      html =
+        render(~H"""
+        <.dropdown_footer
+          locale="pt_BR"
+          apply_count={4}
+          on_apply="apply"
+          on_clear="clear"
+          target="#owner"
+          close_on_apply={false}
+        />
+        """)
+
+      assert find(html, "[data-menu-action=clear]") |> LazyHTML.text() |> String.trim() ==
+               "Limpar"
+
+      assert find(html, "[data-menu-action=apply]") |> LazyHTML.text() |> String.trim() ==
+               "Aplicar (4)"
+
+      assert attr_of(html, "[data-menu-action=apply]", "type") == ["button"]
+      assert attr_of(html, "[data-menu-action=apply]", "phx-click") |> hd() =~ ~s("apply")
+      assert attr_of(html, "[data-menu-action=apply]", "phx-click") |> hd() =~ "#owner"
+      assert attr_of(html, "[data-menu-action=clear]", "phx-click") |> hd() =~ ~s("clear")
+      assert attr_of(html, "[data-menu-action=apply]", "data-close-on-apply") == ["false"]
+    end
+
+    test "the label captions a group" do
+      html = render(~H|<.dropdown_label>Sort by</.dropdown_label>|)
+
+      assert find(html, "div") |> LazyHTML.text() |> String.trim() == "Sort by"
+    end
+  end
 end

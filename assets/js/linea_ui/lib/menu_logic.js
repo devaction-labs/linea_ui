@@ -160,3 +160,26 @@ export const submenuKey = ({key, onTrigger, nested}) =>
     [key === "ArrowRight" && onTrigger, "open"],
     [(key === "ArrowLeft" || key === "Escape") && nested, "back"],
   ].find(([hit]) => hit)?.[1] ?? null
+
+/**
+ * The checked state an item of a filter menu takes when it is chosen: a `menuitemcheckbox` flips, a
+ * `menuitemradio` becomes checked (choosing the chosen one again changes nothing).
+ *
+ * @param {string} role `menuitemcheckbox` or `menuitemradio`
+ * @param {boolean} checked the state before
+ */
+export const choiceState = (role, checked) => (role === "menuitemradio" ? true : !checked)
+
+/** How many of `states` (the `aria-checked` texts of a submenu's items) are checked. */
+export const checkedTotal = (states) => states.filter((state) => state === "true").length
+
+/**
+ * What the server's `data-server-checked` says against what it said last time: the new state when the server
+ * changed it (it wins over what the person did in the browser), `null` when it did not.
+ *
+ * @param {{server: string | undefined, previous: string | undefined}} states
+ */
+export const serverChoice = ({server, previous}) => (server !== previous ? (server ?? null) : null)
+
+/** Whether a hover away from the open submenus leaves them open: `data-keep-submenus` is `"true"`. */
+export const keepsSubmenus = (value) => value === "true"

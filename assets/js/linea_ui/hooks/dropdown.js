@@ -1,9 +1,11 @@
+import {notify} from "../lib/dom.js"
 import {isTyping, runKey, wrap} from "../lib/keys.js"
-import {closesOnSelect, extendBuffer, isTypeahead, matchIndex, submenuKey, submenuSide} from "../lib/menu_logic.js"
+import {checkedTotal, choiceState, closesOnSelect, extendBuffer, isTypeahead, keepsSubmenus, matchIndex, serverChoice, submenuKey, submenuSide} from "../lib/menu_logic.js"
 import {Floating} from "./popover.js"
 
 const ITEM = '[role^="menuitem"]:not([aria-disabled="true"])'
 const MENU = '[role="menu"]'
+const CHOICE = '[role="menuitemcheckbox"], [role="menuitemradio"]'
 const HOVER_MS = 120
 const FOCUS_FRAMES = 12
 
@@ -21,6 +23,13 @@ const FOCUS_FRAMES = 12
  *
  * An item's `transition-all` keeps it `visibility: hidden` for the first frame of the menu's entrance, when
  * `focus()` is refused, so when the focus did not take it is given again on the next frames, until it does (at most `FOCUS_FRAMES`).
+ * A filter menu: `menuitemcheckbox` and `menuitemradio` items flip their `aria-checked` when chosen and leave the menu open
+ * (a radio unchecks the others of its `data-group`). One with a `name` has a real input beside it that follows the state
+ * and fires a bubbling `input` event, so the surrounding form's `phx-change` hears it. A new `data-server-checked` from the
+ * server wins; a patch that did not change it keeps what was chosen in the browser. A submenu's `[data-submenu-count]` shows
+ * how many of its checkboxes are checked. The footer's buttons are `data-menu-action`: `clear` unchecks every checkbox,
+ * `apply` closes the menu (the button's own `phx-click` or form submit runs as usual). `data-keep-submenus="true"` leaves
+ * open submenus open when the pointer moves to another item.
  */
 export default {
   "LineaUI.Dropdown": {
@@ -28,6 +37,9 @@ export default {
 
     mounted() {
       this.setupFloating()
+      this.known = new WeakMap()
+      this.choices().forEach((item) => this.known.set(item, item.dataset.serverChecked))
+      this.syncCounts()
       const trigger = this.trigger()
       this.onClick = (event) => (this.toggle(), event.detail === 0 && this.isOpen() && this.focusItem(0))
       this.onTriggerKey = (event) =>
@@ -44,6 +56,8 @@ export default {
 
     updated() {
       this.updatedFloating()
+      this.applyServer()
+      this.syncCounts()
     },
 
     destroyed() {
@@ -88,11 +102,79 @@ export default {
     },
 
     pick(event) {
+      const action = event.target.closest("[data-menu-action]")
       const item = event.target.closest(ITEM)
       const submenu = item?.matches("[data-submenu-trigger]") && item.closest("[data-submenu]")
-      submenu
-        ? (this.toggleSubmenu(submenu), event.detail === 0 && this.isSubmenuOpen(submenu) && this.focusItem(0, this.submenuMenu(submenu)))
-        : item && closesOnSelect(this.el.dataset.closeOnSelect) && this.close(true)
+      const steps = [
+        [action?.dataset.menuAction === "clear", () => this.clearChecks()],
+        [action?.dataset.menuAction === "apply", () => action.dataset.closeOnApply !== "false" && this.close(true)],
+        [Boolean(submenu), () => (this.toggleSubmenu(submenu), event.detail === 0 && this.isSubmenuOpen(submenu) && this.focusItem(0, this.submenuMenu(submenu)))],
+        [item?.matches(CHOICE), () => this.choose(item)],
+        [Boolean(item), () => closesOnSelect(this.el.dataset.closeOnSelect) && this.close(true)],
+      ]
+      steps.find(([hit]) => hit)?.[1]()
+    },
+
+    choices() {
+      return [...this.panel().querySelectorAll(CHOICE)]
+    },
+
+    inputOf(item) {
+      return item.parentElement.querySelector(":scope > [data-choice-input]")
+    },
+
+    isChecked(item) {
+      return item.getAttribute("aria-checked") === "true"
+    },
+
+    setChecked(item, on) {
+      item.setAttribute("aria-checked", String(on))
+      const input = this.inputOf(item)
+      input && (input.checked = on)
+      return input
+    },
+
+    choose(item) {
+      const role = item.getAttribute("role")
+      const before = this.isChecked(item)
+      const next = choiceState(role, before)
+      role === "menuitemradio" && this.uncheckGroup(item)
+      const input = this.setChecked(item, next)
+      this.syncCounts()
+      next !== before && input && notify(input)
+    },
+
+    uncheckGroup(item) {
+      this.choices()
+        .filter((other) => other !== item && other.getAttribute("role") === "menuitemradio" && other.dataset.group === item.dataset.group && this.menuOf(other) === this.menuOf(item))
+        .forEach((other) => this.setChecked(other, false))
+    },
+
+    clearChecks() {
+      const inputs = this.choices()
+        .filter((item) => item.getAttribute("role") === "menuitemcheckbox" && this.isChecked(item))
+        .map((item) => this.setChecked(item, false))
+      this.syncCounts()
+      const first = inputs.find(Boolean)
+      first && notify(first)
+    },
+
+    applyServer() {
+      this.choices().forEach((item) => {
+        const next = serverChoice({server: item.dataset.serverChecked, previous: this.known.get(item)})
+        this.known.set(item, item.dataset.serverChecked)
+        next !== null && this.setChecked(item, next === "true")
+      })
+    },
+
+    syncCounts() {
+      this.panel().querySelectorAll("[data-submenu]").forEach((submenu) => {
+        const badge = this.submenuTrigger(submenu)?.querySelector("[data-submenu-count]")
+        const menu = this.submenuMenu(submenu)
+        const states = [...menu.querySelectorAll('[role="menuitemcheckbox"]')].filter((item) => item.closest(MENU) === menu).map((item) => item.getAttribute("aria-checked"))
+        const total = checkedTotal(states)
+        badge && ((badge.textContent = String(total)), (badge.hidden = total === 0))
+      })
     },
 
     hover(item) {
@@ -102,9 +184,10 @@ export default {
 
     hoverSettle(item) {
       const menu = this.menuOf(item)
-      this.openSubmenusOf(menu)
-        .filter((submenu) => !submenu.contains(item))
-        .forEach((submenu) => this.closeSubmenu(submenu))
+      keepsSubmenus(this.el.dataset.keepSubmenus) ||
+        this.openSubmenusOf(menu)
+          .filter((submenu) => !submenu.contains(item))
+          .forEach((submenu) => this.closeSubmenu(submenu))
       const submenu = item.matches("[data-submenu-trigger]") && item.closest("[data-submenu]")
       submenu && this.openSubmenu(submenu)
     },

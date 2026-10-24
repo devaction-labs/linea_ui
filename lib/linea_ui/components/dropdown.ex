@@ -46,6 +46,41 @@ defmodule LineaUI.Components.Dropdown do
   when its trigger scrolls out of sight. It stays in the LiveView's DOM where it was rendered, so
   patches and `phx-click` on items work as usual. Without the Popover API (old browsers) it is a
   fixed box on `--linea-z-popover`.
+  ## A filter menu
+
+  `dropdown_checkbox` and `dropdown_radio` are items that keep the menu open while they are toggled
+  (`menuitemcheckbox` and `menuitemradio`); a `dropdown_submenu` groups them and shows how many are
+  checked; `dropdown_footer` ends the menu with Clear / Apply. `keep_submenus` leaves an open submenu
+  open while the pointer moves elsewhere. Inside a form, an item with a `name` is a real (hidden) input, so
+  the form's `phx-change` hears every tick and `phx-submit` gets the checked ones:
+
+      <.form for={@form} phx-change="filter" phx-submit="apply">
+        <.dropdown id="filters" label="Filter" keep_submenus close_on_select={false}>
+          <.dropdown_submenu label="Status">
+            <.dropdown_checkbox
+              :for={status <- @statuses}
+              name="filter[status][]"
+              value={status}
+              checked={status in @filter.status}
+              count={@counts[status]}
+            >
+              {status}
+            </.dropdown_checkbox>
+          </.dropdown_submenu>
+          <.dropdown_separator />
+          <.dropdown_label>Sort by</.dropdown_label>
+          <.dropdown_radio name="filter[sort]" value="recent" checked={@filter.sort == "recent"}>
+            Most recent
+          </.dropdown_radio>
+          <.dropdown_radio name="filter[sort]" value="value" checked={@filter.sort == "value"}>
+            Highest value
+          </.dropdown_radio>
+          <.dropdown_footer locale="pt_BR" />
+        </.dropdown>
+      </.form>
+
+  Without a form, give an item `phx-click` and `phx-value-*`; the checked state is the item's `checked`
+  (the server wins when it changes it, a patch that did not change it keeps what was ticked in the browser).
 
   A long menu scrolls inside a `scroll_area` (`LineaUI.Components.ScrollArea`); keep submenus out
   of a scrolling box inside the menu, which would clip them.
@@ -60,6 +95,7 @@ defmodule LineaUI.Components.Dropdown do
 
   alias LineaUI.Components.Button
   alias LineaUI.Components.Overlay
+  alias LineaUI.Components.Strings
 
   @placements ~w(bottom-start bottom bottom-end top-start top top-end left-start left left-end right-start right right-end)
 
@@ -100,6 +136,12 @@ defmodule LineaUI.Components.Dropdown do
   attr :placement, :string, default: "bottom-start", values: @placements
   attr :offset, :integer, default: 4, doc: "Pixels between the trigger and the menu."
   attr :close_on_select, :boolean, default: true
+
+  attr :keep_submenus, :boolean,
+    default: false,
+    doc:
+      "An open submenu stays open when the pointer moves to another item, until another submenu opens or the menu closes."
+
   attr :on_open, :any, default: nil, doc: "An event name or a `%JS{}`."
   attr :on_close, :any, default: nil, doc: "An event name or a `%JS{}`."
   attr :target, :any, default: nil, doc: "The `phx-target` of `on_open` / `on_close` events."
@@ -128,6 +170,7 @@ defmodule LineaUI.Components.Dropdown do
       data-placement={@placement}
       data-offset={@offset}
       data-close-on-select={bool(@close_on_select)}
+      data-keep-submenus={bool(@keep_submenus)}
       data-on-open={@on_open_js}
       data-on-close={@on_close_js}
       {@rest}
@@ -312,6 +355,12 @@ defmodule LineaUI.Components.Dropdown do
   attr :disabled, :boolean, default: false
   attr :class, :any, default: nil, doc: "Merged into the nested menu box (`w-48`...)."
   attr :trigger_class, :any, default: nil, doc: "Merged into the item that opens it."
+
+  attr :count, :integer,
+    default: nil,
+    doc:
+      "How many of its checkboxes are checked, in a round badge on the item; hidden at 0. The browser keeps it up to date as they are ticked."
+
   attr :rest, :global
   slot :icon, doc: "Drawn before the label."
   slot :inner_block, required: true
@@ -356,7 +405,14 @@ defmodule LineaUI.Components.Dropdown do
         data-submenu-trigger
       >
         {render_slot(@icon)}<span class="flex-1">{@label}</span>
-        <.glyph name={:chevron_right} class="ml-4 size-4 shrink-0 text-slate-400 dark:text-navy-300" />
+        <span
+          data-submenu-count
+          hidden={@count in [nil, 0]}
+          class="ml-3 inline-flex h-4.5 min-w-4.5 items-center justify-center rounded-full bg-primary px-1.5 text-xs font-medium text-white dark:bg-accent"
+        >
+          {@count}
+        </span>
+        <.glyph name={:chevron_right} class="ml-3 size-4 shrink-0 text-slate-400 dark:text-navy-300" />
       </button>
       <div class="linea-submenu" data-submenu-panel>
         <div
@@ -440,4 +496,240 @@ defmodule LineaUI.Components.Dropdown do
     </label>
     """
   end
+
+  @choice_item "group flex h-8 w-full items-center space-x-3 px-3 pr-4 text-left font-medium tracking-wide outline-hidden transition-all hover:bg-slate-100 hover:text-slate-800 focus:bg-slate-100 focus:text-slate-800 dark:hover:bg-navy-600 dark:hover:text-navy-100 dark:focus:bg-navy-600 dark:focus:text-navy-100"
+
+  @check_box "flex size-4 shrink-0 items-center justify-center rounded-sm border border-slate-400 text-white transition-colors group-aria-checked:border-primary group-aria-checked:bg-primary dark:border-navy-300 dark:group-aria-checked:border-accent dark:group-aria-checked:bg-accent"
+
+  @radio_box "size-4 shrink-0 rounded-full border border-slate-400 bg-white transition-all group-aria-checked:border-[5px] group-aria-checked:border-primary dark:border-navy-300 dark:bg-navy-700 dark:group-aria-checked:border-accent"
+
+  @doc """
+  A checkbox item (`menuitemcheckbox`). Choosing it flips it and leaves the menu open, for filters. With a
+  `name` it is a real input too (`value` is what a checked one submits), so a surrounding `phx-change`
+  hears it and `phx-submit` gets the checked ones; without one, give it `phx-click` and `phx-value-*`.
+
+      <.dropdown_checkbox name="filter[status][]" value="paid" checked={"paid" in @status} count={3}>
+        Paid
+      </.dropdown_checkbox>
+  """
+  attr :checked, :boolean,
+    default: false,
+    doc:
+      "The checked state. The server wins when it changes it; a patch that did not change it keeps the browser's choice."
+
+  attr :name, :string, default: nil, doc: "The name of the input the item submits as."
+  attr :value, :string, default: "true", doc: "What a checked item submits."
+
+  attr :id, :string,
+    default: nil,
+    doc: "Of the input; derived from `name` and `value` when not given."
+
+  attr :count, :any,
+    default: nil,
+    doc: "A muted number or text at the end (results for this option)."
+
+  attr :disabled, :boolean, default: false
+  attr :class, :any, default: nil
+  attr :rest, :global, include: ~w(form)
+  slot :inner_block, required: true
+
+  def dropdown_checkbox(assigns) do
+    assigns
+    |> assign(:role, "menuitemcheckbox")
+    |> assign(:box, @check_box)
+    |> render_choice()
+  end
+
+  @doc """
+  A radio item (`menuitemradio`): choosing it checks it and unchecks the other radios of its group (the ones
+  with the same `name` in the same menu). The menu stays open.
+
+      <.dropdown_radio name="filter[sort]" value="recent" checked={@sort == "recent"}>Most recent</.dropdown_radio>
+  """
+  attr :checked, :boolean, default: false, doc: "The checked state; as in `dropdown_checkbox/1`."
+  attr :name, :string, default: nil, doc: "The group of the radio and the name of its input."
+  attr :value, :string, default: "true", doc: "What the checked radio submits."
+
+  attr :id, :string,
+    default: nil,
+    doc: "Of the input; derived from `name` and `value` when not given."
+
+  attr :count, :any, default: nil, doc: "A muted number or text at the end."
+  attr :disabled, :boolean, default: false
+  attr :class, :any, default: nil
+  attr :rest, :global, include: ~w(form)
+  slot :inner_block, required: true
+
+  def dropdown_radio(assigns) do
+    assigns
+    |> assign(:role, "menuitemradio")
+    |> assign(:box, @radio_box)
+    |> render_choice()
+  end
+
+  defp render_choice(assigns) do
+    assigns =
+      assign(assigns,
+        input_id: assigns.id || "choice-#{:erlang.phash2({assigns.name, assigns.value})}",
+        input_type: (assigns.role == "menuitemradio" && "radio") || "checkbox",
+        item_class:
+          merge([
+            @choice_item,
+            assigns.disabled && "pointer-events-none opacity-60",
+            assigns.class
+          ])
+      )
+
+    ~H"""
+    <div class="contents" role="none">
+      <input
+        :if={@name}
+        type={@input_type}
+        id={@input_id}
+        name={@name}
+        value={@value}
+        checked={@checked}
+        disabled={@disabled}
+        tabindex="-1"
+        aria-hidden="true"
+        class="sr-only"
+        phx-update="ignore"
+        data-choice-input
+      />
+      <button
+        type="button"
+        role={@role}
+        class={@item_class}
+        tabindex="-1"
+        aria-checked={bool(@checked)}
+        aria-disabled={@disabled && "true"}
+        disabled={@disabled}
+        data-server-checked={bool(@checked)}
+        data-group={@name}
+        phx-mounted={JS.ignore_attributes(["aria-checked"])}
+        {@rest}
+      >
+        <span class={@box}>
+          <.glyph
+            :if={@role == "menuitemcheckbox"}
+            name={:check}
+            class="size-3 opacity-0 group-aria-checked:opacity-100"
+          />
+        </span>
+        <span class="flex-1">{render_slot(@inner_block)}</span>
+        <span :if={@count != nil} class="ml-4 text-xs text-slate-400 dark:text-navy-300">
+          {@count}
+        </span>
+      </button>
+    </div>
+    """
+  end
+
+  @doc "A small caption over a group of items (\"Sort by\"), as in a filter menu."
+  attr :class, :any, default: nil
+  attr :rest, :global
+  slot :inner_block, required: true
+
+  def dropdown_label(assigns) do
+    ~H"""
+    <div
+      role="presentation"
+      class={
+        merge([
+          "px-3 pt-2 pb-1 text-xs font-medium tracking-wide text-slate-400 dark:text-navy-300",
+          @class
+        ])
+      }
+      {@rest}
+    >
+      {render_slot(@inner_block)}
+    </div>
+    """
+  end
+
+  @doc """
+  The end of a filter menu: a Clear button, which unchecks every checkbox item (and fires their `phx-change`),
+  and an Apply button, which closes the menu. Without `on_apply` the button submits the surrounding form;
+  with one it runs that event (or `%JS{}`) instead.
+
+      <.dropdown_footer locale="pt_BR" apply_count={@pending} on_apply="apply_filters" />
+
+  The buttons are menu items, so the arrow keys reach them.
+  """
+  attr :locale, :string, default: "en", values: ~w(en pt_BR)
+  attr :clear_label, :string, default: nil, doc: "\"Clear\" (\"Limpar\" in pt_BR) by default."
+  attr :apply_label, :string, default: nil, doc: "\"Apply\" (\"Aplicar\" in pt_BR) by default."
+  attr :apply_count, :integer, default: nil, doc: "Written after Apply as `Apply (3)`."
+
+  attr :on_clear, :any,
+    default: nil,
+    doc: "An event name or a `%JS{}` run after the checkboxes are cleared."
+
+  attr :on_apply, :any,
+    default: nil,
+    doc: "An event name or a `%JS{}`; without it Apply submits the form."
+
+  attr :close_on_apply, :boolean, default: true
+
+  attr :target, :any,
+    default: nil,
+    doc: "The `phx-target` of `on_clear` and `on_apply` when they are event names."
+
+  attr :class, :any, default: nil
+  attr :rest, :global
+
+  def dropdown_footer(assigns) do
+    text = Strings.table(assigns.locale)
+
+    assigns =
+      assign(assigns,
+        clear: assigns.clear_label || text.filter_clear,
+        apply: assigns.apply_label || text.filter_apply,
+        clear_js: action_js(assigns.on_clear, assigns.target),
+        apply_js: action_js(assigns.on_apply, assigns.target),
+        apply_suffix: (assigns.apply_count && " (#{assigns.apply_count})") || "",
+        apply_type: (assigns.on_apply == nil && "submit") || "button"
+      )
+
+    ~H"""
+    <div
+      role="none"
+      class={
+        merge([
+          "mt-1.5 flex justify-between gap-2 border-t border-slate-150 px-2.5 pt-2 pb-0.5 dark:border-navy-500",
+          @class
+        ])
+      }
+      {@rest}
+    >
+      <Button.button
+        size="sm"
+        variant="flat"
+        role="menuitem"
+        tabindex="-1"
+        data-menu-action="clear"
+        phx-click={@clear_js}
+      >
+        {@clear}
+      </Button.button>
+      <Button.button
+        size="sm"
+        color="primary"
+        type={@apply_type}
+        role="menuitem"
+        tabindex="-1"
+        data-menu-action="apply"
+        data-close-on-apply={bool(@close_on_apply)}
+        phx-click={@apply_js}
+      >
+        {@apply}{@apply_suffix}
+      </Button.button>
+    </div>
+    """
+  end
+
+  defp action_js(nil, _target), do: nil
+  defp action_js(%JS{} = js, _target), do: js
+  defp action_js(event, nil), do: JS.push(event)
+  defp action_js(event, target), do: JS.push(event, target: target)
 end

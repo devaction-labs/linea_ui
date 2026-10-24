@@ -1,1 +1,134 @@
 /* LineaUI — forms. Rules go inside @layer components { } or @layer base { }. */
+@layer components {
+  /* Color picker: the hue and opacity sliders. */
+  .linea-hue,
+  .linea-alpha {
+    display: block;
+    width: 100%;
+    height: 10px;
+    margin: 0;
+    border-radius: 5px;
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+  .linea-hue {
+    background: linear-gradient(90deg, #f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00);
+  }
+  .linea-hue::-webkit-slider-thumb,
+  .linea-alpha::-webkit-slider-thumb {
+    width: 16px;
+    height: 16px;
+    border: 0;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 0 0 1px rgb(0 0 0 / 0.15), 0 1px 4px rgb(0 0 0 / 0.3);
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+  .linea-hue::-moz-range-thumb,
+  .linea-alpha::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    border: 0;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 0 0 1px rgb(0 0 0 / 0.15), 0 1px 4px rgb(0 0 0 / 0.3);
+    cursor: pointer;
+  }
+  .linea-hue::-moz-range-track,
+  .linea-alpha::-moz-range-track {
+    background: transparent;
+  }
+  .linea-hue:focus-visible::-webkit-slider-thumb,
+  .linea-alpha:focus-visible::-webkit-slider-thumb {
+    box-shadow: 0 0 0 2px var(--color-primary), 0 1px 4px rgb(0 0 0 / 0.3);
+  }
+  .linea-hue:focus-visible::-moz-range-thumb,
+  .linea-alpha:focus-visible::-moz-range-thumb {
+    box-shadow: 0 0 0 2px var(--color-primary), 0 1px 4px rgb(0 0 0 / 0.3);
+  }
+  .linea-hue:disabled,
+  .linea-alpha:disabled {
+    opacity: 0.6;
+    pointer-events: none;
+  }
+}
+
+/* Range, unlayered: .form-range in linea_ui.css has no layer, so only unlayered rules override it. Filled by --p. */
+.form-range.linea-range-filled::-webkit-slider-runnable-track {
+  background: linear-gradient(to right, currentColor var(--p, 0%), var(--track-color) var(--p, 0%));
+}
+.form-range.linea-range-filled::-moz-range-progress {
+  height: var(--range-track-h);
+  border-radius: 9999px;
+  background: currentColor;
+}
+.form-range.linea-range-filled.linea-range-vertical::-webkit-slider-runnable-track {
+  background: linear-gradient(to top, currentColor var(--p, 0%), var(--track-color) var(--p, 0%));
+}
+
+/* Range: standing up. */
+.form-range.linea-range-vertical::-webkit-slider-runnable-track {
+  width: var(--range-track-h);
+  height: 100%;
+}
+.form-range.linea-range-vertical::-moz-range-track {
+  width: var(--range-track-h);
+  height: 100%;
+}
+.form-range.linea-range-vertical::-webkit-slider-thumb {
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.form-range.linea-range-vertical::-moz-range-thumb {
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* Range: two thumbs on one track. */
+.linea-range-pair {
+  position: relative;
+  height: var(--range-thumb-size, 1.125rem);
+}
+.linea-range-pair > .linea-range-track,
+.linea-range-pair > .linea-range-fill {
+  position: absolute;
+  top: 50%;
+  height: var(--range-track-h, 0.375rem);
+  border-radius: 9999px;
+  transform: translateY(-50%);
+}
+.linea-range-pair > .linea-range-track {
+  right: 0;
+  left: 0;
+  background: var(--color-slate-150);
+}
+.dark .linea-range-pair > .linea-range-track {
+  background: var(--color-navy-500);
+}
+.linea-range-pair > .linea-range-fill {
+  background: currentColor;
+}
+.linea-range-pair > input.form-range {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  pointer-events: none;
+  background: transparent;
+}
+.linea-range-pair > input.form-range::-webkit-slider-runnable-track {
+  background: transparent;
+}
+.linea-range-pair > input.form-range::-moz-range-track {
+  background: transparent;
+}
+.linea-range-pair > input.form-range::-webkit-slider-thumb {
+  pointer-events: auto;
+}
+.linea-range-pair > input.form-range::-moz-range-thumb {
+  pointer-events: auto;
+}

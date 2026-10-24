@@ -1,6 +1,6 @@
 import assert from "node:assert/strict"
 import test from "node:test"
-import {asksForContextMenu, buttonView, closesOnSelect, counts, extendBuffer, isExpanded, isTypeahead, keyboardAnchor, matchIndex, pendingCount, placeFixed, resetAction, selectedStates, submenuKey, submenuSide} from "./menu_logic.js"
+import {asksForContextMenu, buttonView, checkedTotal, choiceState, closesOnSelect, counts, extendBuffer, isExpanded, isTypeahead, keepsSubmenus, keyboardAnchor, matchIndex, pendingCount, placeFixed, resetAction, selectedStates, serverChoice, submenuKey, submenuSide} from "./menu_logic.js"
 
 const key = (key, extra = {}) => ({key, ctrlKey: false, metaKey: false, altKey: false, ...extra})
 
@@ -173,4 +173,29 @@ test("→ opens a submenu from its item, ← and Esc go back from inside one", (
   assert.equal(submenuKey({key: "Escape", onTrigger: true, nested: true}), "back")
   assert.equal(submenuKey({key: "Escape", onTrigger: false, nested: false}), null)
   assert.equal(submenuKey({key: "ArrowDown", onTrigger: true, nested: true}), null)
+})
+
+test("choosing a checkbox item flips it and choosing a radio item checks it", () => {
+  assert.equal(choiceState("menuitemcheckbox", false), true)
+  assert.equal(choiceState("menuitemcheckbox", true), false)
+  assert.equal(choiceState("menuitemradio", false), true)
+  assert.equal(choiceState("menuitemradio", true), true)
+})
+
+test("the checked items of a submenu are counted from their aria-checked texts", () => {
+  assert.equal(checkedTotal(["true", "false", "true", undefined]), 2)
+  assert.equal(checkedTotal([]), 0)
+})
+
+test("the server's checked state wins only when it changed", () => {
+  assert.equal(serverChoice({server: "true", previous: "false"}), "true")
+  assert.equal(serverChoice({server: "false", previous: "true"}), "false")
+  assert.equal(serverChoice({server: "true", previous: "true"}), null)
+  assert.equal(serverChoice({server: undefined, previous: "true"}), null)
+})
+
+test("submenus stay open on a hover away only when the menu asks for it", () => {
+  assert.equal(keepsSubmenus("true"), true)
+  assert.equal(keepsSubmenus("false"), false)
+  assert.equal(keepsSubmenus(undefined), false)
 })

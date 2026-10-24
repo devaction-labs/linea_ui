@@ -34,6 +34,27 @@
   transition still has them hidden.
 - New `lib/top_layer.js` (`canLift`, `lift`, `drop`, `clippingAncestors`) and, in `lib/anchor_logic.js`,
   `clipsOverflow` and `referenceHidden`, with node tests.
+- `range`: `show_value` and `value_format` write the value beside the label, `filled` paints the track up to the thumb,
+  `marks` label the track (a click sets the value), `steppers` add minus and plus buttons, `start_field`/`end_field`
+  (or `start_name`/`end_name`, `value={{from, to}}`) give two thumbs on one track, and `orientation="vertical"` stands
+  it up. The browser keeps all of it in step between round trips (`LineaUI.Range`, `LineaUI.RangePair`); a slider
+  without these attrs renders as before.
+- `dropdown` filter menu: `dropdown_checkbox` and `dropdown_radio` (`menuitemcheckbox` / `menuitemradio`) toggle without
+  closing the menu, with a real input beside them when given a `name` (so `phx-change` and `phx-submit` see them),
+  `data-server-checked` so the server wins only when it changes the state, and a muted `count`. `dropdown_submenu`
+  takes `count` and the browser keeps its badge in step with the ticked items; `dropdown` takes `keep_submenus`.
+  `dropdown_footer` adds Clear (unchecks every checkbox) and Apply (closes the menu, submits the form or runs
+  `on_apply`), `dropdown_label` captions a group.
+- `signature_pad`: sign with pointer events (mouse, touch, pen) or type a name; the signature leaves as SVG text in a
+  hidden input (`field`, `phx-change`, `on_change`), with a Clear button, a ready/empty status, a stored SVG shown
+  from `value` and `locale="pt_BR"`.
+- `calendar`: a month or week grid (`role="grid"`) with colored event chips and hour blocks, a toolbar with
+  previous, today, next and month/week switch, roving-tabindex keyboard navigation (arrows, Home, End, Page Up and
+  Page Down, Enter), and `locale="pt_BR"`. The server holds `view` and `date`; the toolbar and the keyboard push
+  `on_navigate`, `on_view`, `on_select` and `on_event`. `calendar_range/3` and `calendar_shift/3` help the handlers.
+- `color_picker`: a saturation and brightness area (drag or arrow keys), hue and optional opacity sliders, a hex
+  field and preset swatches; the form gets `#RRGGBB` (`#RRGGBBAA` with `alpha`) through a hidden input, with
+  `field`, `phx-change`, `on_change` and `locale="pt_BR"`.
 
 ## 0.3.0
 
