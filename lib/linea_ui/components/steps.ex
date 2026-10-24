@@ -95,9 +95,9 @@ defmodule LineaUI.Components.Steps do
   @stepper_bars %{
     "done" => "bg-primary dark:bg-accent",
     "current" =>
-      "bg-[linear-gradient(90deg,var(--color-primary)_50%,var(--color-slate-150)_50%)] dark:bg-[linear-gradient(90deg,var(--color-accent)_50%,var(--color-navy-600)_50%)]",
+      "bg-[linear-gradient(90deg,var(--color-primary)_50%,var(--color-slate-150)_50%)] dark:bg-[linear-gradient(90deg,var(--color-accent)_50%,var(--color-navy-800)_50%)]",
     "error" => "bg-error",
-    "todo" => "bg-slate-150 dark:bg-navy-600"
+    "todo" => "bg-slate-150 dark:bg-navy-800"
   }
 
   @stepper_dots %{
@@ -105,7 +105,7 @@ defmodule LineaUI.Components.Steps do
     "current" =>
       "bg-white text-primary ring-2 ring-inset ring-primary dark:bg-navy-700 dark:text-accent-light dark:ring-accent",
     "error" => "bg-error text-white",
-    "todo" => "bg-slate-150 text-slate-400 dark:bg-navy-600 dark:text-navy-300"
+    "todo" => "bg-slate-150 text-slate-400 dark:bg-navy-800 dark:text-navy-300"
   }
 
   @stepper_labels %{
@@ -117,9 +117,9 @@ defmodule LineaUI.Components.Steps do
 
   @stepper_links %{
     "done" => "before:bg-primary dark:before:bg-accent",
-    "current" => "before:bg-slate-200 dark:before:bg-navy-500",
-    "error" => "before:bg-slate-200 dark:before:bg-navy-500",
-    "todo" => "before:bg-slate-200 dark:before:bg-navy-500"
+    "current" => "before:bg-slate-150 dark:before:bg-navy-600",
+    "error" => "before:bg-slate-150 dark:before:bg-navy-600",
+    "todo" => "before:bg-slate-150 dark:before:bg-navy-600"
   }
 
   @state_names %{
