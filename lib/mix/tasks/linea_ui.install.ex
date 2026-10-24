@@ -57,7 +57,17 @@ if Code.ensure_loaded?(Igniter) do
       |> Web.html_helpers()
       |> hugeicons(options[:hugeicons])
       |> skill(options[:skill])
+      |> replaced_daisyui(options[:replace_daisyui])
       |> Igniter.add_notice(notice())
+    end
+
+    defp replaced_daisyui(igniter, false), do: igniter
+
+    defp replaced_daisyui(igniter, true) do
+      Igniter.add_notice(igniter, """
+      daisyUI and the heroicons plugin are gone from app.css, but Phoenix's generated CoreComponents
+      and Layouts still use their classes (`btn`, `hero-*`...). Restyle them with LineaUI's components.
+      """)
     end
 
     defp hugeicons(igniter, true), do: Hugeicons.install(igniter)
@@ -70,7 +80,12 @@ if Code.ensure_loaded?(Igniter) do
       """
       LineaUI is set up. Use a component in any template:
 
-          <.button color="primary">Save</.button>
+          <.badge color="success">Paid</.badge>
+
+      `use LineaUI, avoid_conflicts: true` leaves `button`, `input`, `table`, `label`, `error`, `header`,
+      `icon` and `theme_toggle` to CoreComponents and Layouts; call LineaUI's with its module, e.g.
+      `<LineaUI.Components.Button.button color="primary">Save</LineaUI.Components.Button.button>`,
+      or drop `avoid_conflicts` once you remove the CoreComponents one.
 
       After upgrading the package, run `mix linea_ui.install` again, or `mix linea_ui.gen.skill`
       to refresh only the Claude Code skill.
@@ -95,8 +110,8 @@ else
     use Mix.Task
 
     @impl true
-    def run(args) do
-      Mix.Task.run("linea_ui.gen.skill", args)
+    def run(_args) do
+      Mix.Task.run("linea_ui.gen.skill", [])
       Enum.each(~w(AGENTS.md CLAUDE.md), &point/1)
       Mix.shell().info(instructions())
     end

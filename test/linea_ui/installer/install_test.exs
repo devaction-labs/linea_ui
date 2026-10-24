@@ -272,10 +272,16 @@ defmodule LineaUI.Installer.InstallTest do
     end
   end
 
+  test "--replace-daisyui adds a notice that CoreComponents and Layouts still use its classes" do
+    igniter = install(project(), ["--replace-daisyui"])
+
+    assert_has_notice(igniter, &(&1 =~ "CoreComponents" and &1 =~ "heroicons"))
+  end
+
   test "ends with a notice that says how to use a component and how to refresh" do
     igniter = install(project())
 
-    assert_has_notice(igniter, &(&1 =~ "<.button" and &1 =~ "mix linea_ui.gen.skill"))
+    assert_has_notice(igniter, &(&1 =~ "<.badge" and &1 =~ "mix linea_ui.gen.skill"))
   end
 
   defp index(string, part) do
