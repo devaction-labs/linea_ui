@@ -454,3 +454,20 @@
       0 0 26px 2px var(--linea-aura-glow);
   }
 }
+
+.drawer.drawer-float {
+  --drawer-from: translate(calc(-100% - 0.75rem));
+}
+
+.drawer.drawer-float.drawer-right {
+  --drawer-from: translate(calc(100% + 0.75rem));
+}
+
+.drawer.drawer-bottom {
+  --drawer-from: translateY(100%);
+  --drawer-to: translateY(0%);
+}
+
+.drawer.drawer-float.drawer-bottom {
+  --drawer-from: translateY(calc(100% + 0.75rem));
+}

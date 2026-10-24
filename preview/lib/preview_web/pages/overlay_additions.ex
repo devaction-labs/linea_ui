@@ -53,6 +53,8 @@ defmodule PreviewWeb.Pages.OverlayAdditions do
     <.example title="Sheet" text="A drawer with a title, a scrolling body and a footer, stacked.">
       <.button color="primary" phx-click={LineaUI.open("detail")} id="open-detail">Detail</.button>
       <.button phx-click={LineaUI.open("small")} id="open-small">Small, left</.button>
+      <.button phx-click={LineaUI.open("flush")} id="open-flush">Flush</.button>
+      <.button phx-click={LineaUI.open("bottom")} id="open-bottom">Bottom</.button>
     </.example>
 
     <.example title="Toasts" text="Kinds, a description, actions, loading then the answer.">
@@ -181,6 +183,27 @@ defmodule PreviewWeb.Pages.OverlayAdditions do
           <.button phx-click={LineaUI.close("inner-confirm")}>Back</.button>
         </:footer>
       </.modal>
+    </.drawer>
+
+    <.drawer
+      id="flush"
+      placement="right"
+      variant="flush"
+      title="Flush sheet"
+      description="Glued to the edge."
+    >
+      <p>Body.</p>
+      <:footer><.button color="primary" phx-click={LineaUI.close("flush")}>Done</.button></:footer>
+    </.drawer>
+
+    <.drawer id="bottom" placement="bottom" variant="float">
+      <.sheet_header title="Filters" description="The phone's sheet." />
+      <.sheet_body>
+        <p :for={n <- 1..20}>Option {n}</p>
+      </.sheet_body>
+      <.sheet_footer>
+        <.button color="primary" phx-click={LineaUI.close("bottom")}>Apply</.button>
+      </.sheet_footer>
     </.drawer>
 
     <.modal id="confirm">
