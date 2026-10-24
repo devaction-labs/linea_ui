@@ -2,6 +2,7 @@
 
 ## 0.4.4
 
+- `card` rebuilt on composable parts, without changing what exists: new `card_header/1` (with `card_heading/1`, `card_subheading/1` and `card_actions/1`), `card_body/1`, `card_footer/1` and `card_bleed/1`. New `body` (`seamless`, `divided`, `separated`, `inset`, `flush`) and `size` (`xs`, `sm`, `md`, `lg`) attrs, and the surfaces `outline`, `muted`, `soft` and `filled`. Actions written before the heading move to the leading side and do not make the header taller; inset corners are concentric with the card's. Headers and footers also work outside a card and nested in a body. `table` has a new `bleed` attr that runs its rows edge to edge inside a card.
 - Framed shell (`framed_sidebar`): the collapsed rail scrolls when its icons do not fit the window height, so the user and the settings stay reachable on a short screen. Its tooltips are positioned on the screen (`position: fixed`, set by the `LineaUI.ShellRail` hook on hover and focus) and are no longer clipped by the scrolling list.
 - `dropdown` and `dropdown_submenu`: the panel no longer has vertical padding of its own; the items sit flush to its top and bottom (the first and last follow the panel's rounded corners).
 - `number_input` with `steppers`: the field now has the same height as the minus and plus buttons. The mono text made it 2px taller than they were.

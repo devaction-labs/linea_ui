@@ -1,0 +1,15 @@
+<%!-- title: Sizes | text: size="xs", "sm", "md" and "lg" each have their own padding, typography, corners and gaps. --%>
+<div class="grid grid-cols-1 gap-4 rounded-lg bg-slate-50 p-4 dark:bg-navy-900 sm:grid-cols-2 sm:gap-5 lg:grid-cols-4">
+  <.card :for={size <- ~w(xs sm md lg)} size={size} variant="outline" body="divided">
+    <.card_header>
+      <.card_heading>Size {size}</.card_heading>
+      <.card_subheading>Subheading</.card_subheading>
+    </.card_header>
+    <.card_body>
+      <p>Lorem ipsum dolor sit amet.</p>
+    </.card_body>
+    <.card_footer>
+      <.button size={size} variant="flat">Cancel</.button>
+    </.card_footer>
+  </.card>
+</div>

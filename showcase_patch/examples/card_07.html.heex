@@ -1,0 +1,27 @@
+<%!-- title: Header, body and footer | text: Composable parts: card_header with card_heading, card_subheading and card_actions, card_body and card_footer. Content placed directly in the card keeps its padding. --%>
+<div class="grid grid-cols-1 gap-4 rounded-lg bg-slate-50 p-4 dark:bg-navy-900 sm:gap-5 lg:grid-cols-2">
+  <.card>
+    <.card_header>
+      <.card_heading>Invoice 2041</.card_heading>
+      <.card_subheading>Due on March 3</.card_subheading>
+      <.card_actions><.button size="xs" variant="flat">Edit</.button></.card_actions>
+    </.card_header>
+    <.card_body>
+      <p>Three line items, $1,240.00 in total.</p>
+    </.card_body>
+    <.card_footer>
+      <.button size="sm" variant="flat">Cancel</.button>
+      <.button size="sm">Pay now</.button>
+    </.card_footer>
+  </.card>
+  <.card>
+    <.card_header>
+      <.card_actions><.button size="xs" variant="flat">Back</.button></.card_actions>
+      <.card_heading>Actions first</.card_heading>
+      <.card_subheading>Written before the heading, they move to the leading side.</.card_subheading>
+    </.card_header>
+    <.card_body>
+      <p>Small buttons sit in the header's padding without making it taller.</p>
+    </.card_body>
+  </.card>
+</div>
