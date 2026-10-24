@@ -30,20 +30,20 @@ defmodule LineaUI.Components.EmptyState do
 
   @icon_tones %{
     "default" =>
-      "bg-white text-primary shadow-[0_0_0_1px_var(--color-slate-200),0_10px_24px_-10px_rgb(79_70_229/0.45)] dark:bg-navy-600 dark:text-accent-light dark:shadow-[0_0_0_1px_var(--color-navy-450),0_10px_24px_-10px_rgb(79_70_229/0.45)]",
+      "bg-white text-primary shadow-[0_0_0_1px_var(--color-slate-200),0_10px_24px_-10px_rgb(79_70_229/0.45)] dark:bg-navy-700 dark:text-accent-light dark:shadow-[0_0_0_1px_var(--color-navy-600),0_10px_24px_-10px_rgb(79_70_229/0.45)]",
     "gradient" =>
       "bg-gradient-to-br from-indigo-600 to-purple-500 text-white shadow-[0_10px_24px_-8px_rgb(124_58_237/0.6)]"
   }
 
   @inline_colors %{
     "neutral" =>
-      "text-slate-500 ring-1 ring-inset ring-slate-200 dark:text-navy-200 dark:ring-navy-500",
+      "text-slate-600 ring-1 ring-inset ring-slate-150 dark:text-navy-100 dark:ring-[#2c3a55]",
     "success" => "bg-success/10 text-success dark:bg-success/15",
     "error" => "bg-error/10 text-error dark:bg-error/15"
   }
 
   @inline_titles %{
-    "neutral" => "text-slate-700 dark:text-navy-50",
+    "neutral" => "text-slate-800 dark:text-navy-50",
     "success" => "text-inherit",
     "error" => "text-inherit"
   }
@@ -97,7 +97,7 @@ defmodule LineaUI.Components.EmptyState do
     <section
       class={
         merge([
-          "relative flex flex-col items-center gap-2.5 overflow-hidden rounded-lg bg-white px-7 pb-7.5 pt-9 text-center shadow-soft dark:bg-navy-700 dark:shadow-none dark:ring-1 dark:ring-navy-500",
+          "relative flex flex-col items-center gap-2.5 overflow-hidden rounded-lg bg-white px-7 pb-7.5 pt-9 text-center shadow-soft dark:bg-navy-700 dark:shadow-none dark:ring-1 dark:ring-[#2c3a55]",
           @class
         ])
       }
@@ -122,7 +122,7 @@ defmodule LineaUI.Components.EmptyState do
       </span>
       <.dynamic_tag
         tag_name={"h#{@level}"}
-        class="relative z-1 text-base font-semibold text-slate-700 dark:text-navy-50"
+        class="relative z-1 text-[17px] font-semibold text-slate-800 dark:text-navy-50"
       >
         {@title}
       </.dynamic_tag>
