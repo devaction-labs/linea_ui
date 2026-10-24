@@ -1,7 +1,8 @@
 # Changelog
 
-## 0.4.4
+## 0.5.0
 
+- **Breaking:** `datetime_picker/1` is now the new component below, not the flatpickr one of `date_picker`. It still takes `name`, `field`, `placeholder`, `min_time`, `max_time` and, as aliases, `time_24hr`, `minute_step` and `default_hour`, but the value is a wall-clock `2026-10-14T10:30` (it was `2026-10-14 10:30`) and the panel is the new one.
 - `select` (listbox): an option map takes `keywords:` (a string or a list), extra terms the search matches though the list does not show them.
 - `heading`: `size` (`sm base lg xl 2xl 3xl`) sets the type size apart from the level.
 - Toasts: every toast leaves by itself after its `duration` and draws a thin countdown line at its bottom (`timer: false` on a toast or `timer={false}` on the toaster turns it off; the pointer over the stack holds it). A toast that depends on the person now stays until it is closed, with a close button and no line: one with `actions`, one with a `template`, one with `aura: :glow` (a `loading` or running progress toast already did). An explicit `duration` wins. A plain toast that stays now gets its close button too.

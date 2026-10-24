@@ -339,4 +339,15 @@ defmodule LineaUI.Components.DatetimePickerTest do
     refute function_exported?(LineaUI.Components.DatePicker, :datetime_picker, 1)
     assert function_exported?(LineaUI.Components.DatetimePicker, :datetime_picker, 1)
   end
+
+  test "the attributes of the former picker still work" do
+    html =
+      render(~H"""
+      <.datetime_picker id="old" name="old" time_24hr minute_step={5} default_hour={9} />
+      """)
+
+    assert data(html, "#old", "data-interval") == ["5"]
+    assert data(html, "#old", "data-default-time") == ["09:00"]
+    assert data(html, "#old", "data-hour12") == ["false"]
+  end
 end

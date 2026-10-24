@@ -168,6 +168,18 @@ defmodule LineaUI.Components.DatetimePicker do
     doc:
       "`12` is 9:30 AM, `24` is 09:30; `auto` follows the `locale` (12 for `en`, 24 for `pt_BR`)."
 
+  attr :time_24hr, :boolean,
+    default: nil,
+    doc: "The attribute of the former flatpickr picker, kept as `time_format=\"24\"`; use `time_format`."
+
+  attr :minute_step, :integer,
+    default: nil,
+    doc: "The attribute of the former flatpickr picker, kept as `interval`; use `interval`."
+
+  attr :default_hour, :integer,
+    default: nil,
+    doc: "The attribute of the former flatpickr picker, kept as `default_time=\"HH:00\"`; use `default_time`."
+
   attr :locale, :string,
     default: "en",
     values: ~w(en pt_BR),
@@ -248,9 +260,26 @@ defmodule LineaUI.Components.DatetimePicker do
     |> assign_new(:id, fn -> gen_id("datetime") end)
     |> then(&assign_new(&1, :name, fn -> &1.id end))
     |> assign_new(:value, fn -> nil end)
+    |> legacy()
     |> prepare()
     |> render_picker()
   end
+
+  defp legacy(assigns) do
+    assign(assigns,
+      time_format: legacy_format(assigns),
+      interval: assigns.minute_step || assigns.interval,
+      default_time: legacy_default(assigns)
+    )
+  end
+
+  defp legacy_format(%{time_24hr: true}), do: "24"
+  defp legacy_format(%{time_format: format}), do: format
+
+  defp legacy_default(%{default_time: nil, default_hour: hour}) when is_integer(hour),
+    do: hour |> Integer.to_string() |> String.pad_leading(2, "0") |> Kernel.<>(":00")
+
+  defp legacy_default(%{default_time: time}), do: time
 
   defp prepare(assigns) do
     locale = assigns.locale

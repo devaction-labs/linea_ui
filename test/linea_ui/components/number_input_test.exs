@@ -111,7 +111,11 @@ defmodule LineaUI.Components.NumberInputTest do
 
   test "the field is as tall as its steppers, so the group has one height" do
     for {size, height} <- [{"sm", "h-8"}, {"md", "h-[2.375rem]"}, {"lg", "h-12"}] do
-      html = render(~H|<.number_input id="n" name="n" size={size} steppers />|)
+      html =
+        Phoenix.LiveViewTest.render_component(
+          &number_input/1,
+          %{id: "n", name: "n", size: size, steppers: true}
+        )
 
       assert height in classes(html, "#n")
       assert height in classes(html, "button[data-step-by=down]")
