@@ -113,4 +113,17 @@
       linear-gradient(rgb(129 140 248 / 0.09) 1px, transparent 1px),
       linear-gradient(90deg, rgb(129 140 248 / 0.09) 1px, transparent 1px);
   }
+
+  .progress .is-shine {
+    animation: progress-shine 1.4s ease-in-out infinite;
+  }
+
+  @keyframes progress-shine {
+    from {
+      left: -35%;
+    }
+    to {
+      left: 100%;
+    }
+  }
 }

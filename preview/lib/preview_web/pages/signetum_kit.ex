@@ -62,7 +62,9 @@ defmodule PreviewWeb.Pages.SignetumKit do
         items: @items,
         picked: nil,
         form: to_form(%{"regime" => "simples"}, as: :company),
-        status: "all"
+        status: "all",
+        step: 1,
+        failed: false
       )
 
   def handle_event("palette-select", %{"value" => value, "new_tab" => new_tab}, socket),
@@ -76,6 +78,11 @@ defmodule PreviewWeb.Pages.SignetumKit do
 
   def handle_event("set-status", %{"value" => value}, socket),
     do: {:noreply, assign(socket, status: value)}
+
+  def handle_event("step", %{"to" => to}, socket),
+    do: {:noreply, assign(socket, step: String.to_integer(to) |> max(0) |> min(3), failed: false)}
+
+  def handle_event("fail", _params, socket), do: {:noreply, assign(socket, step: 1, failed: true)}
 
   def render(assigns) do
     ~H"""
@@ -184,6 +191,50 @@ defmodule PreviewWeb.Pages.SignetumKit do
           </:action>
         </.empty_state>
       </div>
+    </.example>
+
+    <.example
+      title="Stepper"
+      text="Horizontal and vertical, with done, current, error and to do states."
+      class="mt-5 flex flex-col gap-6"
+    >
+      <.stepper current={@step} error={@failed}>
+        <:step label="Empresa" sub="CNPJ e endereço fiscal" />
+        <:step label="Certificado A1" sub="Arquivo .pfx e senha" />
+        <:step label="Perfil fiscal" sub="Regime e operações" />
+        <:step label="Nota de teste" sub="Emissão em homologação" />
+      </.stepper>
+      <div class="flex justify-between gap-2.5">
+        <.button variant="outline" phx-click="step" phx-value-to={@step - 1}>Voltar</.button>
+        <div class="flex gap-2">
+          <.button variant="flat" phx-click="fail">Simular erro</.button>
+          <.button color="primary" phx-click="step" phx-value-to={@step + 1}>Continuar</.button>
+        </div>
+      </div>
+      <.stepper orientation="vertical" current={3}>
+        <:step label="Dados da empresa" sub="Farmácia Signetum Ltda · 12.345.678/0001-90" />
+        <:step label="Certificado digital" sub="A1 válido até 14/08/2027" />
+        <:step label="Conta bancária" sub="Banco do Brasil · CC 48210-7" />
+        <:step
+          label="Cadastrar produtos"
+          sub="12 cadastrados · importe a planilha para ir mais rápido"
+        >
+          <.button size="sm" color="primary">Importar planilha</.button>
+        </:step>
+        <:step label="Convidar a equipe" sub="Vendas, financeiro e estoque" />
+        <:step label="Emitir a primeira NF-e" sub="Depois dos produtos, a partir de um pedido" />
+      </.stepper>
+    </.example>
+    <.example
+      title="Progress"
+      text="Determinate bars and the indeterminate ones, sliding or with the running shine."
+      class="mt-5 flex flex-col gap-5"
+    >
+      <.progress value={64} color="primary" label="Importando planilha" />
+      <.progress indeterminate shine color="primary" label="Compactando o pacote de XMLs" />
+      <.progress indeterminate color="primary" label="Sliding" />
+      <.progress value={82} color="warning" label="Notas emitidas" />
+      <.progress value={24} color="success" label="Armazenamento" />
     </.example>
     """
   end
