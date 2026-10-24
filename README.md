@@ -4,9 +4,9 @@ Phoenix LiveView components with the LineOne design (Tailwind CSS v4), used the 
 used: `use LineaUI`, one function per component, `class` that overrides the defaults, overlays
 opened by id, and hooks that survive LiveView patches. No JavaScript dependencies.
 
-> **License.** The code of this package is DevAction's, but the visual design it reproduces derives from
-> [LineOne](https://themeforest.net/search/lineone) by PiniaStudio (ThemeForest). To use LineaUI you need a valid
-> LineOne license that covers your project. See [LICENSE](LICENSE).
+> **Credits.** The code of this package is DevAction's. The visual design it reproduces derives from
+> [LineOne](https://themeforest.net/search/lineone) by PiniaStudio (ThemeForest) and is credited to its
+> author. See [LICENSE](LICENSE).
 
 ## Installation
 

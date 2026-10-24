@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.1
+
+- LICENSE and README: the design is credited to its author; the text no longer asks users for a license of
+  the original kit.
+
 ## 0.1.0
 
 First release.

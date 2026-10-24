@@ -6,34 +6,26 @@ Copyright (c) 2026 DevAction
 The Elixir code, the component API, the LiveView hooks, the tests and the
 documentation of this package are the work of DevAction.
 
-The visual design this package reproduces, and the CSS and artwork that carry
-it, derive from "LineOne - Multipurpose Admin and WebApp UI Kit based on
-Tailwind CSS" by PiniaStudio, sold on ThemeForest. Those parts are NOT licensed
-by this package and remain subject to the license of their author.
+The visual design this package reproduces derives from "LineOne - Multipurpose
+Admin and WebApp UI Kit based on Tailwind CSS" by PiniaStudio, sold on
+ThemeForest. The design, and the CSS and artwork that carry it, are credited to
+their author and are not licensed by this package.
 
-2. Condition of use
+2. What DevAction allows
 
-To use LineaUI in a project you must hold a valid license of LineOne from
-ThemeForest that covers that project (per ThemeForest's terms, one license per
-end product). Without it you have no right to use the parts derived from
-LineOne, and therefore no right to use this package.
+You may use, copy and modify the code of this package in your own projects. You
+may not redistribute or resell this package, or a modified version of it, as a
+template, theme, UI kit or component library, except as a dependency fetched
+from its public registry or repository.
 
-3. What DevAction allows
-
-For a holder of such a license: use, copy and modify the code of this package
-inside the projects the LineOne license covers. You may not redistribute or
-resell this package, or a modified version of it, as a template, theme, UI kit
-or component library, except as a dependency fetched from its public registry
-or repository.
-
-4. Other works
+3. Other works
 
 The fonts Poppins and Inter that the package ships under priv/static/fonts are
 licensed under the SIL Open Font License 1.1 (see OFL-Poppins.txt and
 OFL-Inter.txt there). Hugeicons, which the package can use through its optional
 icon set, has its own license and is not part of this package.
 
-5. No warranty
+4. No warranty
 
 THE PACKAGE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED. IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR
