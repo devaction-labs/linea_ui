@@ -10,6 +10,7 @@ import Autocomplete from "./hooks/autocomplete.js"
 import Carousel from "./hooks/carousel.js"
 import Chart from "./hooks/chart.js"
 import Clipboard from "./hooks/clipboard.js"
+import ColorPicker from "./hooks/color_picker.js"
 import DataTable from "./hooks/data_table.js"
 import DatePicker from "./hooks/date_picker.js"
 import Dialog from "./hooks/dialog.js"
@@ -35,6 +36,7 @@ export const Hooks = {
   ...Carousel,
   ...Chart,
   ...Clipboard,
+  ...ColorPicker,
   ...DataTable,
   ...DatePicker,
   ...Dialog,

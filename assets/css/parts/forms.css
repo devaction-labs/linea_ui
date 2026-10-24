@@ -1,1 +1,57 @@
 /* LineaUI — forms. Rules go inside @layer components { } or @layer base { }. */
+@layer components {
+  /* Color picker: the hue and opacity sliders. */
+  .linea-hue,
+  .linea-alpha {
+    display: block;
+    width: 100%;
+    height: 10px;
+    margin: 0;
+    border-radius: 5px;
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+  .linea-hue {
+    background: linear-gradient(90deg, #f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00);
+  }
+  .linea-hue::-webkit-slider-thumb,
+  .linea-alpha::-webkit-slider-thumb {
+    width: 16px;
+    height: 16px;
+    border: 0;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 0 0 1px rgb(0 0 0 / 0.15), 0 1px 4px rgb(0 0 0 / 0.3);
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+  .linea-hue::-moz-range-thumb,
+  .linea-alpha::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    border: 0;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 0 0 1px rgb(0 0 0 / 0.15), 0 1px 4px rgb(0 0 0 / 0.3);
+    cursor: pointer;
+  }
+  .linea-hue::-moz-range-track,
+  .linea-alpha::-moz-range-track {
+    background: transparent;
+  }
+  .linea-hue:focus-visible::-webkit-slider-thumb,
+  .linea-alpha:focus-visible::-webkit-slider-thumb {
+    box-shadow: 0 0 0 2px var(--color-primary), 0 1px 4px rgb(0 0 0 / 0.3);
+  }
+  .linea-hue:focus-visible::-moz-range-thumb,
+  .linea-alpha:focus-visible::-moz-range-thumb {
+    box-shadow: 0 0 0 2px var(--color-primary), 0 1px 4px rgb(0 0 0 / 0.3);
+  }
+  .linea-hue:disabled,
+  .linea-alpha:disabled {
+    opacity: 0.6;
+    pointer-events: none;
+  }
+}

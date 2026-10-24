@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- `color_picker`: a saturation and brightness area (drag or arrow keys), hue and optional opacity sliders, a hex
+  field and preset swatches; the form gets `#RRGGBB` (`#RRGGBBAA` with `alpha`) through a hidden input, with
+  `field`, `phx-change`, `on_change` and `locale="pt_BR"`.
+
 ## 0.3.0
 
 - `dropdown_item`: a link item takes `target`, `rel`, `download`, `hreflang`, `referrerpolicy` and `replace`, so

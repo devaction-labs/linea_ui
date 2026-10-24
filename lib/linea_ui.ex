@@ -45,6 +45,7 @@ defmodule LineaUI do
     checkbox: LineaUI.Components.Checkbox,
     clipboard: LineaUI.Components.Clipboard,
     collapse: LineaUI.Components.Collapse,
+    color_picker: LineaUI.Components.ColorPicker,
     data_table: LineaUI.Components.DataTable,
     date_picker: LineaUI.Components.DatePicker,
     divider: LineaUI.Components.Divider,
