@@ -10,6 +10,37 @@ opened by id, and hooks that survive LiveView patches. No JavaScript dependencie
 
 ## Installation
 
+One command adds the package, wires it into a Phoenix app and writes the Claude Code skill, showing the
+diff for you to confirm:
+
+```bash
+mix igniter.install linea_ui
+```
+
+`mix igniter.install` comes with the [`igniter_new`](https://hexdocs.pm/igniter) archive
+(`mix archive.install hex igniter_new`), or with the `igniter` dependency if the app has it. The installer
+edits:
+
+- `assets/css/app.css`: imports LineaUI's fonts and styles (plus `@source` for its templates when the file
+  uses `source(none)`, as Phoenix 1.8's does)
+- `assets/js/app.js`: imports LineaUI's hooks and spreads them into the `LiveSocket` `hooks`
+- the endpoint: a `Plug.Static` for the fonts
+- `lib/my_app_web.ex`: `use LineaUI, avoid_conflicts: true` in `html_helpers/0`
+- `.claude/skills/linea-ui/` and a pointer to it in `AGENTS.md`/`CLAUDE.md` (see [Claude Code skill](#claude-code-skill))
+
+Each step skips what is already there, so running `mix linea_ui.install` again (after an upgrade, say)
+changes only what the new version changed; a step that cannot find its place warns instead of failing.
+Flags: `--hugeicons` (the icon set below, with its dependency and config), `--replace-daisyui` (removes the
+daisyUI and heroicons plugins from `app.css`; without it they stay, with a warning, as the two stylesheets can
+conflict, and Phoenix's `CoreComponents` and `Layouts` still use their classes) and `--no-skill`.
+
+If the package was compiled before `igniter` was in the app, recompile it once:
+`mix deps.compile linea_ui --force`.
+
+### By hand
+
+Without Igniter, `mix linea_ui.install` writes the skill and prints the lines to add. They are:
+
 ```elixir
 # mix.exs
 {:linea_ui, "~> 0.1"}
@@ -88,16 +119,19 @@ only sees what is written, and a name that is not in the set renders nothing.
 
 ## Claude Code skill
 
+The installer writes the skill (`mix igniter.install linea_ui`, or `mix linea_ui.install` on its own, which
+you run again after every upgrade). To refresh only the skill after an upgrade:
+
 ```bash
-mix linea_ui.install      # after adding the dependency, and after every upgrade
+mix linea_ui.gen.skill
 ```
 
-writes `.claude/skills/linea-ui/` — a short `SKILL.md` index (the rules every component shares
+It writes `.claude/skills/linea-ui/` — a short `SKILL.md` index (the rules every component shares
 and one line per component) and `references/<component>.md` with the attrs, allowed values,
 slots and examples of each, generated from the installed components themselves, so it never
 drifts from the code. Only the index is loaded up front; a reference is read when its component
-is used. The task also points `AGENTS.md`/`CLAUDE.md` at the skill (once) and prints the
-remaining setup lines. `mix linea_ui.gen.skill --path <dir>` writes only the skill.
+is used. The installer also points `AGENTS.md`/`CLAUDE.md` (creating `AGENTS.md` when neither exists) at the
+skill, once. `mix linea_ui.gen.skill --path <dir>` writes the skill somewhere else.
 
 ## Usage
 
