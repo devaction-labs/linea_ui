@@ -43,7 +43,7 @@ defmodule LineaUI.Components.NumberInput do
       "[&>:first-child]:rounded-l-full [&>:first-child_.form-input]:rounded-l-full [&>:last-child]:rounded-r-full [&>:last-child_.form-input]:rounded-r-full"
   }
 
-  @stepper "flex shrink-0 items-center justify-center border border-slate-300 px-3 text-slate-500 outline-hidden transition-colors hover:bg-slate-150 hover:text-slate-700 focus-visible:bg-slate-150 active:bg-slate-200 disabled:pointer-events-none disabled:opacity-50 dark:border-navy-450 dark:text-navy-200 dark:hover:bg-navy-500 dark:hover:text-navy-50 dark:focus-visible:bg-navy-500 dark:active:bg-navy-450"
+  @stepper "flex shrink-0 items-center justify-center border border-slate-300 px-3 text-slate-600 outline-hidden transition-colors hover:bg-slate-100 hover:text-slate-800 focus-visible:bg-slate-100 active:bg-slate-150 disabled:pointer-events-none disabled:opacity-35 dark:border-navy-450 dark:text-navy-100 dark:hover:bg-navy-600 dark:hover:text-navy-50 dark:focus-visible:bg-navy-600 dark:active:bg-navy-500"
 
   @stepper_sizes %{"sm" => "h-8", "md" => "h-[2.375rem]", "lg" => "h-12"}
 
@@ -239,27 +239,46 @@ defmodule LineaUI.Components.NumberInput do
         <InputGroup.input_group_addon :if={@prefix} variant="filled" class={@addon_class}>
           {@prefix}
         </InputGroup.input_group_addon>
-        <Input.input
-          type="text"
-          id={@id}
-          value={@display}
-          variant={@variant}
-          size={@size}
-          shape={@shape}
-          align={align(@align)}
-          state={@state}
-          disabled={@disabled}
-          class={merge([@align == "center" && "text-center", @class])}
-          role="spinbutton"
-          inputmode={@inputmode}
-          autocomplete="off"
-          aria-valuenow={@machine}
-          aria-valuemin={@min}
-          aria-valuemax={@max}
-          data-display
-          {@input_rest}
-        />
-        <InputGroup.input_group_addon :if={@suffix} variant="filled" class={@addon_class}>
+        <div class="relative min-w-0 flex-1 [&_.form-input]:w-full">
+          <Input.input
+            type="text"
+            id={@id}
+            value={@display}
+            variant={@variant}
+            size={@size}
+            shape={@shape}
+            align={align(@align)}
+            state={@state}
+            disabled={@disabled}
+            class={
+              merge([
+                @align == "center" && "text-center",
+                @steppers && "font-mono text-sm-plus font-medium text-slate-800 dark:text-navy-50",
+                @steppers && @suffix && "pe-9",
+                @class
+              ])
+            }
+            role="spinbutton"
+            inputmode={@inputmode}
+            autocomplete="off"
+            aria-valuenow={@machine}
+            aria-valuemin={@min}
+            aria-valuemax={@max}
+            data-display
+            {@input_rest}
+          />
+          <span
+            :if={@steppers && @suffix}
+            class="pointer-events-none absolute inset-y-0 end-3 flex items-center font-inter text-xs-plus text-slate-400 dark:text-navy-300"
+          >
+            {@suffix}
+          </span>
+        </div>
+        <InputGroup.input_group_addon
+          :if={@suffix && !@steppers}
+          variant="filled"
+          class={@addon_class}
+        >
           {@suffix}
         </InputGroup.input_group_addon>
         <button

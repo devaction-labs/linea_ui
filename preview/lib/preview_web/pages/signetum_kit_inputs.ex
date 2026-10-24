@@ -98,6 +98,34 @@ defmodule PreviewWeb.Pages.SignetumKitInputs do
 
   def render(assigns) do
     ~H"""
+    <.example title="Number input" text="Steppers, min, max, step and a unit." class="mt-5 block">
+      <div id="numbers" class="grid max-w-sm gap-4">
+        <.number_input
+          name="qty"
+          value={12}
+          label="Quantidade"
+          steppers
+          min={1}
+          max={999}
+          align="center"
+          suffix="un"
+          help="Em estoque: 148 un no Depósito central."
+        />
+        <.number_input
+          name="discount"
+          value={5}
+          label="Desconto"
+          steppers
+          min={0}
+          max={15}
+          step={0.5}
+          decimals={1}
+          align="center"
+          suffix="%"
+        />
+        <.number_input name="price" value={1486.9} label="Valor" prefix="R$" decimals={2} min={0} />
+      </div>
+    </.example>
     <.example title="Color picker" text="Drag the area, pick a preset or type a hex." class="mt-5">
       <form id="stage-form" phx-change="color" class="w-72">
         <.color_picker id="stage-color" name="stage[color]" value={@color} label="Stage color" />
