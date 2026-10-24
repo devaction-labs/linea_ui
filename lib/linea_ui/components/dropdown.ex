@@ -211,7 +211,7 @@ defmodule LineaUI.Components.Dropdown do
         <div
           class={
             merge([
-              "popper-box rounded-md border border-slate-150 bg-white py-1.5 font-inter dark:border-navy-500 dark:bg-navy-700",
+              "popper-box rounded-md border border-slate-150 bg-white font-inter dark:border-navy-500 dark:bg-navy-700 [&>:first-child]:rounded-t-[5px] [&>:last-child]:rounded-b-[5px]",
               @class
             ])
           }
@@ -419,7 +419,7 @@ defmodule LineaUI.Components.Dropdown do
           id={"#{@id}-menu"}
           class={
             merge([
-              "w-max min-w-40 rounded-md border border-slate-150 bg-white py-1.5 font-inter shadow-[0_10px_30px_-8px_rgb(48_46_56/0.18)] dark:border-navy-500 dark:bg-navy-700 dark:shadow-soft-dark",
+              "w-max min-w-40 rounded-md border border-slate-150 bg-white font-inter shadow-[0_10px_30px_-8px_rgb(48_46_56/0.18)] dark:border-navy-500 dark:bg-navy-700 dark:shadow-soft-dark [&>:first-child]:rounded-t-[5px] [&>:last-child]:rounded-b-[5px]",
               @class
             ])
           }

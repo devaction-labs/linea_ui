@@ -203,6 +203,7 @@ defmodule LineaUI.Components.NumberInput do
       assign(assigns,
         group_class: merge([@group, @shapes[assigns.shape]]),
         stepper_class: merge([@stepper, @stepper_sizes[assigns.size]]),
+        field_height: @stepper_sizes[assigns.size],
         addon_class: @addon_sizes[assigns.size]
       )
 
@@ -253,6 +254,7 @@ defmodule LineaUI.Components.NumberInput do
             class={
               merge([
                 @align == "center" && "text-center",
+                @steppers && @field_height,
                 @steppers && "font-mono text-sm-plus font-medium text-slate-800 dark:text-navy-50",
                 @steppers && @suffix && "pe-9",
                 @class

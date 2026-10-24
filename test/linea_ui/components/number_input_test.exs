@@ -109,6 +109,15 @@ defmodule LineaUI.Components.NumberInputTest do
     assert attr_of(html, "#blank-number", "data-negative") == ["true"]
   end
 
+  test "the field is as tall as its steppers, so the group has one height" do
+    for {size, height} <- [{"sm", "h-8"}, {"md", "h-[2.375rem]"}, {"lg", "h-12"}] do
+      html = render(~H|<.number_input id="n" name="n" size={size} steppers />|)
+
+      assert height in classes(html, "#n")
+      assert height in classes(html, "button[data-step-by=down]")
+    end
+  end
+
   test "steppers, prefix, suffix, sizes and debounce" do
     html =
       render(~H"""
