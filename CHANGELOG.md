@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.3.1
 
 - `dropdown` (with `dropdown_submenu`), `popover`: the panel is no longer cut off or covered inside a box that
   scrolls (every `table` sits in a horizontal scroll area, a `drawer` body scrolls) or under an ancestor with a
