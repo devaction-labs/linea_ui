@@ -1,0 +1,20 @@
+<%!-- title: Header and card apart | text: card_header and card_footer work outside a card; size matches the card they stand with. Here a header with a large heading sits above a card of two rows. --%>
+<div class="flex justify-center rounded-lg bg-slate-50 p-6 dark:bg-navy-900 sm:p-10">
+  <div class="w-full max-w-md space-y-4">
+    <.card_header size="lg">
+      <.card_heading size="lg">Security</.card_heading>
+      <.card_actions><.button size="sm" variant="outline">Review</.button></.card_actions>
+    </.card_header>
+    <.card class="gap-3">
+      <div class="flex items-center justify-between">
+        <span>Two-factor authentication</span>
+        <.badge color="success" variant="soft">On</.badge>
+      </div>
+      <.divider />
+      <div class="flex items-center justify-between">
+        <span>Recovery email</span>
+        <span class="text-xs">olivia@acme.com</span>
+      </div>
+    </.card>
+  </div>
+</div>

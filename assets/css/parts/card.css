@@ -1,0 +1,456 @@
+/*
+  LineaUI — card parts.
+
+  The card publishes its measures as custom properties (padding `--card-p`, corner `--card-r`,
+  inset `--card-i`) and, per treatment, how each part sits in it (`--card-m`, `--card-hx`,
+  `--card-hy`, `--card-bx`...). The parts only read them, so they also work nested in a body
+  (which resets them) and outside a card (where they are unset and every rule falls back to
+  nothing).
+*/
+
+@layer components {
+  :is(.card, .card-header, .card-footer)[data-size="xs"] {
+    --card-p: 0.75rem;
+    --card-i: 0.125rem;
+    --card-r: 0.5rem;
+    --card-h: 0.8125rem;
+    --card-s: 0.75rem;
+    --card-sg: 0.25rem;
+  }
+
+  :is(.card, .card-header, .card-footer)[data-size="sm"] {
+    --card-p: 1rem;
+    --card-i: 0.1875rem;
+    --card-r: 0.75rem;
+    --card-h: 0.875rem;
+    --card-s: 0.8125rem;
+    --card-sg: 0.375rem;
+  }
+
+  :is(.card, .card-header, .card-footer)[data-size="md"] {
+    --card-p: 1.5rem;
+    --card-i: 0.25rem;
+    --card-r: 1rem;
+    --card-h: 0.875rem;
+    --card-s: 0.875rem;
+    --card-sg: 0.375rem;
+  }
+
+  :is(.card, .card-header, .card-footer)[data-size="lg"] {
+    --card-p: 1.75rem;
+    --card-i: 0.25rem;
+    --card-r: 1.25rem;
+    --card-h: 0.9375rem;
+    --card-s: 0.875rem;
+    --card-sg: 0.5rem;
+  }
+
+  .card[data-size="xs"] {
+    font-size: 0.75rem;
+    line-height: 1rem;
+  }
+
+  .card[data-size="sm"] {
+    font-size: 0.8125rem;
+    line-height: 1.125rem;
+  }
+
+  .card[data-size] {
+    --card-pad: var(--card-p);
+    --card-gap: var(--card-p);
+    --card-pgap: 0px;
+    --card-m: 0px;
+    --card-hx: 0px;
+    --card-hy: 0px;
+    --card-line: 0px;
+    --card-linex: 0px;
+    --card-linec: rgb(15 23 42 / 0.09);
+    --card-band: transparent;
+    --card-bm: 0px;
+    --card-bx: 0px;
+    --card-by: 0px;
+    --card-br: 0px;
+    --card-bg: transparent;
+    --card-bb: 0px;
+    --card-bc: transparent;
+    --card-bsh: none;
+    --card-bleed-x: var(--card-p);
+    --card-bleed-t: 0px;
+    --card-bleed-b: 0px;
+    --card-bleed-rt: 0px;
+    --card-bleed-rb: 0px;
+    --card-panel-bg: rgb(15 23 42 / 0.03);
+    --card-panel-edge: rgb(15 23 42 / 0.09);
+    --card-panel-shadow: inset 0 1px 2px rgb(15 23 42 / 0.05);
+    gap: var(--card-gap);
+    padding: var(--card-pad);
+    border-radius: var(--card-r);
+
+    @variant dark {
+      --card-linec: rgb(105 122 155 / 0.35);
+      --card-panel-bg: rgb(0 0 0 / 0.2);
+      --card-panel-edge: rgb(255 255 255 / 0.08);
+      --card-panel-shadow: inset 0 1px 2px rgb(0 0 0 / 0.25);
+    }
+  }
+
+  .card:not([data-variant]) {
+    --card-hd: currentColor;
+  }
+
+  .card[data-variant] {
+    border: 1px solid var(--card-edge, transparent);
+  }
+
+  .card[data-variant="default"] {
+    --card-edge: var(--color-slate-200);
+    box-shadow: var(--shadow-soft), var(--card-highlight, 0 0 #0000);
+
+    @variant dark {
+      --card-edge: var(--color-navy-500);
+      box-shadow: none;
+    }
+  }
+
+  .card[data-highlight="true"] {
+    --card-highlight: inset 0 1px 0 0 rgb(255 255 255 / 0.7);
+
+    @variant dark {
+      --card-highlight: 0 0 #0000;
+    }
+  }
+
+  .card[data-variant="outline"] {
+    --card-edge: var(--color-slate-200);
+    background-color: transparent;
+    box-shadow: none;
+
+    @variant dark {
+      --card-edge: var(--color-navy-500);
+    }
+  }
+
+  .card:is([data-variant="muted"], [data-variant="soft"], [data-variant="filled"]) {
+    --card-panel-bg: #fff;
+    --card-panel-edge: rgb(15 23 42 / 0.09);
+    --card-panel-shadow: 0 1px 2px rgb(15 23 42 / 0.06);
+    box-shadow: var(--card-highlight, 0 0 #0000);
+
+    @variant dark {
+      --card-panel-bg: rgb(105 122 155 / 0.14);
+      --card-panel-edge: rgb(105 122 155 / 0.32);
+      --card-panel-shadow: 0 1px 2px rgb(0 0 0 / 0.25);
+    }
+  }
+
+  .card[data-variant="muted"] {
+    --card-edge: rgb(15 23 42 / 0.08);
+    background-color: rgb(15 23 42 / 0.05);
+
+    @variant dark {
+      --card-edge: rgb(105 122 155 / 0.34);
+      background-color: rgb(105 122 155 / 0.16);
+    }
+  }
+
+  .card[data-variant="soft"] {
+    --card-edge: rgb(15 23 42 / 0.07);
+    background-color: rgb(15 23 42 / 0.03);
+
+    @variant dark {
+      --card-edge: rgb(105 122 155 / 0.26);
+      background-color: rgb(105 122 155 / 0.09);
+    }
+  }
+
+  .card[data-variant="filled"] {
+    background-color: rgb(15 23 42 / 0.05);
+
+    @variant dark {
+      background-color: rgb(105 122 155 / 0.16);
+    }
+  }
+
+  .card[data-body="divided"],
+  .card[data-body="separated"] {
+    --card-gap: 0px;
+    --card-m: calc(var(--card-p) * -1);
+    --card-hx: var(--card-p);
+    --card-hy: calc(var(--card-p) * 0.75);
+    --card-bm: calc(var(--card-p) * -1);
+    --card-bx: var(--card-p);
+    --card-by: var(--card-p);
+    --card-bleed-t: var(--card-p);
+    --card-bleed-b: var(--card-p);
+  }
+
+  .card[data-body="divided"] {
+    --card-line: 1px;
+  }
+
+  .card[data-body="divided"][data-divider="inset"] {
+    --card-linex: var(--card-p);
+  }
+
+  .card[data-body="separated"] {
+    --card-band: rgb(15 23 42 / 0.04);
+
+    @variant dark {
+      --card-band: rgb(105 122 155 / 0.16);
+    }
+  }
+
+  .card[data-body="inset"] {
+    --card-gap: 0px;
+    --card-m: calc(var(--card-i) - var(--card-p));
+    --card-hx: calc(var(--card-p) - var(--card-i));
+    --card-hy: calc(var(--card-p) * 0.75 - var(--card-i) + 1px);
+    --card-bm: var(--card-m);
+    --card-bx: calc(var(--card-p) - var(--card-i) - 1px);
+    --card-by: var(--card-p);
+    --card-br: calc(var(--card-r) - 1px - var(--card-i));
+    --card-bg: var(--card-panel-bg);
+    --card-bb: 1px;
+    --card-bc: var(--card-panel-edge);
+    --card-bsh: var(--card-panel-shadow);
+    --card-bleed-x: var(--card-bx);
+    --card-bleed-t: var(--card-by);
+    --card-bleed-b: var(--card-by);
+    --card-bleed-rt: calc(var(--card-br) - 1px);
+    --card-bleed-rb: calc(var(--card-br) - 1px);
+  }
+
+  .card[data-body="flush"] {
+    --card-gap: 0px;
+    --card-m: calc(var(--card-p) * -1);
+    --card-hx: var(--card-p);
+    --card-hy: calc(var(--card-p) * 0.75);
+    --card-bm: calc((var(--card-p) + 1px) * -1);
+    --card-bx: var(--card-p);
+    --card-by: var(--card-p);
+    --card-br: var(--card-r);
+    --card-bg: var(--card-panel-bg);
+    --card-bb: 1px;
+    --card-bc: var(--card-panel-edge);
+    --card-bleed-t: var(--card-by);
+    --card-bleed-b: var(--card-by);
+    --card-bleed-rt: calc(var(--card-r) - 1px);
+    --card-bleed-rb: calc(var(--card-r) - 1px);
+  }
+
+  .card[data-padded="false"] {
+    --card-pad: 0px;
+    --card-gap: 0px;
+    --card-m: 0px;
+    --card-hx: var(--card-p);
+    --card-hy: var(--card-p);
+    --card-line: 0px;
+    --card-band: transparent;
+    --card-bm: 0px;
+    --card-bx: 0px;
+    --card-by: 0px;
+    --card-br: 0px;
+    --card-bg: transparent;
+    --card-bb: 0px;
+    --card-bsh: none;
+    --card-bleed-x: 0px;
+    --card-bleed-t: 0px;
+    --card-bleed-b: 0px;
+    --card-bleed-rt: 0px;
+    --card-bleed-rb: 0px;
+  }
+
+  .card:is([data-body="seamless"], [data-body="divided"], [data-body="separated"])
+    > .card-body:first-child {
+    --card-bleed-t: var(--card-p);
+    --card-bleed-rt: calc(var(--card-r) - 1px);
+  }
+
+  .card:is([data-body="seamless"], [data-body="divided"], [data-body="separated"])
+    > .card-body:last-child {
+    --card-bleed-b: var(--card-p);
+    --card-bleed-rb: calc(var(--card-r) - 1px);
+  }
+
+  .card > .card-bleed {
+    --card-bleed-x: var(--card-p);
+  }
+
+  .card > .card-bleed:first-child {
+    --card-bleed-t: var(--card-p);
+    --card-bleed-rt: calc(var(--card-r) - 1px);
+  }
+
+  .card > .card-bleed:last-child {
+    --card-bleed-b: var(--card-p);
+    --card-bleed-rb: calc(var(--card-r) - 1px);
+  }
+
+  .card > .card-bleed {
+    --card-bleed-x: var(--card-p);
+  }
+
+  .card > .card-bleed:first-child {
+    --card-bleed-t: var(--card-p);
+    --card-bleed-rt: calc(var(--card-r) - 1px);
+  }
+
+  .card > .card-bleed:last-child {
+    --card-bleed-b: var(--card-p);
+    --card-bleed-rb: calc(var(--card-r) - 1px);
+  }
+
+  .card-header,
+  .card-footer {
+    position: relative;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: start;
+    min-height: calc(var(--card-hy) * 2 + 1.25rem);
+    margin-inline: var(--card-m);
+    padding-inline: var(--card-hx);
+    padding-block: var(--card-hy);
+    background-color: var(--card-band);
+  }
+
+  .card-footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+
+    &:has(> .card-heading, > .card-subheading) {
+      display: grid;
+      gap: 0;
+    }
+
+    > .card-actions:not(:first-child) {
+      margin-inline-start: auto;
+    }
+  }
+
+  .card-header:not(:last-child),
+  .card-footer:not(:last-child) {
+    margin-bottom: var(--card-pgap);
+  }
+
+  .card-header:first-child {
+    margin-top: var(--card-m);
+    border-start-start-radius: calc(var(--card-r) - 1px);
+    border-start-end-radius: calc(var(--card-r) - 1px);
+  }
+
+  .card-footer:last-child {
+    margin-bottom: var(--card-m);
+    border-end-start-radius: calc(var(--card-r) - 1px);
+    border-end-end-radius: calc(var(--card-r) - 1px);
+  }
+
+  .card-header:not(:last-child)::after,
+  .card-footer:not(:first-child)::before {
+    content: "";
+    position: absolute;
+    inset-inline: var(--card-linex);
+    height: var(--card-line);
+    background-color: var(--card-linec);
+  }
+
+  .card-header::after {
+    bottom: 0;
+  }
+
+  .card-footer::before {
+    top: 0;
+  }
+
+  .card-heading {
+    grid-column: 2;
+    grid-row: 1;
+    min-width: 0;
+    font-size: var(--card-h, 0.875rem);
+    font-weight: 500;
+    line-height: 1.25rem;
+    color: var(--card-hd, var(--color-slate-700));
+
+    @variant dark {
+      color: var(--card-hd, var(--color-navy-50));
+    }
+  }
+
+  .card-subheading {
+    grid-column: 2;
+    grid-row: 2;
+    min-width: 0;
+    margin-top: var(--card-sg, 0.25rem);
+    font-size: var(--card-s, 0.875rem);
+    line-height: 1.25rem;
+    opacity: 0.85;
+  }
+
+  .card-actions {
+    grid-column: 3;
+    grid-row: 1;
+    align-self: center;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    height: 0;
+    padding-inline-start: 0.75rem;
+    margin-inline-end: calc((var(--card-hx) - var(--card-hy) + 6px) * -1);
+
+    &:first-child {
+      grid-column: 1;
+      padding-inline: 0 0.75rem;
+      margin-inline: calc((var(--card-hx) - var(--card-hy) + 6px) * -1) 0;
+    }
+  }
+
+  .card-body {
+    --card-m: 0px;
+    --card-hx: 0px;
+    --card-hy: 0px;
+    --card-line: 0px;
+    --card-band: transparent;
+    --card-pgap: calc(var(--card-p) * 0.75);
+    margin-inline: var(--card-bm);
+    padding-inline: var(--card-bx);
+    padding-block: var(--card-by);
+    border: var(--card-bb) solid var(--card-bc);
+    border-radius: var(--card-br);
+    background-color: var(--card-bg);
+    box-shadow: var(--card-bsh);
+
+    &:first-child {
+      margin-top: var(--card-bm);
+    }
+
+    &:last-child {
+      margin-bottom: var(--card-bm);
+    }
+  }
+
+  .card-bleed {
+    display: block;
+    overflow: hidden;
+    margin-inline: calc(var(--card-bleed-x) * -1);
+
+    &:first-child {
+      margin-top: calc(var(--card-bleed-t) * -1);
+      border-start-start-radius: var(--card-bleed-rt);
+      border-start-end-radius: var(--card-bleed-rt);
+    }
+
+    &:last-child {
+      margin-bottom: calc(var(--card-bleed-b) * -1);
+      border-end-start-radius: var(--card-bleed-rb);
+      border-end-end-radius: var(--card-bleed-rb);
+    }
+
+    & :is(img, video, svg, canvas) {
+      display: block;
+      width: 100%;
+      object-fit: cover;
+    }
+  }
+}

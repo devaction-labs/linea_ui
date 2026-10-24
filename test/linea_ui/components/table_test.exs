@@ -36,10 +36,13 @@ defmodule LineaUI.Components.TableTest do
       """)
 
     wrapper = classes(html, "div")
-    assert "mx-[calc(var(--card-px,1rem)*-1)]" in wrapper
-    assert "min-w-[calc(100%+var(--card-px,1rem)*2)]" in wrapper
-    assert "[&_tr>:first-child]:pl-[var(--card-px,1rem)]" in wrapper
-    assert "[&_tr>:last-child]:pr-[var(--card-px,1rem)]" in wrapper
+    assert "mx-[calc(var(--card-bleed-x,1rem)*-1)]" in wrapper
+    assert "min-w-[calc(100%+var(--card-bleed-x,1rem)*2)]" in wrapper
+    assert "[&_tr>:first-child]:pl-[var(--card-bleed-x,1rem)]" in wrapper
+    assert "[&_tr>:last-child]:pr-[var(--card-bleed-x,1rem)]" in wrapper
+    assert "first:mt-[calc(var(--card-bleed-t,0px)*-1)]" in wrapper
+    assert "last:mb-[calc(var(--card-bleed-b,0px)*-1)]" in wrapper
+    assert "first:rounded-t-[var(--card-bleed-rt,0px)]" in wrapper
     assert "rounded-none" in wrapper
     refute "rounded-lg" in wrapper
     refute "min-w-full" in wrapper
@@ -57,13 +60,13 @@ defmodule LineaUI.Components.TableTest do
       </.table>
       """)
 
-    assert "mx-[calc(var(--card-px,1rem)*-1)]" in classes(html, "div")
+    assert "mx-[calc(var(--card-bleed-x,1rem)*-1)]" in classes(html, "div")
   end
 
   test "without bleed the wrapper is untouched" do
     html = render_table(%{})
     assert "min-w-full" in classes(html, "div")
-    refute "mx-[calc(var(--card-px,1rem)*-1)]" in classes(html, "div")
+    refute "mx-[calc(var(--card-bleed-x,1rem)*-1)]" in classes(html, "div")
   end
 
   test "bordered draws cell borders inside a bordered wrapper" do

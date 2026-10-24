@@ -1,0 +1,34 @@
+<%!-- title: Table bleed | text: A table with bleed runs its rows edge to edge while its content stays aligned with the card, and reaches the top and bottom of the body when it is the only thing in it. --%>
+<div class="flex justify-center rounded-lg bg-slate-50 p-6 dark:bg-navy-900 sm:p-10">
+  <.card variant="muted" body="flush" class="w-full max-w-md">
+    <.card_header>
+      <.card_heading>Past transactions</.card_heading>
+      <.card_actions>
+        <.button icon size="sm" aria-label="Filter">
+          <.icon name="huge-filter-horizontal" class="size-4" />
+        </.button>
+      </.card_actions>
+    </.card_header>
+    <.card_body>
+      <.table
+        id="card17"
+        bleed
+        headless
+        rows={[
+          %{name: "Blue Bottle Coffee", category: "Dining", amount: "-$6.75"},
+          %{name: "Lumen Design Co.", category: "Payroll", amount: "+$3,120.00"},
+          %{name: "Whole Foods Market", category: "Groceries", amount: "-$84.20"},
+          %{name: "Netflix", category: "Subscriptions", amount: "-$15.49"}
+        ]}
+      >
+        <:col :let={t}>
+          <p class="font-medium text-slate-700 dark:text-navy-50">{t.name}</p>
+          <p class="text-xs">{t.category}</p>
+        </:col>
+        <:col :let={t} align="right" class="tabular-nums text-slate-700 dark:text-navy-50">
+          {t.amount}
+        </:col>
+      </.table>
+    </.card_body>
+  </.card>
+</div>
