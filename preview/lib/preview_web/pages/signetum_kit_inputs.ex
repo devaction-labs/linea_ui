@@ -238,7 +238,7 @@ defmodule PreviewWeb.Pages.SignetumKitInputs do
       </form>
     </.example>
     <.example title="Range" text="Value, marks, two thumbs, steps and vertical." class="mt-5 block">
-      <form id="range-form" phx-change="range" class="grid max-w-3xl gap-8 md:grid-cols-2">
+      <form id="range-form" phx-change="range" class="grid max-w-lg gap-8">
         <.range
           name="markup"
           value={@markup}

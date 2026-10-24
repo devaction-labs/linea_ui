@@ -69,6 +69,21 @@
   background: linear-gradient(to top, currentColor var(--p, 0%), var(--track-color) var(--p, 0%));
 }
 
+input.form-range::-webkit-slider-thumb {
+  background: #fff;
+  box-shadow: 0 0 0 2px currentColor, 0 2px 6px rgb(15 23 42 / 0.2);
+}
+input.form-range::-moz-range-thumb {
+  background: #fff;
+  box-shadow: 0 0 0 2px currentColor, 0 2px 6px rgb(15 23 42 / 0.2);
+}
+input.form-range:focus-visible::-webkit-slider-thumb {
+  box-shadow: 0 0 0 2px currentColor, 0 0 0 6px color-mix(in srgb, currentColor 25%, transparent);
+}
+input.form-range:focus-visible::-moz-range-thumb {
+  box-shadow: 0 0 0 2px currentColor, 0 0 0 6px color-mix(in srgb, currentColor 25%, transparent);
+}
+
 /* Range: standing up. */
 .form-range.linea-range-vertical::-webkit-slider-runnable-track {
   width: var(--range-track-h);
