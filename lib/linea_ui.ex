@@ -54,6 +54,7 @@ defmodule LineaUI do
     drawer: LineaUI.Components.Drawer,
     dropdown: LineaUI.Components.Dropdown,
     empty_state: LineaUI.Components.EmptyState,
+    fab: LineaUI.Components.Fab,
     form: LineaUI.Components.Form,
     icon: LineaUI.Components.Icon,
     input: LineaUI.Components.Input,

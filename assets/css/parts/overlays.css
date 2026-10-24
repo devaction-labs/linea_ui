@@ -163,6 +163,7 @@
    ten per overlay already open (`--linea-layer`, set by the dialog hook), so the last one opened is on top. */
 @layer base {
   :root {
+    --linea-z-fab: 90;
     --linea-z-overlay: 100;
     --linea-z-modal: 100;
     --linea-z-popover: 1000;

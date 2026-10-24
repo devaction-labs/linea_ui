@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.4.2
+
+- New `fab/1`: a floating action button that retracts from a navy pill (icon tile and label) to the round bubble.
+  `retract` is `hover` (default), `auto` (retracts after `retract_after` ms or on scroll, hook `LineaUI.Fab`), `never` or
+  `always`; touch devices show the bubble; `expanded` forces it open from the server. Four corners via `position`,
+  colors `assistant`, `primary`, `dark`, `light`, `badge`, link or button. Sits on the new `--linea-z-fab` layer (90, under modals and drawers).
+
 ## 0.4.1
 
 - Visual parity with the Signetum canvas, no API changes. `command_palette`: key caps are filled with an inset bottom edge, icon tiles and dividers
