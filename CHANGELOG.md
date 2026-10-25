@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.5.1
+
+- New hook `LineaUI.Sortable`: drag and drop of items inside and between lists with the browser's own drag and drop, no library (so no SortableJS in the app). A list is an element with `data-list` (its id), its items are its children with `data-id`; lists with the same `data-group` exchange items. A drop pushes `data-event` (to `data-target` when given, else the LiveView) with `%{"id", "from", "to", "index"}`, and nothing is pushed when the item lands where it was. Optional `data-handle` (a selector), `data-axis` (`x` for a row of items) and `data-disabled`; the hook element can be a single list or hold several. The browser never moves the DOM: the dragged item gets `data-dragging`, the list under the pointer `data-over` and a line shows the slot, so the server's render is the new order. A finger holds an item for a moment and then drags it (pointer events, with a floating copy); the board does not auto-scroll under a finger. Defaults in `assets/css/parts/sortable.css`.
+- New `kanban/1`, `kanban_column/1`, `kanban_card/1` and `kanban_lost/1`: the Signetum canvas's sales funnel board (a scrolling row of 272px tinted columns with the icon tile, count pill, meta and total line, 4px progress bar, empty state and footer, white cards with the warning ring, the 52px "lost" aside). The board is one `LineaUI.Sortable` (`event`, `target`, `group`, `disabled`). A kanban of another look, and a plain sortable list such as a to-do list, use the hook alone.
+
 ## 0.5.0
 
 - **Breaking:** `datetime_picker/1` is now the new component below, not the flatpickr one of `date_picker`. It still takes `name`, `field`, `placeholder`, `min_time`, `max_time` and, as aliases, `time_24hr`, `minute_step` and `default_hour`, but the value is a wall-clock `2026-10-14T10:30` (it was `2026-10-14 10:30`) and the panel is the new one.

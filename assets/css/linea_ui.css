@@ -13,6 +13,7 @@
 @import "./parts/pickers.css";
 @import "./parts/layout.css";
 @import "./parts/card.css";
+@import "./parts/sortable.css";
 @import "./parts/icons.css";
 
 @source "../../lib";
