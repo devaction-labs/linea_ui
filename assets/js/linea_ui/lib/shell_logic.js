@@ -74,6 +74,12 @@ export const place = ({placement, gap, anchor, box, origin, screen}) => {
 /** The side of a placement, the value of `data-popper-placement` LineOne's CSS reads for its shift. */
 export const side = (placement) => placement.split("-")[0]
 
+/** The key a right sidebar keeps the panel the person chose under, in `sessionStorage`. */
+export const tabKey = (id) => `linea-right-tab:${id}`
+
+/** The value to remember for a clicked tab control (an element with `data-tab`), or `null` when it is not one. */
+export const tabChoice = (tab) => (typeof tab === "string" && tab !== "" ? tab : null)
+
 /** The key the framed shell's menu keeps its collapsed state under. */
 export const RAIL_KEY = "linea-rail"
 

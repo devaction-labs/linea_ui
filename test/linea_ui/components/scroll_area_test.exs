@@ -13,6 +13,19 @@ defmodule LineaUI.Components.ScrollAreaTest do
     assert [_] = find(html, "#s[data-scroll-area] > p") |> Enum.to_list()
   end
 
+  test "no hook unless it sticks to the bottom" do
+    html = render(~H|<.scroll_area id="s">x</.scroll_area>|)
+
+    assert find(html, "#s") |> LazyHTML.attribute("phx-hook") == []
+  end
+
+  test "stick_bottom adds the hook on the box" do
+    html = render(~H|<.scroll_area id="messages" stick_bottom class="h-96">x</.scroll_area>|)
+
+    assert find(html, "#messages") |> LazyHTML.attribute("phx-hook") == ["LineaUI.ScrollBottom"]
+    assert ["scrollbar-sm", "overflow-y-auto", "h-96"] -- classes(html, "#messages") == []
+  end
+
   test "orientations, scrollbars and focus" do
     html =
       render(

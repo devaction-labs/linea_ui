@@ -21,9 +21,11 @@ import Dropdown from "./hooks/dropdown.js"
 import Fab from "./hooks/fab.js"
 import InputMask from "./hooks/input_mask.js"
 import NumberInput from "./hooks/number_input.js"
+import Otp from "./hooks/otp.js"
 import PhoneInput from "./hooks/phone_input.js"
 import Popover from "./hooks/popover.js"
 import Range from "./hooks/range.js"
+import ScrollBottom from "./hooks/scroll_bottom.js"
 import Segmented from "./hooks/segmented.js"
 import Select from "./hooks/select.js"
 import Sidebar from "./hooks/sidebar.js"
@@ -55,9 +57,11 @@ export const Hooks = {
   ...Fab,
   ...InputMask,
   ...NumberInput,
+  ...Otp,
   ...PhoneInput,
   ...Popover,
   ...Range,
+  ...ScrollBottom,
   ...Segmented,
   ...Select,
   ...Sidebar,

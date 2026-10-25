@@ -1399,10 +1399,34 @@ defmodule LineaUI.Components.AppShell do
         <:title><span class="text-xs">25 May, 2022</span></:title>
         <div class="px-3">…</div>
       </.right_sidebar>
+
+  ## Remembering the panel
+
+  A drawer with several panels (LineOne's floating tab bar in the `:footer`) switches them in the
+  browser, with `JS` commands on its buttons. `persist_tab` makes the drawer remember the panel the
+  person chose, for the session (`sessionStorage`), so it opens on it again after a live navigation
+  replaces the page. Mark each control that selects a panel with `data-tab="name"`; clicking one
+  saves `name`, and when the drawer mounts it clicks the saved control, which runs the control's own
+  `phx-click`. The key is derived from the drawer's `id`, so two drawers do not share a choice.
+
+      <.right_sidebar id="right-sidebar" persist_tab>
+        <.panel id="panel-home" />
+        <.panel id="panel-activity" />
+        <:footer>
+          <button data-tab="home" phx-click={show_panel("home")}>Home</button>
+          <button data-tab="activity" phx-click={show_panel("activity")}>Activity</button>
+        </:footer>
+      </.right_sidebar>
   """
   attr :id, :string, required: true
   attr :open, :boolean, default: false
   attr :label, :string, default: "Sidebar"
+
+  attr :persist_tab, :boolean,
+    default: false,
+    doc:
+      "Remembers, for the session, the control with `data-tab` that was clicked last, and clicks it again when the drawer mounts."
+
   attr :on_open, :any, default: nil
   attr :on_close, :any, default: nil
   attr :target, :any, default: nil
@@ -1418,6 +1442,7 @@ defmodule LineaUI.Components.AppShell do
       id={@id}
       phx-hook="LineaUI.RightSidebar"
       data-open={bool(@open)}
+      data-persist-tab={@persist_tab}
       data-open-event={event_name(@on_open)}
       data-on-open={js_command(@on_open)}
       data-close-event={event_name(@on_close)}

@@ -65,6 +65,7 @@ defmodule LineaUI do
     menu_list: LineaUI.Components.MenuList,
     modal: LineaUI.Components.Modal,
     number_input: LineaUI.Components.NumberInput,
+    otp_input: LineaUI.Components.OtpInput,
     pagination: LineaUI.Components.Pagination,
     phone_input: LineaUI.Components.PhoneInput,
     popover: LineaUI.Components.Popover,

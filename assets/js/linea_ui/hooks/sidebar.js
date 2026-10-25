@@ -6,7 +6,7 @@ import {execWithPayload} from "../lib/js_payload.js"
  * State the server renders (`data-open`) wins when it changes; a choice made in the browser survives patches that
  * did not change it, and live navigation (the choice is remembered per shell id for the life of the page).
  */
-import {RAIL_KEY, breakpointName, clockText, initialCollapsed, initialOpen, isMobile, place, railValue, smAndUp, storedValue, tipSpot} from "../lib/shell_logic.js"
+import {RAIL_KEY, breakpointName, clockText, initialCollapsed, initialOpen, isMobile, place, railValue, smAndUp, storedValue, tabChoice, tabKey, tipSpot} from "../lib/shell_logic.js"
 
 const SIDEBAR_KEY = "linea-sidebar"
 const OPEN_CLASS = "is-sidebar-open"
@@ -15,19 +15,21 @@ const COMMANDS = ["open", "close", "toggle"]
 
 const memory = new Map()
 
-const read = (key) => {
+const read = (key, store = () => localStorage) => {
   try {
-    return localStorage.getItem(key)
+    return store().getItem(key)
   } catch {
     return null
   }
 }
 
-const write = (key, value) => {
+const write = (key, value, store = () => localStorage) => {
   try {
-    localStorage.setItem(key, value)
+    store().setItem(key, value)
   } catch {}
 }
+
+const session = () => sessionStorage
 
 const setVh = () => document.documentElement.style.setProperty("--vh", `${window.innerHeight * 0.01}px`)
 
@@ -331,13 +333,29 @@ const RightSidebar = {
     this.onClick = (event) => {
       const closes = event.target.matches("[data-drawer-overlay]") || event.target.closest("[data-drawer-close]")
       closes && this.close()
+      this.persistTabs() && this.saveTab(event)
     }
     this.el.addEventListener("click", this.onClick)
 
     this.onKey = (event) => event.key === "Escape" && this.active && this.close()
     document.addEventListener("keydown", this.onKey)
 
+    this.persistTabs() && this.restoreTab()
     this.server && this.open()
+  },
+
+  persistTabs() {
+    return this.el.hasAttribute("data-persist-tab")
+  },
+
+  saveTab(event) {
+    const tab = tabChoice(event.target.closest("[data-tab]")?.dataset.tab)
+    tab && write(tabKey(this.el.id), tab, session)
+  },
+
+  restoreTab() {
+    const tab = tabChoice(read(tabKey(this.el.id), session))
+    tab && this.el.querySelector(`[data-tab="${CSS.escape(tab)}"]`)?.click()
   },
 
   updated() {
