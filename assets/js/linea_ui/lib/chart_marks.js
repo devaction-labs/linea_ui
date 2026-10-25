@@ -12,7 +12,12 @@ const CANDLE_COLORS = {upward: "#00B746", downward: "#EF403C"}
 
 const call = (formatter, ...args) => (typeof formatter === "function" ? formatter(...args) : undefined)
 
-const fraction = (spec, whole) => (typeof spec === "string" && spec.endsWith("px") ? parseFloat(spec) : (parseFloat(spec) / 100) * whole)
+const fraction = (spec, whole, stacked = false) =>
+  typeof spec === "string" && spec.endsWith("px")
+    ? parseFloat(spec)
+    : typeof spec === "number" && !stacked
+      ? spec
+      : (parseFloat(spec) / 100) * whole
 
 const pointsOf = (p, series, row) =>
   series.points.map((point) => {
@@ -64,7 +69,7 @@ export const lineMark = (p, series, row, uid, defs) => {
 
 const barSizes = (p, perGroup) => {
   const spec = p.config.plotOptions.bar
-  const group = Math.min(fraction(p.horizontal ? spec.barHeight : spec.columnWidth, p.cat.width), p.cat.width)
+  const group = Math.min(fraction(p.horizontal ? spec.barHeight : spec.columnWidth, p.cat.width, p.stacks !== null), p.cat.width)
   return {group, width: group / perGroup}
 }
 
@@ -90,7 +95,15 @@ const box = (p, series, point, start, size, from, to) => ({
   ...(p.horizontal ? {x: Math.min(from, to), y: start, w: Math.abs(to - from), h: size} : {x: start, y: Math.min(from, to), w: size, h: Math.abs(to - from)}),
 })
 
-/** A bar series: columns (or rows), grouped, stacked or one per point. */
+const inset = (stroke, {from, to, start, size}) => {
+  const half = stroke / 2
+  const sign = Math.sign(to - from)
+  return {from: from + sign * half, to: to - sign * half, start: start + half, size: Math.max(size - stroke, 0)}
+}
+
+const strokeOf = (config, series) => (config.stroke.show === false ? 0 : Number(pick(config.stroke.width, series.index)) || 0)
+
+/** A bar series: columns (or rows), grouped, stacked or one per point. A stroke insets the bar, as in ApexCharts. */
 export const barMark = (p, series, position, uid, defs, boxes) => {
   const {config, stacks, visible} = p
   const spec = config.plotOptions.bar
@@ -100,15 +113,16 @@ export const barMark = (p, series, position, uid, defs, boxes) => {
   const offset = -group / 2 + (single ? 0 : position * width)
   const radius = Number(spec.borderRadius) || 0
   const zero = p.along(Math.min(Math.max(0, p.value.min), p.value.max))
+  const stroke = strokeOf(config, series)
   const nodes = series.points.map((point) => {
     const cell = row?.[point.slot]
-    const from = cell ? p.along(cell.from) : zero
-    const to = cell ? p.along(cell.to) : point.value === null ? null : p.along(point.value)
-    const start = p.across(point.slot) + offset
+    const base = cell ? p.along(cell.from) : zero
+    const end = cell ? p.along(cell.to) : point.value === null ? null : p.along(point.value)
+    const solid = end !== null && Math.abs(end - base) > 0.01
+    const {from, to, start, size} = solid ? inset(stroke, {from: base, to: end, start: p.across(point.slot) + offset, size: width}) : {}
     const ends = stacks ? stackEnds(stacks, position, point.slot) : spec.borderRadiusApplication === "end" ? "end" : "both"
-    const solid = to !== null && Math.abs(to - from) > 0.01
-    solid && boxes.push(box(p, series, point, start, width, from, to))
-    const d = !solid ? null : p.horizontal ? barPath(start, from, to, width, radius, ends) : columnPath(start, from, to, width, radius, ends)
+    solid && boxes.push(box(p, series, point, start, size, from, to))
+    const d = !solid ? null : p.horizontal ? barPath(start, from, to, size, radius, ends) : columnPath(start, from, to, size, radius, ends)
     return solid && barNode(p, point, series, d, p.horizontal ? (to >= from ? "right" : "left") : to <= from ? "up" : "down", uid, defs)
   })
   return h("g", {class: "linea-chart-series", "data-series": series.index}, nodes)

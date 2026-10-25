@@ -115,8 +115,8 @@ defmodule LineaUI.Components.Chart do
   `total`, each taking `show`, `fontSize`, `fontWeight`, `color`, `offsetY` and `formatter`) and
   `stroke.lineCap`. Hovering a donut slice shows its name and value in the middle.
 
-  **Radar**: `plotOptions.radar` (`size`, `offsetX`, `offsetY`), `xaxis.categories` for the spokes and
-  `yaxis` for the ring labels.
+  **Radar**: `plotOptions.radar` (`size`, `offsetX`, `offsetY`), `xaxis.categories` for the spokes (their
+  labels are `#a8a8a8` unless `xaxis.labels.style.colors` says otherwise) and `yaxis` for the ring labels.
 
   **responsive**: rules apply while the window is narrower than their `breakpoint`, the smaller
   breakpoints last, as in ApexCharts.

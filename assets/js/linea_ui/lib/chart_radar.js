@@ -54,9 +54,9 @@ export const drawRadar = (config, p, data) => {
     : vertices(size, count).map((point, slot) => {
         const spot = anchorOf(point, size)
         const text = call(config.xaxis.labels?.formatter, data.labels[slot] ?? "", {seriesIndex: -1, dataPointIndex: slot}) ?? data.labels[slot] ?? ""
-        return h("text", {class: "linea-chart-label linea-chart-radar-label", x: cx + spot.x, y: cy + spot.y, "text-anchor": spot.anchor, "dominant-baseline": "central", "font-size": p.labelFont}, String(text))
+        return h("text", {class: "linea-chart-radar-label", fill: pick(config.xaxis.labels?.style?.colors, slot) ?? "#a8a8a8", x: cx + spot.x, y: cy + spot.y, "text-anchor": spot.anchor, "dominant-baseline": "central", "font-size": p.labelFont}, String(text))
       })
-  const axis = config.yaxis.show === false ? [] : ticks.slice().reverse().map((tick, index) => h("text", {class: "linea-chart-label", x: cx + (config.yaxis.labels?.offsetX ?? 0), y: cy - rings[index] + (config.yaxis.labels?.offsetY ?? 6), "text-anchor": "middle", "font-size": 11}, String(call(config.yaxis.labels?.formatter, tick, index) ?? plain(tick))))
+  const axis = config.yaxis.show === false ? [] : ticks.slice().reverse().map((tick, index) => h("text", {class: "linea-chart-radar-value", x: cx + (config.yaxis.labels?.offsetX ?? 0), y: cy - rings[index] + (config.yaxis.labels?.offsetY ?? 6), "text-anchor": "middle", "font-size": 11}, String(call(config.yaxis.labels?.formatter, tick, index) ?? plain(tick))))
   const hits = []
   const shapes = visible.map((series) => {
     const points = Array.from({length: count}, (_, slot) => {

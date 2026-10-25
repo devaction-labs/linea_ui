@@ -550,6 +550,14 @@
     stroke-width: 1;
   }
 
+  .linea-chart-radar-label {
+    @apply font-inter;
+  }
+
+  .linea-chart-radar-value {
+    @apply fill-slate-500 font-inter dark:fill-navy-200;
+  }
+
   .linea-chart-center-label {
     @apply fill-slate-600 font-inter dark:fill-navy-100;
   }
@@ -620,7 +628,7 @@
   }
 
   .linea-chart-legend[data-position="bottom"] {
-    @apply right-0 bottom-0 left-0;
+    @apply right-0 bottom-px left-0;
   }
 
   .linea-chart-legend[data-position="top"] {
@@ -642,7 +650,7 @@
   }
 
   .linea-chart-legend-item {
-    @apply flex cursor-pointer items-center text-slate-500 transition-opacity dark:text-navy-200;
+    @apply flex min-h-6 cursor-pointer items-center text-slate-500 transition-opacity dark:text-navy-200;
   }
 
   .linea-chart-legend-item[aria-pressed="false"] {

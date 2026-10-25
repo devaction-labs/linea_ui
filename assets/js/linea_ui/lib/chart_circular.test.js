@@ -21,6 +21,7 @@ test("a donut sits in the room the bottom legend leaves, with ApexCharts' radius
   const {g} = setup(donut)
   assert.equal(Math.round(g.size), 114)
   assert.equal(g.cx, 161.5)
+  assert.equal(g.cy, 123)
   assert.equal(g.height, 280)
 })
 

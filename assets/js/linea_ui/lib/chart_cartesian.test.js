@@ -37,7 +37,7 @@ test("the plot leaves ApexCharts' margins: 30 above, 15 below plus the labels, h
   const {layout} = build(columns, {width: 679})
   assert.equal(layout.plot.x, 0)
   assert.equal(layout.plot.y, 30)
-  assert.equal(Math.round(layout.plot.h * 10) / 10, 202.4)
+  assert.equal(Math.round(layout.plot.h * 10) / 10, 200.7)
   assert.equal(layout.plot.w > 660 && layout.plot.w < 670, true)
   assert.deepEqual([layout.value.min, layout.value.max], [0, 60])
 })

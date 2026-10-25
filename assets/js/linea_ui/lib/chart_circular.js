@@ -64,7 +64,8 @@ export const geometry = (config, {width, height, legend}) => {
   const tail = legend.position === "top" || legend.position === "bottom" ? room + 7 : 0
   const bottom = (spark ? 1 : 15) + pad.bottom
   const fitted = Math.ceil(extent * 2.05 + ty + tail + bottom)
-  return {cx: tx + gridW / 2, cy: ty + base / 2, size, extent, height: placed && beside ? height : Math.max(fitted, 1), gridW, gridH}
+  const lift = placed && legend.position === "bottom" ? 10 : 0
+  return {cx: tx + gridW / 2, cy: ty + lift + base / 2, size, extent, height: placed && beside ? height : Math.max(fitted, 1), gridW, gridH}
 }
 
 const sweep = (delay, duration, ease) => `--linea-chart-delay:${Math.round(delay)}ms;--linea-chart-dur:${Math.round(duration)}ms;--linea-chart-ease:${ease}`

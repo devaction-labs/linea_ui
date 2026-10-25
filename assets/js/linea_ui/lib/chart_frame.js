@@ -6,7 +6,7 @@
 
 const TOP = 30
 const BOTTOM = 15
-const LABELS_HEIGHT = 22.65
+const LABELS_HEIGHT = 24.3
 const SIDE_GAP = 15
 const TIP_EXTRA = 17.3
 const HIDDEN_SIDE = 10

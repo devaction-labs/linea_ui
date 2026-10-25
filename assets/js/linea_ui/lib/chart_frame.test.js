@@ -12,7 +12,7 @@ test("a bare chart keeps 30 above and 15 below, plus the label row", () => {
   const {plot} = lay({chart: {type: "bar"}, grid: {padding: {left: 0, right: 0, top: 0, bottom: 0}}, yaxis: {show: false}})
   assert.equal(plot.x, 0)
   assert.equal(plot.y, 30)
-  assert.equal(Math.round((300 - plot.y - plot.h) * 100) / 100, 37.65)
+  assert.equal(Math.round((300 - plot.y - plot.h) * 100) / 100, 39.3)
   assert.equal(plot.w, 589)
 })
 
