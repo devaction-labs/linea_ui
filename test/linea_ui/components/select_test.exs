@@ -195,7 +195,10 @@ defmodule LineaUI.Components.SelectTest do
     assert find(html, ~s(.option[data-value="BR"])) |> LazyHTML.attribute("data-keywords") ==
              ["brasil tupiniquim"]
 
-    assert find(html, ~s(.option[data-value="CL"])) |> LazyHTML.attribute("data-keywords") == ["cl"]
+    assert find(html, ~s(.option[data-value="CL"])) |> LazyHTML.attribute("data-keywords") == [
+             "cl"
+           ]
+
     assert find(html, ~s(.option[data-value="PE"])) |> LazyHTML.attribute("data-keywords") == []
   end
 

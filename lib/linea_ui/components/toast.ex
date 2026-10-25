@@ -191,11 +191,13 @@ defmodule LineaUI.Components.Toast do
 
   attr :timer, :boolean,
     default: true,
-    doc: "Draws a thin countdown line on the toasts that leave by themselves; a toast turns it off with `timer: false`."
+    doc:
+      "Draws a thin countdown line on the toasts that leave by themselves; a toast turns it off with `timer: false`."
 
   attr :invert, :boolean,
     default: false,
-    doc: "Draws the toasts with the colors reversed: a dark card on a light page and a light card on a dark one. A toast sets it with `invert: true` or `invert: false`."
+    doc:
+      "Draws the toasts with the colors reversed: a dark card on a light page and a light card on a dark one. A toast sets it with `invert: true` or `invert: false`."
 
   attr :close_label, :string, default: "Close"
   attr :loading_label, :string, default: "Loading"

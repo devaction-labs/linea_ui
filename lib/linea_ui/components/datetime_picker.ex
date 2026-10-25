@@ -170,7 +170,8 @@ defmodule LineaUI.Components.DatetimePicker do
 
   attr :time_24hr, :boolean,
     default: nil,
-    doc: "The attribute of the former flatpickr picker, kept as `time_format=\"24\"`; use `time_format`."
+    doc:
+      "The attribute of the former flatpickr picker, kept as `time_format=\"24\"`; use `time_format`."
 
   attr :minute_step, :integer,
     default: nil,
@@ -178,7 +179,8 @@ defmodule LineaUI.Components.DatetimePicker do
 
   attr :default_hour, :integer,
     default: nil,
-    doc: "The attribute of the former flatpickr picker, kept as `default_time=\"HH:00\"`; use `default_time`."
+    doc:
+      "The attribute of the former flatpickr picker, kept as `default_time=\"HH:00\"`; use `default_time`."
 
   attr :locale, :string,
     default: "en",
