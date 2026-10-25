@@ -100,6 +100,10 @@ const SPARKLINE = {
   dataLabels: {enabled: false},
 }
 
+const TYPES = ["line", "area", "bar", "rangeBar", "candlestick", "pie", "donut", "radialBar", "radar"]
+
+const typeOf = (name) => (TYPES.includes(name) ? name : name === "polarArea" ? "pie" : "line")
+
 const first = (value) => (Array.isArray(value) ? (value[0] ?? {}) : (value ?? {}))
 
 const sparklined = (options) => options?.chart?.sparkline?.enabled === true
@@ -116,7 +120,7 @@ const shrunk = (options, viewport) =>
  */
 export const configure = (options, {viewport = Infinity} = {}) => {
   const given = shrunk(options ?? {}, viewport)
-  const type = given.chart?.type ?? BASE.chart.type
+  const type = typeOf(given.chart?.type ?? BASE.chart.type)
   const defaults = merge(merge(BASE, BY_TYPE[type] ?? {}), sparklined(given) ? SPARKLINE : {})
   const config = merge(defaults, {...given, yaxis: first(given.yaxis)})
   return {...config, type}

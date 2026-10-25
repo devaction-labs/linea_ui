@@ -25,7 +25,7 @@ export const legendItems = (config, data, hidden = []) =>
 const wanted = (config, items) => config.legend.show !== false && (items.length > 1 || config.legend.showForSingleSeries === true)
 
 /**
- * The room the legend asks for in a chart `width` px wide: `{position, items, width, height}`; `height`
+ * The room the legend asks for in a chart `width` px wide: `{position, items, rows, width, height}`; `height`
  * is the legend's own when it sits above or below, `width` when it sits beside the chart, and both are 0
  * when it is not shown.
  */
@@ -37,8 +37,8 @@ export const legendBox = (config, data, {width, measure, hidden = []}) => {
   const beside = position === "left" || position === "right"
   const rows = beside ? items.length : Math.max(1, Math.ceil(sizes.reduce((sum, size) => sum + size, 0) / Math.max(width - 20, 1)))
   return wanted(config, items)
-    ? {position, items, width: beside ? Math.max(0, ...sizes) + 10 : 0, height: beside ? 0 : rows * ROW - (rows === 1 ? 1.6 : 0), shape: config.legend.markers?.shape ?? "circle", align: config.legend.horizontalAlign}
-    : {position, items: [], width: 0, height: 0, shape: "circle", align: "center"}
+    ? {position, items, rows, width: beside ? Math.max(0, ...sizes) + 10 : 0, height: beside ? 0 : rows * ROW - (rows === 1 ? 1.6 : 0), shape: config.legend.markers?.shape ?? "circle", align: config.legend.horizontalAlign}
+    : {position, items: [], rows: 0, width: 0, height: 0, shape: "circle", align: "center"}
 }
 
 const ALIGN = {left: "flex-start", center: "center", right: "flex-end"}

@@ -525,8 +525,14 @@
     transition: filter 150ms;
   }
 
-  .linea-chart-bar.is-active {
+  .linea-chart-bar.is-active,
+  .linea-chart-slice.is-active {
     filter: brightness(1.12);
+  }
+
+  .linea-chart-slice-label {
+    @apply fill-white font-inter font-semibold;
+    pointer-events: none;
   }
 
   .linea-chart-track {
@@ -558,6 +564,18 @@
 
   .linea-chart-tooltip[hidden] {
     display: none;
+  }
+
+  .linea-chart-tooltip[data-theme="dark"] {
+    @apply border-navy-600 bg-navy-900/[.85] text-white;
+  }
+
+  .linea-chart-tooltip[data-theme="dark"] .linea-chart-tooltip-name {
+    @apply text-navy-100;
+  }
+
+  .linea-chart-tooltip[data-theme="dark"] .linea-chart-tooltip-title {
+    @apply bg-navy-700;
   }
 
   .linea-chart-tooltip-title {
@@ -684,7 +702,7 @@
     }
 
     .linea-chart--enter .linea-chart-arc {
-      animation: linea-chart-sweep 900ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+      animation: linea-chart-sweep var(--linea-chart-dur, 900ms) var(--linea-chart-ease, linear) both;
       animation-delay: var(--linea-chart-delay, 0ms);
     }
 

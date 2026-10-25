@@ -1,5 +1,4 @@
 import {parseSpec, resolveFormatters} from "../lib/chart_formatters.js"
-import {hover} from "../lib/chart_hover.js"
 import {applyUpdate, parseOptions, targets} from "../lib/chart_logic.js"
 import {build} from "../lib/chart_render.js"
 import {estimateWidth} from "../lib/chart_scale.js"
@@ -97,13 +96,13 @@ const Chart = {
   },
 
   point(event) {
-    const result = this.result
     const svg = this.stage?.querySelector("svg")
-    result?.layout && svg && event.target.closest?.(".linea-chart-legend") === null && this.show(result, svg.getBoundingClientRect(), event)
+    const outside = event.target.closest?.(".linea-chart-legend")
+    svg && !outside && this.result?.probe && this.show(svg.getBoundingClientRect(), event)
   },
 
-  show(result, box, event) {
-    const hit = hover(result.layout, result.drawn.boxes, event.clientX - box.left, event.clientY - box.top)
+  show(box, event) {
+    const hit = this.result.probe(event.clientX - box.left, event.clientY - box.top)
     hit ? this.hit(hit) : this.clear()
   },
 
@@ -112,11 +111,14 @@ const Chart = {
     this.stage.querySelector(".linea-chart-hover").innerHTML = overlaySvg(hit)
     this.stage.querySelector(".linea-chart-axistips").innerHTML = axisTipsHtml(hit)
     this.activate(hit.active)
-    result_enabled(this.result.config) ? this.place(tip, hit) : (tip.hidden = true)
+    this.center(hit.center)
+    this.result.config.tooltip.enabled === false ? (tip.hidden = true) : this.place(tip, hit)
   },
 
   place(tip, hit) {
     tip.innerHTML = tooltipHtml(hit)
+    tip.style.background = hit.fill ?? ""
+    tip.dataset.theme = hit.theme ?? "light"
     tip.hidden = false
     const room = this.stage.getBoundingClientRect()
     const width = tip.offsetWidth
@@ -127,8 +129,19 @@ const Chart = {
   },
 
   activate(active) {
-    this.stage.querySelectorAll(".linea-chart-bar.is-active").forEach((bar) => bar.classList.remove("is-active"))
-    active && this.stage.querySelector(`.linea-chart-bar[data-series="${active.series}"][data-i="${active.slot}"]`)?.classList.add("is-active")
+    this.stage.querySelectorAll(".is-active").forEach((node) => node.classList.remove("is-active"))
+    const selector = active?.slice !== undefined ? `.linea-chart-slice[data-series="${active.slice}"]` : active ? `.linea-chart-bar[data-series="${active.series}"][data-i="${active.slot}"]` : null
+    selector && this.stage.querySelector(selector)?.classList.add("is-active")
+  },
+
+  center(text) {
+    const shown = text ?? this.result.text
+    const name = this.stage.querySelector("[data-center=name]")
+    const value = this.stage.querySelector("[data-center=value]")
+    name && (name.textContent = shown?.name ?? "")
+    value && (value.textContent = shown?.value ?? "")
+    const group = this.stage.querySelector(".linea-chart-center")
+    group && group.setAttribute("opacity", text ? 1 : (this.result.text?.opacity ?? 1))
   },
 
   clear() {
@@ -137,6 +150,7 @@ const Chart = {
     this.stage && (this.stage.querySelector(".linea-chart-hover").innerHTML = "")
     this.stage && (this.stage.querySelector(".linea-chart-axistips").innerHTML = "")
     this.stage && this.activate(null)
+    this.stage && this.center(null)
   },
 
   legendClick(event) {
@@ -150,7 +164,5 @@ const Chart = {
     this.draw()
   },
 }
-
-const result_enabled = (config) => config.tooltip.enabled !== false
 
 export default {"LineaUI.Chart": Chart}
