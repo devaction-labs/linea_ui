@@ -61,6 +61,7 @@ defmodule LineaUI do
     icon: LineaUI.Components.Icon,
     input: LineaUI.Components.Input,
     input_group: LineaUI.Components.InputGroup,
+    kanban: LineaUI.Components.Kanban,
     mask: LineaUI.Components.Mask,
     menu_list: LineaUI.Components.MenuList,
     modal: LineaUI.Components.Modal,

@@ -30,6 +30,7 @@ import Segmented from "./hooks/segmented.js"
 import Select from "./hooks/select.js"
 import Sidebar from "./hooks/sidebar.js"
 import SignaturePad from "./hooks/signature_pad.js"
+import Sortable from "./hooks/sortable.js"
 import Tabs from "./hooks/tabs.js"
 import TagsInput from "./hooks/tags_input.js"
 import TextEditor from "./hooks/text_editor.js"
@@ -66,6 +67,7 @@ export const Hooks = {
   ...Select,
   ...Sidebar,
   ...SignaturePad,
+  ...Sortable,
   ...Tabs,
   ...TagsInput,
   ...TextEditor,
