@@ -1,6 +1,6 @@
 import test from "node:test"
 import assert from "node:assert/strict"
-import {HOLD, edgeDelta, ghostOffset, insertionIndex, isFull, moveIntent, parseWip} from "./kanban_logic.js"
+import {HOLD, approach, edgeDelta, ghostOffset, insertionIndex, isFull, moveIntent, parseWip, scrollStep, tiltOf} from "./kanban_logic.js"
 
 test("a column is full only when it has a limit, is at it and the card comes from outside", () => {
   assert.equal(isFull({count: 2, wip: 2, sameColumn: false}), true)
@@ -74,4 +74,40 @@ test("an area narrower than two edges still pulls to the nearer side", () => {
 
 test("the floating card stays where it was grabbed", () => {
   assert.deepEqual(ghostOffset({x: 300, y: 200}, {x: 20, y: 10}), {x: 280, y: 190})
+})
+
+test("the edge speed eases in: gentle at the start of the zone, full at the edge", () => {
+  const area = {start: 0, end: 1000}
+  assert.ok(edgeDelta(960, area) < 9)
+  assert.ok(edgeDelta(990, area) > 9)
+  assert.equal(edgeDelta(1000, area), 18)
+})
+
+test("a scrolling box steps on both axes and never past the room it has", () => {
+  const rect = {left: 0, top: 0, right: 1000, bottom: 600}
+  const room = {x: [100, 100], y: [0, 0]}
+  assert.deepEqual(scrollStep({x: 500, y: 300}, rect, room), {x: 0, y: 0})
+  assert.deepEqual(scrollStep({x: 1000, y: 300}, rect, room), {x: 18, y: 0})
+  assert.deepEqual(scrollStep({x: 1000, y: 600}, rect, room), {x: 18, y: 0})
+  assert.deepEqual(scrollStep({x: 0, y: 300}, rect, {x: [5, 100], y: [0, 0]}), {x: -5, y: 0})
+  assert.deepEqual(scrollStep({x: 500, y: 600}, rect, {x: [0, 0], y: [0, 200]}), {x: 0, y: 18})
+})
+
+test("the floating card leans towards the movement, within the limit", () => {
+  assert.equal(tiltOf(0), 0)
+  assert.ok(tiltOf(500) > 0)
+  assert.ok(tiltOf(-500) < 0)
+  assert.equal(tiltOf(-500), -tiltOf(500))
+  assert.equal(tiltOf(100000), 6)
+  assert.equal(tiltOf(-100000), -6)
+  assert.equal(tiltOf(100000, {max: 3}), 3)
+})
+
+test("the follower closes in on its target, faster for a longer frame, never past it", () => {
+  assert.equal(approach(0, 100, 0), 0)
+  const short = approach(0, 100, 8)
+  const long = approach(0, 100, 32)
+  assert.ok(short > 0 && short < long && long < 100)
+  assert.ok(Math.abs(approach(0, 100, 5000) - 100) < 1e-6)
+  assert.equal(approach(40, 40, 16), 40)
 })

@@ -41,9 +41,31 @@ export const moveIntent = (pointerType, distance) => {
  * @param {{start: number, end: number}} area the visible part of the scrolling area on this axis
  */
 export const edgeDelta = (position, {start, end}, {edge = 56, speed = 18} = {}) => {
-  const pull = (depth) => Math.round(speed * Math.min(Math.max(depth / edge, 0), 1))
+  const pull = (depth) => Math.round(speed * smooth(Math.min(Math.max(depth / edge, 0), 1)))
   return pull(start + edge - position) * -1 + pull(position - (end - edge))
 }
 
+const smooth = (t) => t * t * (3 - 2 * t)
+
+const within = (value, back, forward) => Math.min(Math.max(value, -back), forward)
+
+/**
+ * The scroll step `{x, y}` of one scrolling box for a pointer near its edges, held back by the room it has left:
+ * `room.x` and `room.y` are `[back, forward]` pixels still scrollable on each axis.
+ *
+ * @param {{x: number, y: number}} point
+ * @param {{left: number, top: number, right: number, bottom: number}} rect the visible part of the box
+ */
+export const scrollStep = (point, rect, room, options) => ({
+  x: within(edgeDelta(point.x, {start: rect.left, end: rect.right}, options), ...room.x),
+  y: within(edgeDelta(point.y, {start: rect.top, end: rect.bottom}, options), ...room.y),
+})
+
 /** Where the floating copy of a dragged card goes so it stays under the pointer where the card was grabbed. */
 export const ghostOffset = (pointer, grab) => ({x: pointer.x - grab.x, y: pointer.y - grab.y})
+
+/** How far (degrees) the floating card leans for a horizontal speed in pixels per second: towards the movement, clamped. */
+export const tiltOf = (speed, {gain = 0.004, max = 6} = {}) => Math.min(Math.max(speed * gain, -max), max)
+
+/** Moves `value` towards `target` like a spring that settles in about `tau` ms, whatever the frame time. */
+export const approach = (value, target, elapsed, tau = 45) => value + (target - value) * (1 - Math.exp(-elapsed / tau))

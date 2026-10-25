@@ -1,7 +1,7 @@
 defmodule LineaUI.Components.Kanban do
   @moduledoc """
   A kanban board: a row of tinted columns (a stage of a sales funnel, a status of a task) holding cards that are
-  dragged between them, with the drag and drop of the browser and no library. It is the Signetum canvas's
+  dragged between them, with a native drag and drop on pointer events and no library. It is the Signetum canvas's
   `AppKanban`, and the same parts serve a plain task board.
 
       <.kanban id="funnel" event="move" group="orders" class="min-h-[600px]">
@@ -39,11 +39,16 @@ defmodule LineaUI.Components.Kanban do
       def handle_event("move", %{"id" => id, "from" => from, "to" => to, "index" => index}, socket),
         do: {:noreply, update(socket, :orders, &Orders.move(&1, id, from, to, index))}
 
-  Nothing is moved in the browser: the dragged card is dimmed (`data-dragging`), the column under the pointer is
-  tinted (`data-over`), a line shows where the card would land, and the server's render is the new order. A drop
-  where the card already was pushes nothing. With a mouse or a pen the cards use the browser's drag and drop;
-  a finger holds a card for a moment and then drags it. A button in the card that pushes the same event with the
-  next column (`phx-click`) is the alternative for the keyboard and for screens where dragging is awkward.
+  Nothing is moved in the browser, the server's render is the new order. While a card is dragged the original
+  stays as a quiet dashed placeholder (`data-dragging`), a lifted copy of the card follows the pointer (tilting
+  a little towards the movement, with a big soft shadow) and, on a drop, glides into its slot or flies back when
+  the drop is cancelled. The cards of the column under the pointer (`data-over`, which only tints the
+  column) slide out of the way as the copy crosses them, opening a gap with a dashed placeholder, and the board
+  and the columns scroll when the pointer is near their edges. A drop where the card already was pushes nothing.
+  A mouse, a pen and a finger share this: a mouse or a pen drags after moving a few pixels (a click on the card, a
+  link or a button in it still works), a finger holds the card for a moment first. Escape cancels. A button in the
+  card that pushes the same event with the next column (`phx-click`) is the alternative for the keyboard and for
+  screens where dragging is awkward.
 
   ## Another board
 
@@ -76,8 +81,9 @@ defmodule LineaUI.Components.Kanban do
     * `data-axis` - `x` for items laid in a row, `y` (default) for items stacked.
     * `data-disabled` - the list neither gives nor takes items (any value but `false`).
 
-  Items carry `data-id`, the id the server gets as `id`. The default look comes from `parts/sortable.css`: a dimmed
-  `[data-dragging]` item and a `[data-list][data-over]` list you can style yourself (it is not drawn by default), both easy to override with utilities.
+  Items carry `data-id`, the id the server gets as `id`. The default look comes from `parts/sortable.css`: a quiet
+  `[data-dragging]` item, the lifted `.linea-drag-ghost` and the dashed `.linea-drop-slot`, all zero-specificity
+  and easy to override with utilities.
   """
 
   use LineaUI.Component
@@ -111,7 +117,7 @@ defmodule LineaUI.Components.Kanban do
     }
   }
 
-  @card "group relative flex cursor-grab flex-col gap-[9px] rounded-xl bg-white p-3 shadow-[0_0_0_1px_var(--color-slate-150),0_1px_2px_rgb(0_0_0/0.05)] transition-shadow hover:shadow-[0_0_0_1px_var(--color-slate-300),0_8px_20px_-10px_rgb(16_24_64/0.3)] active:cursor-grabbing data-[dragging]:opacity-45 dark:bg-navy-700 dark:shadow-[0_0_0_1px_var(--color-navy-500)] dark:hover:shadow-[0_0_0_1px_var(--color-navy-450)]"
+  @card "group relative flex cursor-grab flex-col gap-[9px] rounded-xl bg-white p-3 shadow-[0_0_0_1px_var(--color-slate-150),0_1px_2px_rgb(0_0_0/0.05)] transition-shadow hover:shadow-[0_0_0_1px_var(--color-slate-300),0_8px_20px_-10px_rgb(16_24_64/0.3)] active:cursor-grabbing data-[dragging]:shadow-none dark:bg-navy-700 dark:shadow-[0_0_0_1px_var(--color-navy-500)] dark:hover:shadow-[0_0_0_1px_var(--color-navy-450)]"
 
   @risk "!shadow-[0_0_0_1px_color-mix(in_oklab,var(--color-warning)_45%,var(--color-slate-150)),0_1px_2px_rgb(0_0_0/0.05)]"
 
@@ -290,6 +296,7 @@ defmodule LineaUI.Components.Kanban do
       <div
         :for={empty <- @empty}
         :if={@count == 0}
+        data-empty
         class="flex flex-col items-center gap-1 px-2 pt-5 pb-6 text-center"
       >
         <.icon
@@ -323,7 +330,7 @@ defmodule LineaUI.Components.Kanban do
         </.button>
       </.kanban_card>
 
-  A button inside is clickable as usual; the card is dragged by any other part of it.
+  A button inside is clickable as usual; the card is dragged by any other part of it, with a pointer that moves.
   """
   attr :id, :string, required: true, doc: "The DOM id of the card."
 
@@ -348,7 +355,6 @@ defmodule LineaUI.Components.Kanban do
     <article
       id={@id}
       data-id={@item || @id}
-      draggable="true"
       class={@classes}
       {@rest}
     >

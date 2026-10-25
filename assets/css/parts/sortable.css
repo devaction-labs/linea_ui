@@ -1,5 +1,57 @@
 @layer components {
   :where([data-list] > [data-dragging]) {
-    opacity: 0.45;
+    opacity: 0.35;
+    outline: 1.5px dashed color-mix(in oklab, currentColor 28%, transparent);
+    outline-offset: -1.5px;
+    box-shadow: none;
+    transition: opacity 150ms ease;
+  }
+
+  :where([data-list] > [data-dragging][data-slotted]) {
+    opacity: 0;
+  }
+
+  :where(html[data-linea-dragging], html[data-linea-dragging] *) {
+    cursor: grabbing !important;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  :where(.linea-drag-lift) {
+    box-sizing: border-box;
+    opacity: 0.96;
+    transition:
+      transform 150ms cubic-bezier(0.2, 0.8, 0.2, 1),
+      box-shadow 150ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  :where(.linea-drag-lifted) {
+    transform: rotate(2deg) scale(1.03);
+    box-shadow: 0 18px 40px -12px rgb(15 23 42 / 0.35);
+  }
+
+  :where(.dark .linea-drag-lifted) {
+    box-shadow: 0 18px 40px -12px rgb(0 0 0 / 0.65);
+  }
+
+  :where(.linea-drop-slot) {
+    box-sizing: border-box;
+    border: 1.5px dashed color-mix(in oklab, var(--color-primary) 48%, transparent);
+    background: color-mix(in oklab, var(--color-primary) 7%, transparent);
+  }
+
+  :where(.dark .linea-drop-slot) {
+    border-color: color-mix(in oklab, var(--color-accent) 58%, transparent);
+    background: color-mix(in oklab, var(--color-accent) 9%, transparent);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :where(.linea-drag-lift) {
+      transition: none;
+    }
+
+    :where(.linea-drag-lifted) {
+      transform: scale(1.03);
+    }
   }
 }

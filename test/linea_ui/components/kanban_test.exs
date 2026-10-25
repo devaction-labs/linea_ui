@@ -134,6 +134,21 @@ defmodule LineaUI.Components.KanbanTest do
     assert LazyHTML.text(find(empty, "section")) =~ "Drag one here."
 
     assert find(template.(2), "b") |> Enum.count() == 0
+    assert find(empty, "section > div[data-empty]") |> Enum.count() == 1
+  end
+
+  test "the column and the lost aside tint when a card is over them and draw no ring or outline" do
+    html =
+      render(~H"""
+      <.kanban_column id="c" label="S" />
+      <.kanban_lost label="Lost" list="lost" />
+      """)
+
+    for tag <- ["section", "aside"] do
+      assert "data-[over]:bg-primary/5" in classes(html, tag)
+      assert "dark:data-[over]:bg-accent/10" in classes(html, tag)
+      refute Enum.any?(classes(html, tag), &(&1 =~ ~r/data-\[over\]:(ring|outline)/))
+    end
   end
 
   test "the footer comes after the cards" do
@@ -148,17 +163,17 @@ defmodule LineaUI.Components.KanbanTest do
     assert find(html, "section > article + #add") |> Enum.count() == 1
   end
 
-  test "a card is a draggable surface, with the warning ring on risk" do
+  test "a card is a grabbable surface with no native drag, and the warning ring on risk" do
     html =
       render(~H"""
       <.kanban_card id="c1" item="2462" class="extra">Body</.kanban_card>
       """)
 
-    assert attr_of(html, "article#c1", "draggable") == ["true"]
+    assert attr_of(html, "article#c1", "draggable") == []
     assert attr_of(html, "article#c1", "data-id") == ["2462"]
     assert "rounded-xl" in classes(html, "article")
     assert "cursor-grab" in classes(html, "article")
-    assert "data-[dragging]:opacity-45" in classes(html, "article")
+    assert "data-[dragging]:shadow-none" in classes(html, "article")
     assert "extra" in classes(html, "article")
     refute Enum.any?(classes(html, "article"), &String.starts_with?(&1, "!shadow"))
 

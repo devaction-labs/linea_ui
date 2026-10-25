@@ -1,12 +1,27 @@
-import {HOLD, ghostOffset, moveIntent} from "../lib/kanban_logic.js"
-import {dropPayload, flagged, lineAt, targetAt} from "../lib/sortable_dnd.js"
+import {HOLD, approach, ghostOffset, moveIntent, tiltOf} from "../lib/kanban_logic.js"
+import {dropPayload, flagged, gapPlan, laneOf, slotRect, targetAt} from "../lib/sortable_dnd.js"
+import {
+  SETTLE_MS,
+  autoScroll,
+  closeGap,
+  landGhost,
+  makeGhost,
+  makeSlot,
+  naturalRect,
+  openGap,
+  placeGhost,
+  placeSlot,
+  reduced,
+} from "../lib/sortable_layer.js"
 
 const SELF = '[phx-hook="LineaUI.Sortable"]'
-const LINE_CLASS = "pointer-events-none fixed rounded-full bg-primary dark:bg-accent"
-const SETTLE_MS = 800
+const EDITABLE = "input, textarea, select, [contenteditable='true']"
+const SERVER_MS = 800
+const SWALLOW_MS = 150
+const MARK = "data-linea-dragging"
 
 const instances = new Set()
-const state = {drag: null, over: null, line: null, ghost: null, settle: null}
+const state = {drag: null, over: null, ghost: null, slot: null, open: {}, landing: null, settle: null, point: null, dirty: false, raf: 0, swallow: false}
 
 const elementOf = (node) => (node instanceof Element ? node : node?.parentElement)
 
@@ -17,77 +32,139 @@ const itemIn = (lists, node) => {
 
 const pointOf = ({clientX, clientY}) => ({x: clientX, y: clientY})
 
-const boxOf = (el) => {
-  const {left, top, width, height} = el.getBoundingClientRect()
-  return {id: el.dataset.id, left, top, width, height}
-}
+const px = (value) => Number.parseFloat(value) || 0
 
-const lineElement = () => {
-  state.line ??= Object.assign(document.createElement("div"), {className: LINE_CLASS, hidden: true})
-  state.line.style.zIndex = "var(--linea-z-popover, 1000)"
-  state.line.isConnected || document.body.append(state.line)
-  return state.line
-}
-
-const lineStyle = ({axis, position, from, to}) =>
-  axis === "x"
-    ? {left: `${position - 1.5}px`, top: `${from}px`, width: "3px", height: `${to - from}px`}
-    : {left: `${from}px`, top: `${position - 1.5}px`, width: `${to - from}px`, height: "3px"}
-
-const hideLine = () => state.line && (state.line.hidden = true)
-
-const drawLine = (line) => {
-  const element = lineElement()
-  Object.assign(element.style, lineStyle(line))
-  element.hidden = false
-}
-
-const placeLine = ({record, index}) => {
-  const boxes = record.boxes.filter(({id}) => id !== state.drag.id)
-  boxes.length === 0 ? hideLine() : drawLine(lineAt({rect: record.rect, boxes, index, axis: record.axis}))
-}
+const boxOf = (el) => ({id: el.dataset.id, el, ...naturalRect(el)})
 
 const markOver = (target) => {
   const next = target?.record.el ?? null
   state.over !== next && (state.over?.removeAttribute("data-over"), next?.setAttribute("data-over", ""), (state.over = next))
 }
 
-const show = (target) => {
-  markOver(target)
-  target ? placeLine(target) : hideLine()
+const startOf = (rect, horizontal) => (horizontal ? rect.left : rect.top)
+const endOf = (rect, horizontal) => (horizontal ? rect.left + rect.width : rect.top + rect.height)
+
+const tailOf = (children, boxes) => {
+  const lastItem = children.findLastIndex((child) => child.matches("[data-id]"))
+  const empty = children.findIndex((child) => child.matches("[data-empty]"))
+  return boxes.length ? children.slice(lastItem + 1) : empty < 0 ? [] : children.slice(empty)
+}
+
+const measure = ({el, axis, boxes, rect}) => {
+  const style = getComputedStyle(el)
+  const horizontal = axis === "x"
+  const children = Array.from(el.children)
+  const tail = tailOf(children, boxes)
+  const [first, second] = boxes
+  const gap = second ? startOf(second, horizontal) - endOf(first, horizontal) : px(horizontal ? style.columnGap : style.rowGap)
+  const last = children.at(-1)
+  const anchors = [
+    [tail[0], () => startOf(naturalRect(tail[0]), horizontal)],
+    [last, () => endOf(naturalRect(last), horizontal) + gap],
+    [true, () => startOf(rect, horizontal) + px(horizontal ? style.paddingLeft : style.paddingTop)],
+  ]
+  const inset = horizontal ? [px(style.paddingTop), px(style.paddingBottom)] : [px(style.paddingLeft), px(style.paddingRight)]
+  return {gap, tail, anchor: anchors.find(([applies]) => applies)[1](), lane: laneOf({rect, boxes, axis, inset})}
 }
 
 const hit = (point) =>
-  state.drag && !state.settle && targetAt([...instances].flatMap((instance) => instance.snapshot()), state.drag, point)
+  state.drag?.live && targetAt([...instances].flatMap((instance) => instance.snapshot()), state.drag, point)
 
-const dropGhost = () => {
-  state.ghost?.remove()
-  state.ghost = null
+const openAt = (target) => {
+  const {record, index} = target
+  const {drag} = state
+  const info = measure(record)
+  const size = record.axis === "x" ? drag.box.width : drag.box.height
+  const plan = gapPlan({boxes: record.boxes, dragId: drag.id, index, size, gap: info.gap, axis: record.axis, anchor: info.anchor})
+  openGap(state.open, {list: record.el, axis: record.axis, items: record.boxes, tail: info.tail, plan, step: size + info.gap})
+  state.landing = slotRect({slot: plan.slot, lane: info.lane, box: drag.box, axis: record.axis})
+  placeSlot(state.slot, state.landing, drag.radius, true)
+  drag.item.toggleAttribute("data-slotted", record.key === drag.key)
+}
+
+const shut = () => {
+  closeGap(state.open, true)
+  state.slot && (state.slot.hidden = true)
+  state.landing = null
+  state.drag?.item.removeAttribute("data-slotted")
+}
+
+const show = (target) => {
+  markOver(target)
+  target ? openAt(target) : shut()
 }
 
 const finish = () => {
   clearTimeout(state.settle)
+  cancelAnimationFrame(state.raf)
   state.settle = null
   state.drag?.item.removeAttribute("data-dragging")
+  state.drag?.item.removeAttribute("data-slotted")
   state.drag = null
-  show(null)
-  dropGhost()
+  markOver(null)
+  closeGap(state.open, false)
+  state.slot && (state.slot.hidden = true)
+  state.ghost?.root.remove()
+  state.ghost = null
+  state.landing = null
+  document.documentElement.removeAttribute(MARK)
 }
 
-const commit = (target) => {
-  const payload = target && dropPayload(state.drag, target)
-  markOver(null)
-  dropGhost()
-  payload ? sent(target, payload) : finish()
+const tick = (now) => {
+  const {drag} = state
+  drag?.live && step(drag, now)
+}
+
+const step = (drag, now) => {
+  const elapsed = Math.min(Math.max(now - drag.at, 1), 48)
+  const goal = ghostOffset(state.point, drag.grab)
+  const calm = reduced()
+  const next = calm ? goal : {x: approach(drag.pos.x, goal.x, elapsed, 32), y: approach(drag.pos.y, goal.y, elapsed, 32)}
+  drag.vx = approach(drag.vx, ((next.x - drag.pos.x) / elapsed) * 1000, elapsed, 90)
+  drag.pos = next
+  drag.at = now
+  placeGhost(state.ghost, next, calm ? 0 : tiltOf(drag.vx))
+  const scrolled = autoScroll(state.point)
+  const refresh = scrolled || state.dirty
+  state.dirty = false
+  refresh && show(hit(state.point))
+  state.raf = requestAnimationFrame(tick)
 }
 
 const sent = (target, payload) => {
   target.record.owner.push(target.record.el, payload)
-  state.settle = setTimeout(finish, SETTLE_MS)
+  landGhost(state.ghost, state.landing)
+  setTimeout(() => state.slot && (state.slot.hidden = true), SETTLE_MS)
+  state.settle = setTimeout(finish, SERVER_MS)
 }
 
-const lift = (owner, item, list) => {
+const cancel = () => {
+  const {drag} = state
+  const home = drag.item.getBoundingClientRect()
+  cancelAnimationFrame(state.raf)
+  drag.live = false
+  markOver(null)
+  shut()
+  landGhost(state.ghost, home)
+  state.settle = setTimeout(finish, SETTLE_MS + 30)
+}
+
+const drop = () => {
+  const target = hit(state.point)
+  const payload = target && dropPayload(state.drag, target)
+  cancelAnimationFrame(state.raf)
+  target && payload && show(target)
+  state.drag.live = false
+  markOver(null)
+  payload ? sent(target, payload) : cancel()
+  setTimeout(() => (state.swallow = false), SWALLOW_MS)
+}
+
+const begin = (owner, item, point) => {
   finish()
+  const list = item.parentElement
+  const box = item.getBoundingClientRect()
+  const computed = getComputedStyle(item)
   state.drag = {
     id: item.dataset.id,
     key: list,
@@ -95,60 +172,48 @@ const lift = (owner, item, list) => {
     group: owner.cfg(list, "group"),
     index: owner.items(list).indexOf(item),
     item,
+    box: {width: box.width, height: box.height},
+    grab: {x: point.x - box.left, y: point.y - box.top},
+    radius: computed.borderRadius,
+    pos: {x: box.left, y: box.top},
+    vx: 0,
+    at: performance.now(),
+    live: true,
   }
+  state.point = point
+  state.dirty = true
+  state.swallow = true
+  state.slot ??= makeSlot()
+  state.ghost = makeGhost(item, box, state.drag.grab)
+  placeGhost(state.ghost, state.drag.pos, 0)
+  item.setAttribute("data-dragging", "")
+  document.documentElement.setAttribute(MARK, "")
+  getSelection()?.removeAllRanges()
+  state.raf = requestAnimationFrame(tick)
 }
 
-const ghostFor = (item, box) => {
-  const ghost = item.cloneNode(true)
-  ;[ghost, ...ghost.querySelectorAll("[id]")].forEach((node) => node.removeAttribute("id"))
-  ghost.removeAttribute("draggable")
-  Object.assign(ghost.style, {
-    position: "fixed",
-    top: "0",
-    left: "0",
-    margin: "0",
-    width: `${box.width}px`,
-    pointerEvents: "none",
-    opacity: ".92",
-    rotate: "2deg",
-    filter: "drop-shadow(0 12px 18px rgb(16 24 64 / .25))",
-    zIndex: "var(--linea-z-popover, 1000)",
-  })
-  return ghost
-}
+const onClick = (event) => state.swallow && (event.preventDefault(), event.stopPropagation(), (state.swallow = false))
 
-const onDragOver = (event) => {
-  const target = hit(pointOf(event))
-  show(target)
-  target && (event.preventDefault(), (event.dataTransfer.dropEffect = "move"))
-}
-
-const onDrop = (event) => {
-  const target = hit(pointOf(event))
-  target && (event.preventDefault(), commit(target))
-}
-
-const onDragEnd = () => state.settle || finish()
+const onSelect = (event) => state.drag?.live && event.preventDefault()
 
 const documentListeners = [
-  ["dragover", onDragOver],
-  ["drop", onDrop],
-  ["dragend", onDragEnd],
+  ["click", onClick, true],
+  ["selectstart", onSelect],
 ]
 
-const attach = () => documentListeners.forEach(([type, fn]) => document.addEventListener(type, fn))
+const attach = () => documentListeners.forEach(([type, fn, opts]) => document.addEventListener(type, fn, opts))
 
 const detach = () => {
-  documentListeners.forEach(([type, fn]) => document.removeEventListener(type, fn))
-  state.line?.remove()
-  state.line = null
+  documentListeners.forEach(([type, fn, opts]) => document.removeEventListener(type, fn, opts))
+  state.slot?.remove()
+  state.slot = null
 }
 
 /**
- * `LineaUI.Sortable`: drag and drop of items between and within lists, on the browser's own drag and drop (no
- * library). The hook element is a list, or holds several lists (a board): a list is an element with `data-list`,
- * its items are the children with `data-id`. Lists with the same `data-group` exchange items; without a group an
- * item moves only inside its list.
+ * `LineaUI.Sortable`: drag and drop of items between and within lists, on pointer events (no library, no browser
+ * drag image). The hook element is a list, or holds several lists (a board): a list is an element with
+ * `data-list`, its items are the children with `data-id`. Lists with the same `data-group` exchange items;
+ * without a group an item moves only inside its list.
  *
  * Config, read from the list and, when it has none, from the hook element: `data-event` (the server event),
  * `data-target` (its `phx-target`; without it the event goes to the hook's LiveView), `data-group`,
@@ -156,31 +221,43 @@ const detach = () => {
  * `"y"` by default) and `data-disabled` (the list neither gives nor takes items).
  *
  * A drop pushes `%{"id", "from", "to", "index"}`: the item's `data-id`, the `data-list` it came from and went
- * to, and its index there once it is placed. A drop where the item already was pushes nothing. The browser never
- * moves anything: the dragged item is dimmed (`data-dragging`), the list under the pointer gets `data-over` and a
- * line shows the slot, and the server's render is the new order.
+ * to, and its index there once it is placed. A drop where the item already was pushes nothing. The hook never
+ * moves the DOM, the server's render is the new order; everything it draws is visual:
  *
- * A finger cannot use the browser's drag and drop, so touch is handled with pointer events: hold an item still for
- * a moment, then drag it (a floating copy follows the finger); moving before that scrolls as usual. The board does
- * not auto-scroll under a finger. For the keyboard, and for a touch screen where this is not enough, give the item
- * a button that pushes the same event with the destination.
+ *   * the item stays where it is as a quiet placeholder (`data-dragging`; `data-slotted` too while the gap is in
+ *     its own list, so the placeholder of the gap stands for it);
+ *   * a floating copy of the item (`.linea-drag-ghost`, on the body) follows the pointer, lifted, leaning
+ *     towards the movement, and glides into the slot on a drop or back to the item on a cancel;
+ *   * the list under the pointer gets `data-over` (it draws nothing by itself), and its items at or after the
+ *     insertion index slide out of the way with a `transform` so a gap opens, with a dashed placeholder
+ *     (`.linea-drop-slot`) in it. The gap follows the pointer from item to item and closes when the pointer
+ *     leaves the lists;
+ *   * near the edges of any scrolling box under the pointer (a board, a list), it scrolls.
+ *
+ * Mouse, pen and finger share this path. A mouse or a pen starts a drag after the pointer moves a few pixels
+ * (a plain click on the item, a link or a button inside it still works; the click that ends a drag is
+ * swallowed); a finger holds the item for a moment first (moving before that scrolls as usual). Escape cancels.
+ * For the keyboard, give the item a button that pushes the same event with the destination.
  */
 export default {
   "LineaUI.Sortable": {
     mounted() {
-      this.touch = null
+      this.track = null
       this.lifted = false
       this.pressed = null
+      this.tracking = [
+        ["pointermove", (event) => this.move(event)],
+        ["pointerup", (event) => this.up(event)],
+        ["pointercancel", (event) => this.track?.id === event.pointerId && this.release()],
+        ["keydown", (event) => event.key === "Escape" && this.release()],
+      ]
       this.listeners = [
-        [this.el, "dragstart", (event) => this.dragstart(event)],
-        [this.el, "pointerdown", (event) => this.press(event)],
-        [this.el, "pointermove", (event) => this.move(event)],
-        [this.el, "pointerup", (event) => this.up(event)],
-        [this.el, "pointercancel", () => this.release()],
+        [this.el, "dragstart", (event) => this.itemAt(event.target) && event.preventDefault()],
+        [this.el, "pointerdown", (event) => this.down(event)],
         [this.el, "touchmove", (event) => this.lifted && event.preventDefault(), {passive: false}],
         [this.el, "touchend", (event) => this.unlift(event), {passive: false}],
         [this.el, "touchcancel", (event) => this.unlift(event)],
-        [this.el, "contextmenu", (event) => this.touch && event.preventDefault()],
+        [this.el, "contextmenu", (event) => this.track?.type === "touch" && event.preventDefault()],
       ]
       this.listeners.forEach(([target, type, fn, opts]) => target.addEventListener(type, fn, opts))
       instances.add(this)
@@ -189,6 +266,7 @@ export default {
 
     updated() {
       state.settle ? finish() : state.drag?.item.setAttribute("data-dragging", "")
+      state.dirty = true
     },
 
     destroyed() {
@@ -243,83 +321,69 @@ export default {
       event && (target ? this.pushEventTo(target, event, payload) : this.pushEvent(event, payload))
     },
 
-    press(event) {
+    down(event) {
+      this.release()
       this.pressed = elementOf(event.target)
       const item = this.itemAt(event.target)
-      const allowed = Boolean(item) && this.mayDrag(item.parentElement, item)
-      const touch = event.pointerType === "touch"
-      item && (item.draggable = allowed && !touch)
-      allowed && touch && this.hold(event, item)
+      const allowed =
+        Boolean(item) && event.button === 0 && !this.pressed.closest(EDITABLE) && this.mayDrag(item.parentElement, item)
+      allowed && this.arm(event, item)
     },
 
-    dragstart(event) {
-      const item = this.itemAt(event.target)
-      const allowed = Boolean(item) && this.mayDrag(item.parentElement, item)
-      allowed ? this.pick(event, item) : item && event.preventDefault()
-    },
-
-    pick(event, item) {
-      lift(this, item, item.parentElement)
-      const box = item.getBoundingClientRect()
-      event.dataTransfer.effectAllowed = "move"
-      event.dataTransfer.setData("text/plain", item.dataset.id)
-      event.dataTransfer.setDragImage(item, event.clientX - box.left, event.clientY - box.top)
-      setTimeout(() => state.drag?.item === item && item.setAttribute("data-dragging", ""))
-    },
-
-    hold(event, item) {
-      this.release()
-      this.touch = {
+    arm(event, item) {
+      const type = event.pointerType
+      const hold = HOLD[type]
+      this.track = {
         id: event.pointerId,
         item,
+        type,
         origin: pointOf(event),
-        grab: null,
+        point: pointOf(event),
         active: false,
-        timer: setTimeout(() => this.raise(pointOf(event)), HOLD.touch),
+        timer: hold && setTimeout(() => this.raise(), hold),
       }
+      this.tracking.forEach(([name, fn]) => document.addEventListener(name, fn))
     },
 
-    raise(point) {
-      const {item} = this.touch
-      const box = item.getBoundingClientRect()
-      lift(this, item, item.parentElement)
-      this.touch.active = true
-      this.touch.grab = {x: point.x - box.left, y: point.y - box.top}
-      this.lifted = true
-      state.ghost = ghostFor(item, box)
-      document.body.append(state.ghost)
-      item.setAttribute("data-dragging", "")
-      getSelection()?.removeAllRanges()
-      this.follow(point)
-    },
-
-    follow(point) {
-      const {x, y} = ghostOffset(point, this.touch.grab)
-      state.ghost.style.translate = `${x}px ${y}px`
-      show(hit(point))
+    raise() {
+      const {item, point, type} = this.track
+      begin(this, item, point)
+      this.track.active = true
+      this.lifted = type === "touch"
     },
 
     move(event) {
-      const touch = this.touch
-      const distance = touch && Math.hypot(event.clientX - touch.origin.x, event.clientY - touch.origin.y)
-      touch?.id === event.pointerId &&
-        (touch.active ? this.follow(pointOf(event)) : moveIntent("touch", distance) === "cancel" && this.release())
+      const track = this.track
+      const mine = track?.id === event.pointerId
+      mine && (track.point = pointOf(event))
+      mine && (track.active ? this.follow(track.point) : this.intent(track))
+    },
+
+    follow(point) {
+      state.point = point
+      state.dirty = true
+    },
+
+    intent({type, origin, point}) {
+      const verdict = moveIntent(type, Math.hypot(point.x - origin.x, point.y - origin.y))
+      verdict === "start" ? this.raise() : verdict === "cancel" && this.end()
     },
 
     up(event) {
-      const touch = this.touch
-      const mine = touch?.id === event.pointerId
-      mine && touch.active && commit(hit(pointOf(event)))
+      const track = this.track
+      const mine = track?.id === event.pointerId
+      mine && track.active && drop()
       mine && this.end()
     },
 
     end() {
-      clearTimeout(this.touch?.timer)
-      this.touch = null
+      clearTimeout(this.track?.timer)
+      this.track && this.tracking.forEach(([name, fn]) => document.removeEventListener(name, fn))
+      this.track = null
     },
 
     release() {
-      this.touch?.active && finish()
+      this.track?.active && state.drag?.live && cancel()
       this.end()
     },
 
