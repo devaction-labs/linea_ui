@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.5.1
+
+- `chart` no longer needs ApexCharts: the package draws charts itself, as SVG, with a native engine (`assets/js/linea_ui/lib/chart_*.js`, hook `LineaUI.Chart`). Remove `apexcharts` from the app's `package.json` and `app.js` (`window.ApexCharts` is not read any more). The component, `options` (ApexCharts-shaped), `formatters`, the `linea:chart` push event and the `linea:chart:options` DOM event keep working; `data-state` (`ready`/`waiting`) is gone, and `updateOptions`/`updateSeries` became a merge of the pushed `options` and a by-position overlay of the pushed `series`. The supported options are listed in the `LineaUI.Components.Chart` docs; anything else is ignored.
+- Charts: line, area, column and row bars (grouped, stacked, 100%, distributed, rounded), range bars, candlesticks, sparklines, with value, category and date axes, grid, legend (toggles series), shared and single tooltips with crosshair, gradients, data labels, drop shadow and an entry animation that honors `prefers-reduced-motion`.
+
 ## 0.5.0
 
 - **Breaking:** `datetime_picker/1` is now the new component below, not the flatpickr one of `date_picker`. It still takes `name`, `field`, `placeholder`, `min_time`, `max_time` and, as aliases, `time_24hr`, `minute_step` and `default_hour`, but the value is a wall-clock `2026-10-14T10:30` (it was `2026-10-14 10:30`) and the panel is the new one.

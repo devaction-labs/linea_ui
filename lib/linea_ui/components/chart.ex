@@ -1,7 +1,7 @@
 defmodule LineaUI.Components.Chart do
   @moduledoc """
-  An ApexCharts chart with LineOne's skin (axis labels, grid lines, legend, tooltips, light
-  and dark).
+  A chart drawn by the package itself, as SVG, with LineOne's look (axis labels, grid lines, legend,
+  tooltips, light and dark). It needs no JavaScript library: the `LineaUI.Chart` hook is all there is.
 
       <.chart
         id="sales"
@@ -13,19 +13,15 @@ defmodule LineaUI.Components.Chart do
         }}
       />
 
-  The app provides the library: install `apexcharts` and set `window.ApexCharts` before the
-  LiveView connects.
-
-      import ApexCharts from "apexcharts"
-      window.ApexCharts = ApexCharts
-
-  `options` is any ApexCharts options object, as a map or a JSON string. When it changes on
-  the server the chart is updated in place. To stream data without re-sending the whole
-  options, push an event:
+  `options` is an ApexCharts-shaped options object, as a map or a JSON string (the supported subset is
+  listed below; anything else is ignored). The chart fills the width of its element and redraws when
+  the element resizes. When `options` changes on the server the chart is redrawn in place. To stream
+  data without re-sending the whole options, push an event:
 
       push_event(socket, "linea:chart", %{id: "sales", series: [%{data: [1, 2, 3]}]})
 
-  `series` and/or `options` in the payload are applied with `updateSeries`/`updateOptions`.
+  `series` is laid over the current series by position (an entry that is a map keeps the name and the
+  settings it does not repeat) and `options` is merged into the current options.
 
   JSON has no functions, so formatters are named and resolved in the browser. `formatters` maps
   an options path to a built-in formatter, and a bare `formatter: "name"` string inside the
@@ -66,7 +62,7 @@ defmodule LineaUI.Components.Chart do
 
   @doc """
   Renders a chart. The `LineaUI.Chart` hook draws it into an inner element LiveView leaves
-  alone, and redraws it in place (`updateOptions`) whenever the `options` assign changes.
+  alone, and redraws it in place whenever the `options` assign changes.
 
       <.chart
         id="revenue"
@@ -86,14 +82,13 @@ defmodule LineaUI.Components.Chart do
       push_event(socket, "linea:chart", %{id: "revenue", series: [%{data: [1, 2, 3]}]})
 
   Browser event: `linea:chart:options` (bubbling, on the chart element) fires before each
-  draw with `detail.options`, the place to add JavaScript formatters. `data-state` on the
-  element is `ready`, or `waiting` until `window.ApexCharts` exists.
+  draw with `detail.options`, the place to add JavaScript formatters.
   """
   attr(:id, :string, required: true, doc: "DOM id; also what `push_event` payloads target.")
 
   attr(:options, :any,
     required: true,
-    doc: "ApexCharts options, a map (encoded to JSON) or an already encoded JSON string."
+    doc: "ApexCharts-shaped options, a map (encoded to JSON) or an already encoded JSON string."
   )
 
   attr(:formatters, :map,
