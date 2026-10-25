@@ -40,7 +40,7 @@ defmodule LineaUI.Components.Kanban do
         do: {:noreply, update(socket, :orders, &Orders.move(&1, id, from, to, index))}
 
   Nothing is moved in the browser: the dragged card is dimmed (`data-dragging`), the column under the pointer is
-  outlined (`data-over`), a line shows where the card would land, and the server's render is the new order. A drop
+  tinted (`data-over`), a line shows where the card would land, and the server's render is the new order. A drop
   where the card already was pushes nothing. With a mouse or a pen the cards use the browser's drag and drop;
   a finger holds a card for a moment and then drags it. A button in the card that pushes the same event with the
   next column (`phx-click`) is the alternative for the keyboard and for screens where dragging is awkward.
@@ -77,7 +77,7 @@ defmodule LineaUI.Components.Kanban do
     * `data-disabled` - the list neither gives nor takes items (any value but `false`).
 
   Items carry `data-id`, the id the server gets as `id`. The default look comes from `parts/sortable.css`: a dimmed
-  `[data-dragging]` item and an outlined `[data-list][data-over]` list, both easy to override with utilities.
+  `[data-dragging]` item and a `[data-list][data-over]` list you can style yourself (it is not drawn by default), both easy to override with utilities.
   """
 
   use LineaUI.Component
@@ -85,7 +85,7 @@ defmodule LineaUI.Components.Kanban do
 
   @board "flex items-start gap-3.5 overflow-x-auto px-0.5 pb-3"
 
-  @column "flex w-[272px] flex-none flex-col gap-2.5 rounded-[14px] bg-slate-50 p-2.5 ring-1 ring-slate-150 ring-inset data-[over]:bg-primary/5 data-[over]:ring-2 data-[over]:ring-primary data-[over]:outline-none dark:bg-navy-800 dark:ring-navy-600 dark:data-[over]:bg-accent/10 dark:data-[over]:ring-accent"
+  @column "flex w-[272px] flex-none flex-col gap-2.5 rounded-[14px] bg-slate-50 p-2.5 ring-1 ring-slate-150 ring-inset data-[over]:bg-primary/5 dark:bg-navy-800 dark:ring-navy-600 dark:data-[over]:bg-accent/10"
 
   @colors %{
     "neutral" => %{
@@ -115,7 +115,7 @@ defmodule LineaUI.Components.Kanban do
 
   @risk "!shadow-[0_0_0_1px_color-mix(in_oklab,var(--color-warning)_45%,var(--color-slate-150)),0_1px_2px_rgb(0_0_0/0.05)]"
 
-  @lost "flex w-[52px] flex-none flex-col items-center gap-2.5 self-stretch rounded-[14px] bg-slate-50 py-3 text-slate-500 ring-1 ring-slate-150 ring-inset data-[over]:bg-primary/5 data-[over]:ring-2 data-[over]:ring-primary data-[over]:outline-none dark:bg-navy-800 dark:text-navy-200 dark:ring-navy-600 dark:data-[over]:bg-accent/10 dark:data-[over]:ring-accent"
+  @lost "flex w-[52px] flex-none flex-col items-center gap-2.5 self-stretch rounded-[14px] bg-slate-50 py-3 text-slate-500 ring-1 ring-slate-150 ring-inset data-[over]:bg-primary/5 dark:bg-navy-800 dark:text-navy-200 dark:ring-navy-600 dark:data-[over]:bg-accent/10"
 
   @pill "rounded-full bg-white px-1.5 py-[3px] font-mono text-[11px]/none font-semibold ring-1 ring-slate-150 dark:bg-navy-700 dark:ring-navy-500"
 

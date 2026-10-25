@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.6.1
+
+- Dragging no longer draws a 2px primary outline around the list under the pointer. The `[data-list][data-over]` rule is gone from `sortable.css`; the hook still sets `data-over`, and the kanban column only tints its background. The dimmed card and the insertion line stay.
+
 ## 0.6.0
 
 - **Breaking for charts:** `chart/1` draws its charts itself, so ApexCharts is no longer needed (drop `window.ApexCharts`). `options` keeps the ApexCharts shape, but only the subset in the moduledoc is drawn; the rest is ignored. Combo charts, annotations and several y axes are not supported.

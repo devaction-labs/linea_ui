@@ -1,13 +1,4 @@
 @layer components {
-  :where([data-list][data-over]) {
-    outline: 2px solid var(--color-primary);
-    outline-offset: -2px;
-  }
-
-  :where(.dark [data-list][data-over]) {
-    outline-color: var(--color-accent);
-  }
-
   :where([data-list] > [data-dragging]) {
     opacity: 0.45;
   }

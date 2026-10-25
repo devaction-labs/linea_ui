@@ -49,7 +49,6 @@ defmodule LineaUI.Components.KanbanTest do
     assert attr_of(html, "section > article", "data-id") == ["1", "2"]
     assert "w-[272px]" in classes(html, "section")
     assert "rounded-[14px]" in classes(html, "section")
-    assert "data-[over]:ring-primary" in classes(html, "section")
     assert "dark:bg-navy-800" in classes(html, "section")
     assert LazyHTML.text(find(html, "section > div")) =~ "2"
   end
