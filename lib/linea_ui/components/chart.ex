@@ -56,6 +56,74 @@ defmodule LineaUI.Components.Chart do
       window.addEventListener("linea:chart:options", ({target, detail}) => {
         target.id === "sales" && (detail.options.yaxis = {labels: {formatter: (v) => "$" + v}})
       })
+
+  ## Supported options
+
+  The engine reads this subset of the ApexCharts options. Everything else is ignored, never an error.
+  Colors that belong to the theme (axis text, grid, tooltip card, gauge tracks, radar rings) follow
+  LineOne's light and dark skin and cannot be set from the options.
+
+  **Types** (`chart.type`): `line`, `area`, `bar` (columns, or rows with `plotOptions.bar.horizontal`),
+  `rangeBar`, `candlestick`, `donut`, `pie`, `radialBar` and `radar`. `polarArea` is drawn as a pie and
+  any other type as a line.
+
+  **chart**: `height` (a number, `"200px"`, a share of the width such as `"50%"`, or `"auto"`), `width` (a
+  number or text such as `"120px"` that sizes the element; otherwise the chart fills it), `stacked`,
+  `stackType` (`normal` or `100%`), `sparkline.enabled`, `dropShadow` (`enabled`, `top`, `left`, `blur`,
+  `color`, `opacity`), `animations.enabled`, `parentHeightOffset`. The entry animation is short and
+  is skipped under `prefers-reduced-motion`.
+
+  **Data**: `series` (`[%{name, data}]` where `data` is numbers, `null` for a gap, `%{x, y}` or `[x, y]`;
+  candlestick `y` is `[open, high, low, close]`, range bar `y` is `[start, end]`; donut, pie and radial
+  bar take a list of numbers), `labels` (slice names), `colors`, `xaxis.categories`. Per-series chart
+  types (combo charts) and several y axes are not supported; the first `yaxis` entry is the axis.
+
+  **Lines and areas**: `stroke` (`show`, `curve` `smooth`, `straight` or `stepline`, `width`, `colors`,
+  `dashArray`, `lineCap`; each may be a list per series), `markers` (`size`, `colors`, `hover.size`,
+  `hover.sizeOffset`), `fill` (`type` `solid` or `gradient`, `colors`, `opacity`, and `gradient` with
+  `type` `vertical`, `horizontal`, `diagonal1` or `diagonal2`, `shade`, `shadeIntensity`, `opacityFrom`,
+  `opacityTo`, `stops`, `inverseColors`, `gradientToColors`). A gradient on a `line` chart paints the
+  stroke left to right.
+
+  **Bars**: `plotOptions.bar` with `horizontal`, `columnWidth` and `barHeight` (a share such as `"55%"`,
+  a number meaning the same percentage, or pixels as `"24px"`), `borderRadius`, `borderRadiusApplication`,
+  `distributed`, `rangeBarOverlap` and `dataLabels.position` (`center` or `top`). A stacked bar rounds
+  the ends of the whole pile. `plotOptions.candlestick.colors` takes `upward` and `downward`.
+
+  **Axes**: `xaxis` (`type` `category`, `datetime` or `numeric`, `categories`, `min`, `max`, `tickAmount`,
+  `position` `top`, `show`, `labels` with `show`, `formatter`, `format` for dates such as `"dd MMM"`,
+  `hideOverlappingLabels`, `offsetX`, `offsetY`, `style.fontSize`, `axisBorder.show`, `axisTicks.show`,
+  `crosshairs.show`, `tooltip.enabled`) and `yaxis` (`show`, `min`, `max`, `tickAmount`, `labels` with the
+  same keys, `axisBorder.show`, `axisTicks.show`, `tooltip.enabled`). For a horizontal bar the `yaxis`
+  options drive the category labels and the `xaxis` ones the value labels. Labels never rotate; the ones
+  that would overlap are thinned out.
+
+  **Grid**: `grid.show`, `grid.strokeDashArray`, `grid.xaxis.lines.show`, `grid.yaxis.lines.show` and
+  `grid.padding` (`top`, `right`, `bottom`, `left`, negative values allowed, as in ApexCharts).
+
+  **Text**: `dataLabels` (`enabled`, `formatter`, `offsetX`, `offsetY`, `style.fontSize`), `legend`
+  (`show`, `showForSingleSeries`, `position`, `horizontalAlign`, `fontSize`, `markers.size`,
+  `markers.shape`, `itemMargin`, `onItemClick.toggleDataSeries`; clicking an entry hides its series),
+  `tooltip` (`enabled`, `shared`, `intersect`, `theme` `light` or `dark`, `fillSeriesColor`, `x.show`,
+  `x.format`, `x.formatter`, `y.formatter`, `y.title.formatter`) and `title.text`, which names the chart
+  for assistive technology. Each chart also carries a hidden table with its data.
+
+  **Circular charts**: `plotOptions.pie` (`startAngle`, `endAngle`, `offsetX`, `offsetY`, `customScale`,
+  `donut.size`, `donut.labels` with `show`, `name`, `value` and `total`, `dataLabels.offset`),
+  `plotOptions.radialBar` (`startAngle`, `endAngle`, `hollow.size`, `track.show`,
+  `track.margin`, `track.strokeWidth`, `track.opacity`, `dataLabels` with `show`, `name`, `value` and
+  `total`, each taking `show`, `fontSize`, `fontWeight`, `color`, `offsetY` and `formatter`) and
+  `stroke.lineCap`. Hovering a donut slice shows its name and value in the middle.
+
+  **Radar**: `plotOptions.radar` (`size`, `offsetX`, `offsetY`), `xaxis.categories` for the spokes and
+  `yaxis` for the ring labels.
+
+  **responsive**: rules apply while the window is narrower than their `breakpoint`, the smaller
+  breakpoints last, as in ApexCharts.
+
+  Formatter functions receive the same arguments they do in ApexCharts: `(value, opts)` for data labels
+  and the tooltip's `y`, `(value, timestamp, opts)` for x labels and `(w)` for the gauge total, with
+  `w.config` and `w.globals.seriesTotals`.
   """
 
   use LineaUI.Component

@@ -467,6 +467,7 @@
 
   .linea-chart-stage {
     @apply relative w-full font-inter;
+    touch-action: pan-y;
   }
 
   .linea-chart-svg {
@@ -615,7 +616,7 @@
   }
 
   .linea-chart-legend {
-    @apply absolute flex flex-wrap items-center text-xs text-slate-500 dark:text-navy-200;
+    @apply absolute flex flex-wrap items-center text-slate-500 dark:text-navy-200;
   }
 
   .linea-chart-legend[data-position="bottom"] {
@@ -641,7 +642,7 @@
   }
 
   .linea-chart-legend-item {
-    @apply flex cursor-pointer items-center px-[5px] py-0.5 text-xs text-slate-500 transition-opacity dark:text-navy-200;
+    @apply flex cursor-pointer items-center text-slate-500 transition-opacity dark:text-navy-200;
   }
 
   .linea-chart-legend-item[aria-pressed="false"] {

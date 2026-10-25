@@ -1,14 +1,15 @@
 import {parseSpec, resolveFormatters} from "../lib/chart_formatters.js"
-import {applyUpdate, parseOptions, targets} from "../lib/chart_logic.js"
+import {applyUpdate, parseOptions, targets, widthOf} from "../lib/chart_logic.js"
 import {build} from "../lib/chart_render.js"
 import {estimateWidth} from "../lib/chart_scale.js"
+import {stageHtml} from "../lib/chart_stage.js"
 import {axisTipsHtml, overlaySvg, tooltipHtml} from "../lib/chart_tooltip.js"
 
 /**
- * A chart drawn in SVG from ApexCharts-shaped options, with no library behind it: the lines, bars,
- * rings and axes come from `lib/chart_*.js` and this hook only sizes the chart to its element, draws it,
- * follows the pointer for the tooltip and crosshair, toggles series from the legend and takes the
- * `linea:chart` pushes. The first draw plays a short entry animation (not under `prefers-reduced-motion`).
+ * A chart drawn in SVG from ApexCharts-shaped options, with no library behind it: the lines, bars, rings
+ * and axes come from `lib/chart_*.js`, and this hook sizes the chart to its element, draws it, follows
+ * the pointer for the tooltip and crosshair, toggles series from the legend and takes the `linea:chart`
+ * pushes. The first draw plays a short entry animation (not under `prefers-reduced-motion`).
  */
 
 const prepared = (el, options) => {
@@ -20,9 +21,7 @@ const prepared = (el, options) => {
 const measurer = (el) => {
   const context = document.createElement("canvas").getContext("2d")
   const family = getComputedStyle(el).fontFamily
-  return context
-    ? (text, size) => ((context.font = `${size}px ${family}`), context.measureText(String(text)).width)
-    : estimateWidth
+  return context ? (text, size) => ((context.font = `${size}px ${family}`), context.measureText(String(text)).width) : estimateWidth
 }
 
 const Chart = {
@@ -30,6 +29,7 @@ const Chart = {
     this.hidden = new Set()
     this.entering = true
     this.options = parseOptions(this.el.dataset.options)
+    this.el.style.width = widthOf(this.options?.chart?.width)
     this.key = this.keyOf()
     this.canvas = this.el.querySelector("[data-chart-canvas]")
     this.measure = measurer(this.el)
@@ -41,7 +41,7 @@ const Chart = {
     this.canvas.addEventListener("pointerdown", this.onMove)
     this.canvas.addEventListener("pointerleave", this.onLeave)
     this.canvas.addEventListener("click", this.onClick)
-    this.observer = new ResizeObserver(() => this.resized())
+    this.observer = new ResizeObserver(() => this.schedule())
     this.observer.observe(this.canvas)
     this.handleEvent("linea:chart", (payload) => this.apply(payload))
     this.resized()
@@ -49,10 +49,11 @@ const Chart = {
 
   updated() {
     const key = this.keyOf()
-    key !== this.key && ((this.key = key), (this.options = parseOptions(this.el.dataset.options)), this.draw())
+    key !== this.key && ((this.key = key), (this.options = parseOptions(this.el.dataset.options)), (this.el.style.width = widthOf(this.options?.chart?.width)), this.draw())
   },
 
   destroyed() {
+    cancelAnimationFrame(this.frame)
     this.observer?.disconnect()
     this.canvas?.removeEventListener("pointermove", this.onMove)
     this.canvas?.removeEventListener("pointerdown", this.onMove)
@@ -62,6 +63,11 @@ const Chart = {
 
   keyOf() {
     return `${this.el.dataset.options}|${this.el.dataset.formatters ?? ""}`
+  },
+
+  schedule() {
+    cancelAnimationFrame(this.frame)
+    this.frame = requestAnimationFrame(() => this.resized())
   },
 
   resized() {
@@ -78,18 +84,23 @@ const Chart = {
   },
 
   paint(options) {
-    const result = build(prepared(this.el, options), {
-      width: this.width,
-      viewport: window.innerWidth,
-      measure: this.measure,
-      uid: this.el.id,
-      hidden: [...this.hidden],
-    })
+    const env = {width: this.width, viewport: window.innerWidth, measure: this.measure, uid: this.el.id, hidden: [...this.hidden]}
+    const result = this.attempt(() => build(prepared(this.el, options), env))
+    result && this.reveal(result)
+  },
+
+  attempt(work) {
+    try {
+      return work()
+    } catch (error) {
+      console.error(`LineaUI.Chart #${this.el.id}`, error)
+      return null
+    }
+  },
+
+  reveal(result) {
     this.result = result
-    const position = result.legend?.position ?? "bottom"
-    this.canvas.innerHTML = `<div class="linea-chart-stage${this.entering ? " linea-chart--enter" : ""}" style="height:${result.height}px">${result.svg}${
-      result.legendHtml ? `<div class="linea-chart-legend" data-position="${position}" style="${result.legendStyle}">${result.legendHtml}</div>` : ""
-    }<div class="linea-chart-axistips" aria-hidden="true"></div><div class="linea-chart-tooltip" aria-hidden="true" hidden></div></div>`
+    this.canvas.innerHTML = stageHtml(result, {entering: this.entering && result.config.chart.animations?.enabled !== false})
     this.entering = false
     this.stage = this.canvas.firstElementChild
     this.el.style.minHeight = `${result.height + (result.config.chart.parentHeightOffset ?? 0)}px`
@@ -98,7 +109,7 @@ const Chart = {
   point(event) {
     const svg = this.stage?.querySelector("svg")
     const outside = event.target.closest?.(".linea-chart-legend")
-    svg && !outside && this.result?.probe && this.show(svg.getBoundingClientRect(), event)
+    svg && !outside && this.show(svg.getBoundingClientRect(), event)
   },
 
   show(box, event) {
@@ -121,27 +132,31 @@ const Chart = {
     tip.dataset.theme = hit.theme ?? "light"
     tip.hidden = false
     const room = this.stage.getBoundingClientRect()
-    const width = tip.offsetWidth
-    const height = tip.offsetHeight
-    const left = hit.anchor.x + 14 + width > room.width ? hit.anchor.x - 14 - width : hit.anchor.x + 14
-    const top = Math.min(Math.max(hit.anchor.y - height / 2, 0), Math.max(room.height - height, 0))
+    const flip = hit.anchor.x + 14 + tip.offsetWidth > room.width
+    const left = flip ? hit.anchor.x - 14 - tip.offsetWidth : hit.anchor.x + 14
+    const top = Math.min(Math.max(hit.anchor.y - tip.offsetHeight / 2, 0), Math.max(room.height - tip.offsetHeight, 0))
     tip.style.transform = `translate(${Math.max(left, 0)}px, ${top}px)`
   },
 
   activate(active) {
     this.stage.querySelectorAll(".is-active").forEach((node) => node.classList.remove("is-active"))
-    const selector = active?.slice !== undefined ? `.linea-chart-slice[data-series="${active.slice}"]` : active ? `.linea-chart-bar[data-series="${active.series}"][data-i="${active.slot}"]` : null
+    const selector =
+      active?.slice !== undefined
+        ? `.linea-chart-slice[data-series="${active.slice}"]`
+        : active
+          ? `.linea-chart-bar[data-series="${active.series}"][data-i="${active.slot}"]`
+          : null
     selector && this.stage.querySelector(selector)?.classList.add("is-active")
   },
 
   center(text) {
     const shown = text ?? this.result.text
+    const group = this.stage.querySelector(".linea-chart-center")
     const name = this.stage.querySelector("[data-center=name]")
     const value = this.stage.querySelector("[data-center=value]")
     name && (name.textContent = shown?.name ?? "")
     value && (value.textContent = shown?.value ?? "")
-    const group = this.stage.querySelector(".linea-chart-center")
-    group && group.setAttribute("opacity", text ? 1 : (this.result.text?.opacity ?? 1))
+    group?.setAttribute("opacity", text ? 1 : (this.result.text?.opacity ?? 1))
   },
 
   clear() {
@@ -155,8 +170,7 @@ const Chart = {
 
   legendClick(event) {
     const item = event.target.closest?.(".linea-chart-legend-item")
-    const index = item ? Number(item.dataset.series) : null
-    index !== null && this.result.config.legend.onItemClick?.toggleDataSeries !== false && this.toggle(index)
+    item && this.result.config.legend.onItemClick?.toggleDataSeries !== false && this.toggle(Number(item.dataset.series))
   },
 
   toggle(index) {

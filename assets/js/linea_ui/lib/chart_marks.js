@@ -83,10 +83,12 @@ const barNode = (p, point, series, d, direction, uid, defs) => {
   return h("path", {class: "linea-chart-bar", d, fill: paint.fill, "fill-opacity": paint.opacity, "data-series": series.index, "data-i": point.slot, "data-dir": direction, style: `--linea-chart-i:${point.slot}`})
 }
 
-const box = (p, series, point, start, size, from, to) =>
-  p.horizontal
-    ? {series: series.index, slot: point.slot, x: Math.min(from, to), y: start, w: Math.abs(to - from), h: size}
-    : {series: series.index, slot: point.slot, x: start, y: Math.min(from, to), w: size, h: Math.abs(to - from)}
+const box = (p, series, point, start, size, from, to) => ({
+  series: series.index,
+  slot: point.slot,
+  color: barColor(p, series, point),
+  ...(p.horizontal ? {x: Math.min(from, to), y: start, w: Math.abs(to - from), h: size} : {x: start, y: Math.min(from, to), w: size, h: Math.abs(to - from)}),
+})
 
 /** A bar series: columns (or rows), grouped, stacked or one per point. */
 export const barMark = (p, series, position, uid, defs, boxes) => {

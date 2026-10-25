@@ -8,11 +8,11 @@ export const PALETTE = ["#008FFB", "#00E396", "#FEB019", "#FF4560", "#775DD0", "
 
 const isObject = (value) => value !== null && typeof value === "object" && !Array.isArray(value)
 
-/** Deep merge: objects merge key by key, everything else (arrays included) replaces; `undefined` is skipped. */
+/** Deep merge: objects merge key by key, everything else (arrays included) replaces; `undefined`, and `null` over an object, are skipped. */
 export const merge = (base, extra) =>
   isObject(base) && isObject(extra)
     ? Object.entries(extra).reduce((result, [key, value]) => (value === undefined ? result : {...result, [key]: merge(result[key], value)}), {...base})
-    : extra === undefined
+    : extra === undefined || (extra === null && isObject(base))
       ? base
       : isObject(extra)
         ? merge({}, extra)

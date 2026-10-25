@@ -10,6 +10,7 @@ import {legendBox, legendHtml, legendStyle} from "./chart_legend.js"
 import {drawRadar, radarPlan, vertexAt} from "./chart_radar.js"
 import {estimateWidth, plain} from "./chart_scale.js"
 import {prepare} from "./chart_series.js"
+import {tableHtml} from "./chart_table.js"
 import {h, render} from "./chart_svg.js"
 
 const TITLES = {line: "Line chart", area: "Area chart", bar: "Bar chart", rangeBar: "Range bar chart", candlestick: "Candlestick chart", donut: "Donut chart", pie: "Pie chart", radialBar: "Radial bar chart", radar: "Radar chart"}
@@ -19,7 +20,7 @@ const call = (formatter, ...args) => (typeof formatter === "function" ? formatte
 const shell = (env, uid, title, desc, defs, layers, type) =>
   h(
     "svg",
-    {class: `linea-chart-svg linea-chart-${type}`, xmlns: "http://www.w3.org/2000/svg", width: env.width, height: env.height, viewBox: `0 0 ${env.width} ${env.height}`, role: "img", "aria-labelledby": `${uid}-title ${uid}-desc`},
+    {class: `linea-chart-svg linea-chart-type-${type}`, xmlns: "http://www.w3.org/2000/svg", width: env.width, height: env.height, viewBox: `0 0 ${env.width} ${env.height}`, role: "img", "aria-labelledby": `${uid}-title ${uid}-desc`},
     h("title", {id: `${uid}-title`}, title),
     h("desc", {id: `${uid}-desc`}, desc),
     h("defs", {}, defs),
@@ -136,6 +137,6 @@ export const build = (options, env) => {
   const finalHeight = parts.height ?? height
   const title = config.title?.text ?? TITLES[config.type] ?? "Chart"
   const svg = render(shell({width, height: finalHeight}, uid, title, parts.desc, parts.defs, parts.layers, config.type))
-  return {config, width, height: finalHeight, svg, legend: parts.legend, legendHtml: legendHtml(parts.legend), legendStyle: legendStyle(parts.legend), probe: parts.probe, text: parts.text, slices: parts.slices, layout: parts.layout, drawn: parts.drawn, data: parts.data, g: parts.g}
+  return {config, width, height: finalHeight, svg, legend: parts.legend, legendHtml: legendHtml(parts.legend), legendStyle: legendStyle(parts.legend), table: tableHtml(title, {data: parts.data, slices: parts.slices}), probe: parts.probe, text: parts.text, slices: parts.slices, layout: parts.layout, drawn: parts.drawn, data: parts.data, g: parts.g}
 }
 

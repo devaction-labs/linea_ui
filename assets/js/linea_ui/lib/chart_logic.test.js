@@ -1,6 +1,6 @@
 import assert from "node:assert/strict"
 import test from "node:test"
-import {applyUpdate, parseOptions, targets} from "./chart_logic.js"
+import {applyUpdate, parseOptions, targets, widthOf} from "./chart_logic.js"
 
 test("options are read from a JSON object only", () => {
   assert.deepEqual(parseOptions('{"chart":{"type":"bar"}}'), {chart: {type: "bar"}})
@@ -24,4 +24,13 @@ test("a payload merges options, then lays series over the current ones", () => {
   assert.deepEqual(applyUpdate({series: [1, 2]}, {series: [3, 4, 5]}).series, [3, 4, 5])
   assert.equal(applyUpdate(current, {}), current)
   assert.equal(applyUpdate(current, undefined), current)
+})
+
+test("chart.width sizes the element when it is a number or a CSS length", () => {
+  assert.equal(widthOf(120), "120px")
+  assert.equal(widthOf("50%"), "50%")
+  assert.equal(widthOf("12.5rem"), "12.5rem")
+  assert.equal(widthOf("auto"), "")
+  assert.equal(widthOf(undefined), "")
+  assert.equal(widthOf(-3), "")
 })

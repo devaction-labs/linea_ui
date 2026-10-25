@@ -33,44 +33,46 @@ const labelText = (value) => (value === undefined || value === null ? "" : Array
 const xValue = (kind, raw, index) =>
   kind === "datetime" ? toTime(raw ?? index) : kind === "numeric" ? (isNumber(Number(raw)) && raw !== undefined && raw !== null ? Number(raw) : index + 1) : index
 
-const rowsOf = (config, items) => {
-  const named = config.type === "rangeBar" || (items.length > 0 && items.every((list) => list.every((item) => typeof item.x === "string")))
-  const base = Array.isArray(config.xaxis.categories) && config.xaxis.categories.length > 0 ? config.xaxis.categories : config.labels
-  return named && !(base.length > 0)
-    ? [...new Set(items.flatMap((list) => list.map((item) => item.x)))]
-    : base
+const base = (config) => (Array.isArray(config.xaxis.categories) && config.xaxis.categories.length > 0 ? config.xaxis.categories : config.labels)
+
+const namedRows = (entries) => [...new Set(entries.flatMap((list) => list.map((item) => item.x)).filter((x) => typeof x === "string"))]
+
+const rowsOf = (config, entries) => {
+  const given = base(config)
+  return given.length > 0 ? given : namedRows(entries)
+}
+
+const slotOf = (config, rows, item, position) => (config.type === "rangeBar" && typeof item.x === "string" && rows.includes(item.x) ? rows.indexOf(item.x) : position)
+
+const pointOf = (config, kind, rows, item, position) => {
+  const slot = slotOf(config, rows, item, position)
+  const raw = kind === "category" ? undefined : (item.x ?? (kind === "datetime" ? rows[slot] : undefined))
+  const label = rows[slot] ?? (typeof item.x === "string" ? item.x : item.x === undefined ? slot + 1 : item.x)
+  return {...measure(config.type, item.y), x: xValue(kind, raw, slot), slot, label: labelText(label), fill: item.fill}
 }
 
 /**
- * The series of `config` as points. Returns `{kind, labels, series}`: `kind` is `category`, `numeric` or
- * `datetime`; `labels` the category text; each series has `name`, `index` (in the options, which keeps its
- * color when others are hidden), `color` and `points` of `{x, label, value, ...}`; `null` values stay as gaps.
+ * The series of `config` as points. Returns `{kind, labels, series, count}`: `kind` is `category`, `numeric`
+ * or `datetime`; `labels` the category text; each series has `name`, `index` (in the options, which keeps
+ * its color when others are hidden), `color` and `points` of `{x, slot, label, value, ...}`; `null` values
+ * stay as gaps.
  */
 export const prepare = (config, hidden = []) => {
   const kind = kindOf(config)
   const list = Array.isArray(config.series) ? config.series : []
-  const items = list.map((series) => (Array.isArray(series?.data) ? series.data : []).map(entry))
-  const rows = rowsOf(config, items)
-  const keyed = config.type === "rangeBar" && rows.length > 0 && items.some((entries) => entries.some((item) => typeof item.x === "string"))
+  const entries = list.map((series) => (Array.isArray(series?.data) ? series.data : []).map(entry))
+  const rows = rowsOf(config, entries)
   const series = list.map((source, index) => ({
     name: source?.name ?? `series-${index + 1}`,
     index,
     color: colorAt(config, index),
     hidden: hidden.includes(index),
-    points: items[index].map((item, position) => {
-      const slot = keyed ? rows.indexOf(item.x) : position
-      const raw = kind === "category" ? undefined : (item.x ?? (kind === "datetime" ? rows[slot] : undefined))
-      return {
-        ...measure(config.type, item.y),
-        x: xValue(kind, raw, slot),
-        slot,
-        label: labelText(rows[slot] ?? (typeof item.x === "string" ? item.x : item.x === undefined ? slot + 1 : item.x)),
-        fill: item.fill,
-      }
-    }),
+    points: entries[index].map((item, position) => pointOf(config, kind, rows, item, position)),
   }))
-  const count = Math.max(rows.length, 0, ...series.map((one) => one.points.reduce((top, point) => Math.max(top, point.slot + 1), 0)))
-  return {kind, labels: Array.from({length: count}, (_, slot) => labelText(rows[slot] ?? series.flatMap((one) => one.points).find((point) => point.slot === slot)?.label ?? slot + 1)), series, count}
+  const points = series.flatMap((one) => one.points)
+  const count = Math.max(rows.length, 0, ...points.map((point) => point.slot + 1))
+  const labels = Array.from({length: count}, (_, slot) => labelText(rows[slot] ?? points.find((point) => point.slot === slot)?.label ?? slot + 1))
+  return {kind, labels, series, count}
 }
 
 /**

@@ -30,3 +30,7 @@ export const applyUpdate = (options, payload) => {
   const withOptions = isObject(payload?.options) ? merge(options, payload.options) : options
   return Array.isArray(payload?.series) ? {...withOptions, series: mergeSeries(withOptions.series, payload.series)} : withOptions
 }
+
+/** The CSS width a `chart.width` option asks for: a number is pixels, `"120px"` or `"50%"` pass, anything else is none. */
+export const widthOf = (spec) =>
+  typeof spec === "number" && spec > 0 ? `${spec}px` : /^\d+(\.\d+)?(px|%|rem|em)$/.test(String(spec)) ? String(spec) : ""

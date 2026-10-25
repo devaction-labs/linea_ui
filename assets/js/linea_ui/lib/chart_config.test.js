@@ -6,6 +6,8 @@ test("merge is deep for objects and replaces arrays and scalars", () => {
   assert.deepEqual(merge({a: {b: 1, c: 2}, d: [1, 2]}, {a: {b: 9}, d: [3]}), {a: {b: 9, c: 2}, d: [3]})
   assert.deepEqual(merge({a: 1}, {a: undefined, b: undefined}), {a: 1})
   assert.deepEqual(merge({a: 1}, {a: {b: 2}}), {a: {b: 2}})
+  assert.deepEqual(merge({a: {b: 1}}, {a: null}), {a: {b: 1}})
+  assert.deepEqual(merge({a: 1}, {a: null}), {a: null})
 })
 
 test("pick reads a list by index and passes scalars through", () => {
@@ -38,6 +40,12 @@ test("a sparkline hides axes, legend and grid", () => {
   assert.equal(config.grid.show, false)
   assert.equal(config.xaxis.labels.show, false)
   assert.equal(config.dataLabels.enabled, false)
+})
+
+test("null sections in the options leave the defaults alone", () => {
+  const config = configure({chart: null, xaxis: null, series: null})
+  assert.equal(config.type, "line")
+  assert.equal(config.xaxis.show, true)
 })
 
 test("only the first y axis counts", () => {

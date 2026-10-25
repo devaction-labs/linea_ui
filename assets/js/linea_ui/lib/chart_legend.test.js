@@ -44,5 +44,5 @@ test("the markup is a toggle button per entry, escaped", () => {
   assert.equal(html.includes('data-series="1" aria-pressed="false"'), true)
   assert.equal(html.includes('data-shape="square"'), true)
   assert.equal(legendHtml({items: []}), "")
-  assert.equal(legendStyle({align: "left"}), "justify-content:flex-start")
+  assert.equal(legendStyle({align: "left", font: 12}), "justify-content:flex-start;font-size:12px")
 })
