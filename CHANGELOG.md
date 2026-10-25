@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.5.1
+
+- New `otp_input/1`: a one-time code of single-character boxes. Typing moves to the next box, Backspace on an empty box goes back, the arrows, Home and End move, and a paste or an autofill spreads over the boxes (a text as long as the code always starts at the first). The code is submitted through a hidden input named like the field, which fires `input` so `phx-change` runs. `length` (default 6), `mode` (`numeric` or `alphanumeric`), `size` (`sm md lg`; `md` is the 54px box of the Signetum canvas), `mask` (dots), `separator` (a dash after a position, or a list of positions), `autofocus`, `disabled`, `on_complete` and `target` (pushed with `%{"id", "name", "value"}` when every box is filled), `field`, `label`, `help`, `errors`, `aria_label` and `digit_label`. The group has `role="group"` and every box an accessible name and `autocomplete="one-time-code"`. Hook `LineaUI.Otp`; its pure logic is in `assets/js/linea_ui/lib/otp_logic.js`.
+- `scroll_area`: `stick_bottom` keeps a box that grows at its end (a chat, a stream of replies) scrolled to it while the reader has not scrolled up, with the new hook `LineaUI.ScrollBottom`. It needs a stable `id`.
+- `right_sidebar`: `persist_tab` remembers, for the session, the control with `data-tab` that was clicked last and clicks it again when the drawer mounts, so the drawer reopens on the panel the person chose after a live navigation. The `sessionStorage` key is derived from the drawer's `id`.
+
 ## 0.5.0
 
 - **Breaking:** `datetime_picker/1` is now the new component below, not the flatpickr one of `date_picker`. It still takes `name`, `field`, `placeholder`, `min_time`, `max_time` and, as aliases, `time_24hr`, `minute_step` and `default_hour`, but the value is a wall-clock `2026-10-14T10:30` (it was `2026-10-14 10:30`) and the panel is the new one.

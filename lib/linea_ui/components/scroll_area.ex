@@ -11,6 +11,17 @@ defmodule LineaUI.Components.ScrollArea do
   The height comes from `class` (`max-h-64`, `h-full`...). Without the component, the same
   scrollbar is the `scrollbar-sm` class on any box that overflows; `scrollbar-sm scrollbar-always`
   keeps the thumb shown, and LineOne's `is-scrollbar-hidden` hides it.
+
+  ## Pinned to the bottom
+
+  `stick_bottom` keeps a list that grows at its end, a chat or a stream of replies, scrolled to its
+  last item: the `LineaUI.ScrollBottom` hook scrolls down when the box mounts and each time the
+  server patches it, unless the reader scrolled up to read (within 32px of the end counts as the
+  end; scrolling back down pins it again). It needs a stable `id`.
+
+      <.scroll_area id="messages" stick_bottom class="h-96 px-4 py-5">
+        <.message :for={message <- @messages} message={message} />
+      </.scroll_area>
   """
 
   use LineaUI.Component
@@ -46,6 +57,12 @@ defmodule LineaUI.Components.ScrollArea do
     doc:
       "Makes the box reachable with Tab, so the keyboard can scroll it (when nothing inside takes focus)."
 
+  attr :id, :string, default: nil, doc: "Required with `stick_bottom`, and it must not change."
+
+  attr :stick_bottom, :boolean,
+    default: false,
+    doc: "Keeps the box scrolled to its end when content is added, unless the reader scrolled up."
+
   attr :class, :any, default: nil, doc: "Its size (`max-h-64`, `h-full`) and padding."
   attr :rest, :global
   slot :inner_block, required: true
@@ -53,6 +70,8 @@ defmodule LineaUI.Components.ScrollArea do
   def scroll_area(assigns) do
     ~H"""
     <div
+      id={@id}
+      phx-hook={@stick_bottom && "LineaUI.ScrollBottom"}
       class={
         merge([
           orientation_class(@orientation),

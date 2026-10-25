@@ -1,6 +1,14 @@
 import test from "node:test"
 import assert from "node:assert/strict"
-import {breakpointName, clockText, initialCollapsed, initialOpen, isMobile, modeOn, modeValue, place, railValue, side, smAndUp, storedCollapsed, storedValue, tipSpot, xlAndUp} from "./shell_logic.js"
+import {breakpointName, clockText, initialCollapsed, initialOpen, isMobile, modeOn, modeValue, place, railValue, side, smAndUp, storedCollapsed, storedValue, tabChoice, tabKey, tipSpot, xlAndUp} from "./shell_logic.js"
+
+test("a right sidebar keeps its chosen panel under a key of its id", () => {
+  assert.equal(tabKey("right-sidebar"), "linea-right-tab:right-sidebar")
+  assert.notEqual(tabKey("a"), tabKey("b"))
+  assert.equal(tabChoice("activity"), "activity")
+  assert.equal(tabChoice(""), null)
+  assert.equal(tabChoice(undefined), null)
+})
 
 test("the framed menu starts as the person left it, and never collapsed on a phone", () => {
   assert.equal(isMobile(767), true)

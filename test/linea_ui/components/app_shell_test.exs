@@ -311,6 +311,22 @@ defmodule LineaUI.Components.AppShellTest do
     assert [_] = find(html, "[data-drawer-close]") |> Enum.to_list()
   end
 
+  test "right_sidebar remembers the chosen panel only with persist_tab" do
+    html = render(~H|<.right_sidebar id="rs">Body</.right_sidebar>|)
+    assert find(html, "#rs") |> LazyHTML.attribute("data-persist-tab") == []
+
+    html =
+      render(~H"""
+      <.right_sidebar id="rs" persist_tab>
+        Body
+        <:footer><button data-tab="home">Home</button></:footer>
+      </.right_sidebar>
+      """)
+
+    assert find(html, "#rs") |> LazyHTML.attribute("data-persist-tab") == [""]
+    assert [_] = find(html, "#rs button[data-tab=home]") |> Enum.to_list()
+  end
+
   test "page_header renders the title and the breadcrumb" do
     html =
       render(~H"""
