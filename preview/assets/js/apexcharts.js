@@ -1,7 +1,3 @@
-import ApexCharts from "apexcharts"
-
-window.ApexCharts = ApexCharts
-
 const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
 const pad = (n) => String(n).padStart(2, "0")
 const stamp = (value) => {
@@ -20,9 +16,6 @@ const formatters = {
     options.xaxis.labels = {formatter: (val) => stamp(val)}
   },
   "chart-7": (options) => {
-    options.xaxis.labels = {formatter: (val) => parseFloat(val).toFixed(1)}
-  },
-  "chart-8": (options) => {
     options.plotOptions.radialBar.dataLabels.total.formatter = (w) => w.config.series.reduce((s, v) => s + v)
   },
 }

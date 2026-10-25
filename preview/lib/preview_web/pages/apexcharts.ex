@@ -47,11 +47,9 @@ defmodule PreviewWeb.Pages.Apexcharts do
           {"Radar Chart", candlestick()}
         ],
         right: [
-          {"Area Chart", stacked_bar()},
-          {"Line Chart", scatter()},
-          {"Column Chart", radial_bar()},
-          {"Radialbar Chart", radar()},
-          {"Polar Area Chart", polar_area()}
+          {"Stacked Column Chart", stacked_bar()},
+          {"Radialbar Chart", radial_bar()},
+          {"Radar Chart", radar()}
         ]
       )
 
@@ -85,13 +83,7 @@ defmodule PreviewWeb.Pages.Apexcharts do
     ~H"""
     <.example title={@title} class="max-w-xl">
       <p>
-        <a
-          href="https://github.com/apexcharts/apexcharts.js"
-          class="font-normal text-primary transition-colors hover:text-primary-focus dark:text-accent-light dark:hover:text-accent"
-        >
-          Apexcharts
-        </a>
-        a modern JavaScript charting library that allows you to build interactive data visualizations with simple API and many samples. Check out code for detail of usage.
+        Drawn as SVG by the package, from options shaped like the ApexCharts ones: no charting library to install.
       </p>
       <div class="mt-5">
         <.chart id={@id} options={@options} />
@@ -230,70 +222,6 @@ defmodule PreviewWeb.Pages.Apexcharts do
     }
   end
 
-  defp scatter do
-    %{
-      series: [
-        %{
-          name: "SAMPLE A",
-          data: [
-            [16.4, 5.4],
-            [21.7, 2],
-            [27.1, 2.3],
-            [16.4, 0],
-            [13.6, 3.7],
-            [10.9, 5.2],
-            [16.4, 6.5],
-            [10.9, 0],
-            [24.5, 7.1],
-            [10.9, 0],
-            [8.1, 4.7]
-          ]
-        },
-        %{
-          name: "SAMPLE B",
-          data: [
-            [36.4, 13.4],
-            [1.6, 10],
-            [9.9, 2],
-            [7.1, 15],
-            [1.4, 0],
-            [3.6, 13.7],
-            [1.9, 15.2],
-            [6.4, 16.5],
-            [0.9, 10],
-            [4.5, 17.1],
-            [10.9, 10]
-          ]
-        },
-        %{
-          name: "SAMPLE C",
-          data: [
-            [21.7, 3],
-            [32.6, 3],
-            [27.1, 4],
-            [29.6, 6],
-            [31.6, 8],
-            [21.6, 5],
-            [20.9, 4],
-            [22.4, 0],
-            [32.6, 10.3],
-            [29.7, 20.8],
-            [24.5, 0.8]
-          ]
-        }
-      ],
-      chart: %{
-        height: 350,
-        type: "scatter",
-        zoom: %{enabled: true, type: "xy"},
-        toolbar: @no_toolbar
-      },
-      xaxis: %{tickAmount: 10},
-      yaxis: %{tickAmount: 7},
-      legend: %{position: "bottom", horizontalAlign: "left", fontSize: "14px"}
-    }
-  end
-
   defp radial_bar do
     %{
       colors: ["#4ade80", "#f43f5e", "#a855f7"],
@@ -332,22 +260,6 @@ defmodule PreviewWeb.Pages.Apexcharts do
       fill: %{opacity: 0.1},
       markers: %{size: 0},
       xaxis: %{categories: ~w(2011 2012 2013 2014 2015 2016)}
-    }
-  end
-
-  defp polar_area do
-    %{
-      series: [42, 47, 52, 58, 65],
-      chart: %{width: 380, type: "polarArea", animations: %{enabled: false}},
-      labels: ["Rose A", "Rose B", "Rose C", "Rose D", "Rose E"],
-      fill: %{opacity: 1},
-      stroke: %{width: 1},
-      yaxis: %{show: false},
-      legend: %{position: "bottom", horizontalAlign: "center"},
-      plotOptions: %{polarArea: %{rings: %{strokeWidth: 0}, spokes: %{strokeWidth: 0}}},
-      theme: %{
-        monochrome: %{color: "#F000B9", enabled: true, shadeTo: "light", shadeIntensity: 0.6}
-      }
     }
   end
 end

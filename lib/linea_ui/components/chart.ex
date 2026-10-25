@@ -1,7 +1,7 @@
 defmodule LineaUI.Components.Chart do
   @moduledoc """
-  An ApexCharts chart with LineOne's skin (axis labels, grid lines, legend, tooltips, light
-  and dark).
+  A chart drawn by the package itself, as SVG, with LineOne's look (axis labels, grid lines, legend,
+  tooltips, light and dark). It needs no JavaScript library: the `LineaUI.Chart` hook is all there is.
 
       <.chart
         id="sales"
@@ -13,19 +13,15 @@ defmodule LineaUI.Components.Chart do
         }}
       />
 
-  The app provides the library: install `apexcharts` and set `window.ApexCharts` before the
-  LiveView connects.
-
-      import ApexCharts from "apexcharts"
-      window.ApexCharts = ApexCharts
-
-  `options` is any ApexCharts options object, as a map or a JSON string. When it changes on
-  the server the chart is updated in place. To stream data without re-sending the whole
-  options, push an event:
+  `options` is an ApexCharts-shaped options object, as a map or a JSON string (the supported subset is
+  listed below; anything else is ignored). The chart fills the width of its element and redraws when
+  the element resizes. When `options` changes on the server the chart is redrawn in place. To stream
+  data without re-sending the whole options, push an event:
 
       push_event(socket, "linea:chart", %{id: "sales", series: [%{data: [1, 2, 3]}]})
 
-  `series` and/or `options` in the payload are applied with `updateSeries`/`updateOptions`.
+  `series` is laid over the current series by position (an entry that is a map keeps the name and the
+  settings it does not repeat) and `options` is merged into the current options.
 
   JSON has no functions, so formatters are named and resolved in the browser. `formatters` maps
   an options path to a built-in formatter, and a bare `formatter: "name"` string inside the
@@ -60,13 +56,81 @@ defmodule LineaUI.Components.Chart do
       window.addEventListener("linea:chart:options", ({target, detail}) => {
         target.id === "sales" && (detail.options.yaxis = {labels: {formatter: (v) => "$" + v}})
       })
+
+  ## Supported options
+
+  The engine reads this subset of the ApexCharts options. Everything else is ignored, never an error.
+  Colors that belong to the theme (axis text, grid, tooltip card, gauge tracks, radar rings) follow
+  LineOne's light and dark skin and cannot be set from the options.
+
+  **Types** (`chart.type`): `line`, `area`, `bar` (columns, or rows with `plotOptions.bar.horizontal`),
+  `rangeBar`, `candlestick`, `donut`, `pie`, `radialBar` and `radar`. `polarArea` is drawn as a pie and
+  any other type as a line.
+
+  **chart**: `height` (a number, `"200px"`, a share of the width such as `"50%"`, or `"auto"`), `width` (a
+  number or text such as `"120px"` that sizes the element; otherwise the chart fills it), `stacked`,
+  `stackType` (`normal` or `100%`), `sparkline.enabled`, `dropShadow` (`enabled`, `top`, `left`, `blur`,
+  `color`, `opacity`), `animations.enabled`, `parentHeightOffset`. The entry animation is short and
+  is skipped under `prefers-reduced-motion`.
+
+  **Data**: `series` (`[%{name, data}]` where `data` is numbers, `null` for a gap, `%{x, y}` or `[x, y]`;
+  candlestick `y` is `[open, high, low, close]`, range bar `y` is `[start, end]`; donut, pie and radial
+  bar take a list of numbers), `labels` (slice names), `colors`, `xaxis.categories`. Per-series chart
+  types (combo charts) and several y axes are not supported; the first `yaxis` entry is the axis.
+
+  **Lines and areas**: `stroke` (`show`, `curve` `smooth`, `straight` or `stepline`, `width`, `colors`,
+  `dashArray`, `lineCap`; each may be a list per series), `markers` (`size`, `colors`, `hover.size`,
+  `hover.sizeOffset`), `fill` (`type` `solid` or `gradient`, `colors`, `opacity`, and `gradient` with
+  `type` `vertical`, `horizontal`, `diagonal1` or `diagonal2`, `shade`, `shadeIntensity`, `opacityFrom`,
+  `opacityTo`, `stops`, `inverseColors`, `gradientToColors`). A gradient on a `line` chart paints the
+  stroke left to right.
+
+  **Bars**: `plotOptions.bar` with `horizontal`, `columnWidth` and `barHeight` (a share such as `"55%"`,
+  a number meaning the same percentage, or pixels as `"24px"`), `borderRadius`, `borderRadiusApplication`,
+  `distributed`, `rangeBarOverlap` and `dataLabels.position` (`center` or `top`). A stacked bar rounds
+  the ends of the whole pile. `plotOptions.candlestick.colors` takes `upward` and `downward`.
+
+  **Axes**: `xaxis` (`type` `category`, `datetime` or `numeric`, `categories`, `min`, `max`, `tickAmount`,
+  `position` `top`, `show`, `labels` with `show`, `formatter`, `format` for dates such as `"dd MMM"`,
+  `hideOverlappingLabels`, `offsetX`, `offsetY`, `style.fontSize`, `axisBorder.show`, `axisTicks.show`,
+  `crosshairs.show`, `tooltip.enabled`) and `yaxis` (`show`, `min`, `max`, `tickAmount`, `labels` with the
+  same keys, `axisBorder.show`, `axisTicks.show`, `tooltip.enabled`). For a horizontal bar the `yaxis`
+  options drive the category labels and the `xaxis` ones the value labels. Labels never rotate; the ones
+  that would overlap are thinned out.
+
+  **Grid**: `grid.show`, `grid.strokeDashArray`, `grid.xaxis.lines.show`, `grid.yaxis.lines.show` and
+  `grid.padding` (`top`, `right`, `bottom`, `left`, negative values allowed, as in ApexCharts).
+
+  **Text**: `dataLabels` (`enabled`, `formatter`, `offsetX`, `offsetY`, `style.fontSize`), `legend`
+  (`show`, `showForSingleSeries`, `position`, `horizontalAlign`, `fontSize`, `markers.size`,
+  `markers.shape`, `itemMargin`, `onItemClick.toggleDataSeries`; clicking an entry hides its series),
+  `tooltip` (`enabled`, `shared`, `intersect`, `theme` `light` or `dark`, `fillSeriesColor`, `x.show`,
+  `x.format`, `x.formatter`, `y.formatter`, `y.title.formatter`) and `title.text`, which names the chart
+  for assistive technology. Each chart also carries a hidden table with its data.
+
+  **Circular charts**: `plotOptions.pie` (`startAngle`, `endAngle`, `offsetX`, `offsetY`, `customScale`,
+  `donut.size`, `donut.labels` with `show`, `name`, `value` and `total`, `dataLabels.offset`),
+  `plotOptions.radialBar` (`startAngle`, `endAngle`, `hollow.size`, `track.show`,
+  `track.margin`, `track.strokeWidth`, `track.opacity`, `dataLabels` with `show`, `name`, `value` and
+  `total`, each taking `show`, `fontSize`, `fontWeight`, `color`, `offsetY` and `formatter`) and
+  `stroke.lineCap`. Hovering a donut slice shows its name and value in the middle.
+
+  **Radar**: `plotOptions.radar` (`size`, `offsetX`, `offsetY`), `xaxis.categories` for the spokes (their
+  labels are `#a8a8a8` unless `xaxis.labels.style.colors` says otherwise) and `yaxis` for the ring labels.
+
+  **responsive**: rules apply while the window is narrower than their `breakpoint`, the smaller
+  breakpoints last, as in ApexCharts.
+
+  Formatter functions receive the same arguments they do in ApexCharts: `(value, opts)` for data labels
+  and the tooltip's `y`, `(value, timestamp, opts)` for x labels and `(w)` for the gauge total, with
+  `w.config` and `w.globals.seriesTotals`.
   """
 
   use LineaUI.Component
 
   @doc """
   Renders a chart. The `LineaUI.Chart` hook draws it into an inner element LiveView leaves
-  alone, and redraws it in place (`updateOptions`) whenever the `options` assign changes.
+  alone, and redraws it in place whenever the `options` assign changes.
 
       <.chart
         id="revenue"
@@ -86,14 +150,13 @@ defmodule LineaUI.Components.Chart do
       push_event(socket, "linea:chart", %{id: "revenue", series: [%{data: [1, 2, 3]}]})
 
   Browser event: `linea:chart:options` (bubbling, on the chart element) fires before each
-  draw with `detail.options`, the place to add JavaScript formatters. `data-state` on the
-  element is `ready`, or `waiting` until `window.ApexCharts` exists.
+  draw with `detail.options`, the place to add JavaScript formatters.
   """
   attr(:id, :string, required: true, doc: "DOM id; also what `push_event` payloads target.")
 
   attr(:options, :any,
     required: true,
-    doc: "ApexCharts options, a map (encoded to JSON) or an already encoded JSON string."
+    doc: "ApexCharts-shaped options, a map (encoded to JSON) or an already encoded JSON string."
   )
 
   attr(:formatters, :map,
