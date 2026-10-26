@@ -55,6 +55,7 @@ defmodule LineaUI do
     divider: LineaUI.Components.Divider,
     drawer: LineaUI.Components.Drawer,
     dropdown: LineaUI.Components.Dropdown,
+    email: LineaUI.Components.Email,
     empty_state: LineaUI.Components.EmptyState,
     fab: LineaUI.Components.Fab,
     filter_menu: LineaUI.Components.FilterMenu,
