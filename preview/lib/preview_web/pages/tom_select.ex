@@ -164,6 +164,22 @@ defmodule PreviewWeb.Pages.TomSelect do
         </.form>
       </div>
     </.example>
+    <.example title="Pillbox (one line, +N)" class="max-w-xl">
+      <.intro />
+      <div class="inline-space mt-5">
+        <.select
+          id="tom-pillbox"
+          name="pillbox"
+          label="Select Countries"
+          options={@states}
+          value={~w(AL AK AZ AR CA CO CT DE)}
+          multiple
+          removable
+          overflow="count"
+          placeholder="Select a state..."
+        />
+      </div>
+    </.example>
     <.example title="Custom HTML" class="max-w-xl">
       <.intro />
       <div class="inline-space mt-5">

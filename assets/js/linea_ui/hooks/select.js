@@ -11,6 +11,9 @@ import {escapeHtml} from "../lib/date_picker_view.js"
 
 const COMMANDS = ["open", "close", "toggle"]
 
+/** The width kept for typing in a pillbox that has chips. */
+const MIN_INPUT_PX = 48
+
 const readValues = (el) => JSON.parse(el.dataset.value || "[]")
 
 export const Listbox = {
@@ -52,6 +55,7 @@ export const Listbox = {
       window.addEventListener(`phx:linea:${name}`, this.onPushed)
     })
     this.refresh()
+    this.watchFit()
   },
 
   updated() {
@@ -65,6 +69,7 @@ export const Listbox = {
 
   destroyed() {
     clearTimeout(this.searchTimer)
+    this.fitObserver?.disconnect()
     COMMANDS.forEach((name) => window.removeEventListener(`phx:linea:${name}`, this.onPushed))
   },
 
@@ -285,6 +290,58 @@ export const Listbox = {
     control.querySelectorAll("[data-ts-item]").forEach((chip) => chip.remove())
     const input = this.control()
     this.values.forEach((value) => input.insertAdjacentElement("beforebegin", this.chip(value)))
+    this.fit()
+  },
+
+  counts() {
+    return this.multiple() && this.el.dataset.overflow === "count"
+  },
+
+  watchFit() {
+    if (!this.counts() || typeof ResizeObserver === "undefined") return
+    this.fitObserver = new ResizeObserver(() => this.fit())
+    this.fitObserver.observe(this.q(".ts-control"))
+    this.fit()
+  },
+
+  /** Pillbox: keep the chips that fit on the one line and sum the rest up in a `+N` chip. */
+  fit() {
+    if (!this.counts()) return
+    const control = this.q(".ts-control")
+    const input = this.control()
+    const chips = [...control.querySelectorAll("[data-ts-item]")]
+    const badge = this.badge(control, input)
+    chips.forEach((chip) => (chip.hidden = false))
+    badge.hidden = true
+    const style = getComputedStyle(control)
+    const clear = control.querySelector(".clear-button")
+    const room =
+      control.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight) -
+      (parseFloat(style.getPropertyValue("--ts-pr-caret")) || 0) - (clear?.offsetWidth ?? 0) - MIN_INPUT_PX
+    const widths = chips.map((chip) => chip.offsetWidth + (parseFloat(getComputedStyle(chip).marginRight) || 0))
+    const total = widths.reduce((sum, width) => sum + width, 0)
+    if (total <= room) return
+    let keep = chips.length
+    let used = total
+    while (keep > 0) {
+      badge.textContent = `+${chips.length - keep}`
+      badge.hidden = false
+      const width = badge.offsetWidth + (parseFloat(getComputedStyle(badge).marginRight) || 0)
+      if (used + width <= room) break
+      keep -= 1
+      used -= widths[keep]
+    }
+    chips.forEach((chip, index) => (chip.hidden = index >= keep))
+    badge.textContent = `+${chips.length - keep}`
+    badge.hidden = keep === chips.length
+    badge.title = chips.slice(keep).map((chip) => this.labelOf(chip.dataset.value)).join(", ")
+  },
+
+  badge(control, input) {
+    const badge = control.querySelector(".ts-more") ?? Object.assign(document.createElement("div"), {className: "item ts-more"})
+    badge.hidden = true
+    input.insertAdjacentElement("beforebegin", badge)
+    return badge
   },
 
   chip(value) {

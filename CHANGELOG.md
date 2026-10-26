@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- `select/1` with `multiple` takes `overflow="count"`, a pillbox: the control stays on one line and does not grow; the chips that do not fit are hidden and a `+N` chip (its `title` lists the hidden labels) tells how many. It refits when chips are added or removed and when the control is resized. The default `overflow="wrap"` keeps the chips breaking into more lines.
+
 ## 0.6.3
 
 (0.6.2 shipped the first pass of this restyle; this is the finished one.)

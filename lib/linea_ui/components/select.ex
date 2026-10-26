@@ -141,6 +141,12 @@ defmodule LineaUI.Components.Select do
 
   attr :max, :integer, default: nil, doc: "How many options can be chosen."
 
+  attr :overflow, :string,
+    default: "wrap",
+    values: ~w(wrap count),
+    doc:
+      "Listbox with `multiple` only: `wrap` lets the chips break into more lines and the control grow; `count` keeps one line (a pillbox): the chips that do not fit are hidden and a `+N` chip tells how many."
+
   attr :no_results, :string,
     default: "No results found",
     doc: "Shown when the search matches nothing; `%{query}` is replaced by what was typed."

@@ -19,6 +19,7 @@ defmodule LineaUI.Components.Select.Listbox do
     count = length(values)
 
     assigns
+    |> assign_new(:overflow, fn -> "wrap" end)
     |> assign_new(:search, fn -> "control" end)
     |> assign_new(:search_placeholder, fn -> "Search…" end)
     |> assign(
@@ -93,6 +94,7 @@ defmodule LineaUI.Components.Select.Listbox do
         data-persist={bool(@persist)}
         data-restore={bool(@restore_on_backspace)}
         data-max={@max}
+        data-overflow={@multiple && @overflow == "count" && "count"}
         data-name={@name}
         data-value={Pickers.json(@values)}
         data-on-search={@on_search}

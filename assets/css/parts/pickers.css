@@ -5,6 +5,12 @@
 @keyframes fpFadeInDown { 0% { opacity: 0; transform: translateY(-20px) } to { opacity: 1; transform: translate(0) } }
 
 /* Select and tags: tom-select. */
+.ts-wrapper[data-overflow="count"] .ts-control { flex-wrap: nowrap; }
+.ts-wrapper[data-overflow="count"] .ts-control > :is(.item, .ts-more) { flex-shrink: 0; white-space: nowrap; }
+.ts-wrapper[data-overflow="count"] .ts-control > [hidden] { display: none !important; }
+.ts-wrapper[data-overflow="count"] .ts-control > input { flex: 1 1 3rem; min-width: 3rem; width: auto !important; }
+.ts-wrapper[data-overflow="count"].multi.has-items .ts-control { padding-bottom: 6px; }
+.ts-wrapper[data-overflow="count"] .ts-control > .ts-more { font-variant-numeric: tabular-nums; cursor: pointer; }
 .ts-control {
   border:1px solid #d0d0d0;
   border-radius:3px;
