@@ -153,6 +153,35 @@
     --toast-edge: color-mix(in oklab, var(--toast-tint) 28%, white);
   }
 
+  /* roomier, with a dot of its color and a countdown line along the bottom edge */
+  .toastify.toastify:not(.rich, .html) {
+    @apply flex items-center gap-3;
+    padding: 15px 22px;
+    min-width: 17rem;
+  }
+
+  .toastify.toastify:not(.rich, .html):is(.primary, .secondary, .info, .success, .warning, .error)::before {
+    content: "";
+    @apply size-2 shrink-0 rounded-full;
+    background: var(--toast-tint);
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--toast-tint) 20%, transparent);
+  }
+
+  .toastify.toastify:not(.rich, .html) .toast-close {
+    margin: 0 -8px 0 auto;
+    padding-left: 0;
+  }
+
+  .toastify.toastify:not(.rich, .html) .toast-timer {
+    @apply inset-x-0 bottom-0 h-[3px] rounded-none;
+    background: none;
+  }
+
+  .toastify.toastify:not(.rich, .html) .toast-timer > i {
+    @apply rounded-none;
+    background-color: color-mix(in oklab, var(--toast-tint) 55%, transparent);
+  }
+
   .toastify .toast-close {
     @apply inline-flex size-6 cursor-pointer items-center justify-center rounded-full border-0 bg-transparent p-0 align-middle transition-colors;
     color: inherit;
