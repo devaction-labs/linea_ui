@@ -166,17 +166,38 @@ defmodule PreviewWeb.Pages.TomSelect do
     </.example>
     <.example title="Pillbox (one line, +N)" class="max-w-xl">
       <.intro />
-      <div class="inline-space mt-5">
+      <div class="mt-5 grid grid-cols-2 gap-4">
         <.select
           id="tom-pillbox"
           name="pillbox"
-          label="Select Countries"
+          label="Footer"
           options={@states}
           value={~w(AL AK AZ AR CA CO CT DE)}
           multiple
           removable
-          overflow="count"
+          footer
           placeholder="Select a state..."
+        />
+        <.select
+          id="tom-pillbox-sm"
+          name="pillbox_sm"
+          label="Compact"
+          size="sm"
+          options={@states}
+          value={~w(AL AK AZ AR)}
+          multiple
+          removable
+          placeholder="Select a state..."
+        />
+        <.select
+          id="tom-pillbox-long"
+          name="pillbox_long"
+          label="Long name"
+          options={[{"An extremely long option name that never fits in a pill", "x"}, {"Short", "s"}]}
+          value={~w(x s)}
+          multiple
+          removable
+          placeholder="Choose..."
         />
       </div>
     </.example>

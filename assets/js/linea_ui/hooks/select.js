@@ -334,7 +334,9 @@ export const Listbox = {
     chips.forEach((chip, index) => (chip.hidden = index >= keep))
     badge.textContent = `+${chips.length - keep}`
     badge.hidden = keep === chips.length
-    badge.title = chips.slice(keep).map((chip) => this.labelOf(chip.dataset.value)).join(", ")
+    const names = chips.slice(keep).map((chip) => this.labelOf(chip.dataset.value)).join(", ")
+    badge.title = names
+    badge.setAttribute("aria-label", `${chips.length - keep} ${this.el.dataset.moreLabel || "more"}: ${names}`)
   },
 
   badge(control, input) {
@@ -356,7 +358,7 @@ export const Listbox = {
     chip.className = "item"
     chip.dataset.value = value
     chip.setAttribute("data-ts-item", "")
-    chip.textContent = this.labelOf(value)
+    chip.insertAdjacentHTML("afterbegin", `<span class="item-text">${escapeHtml(this.labelOf(value))}</span>`)
     removeLabel &&
       chip.insertAdjacentHTML(
         "beforeend",
@@ -409,6 +411,16 @@ export const Listbox = {
     this.active = this.active >= 0 && this.active < rows.length ? this.active : this.isOpen && rows.length > 0 ? Math.max(selected, 0) : -1
     this.paintActive()
     this.paintOpen(rows)
+    this.paintFooter()
+  },
+
+  paintFooter() {
+    const footer = this.q("[data-footer]")
+    const text = footer?.querySelector("[data-footer-count]")
+    text &&
+      (text.textContent = footer.dataset.countLabel
+        .replace("%{count}", String(this.values.length))
+        .replace("%{total}", String(this.options().length)))
   },
 
   marked(label) {

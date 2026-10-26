@@ -20,6 +20,11 @@ defmodule LineaUI.Components.Select.Listbox do
 
     assigns
     |> assign_new(:overflow, fn -> "wrap" end)
+    |> assign_new(:size, fn -> "md" end)
+    |> assign_new(:footer, fn -> false end)
+    |> assign_new(:footer_count, fn -> "%{count} of %{total}" end)
+    |> assign_new(:footer_hint, fn -> "Esc to close" end)
+    |> assign_new(:more_label, fn -> "more" end)
     |> assign_new(:search, fn -> "control" end)
     |> assign_new(:search_placeholder, fn -> "Search…" end)
     |> assign(
@@ -95,6 +100,8 @@ defmodule LineaUI.Components.Select.Listbox do
         data-restore={bool(@restore_on_backspace)}
         data-max={@max}
         data-overflow={@multiple && @overflow == "count" && "count"}
+        data-size={@size != "md" && @size}
+        data-more-label={@more_label}
         data-name={@name}
         data-value={Pickers.json(@values)}
         data-on-search={@on_search}
@@ -174,6 +181,10 @@ defmodule LineaUI.Components.Select.Listbox do
             <.entry :for={entry <- @entries} entry={entry} id={@id} option_slot={@option} />
             <div id={@id <> "-extra"} phx-update="ignore" data-extra></div>
           </div>
+          <div :if={@footer and @multiple} class="ts-footer" data-footer data-count-label={@footer_count}>
+            <span data-footer-count></span>
+            <span>{@footer_hint}</span>
+          </div>
         </div>
         <div hidden data-templates>
           <template :for={option <- @known} data-value={option.value}>
@@ -197,7 +208,7 @@ defmodule LineaUI.Components.Select.Listbox do
   defp chip(%{item: []} = assigns) do
     ~H"""
     <div class="item" data-value={@option.value} data-ts-item>
-      {@option.label}<button
+      <span class="item-text">{@option.label}</span><button
         :if={@removable}
         type="button"
         class="remove"

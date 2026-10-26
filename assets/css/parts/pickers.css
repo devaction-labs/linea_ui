@@ -10,7 +10,35 @@
 .ts-wrapper[data-overflow="count"] .ts-control > [hidden] { display: none !important; }
 .ts-wrapper[data-overflow="count"] .ts-control > input { flex: 1 1 3rem; min-width: 3rem; width: auto !important; }
 .ts-wrapper[data-overflow="count"].multi.has-items .ts-control { padding-bottom: 6px; }
-.ts-wrapper[data-overflow="count"] .ts-control > .ts-more { font-variant-numeric: tabular-nums; cursor: pointer; }
+.ts-wrapper[data-overflow="count"] .ts-control > .ts-more {
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+  background: transparent;
+  padding-inline: .5rem;
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, currentColor 22%, transparent);
+}
+.ts-wrapper .ts-control > .item:not(span) { display: inline-flex; align-items: center; max-width: var(--ts-chip-max, 100%); }
+.ts-wrapper[data-overflow="count"] { --ts-chip-max: 150px; }
+.ts-control .item-text { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ts-control .item .remove { flex-shrink: 0; }
+
+/* The compact control, for filter bars. */
+.ts-wrapper[data-size="sm"] .ts-control,
+.ts-wrapper[data-size="sm"].multi.has-items .ts-control { min-height: 2rem; padding-block: 3px; font-size: .75rem; }
+.ts-wrapper[data-size="sm"].multi .ts-control > div { margin-bottom: 0; padding-block: 1px; font-size: .75rem; line-height: 1.25rem; }
+.ts-wrapper[data-size="sm"] .ts-control > input { padding-block: 2px !important; }
+
+/* The line under the list: how many are chosen, and a hint. */
+.ts-dropdown .ts-footer {
+  display: flex;
+  justify-content: space-between;
+  gap: .75rem;
+  padding: .5rem .75rem;
+  font-size: .6875rem;
+  border-top: 1px solid var(--color-slate-150);
+  color: var(--color-slate-400);
+}
+.dark .ts-dropdown .ts-footer { border-color: var(--color-navy-500); color: var(--color-navy-300); }
 .ts-control {
   border:1px solid #d0d0d0;
   border-radius:3px;

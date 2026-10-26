@@ -113,7 +113,10 @@ defmodule LineaUI.Components.Select do
     values: ~w(outline filled),
     doc: "Native only: bordered or filled."
 
-  attr :size, :string, default: "md", values: ~w(sm md lg), doc: "Native only."
+  attr :size, :string,
+    default: "md",
+    values: ~w(sm md lg),
+    doc: "Native: the height. Listbox: `sm` is the compact 32px control for filter bars."
   attr :shape, :string, default: "rounded", values: ~w(rounded pill), doc: "Native only."
 
   attr :inline, :boolean,
@@ -146,6 +149,20 @@ defmodule LineaUI.Components.Select do
     values: ~w(count wrap),
     doc:
       "Listbox with `multiple` only: `count` (the default) keeps one line, a pillbox: the chips that do not fit are hidden and a `+N` chip tells how many; `wrap` lets the chips break into more lines and the control grow."
+
+  attr :footer, :boolean,
+    default: false,
+    doc: "Listbox with `multiple` only: a line under the list with how many are chosen and a hint."
+
+  attr :footer_count, :string,
+    default: "%{count} of %{total}",
+    doc: "The footer's count; `%{count}` is what is chosen and `%{total}` the options."
+
+  attr :footer_hint, :string, default: "Esc to close", doc: "The footer's hint."
+
+  attr :more_label, :string,
+    default: "more",
+    doc: "Names the `+N` chip for screen readers (`3 more: Pix, Boleto…`)."
 
   attr :no_results, :string,
     default: "No results found",
