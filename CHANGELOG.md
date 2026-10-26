@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- New `bulk_bar/1`: the floating bar of bulk actions for a table with selection (the Signetum design system's `BulkBar`). A badge with the count and a label (`label` and `label_plural`, nothing is pluralized here), a `:field` slot for a control skinned as a quiet field (a `select` there opens upwards while the bar floats), `:action` buttons (`variant` `default`, `primary`, `danger`; `icon`; `disabled`; any `phx-*` or `data-*` goes to the button), a `select all N` link (`total`, `on_select_all`, `select_all_label`) and a close that runs `on_clear`; Esc presses it (hook `LineaUI.BulkBar`, logic in `bulk_bar_logic.js`). `variant` is `inverse` (the opposite of the page) or `soft`; `floating` pins it to the bottom center, `floating={false}` lays it out in place. It renders only while `count` is above zero and is a labelled region that announces the count.
 - An icon and its text no longer touch in `dropdown_item` (both variants), `menu_list`, `tabs`, `alert`, `breadcrumb`, `choice`, `accordion` and `divider`: they used `space-x-*`, which skips a text node and left the icon without a margin, so they now use `gap-*`.
 - A multiple listbox `select` takes `prompt` as its placeholder when it has no `placeholder` (`prompt` was ignored there, leaving an empty control).
 - A pillbox no longer asks its parent for the width of its chips (`contain: inline-size`), so a grid or flex row cannot widen its column because of them.

@@ -371,6 +371,144 @@
     display: none !important;
   }
 
+  /* bulk_bar: the floating bar of bulk actions. The colors come from --bb-fg and --bb-bg; every film is a share of the text. */
+  .linea-bulk {
+    --bb-bg: var(--color-navy-800);
+    --bb-fg: #fff;
+    --bb-ring: color-mix(in oklab, var(--bb-fg) 16%, transparent);
+    @apply inline-flex items-center gap-1.5 rounded-2xl py-[7px] pr-2 pl-3.5 text-sm;
+    background: var(--bb-bg);
+    color: var(--bb-fg);
+    box-shadow: 0 0 0 1px var(--bb-ring), 0 14px 34px -8px rgb(15 23 42 / 0.35), 0 4px 10px -4px rgb(15 23 42 / 0.25);
+    --bb-soft: color-mix(in oklab, var(--bb-fg) 62%, transparent);
+    --bb-hover: color-mix(in oklab, var(--bb-fg) 10%, transparent);
+    --bb-film: color-mix(in oklab, var(--bb-fg) 9%, transparent);
+  }
+
+  .dark .linea-bulk:not([data-variant="soft"]) {
+    --bb-bg: #fff;
+    --bb-fg: var(--color-slate-800);
+  }
+
+  .linea-bulk[data-variant="soft"] {
+    --bb-bg: #fff;
+    --bb-fg: var(--color-slate-800);
+    --bb-ring: var(--color-slate-200);
+  }
+
+  .dark .linea-bulk[data-variant="soft"] {
+    --bb-bg: var(--color-navy-700);
+    --bb-fg: var(--color-navy-50);
+    --bb-ring: var(--color-navy-500);
+  }
+
+  .linea-bulk-count {
+    @apply inline-flex items-center gap-2.5 pr-1.5 font-medium whitespace-nowrap;
+  }
+
+  .linea-bulk-badge {
+    @apply inline-flex h-[26px] min-w-[26px] items-center justify-center rounded-[9px] bg-primary px-2 text-[13px] font-semibold text-white dark:bg-accent;
+  }
+
+  .linea-bulk-sep {
+    @apply mx-1.5 h-[22px] w-px shrink-0;
+    background: var(--bb-ring);
+  }
+
+  .linea-bulk-link {
+    @apply cursor-pointer text-[13px] whitespace-nowrap underline underline-offset-3 outline-none;
+    color: var(--bb-soft);
+  }
+
+  .linea-bulk-link:is(:hover, :focus-visible) {
+    color: var(--bb-fg);
+  }
+
+  .linea-bulk-btn,
+  .linea-bulk-clear {
+    @apply inline-flex h-[34px] cursor-pointer items-center justify-center gap-2 rounded-[10px] text-[13.5px] font-medium whitespace-nowrap outline-none transition-colors;
+    color: var(--bb-fg);
+  }
+
+  .linea-bulk-btn {
+    @apply px-3.5;
+  }
+
+  .linea-bulk-clear {
+    @apply min-w-[34px] px-1.5;
+    color: var(--bb-soft);
+  }
+
+  .linea-bulk-btn:is(:hover, :focus-visible),
+  .linea-bulk-clear:is(:hover, :focus-visible) {
+    background: var(--bb-hover);
+  }
+
+  .linea-bulk-clear:is(:hover, :focus-visible) {
+    color: var(--bb-fg);
+  }
+
+  .linea-bulk :is(button, a):focus-visible {
+    outline: 2px solid color-mix(in oklab, var(--color-primary) 70%, white);
+    outline-offset: 2px;
+  }
+
+  .linea-bulk-btn[data-variant="primary"] {
+    @apply bg-primary text-white dark:bg-accent;
+  }
+
+  .linea-bulk-btn[data-variant="primary"]:is(:hover, :focus-visible) {
+    @apply bg-primary-focus dark:bg-accent-focus;
+  }
+
+  .linea-bulk-btn[data-variant="danger"] {
+    color: var(--color-error);
+  }
+
+  .linea-bulk:not([data-variant="soft"]) .linea-bulk-btn[data-variant="danger"] {
+    color: #fca5a5;
+  }
+
+  .dark .linea-bulk:not([data-variant="soft"]) .linea-bulk-btn[data-variant="danger"] {
+    color: var(--color-error);
+  }
+
+  .linea-bulk-btn[data-variant="danger"]:is(:hover, :focus-visible) {
+    background: color-mix(in oklab, var(--color-error) 18%, transparent);
+  }
+
+  .linea-bulk-btn:disabled {
+    @apply cursor-not-allowed;
+    background: var(--bb-film);
+    color: var(--bb-soft);
+  }
+
+  /* a field inside the bar: a quiet film, as tall as the buttons */
+  .linea-bulk-field {
+    @apply min-w-[164px];
+  }
+
+  .linea-bulk-field :is(.ts-control, .form-input, .form-select) {
+    @apply h-[34px] min-h-0 rounded-[10px] border-0 text-[13.5px] shadow-none;
+    background-color: var(--bb-film) !important;
+    color: var(--bb-fg) !important;
+  }
+
+  .linea-bulk-field :is(.ts-control input, input)::placeholder {
+    color: var(--bb-soft) !important;
+  }
+
+  .linea-bulk-field .ts-control > input {
+    color: var(--bb-fg) !important;
+  }
+
+  .linea-bulk[data-floating="true"] .ts-dropdown {
+    top: auto;
+    bottom: 100%;
+    margin: 0 0 .5rem;
+  }
+
+
   .toastify.rich {
     --toast-ai: var(--color-primary);
     --toast-ok: var(--color-emerald-600);
