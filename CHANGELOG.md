@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 0.8.2
+
 - `connection_banner/1` is a toast now (a `loading` one with the `aura` ring, shown by `phx-disconnected` and dismissed by `phx-connected`) instead of its own pill; it needs the page's `<.toaster>`. The `position` attribute is gone: the toaster's position applies.
 
 - `rail_user/1`: the person block of the framed menu is as wide as the rail whatever the name (the dropdown and button around it are stretched, the separator spans the rail) and a long name is cut with an ellipsis, instead of growing with it.
