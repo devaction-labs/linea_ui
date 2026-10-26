@@ -68,7 +68,7 @@ defmodule LineaUI.Components.Toast do
 
   `invert` reverses the colors of the cards: a dark card on a light page and a light one on a dark page, so
   the message stands out. The kind still tells the message (the green check of a success keeps its tint).
-  Put it on the toaster for all of them, or on one toast; the plain colored notes are not affected:
+  Put it on the toaster for all of them, or on one toast; plain notes invert too, keeping their tint:
 
       <.toaster flash={@flash} invert />
 

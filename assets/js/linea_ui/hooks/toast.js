@@ -162,7 +162,7 @@ export default {
       const fill = template ? () => this.fillTemplate(el, template) : rich ? () => this.fillRich(el, input, toast) : () => this.fillText(el, input, toast)
       fill()
       this.decorate(el, input, toast)
-      rich && this.invert(el, input)
+      template || this.invert(el, input)
       this.fillTimer(el, input, toast)
       el.querySelectorAll("[data-toast-dismiss]").forEach((button) => button.addEventListener("click", () => this.remove(toast)))
       el.addEventListener("mouseenter", () => this.hover(toast.position.key, true))

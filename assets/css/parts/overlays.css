@@ -77,6 +77,82 @@
     }
   }
 
+  /* The plain note: a soft rounded card tinted toward its color, light on a light page, navy on a dark one. */
+  .toastify.toastify:not(.rich, .html) {
+    --toast-tint: var(--color-slate-500);
+    --toast-bg: #fff;
+    --toast-fg: var(--color-slate-800);
+    --toast-edge: var(--color-slate-200);
+    @apply rounded-2xl text-sm font-medium;
+    background: var(--toast-bg);
+    color: var(--toast-fg);
+    box-shadow: 0 10px 30px rgb(15 23 42 / 0.1), 0 0 0 1px var(--toast-edge);
+  }
+
+  .toastify.toastify:not(.rich, .html):is(.primary, .secondary, .info, .success, .warning, .error) {
+    --toast-bg: color-mix(in oklab, var(--toast-tint) 10%, white);
+    --toast-fg: color-mix(in oklab, var(--toast-tint) 70%, black);
+    --toast-edge: color-mix(in oklab, var(--toast-tint) 28%, white);
+  }
+
+  .toastify.toastify:not(.rich, .html).primary { --toast-tint: var(--color-primary); }
+  .toastify.toastify:not(.rich, .html).secondary { --toast-tint: var(--color-secondary); }
+  .toastify.toastify:not(.rich, .html).info { --toast-tint: var(--color-info); }
+  .toastify.toastify:not(.rich, .html).success { --toast-tint: var(--color-success); }
+  .toastify.toastify:not(.rich, .html).warning { --toast-tint: var(--color-warning); }
+  .toastify.toastify:not(.rich, .html).error { --toast-tint: var(--color-error); }
+
+  .toastify.toastify:not(.rich, .html).light {
+    --toast-bg: var(--color-slate-100);
+    --toast-fg: var(--color-navy-800);
+  }
+
+  .toastify.toastify:not(.rich, .html).dark {
+    --toast-bg: var(--color-navy-700);
+    --toast-fg: var(--color-navy-50);
+    --toast-edge: var(--color-navy-500);
+  }
+
+  .dark .toastify.toastify:not(.rich, .html, .light) {
+    --toast-bg: var(--color-navy-700);
+    --toast-fg: var(--color-navy-50);
+    --toast-edge: var(--color-navy-500);
+    box-shadow: 0 10px 30px rgb(0 0 0 / 0.35), 0 0 0 1px var(--toast-edge);
+  }
+
+  .dark .toastify.toastify:not(.rich, .html, .light, .dark):is(.primary, .secondary, .info, .success, .warning, .error) {
+    --toast-bg: color-mix(in oklab, var(--toast-tint) 16%, var(--color-navy-700));
+    --toast-fg: color-mix(in oklab, var(--toast-tint) 45%, white);
+    --toast-edge: color-mix(in oklab, var(--toast-tint) 32%, var(--color-navy-700));
+  }
+
+  /* invert: the opposite of the page */
+  .toastify.toastify:not(.rich, .html)[data-surface="dark"] {
+    --toast-bg: var(--color-navy-800);
+    --toast-fg: #fff;
+    --toast-edge: var(--color-navy-600);
+    box-shadow: 0 10px 30px rgb(15 23 42 / 0.25), 0 0 0 1px var(--toast-edge);
+  }
+
+  .toastify.toastify:not(.rich, .html)[data-surface="dark"]:is(.primary, .secondary, .info, .success, .warning, .error) {
+    --toast-bg: color-mix(in oklab, var(--toast-tint) 22%, var(--color-navy-900));
+    --toast-fg: color-mix(in oklab, var(--toast-tint) 35%, white);
+    --toast-edge: color-mix(in oklab, var(--toast-tint) 35%, var(--color-navy-900));
+  }
+
+  .toastify.toastify:not(.rich, .html)[data-surface="light"] {
+    --toast-bg: #fff;
+    --toast-fg: var(--color-slate-800);
+    --toast-edge: var(--color-slate-200);
+    box-shadow: 0 10px 30px rgb(0 0 0 / 0.35), 0 0 0 1px var(--toast-edge);
+  }
+
+  .toastify.toastify:not(.rich, .html)[data-surface="light"]:is(.primary, .secondary, .info, .success, .warning, .error) {
+    --toast-bg: color-mix(in oklab, var(--toast-tint) 12%, white);
+    --toast-fg: color-mix(in oklab, var(--toast-tint) 70%, black);
+    --toast-edge: color-mix(in oklab, var(--toast-tint) 28%, white);
+  }
+
   .toastify .toast-close {
     @apply inline-flex size-6 cursor-pointer items-center justify-center rounded-full border-0 bg-transparent p-0 align-middle transition-colors;
     color: inherit;
