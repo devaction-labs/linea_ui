@@ -22,15 +22,36 @@
 .ts-control .item-text { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .ts-control .item .remove { flex-shrink: 0; }
 
-/* No divider before the remove button (tom-select draws one); the × is a quiet icon that darkens on hover. */
+/* The remove button: no divider (tom-select draws one), a small cross in a round hit area that fills on hover. */
 .ts-wrapper.plugin-remove_button:not(.rtl) .ts-control .item .remove {
-  border-left: 0;
-  margin-left: 2px;
-  padding: 0 3px;
-  opacity: .6;
-  border-radius: .25rem;
+  align-items: center;
+  border: 0;
+  border-radius: 9999px;
+  display: inline-flex;
+  flex-shrink: 0;
+  font-size: 0;
+  height: 1.125rem;
+  justify-content: center;
+  margin-left: 4px;
+  margin-right: -3px;
+  opacity: .55;
+  padding: 0;
+  transition: opacity .15s, background-color .15s;
+  width: 1.125rem;
 }
-.ts-wrapper.plugin-remove_button .ts-control .item .remove:hover { opacity: 1; background: color-mix(in oklab, currentColor 12%, transparent); }
+.ts-wrapper.plugin-remove_button .ts-control .item .remove::before {
+  background-color: currentColor;
+  content: "";
+  height: .625rem;
+  mask: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round'%3E%3Cpath d='M6 6l12 12M18 6 6 18'/%3E%3C/svg%3E") center/contain no-repeat;
+  width: .625rem;
+}
+.ts-wrapper.plugin-remove_button .ts-control .item .remove:hover,
+.ts-wrapper.plugin-remove_button .ts-control .item .remove:focus-visible {
+  background-color: color-mix(in oklab, currentColor 16%, transparent);
+  opacity: 1;
+  outline: none;
+}
 
 /* The compact control, for filter bars. */
 .ts-wrapper[data-size="sm"] .ts-control,
