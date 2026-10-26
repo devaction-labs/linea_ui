@@ -1,6 +1,8 @@
 # Changelog
 
-## Unreleased
+## 0.7.0
+
+(Includes the 0.6.3 toast work if you skipped it: plain notes are soft cards with an icon.)
 
 - `select/1` with `multiple` is now a pillbox by default (`overflow="count"`): the control stays on one line and never grows; the chips that do not fit are hidden and a `+N` chip (its `title` lists the hidden labels) tells how many. It refits when chips are added or removed and when the control is resized. **Behavior change:** pass `overflow="wrap"` for the old look, chips breaking into more lines. `tags_input/1` still wraps.
 - The chips of `select/1` and `tags_input/1` no longer draw tom-select's vertical divider before the `×`; the `×` is a quiet icon that darkens, with a soft background, on hover.
