@@ -392,6 +392,27 @@
     border-top-color: var(--color-navy-450);
   }
 
+  /* The person block is as wide as the rail whatever the name: the menu around it (a dropdown, a button) is
+     stretched, the name is cut with an ellipsis. */
+  .rail-user {
+    width: 100%;
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .rail-user > .rail-label {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .linea-rail :is(div, button):has(> .rail-user),
+  .linea-rail :is(div, button):has(> * > .rail-user),
+  .linea-rail :is(div, button):has(> * > * > .rail-user) {
+    display: flex !important;
+    width: 100%;
+    min-width: 0;
+  }
+
   @media (min-width: 768px) {
     .linea-rail[data-collapsed="true"] {
       width: 3.75rem;

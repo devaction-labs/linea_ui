@@ -46,9 +46,16 @@ defmodule PreviewWeb.Pages.FramedShell do
               </.rail_module>
               <:bottom>
                 <.rail_toggle for="framed-menu" class="self-start" />
-                <.rail_user name="Ana Souza" subtitle="Admin">
-                  <.avatar name="Ana Souza" color="auto" size="32" />
-                </.rail_user>
+                <.dropdown id="framed-user" placement="top-start">
+                  <:toggle>
+                    <.button type="button" variant="flat" color="current" class="h-auto w-full justify-start p-0 text-left font-normal" aria-label="Account">
+                      <.rail_user name="Ana Souza de Albuquerque Montenegro" subtitle="Platform administrator">
+                        <.avatar name="Ana Souza" color="auto" size="32" />
+                      </.rail_user>
+                    </.button>
+                  </:toggle>
+                  <.dropdown_item>My account</.dropdown_item>
+                </.dropdown>
               </:bottom>
             </.framed_sidebar>
           </:sidebar>

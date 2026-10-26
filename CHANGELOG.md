@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- `rail_user/1`: the person block of the framed menu is as wide as the rail whatever the name (the dropdown and button around it are stretched, the separator spans the rail) and a long name is cut with an ellipsis, instead of growing with it.
+
 ## 0.8.1
 
 - `connection_banner/1`: a pill with a spinner and a glowing `aura/1` ring that shows while the LiveView socket is down (`phx-disconnected`) and hides when it is back (`phx-connected`), at the top or the bottom. No JavaScript of its own; put it once in the root layout.
