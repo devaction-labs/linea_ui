@@ -1554,6 +1554,7 @@ defmodule LineaUI.Components.AppShell do
   slot :brand, doc: "The mark in its rounded box (a logo image)."
   slot :wordmark, doc: "The name next to the mark; hidden in the rail."
   slot :workspace, doc: "The workspace switcher under the brand; hidden in the rail."
+
   slot :search,
     doc:
       "The search box; mark what the rail hides with `rail-label`. With `phx-click` (or `id`, `aria-label`...) it is a button that opens your search or command palette, so the whole box is the target." do
@@ -2140,7 +2141,12 @@ defmodule LineaUI.Components.AppShell do
       |> assign(:extra_class, assigns.search[:class])
 
     ~H"""
-    <button :if={@attrs != []} type="button" class={merge(["rail-search rail-search-button", @extra_class])} {@attrs}>
+    <button
+      :if={@attrs != []}
+      type="button"
+      class={merge(["rail-search rail-search-button", @extra_class])}
+      {@attrs}
+    >
       {render_slot(@search)}
     </button>
     <div :if={@attrs == []} class={merge(["rail-search", @extra_class])}>{render_slot(@search)}</div>

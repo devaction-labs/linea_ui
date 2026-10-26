@@ -117,6 +117,7 @@ defmodule LineaUI.Components.Select do
     default: "md",
     values: ~w(sm md lg),
     doc: "Native: the height. Listbox: `sm` is the compact 32px control for filter bars."
+
   attr :shape, :string, default: "rounded", values: ~w(rounded pill), doc: "Native only."
 
   attr :inline, :boolean,
@@ -152,7 +153,8 @@ defmodule LineaUI.Components.Select do
 
   attr :footer, :boolean,
     default: false,
-    doc: "Listbox with `multiple` only: a line under the list with how many are chosen and a hint."
+    doc:
+      "Listbox with `multiple` only: a line under the list with how many are chosen and a hint."
 
   attr :footer_count, :string,
     default: "%{count} of %{total}",

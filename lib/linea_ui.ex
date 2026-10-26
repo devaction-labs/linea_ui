@@ -57,6 +57,7 @@ defmodule LineaUI do
     dropdown: LineaUI.Components.Dropdown,
     email: LineaUI.Components.Email,
     empty_state: LineaUI.Components.EmptyState,
+    connection_banner: LineaUI.Components.ConnectionBanner,
     fab: LineaUI.Components.Fab,
     filter_menu: LineaUI.Components.FilterMenu,
     form: LineaUI.Components.Form,

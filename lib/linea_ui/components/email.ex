@@ -95,7 +95,11 @@ defmodule LineaUI.Components.Email do
   attr :preheader, :string, default: nil, doc: "The line next to the subject in the inbox."
   attr :brand, :string, default: nil, doc: "The name beside the logo."
   attr :logo_url, :string, default: nil, doc: "Absolute URL of the logo."
-  attr :logo_dark_url, :string, default: nil, doc: "Absolute URL of the logo for dark backgrounds."
+
+  attr :logo_dark_url, :string,
+    default: nil,
+    doc: "Absolute URL of the logo for dark backgrounds."
+
   attr :eyebrow, :string, default: nil
   attr :title, :string, required: true
   attr :theme, :atom, default: :auto, values: [:auto, :light, :dark]
@@ -111,7 +115,9 @@ defmodule LineaUI.Components.Email do
     attr :href, :string, required: true
   end
 
-  slot :note, doc: "A line of small print in a panel: the validity, or what to do if it was not you."
+  slot :note,
+    doc: "A line of small print in a panel: the validity, or what to do if it was not you."
+
   slot :footer, doc: "Under the card: who sends this and why."
 
   def email_layout(assigns) do
@@ -142,22 +148,59 @@ defmodule LineaUI.Components.Email do
         </style>
       </head>
       <body style={"margin:0;padding:0;background-color:#{@p.canvas};"} class="em-canvas">
-        <div :if={@preheader} style="display:none;font-size:1px;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;mso-hide:all;">
+        <div
+          :if={@preheader}
+          style="display:none;font-size:1px;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;mso-hide:all;"
+        >
           {@preheader}
         </div>
-        <table role="presentation" width="100%" border="0" cellpadding="0" cellspacing="0" class="em-canvas" bgcolor={@p.canvas} style={"background-color:#{@p.canvas};"}>
+        <table
+          role="presentation"
+          width="100%"
+          border="0"
+          cellpadding="0"
+          cellspacing="0"
+          class="em-canvas"
+          bgcolor={@p.canvas}
+          style={"background-color:#{@p.canvas};"}
+        >
           <tr>
             <td align="center" class="em-outer" style="padding:36px 16px 44px;">
-              <table role="presentation" width="520" border="0" cellpadding="0" cellspacing="0" style="width:100%;max-width:520px;">
+              <table
+                role="presentation"
+                width="520"
+                border="0"
+                cellpadding="0"
+                cellspacing="0"
+                style="width:100%;max-width:520px;"
+              >
                 <tr :if={@logo_url || @brand}>
                   <td style="padding:0 6px 18px;">
                     <table role="presentation" border="0" cellpadding="0" cellspacing="0">
                       <tr>
                         <td :if={@logo_url} valign="middle" style="padding-right:10px;">
-                          <img src={@logo_url} height="28" alt={@brand || ""} class="em-logo-light" style="display:block;height:28px;width:auto;" />
-                          <img :if={@logo_dark_url} src={@logo_dark_url} height="28" alt={@brand || ""} class="em-logo-dark" style="display:none;max-height:0;overflow:hidden;height:28px;width:auto;" />
+                          <img
+                            src={@logo_url}
+                            height="28"
+                            alt={@brand || ""}
+                            class="em-logo-light"
+                            style="display:block;height:28px;width:auto;"
+                          />
+                          <img
+                            :if={@logo_dark_url}
+                            src={@logo_dark_url}
+                            height="28"
+                            alt={@brand || ""}
+                            class="em-logo-dark"
+                            style="display:none;max-height:0;overflow:hidden;height:28px;width:auto;"
+                          />
                         </td>
-                        <td :if={@brand} valign="middle" class="em-ink" style={"color:#{@p.ink};font-family:#{@sans};font-size:17px;line-height:28px;font-weight:600;"}>
+                        <td
+                          :if={@brand}
+                          valign="middle"
+                          class="em-ink"
+                          style={"color:#{@p.ink};font-family:#{@sans};font-size:17px;line-height:28px;font-weight:600;"}
+                        >
                           {@brand}
                         </td>
                       </tr>
@@ -165,13 +208,29 @@ defmodule LineaUI.Components.Email do
                   </td>
                 </tr>
                 <tr>
-                  <td class="em-card" bgcolor={@p.card} style={"background-color:#{@p.card};border:1px solid #{@p.hair};border-radius:14px;overflow:hidden;"}>
+                  <td
+                    class="em-card"
+                    bgcolor={@p.card}
+                    style={"background-color:#{@p.card};border:1px solid #{@p.hair};border-radius:14px;overflow:hidden;"}
+                  >
                     <table role="presentation" width="100%" border="0" cellpadding="0" cellspacing="0">
                       <tr :if={@badge != []}>
-                        <td class="em-hero em-pad" bgcolor={@p.card} style={"padding:30px 32px 0;background-color:#{@p.card};background-image:#{hero_image(@p)};background-size:100% 100%,22px 22px,22px 22px;background-position:0 0,-1px -1px,-1px -1px;"}>
+                        <td
+                          class="em-hero em-pad"
+                          bgcolor={@p.card}
+                          style={"padding:30px 32px 0;background-color:#{@p.card};background-image:#{hero_image(@p)};background-size:100% 100%,22px 22px,22px 22px;background-position:0 0,-1px -1px,-1px -1px;"}
+                        >
                           <table role="presentation" border="0" cellpadding="0" cellspacing="0">
                             <tr>
-                              <td class="em-primary" width="48" height="48" align="center" valign="middle" bgcolor={@p.primary} style={"width:48px;height:48px;border-radius:14px;background-color:#{@p.primary};"}>
+                              <td
+                                class="em-primary"
+                                width="48"
+                                height="48"
+                                align="center"
+                                valign="middle"
+                                bgcolor={@p.primary}
+                                style={"width:48px;height:48px;border-radius:14px;background-color:#{@p.primary};"}
+                              >
                                 {render_slot(@badge)}
                               </td>
                             </tr>
@@ -181,15 +240,27 @@ defmodule LineaUI.Components.Email do
                       <tr>
                         <td class="em-pad" style="padding:20px 32px 32px;">
                           <p :if={@eyebrow} style="margin:0 0 12px;">
-                            <span class="em-soft" style={"display:inline-block;padding:3px 9px;border-radius:5px;background-color:#{@p.soft};color:#{@p.primary_text};font-family:#{@inter};font-size:11px;line-height:16px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;"}>
+                            <span
+                              class="em-soft"
+                              style={"display:inline-block;padding:3px 9px;border-radius:5px;background-color:#{@p.soft};color:#{@p.primary_text};font-family:#{@inter};font-size:11px;line-height:16px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;"}
+                            >
                               {@eyebrow}
                             </span>
                           </p>
-                          <h2 class="em-ink em-title" style={"margin:0 0 14px;color:#{@p.ink};font-family:#{@sans};font-size:22px;line-height:1.3;font-weight:600;letter-spacing:-.01em;"}>
+                          <h2
+                            class="em-ink em-title"
+                            style={"margin:0 0 14px;color:#{@p.ink};font-family:#{@sans};font-size:22px;line-height:1.3;font-weight:600;letter-spacing:-.01em;"}
+                          >
                             {@title}
                           </h2>
                           {render_slot(@body)}
-                          <.button_row :for={action <- @action} action={action} p={@p} sans={@sans} alt_text={@alt_text} />
+                          <.button_row
+                            :for={action <- @action}
+                            action={action}
+                            p={@p}
+                            sans={@sans}
+                            alt_text={@alt_text}
+                          />
                           <.note :for={note <- @note} note={note} p={@p} sans={@sans} />
                         </td>
                       </tr>
@@ -197,7 +268,11 @@ defmodule LineaUI.Components.Email do
                   </td>
                 </tr>
                 <tr :if={@footer != []}>
-                  <td class="em-panel" bgcolor={@p.panel} style={"padding:20px 24px;border-radius:12px;background-color:#{@p.panel};border:1px solid #{@p.hair};color:#{@p.muted};font-family:#{@sans};font-size:12.5px;line-height:1.6;"}>
+                  <td
+                    class="em-panel"
+                    bgcolor={@p.panel}
+                    style={"padding:20px 24px;border-radius:12px;background-color:#{@p.panel};border:1px solid #{@p.hair};color:#{@p.muted};font-family:#{@sans};font-size:12.5px;line-height:1.6;"}
+                  >
                     <div style="height:16px;line-height:16px;font-size:1px;">&nbsp;</div>
                     {render_slot(@footer)}
                   </td>
@@ -222,16 +297,32 @@ defmodule LineaUI.Components.Email do
     ~H"""
     <table role="presentation" border="0" cellpadding="0" cellspacing="0" style="margin:22px 0 4px;">
       <tr>
-        <td class="em-primary" align="center" bgcolor={@p.primary} style={"border-radius:9px;background-color:#{@p.primary};"}>
-          <a href={@href} target="_blank" style={"display:inline-block;padding:12px 22px;border-radius:9px;color:#ffffff;font-family:#{@sans};font-size:14.5px;line-height:22px;font-weight:500;letter-spacing:.01em;text-decoration:none;"}>
+        <td
+          class="em-primary"
+          align="center"
+          bgcolor={@p.primary}
+          style={"border-radius:9px;background-color:#{@p.primary};"}
+        >
+          <a
+            href={@href}
+            target="_blank"
+            style={"display:inline-block;padding:12px 22px;border-radius:9px;color:#ffffff;font-family:#{@sans};font-size:14.5px;line-height:22px;font-weight:500;letter-spacing:.01em;text-decoration:none;"}
+          >
             {render_slot(@action)}&nbsp;&nbsp;&rarr;
           </a>
         </td>
       </tr>
     </table>
-    <p class="em-muted" style={"margin:16px 0 0;color:#{@p.muted};font-family:#{@sans};font-size:12px;line-height:1.6;"}>
+    <p
+      class="em-muted"
+      style={"margin:16px 0 0;color:#{@p.muted};font-family:#{@sans};font-size:12px;line-height:1.6;"}
+    >
       {@alt_text}<br />
-      <a href={@href} class="em-accent" style={"color:#{@p.primary_text};text-decoration:underline;word-break:break-all;"}>{@href}</a>
+      <a
+        href={@href}
+        class="em-accent"
+        style={"color:#{@p.primary_text};text-decoration:underline;word-break:break-all;"}
+      >{@href}</a>
     </p>
     """
   end
@@ -242,9 +333,21 @@ defmodule LineaUI.Components.Email do
 
   defp note(assigns) do
     ~H"""
-    <table role="presentation" width="100%" border="0" cellpadding="0" cellspacing="0" class="em-panel" bgcolor={@p.panel} style={"margin:22px 0 0;border-collapse:separate;border-radius:10px;background-color:#{@p.panel};border:1px solid #{@p.hair};"}>
+    <table
+      role="presentation"
+      width="100%"
+      border="0"
+      cellpadding="0"
+      cellspacing="0"
+      class="em-panel"
+      bgcolor={@p.panel}
+      style={"margin:22px 0 0;border-collapse:separate;border-radius:10px;background-color:#{@p.panel};border:1px solid #{@p.hair};"}
+    >
       <tr>
-        <td class="em-muted" style={"padding:12px 14px;color:#{@p.muted};font-family:#{@sans};font-size:12.5px;line-height:1.6;"}>
+        <td
+          class="em-muted"
+          style={"padding:12px 14px;color:#{@p.muted};font-family:#{@sans};font-size:12.5px;line-height:1.6;"}
+        >
           {render_slot(@note)}
         </td>
       </tr>
@@ -261,7 +364,13 @@ defmodule LineaUI.Components.Email do
     assigns = assign(assigns, p: palette(assigns.theme), sans: @sans)
 
     ~H"""
-    <p class="em-body" style={"margin:0 0 12px;color:#{@p.body};font-family:#{@sans};font-size:14.5px;line-height:1.65;"} {@rest}>{render_slot(@inner_block)}</p>
+    <p
+      class="em-body"
+      style={"margin:0 0 12px;color:#{@p.body};font-family:#{@sans};font-size:14.5px;line-height:1.65;"}
+      {@rest}
+    >
+      {render_slot(@inner_block)}
+    </p>
     """
   end
 
@@ -275,17 +384,45 @@ defmodule LineaUI.Components.Email do
   attr :theme, :atom, default: :auto, values: [:auto, :light, :dark]
 
   def email_code(assigns) do
-    assigns = assign(assigns, p: palette(assigns.theme), chars: String.graphemes(assigns.value), mono: @mono, sans: @sans)
+    assigns =
+      assign(assigns,
+        p: palette(assigns.theme),
+        chars: String.graphemes(assigns.value),
+        mono: @mono,
+        sans: @sans
+      )
 
     ~H"""
-    <table role="presentation" border="0" cellpadding="0" cellspacing="0" aria-label={@value} style="margin:20px 0 6px -4px;border-collapse:separate;border-spacing:4px 0;">
+    <table
+      role="presentation"
+      border="0"
+      cellpadding="0"
+      cellspacing="0"
+      aria-label={@value}
+      style="margin:20px 0 6px -4px;border-collapse:separate;border-spacing:4px 0;"
+    >
       <tr>
-        <td :for={char <- @chars} class="em-panel em-ink" align="center" valign="middle" width="44" height="54" bgcolor={@p.panel} style={"width:44px;height:54px;border:1px solid #{@p.hair};border-radius:10px;background-color:#{@p.panel};color:#{@p.ink};font-family:#{@mono};font-size:24px;line-height:54px;font-weight:600;text-align:center;"}>
+        <td
+          :for={char <- @chars}
+          class="em-panel em-ink"
+          align="center"
+          valign="middle"
+          width="44"
+          height="54"
+          bgcolor={@p.panel}
+          style={"width:44px;height:54px;border:1px solid #{@p.hair};border-radius:10px;background-color:#{@p.panel};color:#{@p.ink};font-family:#{@mono};font-size:24px;line-height:54px;font-weight:600;text-align:center;"}
+        >
           {char}
         </td>
       </tr>
     </table>
-    <p :if={@hint} class="em-muted" style={"margin:0 0 4px;color:#{@p.muted};font-family:#{@sans};font-size:12.5px;"}>{@hint}</p>
+    <p
+      :if={@hint}
+      class="em-muted"
+      style={"margin:0 0 4px;color:#{@p.muted};font-family:#{@sans};font-size:12.5px;"}
+    >
+      {@hint}
+    </p>
     """
   end
 
@@ -299,15 +436,39 @@ defmodule LineaUI.Components.Email do
   attr :theme, :atom, default: :auto, values: [:auto, :light, :dark]
 
   def email_facts(assigns) do
-    assigns = assign(assigns, p: palette(assigns.theme), sans: @sans, mono: @mono, rows: Enum.map(assigns.rows, &fact/1))
+    assigns =
+      assign(assigns,
+        p: palette(assigns.theme),
+        sans: @sans,
+        mono: @mono,
+        rows: Enum.map(assigns.rows, &fact/1)
+      )
 
     ~H"""
-    <table role="presentation" width="100%" border="0" cellpadding="0" cellspacing="0" class="em-panel" bgcolor={@p.panel} style={"margin:18px 0 4px;border-collapse:separate;border:1px solid #{@p.hair};border-radius:10px;background-color:#{@p.panel};"}>
+    <table
+      role="presentation"
+      width="100%"
+      border="0"
+      cellpadding="0"
+      cellspacing="0"
+      class="em-panel"
+      bgcolor={@p.panel}
+      style={"margin:18px 0 4px;border-collapse:separate;border:1px solid #{@p.hair};border-radius:10px;background-color:#{@p.panel};"}
+    >
       <tr :for={{row, index} <- Enum.with_index(@rows)}>
-        <td class={["em-line", row.kind == :total && "em-soft"]} valign="top" style={"padding:10px 14px;#{rule(index, @p)}#{total(row.kind, @p)}color:#{(row.kind == :total && @p.primary_text) || @p.muted};font-family:#{@sans};font-size:13px;line-height:1.5;#{(row.kind == :total && "font-weight:600;") || ""}"}>
+        <td
+          class={["em-line", row.kind == :total && "em-soft"]}
+          valign="top"
+          style={"padding:10px 14px;#{rule(index, @p)}#{total(row.kind, @p)}color:#{(row.kind == :total && @p.primary_text) || @p.muted};font-family:#{@sans};font-size:13px;line-height:1.5;#{(row.kind == :total && "font-weight:600;") || ""}"}
+        >
           {row.label}
         </td>
-        <td class={["em-line", row.kind == :total && "em-soft"]} align="right" valign="top" style={"padding:10px 14px;#{rule(index, @p)}#{total(row.kind, @p)}color:#{(row.kind == :total && @p.primary_text) || @p.ink};font-family:#{(row.kind == :mono && @mono) || @sans};font-size:#{(row.kind == :mono && "12px") || "13px"};line-height:1.5;font-weight:#{(row.kind == :total && "600") || "500"};text-align:right;word-break:break-all;"}>
+        <td
+          class={["em-line", row.kind == :total && "em-soft"]}
+          align="right"
+          valign="top"
+          style={"padding:10px 14px;#{rule(index, @p)}#{total(row.kind, @p)}color:#{(row.kind == :total && @p.primary_text) || @p.ink};font-family:#{(row.kind == :mono && @mono) || @sans};font-size:#{(row.kind == :mono && "12px") || "13px"};line-height:1.5;font-weight:#{(row.kind == :total && "600") || "500"};text-align:right;word-break:break-all;"}
+        >
           {row.value}
         </td>
       </tr>
@@ -333,24 +494,53 @@ defmodule LineaUI.Components.Email do
   attr :theme, :atom, default: :auto, values: [:auto, :light, :dark]
 
   def email_steps(assigns) do
-    assigns = assign(assigns, p: palette(assigns.theme), sans: @sans, last: length(assigns.steps) - 1)
+    assigns =
+      assign(assigns, p: palette(assigns.theme), sans: @sans, last: length(assigns.steps) - 1)
 
     ~H"""
-    <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="margin:18px 0 6px;">
+    <table
+      role="presentation"
+      border="0"
+      cellpadding="0"
+      cellspacing="0"
+      width="100%"
+      style="margin:18px 0 6px;"
+    >
       <tr>
         <%= for {{label, done}, index} <- Enum.with_index(@steps) do %>
           <td align="center" valign="top" width="1" style="width:1%;white-space:nowrap;padding:0 4px;">
             <table role="presentation" border="0" cellpadding="0" cellspacing="0" align="center">
               <tr>
-                <td class={[done && "em-primary", !done && "em-panel"]} align="center" valign="middle" width="22" height="22" bgcolor={(done && @p.primary) || @p.panel} style={"width:22px;height:22px;border-radius:11px;background-color:#{(done && @p.primary) || @p.panel};border:1px solid #{(done && @p.primary) || @p.hair};color:#ffffff;font-family:#{@sans};font-size:12px;line-height:20px;text-align:center;"}>
+                <td
+                  class={[done && "em-primary", !done && "em-panel"]}
+                  align="center"
+                  valign="middle"
+                  width="22"
+                  height="22"
+                  bgcolor={(done && @p.primary) || @p.panel}
+                  style={"width:22px;height:22px;border-radius:11px;background-color:#{(done && @p.primary) || @p.panel};border:1px solid #{(done && @p.primary) || @p.hair};color:#ffffff;font-family:#{@sans};font-size:12px;line-height:20px;text-align:center;"}
+                >
                   {(done && "✓") || " "}
                 </td>
               </tr>
             </table>
-            <p class={["em-muted", done && "em-ink"]} style={"margin:6px 0 0;color:#{(done && @p.ink) || @p.muted};font-family:#{@sans};font-size:11.5px;line-height:1.3;font-weight:500;"}>{label}</p>
+            <p
+              class={["em-muted", done && "em-ink"]}
+              style={"margin:6px 0 0;color:#{(done && @p.ink) || @p.muted};font-family:#{@sans};font-size:11.5px;line-height:1.3;font-weight:500;"}
+            >
+              {label}
+            </p>
           </td>
           <td :if={index < @last} valign="top" style="padding-top:11px;">
-            <div class={[(Enum.at(@steps, index + 1) |> elem(1)) && "em-primary", !(Enum.at(@steps, index + 1) |> elem(1)) && "em-line"]} style={"height:2px;line-height:2px;font-size:1px;background-color:#{(Enum.at(@steps, index + 1) |> elem(1)) && @p.primary || @p.hair};"}>&nbsp;</div>
+            <div
+              class={[
+                Enum.at(@steps, index + 1) |> elem(1) && "em-primary",
+                !(Enum.at(@steps, index + 1) |> elem(1)) && "em-line"
+              ]}
+              style={"height:2px;line-height:2px;font-size:1px;background-color:#{(Enum.at(@steps, index + 1) |> elem(1)) && @p.primary || @p.hair};"}
+            >
+              &nbsp;
+            </div>
           </td>
         <% end %>
       </tr>
@@ -376,7 +566,8 @@ defmodule LineaUI.Components.Email do
     rules = [
       {"body,.em-canvas", "background-color:#{p.canvas} !important"},
       {".em-card", "background-color:#{p.card} !important;border-color:#{p.hair} !important"},
-      {".em-hero", "background-color:#{p.card} !important;background-image:#{hero_image(p)} !important"},
+      {".em-hero",
+       "background-color:#{p.card} !important;background-image:#{hero_image(p)} !important"},
       {".em-ink", "color:#{p.ink} !important"},
       {".em-body", "color:#{p.body} !important"},
       {".em-muted", "color:#{p.muted} !important"},
@@ -384,7 +575,8 @@ defmodule LineaUI.Components.Email do
       {".em-soft", "background-color:#{p.soft} !important;color:#{p.primary_text} !important"},
       {".em-panel", "background-color:#{p.panel} !important;border-color:#{p.hair} !important"},
       {".em-line", "border-color:#{p.hair} !important"},
-      {".em-primary", "background-color:#{p.primary} !important;border-color:#{p.primary} !important"},
+      {".em-primary",
+       "background-color:#{p.primary} !important;border-color:#{p.primary} !important"},
       {".em-logo-light", "display:none !important"},
       {".em-logo-dark", "display:block !important;max-height:none !important"}
     ]

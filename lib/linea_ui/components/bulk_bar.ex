@@ -55,7 +55,10 @@ defmodule LineaUI.Components.BulkBar do
   def bulk_bar_variants, do: @variants
 
   attr :id, :string, required: true
-  attr :count, :integer, required: true, doc: "How many are selected; the bar shows only above zero."
+
+  attr :count, :integer,
+    required: true,
+    doc: "How many are selected; the bar shows only above zero."
 
   attr :label, :string,
     default: "selected",
@@ -67,18 +70,29 @@ defmodule LineaUI.Components.BulkBar do
 
   attr :total, :integer,
     default: nil,
-    doc: "How many there are in all (every page); with `on_select_all`, offers to select them all."
+    doc:
+      "How many there are in all (every page); with `on_select_all`, offers to select them all."
 
   attr :select_all_label, :string,
     default: "Select all %{total}",
     doc: "The select all link; `%{total}` is replaced."
 
-  attr :on_clear, :any, default: nil, doc: "An event name or a `%JS{}` run by the close button and Esc."
-  attr :on_select_all, :any, default: nil, doc: "An event name or a `%JS{}` run by the select all link."
+  attr :on_clear, :any,
+    default: nil,
+    doc: "An event name or a `%JS{}` run by the close button and Esc."
+
+  attr :on_select_all, :any,
+    default: nil,
+    doc: "An event name or a `%JS{}` run by the select all link."
+
   attr :target, :any, default: nil, doc: "The `phx-target` of both."
   attr :clear_label, :string, default: "Clear selection"
   attr :variant, :string, default: "inverse", values: @variants
-  attr :floating, :boolean, default: true, doc: "Pin the bar to the bottom center of the viewport."
+
+  attr :floating, :boolean,
+    default: true,
+    doc: "Pin the bar to the bottom center of the viewport."
+
   attr :class, :any, default: nil
   attr :rest, :global
 
@@ -167,7 +181,8 @@ defmodule LineaUI.Components.BulkBar do
   defp label_for(_count, label, nil), do: label
   defp label_for(_count, _label, plural), do: plural
 
-  defp caption(assigns), do: "#{assigns.count} #{label_for(assigns.count, assigns.label, assigns.label_plural)}"
+  defp caption(assigns),
+    do: "#{assigns.count} #{label_for(assigns.count, assigns.label, assigns.label_plural)}"
 
   defp select_all?(%{on_select_all: nil}), do: false
   defp select_all?(%{total: nil}), do: false

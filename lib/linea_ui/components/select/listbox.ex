@@ -191,7 +191,12 @@ defmodule LineaUI.Components.Select.Listbox do
             <.entry :for={entry <- @entries} entry={entry} id={@id} option_slot={@option} />
             <div id={@id <> "-extra"} phx-update="ignore" data-extra></div>
           </div>
-          <div :if={@footer and @multiple} class="ts-footer" data-footer data-count-label={@footer_count}>
+          <div
+            :if={@footer and @multiple}
+            class="ts-footer"
+            data-footer
+            data-count-label={@footer_count}
+          >
             <span data-footer-count></span>
             <span>{@footer_hint}</span>
           </div>

@@ -5,12 +5,24 @@ defmodule LineaUI.Components.EmailTest do
     assigns = Map.merge(%{theme: :auto}, assigns)
 
     Phoenix.LiveViewTest.rendered_to_string(~H"""
-    <.email_layout subject="Your code" preheader="Valid for 10 minutes" brand="Acme" logo_url="https://acme.com/logo.png" eyebrow="Confirm" title="Your verification code" theme={@theme}>
+    <.email_layout
+      subject="Your code"
+      preheader="Valid for 10 minutes"
+      brand="Acme"
+      logo_url="https://acme.com/logo.png"
+      eyebrow="Confirm"
+      title="Your verification code"
+      theme={@theme}
+    >
       <:badge><img id="icon" src="https://acme.com/e.png" width="24" height="24" alt="" /></:badge>
       <:body>
         <.email_p>Hello <b>Ana</b>.</.email_p>
         <.email_code value="482913" hint="Or tap:" />
-        <.email_facts rows={[{"Estimate", "Thu"}, {"Tracking", "BR482", :mono}, {"Total", "R$ 10", :total}]} />
+        <.email_facts rows={[
+          {"Estimate", "Thu"},
+          {"Tracking", "BR482", :mono},
+          {"Total", "R$ 10", :total}
+        ]} />
         <.email_steps steps={[{"Paid", true}, {"Shipped", true}, {"Delivered", false}]} />
       </:body>
       <:action href="https://app.acme.com/confirm?t=1">Sign in</:action>

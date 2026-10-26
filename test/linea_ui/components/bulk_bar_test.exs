@@ -10,8 +10,15 @@ defmodule LineaUI.Components.BulkBarTest do
   end
 
   test "a labelled region with the count and the text for one or for several" do
-    one = render(~H|<.bulk_bar id="b" count={1} label="order selected" label_plural="orders selected" />|)
-    many = render(~H|<.bulk_bar id="b" count={3} label="order selected" label_plural="orders selected" />|)
+    one =
+      render(
+        ~H|<.bulk_bar id="b" count={1} label="order selected" label_plural="orders selected" />|
+      )
+
+    many =
+      render(
+        ~H|<.bulk_bar id="b" count={3} label="order selected" label_plural="orders selected" />|
+      )
 
     assert attr_of(one, "#b", "role") == ["region"]
     assert attr_of(one, "#b", "aria-label") == ["1 order selected"]
@@ -37,7 +44,10 @@ defmodule LineaUI.Components.BulkBarTest do
   end
 
   test "the close button runs on_clear, to the target, and is labelled with Esc" do
-    html = render(~H|<.bulk_bar id="b" count={2} on_clear="clear" target="#list" clear_label="Limpar" />|)
+    html =
+      render(
+        ~H|<.bulk_bar id="b" count={2} on_clear="clear" target="#list" clear_label="Limpar" />|
+      )
 
     assert attr_of(html, "#b [data-bulk-clear]", "phx-click") == ["clear"]
     assert attr_of(html, "#b [data-bulk-clear]", "phx-target") == ["#list"]
@@ -45,7 +55,11 @@ defmodule LineaUI.Components.BulkBarTest do
   end
 
   test "select all shows only with an event and more in all than selected" do
-    shown = render(~H|<.bulk_bar id="b" count={12} total={128} on_select_all="all" select_all_label="Todos os %{total}" />|)
+    shown =
+      render(
+        ~H|<.bulk_bar id="b" count={12} total={128} on_select_all="all" select_all_label="Todos os %{total}" />|
+      )
+
     all_selected = render(~H|<.bulk_bar id="b" count={128} total={128} on_select_all="all" />|)
     no_event = render(~H|<.bulk_bar id="b" count={12} total={128} />|)
 
@@ -60,7 +74,9 @@ defmodule LineaUI.Components.BulkBarTest do
       render(~H"""
       <.bulk_bar id="b" count={2}>
         <:action variant="primary" disabled phx-click="apply">Apply</:action>
-        <:action variant="danger" icon="huge-delete-02" phx-click="delete" phx-value-kind="soft">Delete</:action>
+        <:action variant="danger" icon="huge-delete-02" phx-click="delete" phx-value-kind="soft">
+          Delete
+        </:action>
         <:action>Plain</:action>
       </.bulk_bar>
       """)
@@ -69,7 +85,13 @@ defmodule LineaUI.Components.BulkBarTest do
     assert attr_of(html, "#b .linea-bulk-btn", "phx-click") == ["apply", "delete"]
     assert attr_of(html, "#b .linea-bulk-btn[data-variant=danger]", "phx-value-kind") == ["soft"]
     assert attr_of(html, "#b .linea-bulk-btn[data-variant=primary]", "disabled") == [""]
-    assert find(html, "#b .linea-bulk-btn[data-variant=danger] [class*=huge-delete-02], #b .linea-bulk-btn[data-variant=danger] svg") |> Enum.count() > 0
+
+    assert find(
+             html,
+             "#b .linea-bulk-btn[data-variant=danger] [class*=huge-delete-02], #b .linea-bulk-btn[data-variant=danger] svg"
+           )
+           |> Enum.count() > 0
+
     assert attr_of(html, "#b .linea-bulk-btn", "type") == ["button", "button", "button"]
   end
 

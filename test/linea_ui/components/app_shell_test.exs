@@ -567,7 +567,9 @@ defmodule LineaUI.Components.AppShellTest do
       html =
         render(~H"""
         <.framed_sidebar id="m">
-          <:search id="open-search" aria-label="Search" phx-click="open_search"><span>Search</span><kbd>Ctrl K</kbd></:search>
+          <:search id="open-search" aria-label="Search" phx-click="open_search">
+            <span>Search</span><kbd>Ctrl K</kbd>
+          </:search>
           x
         </.framed_sidebar>
         """)

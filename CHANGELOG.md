@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- `connection_banner/1`: a pill with a spinner and a glowing `aura/1` ring that shows while the LiveView socket is down (`phx-disconnected`) and hides when it is back (`phx-connected`), at the top or the bottom. No JavaScript of its own; put it once in the root layout.
 - `framed_sidebar/1`: the `:search` slot declares its attributes (`id`, `class`, `title`, `aria-label`, `phx-click`, `phx-target`), so using them no longer warns at compile time; `class` merges into the box.
 - `bulk_bar/1`: the `:action` slot declares `id`, `title`, `aria-label`, `phx-click`, `phx-target`, `phx-disable-with` and `phx-value-id`, so a button with `phx-click` no longer warns at compile time.
 
