@@ -50,7 +50,7 @@ defmodule LineaUI.Components.Divider do
 
   def divider(%{orientation: "horizontal"} = assigns) do
     ~H"""
-    <div role="separator" class={merge(["my-4 flex items-center space-x-3", @class])} {@rest}>
+    <div role="separator" class={merge(["my-4 flex items-center gap-3", @class])} {@rest}>
       <div class={["h-px flex-1", line()]}></div>
       <p>{render_slot(@inner_block)}</p>
       <div class={["h-px flex-1", line()]}></div>

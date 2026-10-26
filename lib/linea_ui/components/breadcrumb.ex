@@ -33,9 +33,9 @@ defmodule LineaUI.Components.Breadcrumb do
 
   @links %{
     "plain" =>
-      "flex items-center space-x-1.5 text-primary transition-colors hover:text-primary-focus dark:text-accent-light dark:hover:text-accent",
+      "flex items-center gap-1.5 text-primary transition-colors hover:text-primary-focus dark:text-accent-light dark:hover:text-accent",
     "bordered" =>
-      "flex items-center space-x-1.5 rounded-lg border border-slate-200 px-1.5 py-1 leading-none text-primary transition-colors hover:text-primary-focus dark:border-navy-500 dark:text-accent-light dark:hover:text-accent"
+      "flex items-center gap-1.5 rounded-lg border border-slate-200 px-1.5 py-1 leading-none text-primary transition-colors hover:text-primary-focus dark:border-navy-500 dark:text-accent-light dark:hover:text-accent"
   }
 
   @doc """
@@ -78,10 +78,10 @@ defmodule LineaUI.Components.Breadcrumb do
 
     ~H"""
     <nav aria-label={@label} {@rest}>
-      <ul class={merge(["flex flex-wrap items-center space-x-2", @class])}>
+      <ul class={merge(["flex flex-wrap items-center gap-2", @class])}>
         <li
           :for={{item, index} <- Enum.with_index(@item)}
-          class={index < @last && "flex items-center space-x-2"}
+          class={index < @last && "flex items-center gap-2"}
         >
           <.crumb item={item} link_class={link_class(@variant)} current={index == @last} />
           <.separator :if={index < @last} separator={@separator} />
@@ -135,7 +135,7 @@ defmodule LineaUI.Components.Breadcrumb do
 
     ~H"""
     <div
-      class={merge(["flex items-center space-x-1.5", @item[:class]])}
+      class={merge(["flex items-center gap-1.5", @item[:class]])}
       aria-current={@current && "page"}
       {@extra}
     >

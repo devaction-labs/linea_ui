@@ -67,7 +67,7 @@ defmodule LineaUI.Components.AlertTest do
       <.alert color="error"><:icon><svg id="i"></svg></:icon>Text</.alert>
       """)
 
-    assert "space-x-2" in classes(html, "[role=alert]")
+    assert "gap-2" in classes(html, "[role=alert]")
     assert [_] = find(html, "[role=alert] > svg#i") |> Enum.to_list()
   end
 

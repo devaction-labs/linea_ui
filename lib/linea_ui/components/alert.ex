@@ -199,7 +199,7 @@ defmodule LineaUI.Components.Alert do
         merge([
           @base_classes,
           "px-4 py-4 sm:px-5",
-          @icon != [] && "space-x-2",
+          @icon != [] && "gap-2",
           (@dismissible or @action != []) && "items-center justify-between",
           @class
         ])
@@ -262,7 +262,7 @@ defmodule LineaUI.Components.Alert do
   defp split_content(nil, true, _icon), do: "flex-1 px-4 py-3 sm:px-5"
   defp split_content(_accent, true, _icon), do: "flex-1 px-4 py-3 sm:px-5"
   defp split_content(_accent, false, []), do: "flex flex-1 p-4"
-  defp split_content(_accent, false, _icon), do: "flex flex-1 items-center space-x-3 p-4"
+  defp split_content(_accent, false, _icon), do: "flex flex-1 items-center gap-3 p-4"
 
   defp bar(color), do: @bars[color]
   defp icon_box(color), do: @icon_boxes[color]

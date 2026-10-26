@@ -50,7 +50,7 @@ defmodule LineaUI.Components.MenuList do
     "bordered" => "space-y-1.5"
   }
 
-  @base "group flex items-center space-x-2 tracking-wide outline-hidden"
+  @base "group flex items-center gap-2 tracking-wide outline-hidden"
 
   @shape %{
     "link" => "inline-flex transition-colors",

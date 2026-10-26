@@ -137,7 +137,7 @@ defmodule LineaUI.Components.Accordion do
       {@rest}
     >
       <:trigger class="ac-header pointer-events-none flex items-center justify-between bg-slate-150 px-4 py-4 dark:bg-navy-500 sm:px-5">
-        <div class="flex items-center space-x-3.5 tracking-wide outline-hidden transition-all">
+        <div class="flex items-center gap-3.5 tracking-wide outline-hidden transition-all">
           {render_slot(@header)}
         </div>
         <span

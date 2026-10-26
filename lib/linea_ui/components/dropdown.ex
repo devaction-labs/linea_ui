@@ -250,11 +250,11 @@ defmodule LineaUI.Components.Dropdown do
     },
     "media" => %{
       "neutral" =>
-        "flex items-center space-x-3.5 px-4 py-2 pr-8 tracking-wide outline-hidden transition-all hover:bg-slate-100 focus:bg-slate-100 dark:hover:bg-navy-600 dark:focus:bg-navy-600",
+        "flex items-center gap-3.5 px-4 py-2 pr-8 tracking-wide outline-hidden transition-all hover:bg-slate-100 focus:bg-slate-100 dark:hover:bg-navy-600 dark:focus:bg-navy-600",
       "primary" =>
-        "flex items-center space-x-3.5 px-4 py-2 pr-8 tracking-wide outline-hidden transition-all hover:bg-primary/10 focus:bg-primary/10 dark:hover:bg-accent-light/10 dark:focus:bg-accent-light/10",
+        "flex items-center gap-3.5 px-4 py-2 pr-8 tracking-wide outline-hidden transition-all hover:bg-primary/10 focus:bg-primary/10 dark:hover:bg-accent-light/10 dark:focus:bg-accent-light/10",
       "error" =>
-        "flex items-center space-x-3.5 px-4 py-2 pr-8 tracking-wide text-error outline-hidden transition-all hover:bg-error/20 focus:bg-error/20"
+        "flex items-center gap-3.5 px-4 py-2 pr-8 tracking-wide text-error outline-hidden transition-all hover:bg-error/20 focus:bg-error/20"
     }
   }
 
@@ -291,7 +291,7 @@ defmodule LineaUI.Components.Dropdown do
         :classes,
         merge([
           @item_styles[assigns.variant][assigns.color],
-          assigns.icon != [] && "space-x-3",
+          assigns.icon != [] && "gap-3",
           assigns.disabled && "pointer-events-none opacity-60",
           "w-full text-left",
           assigns.class

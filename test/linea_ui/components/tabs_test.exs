@@ -110,7 +110,7 @@ defmodule LineaUI.Components.TabsTest do
     assert ["p-0", "aria-selected:text-primary", "rounded-none"] -- tab == []
     refute Enum.any?(tab, &String.starts_with?(&1, "border"))
     refute Enum.any?(tab, &String.contains?(&1, "aria-selected:bg"))
-    assert "space-x-4" in classes(html, "[role=tablist]")
+    assert "gap-4" in classes(html, "[role=tablist]")
 
     assert "aria-selected:text-slate-800" in classes(
              render_tabs(%{variant: "text", color: "neutral"}),
