@@ -3,6 +3,7 @@
 ## Unreleased
 
 - `select/1` with `multiple` is now a pillbox by default (`overflow="count"`): the control stays on one line and never grows; the chips that do not fit are hidden and a `+N` chip (its `title` lists the hidden labels) tells how many. It refits when chips are added or removed and when the control is resized. **Behavior change:** pass `overflow="wrap"` for the old look, chips breaking into more lines. `tags_input/1` still wraps.
+- The chips of `select/1` and `tags_input/1` no longer draw tom-select's vertical divider before the `×`; the `×` is a quiet icon that darkens, with a soft background, on hover.
 - Pillbox details: a chip is cut at 150px with an ellipsis (`.item-text`; the `×` stays); the `+N` chip is outlined and carries an `aria-label` (`3 more: Pix, Boleto…`, the word is `more_label`); `size="sm"` is now also the compact 32px listbox for filter bars; `footer` (with `footer_count` and `footer_hint`, `\"%{count} of %{total}\"` and `\"Esc to close\"` by default) draws a line under the list of a `multiple` select with how many are chosen.
 
 ## 0.6.3

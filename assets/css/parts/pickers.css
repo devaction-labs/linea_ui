@@ -22,6 +22,16 @@
 .ts-control .item-text { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .ts-control .item .remove { flex-shrink: 0; }
 
+/* No divider before the remove button (tom-select draws one); the × is a quiet icon that darkens on hover. */
+.ts-wrapper.plugin-remove_button:not(.rtl) .ts-control .item .remove {
+  border-left: 0;
+  margin-left: 2px;
+  padding: 0 3px;
+  opacity: .6;
+  border-radius: .25rem;
+}
+.ts-wrapper.plugin-remove_button .ts-control .item .remove:hover { opacity: 1; background: color-mix(in oklab, currentColor 12%, transparent); }
+
 /* The compact control, for filter bars. */
 .ts-wrapper[data-size="sm"] .ts-control,
 .ts-wrapper[data-size="sm"].multi.has-items .ts-control { min-height: 2rem; padding-block: 3px; font-size: .75rem; }
