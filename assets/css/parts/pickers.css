@@ -19,6 +19,7 @@
 }
 .ts-wrapper .ts-control > .item:not(span) { display: inline-flex; align-items: center; max-width: var(--ts-chip-max, 100%); }
 .ts-wrapper[data-overflow="count"] { --ts-chip-max: 150px; }
+.ts-wrapper.multi .ts-control > div.item { overflow: hidden; }
 .ts-control .item-text { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .ts-control .item .remove { flex-shrink: 0; }
 
