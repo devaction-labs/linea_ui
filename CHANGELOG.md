@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- `framed_sidebar/1`: the `:search` slot declares its attributes (`id`, `class`, `title`, `aria-label`, `phx-click`, `phx-target`), so using them no longer warns at compile time; `class` merges into the box.
+
 ## 0.8.0
 
 - `framed_sidebar/1`: the `:search` slot takes attributes (`phx-click`, `id`, `aria-label`...); with any, the search box is one `<button class="rail-search-button">` instead of a `div`, so the whole box opens your search or command palette without wrapping its children in a button of your own (which centered the text and left the icon at the edge of the rail). The text is left aligned, the shortcut sits at the right, the icon is centered in the collapsed rail, and the box has a hover and a focus ring.

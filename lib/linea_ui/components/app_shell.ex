@@ -1556,7 +1556,15 @@ defmodule LineaUI.Components.AppShell do
   slot :workspace, doc: "The workspace switcher under the brand; hidden in the rail."
   slot :search,
     doc:
-      "The search box; mark what the rail hides with `rail-label`. With `phx-click` (or any other attribute: `id`, `aria-label`) it is a button that opens your search or command palette, so the whole box is the target."
+      "The search box; mark what the rail hides with `rail-label`. With `phx-click` (or `id`, `aria-label`...) it is a button that opens your search or command palette, so the whole box is the target." do
+    attr :id, :string
+    attr :class, :any
+    attr :title, :string
+    attr :"aria-label", :string
+    attr :"phx-click", :any
+    attr :"phx-target", :any
+  end
+
   slot :bottom, doc: "Items under the navigation: settings, the person."
   slot :inner_block, required: true, doc: "The navigation: `rail_link/1` and `rail_module/1`."
 
@@ -2126,13 +2134,16 @@ defmodule LineaUI.Components.AppShell do
   attr :search, :any, required: true
 
   defp rail_search(assigns) do
-    assigns = assign(assigns, :attrs, assigns_to_attributes(assigns.search, [:inner_block, :__slot__]))
+    assigns =
+      assigns
+      |> assign(:attrs, assigns_to_attributes(assigns.search, [:inner_block, :__slot__, :class]))
+      |> assign(:extra_class, assigns.search[:class])
 
     ~H"""
-    <button :if={@attrs != []} type="button" class="rail-search rail-search-button" {@attrs}>
+    <button :if={@attrs != []} type="button" class={merge(["rail-search rail-search-button", @extra_class])} {@attrs}>
       {render_slot(@search)}
     </button>
-    <div :if={@attrs == []} class="rail-search">{render_slot(@search)}</div>
+    <div :if={@attrs == []} class={merge(["rail-search", @extra_class])}>{render_slot(@search)}</div>
     """
   end
 end
