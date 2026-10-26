@@ -19,6 +19,7 @@ defmodule LineaUI.Components.Select.Listbox do
     count = length(values)
 
     assigns
+    |> then(&assign(&1, :placeholder, Map.get(&1, :placeholder) || Map.get(&1, :prompt)))
     |> assign_new(:overflow, fn -> "wrap" end)
     |> assign_new(:size, fn -> "md" end)
     |> assign_new(:footer, fn -> false end)

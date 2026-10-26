@@ -11,7 +11,7 @@
 .ts-wrapper[data-overflow="count"] .ts-control > input { flex: 1 1 3rem; min-width: 3rem; width: auto !important; }
 /* A pillbox is as tall as an input of its size and never grows: a row of fields stays level. */
 .ts-wrapper[data-overflow="count"],
-.ts-wrapper[data-overflow="count"].multi.has-items { position: relative; }
+.ts-wrapper[data-overflow="count"].multi.has-items { contain: inline-size; position: relative; }
 .ts-wrapper[data-overflow="count"] .ts-control,
 .ts-wrapper[data-overflow="count"].multi.has-items .ts-control {
   align-items: center;

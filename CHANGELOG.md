@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- A multiple listbox `select` takes `prompt` as its placeholder when it has no `placeholder` (`prompt` was ignored there, leaving an empty control).
+- A pillbox no longer asks its parent for the width of its chips (`contain: inline-size`), so a grid or flex row cannot widen its column because of them.
+
 ## 0.7.2
 
 - `clearable` on a single `select/1`: the clear button no longer sits on top of the chevron; it is 2.25rem from the right edge, beside it.
