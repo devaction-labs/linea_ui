@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- `clearable` on a single `select/1`: the clear button no longer sits on top of the chevron; it is 2.25rem from the right edge, beside it.
+
 ## 0.7.1
 
 - A pillbox (`select multiple`, the default `overflow="count"`) is as tall as an input of its size (`sm` 2rem, `md` 2.25rem, `lg` 3rem) and never grows, so a row of fields stays level; it draws a chevron, and its placeholder hides while there are chips.

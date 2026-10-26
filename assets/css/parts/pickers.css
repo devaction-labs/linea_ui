@@ -101,7 +101,7 @@
   z-index: 3;
   transition: opacity .15s, background-color .15s, color .15s;
 }
-.ts-wrapper.plugin-clear_button.single .clear-button { right: max(var(--ts-pr-caret), 8px); }
+.ts-wrapper.plugin-clear_button.single .clear-button { right: 2.25rem; }
 .dark .ts-wrapper.plugin-clear_button .clear-button { color: var(--color-navy-300); }
 .ts-wrapper.plugin-clear_button .clear-button::before {
   background-color: currentColor;
