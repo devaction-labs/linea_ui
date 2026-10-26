@@ -83,7 +83,7 @@
     --toast-bg: #fff;
     --toast-fg: var(--color-slate-800);
     --toast-edge: var(--color-slate-200);
-    @apply rounded-2xl text-sm font-medium;
+    @apply rounded-[10px] text-sm font-medium;
     background: var(--toast-bg);
     color: var(--toast-fg);
     box-shadow: 0 10px 30px rgb(15 23 42 / 0.1), 0 0 0 1px var(--toast-edge);
