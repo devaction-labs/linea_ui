@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-- `select/1` with `multiple` takes `overflow="count"`, a pillbox: the control stays on one line and does not grow; the chips that do not fit are hidden and a `+N` chip (its `title` lists the hidden labels) tells how many. It refits when chips are added or removed and when the control is resized. The default `overflow="wrap"` keeps the chips breaking into more lines.
+- `select/1` with `multiple` is now a pillbox by default (`overflow="count"`): the control stays on one line and never grows; the chips that do not fit are hidden and a `+N` chip (its `title` lists the hidden labels) tells how many. It refits when chips are added or removed and when the control is resized. **Behavior change:** pass `overflow="wrap"` for the old look, chips breaking into more lines. `tags_input/1` still wraps.
 
 ## 0.6.3
 
