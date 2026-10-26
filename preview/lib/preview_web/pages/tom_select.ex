@@ -164,20 +164,34 @@ defmodule PreviewWeb.Pages.TomSelect do
         </.form>
       </div>
     </.example>
-    <.example title="Pillbox (one line, +N)" class="max-w-xl">
+    <.example title="Pillbox (one line, +N)" class="max-w-4xl">
       <.intro />
-      <div class="mt-5 grid grid-cols-2 gap-4">
+      <div class="mt-5 grid grid-cols-4 items-end gap-3">
+        <.input name="order" label="Order" placeholder="PUB-1003458" />
         <.select
           id="tom-pillbox"
           name="pillbox"
-          label="Footer"
+          label="Status (clearable, footer)"
           options={@states}
           value={~w(AL AK AZ AR CA CO CT DE)}
           multiple
           removable
+          clearable
           footer
           placeholder="Select a state..."
         />
+        <.select
+          id="tom-pillbox-empty"
+          name="pillbox_empty"
+          label="Empty"
+          options={@states}
+          multiple
+          removable
+          placeholder="Select a state..."
+        />
+        <.button variant="outline"><.icon name="huge-filter" class="size-4" /> More filters</.button>
+      </div>
+      <div class="mt-4 grid grid-cols-2 gap-4">
         <.select
           id="tom-pillbox-sm"
           name="pillbox_sm"
@@ -187,6 +201,7 @@ defmodule PreviewWeb.Pages.TomSelect do
           value={~w(AL AK AZ AR)}
           multiple
           removable
+          clearable
           placeholder="Select a state..."
         />
         <.select

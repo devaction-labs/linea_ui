@@ -148,7 +148,16 @@ defmodule LineaUI.Components.Select.Listbox do
             readonly={@search != "control"}
             data-search
           />
-          <div :if={@clearable} class="clear-button" title={@clear_label} data-clear>⨯</div>
+          <div
+            :if={@clearable}
+            class="clear-button"
+            role="button"
+            title={@clear_label}
+            aria-label={@clear_label}
+            data-clear
+          >
+            ⨯
+          </div>
         </div>
         <div
           id={@id <> "-dropdown"}

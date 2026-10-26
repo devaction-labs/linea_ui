@@ -9,7 +9,40 @@
 .ts-wrapper[data-overflow="count"] .ts-control > :is(.item, .ts-more) { flex-shrink: 0; white-space: nowrap; }
 .ts-wrapper[data-overflow="count"] .ts-control > [hidden] { display: none !important; }
 .ts-wrapper[data-overflow="count"] .ts-control > input { flex: 1 1 3rem; min-width: 3rem; width: auto !important; }
-.ts-wrapper[data-overflow="count"].multi.has-items .ts-control { padding-bottom: 6px; }
+/* A pillbox is as tall as an input of its size and never grows: a row of fields stays level. */
+.ts-wrapper[data-overflow="count"],
+.ts-wrapper[data-overflow="count"].multi.has-items { position: relative; }
+.ts-wrapper[data-overflow="count"] .ts-control,
+.ts-wrapper[data-overflow="count"].multi.has-items .ts-control {
+  align-items: center;
+  box-sizing: border-box;
+  height: 2.25rem;
+  min-height: 0;
+  padding-block: 0;
+  padding-right: 2rem;
+}
+.ts-wrapper[data-overflow="count"].multi .ts-control > div { margin: 0 4px 0 0; }
+.ts-wrapper[data-overflow="count"][data-size="sm"] .ts-control,
+.ts-wrapper[data-overflow="count"][data-size="sm"].multi.has-items .ts-control { height: 2rem; }
+.ts-wrapper[data-overflow="count"][data-size="lg"] .ts-control,
+.ts-wrapper[data-overflow="count"][data-size="lg"].multi.has-items .ts-control { height: 3rem; }
+.ts-wrapper[data-overflow="count"]::after {
+  background-color: var(--color-slate-400);
+  content: "";
+  height: .875rem;
+  mask: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") center/contain no-repeat;
+  pointer-events: none;
+  position: absolute;
+  right: .75rem;
+  top: calc(50% - .4375rem);
+  width: .875rem;
+  z-index: 2;
+}
+.ts-wrapper[data-overflow="count"].plugin-clear_button .ts-control,
+.ts-wrapper[data-overflow="count"].plugin-clear_button.multi.has-items .ts-control { padding-right: 3.5rem; }
+.ts-wrapper[data-overflow="count"].has-items .ts-control > input::placeholder { color: transparent; }
+.ts-wrapper[data-overflow="count"].dropdown-active::after { transform: rotate(180deg); }
+.dark .ts-wrapper[data-overflow="count"]::after { background-color: var(--color-navy-300); }
 .ts-wrapper[data-overflow="count"] .ts-control > .ts-more {
   font-variant-numeric: tabular-nums;
   cursor: pointer;
@@ -53,6 +86,32 @@
   opacity: 1;
   outline: none;
 }
+
+/* The clear button: a small cross in a round hit area, shown while there is something to clear. */
+.ts-wrapper.plugin-clear_button .clear-button {
+  align-items: center;
+  border-radius: 9999px;
+  color: var(--color-slate-400);
+  display: inline-flex;
+  font-size: 0;
+  height: 1.25rem;
+  justify-content: center;
+  right: 1.75rem;
+  width: 1.25rem;
+  z-index: 3;
+  transition: opacity .15s, background-color .15s, color .15s;
+}
+.ts-wrapper.plugin-clear_button.single .clear-button { right: max(var(--ts-pr-caret), 8px); }
+.dark .ts-wrapper.plugin-clear_button .clear-button { color: var(--color-navy-300); }
+.ts-wrapper.plugin-clear_button .clear-button::before {
+  background-color: currentColor;
+  content: "";
+  height: .625rem;
+  mask: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round'%3E%3Cpath d='M6 6l12 12M18 6 6 18'/%3E%3C/svg%3E") center/contain no-repeat;
+  width: .625rem;
+}
+.ts-wrapper.plugin-clear_button .clear-button:hover { background-color: color-mix(in oklab, currentColor 16%, transparent); color: var(--color-slate-700); }
+.dark .ts-wrapper.plugin-clear_button .clear-button:hover { color: var(--color-navy-50); }
 
 /* The compact control, for filter bars. */
 .ts-wrapper[data-size="sm"] .ts-control,

@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- A pillbox (`select multiple`, the default `overflow="count"`) is as tall as an input of its size (`sm` 2rem, `md` 2.25rem, `lg` 3rem) and never grows, so a row of fields stays level; it draws a chevron, and its placeholder hides while there are chips.
+- `clearable` on `select/1`: the clear button is a small SVG cross in a round hit area (it was a text glyph), beside the chevron, shown on hover or focus while there is a choice. It has `role="button"` and an `aria-label` (`clear_label`).
+- `.btn` has `gap-2`: an icon and a label inside any `button` no longer touch.
+
 ## 0.7.0
 
 (Includes the 0.6.3 toast work if you skipped it: plain notes are soft cards with an icon.)
