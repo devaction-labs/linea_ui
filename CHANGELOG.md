@@ -2,7 +2,7 @@
 
 ## 0.6.2
 
-- The plain toast note (no `kind`, `description`, `actions`...) is now a soft rounded card instead of a solid colored box: white on a light page, navy on a dark one, and every `color` (`primary secondary info success warning error`) tints the card, its edge and its text toward that color (`light` and `dark` stay neutral). `invert` now works on plain notes too: a navy card on a light page, a white one on a dark page, keeping the tint.
+- The plain toast note (no `kind`, `description`, `actions`...) is now a soft rounded card instead of a solid colored box: white on a light page, navy on a dark one, and every `color` (`primary secondary info success warning error`) tints the card, its edge and its text toward that color (`light` and `dark` stay neutral), with the kind's icon at the left (info for `primary`, `secondary` and `info`; none for the neutral ones), an 8px radius and the countdown along the bottom edge. `invert` now works on plain notes too: a navy card on a light page, a white one on a dark page, keeping the tint.
 
 ## 0.6.1
 

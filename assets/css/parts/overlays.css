@@ -153,18 +153,21 @@
     --toast-edge: color-mix(in oklab, var(--toast-tint) 28%, white);
   }
 
-  /* roomier, with a dot of its color and a countdown line along the bottom edge */
+  /* roomier, with an icon of its color and a countdown line along the bottom edge */
   .toastify.toastify:not(.rich, .html) {
     @apply flex items-center gap-3;
     padding: 14px 18px;
     min-width: 17rem;
   }
 
-  .toastify.toastify:not(.rich, .html):is(.primary, .secondary, .info, .success, .warning, .error)::before {
-    content: "";
-    @apply size-2 shrink-0 rounded-full;
-    background: var(--toast-tint);
-    box-shadow: 0 0 0 3px color-mix(in oklab, var(--toast-tint) 20%, transparent);
+  .toastify.toastify:not(.rich, .html) .toast-note-icon {
+    @apply flex shrink-0 items-center;
+    color: var(--toast-tint);
+  }
+
+  .dark .toastify.toastify:not(.rich, .html, .light) .toast-note-icon,
+  .toastify.toastify:not(.rich, .html)[data-surface="dark"] .toast-note-icon {
+    color: color-mix(in oklab, var(--toast-tint) 70%, white);
   }
 
   .toastify.toastify:not(.rich, .html) .toast-close {

@@ -26,6 +26,9 @@ import {
 
 const FLASH_KEY = "linea_toast"
 
+/** The icon a plain note draws at its left, by color; the neutral, light and dark notes have none. */
+const NOTE_ICONS = {primary: "info", secondary: "info", info: "info", success: "success", warning: "warning", error: "error"}
+
 /**
  * `Toaster`: LineOne's notifications (Toastify's look). A toast comes from the flash (`put_toast`, read from
  * `data-flash` on mount and on every patch, then cleared with `lv:clear-flash`), from a server push
@@ -233,6 +236,8 @@ export default {
     fillText(el, input, toast) {
       const text = document.createElement("span")
       text.textContent = input.message ?? ""
+      const icon = this.el.querySelector(`template[data-toast-icon="${NOTE_ICONS[colorFor(input)]}"]`)
+      icon && el.append(this.part("span", "toast-note-icon", icon.content.firstElementChild.cloneNode(true)))
       el.append(text)
       closeFor(input, toast.duration) && el.append(this.closeButton())
     },
