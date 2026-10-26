@@ -551,4 +551,33 @@ defmodule LineaUI.Components.AppShellTest do
       assert find(inline, "h2") |> Enum.count() == 1
     end
   end
+
+  describe "framed_sidebar search" do
+    test "a plain search box is a div" do
+      html =
+        render(~H"""
+        <.framed_sidebar id="m"><:search><span>Search</span></:search>x</.framed_sidebar>
+        """)
+
+      assert find(html, "div.rail-search") |> Enum.count() == 1
+      assert find(html, "button.rail-search") |> Enum.count() == 0
+    end
+
+    test "with attributes it is one button that carries them, so the whole box is the target" do
+      html =
+        render(~H"""
+        <.framed_sidebar id="m">
+          <:search id="open-search" aria-label="Search" phx-click="open_search"><span>Search</span><kbd>Ctrl K</kbd></:search>
+          x
+        </.framed_sidebar>
+        """)
+
+      [button] = find(html, "button.rail-search-button") |> Enum.to_list()
+      assert LazyHTML.attribute(button, "phx-click") == ["open_search"]
+      assert LazyHTML.attribute(button, "aria-label") == ["Search"]
+      assert LazyHTML.attribute(button, "type") == ["button"]
+      assert find(html, "button.rail-search kbd") |> Enum.count() == 1
+      assert find(html, "div.rail-search") |> Enum.count() == 0
+    end
+  end
 end

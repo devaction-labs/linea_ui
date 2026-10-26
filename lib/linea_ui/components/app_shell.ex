@@ -1554,7 +1554,9 @@ defmodule LineaUI.Components.AppShell do
   slot :brand, doc: "The mark in its rounded box (a logo image)."
   slot :wordmark, doc: "The name next to the mark; hidden in the rail."
   slot :workspace, doc: "The workspace switcher under the brand; hidden in the rail."
-  slot :search, doc: "The search box; mark what the rail hides with `rail-label`."
+  slot :search,
+    doc:
+      "The search box; mark what the rail hides with `rail-label`. With `phx-click` (or any other attribute: `id`, `aria-label`) it is a button that opens your search or command palette, so the whole box is the target."
   slot :bottom, doc: "Items under the navigation: settings, the person."
   slot :inner_block, required: true, doc: "The navigation: `rail_link/1` and `rail_module/1`."
 
@@ -1602,7 +1604,7 @@ defmodule LineaUI.Components.AppShell do
       </div>
       <div id={@id <> "-body"} class="rail-body">
         <div :if={@workspace != []} class="rail-label">{render_slot(@workspace)}</div>
-        <div :if={@search != []} class="rail-search">{render_slot(@search)}</div>
+        <.rail_search :for={search <- @search} search={search} />
         <nav class="rail-nav" aria-label={@label}>{render_slot(@inner_block)}</nav>
         {render_slot(@bottom)}
       </div>
@@ -2120,4 +2122,17 @@ defmodule LineaUI.Components.AppShell do
 
   defp js_command(%JS{} = js), do: js
   defp js_command(_other), do: nil
+
+  attr :search, :any, required: true
+
+  defp rail_search(assigns) do
+    assigns = assign(assigns, :attrs, assigns_to_attributes(assigns.search, [:inner_block, :__slot__]))
+
+    ~H"""
+    <button :if={@attrs != []} type="button" class="rail-search rail-search-button" {@attrs}>
+      {render_slot(@search)}
+    </button>
+    <div :if={@attrs == []} class="rail-search">{render_slot(@search)}</div>
+    """
+  end
 end

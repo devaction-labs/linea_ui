@@ -170,6 +170,41 @@
     white-space: nowrap;
   }
 
+  .rail-search > :is(span, p) {
+    min-width: 0;
+    overflow: hidden;
+    text-align: left;
+    text-overflow: ellipsis;
+  }
+
+  .rail-search > kbd {
+    margin-left: auto;
+  }
+
+  .rail-search-button {
+    width: 100%;
+    cursor: pointer;
+    text-align: left;
+    transition:
+      background-color 0.15s,
+      color 0.15s,
+      box-shadow 0.15s;
+  }
+
+  .rail-search-button:is(:hover, :focus-visible) {
+    color: var(--color-slate-600);
+    background: color-mix(in oklab, var(--rail-pill) 85%, var(--color-primary) 6%);
+  }
+
+  .dark .rail-search-button:is(:hover, :focus-visible) {
+    color: var(--color-navy-50);
+  }
+
+  .rail-search-button:focus-visible {
+    outline: 2px solid color-mix(in oklab, var(--color-primary) 60%, transparent);
+    outline-offset: 2px;
+  }
+
   .rail-nav {
     display: flex;
     flex: 1;

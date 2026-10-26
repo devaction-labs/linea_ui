@@ -26,9 +26,10 @@ defmodule PreviewWeb.Pages.FramedShell do
             >
               <:brand><.glyph name={:apps} class="size-5 text-primary" /></:brand>
               <:wordmark>Signetum</:wordmark>
-              <:search>
+              <:search aria-label="Search" phx-click="noop">
                 <.glyph name={:search} class="size-4.5 shrink-0" />
-                <span class="rail-label flex-1">Search</span>
+                <span class="flex-1">Search</span>
+                <.kbd>Ctrl K</.kbd>
               </:search>
               <.rail_link navigate="/framed-shell?page=today" label="Today">
                 <.glyph name={:apps} />
