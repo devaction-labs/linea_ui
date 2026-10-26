@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- `select` pillbox: the `+N` chip has room: wider padding, a minimum width, the count centered, and a margin before the field to type in, so it is no longer squeezed against the caret.
+
 ## 0.8.2
 
 - `connection_banner/1` is a toast now (a `loading` one with the `aura` ring, shown by `phx-disconnected` and dismissed by `phx-connected`) instead of its own pill; it needs the page's `<.toaster>`. The `position` attribute is gone: the toaster's position applies.

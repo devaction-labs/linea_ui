@@ -47,9 +47,14 @@
   font-variant-numeric: tabular-nums;
   cursor: pointer;
   background: transparent;
-  padding-inline: .5rem;
+  justify-content: center;
+  min-width: 2.25rem;
+  padding-inline: .75rem;
   box-shadow: inset 0 0 0 1px color-mix(in oklab, currentColor 22%, transparent);
 }
+/* The count and the field to type in are never glued: the badge keeps a margin of its own. */
+.ts-wrapper[data-overflow="count"].multi .ts-control > .ts-more { margin-right: .5rem; }
+.ts-wrapper[data-overflow="count"] .ts-control > input { padding-left: .25rem; }
 .ts-wrapper .ts-control > .item:not(span) { display: inline-flex; align-items: center; max-width: var(--ts-chip-max, 100%); }
 .ts-wrapper[data-overflow="count"] { --ts-chip-max: 150px; }
 .ts-wrapper.multi .ts-control > div.item { overflow: hidden; }
