@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.7.2
 
 - `clearable` on a single `select/1`: the clear button no longer sits on top of the chevron; it is 2.25rem from the right edge, beside it.
 
