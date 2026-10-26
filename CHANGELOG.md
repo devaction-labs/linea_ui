@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 0.8.3
+
 - `select` pillbox: the `+N` chip has room: wider padding, a minimum width, the count centered, and a margin before the field to type in, so it is no longer squeezed against the caret.
 
 ## 0.8.2
