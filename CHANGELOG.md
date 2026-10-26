@@ -3,6 +3,7 @@
 ## Unreleased
 
 - `framed_sidebar/1`: the `:search` slot declares its attributes (`id`, `class`, `title`, `aria-label`, `phx-click`, `phx-target`), so using them no longer warns at compile time; `class` merges into the box.
+- `bulk_bar/1`: the `:action` slot declares `id`, `title`, `aria-label`, `phx-click`, `phx-target`, `phx-disable-with` and `phx-value-id`, so a button with `phx-click` no longer warns at compile time.
 
 ## 0.8.0
 

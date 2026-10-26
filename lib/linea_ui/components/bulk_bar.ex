@@ -88,6 +88,13 @@ defmodule LineaUI.Components.BulkBar do
     attr :variant, :string, values: ~w(default primary danger)
     attr :disabled, :boolean
     attr :icon, :string
+    attr :id, :string
+    attr :title, :string
+    attr :"aria-label", :string
+    attr :"phx-click", :any
+    attr :"phx-target", :any
+    attr :"phx-disable-with", :string
+    attr :"phx-value-id", :any
   end
 
   def bulk_bar(assigns) do
