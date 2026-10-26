@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.8.0
 
 - `framed_sidebar/1`: the `:search` slot takes attributes (`phx-click`, `id`, `aria-label`...); with any, the search box is one `<button class="rail-search-button">` instead of a `div`, so the whole box opens your search or command palette without wrapping its children in a button of your own (which centered the text and left the icon at the edge of the rail). The text is left aligned, the shortcut sits at the right, the icon is centered in the collapsed rail, and the box has a hover and a focus ring.
 - New `email_layout/1` and its helpers `email_p/1`, `email_code/1`, `email_facts/1` and `email_steps/1` (`LineaUI.Components.Email`): the transactional e-mail of the design system. A whole HTML document for mail clients (tables, every style inline, 520px): the logo and `brand`, a card with an icon `:badge`, an `eyebrow`, a `title`, the `:body`, a main `:action` button with its address spelled out, a `:note` and a `:footer`. `theme` is `:auto` (follows `prefers-color-scheme` through `em-*` hook classes), `:light` or `:dark`; an address that is not http or https becomes `#`. The helpers: a code in boxes, label and value rows (`:mono`, `:total`) and a row of done or to-come steps.
