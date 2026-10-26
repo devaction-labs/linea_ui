@@ -50,6 +50,8 @@ defmodule LineaUI.Components.PhoneInput.Format do
     * `:invalid_length` - fewer than 4 or more than 15 digits in all, or a +1 number (the NANP)
       that does not have exactly 10 national digits.
 
+  ## Examples
+
       iex> LineaUI.Components.PhoneInput.Format.e164("(201) 555-0123", "US")
       {:ok, "+12015550123"}
       iex> LineaUI.Components.PhoneInput.Format.e164("912 345 678", "PT")
