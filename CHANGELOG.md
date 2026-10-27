@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Toast: in a closed pile the cards behind the newest draw no text (`data-behind`), so their titles can no longer show through and overlap the front card when several toasts come at once.
+
 ## 0.8.3
 
 - `select` pillbox: the `+N` chip has room: wider padding, a minimum width, the count centered, and a margin before the field to type in, so it is no longer squeezed against the caret.

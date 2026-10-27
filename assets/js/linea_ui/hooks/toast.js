@@ -362,12 +362,15 @@ export default {
       const stacked = this.el.dataset.stack !== "false"
       const groups = Object.groupBy(this.toasts.filter((toast) => toast.el.isConnected), (toast) => toast.position.key)
       Object.entries(groups).forEach(([key, group]) => {
-        const plan = stack(group.map((toast) => toast.size), !stacked || this.expanded.has(key))
-        group.forEach((toast, index) => this.place(toast, plan[index], index))
+        const open = !stacked || this.expanded.has(key)
+        const plan = stack(group.map((toast) => toast.size), open)
+        group.forEach((toast, index) => this.place(toast, plan[index], index, !open && index > 0))
       })
     },
 
-    place({el, position}, {offset, scale, width, height, hidden}, index) {
+    place({el, position}, {offset, scale, width, height, hidden}, index, behind) {
+      // a card behind the newest of a closed pile is a sliver: its text is not drawn, so it never overlaps the front one
+      el.toggleAttribute("data-behind", behind)
       el.style[position.y] = `${offset}px`
       el.style.width = `${width}px`
       el.style.height = `${height}px`
