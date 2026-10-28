@@ -110,15 +110,7 @@ defmodule LineaUI.Components.Segmented do
         aria-labelledby={@label && "#{@id}-label"}
         phx-hook="LineaUI.Segmented"
         phx-target={@target}
-        class={
-          merge([
-            "gap-0.5 rounded-lg bg-slate-150 p-0.75 dark:bg-navy-800",
-            @full && "flex w-full",
-            !@full && "inline-flex",
-            @label && "mt-1.5",
-            @class
-          ])
-        }
+        class={merge([track(@full), @label && "mt-1.5", @class])}
         data-value={@value}
         data-on-change={@on_change_js}
         {@rest}
@@ -184,5 +176,18 @@ defmodule LineaUI.Components.Segmented do
   defp value(nil), do: ""
   defp value(value), do: to_string(value)
 
-  defp size_class(size), do: Map.fetch!(@sizes, size)
+  # The track the segments sit on, shared with `radio_group variant="segmented"`.
+  @doc false
+  @spec track(boolean()) :: String.t()
+  def track(full \\ false) do
+    merge([
+      "gap-0.5 rounded-lg bg-slate-150 p-0.75 dark:bg-navy-800",
+      full && "flex w-full",
+      !full && "inline-flex"
+    ])
+  end
+
+  @doc false
+  @spec size_class(String.t()) :: String.t()
+  def size_class(size), do: Map.fetch!(@sizes, size)
 end

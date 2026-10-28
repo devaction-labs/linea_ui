@@ -154,7 +154,9 @@ defmodule LineaUI.Components.PhoneInputTest do
       assert attr_of(html, "input[data-display]", "value") == ["(201) 555-0123"]
       assert attr_of(html, "input[data-display]", "autocomplete") == ["tel"]
 
-      assert html |> find("[data-flag]") |> LazyHTML.text() |> String.trim() == "🇺🇸"
+      assert html |> find("[data-iso-code]") |> LazyHTML.text() == "US"
+      assert [] == find(html, "[data-flag]") |> Enum.to_list()
+      assert attr_of(html, "[phx-hook='LineaUI.PhoneInput']", "data-flags") == ["false"]
       assert html |> find("[data-code]") |> LazyHTML.text() == "+1"
       assert attr_of(html, "[data-picker]", "aria-haspopup") == ["listbox"]
       assert attr_of(html, "[data-picker]", "aria-expanded") == ["false"]
@@ -163,6 +165,15 @@ defmodule LineaUI.Components.PhoneInputTest do
       assert attr_of(html, "[data-search]", "placeholder") == ["Search…"]
       assert html |> find("[data-no-results]") |> LazyHTML.text() == "No results found"
       assert [] == find(html, "[data-clear]") |> Enum.to_list()
+    end
+
+    test "flags brings the emoji back in place of the ISO code" do
+      html = render(~H|<.phone_input name="phone" country="US" flags />|)
+
+      assert html |> find("[data-flag]") |> LazyHTML.text() |> String.trim() == "🇺🇸"
+      assert [] == find(html, "[data-iso-code]") |> Enum.to_list()
+      assert html |> find("[data-code]") |> LazyHTML.text() |> String.trim() == "+1"
+      assert attr_of(html, "[phx-hook='LineaUI.PhoneInput']", "data-flags") == ["true"]
     end
 
     test "a 1px divider separates the picker from the number and the list is as wide as the field" do

@@ -4,7 +4,7 @@
  * such as the NANP's +1), and which countries the picker lists and in what order. Formatting only helps the person
  * read what they typed; it does not validate the number.
  */
-import {COUNTRIES, MAIN, byIso} from "./phone_countries.js"
+import {COUNTRIES, MAIN, byIso, flag} from "./phone_countries.js"
 import {fold} from "./text.js"
 
 /** The most digits an E.164 number has, calling code included. */
@@ -170,3 +170,11 @@ export const search = (list, term, locale = "en") => {
  */
 export const initialCountry = (iso, pool, first = []) =>
   [iso, ...first].map((code) => pool.find((country) => country.iso === String(code ?? "").toUpperCase())).find(Boolean) ?? pool[0] ?? byIso("BR")
+
+/**
+ * The mark at the start of a picker row: the mono ISO code (`PT`), or with `flags` the flag emoji of the country.
+ */
+export const markHtml = (country, flags = false) =>
+  flags
+    ? `<span class="shrink-0 text-base leading-none" aria-hidden="true">${flag(country.iso)}</span>`
+    : `<span class="w-6 shrink-0 font-mono text-[11px] font-semibold text-slate-400 dark:text-navy-300">${country.iso}</span>`

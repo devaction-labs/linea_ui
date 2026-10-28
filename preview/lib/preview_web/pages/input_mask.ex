@@ -68,6 +68,14 @@ defmodule PreviewWeb.Pages.InputMask do
         <.input id="inputmask6" name="phone" placeholder="Enter Phone" mask="phone" />
       </.input_group>
     </.example>
+    <.example
+      title="Phone input"
+      text="ISO codes in the button and the rows; `flags` brings the emoji back."
+      class="mt-5 grid max-w-xl gap-4"
+    >
+      <.phone_input name="phone_iso" label="Phone number" value="+5571987654321" clearable />
+      <.phone_input name="phone_flags" label="With flags" country="PT" flags />
+    </.example>
     <.example title="Numeral Formatting" text={@text} class="mt-5 max-w-xl">
       <form id="numeral-form" phx-change="numeral">
         <.input_group shape="pill">

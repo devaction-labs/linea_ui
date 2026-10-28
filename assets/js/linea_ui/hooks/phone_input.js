@@ -13,7 +13,7 @@ import {runKey} from "../lib/keys.js"
 import {caretFor, dropBefore, significantBefore} from "../lib/mask_logic.js"
 import {moveIndex} from "../lib/select_box.js"
 import {COUNTRIES, byIso, flag} from "../lib/phone_countries.js"
-import {arrange, dialLabel, initialCountry, nameOf, resolve, restrict, search} from "../lib/phone_logic.js"
+import {arrange, dialLabel, initialCountry, markHtml, nameOf, resolve, restrict, search} from "../lib/phone_logic.js"
 
 const codes = (text) => (text ?? "").split(",").filter((code) => code !== "")
 
@@ -103,6 +103,7 @@ const PhoneInput = {
     const data = this.el.dataset
     const pool = restrict(COUNTRIES, {only: codes(data.only), except: codes(data.except)})
     this.locale = data.locale || "en"
+    this.flags = data.flags === "true"
     this.pool = pool.length > 0 ? pool : COUNTRIES
     this.first = codes(data.order)
     this.listed = arrange(this.pool, {locale: this.locale, first: this.first})
@@ -184,7 +185,7 @@ const PhoneInput = {
     const clear = this.q("[data-clear]")
     const disabled = this.input().disabled
     this.writeHidden()
-    this.q("[data-flag]").textContent = flag(this.country.iso)
+    this.flags ? (this.q("[data-flag]").textContent = flag(this.country.iso)) : (this.q("[data-iso-code]").textContent = this.country.iso)
     this.q("[data-code]").textContent = `+${this.country.code}`
     button.setAttribute("aria-label", `${this.el.dataset.pickerLabel}: ${nameOf(this.country, this.locale)} +${this.country.code}`)
     button.disabled = disabled
@@ -253,7 +254,7 @@ const PhoneInput = {
     const chosen = country.iso === this.country.iso
     return (
       `<div class="option${chosen ? " selected" : ""}" role="option" id="${this.el.id}-opt-${country.iso}" data-iso="${country.iso}" data-selectable="true" aria-selected="${chosen}">` +
-      `<span class="shrink-0 text-base leading-none" aria-hidden="true">${flag(country.iso)}</span>` +
+      markHtml(country, this.flags) +
       `<span class="min-w-0 flex-1 truncate">${escapeHtml(nameOf(country, this.locale))}</span>` +
       `<span class="shrink-0 font-inter text-xs-plus text-slate-400 dark:text-navy-300">${escapeHtml(dialLabel(country))}</span>` +
       `</div>`
