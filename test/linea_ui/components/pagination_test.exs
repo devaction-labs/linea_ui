@@ -5,12 +5,21 @@ defmodule LineaUI.Components.PaginationTest do
 
   defp count(html, selector), do: html |> find(selector) |> Enum.count()
 
-  test "window keeps the ends and the pages around the current one" do
+  test "window slides back inside the list at the ends and always draws the gap" do
     assert Pagination.window(2, 5, 1, 1) == [1, 2, 3, 4, 5]
     assert Pagination.window(5, 10, 1, 1) == [1, :gap, 4, 5, 6, :gap, 10]
-    assert Pagination.window(1, 10, 1, 1) == [1, 2, :gap, 10]
-    assert Pagination.window(4, 10, 1, 1) == [1, 2, 3, 4, 5, :gap, 10]
+    assert Pagination.window(1, 10, 1, 1) == [1, 2, 3, :gap, 10]
+    assert Pagination.window(10, 10, 1, 1) == [1, :gap, 8, 9, 10]
+    assert Pagination.window(4, 9, 1, 1) == [1, :gap, 3, 4, 5, :gap, 9]
+    assert Pagination.window(1, 9, 1, 1) == [1, 2, 3, :gap, 9]
     assert Pagination.window(1, 1, 1, 1) == [1]
+    assert Pagination.window(4, 7, 1, 1) == [1, 2, 3, 4, 5, 6, 7]
+    assert Pagination.window(1, 8, 1, 1) == [1, 2, 3, :gap, 8]
+  end
+
+  test "window with more siblings or boundaries keeps its width" do
+    assert Pagination.window(1, 20, 2, 1) == [1, 2, 3, 4, 5, :gap, 20]
+    assert Pagination.window(10, 20, 2, 2) == [1, 2, :gap, 8, 9, 10, 11, 12, :gap, 19, 20]
   end
 
   test "patch links with the current page marked" do

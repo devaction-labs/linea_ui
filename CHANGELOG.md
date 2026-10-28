@@ -56,6 +56,7 @@ Refinements from the second pass over the design canvas, artboard by artboard:
 - `autocomplete`: the typed text is bold primary inside each suggestion; the loading row has a spinner and `role="status"`; the clear control is a real 22px `<button>` (`clear_label`).
 - `date_picker`: a named dialog, real month buttons, a `role="grid"` of days with `aria-selected`/`aria-current` and the datetime picker's keyboard (arrows, Home/End, Page Up/Down, Enter/Space, Esc); new `labels` attribute. `time_picker`: the arrows and the AM/PM toggle are named buttons, a step that `min_time`/`max_time` stops is `aria-disabled`; new `labels` and `locale`.
 - `datetime_picker`: a Cancel button in the footer, closed times struck through, today marked with a dot. `calendar`: title and arrows at the left, Today and the view switch at the right; the selected day is a 1.5px ring; month cells are 112px; the week view tints today and gives blocks a 3px left border; solid legend swatches; the "more" button reads "+2 more" with an `aria-label`.
+- `pagination`: **visible change:** the window of pages is always `2 * siblings + 1` wide and slides back inside the list at the ends (page 1 of 10 shows `1 2 3 … 10`, page 10 shows `1 … 8 9 10`), and the gap is drawn even when it hides a single page (page 4 of 9 shows `1 … 3 4 5 … 9`), as in the design; a list of up to `2 * siblings + 2 * boundaries + 3` pages shows every page.
 
 ## 0.8.4
 

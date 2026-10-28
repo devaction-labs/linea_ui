@@ -228,23 +228,33 @@ defmodule LineaUI.Components.Pagination do
   @doc """
   The pages to show around `page` out of `total`: numbers, with `:gap` where pages are left out.
 
+  The window around the current page is `2 * siblings + 1` pages wide and slides back inside the
+  list at the ends, so it never shrinks (page 1 of 10 shows `1 2 3 … 10`). `boundaries` pages stay
+  at each end, and a gap is drawn wherever pages are left out, even a single one. A list short
+  enough to show everything (up to `2 * siblings + 2 * boundaries + 3` pages) has no gap.
+
       iex> LineaUI.Components.Pagination.window(5, 10, 1, 1)
       [1, :gap, 4, 5, 6, :gap, 10]
+      iex> LineaUI.Components.Pagination.window(1, 10, 1, 1)
+      [1, 2, 3, :gap, 10]
   """
   @spec window(pos_integer(), pos_integer(), non_neg_integer(), non_neg_integer()) ::
           [pos_integer() | :gap]
   def window(page, total, siblings, boundaries) do
-    low = page - siblings
-    high = page + siblings
+    if total <= 2 * siblings + 2 * boundaries + 3 do
+      Enum.to_list(1..total)
+    else
+      first = max(1, min(page - siblings, total - 2 * siblings))
+      middle = first..(first + 2 * siblings)
 
-    1..total
-    |> Enum.filter(fn n -> n <= boundaries or n > total - boundaries or n in low..high end)
-    |> Enum.reduce([], &gap/2)
-    |> Enum.reverse()
+      1..total
+      |> Enum.filter(fn n -> n <= boundaries or n > total - boundaries or n in middle end)
+      |> Enum.reduce([], &gap/2)
+      |> Enum.reverse()
+    end
   end
 
-  defp gap(n, [prev | _] = acc) when n == prev + 2, do: [n, prev + 1 | acc]
-  defp gap(n, [prev | _] = acc) when n > prev + 2, do: [n, :gap | acc]
+  defp gap(n, [prev | _] = acc) when n > prev + 1, do: [n, :gap | acc]
   defp gap(n, acc), do: [n | acc]
 
   defp render_pagination(%{footer: true} = assigns) do
