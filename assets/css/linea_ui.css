@@ -403,7 +403,7 @@ nav.header .header-container {
 
 /* Demo inline code style */
 code.inline-code {
-  @apply rounded-sm bg-slate-100 py-0.5 px-1 text-xs-plus text-secondary dark:bg-navy-800 dark:text-secondary-light;
+  @apply rounded-[5px] bg-slate-100 px-1.5 py-0.5 font-mono text-[12.5px] text-primary dark:bg-navy-800 dark:text-accent-light;
 }
 
 /* Scrollbar styles */

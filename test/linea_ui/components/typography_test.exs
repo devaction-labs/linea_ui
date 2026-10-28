@@ -13,8 +13,21 @@ defmodule LineaUI.Components.TypographyTest do
     assert "text-3xl" in classes(html, "h1")
     assert ["text-lg", "font-light", "text-info"] = classes(html, "h4")
     assert [_, d2] = find(html, "h1") |> Enum.to_list()
-    assert d2 |> LazyHTML.attribute("class") |> hd() == "text-7xl"
+    assert d2 |> LazyHTML.attribute("class") |> hd() == "text-7xl font-semibold"
     assert "text-2xl" in classes(html, "h2")
+    refute "font-semibold" in classes(html, "h2")
+  end
+
+  test "a display heading is semibold unless the weight is given" do
+    html =
+      render(~H"""
+      <.heading display={1} weight="light">D1</.heading>
+      <.heading display={3}>D3</.heading>
+      """)
+
+    assert "font-light" in classes(html, "h1:first-child")
+    refute "font-semibold" in classes(html, "h1:first-child")
+    assert "font-semibold" in classes(html, "h1:last-child")
   end
 
   test "a heading takes its type size apart from its level" do
@@ -48,10 +61,13 @@ defmodule LineaUI.Components.TypographyTest do
       <.kbd>K</.kbd>
       """)
 
-    assert ["font-semibold", "underline", "decoration-2", "decoration-info", "decoration-wavy"] =
+    assert ["underline", "decoration-1", "decoration-info", "decoration-wavy"] =
              classes(html, "a")
 
     assert [_] = find(html, "code.inline-code") |> Enum.to_list()
     assert [_] = find(html, "kbd") |> Enum.to_list()
+    assert "font-mono" in classes(html, "kbd")
+    assert "text-[11.5px]" in classes(html, "kbd")
+    assert "rounded-[5px]" in classes(html, "kbd")
   end
 end
