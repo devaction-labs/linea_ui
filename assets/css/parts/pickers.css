@@ -2106,6 +2106,50 @@ span.flatpickr-day.selected {
   vertical-align: middle;
 }
 
+/* Highlight and pictures: `<mark>` and `<img>` in the editor and in the saved HTML shown inside a `.ql-editor`. */
+.ql-editor mark {
+  padding: 0 .125rem;
+  border-radius: .1875rem;
+  background-color: #fef08a;
+  color: inherit;
+}
+.ql-editor mark:where(.dark, .dark *) {
+  background-color: color-mix(in oklab, #facc15 38%, transparent);
+  color: var(--color-navy-50);
+}
+.ql-editor img {
+  display: inline-block;
+  max-width: 100%;
+  height: auto;
+  border-radius: .375rem;
+  vertical-align: middle;
+}
+.ql-snow .ql-tooltip.ql-image-box {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: .5rem;
+  right: 15px;
+  white-space: normal;
+}
+.ql-snow .ql-tooltip.ql-image-box input[type="text"] {
+  flex: 1 1 9rem;
+  width: auto;
+  min-width: 0;
+}
+.ql-snow .ql-tooltip.ql-image-box[hidden] {
+  display: none;
+}
+.ql-snow .ql-tooltip.ql-image-box::before {
+  content: none;
+}
+.ql-snow .ql-tooltip.ql-image-box input[type="text"][aria-invalid="true"] {
+  border-color: var(--color-error);
+}
+.ql-snow .ql-tooltip.ql-image-box button {
+  margin-left: 0;
+}
+
 /* Text editor: variables and mentions as chips, the "/" and "@" menu, the assistant button, footer and comment bar. */
 .ql-editor .ql-token {
   display: inline-flex;

@@ -8,9 +8,14 @@
  * HTML and the selected text; the server answers with `linea:editor-insert`); Ctrl+Enter or the submit button
  * (`data-on-submit` is pushed with the HTML and the mentioned handles); an entry of the "/" menu that is not a built-in
  * block is pushed to `data-on-slash` with its key; and a word count in the footer.
+ *
+ * Toolbar buttons that are opt-in: `image` (a small popover for the address and description of a picture, or
+ * `data-on-image` pushed instead so the app can upload it), `variable` (a menu of `data-variables` to insert at the
+ * caret) and `mark` (toggles a `<mark>` around the selection). `<img>` survives the HTML cleaning only where
+ * `data-images` is on.
  */
 import {notify} from "../lib/dom.js"
-import {filterItems, mentionsIn, nextIndex, safeHref, sends, slashActions, slashKind, tokenize, triggerOf, wordsLabel} from "../lib/editor_logic.js"
+import {filterItems, imageHtml, mentionsIn, nextIndex, safeHref, sends, slashActions, slashKind, toggleAction, tokenize, triggerOf, variableItems, wordsLabel} from "../lib/editor_logic.js"
 import {TOOLS, alignCommand, cleanAttribute, headerValue, isEmptyHtml, tagAction, toggleBlock} from "../lib/editor_html.js"
 
 const STATES = {
@@ -26,26 +31,26 @@ const STATES = {
 const BLOCKS = {blockquote: "blockquote", "code-block": "pre", "header-1": "h1", "header-2": "h2"}
 const MARKER = "linea-marker"
 
-const cleanNode = (node) => {
+const cleanNode = (node, images) => {
   const children = [...node.childNodes]
-  children.forEach((child) => child.nodeType === Node.ELEMENT_NODE ? cleanElement(child) : child.nodeType !== Node.TEXT_NODE && child.remove())
+  children.forEach((child) => child.nodeType === Node.ELEMENT_NODE ? cleanElement(child, images) : child.nodeType !== Node.TEXT_NODE && child.remove())
 }
 
-const cleanElement = (element) => {
-  const action = tagAction(element.tagName)
+const cleanElement = (element, images) => {
+  const action = tagAction(element.tagName, images)
   ;[...element.attributes].forEach((attribute) => {
     const kept = cleanAttribute(element.tagName, attribute.name, attribute.value)
     kept === null ? element.removeAttribute(attribute.name) : element.setAttribute(attribute.name, kept)
   })
-  action !== "drop" && cleanNode(element)
+  action !== "drop" && cleanNode(element, images)
   action === "drop" && element.remove()
   action === "unwrap" && element.replaceWith(...element.childNodes)
 }
 
-export const sanitize = (html) => {
+export const sanitize = (html, images = false) => {
   const doc = new DOMParser().parseFromString(`<div>${html ?? ""}</div>`, "text/html")
   const root = doc.body.firstElementChild
-  cleanNode(root)
+  cleanNode(root, images)
   return root.innerHTML
 }
 
@@ -62,7 +67,7 @@ const TextEditor = {
     this.onToolbarDown = (event) => event.target.closest("[data-toolbar], [data-menu], [data-comment-bar]") && event.preventDefault()
     this.onClick = (event) => this.click(event)
     this.onInput = (event) =>
-      event.target.closest("[data-editor]") ? this.sync() : event.target.matches("[data-link-input]") && event.stopPropagation()
+      event.target.closest("[data-editor]") ? this.sync() : event.target.matches("[data-link-input], [data-image-input], [data-image-alt]") && event.stopPropagation()
     this.onPaste = (event) => this.paste(event)
     this.onSelection = () => document.activeElement === this.editor() && (this.paintState(), this.refreshMenu())
     this.onOutside = (event) => {
@@ -103,6 +108,7 @@ const TextEditor = {
     this.slash = this.el.dataset.slash ? read("slash") : null
     this.variables = read("variables")
     this.mentions = read("mentions")
+    this.images = this.el.dataset.images === "true"
   },
 
   names() {
@@ -110,7 +116,7 @@ const TextEditor = {
   },
 
   load(html) {
-    this.editor().innerHTML = sanitize(html)
+    this.editor().innerHTML = sanitize(html, this.images)
     this.chipify()
   },
 
@@ -156,6 +162,7 @@ const TextEditor = {
     const label = event.target.closest("[data-picker-label]")
     const item = event.target.closest("[data-item]")
     const save = event.target.closest("[data-link-save]")
+    const saveImage = event.target.closest("[data-image-save]")
     const row = event.target.closest("[data-menu-index]")
     const ai = event.target.closest("[data-ai]")
     const submit = event.target.closest("[data-submit]")
@@ -168,7 +175,8 @@ const TextEditor = {
       (button && (() => this.run(button.dataset.tool))) ||
       (label && (() => this.togglePicker(label.closest("[data-picker]")))) ||
       (item && (() => this.pick(item.closest("[data-picker]"), item))) ||
-      (save && (() => this.saveLink()))
+      (save && (() => this.saveLink())) ||
+      (saveImage && (() => this.saveImage()))
     action && (event.preventDefault(), action())
   },
 
@@ -186,6 +194,9 @@ const TextEditor = {
       [tool.wrap, () => this.wrapSelection(tool.wrap)],
       [tool.special === "direction", () => this.toggleDirection()],
       [tool.special === "link", () => this.openLink()],
+      [tool.special === "image", () => this.openImage()],
+      [tool.special === "variable", () => this.openVariables()],
+      [tool.special === "mark", () => this.toggleMark()],
       [tool.special === "clean", () => (this.exec("removeFormat"), this.exec("formatBlock", "p"), this.exec("unlink"))],
     ]
     actions.find(([applies]) => applies)[1]()
@@ -197,6 +208,50 @@ const TextEditor = {
     const range = selection.rangeCount > 0 && selection.getRangeAt(0)
     const inside = range && this.editor().contains(range.commonAncestorContainer) && !range.collapsed
     inside && this.exec("insertHTML", `<${tag}>${range.toString().replace(/[&<>]/g, (c) => ({"&": "&amp;", "<": "&lt;", ">": "&gt;"})[c])}</${tag}>`)
+  },
+
+  markAround() {
+    const range = this.selectionRange()
+    const node = range?.commonAncestorContainer
+    const element = node?.nodeType === Node.TEXT_NODE ? node.parentElement : node
+    const mark = element?.closest?.("mark")
+    return mark && this.editor().contains(mark) ? mark : null
+  },
+
+  selectionRange() {
+    const selection = window.getSelection()
+    const range = selection.rangeCount > 0 ? selection.getRangeAt(0) : null
+    return range && this.editor().contains(range.commonAncestorContainer) ? range : null
+  },
+
+  toggleMark() {
+    const mark = this.markAround()
+    const range = this.selectionRange()
+    const actions = {
+      unwrap: () => this.unwrapNode(mark),
+      wrap: () => range && !range.collapsed && this.wrapRange(range),
+    }
+    actions[toggleAction(Boolean(mark))]()
+  },
+
+  wrapRange(range) {
+    const mark = document.createElement("mark")
+    mark.append(range.extractContents())
+    range.insertNode(mark)
+    const selection = window.getSelection()
+    range.selectNodeContents(mark)
+    selection.removeAllRanges()
+    selection.addRange(range)
+  },
+
+  unwrapNode(node) {
+    const children = [...node.childNodes]
+    node.replaceWith(...children)
+    const range = document.createRange()
+    const selection = window.getSelection()
+    children.length > 0 && (range.setStartBefore(children[0]), range.setEndAfter(children[children.length - 1]))
+    selection.removeAllRanges()
+    selection.addRange(range)
   },
 
   currentBlock() {
@@ -288,11 +343,52 @@ const TextEditor = {
     this.sync()
   },
 
+  openImage() {
+    const event = this.el.dataset.onImage
+    const target = this.el.getAttribute("phx-target")
+    event ? this.pushEventTo(target || this.el, event, {id: this.el.id}) : this.showImageBox()
+  },
+
+  showImageBox() {
+    this.savedRange = this.selectionRange()?.cloneRange() ?? null
+    const box = this.el.querySelector("[data-image-box]")
+    box.hidden = false
+    box.querySelectorAll("input").forEach((input) => (input.value = ""))
+    box.querySelector("[data-image-input]").focus()
+  },
+
+  saveImage() {
+    const box = this.el.querySelector("[data-image-box]")
+    const html = imageHtml(box.querySelector("[data-image-input]").value, box.querySelector("[data-image-alt]").value)
+    html ? this.insertImage(box, html) : box.querySelector("[data-image-input]").setAttribute("aria-invalid", "true")
+  },
+
+  insertImage(box, html) {
+    const selection = window.getSelection()
+    box.hidden = true
+    box.querySelector("[data-image-input]").removeAttribute("aria-invalid")
+    this.editor().focus()
+    this.savedRange && (selection.removeAllRanges(), selection.addRange(this.savedRange))
+    this.insertWith(html)
+    this.sync()
+  },
+
+  closeImageBox() {
+    const box = this.el.querySelector("[data-image-box]")
+    const open = box && !box.hidden
+    box && (box.hidden = true)
+    open && this.editor().focus()
+  },
+
+  insertWith(html) {
+    this.exec("insertHTML", sanitize(html, true))
+  },
+
   paste(event) {
     const inEditor = event.target.closest("[data-editor]")
     const html = event.clipboardData?.getData("text/html")
     const text = event.clipboardData?.getData("text/plain") ?? ""
-    inEditor && (event.preventDefault(), html ? this.exec("insertHTML", sanitize(html)) : this.exec("insertText", text))
+    inEditor && (event.preventDefault(), html ? this.exec("insertHTML", sanitize(html, this.images)) : this.exec("insertText", text))
   },
 
   paintBlank() {
@@ -305,8 +401,10 @@ const TextEditor = {
       const name = button.dataset.tool
       const active = STATES[name] ? document.queryCommandState(STATES[name]) : BLOCKS[name] === block
       button.classList.toggle("ql-active", Boolean(active))
-      button.setAttribute("aria-pressed", String(Boolean(active)))
+      button.hasAttribute("aria-pressed") && button.setAttribute("aria-pressed", String(Boolean(active)))
     })
+    const mark = this.el.querySelector('[data-tool="mark"]')
+    mark && (mark.classList.toggle("ql-active", Boolean(this.markAround())), mark.setAttribute("aria-pressed", String(Boolean(this.markAround()))))
     const header = this.el.querySelector('[data-picker="header"]')
     header && this.setLabel(header, headerValue(block))
   },
@@ -334,6 +432,8 @@ const TextEditor = {
     const inEditor = event.target.closest("[data-editor]")
     const actions = [
       [link && event.key === "Enter", () => this.saveLink()],
+      [event.target.closest("[data-image-box]") && event.key === "Enter", () => this.saveImage()],
+      [event.target.closest("[data-image-box]") && event.key === "Escape", () => this.closeImageBox()],
       [inEditor && this.menu && this.menuKey(event.key), () => this.menuPress(event.key)],
       [inEditor && this.el.dataset.onSubmit && sends(event), () => this.submit()],
     ]
@@ -360,14 +460,29 @@ const TextEditor = {
   },
 
   insert(html) {
-    this.exec("insertHTML", sanitize(html))
+    this.exec("insertHTML", sanitize(html, this.images))
     this.sync()
   },
 
   items(kind) {
-    const slash = [...(this.slash ?? []), ...this.variables.map((name) => ({key: `variable:${name}`, label: `{${name}}`, hint: this.el.dataset.variableLabel ?? ""}))]
+    const slash = [...(this.slash ?? []), ...this.variableItems()]
     const mentions = this.mentions.map((mention) => ({key: `mention:${mention.handle}`, label: mention.label, hint: `@${mention.handle}`}))
     return {slash, mention: mentions}[kind]
+  },
+
+  variableItems() {
+    return variableItems(this.variables, this.el.dataset.variableLabel ?? "")
+  },
+
+  openVariables() {
+    const items = this.variableItems()
+    const button = this.el.querySelector('[data-tool="variable"]')
+    const range = this.selectionRange()
+    this.savedRange = range ? range.cloneRange() : null
+    this.editor().focus()
+    this.savedRange && (window.getSelection().removeAllRanges(), window.getSelection().addRange(this.savedRange))
+    this.menu = {kind: "variable", tool: true, length: 0, items, index: 0}
+    items.length > 0 ? this.paintMenu(button) : this.closeMenu()
   },
 
   kinds() {
@@ -381,6 +496,7 @@ const TextEditor = {
   },
 
   refreshMenu() {
+    if (this.menu?.tool) return
     const range = document.activeElement === this.editor() ? this.caret() : null
     const trigger = range && triggerOf(range.startContainer.textContent.slice(0, range.startOffset), this.kinds())
     const items = trigger ? filterItems(this.items(trigger.kind), trigger.query) : []
@@ -402,7 +518,7 @@ const TextEditor = {
 
   paintMenu(range) {
     const box = this.el.querySelector("[data-menu]")
-    const title = this.el.dataset[this.menu.kind === "slash" ? "slashTitle" : "mentionTitle"] ?? ""
+    const title = this.el.dataset[{slash: "slashTitle", mention: "mentionTitle", variable: "variableTitle"}[this.menu.kind]] ?? ""
     const caption = document.createElement("div")
     caption.className = "ql-menu-title"
     caption.textContent = title
@@ -452,15 +568,14 @@ const TextEditor = {
   },
 
   choose(index) {
-    const {length, node, end, items} = this.menu
+    const {length, node, end, items, tool} = this.menu
     const item = items[index]
-    const range = document.createRange()
-    range.setStart(node, end - length)
-    range.setEnd(node, end)
+    const range = tool ? this.savedRange : document.createRange()
+    tool || (range.setStart(node, end - length), range.setEnd(node, end))
     const selection = window.getSelection()
     selection.removeAllRanges()
-    selection.addRange(range)
-    range.deleteContents()
+    range && selection.addRange(range)
+    tool || range.deleteContents()
     this.closeMenu()
     this.apply(item)
     this.sync()

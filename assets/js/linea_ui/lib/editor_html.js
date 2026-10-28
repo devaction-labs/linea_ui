@@ -2,13 +2,17 @@
  * What the text editor keeps of the HTML it is given or pasted, and what its toolbar buttons do, without a DOM:
  * the tags kept, unwrapped or dropped, the attributes kept, and the browser editing command behind each tool.
  */
-import {safeHref} from "./editor_logic.js"
+import {imageSize, safeHref, safeSrc} from "./editor_logic.js"
 
-const KEEP = new Set(["P", "BR", "B", "STRONG", "I", "EM", "U", "S", "STRIKE", "SUB", "SUP", "H1", "H2", "H3", "H4", "H5", "H6", "OL", "UL", "LI", "BLOCKQUOTE", "PRE", "CODE", "HR", "A", "SPAN", "DIV", "FONT"])
+const KEEP = new Set(["P", "BR", "B", "STRONG", "I", "EM", "U", "S", "STRIKE", "SUB", "SUP", "H1", "H2", "H3", "H4", "H5", "H6", "OL", "UL", "LI", "BLOCKQUOTE", "PRE", "CODE", "HR", "A", "SPAN", "DIV", "FONT", "MARK"])
 const DROP = new Set(["SCRIPT", "STYLE", "IFRAME", "OBJECT", "EMBED", "LINK", "META", "TEMPLATE", "NOSCRIPT", "SVG", "MATH", "FORM", "INPUT", "BUTTON", "TEXTAREA", "SELECT"])
 
-/** What happens to an element: `keep` it, `unwrap` it (keep its children) or `drop` it with its children. */
-export const tagAction = (tag) => (KEEP.has(tag) ? "keep" : DROP.has(tag) ? "drop" : "unwrap")
+/**
+ * What happens to an element: `keep` it, `unwrap` it (keep its children) or `drop` it with its children. An `IMG`
+ * stays only where `images` is on (an editor with the image button) and is dropped everywhere else.
+ */
+export const tagAction = (tag, images = false) =>
+  tag === "IMG" ? (images ? "keep" : "drop") : KEEP.has(tag) ? "keep" : DROP.has(tag) ? "drop" : "unwrap"
 
 const STYLES = ["color", "background-color", "text-align"]
 
@@ -25,6 +29,10 @@ const ATTRIBUTES = {
   class: (value) => value.split(/\s+/).filter((name) => /^ql-[a-z0-9-]+$/.test(name)).join(" ") || null,
   style: (value) => cleanStyle(value) || null,
   dir: (value) => (["rtl", "ltr"].includes(value) ? value : null),
+  src: (value, tag) => (tag === "IMG" ? safeSrc(value) : null),
+  alt: (value, tag) => (tag === "IMG" ? value.slice(0, 300) : null),
+  width: (value, tag) => (tag === "IMG" ? imageSize(value) : null),
+  height: (value, tag) => (tag === "IMG" ? imageSize(value) : null),
   face: (value, tag) => (tag === "FONT" ? value : null),
 }
 
@@ -53,6 +61,9 @@ export const TOOLS = {
   code: {wrap: "code"},
   "direction-rtl": {special: "direction"},
   link: {special: "link"},
+  image: {special: "image"},
+  variable: {special: "variable"},
+  mark: {special: "mark"},
   clean: {special: "clean"},
 }
 

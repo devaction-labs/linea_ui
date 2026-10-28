@@ -1,6 +1,6 @@
 import test from "node:test"
 import assert from "node:assert/strict"
-import {blocks, commands, currentStyle, filterItems, imageProblem, mentionsIn, names, nextIndex, rowParts, safeHref, sends, slashActions, slashKind, styles, textboxAttributes, tokenize, triggerOf, uploadError, wordCount, wordsLabel} from "./editor_logic.js"
+import {blocks, commands, currentStyle, filterItems, imageHtml, imageProblem, imageSize, mentionsIn, names, nextIndex, rowParts, safeHref, safeSrc, sends, slashActions, slashKind, styles, textboxAttributes, toggleAction, tokenize, triggerOf, uploadError, variableItems, wordCount, wordsLabel} from "./editor_logic.js"
 
 const chain = () => {
   const calls = []
@@ -162,4 +162,49 @@ test("a slash entry is a built-in block, a chip, or a custom command for the ser
   assert.equal(slashKind("mention:ana"), "mention")
   assert.equal(slashKind("insert-image"), "custom")
   assert.equal(slashKind("variable"), "custom")
+})
+
+test("safeSrc accepts http(s) and relative paths only", () => {
+  assert.equal(safeSrc(" https://example.com/a.png "), "https://example.com/a.png")
+  assert.equal(safeSrc("http://example.com/a.png"), "http://example.com/a.png")
+  assert.equal(safeSrc("/a.png"), "/a.png")
+  assert.equal(safeSrc("img/a.png"), "img/a.png")
+  assert.equal(safeSrc("../a.png"), "../a.png")
+  assert.equal(safeSrc("data:image/svg+xml,<svg/>"), null)
+  assert.equal(safeSrc("JavaScript:alert(1)"), null)
+  assert.equal(safeSrc("java\tscript:alert(1)"), null)
+  assert.equal(safeSrc("ftp://example.com/a.png"), null)
+  assert.equal(safeSrc("//example.com/a.png"), null)
+  assert.equal(safeSrc("https://"), null)
+  assert.equal(safeSrc(""), null)
+  assert.equal(safeSrc(null), null)
+})
+
+test("imageSize keeps whole pixels from 1 to 4000", () => {
+  assert.equal(imageSize("320"), "320")
+  assert.equal(imageSize(" 0480 "), "480")
+  assert.equal(imageSize("0"), null)
+  assert.equal(imageSize("4001"), null)
+  assert.equal(imageSize("12.5"), null)
+  assert.equal(imageSize("auto"), null)
+})
+
+test("imageHtml escapes the address and the description, and refuses an unsafe address", () => {
+  assert.equal(imageHtml("https://e.com/a.png?x=1&y=2", 'A "photo"'), '<img src="https://e.com/a.png?x=1&amp;y=2" alt="A &quot;photo&quot;">')
+  assert.equal(imageHtml("/a.png"), '<img src="/a.png" alt="">')
+  assert.equal(imageHtml("javascript:alert(1)", "x"), null)
+})
+
+test("toggleAction unwraps inside the element and wraps outside", () => {
+  assert.equal(toggleAction(true), "unwrap")
+  assert.equal(toggleAction(false), "wrap")
+})
+
+test("variableItems makes one chip entry per name", () => {
+  assert.deepEqual(variableItems(["cliente", "preço"], "Variable"), [
+    {key: "variable:cliente", label: "{cliente}", hint: "Variable"},
+    {key: "variable:preço", label: "{preço}", hint: "Variable"},
+  ])
+  assert.deepEqual(variableItems([], "x"), [])
+  assert.equal(slashKind("variable:cliente"), "variable")
 })
