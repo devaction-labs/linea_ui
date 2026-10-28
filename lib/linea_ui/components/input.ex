@@ -34,7 +34,7 @@ defmodule LineaUI.Components.Input do
   | `date` | `pattern` of `d m y Y` (`~w(d m Y)`), `delimiter` (`"/"`) |
   | `time` | `pattern` of `h m s` (`~w(h m s)`), `delimiter` (`":"`) |
   | `phone` | `blocks` (`[3, 3, 4]`), `delimiter` (`" "`) |
-  | `numeral` | `thousands` (`thousand lakh wan none`), `decimals` (`2`), `delimiter` (`","`), `decimal_mark` (`"."`), `positive` |
+  | `numeral` | `thousands` (`thousand lakh wan none`), `decimals` (`2`), `delimiter` (`","`), `decimal_mark` (`"."`), `positive`, `prefix` (`"R$ "`, shown before the figure and left out of the raw value) |
 
   The input submits the masked text. `mask_submit="raw"` submits the unmasked value instead
   (digits, or a plain number like `1234.5` for `numeral`) through a hidden input that carries

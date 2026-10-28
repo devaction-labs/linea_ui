@@ -114,7 +114,9 @@ const formatNumeral = (value, options) => {
   const delimiter = options.delimiter ?? ","
   const grouped = groupInteger(integer, options.thousands ?? "thousand").replace(/,/g, delimiter)
   const whole = hasMark && integer === "" ? "0" : grouped
-  return `${negative ? "-" : ""}${whole}${hasMark ? mark + decimals : ""}`
+  const number = `${whole}${hasMark ? mark + decimals : ""}`
+  const prefix = number === "" ? "" : options.prefix ?? ""
+  return `${negative ? "-" : ""}${prefix}${number}`
 }
 
 const formatters = {

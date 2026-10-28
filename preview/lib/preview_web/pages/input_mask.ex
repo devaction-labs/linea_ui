@@ -99,6 +99,74 @@ defmodule PreviewWeb.Pages.InputMask do
         Submitted value: {@amount || "—"}
       </p>
     </.example>
+    <.example
+      title="Masks for Brazilian data"
+      text="mask and mask_options format while the person types; the LiveView receives the masked text, or only the value with mask_submit raw."
+      class="mt-5 grid max-w-3xl gap-4 sm:grid-cols-2"
+    >
+      <.input
+        id="br-doc"
+        name="doc"
+        label="Documento (blocos)"
+        value="12345678901"
+        mask="blocks"
+        mask_options={%{blocks: [3, 3, 3, 2], delimiters: [".", ".", "-"], numeric: true}}
+      />
+      <.input id="br-phone" name="phone" label="Telefone" value="11912345678" mask="phone" />
+      <.input
+        id="br-phone-blocks"
+        name="phone_blocks"
+        label="Telefone (blocos)"
+        value="11912345678"
+        mask="blocks"
+        mask_options={%{blocks: [2, 5, 4], delimiters: [" ", "-"], numeric: true}}
+      />
+      <.input
+        id="br-amount"
+        name="amount"
+        label="Valor"
+        value="1234567,5"
+        mask="numeral"
+        mask_submit="raw"
+        mask_options={%{delimiter: ".", decimal_mark: ",", decimals: 2, prefix: "R$ "}}
+      />
+      <.input
+        id="br-date"
+        name="date"
+        label="Data"
+        value="25102026"
+        mask="date"
+        mask_options={%{pattern: ~w(d m Y), delimiter: "/"}}
+      />
+      <.input
+        id="br-time"
+        name="time"
+        label="Hora"
+        value="1430"
+        mask="time"
+        mask_options={%{pattern: ~w(h m)}}
+      />
+      <.input id="br-card" name="card" label="Cartão" value="4111111111111111" mask="credit_card" />
+      <.input
+        id="br-date-error"
+        name="date_error"
+        label="Data com erro"
+        value="31022026"
+        mask="date"
+        mask_options={%{pattern: ~w(d m Y), delimiter: "/"}}
+        state="error"
+        help="Data inválida: fevereiro não tem dia 31."
+      />
+      <.input
+        id="br-disabled"
+        name="disabled"
+        label="Desabilitado"
+        value="12345678901"
+        mask="blocks"
+        mask_options={%{blocks: [3, 3, 3, 2], delimiters: [".", ".", "-"], numeric: true}}
+        disabled
+      />
+    </.example>
     """
   end
 end

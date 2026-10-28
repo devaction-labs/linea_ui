@@ -77,6 +77,31 @@ defmodule PreviewWeb.Pages.Fab do
     </.example>
 
     <.example
+      title="Disabled and position"
+      text="disabled is 60% opaque and takes no pointer; position moves it to another corner."
+      class="mt-5"
+    >
+      <div id="stage-disabled" class={[@stage, "h-40"]}>
+        <.fab
+          id="fab-d1"
+          label="New proposal"
+          retract="never"
+          color="primary"
+          disabled
+          class="!bottom-4 !right-4"
+        />
+        <.fab
+          id="fab-d2"
+          label="Talk to the team"
+          retract="never"
+          color="dark"
+          position="bottom-left"
+          class="!bottom-4 !left-4"
+        />
+      </div>
+    </.example>
+
+    <.example
       title="Speed-dial"
       text="Click the button; Escape closes and returns the focus, the arrows walk the actions."
       class="mt-5"
@@ -84,13 +109,13 @@ defmodule PreviewWeb.Pages.Fab do
       <div id="stage-dial" class={[@stage, "h-80"]}>
         <.fab_dial id="fab-dial" label="Quick actions" class={@offset}>
           <:action label="New contact" phx-click="noop">
-            <.icon name="hero-user-plus" class="size-4.5" />
+            <.icon name="huge-user-add-01" class="size-4.5" />
           </:action>
           <:action label="Upload a file" phx-click="noop">
-            <.icon name="hero-arrow-up-tray" class="size-4.5" />
+            <.icon name="huge-upload-01" class="size-4.5" />
           </:action>
           <:action label="New proposal" phx-click="noop">
-            <.icon name="hero-document-plus" class="size-4.5" />
+            <.icon name="huge-file-add" class="size-4.5" />
           </:action>
         </.fab_dial>
       </div>

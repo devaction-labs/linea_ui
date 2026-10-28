@@ -57,6 +57,15 @@ test("phones group digits", () => {
   assert.equal(raw("201 555 0123", "phone"), "2015550123")
 })
 
+test("a numeral prefix shows before the figure and stays out of the raw value", () => {
+  const options = {delimiter: ".", decimal_mark: ",", prefix: "R$ "}
+  assert.equal(format("1234567,5", "numeral", options), "R$ 1.234.567,5")
+  assert.equal(format("R$ 1.234.567,5", "numeral", options), "R$ 1.234.567,5")
+  assert.equal(raw("R$ 1.234.567,5", "numeral", options), "1234567.5")
+  assert.equal(format("", "numeral", options), "")
+  assert.equal(format("-1234", "numeral", options), "-R$ 1.234")
+})
+
 test("numerals group thousands in three styles", () => {
   assert.equal(format("1234567.891", "numeral"), "1,234,567.89")
   assert.equal(format("1234567", "numeral", {thousands: "lakh"}), "12,34,567")
