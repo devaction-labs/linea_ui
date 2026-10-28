@@ -25,6 +25,8 @@ defmodule LineaUI.Components.Timer do
   monotonic clock, so a background tab never loses a second. A new `elapsed`, `running`, `total` or `direction` from
   the server replaces what the browser counted; a patch that changes none of them leaves the count alone.
 
+  `format` is `hms` (`03:12:45`), `hm` (`3h12`) or `hh:mm` (`03:12`), the mini clock of a top bar.
+
   `direction="up"` shows the time elapsed and fills the ring as it passes; `direction="down"` shows the time left
   (`total - elapsed`) and empties it. The ring is drawn in `color` while it runs and in warning when paused; the
   kicker under it is green while it runs and orange when paused.
@@ -156,9 +158,9 @@ defmodule LineaUI.Components.Timer do
 
   attr :format, :string,
     default: "auto",
-    values: ~w(auto hms hm),
+    values: ~w(auto hms hm hh:mm),
     doc:
-      "`hms` is `03:12:45`, `hm` is `3h12`, `auto` is `hms` for the ring and `hm` for the pill."
+      "`hms` is `03:12:45`, `hm` is `3h12`, `hh:mm` is `03:12`, `auto` is `hms` for the ring and `hm` for the pill."
 
   attr :kicker, :string,
     default: nil,
@@ -355,6 +357,9 @@ defmodule LineaUI.Components.Timer do
 
   defp format_time(seconds, "hm"),
     do: "#{div(seconds, 3600)}h#{pad(div(rem(seconds, 3600), 60))}"
+
+  defp format_time(seconds, "hh:mm"),
+    do: "#{pad(div(seconds, 3600))}:#{pad(div(rem(seconds, 3600), 60))}"
 
   defp format_time(seconds, "hms"),
     do: "#{pad(div(seconds, 3600))}:#{pad(div(rem(seconds, 3600), 60))}:#{pad(rem(seconds, 60))}"

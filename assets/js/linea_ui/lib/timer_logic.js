@@ -38,12 +38,14 @@ export const sameServer = (a, b) =>
 export const shownSeconds = ({elapsed, total, direction}) =>
   Math.floor(direction === "down" ? Math.max(0, total - elapsed) : Math.max(0, elapsed))
 
-/** `03:12:45` for `hms`, `3h12` for `hm`. */
+/** `03:12:45` for `hms`, `3h12` for `hm`, `03:12` for `hh:mm`. */
 export const formatTime = (seconds, format = "hms") => {
   const s = Math.max(0, Math.floor(seconds))
   const h = Math.floor(s / 3600)
   const m = Math.floor((s % 3600) / 60)
-  return format === "hm" ? `${h}h${pad(m)}` : `${pad(h)}:${pad(m)}:${pad(s % 60)}`
+  if (format === "hm") return `${h}h${pad(m)}`
+  if (format === "hh:mm") return `${pad(h)}:${pad(m)}`
+  return `${pad(h)}:${pad(m)}:${pad(s % 60)}`
 }
 
 /** The fraction of the ring that is drawn: the elapsed time counting up, the time left counting down; 0 to 1. */
