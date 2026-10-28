@@ -64,6 +64,29 @@ defmodule LineaUI.Components.CarouselTest do
              |> Enum.to_list()
   end
 
+  test "prev comes before next and both control the track" do
+    html =
+      render(~H"""
+      <.carousel id="c" navigation>
+        <.carousel_slide>One</.carousel_slide>
+      </.carousel>
+      """)
+
+    assert [_] = find(html, "#c > #c-track[data-carousel-track]") |> Enum.to_list()
+
+    assert ["data-carousel-prev", "data-carousel-next"] ==
+             html
+             |> find("#c > button")
+             |> Enum.map(fn button ->
+               if LazyHTML.attribute(button, "data-carousel-prev") == [""],
+                 do: "data-carousel-prev",
+                 else: "data-carousel-next"
+             end)
+
+    assert ["c-track", "c-track"] ==
+             html |> find("#c > button") |> LazyHTML.attribute("aria-controls")
+  end
+
   test "the prev arrow starts disabled at the first slide without loop" do
     html = render(~H|<.carousel id="c" navigation>
   <.carousel_slide>A</.carousel_slide>
