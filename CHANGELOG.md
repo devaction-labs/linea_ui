@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- `card_table`: a compact table of row cards for long lists. It answers to its own width (a container query): the columns leave by `priority` at 1180, 960 and 720px, what left shows in a panel when the row is pointed at, and below 520px each row is a card of three lines placed by the `role` of its columns. It has row selection, sortable headers, a status bar per row and a stream-friendly empty state.
 - Table: the scrolling wrapper is `relative`, so an absolute child of a wide table (the `sr-only` label of the actions column) no longer escapes the clip and makes the page around it scroll sideways, which hid the start of the content behind the framed menu.
 - Toast: in a closed pile the cards behind the newest draw no text (`data-behind`), so their titles can no longer show through and overlap the front card when several toasts come at once.
 

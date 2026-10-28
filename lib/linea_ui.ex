@@ -38,6 +38,7 @@ defmodule LineaUI do
     avatar: LineaUI.Components.Avatar,
     badge: LineaUI.Components.Badge,
     breadcrumb: LineaUI.Components.Breadcrumb,
+    card_table: LineaUI.Components.CardTable,
     bulk_bar: LineaUI.Components.BulkBar,
     button: LineaUI.Components.Button,
     calendar: LineaUI.Components.Calendar,

@@ -778,3 +778,279 @@
     }
   }
 }
+
+/* card_table: a compact table of row cards. The box answers to its own width (a container query): the columns
+   leave by priority at 1180, 960 and 720px, and below 520px each row is a card of three lines. The tracks of every
+   width come from the component as --ct-c0..--ct-c3. */
+@layer components {
+  .linea-ctable {
+    container-type: inline-size;
+    container-name: ctable;
+    width: 100%;
+    --ct-ink: var(--color-slate-700);
+    --ct-soft: var(--color-slate-500);
+    --ct-line: var(--color-slate-200);
+    --ct-card: #fff;
+    --ct-st: var(--color-slate-400);
+  }
+
+  .dark .linea-ctable {
+    --ct-ink: var(--color-navy-50);
+    --ct-soft: var(--color-navy-200);
+    --ct-line: var(--color-navy-500);
+    --ct-card: var(--color-navy-700);
+  }
+
+  .linea-ctable-all {
+    @apply hidden items-center gap-2.5 pr-1 pb-2.5 pl-5 text-xs font-medium;
+    color: var(--ct-soft);
+  }
+
+  .linea-ctable-grid {
+    display: grid;
+    grid-template-columns: var(--ct-c0);
+    column-gap: 14px;
+    row-gap: 6px;
+  }
+
+  .linea-ctable-grid > ul {
+    display: contents;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .linea-ctable-head,
+  .linea-ctable-row {
+    display: grid;
+    grid-column: 1 / -1;
+    grid-template-columns: subgrid;
+    align-items: center;
+  }
+
+  .linea-ctable-head {
+    padding: 0 16px 2px 20px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    color: color-mix(in oklab, var(--ct-soft) 85%, transparent);
+  }
+
+  .linea-ctable-sort {
+    @apply inline-flex cursor-pointer items-center gap-1 font-semibold outline-hidden;
+  }
+
+  .linea-ctable-sort .table-sort-icon {
+    width: 0.625rem;
+    height: 0.625rem;
+  }
+
+  .linea-ctable-row {
+    position: relative;
+    min-height: 46px;
+    padding: 7px 16px 7px 20px;
+    border-radius: 10px;
+    background: var(--ct-card);
+    box-shadow: 0 0 0 1px var(--ct-line);
+    font-size: 13px;
+    color: var(--ct-ink);
+    outline: none;
+    transition: box-shadow 0.15s, background 0.15s;
+  }
+
+  .linea-ctable-row[data-status]::before {
+    content: "";
+    position: absolute;
+    top: 10px;
+    bottom: 10px;
+    left: 0;
+    width: 3px;
+    border-radius: 0 3px 3px 0;
+    background: var(--ct-st);
+  }
+
+  .linea-ctable-row[data-status="primary"] { --ct-st: var(--color-primary); }
+  .linea-ctable-row[data-status="secondary"] { --ct-st: var(--color-secondary); }
+  .linea-ctable-row[data-status="accent"] { --ct-st: var(--color-accent); }
+  .linea-ctable-row[data-status="info"] { --ct-st: var(--color-info); }
+  .linea-ctable-row[data-status="success"] { --ct-st: var(--color-success); }
+  .linea-ctable-row[data-status="warning"] { --ct-st: var(--color-warning); }
+  .linea-ctable-row[data-status="error"] { --ct-st: var(--color-error); }
+
+  .linea-ctable-row:hover,
+  .linea-ctable-row:focus-within {
+    z-index: 3;
+    box-shadow: 0 0 0 1px var(--color-slate-300), 0 8px 20px -14px rgb(15 23 42 / 0.4);
+  }
+
+  .dark .linea-ctable-row:hover,
+  .dark .linea-ctable-row:focus-within {
+    box-shadow: 0 0 0 1px var(--color-navy-400), 0 8px 20px -14px rgb(0 0 0 / 0.6);
+  }
+
+  .linea-ctable-row:focus-visible {
+    box-shadow: 0 0 0 2px var(--color-primary);
+  }
+
+  .linea-ctable-row[data-selected="true"] {
+    background: color-mix(in oklab, var(--color-primary) 6%, var(--ct-card));
+    box-shadow: 0 0 0 1px color-mix(in oklab, var(--color-primary) 50%, transparent);
+  }
+
+  .linea-ctable-head > *,
+  .linea-ctable-row > * {
+    min-width: 0;
+  }
+
+  .linea-ctable-cell {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .linea-ctable-cell.is-wrap {
+    overflow: visible;
+    text-overflow: clip;
+    white-space: normal;
+  }
+
+  .linea-ctable-sel {
+    display: flex;
+    align-items: center;
+  }
+
+  .linea-ctable-act {
+    display: flex;
+    justify-self: end;
+  }
+
+  .linea-ctable-empty {
+    grid-column: 1 / -1;
+    padding: 2rem 1rem;
+    text-align: center;
+    font-size: 0.875rem;
+    color: var(--ct-soft);
+  }
+
+  /* The panel of the columns that left: label over value, under the row, shown while it is pointed at. */
+  .linea-ctable-pop {
+    position: absolute;
+    z-index: 8;
+    top: calc(100% + 6px);
+    right: 56px;
+    display: none;
+    width: max-content;
+    max-width: min(520px, 92%);
+    margin: 0;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 10px 22px;
+    padding: 12px 14px;
+    border-radius: 10px;
+    background: var(--color-slate-800);
+    color: var(--color-slate-100);
+    font-size: 12px;
+    font-weight: 500;
+    box-shadow: 0 14px 30px -12px rgb(15 23 42 / 0.5);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-4px);
+    transition: opacity 0.15s, transform 0.15s, visibility 0.15s;
+    pointer-events: none;
+  }
+
+  .dark .linea-ctable-pop {
+    background: var(--color-navy-50);
+    color: var(--color-slate-800);
+  }
+
+  .linea-ctable-pop > div {
+    display: none;
+    flex-direction: column;
+    gap: 1px;
+    min-width: 0;
+  }
+
+  .linea-ctable-pop dt {
+    font-size: 11px;
+    opacity: 0.6;
+  }
+
+  .linea-ctable-pop dd {
+    margin: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .linea-ctable-row:nth-last-child(-n + 2) .linea-ctable-pop {
+    top: auto;
+    bottom: calc(100% + 6px);
+  }
+
+  .linea-ctable-row:hover .linea-ctable-pop,
+  .linea-ctable-row:focus-within .linea-ctable-pop {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+  }
+
+  /* 1: without the columns of priority 1 */
+  @container ctable (max-width: 1179.98px) {
+    .linea-ctable-grid { grid-template-columns: var(--ct-c1); }
+    .linea-ctable [data-p="1"].linea-ctable-cell,
+    .linea-ctable [data-p="1"].linea-ctable-h { display: none; }
+    .linea-ctable-pop:has(> [data-p="1"]) { display: grid; }
+    .linea-ctable-pop > [data-p="1"] { display: flex; }
+  }
+
+  /* 2: and without those of priority 2 */
+  @container ctable (max-width: 959.98px) {
+    .linea-ctable-grid { grid-template-columns: var(--ct-c2); }
+    .linea-ctable [data-p="2"].linea-ctable-cell,
+    .linea-ctable [data-p="2"].linea-ctable-h { display: none; }
+    .linea-ctable-pop:has(> [data-p="2"]) { display: grid; }
+    .linea-ctable-pop > [data-p="2"] { display: flex; }
+  }
+
+  /* 3: and without those of priority 3 */
+  @container ctable (max-width: 719.98px) {
+    .linea-ctable-grid { grid-template-columns: var(--ct-c3); }
+    .linea-ctable [data-p="3"].linea-ctable-cell,
+    .linea-ctable [data-p="3"].linea-ctable-h { display: none; }
+    .linea-ctable-pop:has(> [data-p="3"]) { display: grid; }
+    .linea-ctable-pop > [data-p="3"] { display: flex; }
+  }
+
+  /* 4: a card of three lines per row; the `role` of a column says where it goes */
+  @container ctable (max-width: 519.98px) {
+    .linea-ctable-all { display: flex; }
+    .linea-ctable-head { display: none; }
+    .linea-ctable-grid {
+      grid-template-columns: var(--ct-sel, 0px) minmax(0, 1fr) auto var(--ct-act, 0px);
+      column-gap: 0;
+      row-gap: 8px;
+    }
+    .linea-ctable-row {
+      grid-template-areas: "sel head status act" "title title title title" "meta meta value value";
+      row-gap: 8px;
+      min-height: 0;
+      padding: 12px 12px 12px 18px;
+    }
+    .linea-ctable-row > .linea-ctable-cell { display: none; }
+    .linea-ctable-row > .linea-ctable-sel { grid-area: sel; }
+    .linea-ctable-row > .linea-ctable-act { grid-area: act; }
+    .linea-ctable .linea-ctable-row > .linea-ctable-cell[data-role="head"] { display: block; grid-area: head; }
+    .linea-ctable .linea-ctable-row > .linea-ctable-cell[data-role="status"] { display: block; grid-area: status; justify-self: end; padding: 0 0.5rem; }
+    .linea-ctable .linea-ctable-row > .linea-ctable-cell[data-role="meta"] { display: block; grid-area: meta; }
+    .linea-ctable .linea-ctable-row > .linea-ctable-cell[data-role="value"] { display: block; grid-area: value; justify-self: end; padding-left: 0.5rem; }
+    .linea-ctable .linea-ctable-row > .linea-ctable-cell[data-role="title"] {
+      display: -webkit-box;
+      grid-area: title;
+      white-space: normal;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+    .linea-ctable-pop { display: none !important; }
+  }
+}
