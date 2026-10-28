@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Table: the scrolling wrapper is `relative`, so an absolute child of a wide table (the `sr-only` label of the actions column) no longer escapes the clip and makes the page around it scroll sideways, which hid the start of the content behind the framed menu.
 - Toast: in a closed pile the cards behind the newest draw no text (`data-behind`), so their titles can no longer show through and overlap the front card when several toasts come at once.
 
 ## 0.8.3

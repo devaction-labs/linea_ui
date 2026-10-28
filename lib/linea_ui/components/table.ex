@@ -99,13 +99,15 @@ defmodule LineaUI.Components.Table do
 
   alias Phoenix.LiveView.LiveStream
 
+  # `relative` so an absolute child of the table (an `sr-only` label) is clipped by the scroller instead of
+  # widening the page around it.
   @wrapper %{
-    "basic" => "is-scrollbar-hidden min-w-full overflow-x-auto",
+    "basic" => "is-scrollbar-hidden relative min-w-full overflow-x-auto",
     "bordered" =>
-      "is-scrollbar-hidden min-w-full overflow-x-auto rounded-lg border border-slate-200 dark:border-navy-500",
-    "hoverable" => "is-scrollbar-hidden min-w-full overflow-x-auto",
-    "zebra" => "is-scrollbar-hidden min-w-full overflow-x-auto",
-    "grid" => "is-scrollbar-hidden min-w-full overflow-x-auto"
+      "is-scrollbar-hidden relative min-w-full overflow-x-auto rounded-lg border border-slate-200 dark:border-navy-500",
+    "hoverable" => "is-scrollbar-hidden relative min-w-full overflow-x-auto",
+    "zebra" => "is-scrollbar-hidden relative min-w-full overflow-x-auto",
+    "grid" => "is-scrollbar-hidden relative min-w-full overflow-x-auto"
   }
 
   @table %{
