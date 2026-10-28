@@ -34,6 +34,15 @@ defmodule LineaUI.Components.ScrollAreaTest do
 
     assert ["overflow-x-auto", "scrollbar-sm", "scrollbar-always"] -- classes(html, "#s") == []
     assert find(html, "#s") |> LazyHTML.attribute("tabindex") == ["0"]
+    assert find(html, "#s") |> LazyHTML.attribute("role") == []
+
+    html = render(~H|<.scroll_area id="s" focusable label="Notes">x</.scroll_area>|)
+    assert find(html, "#s") |> LazyHTML.attribute("role") == ["region"]
+    assert find(html, "#s") |> LazyHTML.attribute("aria-label") == ["Notes"]
+
+    html = render(~H|<.scroll_area id="s" label="Notes">x</.scroll_area>|)
+    assert find(html, "#s") |> LazyHTML.attribute("role") == []
+    assert find(html, "#s") |> LazyHTML.attribute("aria-label") == []
 
     html = render(~H|<.scroll_area id="s" orientation="both" scrollbar="hidden">x</.scroll_area>|)
     assert ["overflow-auto", "is-scrollbar-hidden"] -- classes(html, "#s") == []

@@ -102,5 +102,19 @@ defmodule LineaUI.Components.DisclosureTest do
     assert "size-4" in classes(html, "#b > summary > svg")
     assert [] = find(html, "#c svg") |> Enum.to_list()
     refute "group/collapse" in classes(html, "#c")
+    assert ["size-4", "text-slate-400"] -- classes(html, "#a > summary > svg") == []
+  end
+
+  test "collapse variant is a data attribute and the panel takes a class" do
+    html =
+      render(~H"""
+      <.collapse id="a" variant="framed" panel_class="px-6"><:trigger>A</:trigger>x</.collapse>
+      <.collapse id="b"><:trigger>B</:trigger>x</.collapse>
+      """)
+
+    assert find(html, "#a") |> LazyHTML.attribute("data-variant") == ["framed"]
+    assert find(html, "#b") |> LazyHTML.attribute("data-variant") == []
+    assert ["ac-panel", "px-6"] -- classes(html, "#a > .ac-panel") == []
+    assert classes(html, "#b > .ac-panel") == ["ac-panel"]
   end
 end

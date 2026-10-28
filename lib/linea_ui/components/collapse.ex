@@ -15,6 +15,15 @@ defmodule LineaUI.Components.Collapse do
         …
       </.collapse>
 
+  `variant` gives it one of three looks without writing the trigger's classes: `framed` (a card with a
+  12px radius and an inset 1px border, a hover fill, 16/14px padding), `flat` (only a rule under it) and
+  `section` (a small uppercase label):
+
+      <.collapse id="filters" variant="section" chevron="down" open>
+        <:trigger>Filters</:trigger>
+        …
+      </.collapse>
+
   It is a native `<details>`: the trigger works with the mouse and the keyboard and the browser
   owns `open`, which survives patches. When the server changes `open`, the server wins.
   `LineaUI.open/close/toggle("details")` (and their socket forms) open and close it too, and
@@ -49,6 +58,16 @@ defmodule LineaUI.Components.Collapse do
     doc:
       "Draws a chevron at the end of the trigger (which becomes a flex row with `justify-between`). `down` turns upside down while open, `right` turns down."
 
+  attr :variant, :string,
+    default: nil,
+    values: [nil, "framed", "flat", "section"],
+    doc:
+      "A ready-made look: `framed` (card with an inset border), `flat` (a rule under it), `section` (an uppercase label). `nil` leaves the trigger to its `class`."
+
+  attr :panel_class, :any,
+    default: nil,
+    doc: "Merged into the panel (`.ac-panel`) that holds the content (`px-4 pb-4`...)."
+
   attr :chevron_class, :any, default: nil, doc: "Merged into the chevron's `<svg>`."
   attr :class, :any, default: nil, doc: "Merged into the `<details>`."
   attr :rest, :global
@@ -73,6 +92,7 @@ defmodule LineaUI.Components.Collapse do
       phx-hook="LineaUI.Collapse"
       phx-mounted={JS.ignore_attributes(["open", "name"])}
       data-open={bool(@open)}
+      data-variant={@variant}
       data-on-open={@on_open_js}
       data-on-close={@on_close_js}
       {@rest}
@@ -90,7 +110,7 @@ defmodule LineaUI.Components.Collapse do
         {render_slot(trigger)}
         <.chevron_icon :if={@chevron} kind={@chevron} class={@chevron_class} />
       </summary>
-      <div class="ac-panel">{render_slot(@inner_block)}</div>
+      <div class={merge(["ac-panel", @panel_class])}>{render_slot(@inner_block)}</div>
     </details>
     """
   end
@@ -102,8 +122,13 @@ defmodule LineaUI.Components.Collapse do
     ~H"""
     <.glyph
       name={:chevron_right}
-      class={merge(["size-3.5 shrink-0 transition-transform group-open/collapse:rotate-90", @class])}
-      stroke_width="2.5"
+      class={
+        merge([
+          "size-4 shrink-0 text-slate-400 transition-transform group-open/collapse:rotate-90 dark:text-navy-300",
+          @class
+        ])
+      }
+      stroke_width="2"
     />
     """
   end
@@ -112,8 +137,13 @@ defmodule LineaUI.Components.Collapse do
     ~H"""
     <.glyph
       name={:chevron_down}
-      class={merge(["size-3.5 shrink-0 transition-transform group-open/collapse:rotate-180", @class])}
-      stroke_width="2.5"
+      class={
+        merge([
+          "size-4 shrink-0 text-slate-400 transition-transform group-open/collapse:rotate-180 dark:text-navy-300",
+          @class
+        ])
+      }
+      stroke_width="2"
     />
     """
   end

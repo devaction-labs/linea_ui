@@ -12,6 +12,11 @@ defmodule LineaUI.Components.ScrollArea do
   scrollbar is the `scrollbar-sm` class on any box that overflows; `scrollbar-sm scrollbar-always`
   keeps the thumb shown, and LineOne's `is-scrollbar-hidden` hides it.
 
+  `focusable` lets the keyboard scroll the box and draws a 2px focus ring around it. A focusable box
+  needs a name, so give it a `label`:
+
+      <.scroll_area focusable label="Release notes" class="max-h-64">…</.scroll_area>
+
   ## Pinned to the bottom
 
   `stick_bottom` keeps a list that grows at its end, a chat or a stream of replies, scrolled to its
@@ -57,6 +62,11 @@ defmodule LineaUI.Components.ScrollArea do
     doc:
       "Makes the box reachable with Tab, so the keyboard can scroll it (when nothing inside takes focus)."
 
+  attr :label, :string,
+    default: nil,
+    doc:
+      "With `focusable`, the box becomes a `role=\"region\"` named by this `aria-label`, so a screen reader says what the focus landed on. Ignored when it is not focusable."
+
   attr :id, :string, default: nil, doc: "Required with `stick_bottom`, and it must not change."
 
   attr :stick_bottom, :boolean,
@@ -81,6 +91,8 @@ defmodule LineaUI.Components.ScrollArea do
         ])
       }
       tabindex={@focusable && "0"}
+      role={@focusable && @label && "region"}
+      aria-label={@focusable && @label}
       data-scroll-area
       {@rest}
     >

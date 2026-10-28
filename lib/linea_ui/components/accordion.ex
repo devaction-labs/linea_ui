@@ -12,6 +12,8 @@ defmodule LineaUI.Components.Accordion do
 
       <.accordion id="help" variant="primary" color="warning">…</.accordion>
 
+  The `warning` header is too light for white text, so it uses a near-black text and chevron.
+
   One section is open at a time; `multiple` lets them open independently (LineOne's Collapse
   page). The `advanced` style puts a header of your own in each item, with the chevron button
   at its end:
