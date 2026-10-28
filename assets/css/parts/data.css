@@ -627,6 +627,31 @@
     @apply text-slate-500 dark:text-navy-200;
   }
 
+  /* The line of figures above the plot (`summary`): the label as a chip, then name and value per series. */
+  .linea-chart-summary {
+    @apply mb-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs-plus text-slate-700 dark:text-navy-50;
+  }
+
+  .linea-chart-summary:empty {
+    display: none;
+  }
+
+  .linea-chart-summary-chip {
+    @apply rounded-full bg-slate-150 px-2 py-0.5 text-xs font-medium tabular-nums dark:bg-navy-500;
+  }
+
+  .linea-chart-summary-item {
+    @apply inline-flex items-center gap-1.5 tabular-nums;
+  }
+
+  .linea-chart-summary-marker {
+    @apply size-2 shrink-0 rounded-full;
+  }
+
+  .linea-chart-summary-name {
+    @apply text-slate-500 dark:text-navy-200;
+  }
+
   .linea-chart-axistips {
     @apply pointer-events-none absolute inset-0;
   }
@@ -705,6 +730,7 @@
     height: auto !important;
   }
 
+  .linea-chart[data-view="table"] .linea-chart-summary,
   .linea-chart[data-view="table"] .linea-chart-svg,
   .linea-chart[data-view="table"] .linea-chart-legend,
   .linea-chart[data-view="table"] .linea-chart-axistips,

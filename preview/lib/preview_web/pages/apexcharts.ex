@@ -86,6 +86,19 @@ defmodule PreviewWeb.Pages.Apexcharts do
     </.example>
 
     <.example
+      title="Summary that follows the cursor"
+      text="summary writes the label and the value of each series above the plot. It follows the pointer and the arrow keys, and rests on the last point with data when the cursor leaves. It is not a live region. The chart also dispatches linea:chart:cursor (bubbling) and, with on_cursor set, pushes it to the LiveView."
+      class="mt-5 max-w-xl"
+    >
+      <.chart
+        id="chart-hourly"
+        summary
+        options={hourly()}
+        formatters={%{"yaxis.labels.formatter" => "brl_thousands", "tooltip.y.formatter" => "brl"}}
+      />
+    </.example>
+
+    <.example
       title="View toggle and legend figures"
       text="table_toggle adds a Chart / Table switch that swaps the drawing for its data table in the browser. legend.showValue and showPercent write value and share after each name (524 · 42%). Tab to a chart and use the arrow keys: on the donut they move between slices, on the radar between spokes."
       class="mt-5 max-w-xl"
@@ -141,6 +154,24 @@ defmodule PreviewWeb.Pages.Apexcharts do
       xaxis: %{categories: ~w(Jan Fev Mar Abr Mai Jun)},
       dataLabels: %{enabled: false},
       legend: %{position: "bottom", showValue: true, showPercent: true}
+    }
+  end
+
+  defp hourly do
+    hours = Enum.map(0..13, &"#{String.pad_leading(Integer.to_string(&1), 2, "0")}:00")
+
+    %{
+      chart: %{type: "area", height: 240, toolbar: @no_toolbar, defaultLocale: "pt-BR"},
+      colors: ["#4467ef", "#a8a8a8"],
+      series: [
+        %{name: "Hoje", data: [120, 80, 60, 40, 90, 310, 640, 1180, 1560, 1240, 1710, 1980, 1450, nil]},
+        %{name: "Ontem", data: [140, 95, 70, 55, 100, 280, 590, 1020, 1340, 1410, 1500, 1620, 1710, 1830]}
+      ],
+      xaxis: %{categories: hours},
+      stroke: %{curve: "smooth", width: 2},
+      fill: %{type: "solid", opacity: 0.12},
+      dataLabels: %{enabled: false},
+      legend: %{show: false}
     }
   end
 

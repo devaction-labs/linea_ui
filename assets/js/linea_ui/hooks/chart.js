@@ -1,4 +1,5 @@
 import {parseSpec, resolveFormatters} from "../lib/chart_formatters.js"
+import {cursorDetail, cursorPayload, lastWithData, sameCursor, summaryHtml, throttled} from "../lib/chart_cursor.js"
 import {MARKS, focusClass, grown, legendFocus} from "../lib/chart_focus.js"
 import {applyUpdate, nextView, parseOptions, stepSlot, targets, widthOf} from "../lib/chart_logic.js"
 import {build} from "../lib/chart_render.js"
@@ -10,7 +11,7 @@ import {axisTipsHtml, overlaySvg, tooltipHtml} from "../lib/chart_tooltip.js"
  * A chart drawn in SVG from ApexCharts-shaped options, with no library behind it: the lines, bars, rings
  * and axes come from `lib/chart_*.js`, and this hook sizes the chart to its element, draws it, follows
  * the pointer (or the arrow keys, on a focused chart: slots, slices or spokes) for the tooltip and crosshair, toggles series from the legend
- * (pointing at an entry puts its series in front) and takes the `linea:chart`
+ * (pointing at an entry puts its series in front), tells the page where the cursor is (the bubbling `linea:chart:cursor` event, the optional `summary` line above the plot, the optional throttled `on_cursor` push) and takes the `linea:chart`
  * pushes and swaps the chart for its table when the person picks Table in the view toggle (`data-chart-view`, no server round trip). The first draw plays a short entry animation (not under `prefers-reduced-motion`).
  */
 
@@ -37,6 +38,8 @@ const Chart = {
     this.el.style.width = widthOf(this.options?.chart?.width)
     this.signature = this.keyOf()
     this.canvas = this.el.querySelector("[data-chart-canvas]")
+    this.summary = this.el.querySelector("[data-chart-summary]")
+    this.push = throttled((payload) => this.pushCursor(payload), 100)
     this.measure = measurer(this.el)
     this.width = 0
     this.onMove = (event) => this.point(event)
@@ -71,6 +74,7 @@ const Chart = {
 
   destroyed() {
     cancelAnimationFrame(this.frame)
+    this.push?.cancel()
     this.observer?.disconnect()
     this.canvas?.removeEventListener("pointermove", this.onMove)
     this.canvas?.removeEventListener("pointerdown", this.onMove)
@@ -125,10 +129,36 @@ const Chart = {
     this.canvas.innerHTML = stageHtml(result, {entering: this.entering && result.config.chart.animations?.enabled !== false})
     this.entering = false
     this.cursor = null
+    this.sent = null
     this.stage = this.canvas.firstElementChild
     this.focusSeries(this.focus ?? null)
     this.el.style.minHeight = `${result.height + (result.config.chart.parentHeightOffset ?? 0)}px`
     this.applyView()
+    this.rest()
+  },
+
+  /** The summary line when nothing is pointed at: the last slot where every series has a value (else any). */
+  rest() {
+    const keys = this.result?.keys
+    const answer = (slot) => (keys.hit ? keys.hit(slot) : this.result.probe(keys.at(slot).x, keys.at(slot).y))
+    this.summary && (this.summary.innerHTML = summaryHtml(cursorDetail(keys ? lastWithData(keys.slots, answer, this.result.layout?.visible?.length) : null)))
+  },
+
+  /** Tells the page the cursor moved (or left, with `null`): the `linea:chart:cursor` event, the summary line and, when `on_cursor` names an event, a throttled push. Nothing goes out while the cursor stays on what it showed. */
+  announce(hit) {
+    const detail = cursorDetail(hit)
+    if (sameCursor(detail, this.sent)) return
+    this.sent = detail
+    this.el.dispatchEvent(new CustomEvent("linea:chart:cursor", {bubbles: true, detail}))
+    detail ? this.summary && (this.summary.innerHTML = summaryHtml(detail)) : this.rest()
+    const payload = this.el.dataset.onCursor && cursorPayload(this.el.id, detail)
+    payload && (detail ? this.push(payload) : this.push.flush(payload))
+  },
+
+  pushCursor(payload) {
+    const target = this.el.getAttribute("phx-target")
+    const name = this.el.dataset.onCursor
+    name && (target ? this.pushEventTo(target, name, payload) : this.pushEvent(name, payload))
   },
 
   /** The chart or its table (the person's choice from the toggle, kept in the browser): the canvas is only a tab stop while the chart shows. */
@@ -174,6 +204,7 @@ const Chart = {
 
   hit(hit) {
     const tip = this.stage.querySelector(".linea-chart-tooltip")
+    this.announce(hit)
     this.stage.querySelector(".linea-chart-hover").innerHTML = overlaySvg(hit)
     this.stage.querySelector(".linea-chart-axistips").innerHTML = axisTipsHtml(hit)
     this.activate(hit.active)
@@ -216,6 +247,7 @@ const Chart = {
 
   clear() {
     const tip = this.stage?.querySelector(".linea-chart-tooltip")
+    this.stage && this.announce(null)
     tip && (tip.hidden = true)
     this.stage && (this.stage.querySelector(".linea-chart-hover").innerHTML = "")
     this.stage && (this.stage.querySelector(".linea-chart-axistips").innerHTML = "")

@@ -74,6 +74,23 @@ defmodule LineaUI.Components.ChartTest do
 
     assert find(html, "#c-canvas[phx-update=ignore]") |> Enum.to_list() |> length() == 1
   end
+
+  test "summary adds a quiet header line, on_cursor names the pushed event, both off by default" do
+    html =
+      render(~H"""
+      <.chart id="a" options={%{}} />
+      <.chart id="b" options={%{}} summary on_cursor="cursor" />
+      """)
+
+    assert find(html, "#a-summary") |> Enum.to_list() == []
+    assert find(html, "#a[data-on-cursor]") |> Enum.to_list() == []
+
+    assert find(html, "#b-summary[data-chart-summary][aria-live=off][phx-update=ignore]")
+           |> Enum.to_list()
+           |> length() == 1
+
+    assert find(html, "#b") |> LazyHTML.attribute("data-on-cursor") == ["cursor"]
+  end
 end
 
 defmodule LineaUI.Components.ChartLiveTest do

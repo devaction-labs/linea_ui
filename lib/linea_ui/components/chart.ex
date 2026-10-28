@@ -60,6 +60,25 @@ defmodule LineaUI.Components.Chart do
         target.id === "sales" && (detail.options.yaxis = {labels: {formatter: (v) => "$" + v}})
       })
 
+  ## Cursor
+
+  The chart tells the page where its cursor is, as the pointer or the arrow keys move it. Three ways,
+  each off unless asked for:
+
+    * the `linea:chart:cursor` event, always: bubbling, on the chart element, with `detail` as
+      `{index, label, values: [{name, color, value}]}` (the values are the ones the tooltip shows, so
+      formatters apply) and a `null` detail when the cursor leaves.
+    * `summary`: a line above the plot with the label as a chip and one `name value` per series. It follows
+      the cursor and, when the cursor is gone, shows the last point that has a value. It is not a live
+      region (`aria-live="off"`): the tooltip and the hidden data table are what assistive technology reads.
+    * `on_cursor="event"`: pushes `event` to the LiveView (to `phx-target` when the chart has one) with
+      `%{"id" => id, "index" => i, "label" => l, "values" => [%{"name" => ..., "color" => ..., "value" => ...}]}`,
+      at most every 100 ms, and with `"index" => nil` and `"values" => []` on leave.
+
+      window.addEventListener("linea:chart:cursor", ({target, detail}) => console.log(target.id, detail))
+
+  A chart whose tooltip lists one series at a time (bars with `tooltip.shared` off) reports that series only.
+
   ## Supported options
 
   The engine reads this subset of the ApexCharts options. Everything else is ignored, never an error.
@@ -170,8 +189,9 @@ defmodule LineaUI.Components.Chart do
 
       push_event(socket, "linea:chart", %{id: "revenue", series: [%{data: [1, 2, 3]}]})
 
-  Browser event: `linea:chart:options` (bubbling, on the chart element) fires before each
-  draw with `detail.options`, the place to add JavaScript formatters.
+  Browser events, bubbling on the chart element: `linea:chart:options` fires before each draw with
+  `detail.options`, the place to add JavaScript formatters, and `linea:chart:cursor` fires as the cursor
+  moves (see Cursor in the module doc).
   """
   attr(:id, :string, required: true, doc: "DOM id; also what `push_event` payloads target.")
 
@@ -192,6 +212,18 @@ defmodule LineaUI.Components.Chart do
       "`true` adds a Chart / Table switch above the chart (a `segmented` control, answered in the browser) that shows the data table in place of the drawing. A map renames the texts: `%{chart: \"Gráfico\", table: \"Tabela\", label: \"Visualização\"}`."
   )
 
+  attr(:summary, :boolean,
+    default: false,
+    doc:
+      "Writes a line above the plot with the label and the value of each series at the cursor, falling back to the last point with data. Not a live region."
+  )
+
+  attr(:on_cursor, :string,
+    default: nil,
+    doc:
+      "Name of a LiveView event pushed (at most every 100 ms) with `id`, `index`, `label` and `values` as the cursor moves, and with an empty one when it leaves. Off by default."
+  )
+
   attr(:class, :any, default: nil)
   attr(:rest, :global)
 
@@ -209,6 +241,7 @@ defmodule LineaUI.Components.Chart do
       phx-hook="LineaUI.Chart"
       data-options={@json}
       data-formatters={@formatters_json}
+      data-on-cursor={@on_cursor}
       phx-mounted={JS.ignore_attributes(["data-view"])}
       {@rest}
     >
@@ -220,6 +253,15 @@ defmodule LineaUI.Components.Chart do
           aria-label={@toggle.label}
           options={[{@toggle.chart, "chart"}, {@toggle.table, "table"}]}
         />
+      </div>
+      <div
+        :if={@summary}
+        id={@id <> "-summary"}
+        phx-update="ignore"
+        aria-live="off"
+        data-chart-summary
+        class="linea-chart-summary"
+      >
       </div>
       <div id={@id <> "-canvas"} phx-update="ignore" data-chart-canvas></div>
     </div>
