@@ -196,6 +196,31 @@ defmodule LineaUI.Components.DataTable do
   attr(:entries_label, :string, default: "entries", doc: "Text after the page-size select.")
   attr(:prev_label, :string, default: "Previous", doc: "Text of the `grid` pager's first button.")
   attr(:next_label, :string, default: "Next", doc: "Text of the `grid` pager's last button.")
+
+  attr(:page_label, :string,
+    default: "Page %{page}",
+    doc: "`aria-label` of each page button; `%{page}` is replaced."
+  )
+
+  attr(:summary_label, :string,
+    default: nil,
+    doc:
+      "The summary text, `%{from}`, `%{to}` and `%{total}` being replaced (the `grid` variant shows them in bold): \"Showing 1 to 10 of 15 results\" in `grid`, \"1 - 10 of 15 entries\" in `advanced`. The `:summary` slot replaces it."
+  )
+
+  attr(:select_all_label, :string,
+    default: "Select all rows",
+    doc: "`aria-label` of the header checkbox."
+  )
+
+  attr(:select_label, :string, default: "Select row", doc: "`aria-label` of each row checkbox.")
+
+  attr(:sort_label, :string,
+    default: nil,
+    doc:
+      "`aria-label` of a sortable header, `%{label}` being the column's `label`; none by default."
+  )
+
   attr(:selected, :list, default: [], doc: "Keys of the selected rows.")
 
   attr(:all_selected, :boolean,
@@ -282,6 +307,30 @@ defmodule LineaUI.Components.DataTable do
     Enum.to_list(start..min(start + 4, pages))
   end
 
+  @grid_summary "Showing %{from} to %{to} of %{total} results"
+  @advanced_summary "%{from} - %{to} of %{total} entries"
+
+  defp grid_summary(template, range) do
+    (template || @grid_summary)
+    |> String.split(~r/%\{(?:from|to|total)\}/, include_captures: true)
+    |> Enum.map(fn
+      "%{from}" -> bold(range.first)
+      "%{to}" -> bold(range.last)
+      "%{total}" -> bold(range.total)
+      text -> text |> Phoenix.HTML.html_escape() |> Phoenix.HTML.safe_to_string()
+    end)
+    |> Phoenix.HTML.raw()
+  end
+
+  defp bold(number), do: "<b>#{number}</b>"
+
+  defp advanced_summary_text(template, range) do
+    (template || @advanced_summary)
+    |> String.replace("%{from}", to_string(range.first))
+    |> String.replace("%{to}", to_string(range.last))
+    |> String.replace("%{total}", to_string(range.total))
+  end
+
   defp render_data_table(%{variant: "grid"} = assigns) do
     ~H"""
     <div id={@id} class={merge(["w-full", @class])} {@rest}>
@@ -293,16 +342,19 @@ defmodule LineaUI.Components.DataTable do
         phx-submit={@on_search}
         phx-target={@target}
       >
-        <input
-          type="search"
-          name="search"
-          value={@search}
-          placeholder={@search_placeholder || "Type a keyword..."}
-          aria-label={@search_placeholder || "Type a keyword..."}
-          autocomplete="off"
-          phx-debounce="300"
-          class="form-input appearance-none rounded-lg border border-slate-300 bg-transparent px-3 py-2 font-medium outline-hidden placeholder:font-normal placeholder:text-slate-400/70 dark:border-navy-450 dark:bg-navy-700 dark:text-navy-100"
-        />
+        <label class="flex h-9 w-full max-w-55 items-center gap-2 rounded-lg border border-slate-300 bg-transparent px-3 text-slate-400 focus-within:border-primary dark:border-navy-450 dark:bg-navy-700 dark:focus-within:border-accent">
+          <.glyph name={:search} class="size-4 shrink-0" stroke_width="1.5" />
+          <input
+            type="search"
+            name="search"
+            value={@search}
+            placeholder={@search_placeholder || "Type a keyword..."}
+            aria-label={@search_placeholder || "Type a keyword..."}
+            autocomplete="off"
+            phx-debounce="300"
+            class="min-w-0 flex-1 appearance-none border-0 bg-transparent p-0 font-medium text-slate-700 outline-hidden placeholder:font-normal placeholder:text-slate-400/70 focus:ring-0 dark:text-navy-100"
+          />
+        </label>
       </form>
       <.data_table_body {assigns} table_variant="grid" rounded="none" />
       <div
@@ -310,9 +362,7 @@ defmodule LineaUI.Components.DataTable do
         class="flex flex-col justify-between space-y-4 px-4 py-4 sm:flex-row sm:items-center sm:space-y-0 sm:px-5"
       >
         <div role="status" aria-live="polite">
-          <span :if={@summary == []}>
-            Showing <b>{@range.first}</b> to <b>{@range.last}</b> of <b>{@range.total}</b> results
-          </span>
+          <span :if={@summary == []}>{grid_summary(@summary_label, @range)}</span>
           {render_slot(@summary, @range)}
         </div>
         <div class="flex flex-wrap space-x-1 text-slate-600 dark:text-slate-300">
@@ -331,7 +381,7 @@ defmodule LineaUI.Components.DataTable do
             to={n}
             current={n == @page}
             class={grid_page_class(n == @page)}
-            label={"Page #{n}"}
+            label={page_label(@page_label, n)}
           >
             {n}
           </.pager_link>
@@ -411,9 +461,19 @@ defmodule LineaUI.Components.DataTable do
             </label>
             <span>{@entries_label}</span>
           </form>
-          <.advanced_summary :if={@page_sizes == []} range={@range} summary={@summary} />
+          <.advanced_summary
+            :if={@page_sizes == []}
+            range={@range}
+            summary={@summary}
+            summary_label={@summary_label}
+          />
           <.advanced_pager {assigns} />
-          <.advanced_summary :if={@page_sizes != []} range={@range} summary={@summary} />
+          <.advanced_summary
+            :if={@page_sizes != []}
+            range={@range}
+            summary={@summary}
+            summary_label={@summary_label}
+          />
         </div>
       </div>
     </div>
@@ -422,7 +482,7 @@ defmodule LineaUI.Components.DataTable do
 
   @table_keys ~w(row_id row_key row_item row_click sort_by sort_dir on_sort on_select on_select_all
                  selected all_selected expand_label target col action expand empty compact headless
-                 borderless row_class row_attrs sticky_header foot)a
+                 borderless row_class row_attrs sticky_header foot select_all_label select_label sort_label)a
 
   defp data_table_body(assigns) do
     assigns =
@@ -455,9 +515,7 @@ defmodule LineaUI.Components.DataTable do
   defp advanced_summary(assigns) do
     ~H"""
     <div class="text-xs-plus" role="status" aria-live="polite">
-      <span :if={@summary == []}>
-        {@range.first} - {@range.last} of {@range.total} entries
-      </span>
+      <span :if={@summary == []}>{advanced_summary_text(@summary_label, @range)}</span>
       {render_slot(@summary, @range)}
     </div>
     """
@@ -492,7 +550,7 @@ defmodule LineaUI.Components.DataTable do
           to={n}
           current={n == @page}
           class={page_class(n == @page, @page_class, @current_class)}
-          label={"Page #{n}"}
+          label={page_label(@page_label, n)}
         >
           {n}
         </.pager_link>
@@ -520,6 +578,8 @@ defmodule LineaUI.Components.DataTable do
 
   defp page_class(true, _page, current), do: current
   defp page_class(false, page, _current), do: page
+
+  defp page_label(template, page), do: String.replace(template, "%{page}", to_string(page))
 
   defp grid_button, do: @grid_button
   defp grid_page_class(true), do: @grid_current
