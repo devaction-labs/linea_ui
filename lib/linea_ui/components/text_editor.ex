@@ -27,6 +27,14 @@ defmodule LineaUI.Components.TextEditor do
         <:ai>Write with the assistant</:ai>
       </.text_editor>
 
+  The menu takes commands of your own: an entry of `slash_items` whose `key` is not one of the blocks
+  is pushed to `on_slash` with that key (the "/" text is removed first), and `hint` is the line after its label:
+
+      <.text_editor name="post" slash on_slash="slash"
+        slash_items={[%{key: "paragraph", label: "Text"}, %{key: "image", label: "Image", hint: "Upload a picture", icon: "▣"}]} />
+
+      def handle_event("slash", %{"id" => id, "key" => "image"}, socket), do: ...
+
   ## Comments
 
   `variant="comment"` is the compact editor of a thread: no toolbar, a bar with a "mention" button,
@@ -135,7 +143,12 @@ defmodule LineaUI.Components.TextEditor do
   attr :slash_items, :list,
     default: @slash_items,
     doc:
-      "The entries of the menu: maps with `key` (`paragraph h1 h2 bullet ordered quote code divider`), `label`, and optionally `hint` and `icon` (a short text)."
+      "The entries of the menu: maps with `key` (`paragraph h1 h2 bullet ordered quote code divider`), `label`, and optionally `hint` (a line after the label) and `icon` (a short text). Any other `key` is a custom command: choosing it removes the typed \"/…\" and pushes `on_slash` with that key."
+
+  attr :on_slash, :string,
+    default: nil,
+    doc:
+      "The event a custom entry of the \"/\" menu pushes, with `%{\"id\" => id, \"key\" => key}`; answer with `insert_html/3` if the command inserts something."
 
   attr :slash_title, :string, default: "Insert", doc: "The caption of the \"/\" menu."
 
@@ -225,6 +238,7 @@ defmodule LineaUI.Components.TextEditor do
         data-on-change={@on_change}
         data-debounce={@debounce}
         data-slash={@slash && Jason.encode!(@slash_items)}
+        data-on-slash={@on_slash}
         data-slash-title={@slash_title}
         data-variables={Jason.encode!(@variables)}
         data-variable-label={@variable_label}

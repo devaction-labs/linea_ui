@@ -180,7 +180,17 @@ defmodule LineaUI.Components.Table do
 
   @bleed "min-w-[calc(100%+var(--card-bleed-x,1rem)*2)] mx-[calc(var(--card-bleed-x,1rem)*-1)] rounded-none border-0 first:mt-[calc(var(--card-bleed-t,0px)*-1)] last:mb-[calc(var(--card-bleed-b,0px)*-1)] first:rounded-t-[var(--card-bleed-rt,0px)] last:rounded-b-[var(--card-bleed-rb,0px)] [&_tbody>tr:last-child]:border-b-transparent [&_tr>:first-child]:pl-[var(--card-bleed-x,1rem)] [&_tr>:last-child]:pr-[var(--card-bleed-x,1rem)]"
 
-  @slot_defaults %{row_class: nil, row_attrs: nil, sticky_header: false, foot: []}
+  @slot_defaults %{
+    row_class: nil,
+    row_attrs: nil,
+    sticky_header: false,
+    foot: [],
+    select_all_label: "Select all rows",
+    select_label: "Select row",
+    sort_label: nil
+  }
+
+  @sort_button "-mx-1.5 inline-flex h-7 max-w-full cursor-pointer items-center gap-1.5 rounded-md px-1.5 text-left font-semibold uppercase outline-hidden transition-colors hover:bg-slate-300/40 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-primary/55 dark:hover:bg-navy-450/40"
 
   @foot_td "whitespace-nowrap border-t border-slate-200 px-4 py-3 font-semibold text-slate-700 dark:border-navy-500 dark:text-navy-100 sm:px-5"
 
@@ -321,13 +331,23 @@ defmodule LineaUI.Components.Table do
   attr(:sort_label, :string,
     default: nil,
     doc:
-      "Prefix of the `aria-label` of the sort buttons (\"Sort by\" gives \"Sort by Order\"); without it the button is named by its text."
+      "`aria-label` of the sort buttons: a prefix (\"Sort by\" gives \"Sort by Order\") or a template with `%{label}` for the column's label; without it the button is named by its text."
   )
 
   attr(:row_label, :any,
     default: nil,
     doc:
       "A function of the row (after `row_item`) returning the `aria-label` of its selection checkbox (\"Select order #2481\"); \"Select row\" when not given."
+  )
+
+  attr(:select_all_label, :string,
+    default: "Select all rows",
+    doc: "`aria-label` of the header checkbox."
+  )
+
+  attr(:select_label, :string,
+    default: "Select row",
+    doc: "`aria-label` of each row checkbox, unless `row_label` is given."
   )
 
   attr(:wrapper_class, :any, default: nil, doc: "Classes of the scrolling wrapper.")
@@ -485,7 +505,7 @@ defmodule LineaUI.Components.Table do
     keys != [] and Enum.all?(keys, &(&1 in selected))
   end
 
-  defp row_label(%{row_label: nil}, _row), do: "Select row"
+  defp row_label(%{row_label: nil, select_label: label}, _row), do: label
   defp row_label(%{row_label: row_label, row_item: row_item}, row), do: row_label.(row_item.(row))
 
   defp key(%{row_key: nil, row_id: row_id}, row), do: row_id.(row)
@@ -586,7 +606,7 @@ defmodule LineaUI.Components.Table do
               type="checkbox"
               class={[@checkbox, "table-select-all"]}
               checked={@all_selected}
-              aria-label="Select all rows"
+              aria-label={@select_all_label}
               phx-hook="LineaUI.TableSelectAll"
               data-indeterminate={bool(@some_selected and not @all_selected)}
               phx-click={@on_select_all}
@@ -621,9 +641,9 @@ defmodule LineaUI.Components.Table do
     ~H"""
     <button
       type="button"
-      class="flex w-full cursor-pointer items-center justify-between space-x-2 text-left font-semibold uppercase outline-hidden"
+      class={sort_button()}
+      aria-label={sort_aria(@sort_label, @col[:label])}
       phx-click={@on_sort}
-      aria-label={@sort_label && "#{@sort_label} #{@col[:label]}"}
       phx-value-column={@col.sort_key}
       phx-value-direction={next_dir(@dir)}
       phx-target={@target}
@@ -632,6 +652,17 @@ defmodule LineaUI.Components.Table do
       <span class="table-sort-icon" data-sort={@dir} aria-hidden="true"></span>
     </button>
     """
+  end
+
+  defp sort_button, do: @sort_button
+
+  defp sort_aria(nil, _label), do: nil
+  defp sort_aria(_template, nil), do: nil
+
+  defp sort_aria(template, label) do
+    if String.contains?(template, "%{label}"),
+      do: String.replace(template, "%{label}", to_string(label)),
+      else: "#{template} #{label}"
   end
 
   defp slot_foot(%{foot: []} = assigns), do: ~H""
@@ -764,6 +795,12 @@ defmodule LineaUI.Components.Table do
   )
 
   attr(:select_all_label, :string, default: "Select all rows")
+
+  attr(:sort_label, :string,
+    default: nil,
+    doc: "`aria-label` of a sortable header, `%{label}` being its `label`; none by default."
+  )
+
   attr(:target, :any, default: nil, doc: "`phx-target` of the events.")
   attr(:class, :any, default: nil, doc: "Classes of the `<tr>`.")
   attr(:rest, :global)
@@ -806,7 +843,8 @@ defmodule LineaUI.Components.Table do
           <button
             :if={col[:sort_key] && @on_sort}
             type="button"
-            class="flex w-full cursor-pointer items-center justify-between space-x-2 text-left font-semibold uppercase outline-hidden"
+            class={sort_button()}
+            aria-label={sort_aria(@sort_label, col[:label])}
             phx-click={@on_sort}
             phx-value-column={col.sort_key}
             phx-value-direction={next_dir(sort_state(col.sort_key, @sort_by, @sort_dir))}

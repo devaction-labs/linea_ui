@@ -2,7 +2,8 @@ defmodule LineaUI.Components.Email do
   @moduledoc """
   LineOne's transactional e-mail: one layout for the e-mails a system sends (a sign-in code, a reset link, an
   order update): the logo, a card with an icon badge, an eyebrow, a title, text, a block of code, facts or steps,
-  a main button with its address spelled out, a note and a footer. 520px wide.
+  a main button with its address spelled out, a note (with an optional 16px `icon` image) and a footer, set
+  16px under the card. 520px wide.
 
       <.email_layout subject="Your code" preheader="Valid for 10 minutes" brand="Acme" logo_url="https://acme.com/logo.png"
                      eyebrow="Confirm your access" title="Your verification code">
@@ -124,7 +125,11 @@ defmodule LineaUI.Components.Email do
   end
 
   slot :note,
-    doc: "A line of small print in a panel: the validity, or what to do if it was not you."
+    doc: "A line of small print in a panel: the validity, or what to do if it was not you." do
+    attr :icon, :string,
+      doc:
+        "Absolute http(s) URL of a 16px image shown before the text (an image, as every icon in a mail)."
+  end
 
   slot :footer, doc: "Under the card: who sends this and why."
 
@@ -277,12 +282,14 @@ defmodule LineaUI.Components.Email do
                   </td>
                 </tr>
                 <tr :if={@footer != []}>
+                  <td style="height:16px;line-height:16px;font-size:1px;">&nbsp;</td>
+                </tr>
+                <tr :if={@footer != []}>
                   <td
                     class="em-panel"
                     bgcolor={@p.panel}
                     style={"padding:20px 24px;border-radius:12px;background-color:#{@p.panel};border:1px solid #{@p.hair};color:#{@p.muted};font-family:#{@sans};font-size:12.5px;line-height:1.6;"}
                   >
-                    <div style="height:16px;line-height:16px;font-size:1px;">&nbsp;</div>
                     {render_slot(@footer)}
                   </td>
                 </tr>
@@ -362,6 +369,8 @@ defmodule LineaUI.Components.Email do
   attr :sans, :string, required: true
 
   defp note(assigns) do
+    assigns = assign(assigns, icon: icon_url(assigns.note))
+
     ~H"""
     <table
       role="presentation"
@@ -374,6 +383,20 @@ defmodule LineaUI.Components.Email do
       style={"margin:22px 0 0;border-collapse:separate;border-radius:10px;background-color:#{@p.panel};border:1px solid #{@p.hair};"}
     >
       <tr>
+        <td
+          :if={@icon}
+          valign="top"
+          width="16"
+          style="width:16px;padding:14px 0 0 14px;line-height:0;font-size:0;"
+        >
+          <img
+            src={@icon}
+            width="16"
+            height="16"
+            alt=""
+            style="display:block;width:16px;height:16px;"
+          />
+        </td>
         <td
           class="em-muted"
           style={"padding:12px 14px;color:#{@p.muted};font-family:#{@sans};font-size:12.5px;line-height:1.6;"}
@@ -621,4 +644,8 @@ defmodule LineaUI.Components.Email do
   defp safe_url("https://" <> _ = url), do: url
   defp safe_url("http://" <> _ = url), do: url
   defp safe_url(_url), do: "#"
+
+  defp icon_url(%{icon: "https://" <> _ = url}), do: url
+  defp icon_url(%{icon: "http://" <> _ = url}), do: url
+  defp icon_url(_note), do: nil
 end

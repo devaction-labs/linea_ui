@@ -1792,11 +1792,15 @@ span.flatpickr-day.selected {
   position: absolute;
   transition: background-color .25s;
 }
+.filepond--panel-root:where(.dark, .dark *) {
+  background-color: var(--color-navy-500);
+}
 .filepond.fp-bordered .filepond--panel-root {
   background-color: transparent;
   border: 2px dashed var(--color-slate-300);
 }
 .filepond.fp-bordered .filepond--panel-root:where(.dark, .dark *) {
+  background-color: transparent;
   border-color: var(--color-navy-450);
 }
 .filepond.fp-bg-filled .filepond--panel-root {
@@ -1807,6 +1811,12 @@ span.flatpickr-day.selected {
 }
 .filepond--root[data-dragging] .filepond--panel-root {
   background-color: color-mix(in oklab, var(--color-slate-300) 40%, transparent);
+}
+.filepond--root[data-dragging] .filepond--panel-root:where(.dark, .dark *) {
+  background-color: color-mix(in oklab, var(--color-navy-450) 55%, transparent);
+}
+.filepond.fp-bordered[data-dragging] .filepond--panel-root {
+  border-color: var(--color-primary);
 }
 .filepond--drop-label {
   align-items: center;
@@ -1820,6 +1830,11 @@ span.flatpickr-day.selected {
 }
 .filepond--drop-label:where(.dark, .dark *) {
   color: var(--color-navy-100);
+}
+.filepond--drop-label:focus-visible {
+  border-radius: .5em;
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
 }
 .filepond.label-icon .filepond--drop-label {
   color: var(--color-slate-400);

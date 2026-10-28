@@ -30,7 +30,8 @@ defmodule LineaUI.Components.Toast do
   `kind` (`neutral info success warning error loading`) draws the toast as a card (white, `navy-700`
   in dark) with the icon in a tile tinted by the kind (or by `color`, `dark` makes the whole card dark)
   and a title; `description` adds a second line and `actions` put buttons on the right. A toast with
-  none of `kind`, `description`, `actions`, `aura` or `value` stays LineOne's plain colored note:
+  none of `kind`, `description`, `actions`, `aura` or `value` stays LineOne's plain colored note (a `color: :dark`
+  card with no `kind` leads with a dot with a halo where the icon would be):
 
       send_toast(socket, "Invoice sent",
         kind: :success,

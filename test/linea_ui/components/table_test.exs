@@ -161,6 +161,27 @@ defmodule LineaUI.Components.TableTest do
     assert ["Select row"] = plain |> find("tbody input") |> LazyHTML.attribute("aria-label")
   end
 
+  test "a sort header is a pill with the arrow next to the label, and can be named" do
+    html =
+      render(~H"""
+      <.table id="t" rows={[%{a: 1}]} on_sort="sort" sort_label="Sort by %{label}">
+        <:col :let={row} label="A" sort_key="a">{row.a}</:col>
+      </.table>
+      <table>
+        <.table_head on_sort="sort" sort_label="Sort by %{label}">
+          <:col label="B" sort_key="b" />
+        </.table_head>
+      </table>
+      """)
+
+    assert ["Sort by A", "Sort by B"] =
+             html |> find("th button") |> LazyHTML.attribute("aria-label")
+
+    assert "h-7" in classes(html, "th button")
+    assert "inline-flex" in classes(html, "th button")
+    assert "hover:bg-slate-300/40" in classes(html, "th button")
+  end
+
   test "selection adds checkboxes with their keys" do
     html =
       render(~H"""

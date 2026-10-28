@@ -60,4 +60,51 @@ defmodule LineaUI.Components.UploadTest do
     assert "rounded-full" in classes
     assert find(html, "input[type=file][name=doc][multiple]") |> Enum.count() == 1
   end
+
+  defp too_many(max) do
+    upload = config(max_entries: max)
+    %{upload | errors: [{upload.ref, :too_many_files}]}
+  end
+
+  test "too_many_files keeps its default text" do
+    assigns = %{__changed__: nil, upload: too_many(2)}
+    html = rendered_to_string(~H|<.upload upload={@upload} />|)
+
+    assert html |> find(".filepond--errors li") |> LazyHTML.text() |> String.trim() ==
+             "Too many files"
+  end
+
+  test "an error text can interpolate the limit" do
+    assigns = %{
+      __changed__: nil,
+      upload: too_many(3),
+      texts: %{too_many_files: "Only %{max} files"}
+    }
+
+    html = rendered_to_string(~H|<.upload upload={@upload} error_texts={@texts} />|)
+
+    assert html |> find(".filepond--errors li") |> LazyHTML.text() |> String.trim() ==
+             "Only 3 files"
+  end
+
+  test "upload_button is enabled by default and shows a focus outline" do
+    html = render(~H|<.upload_button name="doc">Choose</.upload_button>|)
+    assert find(html, "input[disabled]") |> Enum.count() == 0
+    refute html =~ "opacity-55"
+    assert html =~ "has-[input:focus-visible]:outline-primary"
+  end
+
+  test "a disabled upload_button disables its input and dims" do
+    html = render(~H|<.upload_button name="doc" disabled>Choose</.upload_button>|)
+    assert find(html, "input[disabled]") |> Enum.count() == 1
+    assert html =~ "opacity-55"
+    assert html =~ "pointer-events-none"
+
+    assigns = %{__changed__: nil, upload: config()}
+
+    html =
+      rendered_to_string(~H|<.upload_button upload={@upload} disabled>Choose</.upload_button>|)
+
+    assert find(html, "input[type=file][disabled]") |> Enum.count() == 1
+  end
 end

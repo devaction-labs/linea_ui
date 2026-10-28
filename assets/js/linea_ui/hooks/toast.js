@@ -5,6 +5,7 @@ import {
   auraOf,
   closeFor,
   colorFor,
+  dotFor,
   durationFor,
   encodedJS,
   failedOf,
@@ -250,6 +251,7 @@ export default {
       kind && el.setAttribute("aria-busy", String(kind === "loading"))
       const icon = kind && this.el.querySelector(`template[data-toast-icon="${kind}"]`)
       icon && el.append(this.part("span", "toast-icon", icon.content.firstElementChild.cloneNode(true)))
+      dotFor(input) && el.append(this.part("span", "toast-dot"))
       const steps = stepsOf(input)
       const body = steps ? this.stepsBody(el, input, steps) : this.textBody(input)
       const actions = (input.actions ?? []).map((action) => this.action(action, toast))

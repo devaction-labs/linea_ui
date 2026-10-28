@@ -1,4 +1,5 @@
 import {parseSpec, resolveFormatters} from "../lib/chart_formatters.js"
+import {MARKS, focusClass, grown, legendFocus} from "../lib/chart_focus.js"
 import {applyUpdate, nextView, parseOptions, stepSlot, targets, widthOf} from "../lib/chart_logic.js"
 import {build} from "../lib/chart_render.js"
 import {estimateWidth} from "../lib/chart_scale.js"
@@ -8,7 +9,8 @@ import {axisTipsHtml, overlaySvg, tooltipHtml} from "../lib/chart_tooltip.js"
 /**
  * A chart drawn in SVG from ApexCharts-shaped options, with no library behind it: the lines, bars, rings
  * and axes come from `lib/chart_*.js`, and this hook sizes the chart to its element, draws it, follows
- * the pointer (or the arrow keys, on a focused chart: slots, slices or spokes) for the tooltip and crosshair, toggles series from the legend and takes the `linea:chart`
+ * the pointer (or the arrow keys, on a focused chart: slots, slices or spokes) for the tooltip and crosshair, toggles series from the legend
+ * (pointing at an entry puts its series in front) and takes the `linea:chart`
  * pushes and swaps the chart for its table when the person picks Table in the view toggle (`data-chart-view`, no server round trip). The first draw plays a short entry animation (not under `prefers-reduced-motion`).
  */
 
@@ -23,6 +25,9 @@ const measurer = (el) => {
   const family = getComputedStyle(el).fontFamily
   return context ? (text, size) => ((context.font = `${size}px ${family}`), context.measureText(String(text)).width) : estimateWidth
 }
+
+const FOCUS_IN = ["pointerover", "focusin"]
+const FOCUS_OUT = ["pointerout", "focusout"]
 
 const Chart = {
   mounted() {
@@ -47,6 +52,10 @@ const Chart = {
     this.canvas.addEventListener("keydown", this.onKey)
     this.canvas.addEventListener("blur", this.onBlur)
     this.el.addEventListener("click", this.onView)
+    this.onLegendIn = (event) => this.focusSeries(legendFocus(event.target.closest?.(".linea-chart-legend-item")))
+    this.onLegendOut = () => this.focusSeries(null)
+    FOCUS_IN.forEach((type) => this.canvas.addEventListener(type, this.onLegendIn))
+    FOCUS_OUT.forEach((type) => this.canvas.addEventListener(type, this.onLegendOut))
     this.observer = new ResizeObserver(() => this.schedule())
     this.observer.observe(this.canvas)
     this.handleEvent("linea:chart", (payload) => this.apply(payload))
@@ -70,6 +79,8 @@ const Chart = {
     this.canvas?.removeEventListener("keydown", this.onKey)
     this.canvas?.removeEventListener("blur", this.onBlur)
     this.el.removeEventListener("click", this.onView)
+    FOCUS_IN.forEach((type) => this.canvas?.removeEventListener(type, this.onLegendIn))
+    FOCUS_OUT.forEach((type) => this.canvas?.removeEventListener(type, this.onLegendOut))
   },
 
   keyOf() {
@@ -115,6 +126,7 @@ const Chart = {
     this.entering = false
     this.cursor = null
     this.stage = this.canvas.firstElementChild
+    this.focusSeries(this.focus ?? null)
     this.el.style.minHeight = `${result.height + (result.config.chart.parentHeightOffset ?? 0)}px`
     this.applyView()
   },
@@ -216,8 +228,20 @@ const Chart = {
     item && this.result.config.legend.onItemClick?.toggleDataSeries !== false && this.toggle(Number(item.dataset.series))
   },
 
+  focusSeries(index) {
+    this.focus = index
+    this.stage?.querySelectorAll(MARKS).forEach((mark) => {
+      const state = focusClass(mark.dataset.series, index)
+      const own = mark.dataset.width ?? mark.getAttribute("stroke-width")
+      mark.classList.toggle("is-focus", state === "is-focus")
+      mark.classList.toggle("is-dim", state === "is-dim")
+      own && ((mark.dataset.width = own), mark.setAttribute("stroke-width", state === "is-focus" ? (grown(own) ?? own) : own))
+    })
+  },
+
   toggle(index) {
     this.hidden.has(index) ? this.hidden.delete(index) : this.hidden.add(index)
+    this.hidden.has(index) && this.focus === index && (this.focus = null)
     this.draw()
   },
 }

@@ -200,5 +200,9 @@ export const slashActions = {
   divider: ["insertHorizontalRule"],
 }
 
+/** What choosing an entry of the "/" menu does: `command` (a built-in block), `variable`, `mention`, or `custom`, which the server handles. */
+export const slashKind = (key) =>
+  key in slashActions ? "command" : (["variable", "mention"].find((kind) => key.startsWith(`${kind}:`)) ?? "custom")
+
 /** The words of the editor's footer: the count and its label. */
 export const wordsLabel = (text, label) => `${wordCount(text)} ${label}`

@@ -77,6 +77,33 @@ defmodule LineaUI.Components.EmailTest do
     refute html() =~ ~s(class="em-edge")
   end
 
+  test "the gap above the footer is outside its panel" do
+    doc = out_doc()
+
+    assert find(doc, "td.em-panel div") |> Enum.count() == 0
+    assert find(doc, "td[style*='height:16px']") |> Enum.count() == 1
+  end
+
+  test "a note takes an optional 16px icon image" do
+    assigns = %{}
+
+    out =
+      Phoenix.LiveViewTest.rendered_to_string(~H"""
+      <.email_layout subject="s" title="t">
+        <:body>x</:body>
+        <:note icon="https://acme.com/i.png">With icon</:note>
+        <:note icon="javascript:alert(1)">Unsafe</:note>
+        <:note>Plain</:note>
+      </.email_layout>
+      """)
+
+    assert find(out, "img[src='https://acme.com/i.png'][width='16'][height='16']") |> Enum.count() ==
+             1
+
+    refute out =~ "javascript:"
+    assert find(out, "img[width='16']") |> Enum.count() == 1
+  end
+
   test "an unsafe address becomes a hash" do
     assigns = %{}
 

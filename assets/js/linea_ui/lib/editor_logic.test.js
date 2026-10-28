@@ -1,6 +1,6 @@
 import test from "node:test"
 import assert from "node:assert/strict"
-import {blocks, commands, currentStyle, filterItems, imageProblem, mentionsIn, names, nextIndex, rowParts, safeHref, sends, slashActions, styles, textboxAttributes, tokenize, triggerOf, uploadError, wordCount, wordsLabel} from "./editor_logic.js"
+import {blocks, commands, currentStyle, filterItems, imageProblem, mentionsIn, names, nextIndex, rowParts, safeHref, sends, slashActions, slashKind, styles, textboxAttributes, tokenize, triggerOf, uploadError, wordCount, wordsLabel} from "./editor_logic.js"
 
 const chain = () => {
   const calls = []
@@ -154,4 +154,12 @@ test("known variables and mentions become tokens, the rest stays text", () => {
 test("the slash menu knows its commands and the footer its words", () => {
   assert.deepEqual(slashActions.h2, ["formatBlock", "h2"])
   assert.equal(wordsLabel("one two  three", "words"), "3 words")
+})
+
+test("a slash entry is a built-in block, a chip, or a custom command for the server", () => {
+  assert.equal(slashKind("h2"), "command")
+  assert.equal(slashKind("variable:cliente"), "variable")
+  assert.equal(slashKind("mention:ana"), "mention")
+  assert.equal(slashKind("insert-image"), "custom")
+  assert.equal(slashKind("variable"), "custom")
 })

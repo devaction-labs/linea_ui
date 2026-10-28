@@ -225,7 +225,10 @@ defmodule LineaUI.Components.Timeline do
       <div class={merge(["timeline-item-point rounded-full", @point_class, @point_extra])}>
         <span
           :if={@ping}
-          class={["inline-flex h-full w-full motion-safe:animate-ping rounded-full opacity-80", @ping_class]}
+          class={[
+            "inline-flex h-full w-full motion-safe:animate-ping rounded-full opacity-80",
+            @ping_class
+          ]}
         ></span>
         {render_slot(@point)}
       </div>

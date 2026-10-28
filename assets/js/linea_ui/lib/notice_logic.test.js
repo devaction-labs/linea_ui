@@ -1,6 +1,6 @@
 import test from "node:test"
 import assert from "node:assert/strict"
-import {PROGRESS_DONE_MS, actionPayload, auraOf, closeFor, colorFor, colorOf, durationFor, durationOf, encodedJS, failedOf, invertFor, isRich, kindOf, mergeToast, needsAction, offsets, positionOf, progressKind, progressOf, resumeAfter, stack, stepsOf, surfaceFor, timeLeft, timerFor, unseen, withKindColor} from "./notice_logic.js"
+import {PROGRESS_DONE_MS, actionPayload, auraOf, closeFor, colorFor, colorOf, durationFor, dotFor, durationOf, encodedJS, failedOf, invertFor, isRich, kindOf, mergeToast, needsAction, offsets, positionOf, progressKind, progressOf, resumeAfter, stack, stepsOf, surfaceFor, timeLeft, timerFor, unseen, withKindColor} from "./notice_logic.js"
 
 test("an unknown color is neutral", () => {
   assert.equal(colorOf("success"), "success")
@@ -209,4 +209,13 @@ test("a toast in steps is rich, neutral, stays until the last step and then leav
   assert.equal(closeFor({steps: 5, step: 2}, Infinity), false)
   assert.equal(closeFor({steps: 5, step: 2, close: true}, Infinity), true)
   assert.equal(timerFor({steps: 5, step: 5}, PROGRESS_DONE_MS), false)
+})
+
+test("a dark card with no kind leads with a dot; a kind, a light card or a plain note do not", () => {
+  assert.equal(dotFor({color: "dark", description: "Notes since 22/10"}), true)
+  assert.equal(dotFor({color: "dark", aura: "default"}), true)
+  assert.equal(dotFor({color: "dark", kind: "info", description: "x"}), false)
+  assert.equal(dotFor({color: "dark", value: 40}), false)
+  assert.equal(dotFor({color: "neutral", description: "x"}), false)
+  assert.equal(dotFor({color: "dark"}), false)
 })
