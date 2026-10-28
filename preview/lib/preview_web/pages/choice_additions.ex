@@ -44,6 +44,30 @@ defmodule PreviewWeb.Pages.ChoiceAdditions do
           ]}
         />
       </.example>
+      <.example
+        title="Radio segmented"
+        text="The segmented control made of radios: it submits, takes errors, and the arrows move it."
+        class="mt-5 space-y-4"
+      >
+        <.radio_group
+          field={@form[:status]}
+          variant="segmented"
+          label="Status"
+          options={[
+            %{label: "Todos", value: "all", count: 128},
+            %{label: "Rascunho", value: "draft", count: 4},
+            %{label: "Confirmado", value: "confirmed"},
+            %{label: "Entregue", value: "delivered", disabled: true}
+          ]}
+        />
+        <.radio_group
+          name="size_demo"
+          variant="segmented"
+          size="sm"
+          value="week"
+          options={[{"Day", "day"}, {"Week", "week"}, {"Month", "month"}]}
+        />
+      </.example>
       <.example title="Radio cards" text="A card per option." class="mt-5 max-w-xl">
         <.radio_group field={@form[:plan]} variant="card" color="primary" class="grid-cols-2">
           <:radio value="basic" description="One store, one user" icon="huge-store-01">
