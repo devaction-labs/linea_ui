@@ -23,13 +23,15 @@ defmodule LineaUI.Components.DatetimePicker do
   time highlighted. Changing only the day updates the value at once, keeping the time (or taking
   the default one when that time is closed on the new day); choosing a time updates it and closes
   the panel. On a narrow screen the time list becomes a dropdown under the calendar and a
-  "Select" button confirms: a tap alone does not change the value.
+  "Select" button confirms (with a "Cancel" beside it): a tap alone does not change the value.
+  A time that is closed is struck through and dimmed; today is marked with a dot under its number.
 
   ## A range
 
   `mode="range"` shows two months and, under them, the day and a time control for the start and
   for the end. The first click on a day starts the range, the next one closes it (a click before
-  the start restarts it); nothing is applied until "Select range" is pressed. `default_time`
+  the start restarts it); nothing is applied until "Select range" is pressed, and "Cancel" (the
+  `datetime_cancel` label) closes the panel without applying. `default_time`
   takes `"start/end"` (`"09:00/17:00"`); the end of a range cannot be before its start.
 
   ## Times
@@ -229,7 +231,7 @@ defmodule LineaUI.Components.DatetimePicker do
   attr :labels, :map,
     default: %{},
     doc:
-      "Single texts of the panel: `:datetime_select`, `:datetime_select_range`, `:datetime_start`, `:datetime_end`, `:datetime_time`, `:datetime_times`, `:datetime_no_times`, `:datetime_time_placeholder`, `:datetime_previous`, `:datetime_next`, `:datetime_day` (with `%{weekday}`, `%{month}`, `%{day}`, `%{year}`), `:datetime_title` (with `%{month}`, `%{year}`), `:datetime_dialog`, `:datetime_dialog_range`, `:datetime_placeholder`, `:datetime_placeholder_range`."
+      "Single texts of the panel: `:datetime_select`, `:datetime_select_range`, `:datetime_cancel`, `:datetime_start`, `:datetime_end`, `:datetime_time`, `:datetime_times`, `:datetime_no_times`, `:datetime_time_placeholder`, `:datetime_previous`, `:datetime_next`, `:datetime_day` (with `%{weekday}`, `%{month}`, `%{day}`, `%{year}`), `:datetime_title` (with `%{month}`, `%{year}`), `:datetime_dialog`, `:datetime_dialog_range`, `:datetime_placeholder`, `:datetime_placeholder_range`."
 
   attr :variant, :string, default: "outlined", values: ~w(outlined filled)
   attr :size, :string, default: "md", values: ~w(sm md lg)

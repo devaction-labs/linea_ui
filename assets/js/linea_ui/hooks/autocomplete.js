@@ -9,7 +9,7 @@ import {notify} from "../lib/dom.js"
 import {escapeHtml} from "../lib/date_picker_view.js"
 import {highlight, moveIndex} from "../lib/select_box.js"
 import {matches} from "../lib/text.js"
-import {fillQuery, left, opens, picked, searchable, typed} from "../lib/autocomplete_logic.js"
+import {fillQuery, left, opens, picked, searchable, statusHtml, typed} from "../lib/autocomplete_logic.js"
 
 const COMMANDS = ["open", "close", "toggle"]
 
@@ -263,8 +263,9 @@ const Autocomplete = {
     const empty = !this.loading && rows.length === 0 && this.term.trim() !== "" && fillQuery(this.q("[data-no-results]").textContent, this.term)
     const message = loading || empty
     const kind = loading ? "loading" : "no-results"
-    const html = message ? `<div class="no-results" data-kind="${kind}">${escapeHtml(message)}</div>` : ""
+    const html = statusHtml(kind, message, escapeHtml)
     status.innerHTML !== html && (status.innerHTML = html)
+    this.q("[data-listbox]").setAttribute("aria-busy", String(Boolean(loading)))
   },
 
   paintOpen(rows) {

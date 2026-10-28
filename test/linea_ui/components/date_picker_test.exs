@@ -163,4 +163,27 @@ defmodule LineaUI.Components.DatePickerTest do
     assert Shell.format("2026-10-24", "x:y", "Y-m-d H:i", names) == ""
     assert Shell.format("2026-10-24", "09:05", "Y-m-d H:i", names) == "2026-10-24 09:05"
   end
+
+  test "the calendar is a named dialog; labels and the locale change the name and the texts" do
+    html = render(~H|<.date_picker id="d" name="d" />|)
+    assert html |> find("#d-calendar") |> LazyHTML.attribute("aria-label") == ["Choose date"]
+    labels = html |> find("#d") |> LazyHTML.attribute("data-labels") |> hd() |> Jason.decode!()
+    assert labels["picker_previous"] == "Previous month"
+    assert labels["picker_day"] == "%{weekday}, %{month} %{day}, %{year}"
+
+    html = render(~H|<.date_picker id="r" name="r" mode="range" />|)
+    assert html |> find("#r-calendar") |> LazyHTML.attribute("aria-label") == ["Choose period"]
+
+    html =
+      render(
+        ~H|<.date_picker id="p" name="p" locale="pt_BR" labels={%{picker_next: "Avançar"}} />|
+      )
+
+    assert html |> find("#p-calendar") |> LazyHTML.attribute("aria-label") == ["Escolher data"]
+    labels = html |> find("#p") |> LazyHTML.attribute("data-labels") |> hd() |> Jason.decode!()
+    assert labels["picker_next"] == "Avançar"
+    assert labels["picker_previous"] == "Mês anterior"
+    assert labels["picker_day"] == "%{weekday}, %{day} de %{month} de %{year}"
+    refute Map.has_key?(labels, "datetime_select")
+  end
 end

@@ -28,6 +28,11 @@ defmodule LineaUI.Components.Autocomplete do
   it, the hook pushes the query to the server, shows `loading_text` until the reply, and the
   server answers by re-rendering `options`.
 
+  The text typed shows in bold primary colour inside each suggestion (no background). While the
+  server searches the list is `aria-busy` and `loading_text` shows with a 16px spinner as a
+  `role="status"`; "no results" is a status too. The clear button is a real button
+  (`clear_label` names it) that can be reached with `Tab` and pressed with `Enter` or `Space`.
+
   The behavior lives in the `LineaUI.Autocomplete` hook, so the field needs a stable `id` (it
   gets one from `field` or `name`).
   """
@@ -92,7 +97,10 @@ defmodule LineaUI.Components.Autocomplete do
     doc: "Show the suggestions as soon as the input has focus."
 
   attr :clearable, :boolean, default: false, doc: "A button that empties the field."
-  attr :clear_label, :string, default: "Clear"
+
+  attr :clear_label, :string,
+    default: "Clear",
+    doc: "The name of the clear button, for screen readers and its tooltip."
 
   attr :no_results, :string,
     default: "No results found",
@@ -206,7 +214,26 @@ defmodule LineaUI.Components.Autocomplete do
             data-query
             {@input_rest}
           />
-          <div :if={@clearable} class="clear-button" title={@clear_label} data-clear>⨯</div>
+          <button
+            :if={@clearable}
+            type="button"
+            class="clear-button"
+            title={@clear_label}
+            aria-label={@clear_label}
+            data-clear
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="3"
+              stroke-linecap="round"
+              class="size-2.5"
+              aria-hidden="true"
+            >
+              <path d="M6 6l12 12M18 6 6 18" />
+            </svg>
+          </button>
         </div>
         <div
           id={@id <> "-dropdown"}
@@ -215,7 +242,14 @@ defmodule LineaUI.Components.Autocomplete do
           hidden
           data-dropdown
         >
-          <div id={@id <> "-listbox"} class="ts-dropdown-content" role="listbox">
+          <div
+            id={@id <> "-listbox"}
+            class="ts-dropdown-content"
+            role="listbox"
+            aria-busy="false"
+            phx-mounted={JS.ignore_attributes(["aria-busy"])}
+            data-listbox
+          >
             <.entry :for={entry <- @entries} entry={entry} id={@id} option_slot={@option} />
             <div id={@id <> "-status"} phx-update="ignore" data-status></div>
           </div>

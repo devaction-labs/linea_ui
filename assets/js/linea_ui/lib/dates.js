@@ -69,6 +69,10 @@ const moves = {
 
 export const moveFocus = (key, iso, weekStart) => moves[key]?.(iso, weekStart)
 
+/** `moveFocus`, with Shift turning Page Up and Page Down into a year. */
+export const dayTarget = (key, iso, weekStart, shift = false) =>
+  shift && (key === "PageUp" || key === "PageDown") ? addMonths(iso, key === "PageUp" ? -12 : 12) : moveFocus(key, iso, weekStart)
+
 
 /** The rules of a range, tried in order: the first whose test passes decides the new range. */
 const rangeRules = [

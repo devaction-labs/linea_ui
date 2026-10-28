@@ -1,6 +1,14 @@
 import assert from "node:assert/strict"
 import test from "node:test"
-import {fillQuery, left, opens, picked, searchable, typed} from "./autocomplete_logic.js"
+import {fillQuery, left, opens, picked, searchable, statusHtml, typed} from "./autocomplete_logic.js"
+
+test("the status row is a role=status; only loading carries the spinner", () => {
+  const escape = (text) => text.replace("<", "&lt;")
+  assert.equal(statusHtml("no-results", "<none>", escape), '<div class="no-results" role="status" data-kind="no-results">&lt;none></div>')
+  assert.match(statusHtml("loading", "Searching", escape), /role="status" data-kind="loading"><span class="ac-spinner" aria-hidden="true"><\/span>Searching/)
+  assert.equal(statusHtml("loading", "", escape), "")
+  assert.equal(statusHtml("loading", false, escape), "")
+})
 
 test("the no-results message takes the query", () => {
   assert.equal(fillQuery('Nothing for "%{query}"', " tea "), 'Nothing for "tea"')

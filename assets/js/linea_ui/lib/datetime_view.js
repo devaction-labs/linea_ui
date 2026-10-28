@@ -2,7 +2,7 @@
  * The panel of the date-time picker as HTML, from a plain description of what it shows (`vm`): the month grids,
  * the time list, the time dropdown or field, and the footer with the confirm button. No DOM: the hook writes the
  * string and listens to the `data-*` hooks it carries (`data-day`, `data-nav`, `data-time`, `data-time-select`,
- * `data-time-input`, `data-suggest`, `data-confirm`).
+ * `data-time-input`, `data-suggest`, `data-confirm`, `data-cancel`).
  */
 import {bandCell, daysInMonth, leadingDays, previewRange, shiftMonth, toIso, weekdayIndex} from "./dates.js"
 import {escapeHtml} from "./date_picker_view.js"
@@ -13,10 +13,12 @@ const DAY = "relative mx-auto flex size-9 items-center justify-center rounded-lg
 const EDGE = "bg-primary font-medium text-white hover:bg-primary-focus dark:bg-accent dark:hover:bg-accent-focus"
 const IDLE = "hover:bg-slate-150 dark:hover:bg-navy-500"
 const OFF = "cursor-not-allowed text-slate-300 dark:text-navy-400"
-const TODAY = "font-semibold text-primary ring-1 ring-primary/40 ring-inset dark:text-accent-light dark:ring-accent/40"
+const TODAY = "font-semibold text-primary after:absolute after:bottom-[5px] after:left-1/2 after:-ml-0.5 after:size-1 after:rounded-full after:bg-current after:content-[''] dark:text-accent-light"
+const SLOT_OFF = "cursor-not-allowed text-slate-400 line-through opacity-50 dark:text-navy-300"
 const NAV = "flex size-8 items-center justify-center rounded-lg text-slate-500 outline-hidden transition-colors hover:bg-slate-150 focus-visible:ring-2 focus-visible:ring-primary/50 dark:text-navy-200 dark:hover:bg-navy-500 dark:focus-visible:ring-accent/50"
 const OPTION = "flex w-full items-center rounded-lg px-3 py-1.5 text-left text-sm outline-hidden transition-colors focus-visible:ring-2 focus-visible:ring-primary/50 dark:focus-visible:ring-accent/50"
 const FIELD = "w-full rounded-lg border border-slate-300 bg-transparent px-3 py-2 text-sm text-slate-700 placeholder:text-slate-400/70 hover:border-slate-400 focus:border-primary disabled:pointer-events-none disabled:bg-zinc-100 disabled:opacity-70 dark:border-navy-450 dark:text-navy-100 dark:hover:border-navy-400 dark:focus:border-accent dark:disabled:bg-navy-600"
+const CANCEL = "inline-flex h-9 items-center justify-center rounded-lg border border-slate-300 px-4 text-sm font-medium text-slate-700 outline-hidden transition-colors hover:bg-slate-150 focus-visible:ring-2 focus-visible:ring-primary/50 dark:border-navy-450 dark:text-navy-100 dark:hover:bg-navy-500 dark:focus-visible:ring-accent/50"
 const CONFIRM = "inline-flex h-9 items-center justify-center rounded-lg bg-primary px-4 text-sm font-medium text-white outline-hidden transition-colors hover:bg-primary-focus focus-visible:ring-2 focus-visible:ring-primary/50 disabled:pointer-events-none disabled:opacity-60 dark:bg-accent dark:hover:bg-accent-focus dark:focus-visible:ring-accent/50"
 
 const attr = escapeHtml
@@ -29,9 +31,9 @@ export const bandClass = ({paints, roundStart, roundEnd}) =>
 export const dayClass = ({edge, off, today}) =>
   [DAY, edge ? EDGE : off ? OFF : IDLE, today && !edge && TODAY].filter(Boolean).join(" ")
 
-/** The classes of an option of the time list. */
+/** The classes of an option of the time list: a closed slot is struck through and dimmed. */
 export const optionClass = ({selected, disabled}) =>
-  [OPTION, selected ? EDGE : disabled ? OFF : "text-slate-600 hover:bg-slate-150 dark:text-navy-100 dark:hover:bg-navy-500"].join(" ")
+  [OPTION, selected ? EDGE : disabled ? SLOT_OFF : "text-slate-600 hover:bg-slate-150 dark:text-navy-100 dark:hover:bg-navy-500"].join(" ")
 
 const range = (vm) => {
   const {start, end} = vm.state
@@ -164,7 +166,11 @@ const footer = (vm) => {
   return (
     `<div class="flex flex-wrap items-end gap-3 border-t border-slate-150 p-3 dark:border-navy-600">` +
     ends.map((which) => controlBlock(which, vm)).join("") +
-    (confirm ? `<button type="button" data-confirm class="${CONFIRM} w-full sm:w-auto"${vm.canConfirm ? "" : " disabled"}>${attr(label)}</button>` : "") +
+    (confirm
+      ? `<div class="flex w-full gap-2 sm:w-auto">` +
+        `<button type="button" data-cancel class="${CANCEL} flex-1 sm:flex-none">${attr(vm.labels.datetime_cancel)}</button>` +
+        `<button type="button" data-confirm class="${CONFIRM} flex-1 sm:flex-none"${vm.canConfirm ? "" : " disabled"}>${attr(label)}</button></div>`
+      : "") +
     `</div>`
   )
 }

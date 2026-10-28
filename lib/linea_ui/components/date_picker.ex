@@ -43,6 +43,18 @@ defmodule LineaUI.Components.DatePicker do
   `locale="pt_BR"` names the months and weekdays in Portuguese, shows `dd/mm/aaaa` and joins
   a range with "até"; `months`, `weekdays`, `display_format` and `range_separator` still
   override it one by one.
+
+  ## Keyboard and screen readers
+
+  The popup is a dialog named "Choose date" ("Choose period" for a range); the month buttons are
+  real buttons with a name, and the days are a `grid` of rows and cells with `aria-selected`,
+  `aria-disabled`, `aria-current="date"` for today and a long name ("Friday, October 23, 2026",
+  in the `locale`). The `labels` attribute changes any of these texts.
+
+  `↓` or `Enter` on the input opens the calendar with the focus on the chosen day. In the calendar
+  the arrows move a day or a week, `Home`/`End` the start and end of the week, `Page Up`/`Page Down`
+  a month (with `Shift` a year) and `Enter` or `Space` picks. `Esc` closes the calendar and gives
+  the focus back to the input; leaving it with `Tab` closes it.
   """
 
   use LineaUI.Component
@@ -113,6 +125,11 @@ defmodule LineaUI.Components.DatePicker do
   attr :range_separator, :string,
     default: nil,
     doc: "The text between the two days of a range; \" to \" (en) or \" até \" (pt_BR)."
+
+  attr :labels, :map,
+    default: %{},
+    doc:
+      "Single texts of the calendar, over the `locale` ones: `:picker_date_dialog`, `:picker_period_dialog` (the name of the popup), `:picker_previous`, `:picker_next`, `:picker_day` (the name of a day, with `%{weekday}`, `%{month}`, `%{day}`, `%{year}`), `:picker_month`, `:picker_year`, `:picker_year_up`, `:picker_year_down`."
 
   attr :min, :any, default: nil, doc: "The first day that can be picked (`Date` or ISO text)."
   attr :max, :any, default: nil, doc: "The last day that can be picked."

@@ -28,3 +28,12 @@ export const left = (text, {value, label, freeText}) =>
 /** Whether the list should open: on focus only when asked to, and never for a query under the threshold. */
 export const opens = ({query, threshold, onFocus, focusing}) =>
   focusing ? onFocus && searchable(query, threshold) : searchable(query, threshold)
+
+/**
+ * The row under the options that tells what the list is doing: `loading` (a spinner) or `no-results`, both a
+ * `role="status"` so a screen reader says them; nothing for no message. `escape` makes the text safe for HTML.
+ */
+export const statusHtml = (kind, message, escape) =>
+  message
+    ? `<div class="no-results" role="status" data-kind="${kind}">${kind === "loading" ? '<span class="ac-spinner" aria-hidden="true"></span>' : ""}${escape(message)}</div>`
+    : ""

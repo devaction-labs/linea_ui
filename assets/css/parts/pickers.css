@@ -118,6 +118,30 @@
 .ts-wrapper.plugin-clear_button .clear-button:hover { background-color: color-mix(in oklab, currentColor 16%, transparent); color: var(--color-slate-700); }
 .dark .ts-wrapper.plugin-clear_button .clear-button:hover { color: var(--color-navy-50); }
 
+/* The autocomplete's clear button is a real 22px square button with an SVG cross (no mask), reachable with Tab. */
+.ts-wrapper.autocomplete.plugin-clear_button .clear-button { border-radius: 6px; height: 1.375rem; width: 1.375rem; }
+.ts-wrapper.autocomplete.plugin-clear_button .clear-button::before { content: none; }
+.ts-wrapper.autocomplete.plugin-clear_button .clear-button:focus-visible {
+  opacity: 1;
+  outline: 2px solid color-mix(in oklab, var(--color-primary) 50%, transparent);
+  outline-offset: 1px;
+}
+.dark .ts-wrapper.autocomplete.plugin-clear_button .clear-button:focus-visible { outline-color: color-mix(in oklab, var(--color-accent) 50%, transparent); }
+.ts-wrapper.autocomplete:not(.has-items) .clear-button { display: none; }
+
+/* The loading row of the autocomplete: a 16px ring turning beside the text. */
+.ts-dropdown .no-results[data-kind="loading"] { align-items: center; display: flex; gap: .5rem; justify-content: center; }
+.ts-dropdown .ac-spinner {
+  animation: lds-dual-ring .8s linear infinite;
+  border: 2px solid currentColor;
+  border-radius: 9999px;
+  border-right-color: transparent;
+  flex: none;
+  height: 1rem;
+  width: 1rem;
+}
+@media (prefers-reduced-motion: reduce) { .ts-dropdown .ac-spinner { animation-duration: 2.4s; } }
+
 /* The compact control, for filter bars. */
 .ts-wrapper[data-size="sm"] .ts-control,
 .ts-wrapper[data-size="sm"].multi.has-items .ts-control { min-height: 2rem; padding-block: 3px; font-size: .75rem; }
@@ -710,12 +734,12 @@
   color:var(--color-navy-200)
 }
 .ts-wrapper .ts-dropdown [data-selectable] .highlight {
-  background-color:color-mix(in oklab,var(--color-primary) 16%,transparent);
-  border-radius:2px;
-  color:inherit
+  background: none;
+  color: var(--color-primary);
+  font-weight: 600
 }
 .dark .ts-wrapper .ts-dropdown [data-selectable] .highlight {
-  background-color:color-mix(in oklab,var(--color-accent-light) 22%,transparent)
+  color: var(--color-accent-light)
 }
 .ts-dropdown .ts-search {
   align-items:center;
@@ -931,7 +955,7 @@
   height:auto;
   position:relative
 }
-.numInputWrapper input,.numInputWrapper span {
+.numInputWrapper input,.numInputWrapper :is(span,button) {
   display:inline-block
 }
 .numInputWrapper input {
@@ -944,7 +968,7 @@
   -webkit-appearance:none;
   margin:0
 }
-.numInputWrapper span {
+.numInputWrapper :is(span,button) {
   border:1px solid #48484826;
   box-sizing:border-box;
   cursor:pointer;
@@ -956,47 +980,47 @@
   right:0;
   width:14px
 }
-.numInputWrapper span:hover {
+.numInputWrapper :is(span,button):hover {
   background:#0000001a
 }
-.numInputWrapper span:active {
+.numInputWrapper :is(span,button):active {
   background:#0003
 }
-.numInputWrapper span:after {
+.numInputWrapper :is(span,button):after {
   content:"";
   display:block;
   position:absolute
 }
-.numInputWrapper span.arrowUp {
+.numInputWrapper :is(span,button).arrowUp {
   border-bottom:0;
   top:0
 }
-.numInputWrapper span.arrowUp:after {
+.numInputWrapper :is(span,button).arrowUp:after {
   border-bottom:4px solid #48484899;
   border-left:4px solid #0000;
   border-right:4px solid #0000;
   top:26%
 }
-.numInputWrapper span.arrowDown {
+.numInputWrapper :is(span,button).arrowDown {
   top:50%
 }
-.numInputWrapper span.arrowDown:after {
+.numInputWrapper :is(span,button).arrowDown:after {
   border-left:4px solid #0000;
   border-right:4px solid #0000;
   border-top:4px solid #48484899;
   top:40%
 }
-.numInputWrapper span svg {
+.numInputWrapper :is(span,button) svg {
   height:auto;
   width:inherit
 }
-.numInputWrapper span svg path {
+.numInputWrapper :is(span,button) svg path {
   fill:#5a617180
 }
 .numInputWrapper:hover {
   background:#0000000d
 }
-.numInputWrapper:hover span {
+.numInputWrapper:hover :is(span,button) {
   opacity:1
 }
 .flatpickr-current-month {
@@ -1030,10 +1054,10 @@
   width:6ch;
   width:7ch
 }
-.flatpickr-current-month .numInputWrapper span.arrowUp:after {
+.flatpickr-current-month .numInputWrapper :is(span,button).arrowUp:after {
   border-bottom-color:#5a6171
 }
-.flatpickr-current-month .numInputWrapper span.arrowDown:after {
+.flatpickr-current-month .numInputWrapper :is(span,button).arrowDown:after {
   border-top-color:#5a6171
 }
 .flatpickr-current-month input.cur-year {
@@ -1283,10 +1307,10 @@ span.flatpickr-weekday {
   height:40px;
   width:40%
 }
-.flatpickr-time .numInputWrapper span.arrowUp:after {
+.flatpickr-time .numInputWrapper :is(span,button).arrowUp:after {
   border-bottom-color:#484848
 }
-.flatpickr-time .numInputWrapper span.arrowDown:after {
+.flatpickr-time .numInputWrapper :is(span,button).arrowDown:after {
   border-top-color:#484848
 }
 .flatpickr-time.hasSeconds .numInputWrapper {
@@ -1425,10 +1449,10 @@ span.flatpickr-day.selected {
 :is(.flatpickr-time input:hover,.flatpickr-time .flatpickr-am-pm:hover,.flatpickr-time input:focus,.flatpickr-time .flatpickr-am-pm:focus):where(.dark,.dark *) {
   background-color:var(--color-navy-500)
 }
-.flatpickr-time .numInputWrapper span.arrowUp:where(.dark,.dark *):after {
+.flatpickr-time .numInputWrapper :is(span,button).arrowUp:where(.dark,.dark *):after {
   border-bottom-color:var(--color-navy-200)
 }
-.flatpickr-time .numInputWrapper span.arrowDown:where(.dark,.dark *):after {
+.flatpickr-time .numInputWrapper :is(span,button).arrowDown:where(.dark,.dark *):after {
   border-top-color:var(--color-navy-200)
 }
 .flatpickr-calendar.hasTime .flatpickr-time {
@@ -1465,6 +1489,24 @@ span.flatpickr-day.selected {
   color:var(--color-navy-300)
 }
 
+/* The controls of the calendar and the time row are real buttons: a day grid in rows, a visible focus, a dimmed step that cannot move. */
+.dayContainer > [role="row"] { display: flex; width: 100%; }
+.flatpickr-months :is(.flatpickr-prev-month, .flatpickr-next-month) { background: none; border: 0; }
+.flatpickr-months :is(.flatpickr-prev-month, .flatpickr-next-month):focus-visible,
+.flatpickr-day:focus-visible,
+.flatpickr-time .flatpickr-am-pm:focus-visible,
+.numInputWrapper :is(span, button):focus-visible {
+  outline: 2px solid color-mix(in oklab, var(--color-primary) 55%, transparent);
+  outline-offset: -2px;
+}
+.dark :is(.flatpickr-months :is(.flatpickr-prev-month, .flatpickr-next-month), .flatpickr-day, .flatpickr-time .flatpickr-am-pm, .numInputWrapper :is(span, button)):focus-visible {
+  outline-color: color-mix(in oklab, var(--color-accent) 55%, transparent);
+}
+.numInputWrapper:focus-within :is(span, button) { opacity: 1; }
+.flatpickr-time button.flatpickr-am-pm { background: transparent; border: 0; font: inherit; font-weight: 400; padding: 0; }
+.numInputWrapper:is(:hover, :focus-within) :is(span, button)[aria-disabled="true"],
+.flatpickr-time .flatpickr-am-pm[aria-disabled="true"] { cursor: not-allowed; opacity: .35; }
+.flatpickr-day[aria-disabled="true"] { cursor: not-allowed; }
 
 /* Text editor: Quill's snow toolbar and container with LineOne's skin. */
 .ql-container {

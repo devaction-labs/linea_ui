@@ -3,14 +3,15 @@
  * popup the server renders, the text of the input and the hidden inputs the form submits. The server's value
  * wins when it changes; otherwise the browser's choice survives patches.
  */
-import {monthOf, shiftMonth} from "../lib/dates.js"
+import {dayTarget, monthOf, shiftMonth} from "../lib/dates.js"
 import {notify} from "../lib/dom.js"
-import {clampTime, formatDate, isDisabled, pickDate, readTime, renderDays, renderTime, setUnit, stepTime, timeText} from "../lib/calendar_view.js"
+import {clampTime, dayName, formatDate, isDisabled, pickDate, readTime, renderDays, renderTime, setUnit, stepTime, timeText} from "../lib/calendar_view.js"
 import {escapeHtml} from "../lib/date_picker_view.js"
 import {presetActive, presetDates, rangeInputs} from "../lib/date_range.js"
 import {iconSet} from "../lib/glyphs.js"
 import {sameValues} from "../lib/select_box.js"
 
+const DAY_LABEL = "%{weekday}, %{month} %{day}, %{year}"
 const COMMANDS = ["open", "close", "toggle", "clear"]
 const GAP = 2
 
@@ -27,6 +28,7 @@ export const Picker = {
   mounted() {
     this.isOpen = false
     this.hover = null
+    this.focusIso = null
     this.server = this.el.dataset.value
     this.load(readValues(this.el))
     this.view = monthOf(this.dates[0] ?? this.el.dataset.today ?? "1970-01-01")
@@ -41,6 +43,7 @@ export const Picker = {
     this.onKeyDown = (event) => this.key(event)
     this.onChange = (event) => this.changed(event)
     this.onOver = (event) => this.over(event)
+    this.onFocusOut = (event) => this.leaving(event)
     this.onCommand = (event) => this[event.type.replace("linea:", "")]()
     this.onPushed = (event) => event.detail?.id && this.el.matches(event.detail.id) && this[event.type.replace("phx:linea:", "")]()
 
@@ -50,6 +53,7 @@ export const Picker = {
     this.el.addEventListener("change", this.onChange)
     this.el.addEventListener("input", this.onInput = (event) => event.target.closest("[data-calendar]") && event.stopPropagation())
     this.el.addEventListener("mouseover", this.onOver)
+    this.el.addEventListener("focusout", this.onFocusOut)
     document.addEventListener("pointerdown", this.onOutside)
     COMMANDS.forEach((name) => {
       this.el.addEventListener(`linea:${name}`, this.onCommand)
@@ -103,6 +107,10 @@ export const Picker = {
     return JSON.parse(this.el.dataset.names || "{}")
   },
 
+  labels() {
+    return JSON.parse(this.el.dataset.labels || "{}")
+  },
+
   state() {
     const data = this.el.dataset
     return {
@@ -113,6 +121,9 @@ export const Picker = {
       hover: this.hover,
       weekStart: Number(data.weekStart || 0),
       names: this.names(),
+      labels: this.labels(),
+      dayLabel: (iso) => dayName(iso, this.labels().picker_day ?? DAY_LABEL, this.names()),
+      focus: this.focusIso,
       icons: iconSet(this.el),
       rules: {
         min: data.min || null,
@@ -123,16 +134,33 @@ export const Picker = {
     }
   },
 
-  render() {
+  render(keepInputs = false) {
+    const kept = this.focusKey(keepInputs)
     const kind = this.kind()
     const time = this.time ?? this.defaultTime()
     const days = kind === "time" ? "" : renderDays(this.state())
     const clock =
       kind === "date"
         ? ""
-        : renderTime({...time, twentyFour: this.el.dataset.time24 === "true", ...this.timeRules()})
+        : renderTime({...time, twentyFour: this.el.dataset.time24 === "true", ...this.timeRules(), labels: this.labels()})
     this.q("[data-calendar]").innerHTML = days + clock + this.presetsHtml()
     this.paintPresets()
+    const again = kept && this.q("[data-calendar]").querySelector(kept)
+    again && again.focus({preventScroll: true})
+  },
+
+  focusKey(keepInputs) {
+    const active = document.activeElement
+    const own = active && this.q("[data-calendar]").contains(active)
+    const keys = own && [
+      [active.dataset.date, `[data-date="${active.dataset.date}"]`],
+      [active.dataset.month, `[data-month="${active.dataset.month}"]`],
+      [active.dataset.step, `[data-unit="${active.dataset.unit}"][data-step="${active.dataset.step}"]`],
+      [active.hasAttribute("data-ampm"), "[data-ampm]"],
+      [keepInputs && active.hasAttribute("data-hour"), "[data-hour]"],
+      [keepInputs && active.hasAttribute("data-minute"), "[data-minute]"],
+    ]
+    return keys && keys.find(([present]) => present)?.[1]
   },
 
   presetsHtml() {
@@ -153,13 +181,20 @@ export const Picker = {
     this.dates = presetDates({from: button.dataset.from, to: button.dataset.to}, this.mode())
     this.view = monthOf(this.dates.at(-1))
     this.commit()
-    this.el.dataset.inline === "true" ? this.render() : this.close()
+    this.el.dataset.inline === "true" ? this.render() : this.dismiss()
   },
 
   open() {
     const display = this.q("[data-display]")
     const can = !display.disabled && !this.isOpen
-    can && ((this.isOpen = true), (this.view = monthOf(this.dates.at(-1) ?? this.el.dataset.today ?? "1970-01-01")), this.render(), this.show())
+    const anchor = this.dates.at(-1) ?? this.el.dataset.today ?? "1970-01-01"
+    can && ((this.isOpen = true), (this.focusIso = anchor), (this.view = monthOf(anchor)), this.render(), this.show())
+    return can
+  },
+
+  openByKey() {
+    this.open()
+    this.isOpen && this.kind() !== "time" && this.q("[data-calendar] [data-date][tabindex='0']")?.focus({preventScroll: true})
   },
 
   show() {
@@ -190,6 +225,18 @@ export const Picker = {
     this.q("[data-display]").setAttribute("aria-expanded", "false")
   },
 
+  dismiss() {
+    const calendar = this.q("[data-calendar]")
+    const inside = calendar.contains(document.activeElement)
+    this.close()
+    inside && this.q("[data-display]").focus({preventScroll: true})
+  },
+
+  leaving(event) {
+    const gone = event.relatedTarget && !this.el.contains(event.relatedTarget)
+    gone && this.isOpen && this.el.dataset.inline !== "true" && this.close()
+  },
+
   toggle() {
     this.isOpen ? this.close() : this.open()
   },
@@ -207,11 +254,13 @@ export const Picker = {
     const month = event.target.closest("[data-month]")
     const arrow = event.target.closest(".numInputWrapper [data-step]")
     const ampm = event.target.closest("[data-ampm]")
+    const stuck = (arrow || ampm)?.getAttribute("aria-disabled") === "true"
     const display = event.target.closest("[data-display]")
     const action =
       (preset && (() => this.pickPreset(preset))) ||
       (day && (() => this.pickDay(day))) ||
       (month && (() => this.moveMonth(Number(month.dataset.month)))) ||
+      (stuck && (() => false)) ||
       (arrow && (() => this.stepArrow(arrow))) ||
       (ampm && (() => this.setTime({...this.currentTime(), hour: (this.currentTime().hour + 12) % 24}))) ||
       (display && (() => this.open()))
@@ -220,13 +269,14 @@ export const Picker = {
 
   pickDay(day) {
     const iso = day.dataset.date
+    this.focusIso = iso
     const blocked = isDisabled(iso, this.state().rules)
     const mode = this.mode()
     !blocked && ((this.dates = pickDate(this.dates, iso, mode)), this.kind() === "datetime" && !this.time && (this.time = this.defaultTime()))
     !blocked && this.commit()
     !blocked && this.paintPresets()
     const done = !blocked && this.kind() === "date" && (mode === "single" || (mode === "range" && this.dates.length === 2))
-    done ? this.close() : this.isOpen && this.render()
+    done ? this.dismiss() : this.isOpen && this.render()
   },
 
   moveMonth(delta) {
@@ -246,10 +296,10 @@ export const Picker = {
     year ? ((this.view = {...this.view, year: this.view.year + delta}), this.render()) : this.setTime(stepTime(this.currentTime(), unit, delta, this.timeRules()))
   },
 
-  setTime(time) {
+  setTime(time, keepInputs = false) {
     this.time = clampTime(time, this.timeRules())
     this.commit()
-    this.render()
+    this.render(keepInputs)
   },
 
   changed(event) {
@@ -279,17 +329,36 @@ export const Picker = {
   },
 
   key(event) {
+    const onDay = event.target.matches("[data-date]")
+    onDay && event.key !== "Escape" ? this.dayKey(event) : this.fieldKey(event)
+  },
+
+  fieldKey(event) {
     const onDisplay = event.target.matches("[data-display]")
     const time = event.target.matches("[data-hour], [data-minute]")
     const unit = event.target.matches("[data-hour]") ? "hour" : "minute"
     const handlers = {
-      Escape: () => this.close(),
-      Enter: () => onDisplay && this.toggle(),
-      ArrowDown: () => (time ? this.setTime(stepTime(this.currentTime(), unit, -1, this.timeRules())) : onDisplay && this.open()),
-      ArrowUp: () => time && this.setTime(stepTime(this.currentTime(), unit, 1, this.timeRules())),
+      Escape: () => this.dismiss(),
+      Enter: () => onDisplay && (this.isOpen ? this.close() : this.openByKey()),
+      ArrowDown: () => (time ? this.setTime(stepTime(this.currentTime(), unit, -1, this.timeRules()), true) : onDisplay && this.openByKey()),
+      ArrowUp: () => time && this.setTime(stepTime(this.currentTime(), unit, 1, this.timeRules()), true),
     }
     const handler = handlers[event.key]
     handler && (onDisplay || time || event.key === "Escape") && (event.preventDefault(), handler())
+  },
+
+  dayKey(event) {
+    const day = event.target
+    const target = dayTarget(event.key, day.dataset.date, Number(this.el.dataset.weekStart || 0), event.shiftKey)
+    const picks = event.key === "Enter" || event.key === " "
+    const move = () => {
+      const month = monthOf(target)
+      this.focusIso = target
+      this.view = month.year === this.view.year && month.month === this.view.month ? this.view : month
+      this.render()
+      this.q(`[data-calendar] [data-date="${target}"]`)?.focus({preventScroll: true})
+    }
+    target ? (event.preventDefault(), move()) : picks && (event.preventDefault(), this.pickDay(day))
   },
 
   hiddenValues() {

@@ -7,7 +7,7 @@
  * wins when it changes, otherwise the browser's choice survives patches.
  */
 import {notify} from "../lib/dom.js"
-import {addMonths, moveFocus, shiftMonth, toIso} from "../lib/dates.js"
+import {dayTarget, shiftMonth, toIso} from "../lib/dates.js"
 import {formatDate} from "../lib/calendar_view.js"
 import {formatTime, formatValue, nearestSlot, parseTimeText, suggestSlots} from "../lib/datetime_format.js"
 import {buildRules, isSlotAvailable, parseDefaultTime, slotTimes} from "../lib/datetime_rules.js"
@@ -219,6 +219,7 @@ export const DatetimePicker = {
       [active.dataset.nav, `[data-nav="${active.dataset.nav}"]`],
       [active.id, `[id="${active.id}"]`],
       [active.hasAttribute?.("data-confirm"), "[data-confirm]"],
+      [active.hasAttribute?.("data-cancel"), "[data-cancel]"],
     ]
     return keys && keys.find(([present]) => present)?.[1]
   },
@@ -249,12 +250,14 @@ export const DatetimePicker = {
     const time = target.closest("[data-time]")
     const suggestion = target.closest("[data-suggest]")
     const confirm = target.closest("[data-confirm]")
+    const cancel = target.closest("[data-cancel]")
     const action =
       (day && (() => this.chooseDay(day.dataset.day))) ||
       (nav && (() => this.navigate(Number(nav.dataset.nav)))) ||
       (time && (() => this.chooseTime("start", time.dataset.time))) ||
       (suggestion && (() => this.chooseTime(suggestion.dataset.which, suggestion.dataset.suggest))) ||
-      (confirm && (() => this.confirm()))
+      (confirm && (() => this.confirm())) ||
+      (cancel && (() => this.close(true)))
     action && action()
   },
 
@@ -338,8 +341,7 @@ export const DatetimePicker = {
 
   dayKey(event) {
     const iso = event.target.dataset.day
-    const year = event.shiftKey && (event.key === "PageUp" || event.key === "PageDown")
-    const target = year ? addMonths(iso, event.key === "PageUp" ? -12 : 12) : moveFocus(event.key, iso, this.cfg.weekStart)
+    const target = dayTarget(event.key, iso, this.cfg.weekStart, event.shiftKey)
     const move = () => {
       this.focusIso = target
       this.view = showMonth(this.view, this.months(), target)
