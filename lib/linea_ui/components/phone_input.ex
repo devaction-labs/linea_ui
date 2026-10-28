@@ -1,7 +1,7 @@
 defmodule LineaUI.Components.PhoneInput do
   @moduledoc """
-  A phone number field with a country picker: a button at the left with the flag and the calling code, and the
-  number input. The number is written in the national format of the country as it is typed
+  A phone number field with a country picker: a button at the left with the ISO code and the calling code
+  (`BR +55`), and the number input. The number is written in the national format of the country as it is typed
   (`(11) 91234-5678`), and what the form submits is the E.164 number (`+5511912345678`).
 
       <.phone_input field={@form[:phone]} label="Phone number" />
@@ -18,15 +18,16 @@ defmodule LineaUI.Components.PhoneInput do
   ## The picker
 
   The button opens a list with a search field, as wide as the field (at least 16rem), and a 1px divider separates
-  the button from the number. Each entry shows the flag, the country name and its calling code; a country that
+  the button from the number. Each entry shows the ISO code (in mono type), the country name and its calling code (`PT Portugal +351`); a country that
   shares its code with others and has its own area codes shows them after it (`+1 787, 939` for Puerto Rico).
   Typing narrows the list by name (in Portuguese or English, and common names such as `usa`), by ISO code (`br`) and
   by calling code (`55` or `+55`), ignoring case and accents. The arrows move, Enter chooses, Esc closes and gives the
   focus back to the button. The names are in the language of `locale`.
 
   `country_order` lists the countries to show first, in that order; the rest follow by name. `countries` limits the
-  picker to a set and `except` removes some from it. Flags are the emoji of the country's ISO code, so they need a
-  platform with flag emoji (Windows draws the two letters instead).
+  picker to a set and `except` removes some from it. The look is ISO codes because flag emoji do not render
+  on Windows, which draws two letters in their place. `flags` brings the emoji back, in the button and in the rows,
+  for apps whose users are on platforms that draw them.
 
   ## Typing and pasting
 
@@ -82,6 +83,8 @@ defmodule LineaUI.Components.PhoneInput do
 
   @input_padding "pl-[6.875rem]"
 
+  @code "font-inter font-normal text-slate-400 dark:text-navy-300"
+
   @picker "flex h-full w-full items-center gap-1.5 rounded-l-lg pl-3 pr-1 text-slate-600 outline-hidden transition-colors hover:text-slate-800 focus-visible:text-primary disabled:pointer-events-none dark:text-navy-100 dark:hover:text-navy-50 dark:focus-visible:text-accent"
 
   @doc """
@@ -121,6 +124,11 @@ defmodule LineaUI.Components.PhoneInput do
     default: "pt-BR",
     doc:
       "The language of the country names and their order: `pt-BR` (or any `pt`) for Portuguese, anything else for English. Both languages are searched."
+
+  attr :flags, :boolean,
+    default: false,
+    doc:
+      "Show the flag emoji of the country instead of its ISO code, in the button and in the picker. Off by default, because Windows does not draw flag emoji."
 
   attr :label, :string, default: nil, doc: "The caption."
   attr :label_class, :any, default: nil, doc: "Classes of the caption text."
@@ -191,6 +199,7 @@ defmodule LineaUI.Components.PhoneInput do
       order: codes(assigns.country_order),
       state: error_state(assigns.errors),
       input_class: merge([@input_padding, assigns.clearable && "pe-9", assigns.class]),
+      code_class: @code,
       picker_class: merge([@picker, @picker_sizes[assigns.size]]),
       forwarded: Pickers.forwarded(assigns.rest),
       input_rest:
@@ -253,6 +262,7 @@ defmodule LineaUI.Components.PhoneInput do
       data-country={@selected.iso}
       data-value={@e164}
       data-locale={@locale}
+      data-flags={to_string(@flags)}
       data-only={Enum.join(@only, ",")}
       data-except={Enum.join(@excluded, ",")}
       data-order={Enum.join(@order, ",")}
@@ -297,10 +307,11 @@ defmodule LineaUI.Components.PhoneInput do
               disabled={@disabled}
               data-picker
             >
-              <span class="text-base leading-none" aria-hidden="true" data-flag>
+              <span :if={@flags} class="text-base leading-none" aria-hidden="true" data-flag>
                 {Format.flag(@selected.iso)}
               </span>
-              <span class="font-inter font-medium" data-code>+{@selected.code}</span>
+              <span :if={!@flags} class="font-inter font-medium" data-iso-code>{@selected.iso}</span>
+              <span class={@code_class} data-code>+{@selected.code}</span>
               <.glyph
                 name={:chevron_down}
                 class="ml-auto size-3.5 shrink-0 text-slate-400 dark:text-navy-300"

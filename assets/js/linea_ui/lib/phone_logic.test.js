@@ -6,6 +6,7 @@ import {
   codeOf,
   dialLabel,
   digitsOf,
+  markHtml,
   e164,
   formatNational,
   initialCountry,
@@ -50,6 +51,13 @@ test("flags are the regional indicators of the ISO code", () => {
   assert.equal(byIso("br"), br)
   assert.equal(byIso("ZZ"), undefined)
   assert.equal(byIso(undefined), undefined)
+})
+
+test("a row starts with the mono ISO code, or with the flag emoji when asked", () => {
+  assert.match(markHtml(br), /font-mono[^>]*>BR<\/span>$/)
+  assert.doesNotMatch(markHtml(br), /🇧🇷/)
+  assert.match(markHtml(br, true), /🇧🇷/)
+  assert.doesNotMatch(markHtml(br, true), /font-mono/)
 })
 
 test("national formats of the countries with a known pattern", () => {
