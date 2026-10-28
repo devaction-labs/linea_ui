@@ -124,7 +124,11 @@ defmodule LineaUI.Components.CalendarTest do
   on_event="pick"
 />|)
 
-      assert texts(html, "[data-date='2026-10-15'] button") == ["E1", "E2", "mais 3"]
+      assert texts(html, "[data-date='2026-10-15'] button") == ["E1", "E2", "+3 mais"]
+
+      assert attr_of(html, "[data-date='2026-10-15'] button[tabindex='-1']", "aria-label") == [
+               "Ver mais 3 eventos"
+             ]
     end
 
     test "the slot replaces the content of a chip" do
@@ -250,6 +254,75 @@ defmodule LineaUI.Components.CalendarTest do
       assert count(html, "[data-nav]") == 0
       assert attr_of(html, "[role=grid]", "aria-label") == ["October 2026"]
     end
+  end
+
+  test "the toolbar has the title and the arrows at the left, Today and the switch at the right" do
+    html =
+      render(~H|<.calendar id="cal" date={~D[2026-10-24]} on_navigate="nav" on_view="view" />|)
+
+    assert "justify-between" in classes(html, "#cal > div:first-child")
+    left = "#cal > div:first-child > div:first-child"
+    right = "#cal > div:first-child > div:last-child"
+    assert count(html, "#{left} #cal-title") == 1
+    assert count(html, "#{left} [data-nav=prev]") == 1
+    assert count(html, "#{left} [data-nav=next]") == 1
+    assert count(html, "#{right} [data-nav=today]") == 1
+    assert count(html, "#{right} [data-view-button]") == 2
+  end
+
+  test "the month cell is 112px tall, hovers when it can be selected and rings the selected number" do
+    html =
+      render(
+        ~H|<.calendar id="cal" date={~D[2026-10-24]} selected={~D[2026-10-12]} on_select="day" />|
+      )
+
+    cell = classes(html, "[data-date='2026-10-12']")
+    assert "min-h-28" in cell
+    assert "hover:bg-slate-100" in cell
+    assert "ring-[1.5px]" in classes(html, "[data-date='2026-10-12'] > span")
+    refute "ring-[1.5px]" in classes(html, "[data-date='2026-10-13'] > span")
+    refute "bg-primary/5" in cell
+
+    quiet = render(~H|<.calendar id="cal" date={~D[2026-10-24]} />|)
+    refute "hover:bg-slate-100" in classes(quiet, "[data-date='2026-10-12']")
+  end
+
+  test "the week view tints the column of today and marks timed blocks with a coloured edge" do
+    assigns = %{events: @events}
+
+    html =
+      rendered_to_string(~H|<.calendar
+  id="cal"
+  view="week"
+  date={~D[2026-10-21]}
+  today={~D[2026-10-19]}
+  week_start={1}
+  events={@events}
+  day_start={8}
+  day_end={12}
+/>|)
+
+    today = classes(html, "[role=gridcell][data-date='2026-10-19']")
+
+    assert Enum.any?(
+             today,
+             &String.starts_with?(&1, "bg-[color-mix(in_oklab,var(--color-primary)_5%")
+           )
+
+    other = classes(html, "[role=gridcell][data-date='2026-10-20']")
+    refute Enum.any?(other, &String.starts_with?(&1, "bg-[color-mix"))
+    assert "border-l-[3px]" in classes(html, "[data-date='2026-10-19'] .absolute > *")
+  end
+
+  test "the legend swatches are solid colours" do
+    html =
+      render(
+        ~H|<.calendar id="cal" date={~D[2026-10-24]} legend={[{"Pay", "error"}, {"Receive", "success"}]} />|
+      )
+
+    assert "bg-error" in classes(html, "ul li:first-child span")
+    refute "bg-error/10" in classes(html, "ul li:first-child span")
+    assert "bg-success" in classes(html, "ul li:last-child span")
   end
 
   test "the legend lists the colors" do

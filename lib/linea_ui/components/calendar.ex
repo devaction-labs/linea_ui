@@ -58,6 +58,18 @@ defmodule LineaUI.Components.Calendar do
     "error" => "bg-error/10 text-error dark:bg-error/15"
   }
 
+  @solid %{
+    "neutral" => "bg-slate-400 dark:bg-navy-300",
+    "primary" => "bg-primary dark:bg-accent-light",
+    "secondary" => "bg-secondary dark:bg-secondary-light",
+    "info" => "bg-info",
+    "success" => "bg-success",
+    "warning" => "bg-warning",
+    "error" => "bg-error"
+  }
+
+  @today_column "bg-[color-mix(in_oklab,var(--color-primary)_5%,white)] dark:bg-[color-mix(in_oklab,var(--color-accent)_10%,var(--color-navy-700))]"
+
   @cell "relative border-t border-l border-slate-150 bg-white outline-hidden first:border-l-0 focus-visible:z-10 focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:ring-inset dark:border-navy-600 dark:bg-navy-700 dark:focus-visible:ring-accent/60"
   @head "bg-slate-200 px-2.5 py-2 font-inter text-tiny-plus font-semibold tracking-wider text-slate-500 uppercase dark:bg-navy-800 dark:text-navy-200"
   @chip "block w-full truncate rounded px-1.5 py-0.5 text-left font-inter text-tiny-plus font-medium"
@@ -109,7 +121,7 @@ defmodule LineaUI.Components.Calendar do
   attr :labels, :map,
     default: %{},
     doc:
-      "Single texts: `:calendar_today`, `:calendar_previous`, `:calendar_next`, `:calendar_view`, `:calendar_month`, `:calendar_week`, `:calendar_all_day`, `:calendar_more` (with `%{count}`)."
+      "Single texts: `:calendar_today`, `:calendar_previous`, `:calendar_next`, `:calendar_view`, `:calendar_month`, `:calendar_week`, `:calendar_all_day`, `:calendar_more` (with `%{count}`, the text of the button of a crowded day), `:calendar_more_label` (with `%{count}`, its name for screen readers)."
 
   attr :week_start, :integer, default: 0, doc: "The first column of the grid, 0 = Sunday."
 
@@ -181,7 +193,9 @@ defmodule LineaUI.Components.Calendar do
         months: assigns.months || names.months,
         weekdays: assigns.weekdays || names.weekdays,
         by_date: Grid.events(assigns.events),
-        colors: @colors
+        colors: @colors,
+        solid: @solid,
+        today_column: @today_column
       )
 
     assigns
@@ -350,73 +364,77 @@ defmodule LineaUI.Components.Calendar do
       class={merge(["w-full", @class])}
       {@rest}
     >
-      <div :if={@header} class="mb-4 flex flex-wrap items-center justify-end gap-3">
-        <Button.button
-          size="sm"
-          variant="flat"
-          data-nav="today"
-          disabled={@on_navigate == nil}
-          phx-click={push_js(@on_navigate, @id, @target, %{date: iso(@today), view: @view})}
-        >
-          {@text.calendar_today}
-        </Button.button>
-        <div class="flex items-center gap-1">
-          <Button.button
-            icon
-            size="sm"
-            variant="flat"
-            shape="pill"
-            class="size-8"
-            aria-label={@text.calendar_previous}
-            data-nav="prev"
-            disabled={@on_navigate == nil}
-            phx-click={
-              push_js(@on_navigate, @id, @target, %{
-                date: iso(Grid.shift(@date, @view, :prev)),
-                view: @view
-              })
-            }
-          >
-            <.glyph name={:chevron_left} class="size-4" />
-          </Button.button>
+      <div :if={@header} class="mb-4 flex flex-wrap items-center justify-between gap-x-4 gap-y-2.5">
+        <div class="flex items-center gap-2.5">
           <h2
             id={@label_id}
             aria-live="polite"
-            class="min-w-32 text-center font-medium text-slate-700 dark:text-navy-100"
+            class="text-base font-medium text-slate-700 dark:text-navy-100"
           >
             {@title}
           </h2>
+          <div class="flex items-center gap-0.5">
+            <Button.button
+              icon
+              size="sm"
+              variant="flat"
+              shape="pill"
+              class="size-8"
+              aria-label={@text.calendar_previous}
+              data-nav="prev"
+              disabled={@on_navigate == nil}
+              phx-click={
+                push_js(@on_navigate, @id, @target, %{
+                  date: iso(Grid.shift(@date, @view, :prev)),
+                  view: @view
+                })
+              }
+            >
+              <.glyph name={:chevron_left} class="size-4" />
+            </Button.button>
+            <Button.button
+              icon
+              size="sm"
+              variant="flat"
+              shape="pill"
+              class="size-8"
+              aria-label={@text.calendar_next}
+              data-nav="next"
+              disabled={@on_navigate == nil}
+              phx-click={
+                push_js(@on_navigate, @id, @target, %{
+                  date: iso(Grid.shift(@date, @view, :next)),
+                  view: @view
+                })
+              }
+            >
+              <.glyph name={:chevron_right} class="size-4" />
+            </Button.button>
+          </div>
+        </div>
+        <div class="flex items-center gap-2.5">
           <Button.button
-            icon
             size="sm"
             variant="flat"
-            shape="pill"
-            class="size-8"
-            aria-label={@text.calendar_next}
-            data-nav="next"
+            data-nav="today"
             disabled={@on_navigate == nil}
-            phx-click={
-              push_js(@on_navigate, @id, @target, %{
-                date: iso(Grid.shift(@date, @view, :next)),
-                view: @view
-              })
-            }
+            phx-click={push_js(@on_navigate, @id, @target, %{date: iso(@today), view: @view})}
           >
-            <.glyph name={:chevron_right} class="size-4" />
+            {@text.calendar_today}
           </Button.button>
-        </div>
-        <div role="group" aria-label={@text.calendar_view} class={@switch}>
-          <button
-            :for={{view, label} <- [{"month", @text.calendar_month}, {"week", @text.calendar_week}]}
-            type="button"
-            aria-pressed={bool(@view == view)}
-            data-view-button={view}
-            disabled={@on_view == nil}
-            phx-click={push_js(@on_view, @id, @target, %{date: iso(@date), view: view})}
-            class={@switch_item}
-          >
-            {label}
-          </button>
+          <div role="group" aria-label={@text.calendar_view} class={@switch}>
+            <button
+              :for={{view, label} <- [{"month", @text.calendar_month}, {"week", @text.calendar_week}]}
+              type="button"
+              aria-pressed={bool(@view == view)}
+              data-view-button={view}
+              disabled={@on_view == nil}
+              phx-click={push_js(@on_view, @id, @target, %{date: iso(@date), view: view})}
+              class={@switch_item}
+            >
+              {label}
+            </button>
+          </div>
         </div>
       </div>
 
@@ -444,19 +462,18 @@ defmodule LineaUI.Components.Calendar do
             class={
               merge([
                 @cell,
-                "flex min-h-24 min-w-0 flex-col gap-1 px-2 py-1.5",
+                "flex min-h-28 min-w-0 flex-col gap-1 px-2 py-1.5",
                 cell.out? && "bg-slate-50 dark:bg-navy-750",
-                cell.selected? && "bg-primary/5 dark:bg-accent/10",
-                @on_select && "cursor-pointer"
+                @on_select && "cursor-pointer hover:bg-slate-100 dark:hover:bg-navy-600"
               ])
             }
           >
             <span class={[
-              "inline-flex h-5.5 items-center font-inter text-xs font-medium",
-              (cell.today? &&
-                 "size-5.5 justify-center rounded-full bg-primary text-white dark:bg-accent") ||
+              "inline-flex h-6 min-w-6 items-center justify-center self-start rounded-full px-1 font-inter text-xs font-medium",
+              (cell.today? && "bg-primary text-white dark:bg-accent") ||
                 (cell.out? && "text-slate-400 dark:text-navy-300") ||
-                "text-slate-600 dark:text-navy-100"
+                "text-slate-600 dark:text-navy-100",
+              cell.selected? && "ring-[1.5px] ring-primary ring-inset dark:ring-accent-light"
             ]}>
               {cell.day}
             </span>
@@ -470,6 +487,7 @@ defmodule LineaUI.Components.Calendar do
               :if={cell.more > 0}
               type="button"
               tabindex="-1"
+              aria-label={Strings.fill(@text.calendar_more_label, %{count: cell.more})}
               phx-click={push_js(@on_select, @id, @target, %{date: cell.iso})}
               class="w-full truncate rounded px-1.5 py-0.5 text-left font-inter text-tiny-plus font-medium text-slate-500 outline-hidden hover:bg-slate-150/60 dark:text-navy-200 dark:hover:bg-navy-500/40"
             >
@@ -511,7 +529,9 @@ defmodule LineaUI.Components.Calendar do
             data-date={cell.iso}
             tabindex="-1"
             aria-label={cell.label <> ", " <> @text.calendar_all_day}
-            class={merge([@cell, "flex min-h-10 min-w-0 flex-col gap-1 p-1"])}
+            class={
+              merge([@cell, "flex min-h-10 min-w-0 flex-col gap-1 p-1", cell.today? && @today_column])
+            }
           >
             <.chip
               :for={event <- cell.events}
@@ -537,7 +557,14 @@ defmodule LineaUI.Components.Calendar do
             aria-label={cell.label}
             aria-current={cell.today? && "date"}
             phx-click={push_js(@on_select, @id, @target, %{date: cell.iso})}
-            class={merge([@cell, "h-13 min-w-0", @on_select && "cursor-pointer"])}
+            class={
+              merge([
+                @cell,
+                "h-13 min-w-0",
+                cell.today? && @today_column,
+                @on_select && "cursor-pointer"
+              ])
+            }
           >
             <div
               :for={block <- cell.blocks}
@@ -564,7 +591,7 @@ defmodule LineaUI.Components.Calendar do
           <span class={
             merge([
               "size-2.5 rounded-[3px]",
-              Map.get(@colors, color, @colors["primary"])
+              Map.get(@solid, color, @solid["primary"])
             ])
           }></span>
           {label}
@@ -606,7 +633,7 @@ defmodule LineaUI.Components.Calendar do
       @chip,
       Map.get(@colors, event.color, @colors["primary"]),
       button? && @chip_button,
-      block && "py-1 leading-[15px] whitespace-normal",
+      block && "border-l-[3px] border-current py-1 leading-[15px] whitespace-normal",
       extra
     ])
   end
