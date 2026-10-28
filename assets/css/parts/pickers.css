@@ -684,6 +684,23 @@
 .dark .ts-wrapper .ts-dropdown .create {
   color:var(--color-accent-light)
 }
+.ts-wrapper .ts-dropdown .create {
+  align-items:center;
+  display:flex;
+  gap:.5rem
+}
+.ts-wrapper .ts-dropdown .create-hint {
+  background-color:var(--color-slate-150);
+  border-radius:.25rem;
+  color:var(--color-slate-500);
+  flex:none;
+  font:500 .6875rem/1.25 var(--font-mono, ui-monospace, monospace);
+  padding:.0625rem .3125rem
+}
+.dark .ts-wrapper .ts-dropdown .create-hint {
+  background-color:var(--color-navy-500);
+  color:var(--color-navy-200)
+}
 .ts-wrapper .ts-dropdown [data-selectable] .highlight {
   background-color:color-mix(in oklab,var(--color-primary) 16%,transparent);
   border-radius:2px;

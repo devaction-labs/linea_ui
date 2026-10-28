@@ -6,7 +6,7 @@
 import {canCreate} from "../lib/listbox_logic.js"
 import {fillQuery} from "../lib/autocomplete_logic.js"
 import {notify} from "../lib/dom.js"
-import {choose, highlight, isFull, moveIndex, removeLast, removeValue, sameValues, shows, splitTags} from "../lib/select_box.js"
+import {choose, createRow, createsOnTab, fitCount, highlight, isFull, limitState, moveIndex, removeLast, removeValue, sameValues, shows, splitTags} from "../lib/select_box.js"
 import {escapeHtml} from "../lib/date_picker_view.js"
 
 const COMMANDS = ["open", "close", "toggle"]
@@ -179,7 +179,7 @@ export const Listbox = {
       Enter: () => (!this.isOpen ? this.open() : rows[this.active] ? this.pickRow(rows[this.active]) : this.createTyped()),
       " ": () => !this.typesInControl() && !this.isOpen && this.open(),
       Escape: () => this.close(),
-      Tab: () => this.el.dataset.mode === "tags" && this.term.trim() && this.createTyped(),
+      Tab: () => createsOnTab(this.el.dataset.mode, this.term) && this.createTyped(),
       Backspace: () => this.erases() && this.backspace(),
     }
     const handler = handlers[event.key]
@@ -321,16 +321,12 @@ export const Listbox = {
     const widths = chips.map((chip) => chip.offsetWidth + (parseFloat(getComputedStyle(chip).marginRight) || 0))
     const total = widths.reduce((sum, width) => sum + width, 0)
     if (total <= room) return
-    let keep = chips.length
-    let used = total
-    while (keep > 0) {
-      badge.textContent = `+${chips.length - keep}`
+    const badgeWidth = (hidden) => {
+      badge.textContent = `+${hidden}`
       badge.hidden = false
-      const width = badge.offsetWidth + (parseFloat(getComputedStyle(badge).marginRight) || 0)
-      if (used + width <= room) break
-      keep -= 1
-      used -= widths[keep]
+      return badge.offsetWidth + (parseFloat(getComputedStyle(badge).marginRight) || 0)
     }
+    const keep = fitCount(widths, room, badgeWidth)
     chips.forEach((chip, index) => (chip.hidden = index >= keep))
     badge.textContent = `+${chips.length - keep}`
     badge.hidden = keep === chips.length
@@ -435,8 +431,27 @@ export const Listbox = {
     const wanted =
       this.el.dataset.create === "true" && term !== "" && canCreate(term, options.map((row) => row.dataset.label)) &&
       !(this.multiple() && isFull(this.values.length, true, this.max()))
-    const label = escapeHtml(this.el.dataset.createLabel || "Add")
-    holder.innerHTML = wanted ? `<div class="create" id="${this.el.id}-create-row">${label} <strong>${escapeHtml(term)}</strong>&hellip;</div>` : ""
+    const {hint, label, quoted} = createRow(this.el.dataset.createHint, this.el.dataset.createLabel || "Add", term)
+    const key = hint ? `<kbd class="create-hint">${escapeHtml(hint)}</kbd>` : ""
+    holder.innerHTML = wanted
+      ? `<div class="create" id="${this.el.id}-create-row">${key}<span>${escapeHtml(label)} <strong>${escapeHtml(quoted)}</strong></span></div>`
+      : ""
+  },
+
+  /** A tag input at its `max`: the input is off, its placeholder says so and a `3 / 3` counter shows. */
+  paintLimit() {
+    if (this.el.dataset.mode !== "tags" || this.max() === null) return
+    const state = limitState({
+      count: this.values.length,
+      max: this.max(),
+      placeholder: this.el.dataset.placeholder ?? "",
+      limitPlaceholder: this.el.dataset.limitPlaceholder,
+    })
+    const input = this.control()
+    const counter = this.q("[data-counter]")
+    input.disabled = this.el.classList.contains("disabled") || state.disabled
+    input.placeholder = state.placeholder
+    counter && ((counter.textContent = state.counter), (counter.hidden = !state.showCounter))
   },
 
   paintNoResults() {
@@ -454,6 +469,7 @@ export const Listbox = {
     this.el.classList.toggle("has-items", this.values.length > 0)
     this.el.classList.toggle("full", full)
     this.el.classList.toggle("input-hidden", !this.multiple() && full && this.hidesControl(this.term))
+    this.paintLimit()
   },
 
   paintOpen(rows) {

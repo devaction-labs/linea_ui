@@ -135,6 +135,10 @@ defmodule LineaUI.Components.Select do
     default: "Add",
     doc: "The text before the typed term in the create row."
 
+  attr :create_hint, :string,
+    default: nil,
+    doc: "A key shown in the create row before the label (`\"Enter\"`); none by default."
+
   attr :persist, :boolean,
     default: true,
     doc: "A created option stays in the list after it is removed."
