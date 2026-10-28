@@ -16,6 +16,18 @@ defmodule LineaUI.Components.FormControlsTest do
              )
     end
 
+    test "error is announced and a success help line has a check-circle icon" do
+      assert [_] = find(render(~H'<.error>bad</.error>'), "span[role=alert]") |> Enum.to_list()
+
+      ok = render(~H'<.help_text state="success">ok</.help_text>')
+      assert [svg] = find(ok, "span > svg") |> Enum.to_list()
+      assert "size-3.5" in (svg |> LazyHTML.attribute("class") |> List.first() |> String.split())
+      assert find(render(~H'<.help_text>hi</.help_text>'), "svg") |> Enum.to_list() == []
+
+      assert find(render(~H'<.help_text state="error">no</.help_text>'), "svg") |> Enum.to_list() ==
+               []
+    end
+
     test "field wraps any control with caption, help and errors" do
       form =
         Phoenix.Component.to_form(%{"country" => "br"},

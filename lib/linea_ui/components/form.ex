@@ -17,11 +17,13 @@ defmodule LineaUI.Components.Form do
 
   use LineaUI.Component
 
+  import LineaUI.Components.Icon, only: [glyph: 1]
+
   alias LineaUI.Components.Control
 
   @help %{
     nil => "text-tiny-plus text-slate-400 dark:text-navy-300",
-    "success" => "text-tiny-plus text-success",
+    "success" => "inline-flex items-center gap-1 text-tiny-plus text-success",
     "error" => "text-tiny-plus text-error"
   }
 
@@ -42,7 +44,8 @@ defmodule LineaUI.Components.Form do
   end
 
   @doc """
-  A validation message, in LineOne's small red text.
+  A validation message, in LineOne's small red text. It has `role="alert"`, so a screen reader
+  announces it when it appears.
 
       <.error>Username is invalid</.error>
   """
@@ -52,7 +55,7 @@ defmodule LineaUI.Components.Form do
 
   def error(assigns) do
     ~H"""
-    <span class={merge(["block text-tiny-plus text-error", @class])} {@rest}>
+    <span role="alert" class={merge(["block text-tiny-plus text-error", @class])} {@rest}>
       {render_slot(@inner_block)}
     </span>
     """
@@ -60,7 +63,8 @@ defmodule LineaUI.Components.Form do
 
   @doc """
   The small line under a control that explains it. `state="success"` paints it green and
-  `state="error"` red, as LineOne's validation examples do.
+  `state="error"` red, as LineOne's validation examples do; the green one starts with a 14px
+  check-circle icon.
 
       <.help_text>This is a help text</.help_text>
       <.help_text state="success">Username is valid</.help_text>
@@ -72,7 +76,10 @@ defmodule LineaUI.Components.Form do
 
   def help_text(assigns) do
     ~H"""
-    <span class={merge([help_class(@state), @class])} {@rest}>{render_slot(@inner_block)}</span>
+    <span class={merge([help_class(@state), @class])} {@rest}>
+      <.glyph :if={@state == "success"} name={:check_circle} class="size-3.5 shrink-0" />
+      {render_slot(@inner_block)}
+    </span>
     """
   end
 

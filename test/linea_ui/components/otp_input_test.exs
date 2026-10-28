@@ -162,6 +162,22 @@ defmodule LineaUI.Components.OtpInputTest do
     refute "data-filled:border-primary" in classes(html, "#code-1")
   end
 
+  test "the error line is an alert" do
+    html = render(~H|<.otp_input name="code" value="12" errors={["is invalid"]} />|)
+    assert LazyHTML.text(find(html, "span[role=alert]")) =~ "is invalid"
+  end
+
+  test "success paints the boxes green and puts a check-circle before the help line" do
+    html =
+      render(~H|<.otp_input name="code" value="123456" state="success" help="Code confirmed" />|)
+
+    assert "border-success" in classes(html, "#code-1")
+    refute "data-filled:border-primary" in classes(html, "#code-1")
+    assert attr_of(html, "#code-1", "aria-invalid") == []
+    assert [_] = find(html, "span.text-success > svg.size-3\\.5") |> Enum.to_list()
+    assert html =~ "Code confirmed"
+  end
+
   test "a form field supplies the id, name, value and wrapper" do
     form = to_form(%{"code" => "9081"}, as: :otp)
     assigns = %{__changed__: nil, form: form}
