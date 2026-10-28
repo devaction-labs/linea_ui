@@ -118,6 +118,30 @@
 .ts-wrapper.plugin-clear_button .clear-button:hover { background-color: color-mix(in oklab, currentColor 16%, transparent); color: var(--color-slate-700); }
 .dark .ts-wrapper.plugin-clear_button .clear-button:hover { color: var(--color-navy-50); }
 
+/* The autocomplete's clear button is a real 22px square button with an SVG cross (no mask), reachable with Tab. */
+.ts-wrapper.autocomplete.plugin-clear_button .clear-button { border-radius: 6px; height: 1.375rem; width: 1.375rem; }
+.ts-wrapper.autocomplete.plugin-clear_button .clear-button::before { content: none; }
+.ts-wrapper.autocomplete.plugin-clear_button .clear-button:focus-visible {
+  opacity: 1;
+  outline: 2px solid color-mix(in oklab, var(--color-primary) 50%, transparent);
+  outline-offset: 1px;
+}
+.dark .ts-wrapper.autocomplete.plugin-clear_button .clear-button:focus-visible { outline-color: color-mix(in oklab, var(--color-accent) 50%, transparent); }
+.ts-wrapper.autocomplete:not(.has-items) .clear-button { display: none; }
+
+/* The loading row of the autocomplete: a 16px ring turning beside the text. */
+.ts-dropdown .no-results[data-kind="loading"] { align-items: center; display: flex; gap: .5rem; justify-content: center; }
+.ts-dropdown .ac-spinner {
+  animation: lds-dual-ring .8s linear infinite;
+  border: 2px solid currentColor;
+  border-radius: 9999px;
+  border-right-color: transparent;
+  flex: none;
+  height: 1rem;
+  width: 1rem;
+}
+@media (prefers-reduced-motion: reduce) { .ts-dropdown .ac-spinner { animation-duration: 2.4s; } }
+
 /* The compact control, for filter bars. */
 .ts-wrapper[data-size="sm"] .ts-control,
 .ts-wrapper[data-size="sm"].multi.has-items .ts-control { min-height: 2rem; padding-block: 3px; font-size: .75rem; }
@@ -685,12 +709,12 @@
   color:var(--color-accent-light)
 }
 .ts-wrapper .ts-dropdown [data-selectable] .highlight {
-  background-color:color-mix(in oklab,var(--color-primary) 16%,transparent);
-  border-radius:2px;
-  color:inherit
+  background: none;
+  color: var(--color-primary);
+  font-weight: 600
 }
 .dark .ts-wrapper .ts-dropdown [data-selectable] .highlight {
-  background-color:color-mix(in oklab,var(--color-accent-light) 22%,transparent)
+  color: var(--color-accent-light)
 }
 .ts-dropdown .ts-search {
   align-items:center;

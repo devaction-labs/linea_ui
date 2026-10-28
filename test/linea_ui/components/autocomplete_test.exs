@@ -73,7 +73,19 @@ defmodule LineaUI.Components.AutocompleteTest do
     assert "is-invalid" in root
     assert "disabled" in root
     assert "[&_.ts-control]:py-1" in root
-    assert [_] = find(html, "[data-clear]") |> Enum.to_list()
+    assert [_] = find(html, "button[type=button][data-clear]") |> Enum.to_list()
+    assert attr_of(html, "[data-clear]", "aria-label") == ["Clear"]
+    assert [_] = find(html, "[data-clear] svg[aria-hidden=true]") |> Enum.to_list()
+    assert attr_of(html, "[role=listbox]", "aria-busy") == ["false"]
+  end
+
+  test "the clear button name can be set" do
+    html =
+      render(~H"""
+      <.autocomplete name="x" options={[]} clearable clear_label="Limpar" />
+      """)
+
+    assert attr_of(html, "[data-clear]", "aria-label") == ["Limpar"]
   end
 
   test "value without a matching option, free text, groups, the option and prefix slots" do
