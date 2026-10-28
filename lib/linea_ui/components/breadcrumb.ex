@@ -19,6 +19,9 @@ defmodule LineaUI.Components.Breadcrumb do
         </:item>
       </.breadcrumb>
 
+  The current page is in the soft text color and a long label is cut with an ellipsis; give the
+  item a `title` for the full label.
+
   The separator is LineOne's chevron unless a `:separator` is given:
 
       <.breadcrumb variant="bordered">
@@ -35,7 +38,7 @@ defmodule LineaUI.Components.Breadcrumb do
     "plain" =>
       "flex items-center gap-1.5 text-primary transition-colors hover:text-primary-focus dark:text-accent-light dark:hover:text-accent",
     "bordered" =>
-      "flex items-center gap-1.5 rounded-lg border border-slate-200 px-1.5 py-1 leading-none text-primary transition-colors hover:text-primary-focus dark:border-navy-500 dark:text-accent-light dark:hover:text-accent"
+      "flex items-center gap-1.5 rounded-lg border border-slate-200 px-2 py-[5px] leading-none text-primary transition-colors hover:text-primary-focus dark:border-navy-500 dark:text-accent-light dark:hover:text-accent"
   }
 
   @doc """
@@ -69,6 +72,7 @@ defmodule LineaUI.Components.Breadcrumb do
     attr(:"phx-target", :any)
     attr(:"phx-value-id", :any)
     attr(:id, :string)
+    attr(:title, :string, doc: "The full label, shown on hover when the current page is cut.")
   end
 
   slot(:separator, doc: "What goes between two steps, LineOne's chevron by default.")
@@ -81,7 +85,7 @@ defmodule LineaUI.Components.Breadcrumb do
       <ul class={merge(["flex flex-wrap items-center gap-2", @class])}>
         <li
           :for={{item, index} <- Enum.with_index(@item)}
-          class={index < @last && "flex items-center gap-2"}
+          class={if index < @last, do: "flex items-center gap-2", else: "min-w-0 max-w-full"}
         >
           <.crumb item={item} link_class={link_class(@variant)} current={index == @last} />
           <.separator :if={index < @last} separator={@separator} />
@@ -135,11 +139,16 @@ defmodule LineaUI.Components.Breadcrumb do
 
     ~H"""
     <div
-      class={merge(["flex items-center gap-1.5", @item[:class]])}
+      class={
+        merge([
+          "flex min-w-0 items-center gap-1.5 text-slate-600 dark:text-navy-200",
+          @item[:class]
+        ])
+      }
       aria-current={@current && "page"}
       {@extra}
     >
-      {render_slot(@item)}
+      <span class="min-w-0 truncate">{render_slot(@item)}</span>
     </div>
     """
   end
