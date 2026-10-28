@@ -310,10 +310,7 @@ defmodule LineaUI.Components.DataTable do
   defp first(0, _page, _size), do: 0
   defp first(_total, page, size), do: (page - 1) * size + 1
 
-  defp window(page, pages) do
-    start = (page - 2) |> min(pages - 4) |> max(1)
-    Enum.to_list(start..min(start + 4, pages))
-  end
+  defp window(page, pages), do: LineaUI.Components.Pagination.window(page, pages, 1, 1)
 
   @grid_summary "Showing %{from} to %{to} of %{total} results"
   @advanced_summary "%{from} - %{to} of %{total} entries"
@@ -383,16 +380,23 @@ defmodule LineaUI.Components.DataTable do
           >
             {@prev_label}
           </.pager_link>
-          <.pager_link
-            :for={n <- @window}
-            {pager_link_assigns(assigns)}
-            to={n}
-            current={n == @page}
-            class={grid_page_class(n == @page)}
-            label={page_label(@page_label, n)}
-          >
-            {n}
-          </.pager_link>
+          <%= for n <- @window do %>
+            <span
+              :if={n == :gap}
+              aria-hidden="true"
+              class="flex h-8 items-center justify-center px-2"
+            >…</span>
+            <.pager_link
+              :if={n != :gap}
+              {pager_link_assigns(assigns)}
+              to={n}
+              current={n == @page}
+              class={grid_page_class(n == @page)}
+              label={page_label(@page_label, n)}
+            >
+              {n}
+            </.pager_link>
+          <% end %>
           <.pager_link
             {pager_link_assigns(assigns)}
             to={@page + 1}
@@ -553,7 +557,13 @@ defmodule LineaUI.Components.DataTable do
         </.pager_link>
       </li>
       <li :for={n <- @window} class={elem(@li, 1)}>
+        <span
+          :if={n == :gap}
+          aria-hidden="true"
+          class={[@page_class, "pointer-events-none"]}
+        >…</span>
         <.pager_link
+          :if={n != :gap}
           {pager_link_assigns(assigns)}
           to={n}
           current={n == @page}

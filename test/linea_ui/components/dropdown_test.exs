@@ -63,7 +63,9 @@ defmodule LineaUI.Components.DropdownTest do
       """)
 
     [primary, error, media, disabled] = find(html, "button") |> Enum.to_list()
-    assert "hover:bg-primary" in (LazyHTML.attribute(primary, "class") |> hd() |> String.split())
+
+    assert ["text-primary", "hover:bg-slate-100"] --
+             (LazyHTML.attribute(primary, "class") |> hd() |> String.split()) == []
 
     assert ["text-error", "gap-3"] --
              (LazyHTML.attribute(error, "class") |> hd() |> String.split()) == []

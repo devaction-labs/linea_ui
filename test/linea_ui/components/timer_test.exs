@@ -129,15 +129,15 @@ defmodule LineaUI.Components.TimerTest do
   test "sizes change the ring and the type" do
     sm = render(~H|<.timer id="a" size="sm" kicker="K" />|)
     assert "size-32" in classes(sm, "#a > div > div")
-    assert "text-base" in classes(sm, "[data-time]")
+    assert "text-xl" in classes(sm, "[data-time]")
 
     md = render(~H|<.timer id="a" kicker="K" />|)
     assert "size-42" in classes(md, "#a > div > div")
-    assert "text-[22px]" in classes(md, "[data-time]")
+    assert "text-[28px]" in classes(md, "[data-time]")
 
     lg = render(~H|<.timer id="a" size="lg" kicker="K" />|)
     assert "size-52" in classes(lg, "#a > div > div")
-    assert "text-[28px]" in classes(lg, "[data-time]")
+    assert "text-[34px]" in classes(lg, "[data-time]")
   end
 
   test "label and caption lines" do

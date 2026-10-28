@@ -244,7 +244,7 @@ defmodule LineaUI.Components.Dropdown do
       "neutral" =>
         "flex h-8.5 items-center px-3 pr-8 font-medium tracking-wide outline-hidden transition-all hover:bg-slate-100 hover:text-slate-800 focus:bg-slate-100 focus:text-slate-800 dark:hover:bg-navy-600 dark:hover:text-navy-100 dark:focus:bg-navy-600 dark:focus:text-navy-100",
       "primary" =>
-        "flex h-8.5 items-center px-3 pr-8 font-medium tracking-wide outline-hidden transition-all hover:bg-primary hover:text-white focus:bg-primary focus:text-white dark:hover:bg-accent dark:focus:bg-accent",
+        "flex h-8.5 items-center px-3 pr-8 font-medium tracking-wide text-primary outline-hidden transition-all hover:bg-slate-100 focus:bg-slate-100 dark:text-accent-light dark:hover:bg-navy-600 dark:focus:bg-navy-600",
       "error" =>
         "flex h-8.5 items-center px-3 pr-8 font-medium tracking-wide text-error outline-hidden transition-all hover:bg-error/20 focus:bg-error/20"
     },

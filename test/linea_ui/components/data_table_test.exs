@@ -137,4 +137,35 @@ defmodule LineaUI.Components.DataTableTest do
 
     assert find(html, "#g-search-form label.h-9 input[type=search]") |> Enum.count() == 1
   end
+
+  test "the pagers leave a gap where pages are left out, the same window as pagination" do
+    html =
+      render(~H"""
+      <.data_table id="a" rows={[%{n: 1}]} total={100} page_size={10} page={5} on_page="page">
+        <:col :let={row} label="N">{row.n}</:col>
+      </.data_table>
+      <.data_table
+        id="b"
+        variant="grid"
+        rows={[%{n: 1}]}
+        total={100}
+        page_size={10}
+        page={1}
+        on_page="page"
+      >
+        <:col :let={row} label="N">{row.n}</:col>
+      </.data_table>
+      """)
+
+    assert ["…", "…"] =
+             html |> find("#a ol.pagination span[aria-hidden=true]") |> Enum.map(&LazyHTML.text/1)
+
+    assert ["4", "5", "6"] --
+             (html
+              |> find("#a ol.pagination li")
+              |> Enum.map(&LazyHTML.text/1)
+              |> Enum.map(&String.trim/1)) == []
+
+    assert ["…"] = html |> find("#b span[aria-hidden=true]") |> Enum.map(&LazyHTML.text/1)
+  end
 end

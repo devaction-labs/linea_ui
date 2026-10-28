@@ -69,4 +69,25 @@ defmodule LineaUI.Components.TextareaTest do
     assert "py-2" in classes(html, "div.justify-between:last-child")
     assert "px-2.5" in classes(html, "div.justify-between:last-child")
   end
+
+  test "the counter shares the row of the help, at the right; alone it sits under the control" do
+    framed =
+      render(~H'<.textarea name="n" label="Note" help="Keep it short" maxlength={200} counter />')
+
+    assert [_] =
+             find(framed, "div.flex.justify-between > div.ml-auto > span[aria-live=polite]")
+             |> Enum.to_list()
+
+    assert ["Keep it short"] =
+             framed
+             |> find("div.flex.justify-between > div.min-w-0")
+             |> Enum.map(&LazyHTML.text/1)
+             |> Enum.map(&String.trim/1)
+
+    alone = render(~H'<.textarea name="n" maxlength={200} counter />')
+
+    assert [_] =
+             find(alone, "div.w-full > div.justify-end > span[aria-live=polite]")
+             |> Enum.to_list()
+  end
 end

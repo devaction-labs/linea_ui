@@ -89,19 +89,19 @@ defmodule LineaUI.Components.Timer do
   @ring_sizes %{
     "sm" => %{
       box: "size-32",
-      time: "text-base leading-6",
+      time: "text-xl leading-7",
       kicker: "text-[10px]",
       label: "text-[11px]"
     },
     "md" => %{
       box: "size-42",
-      time: "text-[22px] leading-8",
+      time: "text-[28px] leading-10",
       kicker: "text-[11px]",
       label: "text-xs"
     },
     "lg" => %{
       box: "size-52",
-      time: "text-[28px] leading-10",
+      time: "text-[34px] leading-11",
       kicker: "text-xs",
       label: "text-[13px]"
     }

@@ -46,12 +46,18 @@ defmodule LineaUI.Components.Accordion do
   }
 
   @frames %{
-    "primary" => "divide-indigo-400 border-primary dark:border-accent",
-    "secondary" => "divide-violet-400 border-secondary dark:border-secondary",
-    "info" => "divide-sky-400 border-info dark:border-info",
-    "success" => "divide-emerald-400 border-success dark:border-success",
-    "warning" => "divide-yellow-400 border-warning dark:border-warning",
-    "error" => "divide-rose-400 border-error dark:border-error"
+    "primary" =>
+      "divide-[color-mix(in_oklab,var(--color-primary)_55%,white)] border-primary dark:border-accent",
+    "secondary" =>
+      "divide-[color-mix(in_oklab,var(--color-secondary)_55%,white)] border-secondary dark:border-secondary",
+    "info" =>
+      "divide-[color-mix(in_oklab,var(--color-info)_55%,white)] border-info dark:border-info",
+    "success" =>
+      "divide-[color-mix(in_oklab,var(--color-success)_55%,white)] border-success dark:border-success",
+    "warning" =>
+      "divide-[color-mix(in_oklab,var(--color-warning)_55%,white)] border-warning dark:border-warning",
+    "error" =>
+      "divide-[color-mix(in_oklab,var(--color-error)_55%,white)] border-error dark:border-error"
   }
 
   @doc """

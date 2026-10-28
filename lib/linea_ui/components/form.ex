@@ -114,6 +114,11 @@ defmodule LineaUI.Components.Form do
   attr(:rest, :global)
   slot(:inner_block, required: true)
 
+  slot(:aside,
+    doc:
+      "A small piece (a character counter) on the same row as the help and the errors, at the right."
+  )
+
   def field(assigns) do
     assigns
     |> Control.assign_control()
@@ -127,7 +132,7 @@ defmodule LineaUI.Components.Form do
         <span :if={@label} class={@label_class}>{@label}</span>
         <span class={control_class(@label)}>{render_slot(@inner_block)}</span>
       </label>
-      <.messages help={@help} errors={@errors} state={@state} />
+      <.message_row help={@help} errors={@errors} state={@state} aside={@aside} />
     </div>
     """
   end
@@ -139,13 +144,33 @@ defmodule LineaUI.Components.Form do
         {@label}
       </span>
       {render_slot(@inner_block)}
-      <.messages help={@help} errors={@errors} state={@state} />
+      <.message_row help={@help} errors={@errors} state={@state} aside={@aside} />
     </div>
     """
   end
 
   defp control_class(nil), do: "flex"
   defp control_class(_label), do: "mt-1.5 flex"
+
+  attr(:help, :string, default: nil)
+  attr(:errors, :list, default: [])
+  attr(:state, :string, default: nil)
+  attr(:aside, :list, default: [])
+
+  defp message_row(%{aside: []} = assigns) do
+    ~H"""
+    <.messages help={@help} errors={@errors} state={@state} />
+    """
+  end
+
+  defp message_row(assigns) do
+    ~H"""
+    <div class="mt-1 flex items-start justify-between gap-3">
+      <div class="min-w-0"><.messages help={@help} errors={@errors} state={@state} /></div>
+      <div class="ml-auto shrink-0">{render_slot(@aside)}</div>
+    </div>
+    """
+  end
 
   attr(:help, :string, default: nil, doc: "The small line under the control.")
 

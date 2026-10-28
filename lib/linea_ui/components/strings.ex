@@ -110,7 +110,7 @@ defmodule LineaUI.Components.Strings do
       datetime_previous: "Mês anterior",
       datetime_next: "Próximo mês",
       datetime_choose_month: "Escolher mês",
-      datetime_choose_year: "Escolher ano",
+      datetime_choose_year: "Ano",
       datetime_day: "%{weekday}, %{day} de %{month} de %{year}",
       datetime_title: "%{month} de %{year}",
       datetime_dialog: "Escolher data e hora",

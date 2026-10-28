@@ -74,12 +74,20 @@ defmodule LineaUI.Components.DisclosureTest do
       </.accordion>
       """)
 
-    assert ["border-primary", "divide-indigo-400", "dark:border-accent"] -- classes(html, "#a") ==
+    assert [
+             "border-primary",
+             "divide-[color-mix(in_oklab,var(--color-primary)_55%,white)]",
+             "dark:border-accent"
+           ] -- classes(html, "#a") ==
              []
 
     assert [_] = find(html, "#a[data-color=primary]") |> Enum.to_list()
 
-    assert ["border-warning", "divide-yellow-400", "dark:border-warning"] -- classes(html, "#b") ==
+    assert [
+             "border-warning",
+             "divide-[color-mix(in_oklab,var(--color-warning)_55%,white)]",
+             "dark:border-warning"
+           ] -- classes(html, "#b") ==
              []
 
     assert [_] = find(html, "#b[data-color=warning]") |> Enum.to_list()
