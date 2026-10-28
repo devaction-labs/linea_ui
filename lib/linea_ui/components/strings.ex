@@ -46,7 +46,25 @@ defmodule LineaUI.Components.Strings do
       datetime_dialog: "Choose date and time",
       datetime_dialog_range: "Choose a date and time range",
       datetime_placeholder: "Select date and time",
-      datetime_placeholder_range: "Select date range"
+      datetime_placeholder_range: "Select date range",
+      datetime_cancel: "Cancel",
+      picker_date_dialog: "Choose date",
+      picker_period_dialog: "Choose period",
+      picker_time_dialog: "Choose time",
+      picker_previous: "Previous month",
+      picker_next: "Next month",
+      picker_day: "%{weekday}, %{month} %{day}, %{year}",
+      picker_month: "Month",
+      picker_year: "Year",
+      picker_year_up: "Next year",
+      picker_year_down: "Previous year",
+      picker_hour: "Hour",
+      picker_minute: "Minute",
+      picker_hour_up: "Increase hour",
+      picker_hour_down: "Decrease hour",
+      picker_minute_up: "Increase minute",
+      picker_minute_down: "Decrease minute",
+      picker_toggle_period: "Toggle AM/PM"
     },
     "pt_BR" => %{
       color_area: "Saturação e brilho",
@@ -92,7 +110,25 @@ defmodule LineaUI.Components.Strings do
       datetime_dialog: "Escolher data e hora",
       datetime_dialog_range: "Escolher período com data e hora",
       datetime_placeholder: "Selecionar data e hora",
-      datetime_placeholder_range: "Selecionar período"
+      datetime_placeholder_range: "Selecionar período",
+      datetime_cancel: "Cancelar",
+      picker_date_dialog: "Escolher data",
+      picker_period_dialog: "Escolher período",
+      picker_time_dialog: "Escolher hora",
+      picker_previous: "Mês anterior",
+      picker_next: "Próximo mês",
+      picker_day: "%{weekday}, %{day} de %{month} de %{year}",
+      picker_month: "Mês",
+      picker_year: "Ano",
+      picker_year_up: "Próximo ano",
+      picker_year_down: "Ano anterior",
+      picker_hour: "Hora",
+      picker_minute: "Minuto",
+      picker_hour_up: "Aumentar hora",
+      picker_hour_down: "Diminuir hora",
+      picker_minute_up: "Aumentar minuto",
+      picker_minute_down: "Diminuir minuto",
+      picker_toggle_period: "Alternar AM/PM"
     }
   }
 

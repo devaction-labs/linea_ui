@@ -11,6 +11,14 @@ defmodule LineaUI.Components.TimePicker do
   The form gets `"HH:MM"` (24-hour) through a hidden input named like the field, and every
   change fires a bubbling `input` event for `phx-change`. The popup is an overlay:
   `LineaUI.open/close/toggle("id")` work on it.
+
+  ## Keyboard and screen readers
+
+  The popup is a dialog with a name, and the hour and minute boxes, the arrows over them and the
+  AM/PM toggle are real controls you reach with `Tab`: `↑`/`↓` in a box step it, and the buttons
+  have names ("Increase hour"...). An arrow that cannot move because `min_time` or `max_time`
+  stop it is dimmed and `aria-disabled`. `Esc` closes the popup and gives the focus back to the
+  input.
   """
 
   use LineaUI.Component
@@ -41,6 +49,16 @@ defmodule LineaUI.Components.TimePicker do
   attr :display_format, :string,
     default: nil,
     doc: "The text of the input in flatpickr tokens; `H:i` by default (`h:i K` for 12-hour text)."
+
+  attr :locale, :string,
+    default: "en",
+    values: ~w(en pt_BR),
+    doc: "The language of the texts of the popup (`labels`); the clock is set by `time_24hr`."
+
+  attr :labels, :map,
+    default: %{},
+    doc:
+      "Single texts of the popup, over the `locale` ones: `:picker_time_dialog` (its name), `:picker_hour`, `:picker_minute`, `:picker_hour_up`, `:picker_hour_down`, `:picker_minute_up`, `:picker_minute_down`, `:picker_toggle_period` (the AM/PM button)."
 
   attr :show_icon, :boolean, default: true
   attr :disabled, :boolean, default: false

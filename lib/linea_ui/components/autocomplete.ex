@@ -97,6 +97,7 @@ defmodule LineaUI.Components.Autocomplete do
     doc: "Show the suggestions as soon as the input has focus."
 
   attr :clearable, :boolean, default: false, doc: "A button that empties the field."
+
   attr :clear_label, :string,
     default: "Clear",
     doc: "The name of the clear button, for screen readers and its tooltip."

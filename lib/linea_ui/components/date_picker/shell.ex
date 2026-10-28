@@ -5,6 +5,7 @@ defmodule LineaUI.Components.DatePicker.Shell do
   import LineaUI.Components.Icon, only: [glyph: 1, icon_set: 0]
 
   alias LineaUI.Components.Pickers
+  alias LineaUI.Components.Strings
 
   @months ~w(January February March April May June July August September October November December)
   @weekdays ~w(Sunday Monday Tuesday Wednesday Thursday Friday Saturday)
@@ -64,9 +65,13 @@ defmodule LineaUI.Components.DatePicker.Shell do
       weekdays: assigns.weekdays || locale.weekdays
     }
 
+    text = texts(Map.get(assigns, :locale, "en"), Map.get(assigns, :labels, %{}))
+
     assign(assigns,
       values: values,
       format: format,
+      text: text,
+      dialog: dialog_label(text, kind, assigns.mode),
       names: names,
       separator: separator,
       display: display(values, kind, assigns.mode, format, names, separator),
@@ -77,6 +82,19 @@ defmodule LineaUI.Components.DatePicker.Shell do
       grouped: assigns.trailing != []
     )
   end
+
+  defp texts(locale, labels) do
+    locale
+    |> Strings.table(labels)
+    |> Enum.filter(fn {key, _text} ->
+      key |> Atom.to_string() |> String.starts_with?("picker_")
+    end)
+    |> Map.new()
+  end
+
+  defp dialog_label(text, :time, _mode), do: text.picker_time_dialog
+  defp dialog_label(text, _kind, "range"), do: text.picker_period_dialog
+  defp dialog_label(text, _kind, _mode), do: text.picker_date_dialog
 
   defp split(start, finish, values) when is_binary(start) and is_binary(finish),
     do: [{start, Enum.at(values, 0, "")}, {finish, Enum.at(values, 1, "")}]
@@ -259,6 +277,7 @@ defmodule LineaUI.Components.DatePicker.Shell do
         data-name={@input_name}
         data-format={@format}
         data-names={Pickers.json(@names)}
+        data-labels={Pickers.json(@text)}
         data-separator={@separator}
         data-start-name={split_name(@split, 0)}
         data-end-name={split_name(@split, 1)}
@@ -331,6 +350,7 @@ defmodule LineaUI.Components.DatePicker.Shell do
           id={@id <> "-calendar"}
           phx-update="ignore"
           role="dialog"
+          aria-label={@dialog}
           tabindex="-1"
           class={calendar_class(@kind, @mode, @inline)}
           style={calendar_style(@inline)}

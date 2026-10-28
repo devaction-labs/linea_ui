@@ -7,7 +7,7 @@
  * wins when it changes, otherwise the browser's choice survives patches.
  */
 import {notify} from "../lib/dom.js"
-import {addMonths, moveFocus, shiftMonth, toIso} from "../lib/dates.js"
+import {dayTarget, shiftMonth, toIso} from "../lib/dates.js"
 import {formatDate} from "../lib/calendar_view.js"
 import {formatTime, formatValue, nearestSlot, parseTimeText, suggestSlots} from "../lib/datetime_format.js"
 import {buildRules, isSlotAvailable, parseDefaultTime, slotTimes} from "../lib/datetime_rules.js"
@@ -338,8 +338,7 @@ export const DatetimePicker = {
 
   dayKey(event) {
     const iso = event.target.dataset.day
-    const year = event.shiftKey && (event.key === "PageUp" || event.key === "PageDown")
-    const target = year ? addMonths(iso, event.key === "PageUp" ? -12 : 12) : moveFocus(event.key, iso, this.cfg.weekStart)
+    const target = dayTarget(event.key, iso, this.cfg.weekStart, event.shiftKey)
     const move = () => {
       this.focusIso = target
       this.view = showMonth(this.view, this.months(), target)

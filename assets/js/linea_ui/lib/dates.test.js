@@ -1,6 +1,6 @@
 import assert from "node:assert/strict"
 import test from "node:test"
-import {bandCell, countDays, previewRange, rangeLabel, sameRange, addDays, addMonths, clampMin, daysInMonth, formatIso, leadingDays, maskDate, monthOf, moveFocus, pick, readDate, sameDayIn, shiftMonth, weekdayIndex} from "./dates.js"
+import {bandCell, countDays, dayTarget, previewRange, rangeLabel, sameRange, addDays, addMonths, clampMin, daysInMonth, formatIso, leadingDays, maskDate, monthOf, moveFocus, pick, readDate, sameDayIn, shiftMonth, weekdayIndex} from "./dates.js"
 
 test("adding days and months crosses month and year ends", () => {
   assert.equal(addDays("2026-10-31", 1), "2026-11-01")
@@ -157,4 +157,12 @@ test("a day before the minimum is invalid and the minimum itself is fine", () =>
   assert.equal(readDate("09/10/2026", dmy, "2026-10-10").status, "invalid")
   assert.equal(readDate("10/10/2026", dmy, "2026-10-10").status, "ok")
   assert.equal(readDate("11/10/2026", dmy, "2026-10-10").iso, "2026-10-11")
+})
+
+test("Shift makes Page Up and Page Down a year", () => {
+  assert.equal(dayTarget("PageDown", "2026-10-14", 0, true), "2027-10-14")
+  assert.equal(dayTarget("PageUp", "2026-10-14", 0, true), "2025-10-14")
+  assert.equal(dayTarget("PageDown", "2026-10-14", 0, false), "2026-11-14")
+  assert.equal(dayTarget("ArrowLeft", "2026-10-14", 0, true), "2026-10-13")
+  assert.equal(dayTarget("Enter", "2026-10-14", 0), undefined)
 })

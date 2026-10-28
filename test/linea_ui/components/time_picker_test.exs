@@ -36,4 +36,22 @@ defmodule LineaUI.Components.TimePickerTest do
 
     assert find(html, "input[type=hidden][name=at][value='']") |> Enum.count() == 1
   end
+
+  test "the popup is a named dialog and its texts can be set" do
+    html = render(~H|<.time_picker id="t" name="t" />|)
+    assert html |> find("#t-calendar") |> LazyHTML.attribute("aria-label") == ["Choose time"]
+    labels = html |> find("#t") |> LazyHTML.attribute("data-labels") |> hd() |> JSON.decode!()
+    assert labels["picker_hour_up"] == "Increase hour"
+    assert labels["picker_toggle_period"] == "Toggle AM/PM"
+
+    html =
+      render(
+        ~H|<.time_picker id="t" name="t" locale="pt_BR" labels={%{picker_minute_up: "Mais minutos"}} />|
+      )
+
+    assert html |> find("#t-calendar") |> LazyHTML.attribute("aria-label") == ["Escolher hora"]
+    labels = html |> find("#t") |> LazyHTML.attribute("data-labels") |> hd() |> JSON.decode!()
+    assert labels["picker_minute_up"] == "Mais minutos"
+    assert labels["picker_hour_down"] == "Diminuir hora"
+  end
 end
