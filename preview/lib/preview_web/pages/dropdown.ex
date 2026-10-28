@@ -119,6 +119,22 @@ defmodule PreviewWeb.Pages.Dropdown do
         </div>
       </.dropdown>
     </.narrow>
+
+    <.narrow
+      title="Shortcuts, subtitle and search"
+      text="A header with a subtitle, an inset search field, a shortcut at the end of an item, a primary item and a disabled one."
+      class="mt-5"
+    >
+      <.dropdown id="dropdown-refined" label="Assign to">
+        <.dropdown_header subtitle="Aurora project">Assign to</.dropdown_header>
+        <.dropdown_search placeholder="Search people" />
+        <.dropdown_item shortcut="Ctrl E">Edit</.dropdown_item>
+        <.dropdown_item color="primary" shortcut="Ctrl D">Duplicate</.dropdown_item>
+        <.dropdown_item disabled shortcut="Ctrl M">Move</.dropdown_item>
+        <.dropdown_separator />
+        <.dropdown_item color="error" shortcut="Del">Delete</.dropdown_item>
+      </.dropdown>
+    </.narrow>
     """
   end
 
