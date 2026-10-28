@@ -57,7 +57,11 @@ defmodule LineaUI.Components.Upload do
   attr :on_cancel, :any, default: nil, doc: "Event (or `%JS{}`) of the remove button."
   attr :target, :any, default: nil
   attr :previews, :boolean, default: true, doc: "A thumbnail for image files."
-  attr :error_texts, :map, default: @error_texts, doc: "The text of each upload error atom."
+  attr :error_texts, :map,
+    default: @error_texts,
+    doc:
+      "The text of each upload error atom. `%{max}` in a text is replaced by the `max_entries` of the upload (\"Only %{max} files\")."
+
   attr :browse_label, :string, default: "Browse"
   attr :drop_label, :string, default: "Drag & Drop your files or"
   attr :remove_label, :string, default: "Remove"
@@ -164,7 +168,9 @@ defmodule LineaUI.Components.Upload do
         </li>
       </ul>
       <ul :if={@upload_errors != []} class="filepond--errors">
-        <li :for={error <- @upload_errors}>{error_text(@error_texts, error)}</li>
+        <li :for={error <- @upload_errors}>
+          {error_text(@error_texts, error, @upload.max_entries)}
+        </li>
       </ul>
     </div>
     """
@@ -193,13 +199,14 @@ defmodule LineaUI.Components.Upload do
 
   defp status(upload, entry, assigns) do
     case {entry_errors(upload, entry), entry.done?} do
-      {[error | _], _done} -> error_text(assigns.error_texts, error)
+      {[error | _], _done} -> error_text(assigns.error_texts, error, upload.max_entries)
       {[], true} -> assigns.complete_label
       {[], false} -> assigns.uploading_label
     end
   end
 
-  defp error_text(texts, error), do: Map.get(texts, error, to_string(error))
+  defp error_text(texts, error, max),
+    do: texts |> Map.get(error, to_string(error)) |> String.replace("%{max}", to_string(max))
 
   defp image?(%{client_type: "image/" <> _}), do: true
   defp image?(_entry), do: false
@@ -238,12 +245,18 @@ defmodule LineaUI.Components.Upload do
         <svg>…</svg>
       </.upload_button>
 
-  With `upload` it renders `live_file_input`; otherwise a plain `<input type="file" name>`.
+  With `upload` it renders `live_file_input`; otherwise a plain `<input type="file" name>`. The
+  button shows a 2px primary outline while its input has keyboard focus.
   """
   attr :upload, Phoenix.LiveView.UploadConfig, default: nil
   attr :name, :string, default: nil, doc: "Name of the plain file input, without `upload`."
   attr :multiple, :boolean, default: false, doc: "Plain input only."
   attr :accept, :string, default: nil, doc: "Plain input only."
+
+  attr :disabled, :boolean,
+    default: false,
+    doc: "Disables the input and dims the button (no pointer events)."
+
   attr :color, :string, default: "neutral", values: ~w(neutral primary info)
   attr :variant, :string, default: "solid", values: ~w(solid outline glow)
   attr :shape, :string, default: "rounded", values: ~w(rounded pill)
@@ -260,7 +273,9 @@ defmodule LineaUI.Components.Upload do
         merge([
           "btn relative font-medium",
           @button_styles[{assigns.variant, assigns.color}],
+          "has-[input:focus-visible]:outline-2 has-[input:focus-visible]:outline-offset-2 has-[input:focus-visible]:outline-primary",
           assigns.icon && "size-9 p-0",
+          assigns.disabled && "pointer-events-none opacity-55",
           assigns.shape == "pill" && "rounded-full",
           assigns.class
         ])
@@ -271,6 +286,7 @@ defmodule LineaUI.Components.Upload do
       <.live_file_input
         :if={@upload}
         upload={@upload}
+        disabled={@disabled}
         tabindex="-1"
         class="pointer-events-none absolute inset-0 h-full w-full opacity-0"
       />
@@ -280,6 +296,7 @@ defmodule LineaUI.Components.Upload do
         name={@name}
         multiple={@multiple}
         accept={@accept}
+        disabled={@disabled}
         tabindex="-1"
         class="pointer-events-none absolute inset-0 h-full w-full opacity-0"
       />
