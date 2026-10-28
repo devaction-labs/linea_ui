@@ -19,7 +19,12 @@ defmodule PreviewWeb.Pages.Treeview do
       <div class="mt-5">
         <.treeview id="tree1" on_select="select" on_toggle="toggle">
           <.tree_item id="tree1-application" label="Application">
-            <.tree_item :for={name <- ["Chrome", "VS Code", "Mail App", "Firefox"]} label={name} />
+            <.tree_item
+              :for={name <- ["Chrome", "VS Code", "Mail App", "Firefox"]}
+              id={"tree1-" <> name}
+              label={name}
+              selected={@selected == "tree1-" <> name}
+            />
           </.tree_item>
           <.tree_item id="tree1-document" label="Document" expanded>
             <.tree_item id="tree1-react" label="React App" expanded>

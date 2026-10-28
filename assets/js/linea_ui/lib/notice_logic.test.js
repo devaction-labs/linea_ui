@@ -1,6 +1,6 @@
 import test from "node:test"
 import assert from "node:assert/strict"
-import {PROGRESS_DONE_MS, actionPayload, auraOf, closeFor, colorFor, colorOf, durationFor, durationOf, encodedJS, failedOf, invertFor, isRich, kindOf, mergeToast, needsAction, offsets, positionOf, progressKind, progressOf, resumeAfter, stack, surfaceFor, timeLeft, timerFor, unseen, withKindColor} from "./notice_logic.js"
+import {PROGRESS_DONE_MS, actionPayload, auraOf, closeFor, colorFor, colorOf, durationFor, durationOf, encodedJS, failedOf, invertFor, isRich, kindOf, mergeToast, needsAction, offsets, positionOf, progressKind, progressOf, resumeAfter, stack, stepsOf, surfaceFor, timeLeft, timerFor, unseen, withKindColor} from "./notice_logic.js"
 
 test("an unknown color is neutral", () => {
   assert.equal(colorOf("success"), "success")
@@ -186,4 +186,27 @@ test("an inverted toast takes the opposite surface of the page", () => {
   assert.equal(surfaceFor(true, false), "dark")
   assert.equal(surfaceFor(true, true), "light")
   assert.equal(surfaceFor(false, true), null)
+})
+
+test("a toast in steps counts its stages, clamped, and an error or no steps is not one", () => {
+  assert.deepEqual(stepsOf({steps: 5, step: 2}), {total: 5, step: 2, done: false})
+  assert.deepEqual(stepsOf({steps: 5}), {total: 5, step: 0, done: false})
+  assert.deepEqual(stepsOf({steps: 5, step: 9}), {total: 5, step: 5, done: true})
+  assert.deepEqual(stepsOf({steps: 5, step: -1}), {total: 5, step: 0, done: false})
+  assert.equal(stepsOf({steps: 0, step: 0}), null)
+  assert.equal(stepsOf({steps: null}), null)
+  assert.equal(stepsOf({}), null)
+  assert.equal(stepsOf({kind: "error", steps: 5, step: 2}), null)
+})
+
+test("a toast in steps is rich, neutral, stays until the last step and then leaves, without timer or close", () => {
+  assert.equal(isRich({message: "Batch", steps: 5, step: 0}), true)
+  assert.equal(colorFor({steps: 5, step: 1, color: "info"}), "neutral")
+  assert.equal(colorFor({steps: 5, step: 1, color: "dark"}), "dark")
+  assert.equal(durationFor({steps: 5, step: 2, duration: 3000}, 5000), Infinity)
+  assert.equal(durationFor({steps: 5, step: 5}, 5000), PROGRESS_DONE_MS)
+  assert.equal(durationFor({steps: 5, step: 5, duration: 3000}, 5000), 3000)
+  assert.equal(closeFor({steps: 5, step: 2}, Infinity), false)
+  assert.equal(closeFor({steps: 5, step: 2, close: true}, Infinity), true)
+  assert.equal(timerFor({steps: 5, step: 5}, PROGRESS_DONE_MS), false)
 })

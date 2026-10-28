@@ -117,6 +117,20 @@ defmodule LineaUI.Components.Toast do
       update_toast(socket, "nfe-42", value: 64, description: "Sending to SEFAZ…")
       update_toast(socket, "nfe-42", value: 100, title: "NF-e authorized", description: "Protocol 1292…")
 
+  ## Steps
+
+  A batch that goes in stages is a toast with `steps` (how many) and `step` (how many are done): a title with
+  the `step/steps` counter, one segment per stage (done ones in the primary color, the one in course in
+  purple, the rest empty) and the `description` below. The id makes the next call update it in place; no
+  other toast is stacked. It stays until the last step (no timer, no close button unless `close: true`), then
+  it turns green and leaves by itself after 1.6 s (or its `duration`). `kind: :error` turns it into a plain
+  failure. It is still a toast: `actions`, `invert`, `position` and `color: :dark` work as in any other.
+
+      socket = send_toast(socket, "Issuing 5 invoices", id: "batch", steps: 5, step: 0, description: "Validating…")
+      # later, in handle_info/2
+      update_toast(socket, "batch", step: 2, description: "NF-e of PV-1286 at SEFAZ")
+      update_toast(socket, "batch", step: 5, title: "Batch issued", description: "5 NF-e authorized")
+
   The toasts of a corner are stacked: the newest is shown in full and the older ones sit behind it,
   smaller, as slivers (three at most). With the pointer over the stack it opens, every toast in its own
   size, and their timers wait; when the pointer leaves they go on with the time they had left. Set
@@ -399,7 +413,9 @@ defmodule LineaUI.Components.Toast do
       "aura_size" => opts |> Keyword.get(:aura_size) |> aura_size!(),
       "aura_color" => opts |> Keyword.get(:aura_color) |> aura_color!(),
       "value" => opts |> Keyword.get(:value) |> value!(),
-      "bar" => Keyword.get(opts, :bar, false)
+      "bar" => Keyword.get(opts, :bar, false),
+      "steps" => opts |> Keyword.get(:steps) |> steps!(),
+      "step" => opts |> Keyword.get(:step) |> step!()
     }
   end
 
@@ -427,6 +443,8 @@ defmodule LineaUI.Components.Toast do
   defp change({:aura_color, value}), do: {"aura_color", aura_color!(value)}
   defp change({:value, value}), do: {"value", value!(value)}
   defp change({:bar, value}), do: {"bar", value}
+  defp change({:steps, value}), do: {"steps", steps!(value)}
+  defp change({:step, value}), do: {"step", step!(value)}
 
   defp change({key, _value}),
     do: raise(ArgumentError, "update_toast/3 does not change #{inspect(key)}")
@@ -451,6 +469,18 @@ defmodule LineaUI.Components.Toast do
   defp value!(value),
     do:
       raise(ArgumentError, "a toast value must be a number from 0 to 100, got #{inspect(value)}")
+
+  defp steps!(nil), do: nil
+  defp steps!(steps) when is_integer(steps) and steps > 0, do: steps
+
+  defp steps!(steps),
+    do: raise(ArgumentError, "toast steps must be a positive integer, got #{inspect(steps)}")
+
+  defp step!(nil), do: nil
+  defp step!(step) when is_integer(step) and step >= 0, do: step
+
+  defp step!(step),
+    do: raise(ArgumentError, "a toast step must be an integer from 0, got #{inspect(step)}")
 
   defp kind_color(nil), do: "neutral"
   defp kind_color(kind), do: Map.fetch!(@kind_colors, kind)

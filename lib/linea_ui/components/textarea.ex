@@ -6,6 +6,9 @@ defmodule LineaUI.Components.Textarea do
       <.textarea name="bio" placeholder="Enter Text" />
       <.textarea field={@form[:bio]} label="Bio" variant="filled" resizable />
 
+      <.textarea name="note" maxlength={200} counter autogrow max_rows={8} />
+      <.textarea name="why" counter min_length={20} />
+
       <.textarea name="post" rows={5} placeholder="Write the post">
         <:header>
           <.input name="title" variant="plain" class="p-3 text-lg font-medium" placeholder="Title" />
@@ -58,6 +61,29 @@ defmodule LineaUI.Components.Textarea do
   attr(:rows, :integer, default: 4)
   attr(:variant, :string, default: "outlined", values: ~w(outlined filled plain))
   attr(:resizable, :boolean, default: false)
+
+  attr(:counter, :boolean,
+    default: false,
+    doc:
+      "Shows a live character count under the text (\"68 / 200\" with `maxlength`, \"2 / 20 mín.\" below `min_length`). " <>
+        "It warns from 90% of the limit and turns red past it; it updates while typing, without the server."
+  )
+
+  attr(:min_length, :integer,
+    default: nil,
+    doc: "Minimum characters the counter asks for. Only the counter uses it: it blocks nothing."
+  )
+
+  attr(:autogrow, :boolean,
+    default: false,
+    doc: "The height follows the text, from `rows` up to `max_rows`. Not resizable by hand."
+  )
+
+  attr(:max_rows, :integer,
+    default: nil,
+    doc: "With `autogrow`, the most lines it grows to before it scrolls."
+  )
+
   attr(:state, :string, default: nil, values: [nil, "success", "error"])
   attr(:label, :string, default: nil, doc: "The caption.")
   attr(:label_class, :any, default: nil, doc: "Classes of the caption text.")
@@ -90,7 +116,9 @@ defmodule LineaUI.Components.Textarea do
     assigns
     |> Control.assign_control()
     |> then(&assign(&1, :state, Control.state(&1.state, &1.errors)))
+    |> then(&assign(&1, :id, &1.id || ((&1.counter or &1.autogrow) && gen_id("textarea")) || nil))
     |> then(&assign(&1, :classes, classes(&1)))
+    |> then(&assign(&1, :length, length_of(&1)))
     |> assign(:frame, @frame)
     |> render_textarea()
   end
@@ -98,7 +126,8 @@ defmodule LineaUI.Components.Textarea do
   defp classes(%{header: [], footer: []} = assigns) do
     merge([
       @variants[assigns.variant],
-      resize(assigns.resizable),
+      resize(assigns.resizable and not assigns.autogrow),
+      grow(assigns.autogrow),
       @states[{assigns.variant, assigns.state}],
       assigns.class
     ])
@@ -107,7 +136,8 @@ defmodule LineaUI.Components.Textarea do
   defp classes(assigns) do
     merge([
       @variants["plain"],
-      resize(assigns.resizable),
+      resize(assigns.resizable and not assigns.autogrow),
+      grow(assigns.autogrow),
       @framed_padding[{assigns.header != [], assigns.footer != []}],
       assigns.class
     ])
@@ -115,6 +145,39 @@ defmodule LineaUI.Components.Textarea do
 
   defp resize(true), do: nil
   defp resize(false), do: "resize-none"
+
+  defp grow(true), do: "overflow-hidden"
+  defp grow(false), do: nil
+
+  # Characters the way the browser counts `maxlength`: UTF-16 code units.
+  defp length_of(%{value: value}) do
+    "text"
+    |> Phoenix.HTML.Form.normalize_value(value)
+    |> to_string()
+    |> :unicode.characters_to_binary(:utf8, :utf16)
+    |> byte_size()
+    |> div(2)
+  end
+
+  @warn_at 0.9
+
+  defp limit(value) do
+    case Integer.parse(to_string(value || "")) do
+      {number, _rest} when number > 0 -> number
+      _other -> nil
+    end
+  end
+
+  # Mirrors `counterState` of `lib/textarea_logic.js`, so the first paint already says the right thing.
+  defp counter_state(size, min, max) do
+    cond do
+      min && size > 0 && size < min -> {"#{size} / #{min} mín.", "bad"}
+      is_nil(max) -> {to_string(size), "ok"}
+      size > max -> {"#{size} / #{max}", "bad"}
+      size >= max * @warn_at -> {"#{size} / #{max}", "warn"}
+      true -> {"#{size} / #{max}", "ok"}
+    end
+  end
 
   defp render_textarea(%{label: nil, help: nil, errors: [], header: [], footer: []} = assigns) do
     ~H"""
@@ -162,10 +225,52 @@ defmodule LineaUI.Components.Textarea do
   end
 
   defp control_assigns(assigns) do
-    Map.take(assigns, [:id, :name, :value, :rows, :classes, :disabled, :state, :rest])
+    Map.take(assigns, [
+      :id,
+      :name,
+      :value,
+      :rows,
+      :classes,
+      :disabled,
+      :state,
+      :rest,
+      :counter,
+      :min_length,
+      :autogrow,
+      :max_rows,
+      :length
+    ])
+  end
+
+  defp control(%{counter: true} = assigns) do
+    {text, tone} =
+      counter_state(assigns.length, assigns.min_length, limit(assigns.rest[:maxlength]))
+
+    assigns = assign(assigns, text: text, tone: tone)
+
+    ~H"""
+    <div class="w-full">
+      <.field_control {assigns} described_by={"#{@id}-counter"} />
+      <div class="mt-1 flex justify-end px-0.5">
+        <span
+          id={"#{@id}-counter"}
+          aria-live="polite"
+          aria-atomic="true"
+          data-tone={@tone}
+          class="text-tiny-plus tabular-nums text-slate-400 data-[tone=bad]:text-error data-[tone=warn]:text-warning dark:text-navy-300"
+        >{@text}</span>
+      </div>
+    </div>
+    """
   end
 
   defp control(assigns) do
+    ~H"""
+    <.field_control {assigns} described_by={nil} />
+    """
+  end
+
+  defp field_control(assigns) do
     ~H"""
     <textarea
       id={@id}
@@ -174,6 +279,13 @@ defmodule LineaUI.Components.Textarea do
       class={@classes}
       disabled={@disabled}
       aria-invalid={@state == "error" && "true"}
+      aria-describedby={@described_by}
+      phx-hook={(@counter or @autogrow) && "LineaUI.Textarea"}
+      data-counter={@counter && "#{@id}-counter"}
+      data-min={@counter && @min_length}
+      data-max={@counter && limit(@rest[:maxlength])}
+      data-autogrow={@autogrow && ""}
+      data-max-rows={@autogrow && @max_rows}
       {@rest}
     >{Phoenix.HTML.Form.normalize_value("textarea", @value)}</textarea>
     """

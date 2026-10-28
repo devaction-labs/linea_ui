@@ -40,6 +40,7 @@ defmodule LineaUI.Components.TagTest do
 
     classes = classes(html, "div")
     assert "-space-x-px" in classes
+    assert "inline-flex" in classes
     assert "[&>*:not(:first-child)]:rounded-l-none" in classes
   end
 

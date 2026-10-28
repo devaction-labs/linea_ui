@@ -552,6 +552,17 @@ defmodule LineaUI.Components.Avatar do
     doc: "The size of the \"+N\" avatar; give it the same `size` as the avatars."
   )
 
+  attr(:spread, :boolean,
+    default: false,
+    doc:
+      "The avatars move apart on hover or focus, so each one can be read (the group takes focus with the keyboard)."
+  )
+
+  attr(:label, :string,
+    default: nil,
+    doc: "The group's `aria-label` (\"7 people\"); it also makes the group a `role=\"group\"`."
+  )
+
   attr(:class, :any, default: nil)
   attr(:rest, :global)
   slot(:inner_block, required: true)
@@ -559,7 +570,19 @@ defmodule LineaUI.Components.Avatar do
   def avatar_group(assigns) do
     ~H"""
     <div
-      class={merge(["flex flex-wrap", overlap(@overlap), @pulse && "animate-pulse", @class])}
+      role={@label && "group"}
+      aria-label={@label}
+      tabindex={@spread && "0"}
+      class={
+        merge([
+          "flex flex-wrap",
+          overlap(@overlap),
+          @spread &&
+            "rounded-full outline-hidden focus-visible:ring-2 focus-visible:ring-primary/50 hover:space-x-1 focus-within:space-x-1 motion-reduce:*:transition-none *:transition-[margin] *:duration-200",
+          @pulse && "animate-pulse",
+          @class
+        ])
+      }
       {@rest}
     >
       {render_slot(@inner_block)}

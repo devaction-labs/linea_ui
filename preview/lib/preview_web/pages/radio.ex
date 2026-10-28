@@ -53,6 +53,22 @@ defmodule PreviewWeb.Pages.Radio do
       </.radio_group>
     </.example>
     <.example
+      title="Radio Error"
+      text="Errors paint the unchecked radios with the error border and show the message below."
+      class="mt-5 max-w-2xl"
+    >
+      <.radio_group
+        id="terms"
+        name="terms"
+        color="primary"
+        errors={["Choose an option to continue."]}
+        class={@grid}
+      >
+        <:radio value="yes">I agree</:radio>
+        <:radio value="no">I do not agree</:radio>
+      </.radio_group>
+    </.example>
+    <.example
       title="Radio Size"
       text="The radio component can have various sizes. Check out code for detail of usage."
       class="mt-5 max-w-2xl"

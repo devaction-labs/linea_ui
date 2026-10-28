@@ -22,6 +22,24 @@ defmodule LineaUI.Components.TimelineTest do
     assert html |> find(".timeline-item-content a") |> Enum.count() == 1
   end
 
+  test "a day label sits in the line" do
+    html =
+      render(~H"""
+      <.timeline>
+        <.timeline_day label="Today" class="x" />
+        <.timeline_item title="Out" />
+      </.timeline>
+      """)
+
+    assert ["timeline-item", "timeline-day", "pb-3", "x"] -- classes(html, "li.timeline-day") ==
+             []
+
+    assert html
+           |> find("li.timeline-day span")
+           |> Enum.map(&LazyHTML.text/1)
+           |> Enum.map(&String.trim/1) == ["Today"]
+  end
+
   test "variants, ping, line space and size" do
     html =
       render(~H"""

@@ -112,6 +112,20 @@ export const progressOf = ({kind, value}) =>
 export const failedOf = ({kind, value}) =>
   kind === "error" && value !== null && value !== undefined && value !== "" && Number.isFinite(Number(value))
 
+/**
+ * The stages of a toast that goes in steps (`steps` of them, `step` already done), or `null` for a toast without
+ * `steps` (an error never shows steps). `step` is clamped to 0..steps; `done` once all are done.
+ *
+ * @returns {{total: number, step: number, done: boolean} | null}
+ */
+export const stepsOf = ({kind, steps, step}) => {
+  const total = Math.floor(Number(steps))
+  const at = Number.isFinite(Number(step)) && step !== null && step !== "" ? Math.floor(Number(step)) : 0
+  return kind === "error" || steps === null || steps === undefined || !Number.isFinite(total) || total < 1
+    ? null
+    : {total, step: Math.min(Math.max(at, 0), total), done: at >= total}
+}
+
 /** The kind a toast is drawn with: a progress toast spins while it runs and turns into a success at 100. */
 export const progressKind = (input) => {
   const progress = progressOf(input)
@@ -120,11 +134,15 @@ export const progressKind = (input) => {
 
 /** The color a toast is drawn in: its own `color`, else its kind's, else `neutral`; a progress toast is a neutral card, or a dark one. */
 export const colorFor = (input) =>
-  progressOf(input) === null ? colorOf(input.color ?? KIND_COLORS[input.kind] ?? "neutral") : input.color === "dark" ? "dark" : "neutral"
+  progressOf(input) === null && stepsOf(input) === null
+    ? colorOf(input.color ?? KIND_COLORS[input.kind] ?? "neutral")
+    : input.color === "dark"
+      ? "dark"
+      : "neutral"
 
 /** Whether a toast takes the layout with icon, title, description and actions instead of LineOne's one line. */
 export const isRich = (input) =>
-  Boolean(kindOf(input.kind) || input.description || input.actions?.length || input.aura || progressOf(input) !== null)
+  Boolean(kindOf(input.kind) || input.description || input.actions?.length || input.aura || progressOf(input) !== null || stepsOf(input) !== null)
 
 /** Whether a toast waits for the person: it has buttons, a template of its own, or an aura that asks for attention. */
 export const needsAction = ({actions, template, aura}) => Boolean(actions?.length || template || aura === "glow")
@@ -140,13 +158,18 @@ const unset = (value) => value === null || value === undefined
 export const durationFor = (input, fallback = DURATION_MS, persistErrors = false) => {
   const {kind, duration} = input
   const progress = progressOf(input)
+  const steps = stepsOf(input)
   const stays = kind === "loading" || (unset(duration) && (needsAction(input) || (kind === "error" && persistErrors)))
-  return progress !== null ? (progress >= 100 ? durationOf(duration, PROGRESS_DONE_MS) : Infinity) : stays ? Infinity : durationOf(duration, fallback)
+  return steps !== null
+    ? steps.done
+      ? durationOf(duration, PROGRESS_DONE_MS)
+      : Infinity
+    : progress !== null ? (progress >= 100 ? durationOf(duration, PROGRESS_DONE_MS) : Infinity) : stays ? Infinity : durationOf(duration, fallback)
 }
 
 /** Whether a toast gets a close button: asked for, or one that stays (except while loading or progressing). */
 export const closeFor = (input, duration) =>
-  progressOf(input) !== null ? Boolean(input.close) : input.kind !== "loading" && Boolean(input.close || !Number.isFinite(duration))
+  progressOf(input) !== null || stepsOf(input) !== null ? Boolean(input.close) : input.kind !== "loading" && Boolean(input.close || !Number.isFinite(duration))
 
 /** Whether a toast is drawn inverted (a dark card on a light page, a light one on a dark page): its own `invert`, else the toaster's. */
 export const invertFor = (input, fallback = false) => (unset(input.invert) ? fallback : Boolean(input.invert))
@@ -156,7 +179,7 @@ export const surfaceFor = (inverted, dark) => (inverted ? (dark ? "light" : "dar
 
 /** Whether a toast draws its countdown line: it leaves by itself, is not a progress toast, and did not turn it off. */
 export const timerFor = (input, duration, fallback = true) =>
-  Number.isFinite(duration) && progressOf(input) === null && (unset(input.timer) ? fallback : Boolean(input.timer))
+  Number.isFinite(duration) && progressOf(input) === null && stepsOf(input) === null && (unset(input.timer) ? fallback : Boolean(input.timer))
 
 export const AURA_VARIANTS = ["default", "dual", "glow"]
 export const AURA_SIZES = ["xs", "sm", "lg"]

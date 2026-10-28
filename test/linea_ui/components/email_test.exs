@@ -59,6 +59,24 @@ defmodule LineaUI.Components.EmailTest do
     assert text(doc, "table") =~ "copy and paste this address"
   end
 
+  test "a secondary button sits beside the main one and takes a safe address" do
+    assigns = %{}
+
+    out =
+      Phoenix.LiveViewTest.rendered_to_string(~H"""
+      <.email_layout subject="s" title="t">
+        <:body>x</:body>
+        <:action href="https://a.com/1">Track</:action>
+        <:secondary href="javascript:alert(1)">View order</:secondary>
+      </.email_layout>
+      """)
+
+    assert out =~ "View order"
+    assert out =~ ~s(class="em-edge")
+    refute out =~ "javascript:"
+    refute html() =~ ~s(class="em-edge")
+  end
+
   test "an unsafe address becomes a hash" do
     assigns = %{}
 

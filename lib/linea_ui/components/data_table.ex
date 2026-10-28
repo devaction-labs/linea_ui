@@ -181,6 +181,14 @@ defmodule LineaUI.Components.DataTable do
   attr(:row_class, :any, default: nil, doc: "Extra classes of a row's `<tr>`, see `table/1`.")
   attr(:row_attrs, :any, default: nil, doc: "Extra attributes of a row's `<tr>`, see `table/1`.")
   attr(:sticky_header, :boolean, default: false, doc: "Sticky header row, see `table/1`.")
+  attr(:scroll_label, :string, default: nil, doc: "Names the scrolling wrapper, see `table/1`.")
+
+  attr(:sort_label, :string,
+    default: nil,
+    doc: "Prefix of the sort buttons' label, see `table/1`."
+  )
+
+  attr(:row_label, :any, default: nil, doc: "Label of a row's checkbox, see `table/1`.")
   attr(:headless, :boolean, default: false, doc: "No `<thead>`, see `table/1`.")
   attr(:borderless, :boolean, default: false, doc: "No row rules, see `table/1`.")
   attr(:page_sizes, :list, default: [], doc: "Options of the \"Show N entries\" select.")
@@ -422,7 +430,7 @@ defmodule LineaUI.Components.DataTable do
 
   @table_keys ~w(row_id row_key row_item row_click sort_by sort_dir on_sort on_select on_select_all
                  selected all_selected expand_label target col action expand empty compact headless
-                 borderless row_class row_attrs sticky_header foot)a
+                 borderless row_class row_attrs sticky_header foot scroll_label sort_label row_label)a
 
   defp data_table_body(assigns) do
     assigns =

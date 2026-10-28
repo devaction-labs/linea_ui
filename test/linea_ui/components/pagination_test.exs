@@ -58,6 +58,20 @@ defmodule LineaUI.Components.PaginationTest do
     assert click =~ "go"
   end
 
+  test "pages are named for screen readers and the ellipsis is hidden" do
+    html = render(~H|<.pagination page={5} total_pages={10} on_change="go" />|)
+
+    assert count(html, "button[aria-label='Page 5'][aria-current=page]") == 1
+    assert count(html, "span[aria-hidden=true]") == 2
+
+    html =
+      render(
+        ~H|<.pagination page={2} total_pages={3} on_change="go" page_label="Página %{page}" />|
+      )
+
+    assert count(html, "button[aria-label='Página 3']") == 1
+  end
+
   test "gaps, divided, pill and sizes" do
     html =
       render(

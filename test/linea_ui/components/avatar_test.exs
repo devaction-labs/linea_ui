@@ -143,6 +143,28 @@ defmodule LineaUI.Components.AvatarTest do
     assert [] = find(html, "#b > div") |> Enum.to_list()
   end
 
+  test "avatar_group spread and label" do
+    assigns = %{}
+
+    out =
+      rendered_to_string(~H"""
+      <.avatar_group spread label="7 people"><.avatar src="/a.jpg" ring /></.avatar_group>
+      """)
+
+    assert out =~ ~s(role="group")
+    assert out =~ ~s(aria-label="7 people")
+    assert out =~ ~s(tabindex="0")
+    assert out =~ "hover:space-x-1"
+
+    plain =
+      rendered_to_string(~H"""
+      <.avatar_group><.avatar src="/a.jpg" /></.avatar_group>
+      """)
+
+    refute plain =~ "tabindex"
+    refute plain =~ "role="
+  end
+
   test "avatar_group overlap" do
     html =
       render(~H"""

@@ -27,6 +27,13 @@ defmodule LineaUI.Components.Timeline do
 
   The inner block of an item comes after its description: images, links, tags, members.
 
+  A `timeline_day` splits the events by day with a small label, the line running through it:
+
+      <.timeline>
+        <.timeline_day label="Today" />
+        <.timeline_item title="Out for delivery" time="11:42" color="info" />
+      </.timeline>
+
   The items can come from a list or a stream through `rows` and the `:item` slot, which gets
   `{dom_id, row}` and renders a `timeline_item` with that `id`:
 
@@ -231,6 +238,28 @@ defmodule LineaUI.Components.Timeline do
         </div>
         <p :if={@description} class="py-1">{@description}</p>
         {render_slot(@inner_block)}
+      </div>
+    </li>
+    """
+  end
+
+  @doc """
+  Renders a label that splits the events by day, with the line running through it.
+
+      <.timeline_day label="Yesterday" />
+  """
+  attr(:label, :string, required: true)
+  attr(:class, :any, default: nil)
+  attr(:rest, :global)
+
+  def timeline_day(assigns) do
+    ~H"""
+    <li class={merge(["timeline-item timeline-day pb-3", @class])} {@rest}>
+      <div class="timeline-item-point"></div>
+      <div class="timeline-item-content flex-1 pl-4 sm:pl-8">
+        <span class="inline-flex h-5.5 items-center rounded-full bg-slate-150 px-2.5 text-[11px] font-semibold uppercase tracking-wide text-slate-500 dark:bg-navy-500 dark:text-navy-200">
+          {@label}
+        </span>
       </div>
     </li>
     """

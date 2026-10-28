@@ -202,6 +202,16 @@ defmodule PreviewWeb.Pages.Avatar do
     </.example>
 
     <.example
+      title="Spread Avatar Group"
+      text="spread moves the avatars apart on hover or keyboard focus; label names the group."
+      class="mt-5"
+    >
+      <.avatar_group spread label="Team">
+        <.group_member :for={member <- @group} member={member} shape="circle" />
+      </.avatar_group>
+    </.example>
+
+    <.example
       title="Square Avatar Group"
       text="The Avatar group renders its children as a stack. Check out code for detail of usage."
       class="mt-5"

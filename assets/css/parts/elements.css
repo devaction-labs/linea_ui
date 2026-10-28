@@ -12,11 +12,12 @@
   .tippy-box {
     position: relative;
     max-width: 350px;
-    border-radius: 4px;
+    border-radius: 6px;
     background-color: #333;
     color: #fff;
-    font-size: 14px;
-    line-height: 1.4;
+    font-size: 12.5px;
+    font-weight: 500;
+    line-height: 1.35;
     white-space: normal;
     outline: 0;
     transition-property: transform, visibility, opacity;
@@ -25,7 +26,7 @@
   .tippy-content {
     position: relative;
     z-index: 1;
-    padding: 5px 9px;
+    padding: 6px 10px;
   }
 
   .tippy-svg-arrow {
@@ -228,6 +229,44 @@
 
   @media (prefers-reduced-motion: reduce) {
     .linea-fab-label {
+      transition: none;
+    }
+  }
+}
+
+@layer components {
+  .linea-fab-dial-menu {
+    visibility: hidden;
+    opacity: 0;
+    transform: translateY(0.5rem);
+    transition:
+      opacity 0.2s ease,
+      transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+      visibility 0s linear 0.2s;
+  }
+
+  .linea-fab-dial[data-side="down"] .linea-fab-dial-menu {
+    transform: translateY(-0.5rem);
+  }
+
+  .linea-fab-dial[data-state="open"] .linea-fab-dial-menu {
+    visibility: visible;
+    opacity: 1;
+    transform: none;
+    transition-delay: 0s;
+  }
+
+  .linea-fab-dial-icon {
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .linea-fab-dial[data-state="open"] .linea-fab-dial-icon {
+    transform: rotate(45deg);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .linea-fab-dial-menu,
+    .linea-fab-dial-icon {
       transition: none;
     }
   }

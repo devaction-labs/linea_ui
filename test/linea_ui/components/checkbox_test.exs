@@ -94,4 +94,21 @@ defmodule LineaUI.Components.CheckboxTest do
 
     assert "checked:bg-success" in classes(html, "input[type=checkbox]")
   end
+
+  test "errors paint the checkboxes with the error border" do
+    html = render(~H'<.checkbox name="t" errors={["required"]} />')
+    assert "border-error" in classes(html, "input[type=checkbox]")
+
+    html = render(~H'<.checkbox name="t" variant="outline" errors={["required"]} />')
+    assert "border-error" in classes(html, "input[type=checkbox]")
+
+    html = render(~H'<.checkbox name="t" />')
+    refute "border-error" in classes(html, "input[type=checkbox]")
+
+    html = render(~H'<.checkbox_group name="g[]" options={["a", "b"]} errors={["pick one"]} />')
+    assert "border-error" in classes(html, "input[type=checkbox]")
+
+    html = render(~H'<.checkbox_group name="g[]" options={["a", "b"]} />')
+    refute "border-error" in classes(html, "input[type=checkbox]")
+  end
 end

@@ -117,7 +117,7 @@ defmodule LineaUI.Components.Kanban do
     }
   }
 
-  @card "group relative flex cursor-grab flex-col gap-[9px] rounded-xl bg-white p-3 shadow-[0_0_0_1px_var(--color-slate-150),0_1px_2px_rgb(0_0_0/0.05)] transition-shadow hover:shadow-[0_0_0_1px_var(--color-slate-300),0_8px_20px_-10px_rgb(16_24_64/0.3)] active:cursor-grabbing data-[dragging]:shadow-none dark:bg-navy-700 dark:shadow-[0_0_0_1px_var(--color-navy-500)] dark:hover:shadow-[0_0_0_1px_var(--color-navy-450)]"
+  @card "group relative flex cursor-grab flex-col gap-[9px] rounded-xl bg-white p-3 shadow-[0_0_0_1px_var(--color-slate-150),0_1px_2px_rgb(0_0_0/0.05)] transition-shadow hover:shadow-[0_0_0_1px_var(--color-slate-300),0_8px_20px_-10px_rgb(16_24_64/0.3)] active:cursor-grabbing focus-within:outline-2 focus-within:outline-offset-1 focus-within:outline-primary/50 dark:focus-within:outline-accent/50 data-[dragging]:shadow-none dark:bg-navy-700 dark:shadow-[0_0_0_1px_var(--color-navy-500)] dark:hover:shadow-[0_0_0_1px_var(--color-navy-450)]"
 
   @risk "!shadow-[0_0_0_1px_color-mix(in_oklab,var(--color-warning)_45%,var(--color-slate-150)),0_1px_2px_rgb(0_0_0/0.05)]"
 

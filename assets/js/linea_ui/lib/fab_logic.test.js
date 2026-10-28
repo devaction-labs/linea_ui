@@ -1,6 +1,6 @@
 import test from "node:test"
 import assert from "node:assert/strict"
-import {DEFAULT_AFTER_MS, afterOf, begin, shapeOf, step} from "./fab_logic.js"
+import {DEFAULT_AFTER_MS, afterOf, begin, dialTarget, shapeOf, step} from "./fab_logic.js"
 
 test("the retract delay is a positive number of ms, else the default", () => {
   assert.equal(afterOf("6000"), 6000)
@@ -67,4 +67,17 @@ test("focus counts like hover, and both must go before the timer starts", () => 
 test("an unknown event changes nothing", () => {
   const initial = begin(true)
   assert.deepEqual(step(initial.state, "wheel"), {state: initial.state, timer: "keep"})
+})
+
+test("the arrows walk the actions of a speed-dial, wrapping, and the button enters at either end", () => {
+  assert.equal(dialTarget(3, -1, "ArrowDown"), 0)
+  assert.equal(dialTarget(3, -1, "ArrowUp"), 2)
+  assert.equal(dialTarget(3, 0, "ArrowDown"), 1)
+  assert.equal(dialTarget(3, 2, "ArrowDown"), 0)
+  assert.equal(dialTarget(3, 0, "ArrowUp"), 2)
+  assert.equal(dialTarget(3, 2, "ArrowUp"), 1)
+  assert.equal(dialTarget(3, 1, "Home"), 0)
+  assert.equal(dialTarget(3, 1, "End"), 2)
+  assert.equal(dialTarget(3, 1, "a"), null)
+  assert.equal(dialTarget(0, -1, "ArrowDown"), null)
 })

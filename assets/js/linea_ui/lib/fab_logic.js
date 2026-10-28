@@ -26,3 +26,18 @@ export const begin = (canHover) => {
 export const step = (state, event) => (EVENTS[event] ?? ((s) => ({state: s, timer: "keep"})))(state)
 
 export const shapeOf = (state) => (state.expanded ? "expanded" : "collapsed")
+
+/**
+ * Where the arrow keys take the focus in a speed-dial: `index` is the action in focus (`-1` for the button), `count`
+ * the number of actions. Down goes to the next action and up to the previous one, both wrapping; from the button, down
+ * is the first and up the last; Home and End are the ends. Anything else keeps the focus where it is (`null`).
+ */
+export const dialTarget = (count, index, key) => {
+  const moves = {
+    ArrowDown: () => (index < 0 ? 0 : (index + 1) % count),
+    ArrowUp: () => (index < 0 ? count - 1 : (index - 1 + count) % count),
+    Home: () => 0,
+    End: () => count - 1,
+  }
+  return count > 0 && key in moves ? moves[key]() : null
+}

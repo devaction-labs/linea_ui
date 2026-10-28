@@ -24,7 +24,7 @@ defmodule LineaUI.Components.Tag do
 
   use LineaUI.Component
 
-  @base "tag disabled:pointer-events-none disabled:opacity-60 aria-disabled:pointer-events-none aria-disabled:opacity-60"
+  @base "tag disabled:pointer-events-none disabled:opacity-55 aria-disabled:pointer-events-none aria-disabled:opacity-55"
 
   @variants %{
     "solid" => %{
@@ -176,7 +176,7 @@ defmodule LineaUI.Components.Tag do
     <div
       class={
         merge([
-          "flex -space-x-px [&>*:not(:first-child)]:rounded-l-none [&>*:not(:last-child)]:rounded-r-none",
+          "inline-flex -space-x-px [&>*:not(:first-child)]:rounded-l-none [&>*:not(:last-child)]:rounded-r-none",
           @class
         ])
       }

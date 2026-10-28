@@ -43,7 +43,9 @@ defmodule LineaUI.Components.Treeview do
   use LineaUI.Component
   import LineaUI.Components.Icon, only: [glyph: 1]
 
-  @header "flex cursor-pointer items-center rounded-sm px-2 py-1 tracking-wide outline-hidden transition-all hover:bg-slate-100 hover:text-slate-800 focus:bg-slate-100 focus:text-slate-800 dark:hover:bg-navy-600 dark:hover:text-navy-100 dark:focus:bg-navy-600 dark:focus:text-navy-100"
+  @header "flex min-w-0 cursor-pointer items-center rounded-sm px-2 py-1 tracking-wide outline-hidden transition-all hover:bg-slate-100 hover:text-slate-800 focus:bg-slate-100 focus:text-slate-800 dark:hover:bg-navy-600 dark:hover:text-navy-100 dark:focus:bg-navy-600 dark:focus:text-navy-100 focus-visible:ring-2 focus-visible:ring-primary/55 dark:focus-visible:ring-accent/55"
+
+  @selected "bg-primary/10 text-primary hover:bg-primary/10 hover:text-primary focus:bg-primary/10 focus:text-primary dark:bg-accent/15 dark:text-accent-light dark:hover:bg-accent/15 dark:hover:text-accent-light dark:focus:bg-accent/15 dark:focus:text-accent-light"
 
   @layouts %{
     basic: "space-x-1.5",
@@ -137,6 +139,12 @@ defmodule LineaUI.Components.Treeview do
   attr(:id, :string, default: nil, doc: "Names the item in events and in `expanded`.")
   attr(:label, :string, default: nil)
   attr(:expanded, :boolean, default: false, doc: "Whether the branch is open (server state).")
+
+  attr(:selected, :boolean,
+    default: false,
+    doc: "Marks the item as the chosen one: `aria-selected` and a tinted header."
+  )
+
   attr(:tag, :string, default: "li", values: ~w(li div))
   attr(:class, :any, default: nil)
   attr(:rest, :global)
@@ -163,7 +171,8 @@ defmodule LineaUI.Components.Treeview do
   defp content?(_rendered), do: true
 
   defp render_item(%{branch?: false} = assigns) do
-    assigns = assign(assigns, :classes, [@header, @layouts[assigns.layout]])
+    assigns =
+      assign(assigns, :classes, [@header, @layouts[assigns.layout], assigns.selected && @selected])
 
     ~H"""
     <.dynamic_tag tag_name={@tag} role={@tag == "div" && "none"} class={@class} {@rest}>
@@ -171,12 +180,13 @@ defmodule LineaUI.Components.Treeview do
         tabindex="0"
         role="treeitem"
         class={@classes}
+        aria-selected={@selected && "true"}
         data-tree-leaf={@item_id}
       >
         <div class={["flex size-5 items-center justify-center", @layout == :advanced && "mr-1"]}>
         </div>
         <span :for={icon <- @icon} class="mr-3 flex">{render_slot(icon)}</span>
-        <span>{@label}</span>
+        <span class="truncate">{@label}</span>
       </div>
     </.dynamic_tag>
     """
@@ -184,7 +194,12 @@ defmodule LineaUI.Components.Treeview do
 
   defp render_item(assigns) do
     assigns =
-      assign(assigns, :classes, ["tree-header list-none", @header, @layouts[assigns.layout]])
+      assign(assigns, :classes, [
+        "tree-header list-none",
+        @header,
+        @layouts[assigns.layout],
+        assigns.selected && @selected
+      ])
 
     ~H"""
     <.dynamic_tag tag_name={@tag} role={@tag == "div" && "none"} class={@class} {@rest}>
@@ -196,7 +211,12 @@ defmodule LineaUI.Components.Treeview do
         data-server-open={bool(@expanded)}
         phx-mounted={JS.ignore_attributes(["open"])}
       >
-        <summary role="treeitem" class={@classes}>
+        <summary
+          role="treeitem"
+          class={@classes}
+          aria-expanded={bool(@expanded)}
+          aria-selected={@selected && "true"}
+        >
           <span class={[
             "btn size-5 rounded-lg p-0 hover:bg-slate-300/20 focus:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25",
             @layout == :advanced && "mr-1"
@@ -204,7 +224,7 @@ defmodule LineaUI.Components.Treeview do
             <.glyph name={:chevron_right_solid} class="tree-chevron size-4.5 transition-transform" />
           </span>
           <span :for={icon <- @icon} class="mr-3 flex">{render_slot(icon)}</span>
-          <span>{@label}</span>
+          <span class="truncate">{@label}</span>
         </summary>
         <ul role="group" class="pl-4">
           {render_slot(@inner_block)}

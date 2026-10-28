@@ -52,4 +52,19 @@ defmodule LineaUI.Components.RadioTest do
     assert LazyHTML.text(find(html, ".text-error")) =~ "is invalid"
     assert LazyHTML.text(find(html, "#s_plan-label")) =~ "Plan"
   end
+
+  test "errors paint the radios with the error border" do
+    form =
+      Phoenix.Component.to_form(%{"plan" => "free"}, as: :s, errors: [plan: {"is invalid", []}])
+
+    assigns = %{form: form}
+
+    html =
+      rendered_to_string(~H'<.radio_group field={@form[:plan]} options={["free", "pro"]} />')
+
+    assert "border-error" in classes(html, "input")
+
+    html = render(~H'<.radio_group name="plan" options={["free", "pro"]} />')
+    refute "border-error" in classes(html, "input")
+  end
 end

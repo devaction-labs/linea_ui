@@ -1,5 +1,5 @@
 import {parseSpec, resolveFormatters} from "../lib/chart_formatters.js"
-import {applyUpdate, parseOptions, targets, widthOf} from "../lib/chart_logic.js"
+import {applyUpdate, nextView, parseOptions, stepSlot, targets, widthOf} from "../lib/chart_logic.js"
 import {build} from "../lib/chart_render.js"
 import {estimateWidth} from "../lib/chart_scale.js"
 import {stageHtml} from "../lib/chart_stage.js"
@@ -8,8 +8,8 @@ import {axisTipsHtml, overlaySvg, tooltipHtml} from "../lib/chart_tooltip.js"
 /**
  * A chart drawn in SVG from ApexCharts-shaped options, with no library behind it: the lines, bars, rings
  * and axes come from `lib/chart_*.js`, and this hook sizes the chart to its element, draws it, follows
- * the pointer for the tooltip and crosshair, toggles series from the legend and takes the `linea:chart`
- * pushes. The first draw plays a short entry animation (not under `prefers-reduced-motion`).
+ * the pointer (or the arrow keys, on a focused chart: slots, slices or spokes) for the tooltip and crosshair, toggles series from the legend and takes the `linea:chart`
+ * pushes and swaps the chart for its table when the person picks Table in the view toggle (`data-chart-view`, no server round trip). The first draw plays a short entry animation (not under `prefers-reduced-motion`).
  */
 
 const prepared = (el, options) => {
@@ -30,26 +30,34 @@ const Chart = {
     this.entering = true
     this.options = parseOptions(this.el.dataset.options)
     this.el.style.width = widthOf(this.options?.chart?.width)
-    this.key = this.keyOf()
+    this.signature = this.keyOf()
     this.canvas = this.el.querySelector("[data-chart-canvas]")
     this.measure = measurer(this.el)
     this.width = 0
     this.onMove = (event) => this.point(event)
     this.onLeave = () => this.clear()
     this.onClick = (event) => this.legendClick(event)
+    this.onKey = (event) => this.step(event)
+    this.onBlur = () => this.leave()
+    this.onView = (event) => this.viewClick(event)
     this.canvas.addEventListener("pointermove", this.onMove)
     this.canvas.addEventListener("pointerdown", this.onMove)
     this.canvas.addEventListener("pointerleave", this.onLeave)
     this.canvas.addEventListener("click", this.onClick)
+    this.canvas.addEventListener("keydown", this.onKey)
+    this.canvas.addEventListener("blur", this.onBlur)
+    this.el.addEventListener("click", this.onView)
     this.observer = new ResizeObserver(() => this.schedule())
     this.observer.observe(this.canvas)
     this.handleEvent("linea:chart", (payload) => this.apply(payload))
+    this.view = "chart"
     this.resized()
   },
 
   updated() {
     const key = this.keyOf()
-    key !== this.key && ((this.key = key), (this.options = parseOptions(this.el.dataset.options)), (this.el.style.width = widthOf(this.options?.chart?.width)), this.draw())
+    this.applyView()
+    key !== this.signature && ((this.signature = key), (this.options = parseOptions(this.el.dataset.options)), (this.el.style.width = widthOf(this.options?.chart?.width)), this.draw())
   },
 
   destroyed() {
@@ -59,6 +67,9 @@ const Chart = {
     this.canvas?.removeEventListener("pointerdown", this.onMove)
     this.canvas?.removeEventListener("pointerleave", this.onLeave)
     this.canvas?.removeEventListener("click", this.onClick)
+    this.canvas?.removeEventListener("keydown", this.onKey)
+    this.canvas?.removeEventListener("blur", this.onBlur)
+    this.el.removeEventListener("click", this.onView)
   },
 
   keyOf() {
@@ -102,14 +113,46 @@ const Chart = {
     this.result = result
     this.canvas.innerHTML = stageHtml(result, {entering: this.entering && result.config.chart.animations?.enabled !== false})
     this.entering = false
+    this.cursor = null
     this.stage = this.canvas.firstElementChild
     this.el.style.minHeight = `${result.height + (result.config.chart.parentHeightOffset ?? 0)}px`
+    this.applyView()
+  },
+
+  /** The chart or its table (the person's choice from the toggle, kept in the browser): the canvas is only a tab stop while the chart shows. */
+  applyView() {
+    this.el.dataset.view = this.view
+    this.result?.keys && this.view === "chart" ? this.canvas.setAttribute("tabindex", "0") : this.canvas.removeAttribute("tabindex")
+    this.view === "table" && this.leave()
+  },
+
+  viewClick(event) {
+    const button = event.target.closest?.("[data-chart-view] button[data-value]")
+    const view = nextView(this.view, button?.dataset.value)
+    view && ((this.view = view), this.applyView())
   },
 
   point(event) {
     const svg = this.stage?.querySelector("svg")
     const outside = event.target.closest?.(".linea-chart-legend")
-    svg && !outside && this.show(svg.getBoundingClientRect(), event)
+    svg && !outside && this.view === "chart" && this.show(svg.getBoundingClientRect(), event)
+  },
+
+  step(event) {
+    const keys = this.view === "chart" && event.target === this.canvas ? this.result?.keys : null
+    const slot = keys ? stepSlot(keys.slots, this.cursor, event.key) : undefined
+    if (event.key === "Escape" && event.target === this.canvas) return this.leave()
+    if (slot === undefined) return
+    event.preventDefault()
+    this.cursor = slot
+    const hit = keys.hit ? keys.hit(slot) : this.result.probe(keys.at(slot).x, keys.at(slot).y)
+    hit ? this.hit(hit) : this.clear()
+  },
+
+  /** The keyboard cursor goes away (Escape, or the chart lost focus) and so does what it showed. */
+  leave() {
+    this.cursor = null
+    this.clear()
   },
 
   show(box, event) {

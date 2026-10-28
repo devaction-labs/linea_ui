@@ -465,6 +465,10 @@
     @apply relative block w-full;
   }
 
+  [data-chart-canvas]:focus-visible {
+    @apply rounded-md outline-2 outline-offset-2 outline-primary dark:outline-accent;
+  }
+
   .linea-chart-stage {
     @apply relative w-full font-inter;
     touch-action: pan-y;
@@ -669,6 +673,51 @@
     @apply absolute size-px overflow-hidden whitespace-nowrap;
     clip: rect(0 0 0 0);
     clip-path: inset(50%);
+  }
+
+  .linea-chart-legend-figures {
+    @apply ml-2 font-semibold text-slate-700 tabular-nums dark:text-navy-50;
+  }
+
+  /* The Chart / Table switch: the table takes the drawing's place, the stage grows with it. */
+  .linea-chart[data-view="table"] {
+    min-height: 0 !important;
+  }
+
+  .linea-chart[data-view="table"] .linea-chart-stage {
+    @apply overflow-x-auto;
+    height: auto !important;
+  }
+
+  .linea-chart[data-view="table"] .linea-chart-svg,
+  .linea-chart[data-view="table"] .linea-chart-legend,
+  .linea-chart[data-view="table"] .linea-chart-axistips,
+  .linea-chart[data-view="table"] .linea-chart-tooltip {
+    display: none;
+  }
+
+  .linea-chart[data-view="table"] .linea-chart-sr {
+    @apply static size-auto w-full overflow-visible border-collapse text-left text-xs-plus whitespace-normal text-slate-600 dark:text-navy-100;
+    clip: auto;
+    clip-path: none;
+  }
+
+  .linea-chart[data-view="table"] .linea-chart-sr caption {
+    @apply pb-2 text-left font-medium text-slate-700 dark:text-navy-50;
+  }
+
+  .linea-chart[data-view="table"] .linea-chart-sr th,
+  .linea-chart[data-view="table"] .linea-chart-sr td {
+    @apply border-b border-slate-150 px-3 py-2 dark:border-navy-500;
+  }
+
+  .linea-chart[data-view="table"] .linea-chart-sr thead th,
+  .linea-chart[data-view="table"] .linea-chart-sr tr:first-child th {
+    @apply font-medium text-slate-500 dark:text-navy-200;
+  }
+
+  .linea-chart[data-view="table"] .linea-chart-sr td {
+    @apply tabular-nums;
   }
 
   @media not (prefers-reduced-motion: reduce) {

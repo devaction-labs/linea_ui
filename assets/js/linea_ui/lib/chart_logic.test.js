@@ -1,6 +1,6 @@
 import assert from "node:assert/strict"
 import test from "node:test"
-import {applyUpdate, parseOptions, targets, widthOf} from "./chart_logic.js"
+import {applyUpdate, nextView, parseOptions, stepSlot, targets, widthOf} from "./chart_logic.js"
 
 test("options are read from a JSON object only", () => {
   assert.deepEqual(parseOptions('{"chart":{"type":"bar"}}'), {chart: {type: "bar"}})
@@ -33,4 +33,26 @@ test("chart.width sizes the element when it is a number or a CSS length", () => 
   assert.equal(widthOf("auto"), "")
   assert.equal(widthOf(undefined), "")
   assert.equal(widthOf(-3), "")
+})
+
+test("arrows, Home and End move the keyboard cursor along the slots", () => {
+  const slots = [0, 1, 2, 3]
+  assert.equal(stepSlot(slots, null, "ArrowRight"), 0)
+  assert.equal(stepSlot(slots, null, "ArrowLeft"), 3)
+  assert.equal(stepSlot(slots, 1, "ArrowRight"), 2)
+  assert.equal(stepSlot(slots, 1, "ArrowLeft"), 0)
+  assert.equal(stepSlot(slots, 3, "ArrowRight"), 3)
+  assert.equal(stepSlot(slots, 0, "ArrowLeft"), 0)
+  assert.equal(stepSlot(slots, 2, "Home"), 0)
+  assert.equal(stepSlot(slots, 1, "End"), 3)
+  assert.equal(stepSlot(slots, 1, "Enter"), undefined)
+  assert.equal(stepSlot([], null, "ArrowRight"), undefined)
+})
+
+test("the view toggle only changes to the other known view", () => {
+  assert.equal(nextView("chart", "table"), "table")
+  assert.equal(nextView("table", "chart"), "chart")
+  assert.equal(nextView("chart", "chart"), null)
+  assert.equal(nextView("chart", "grid"), null)
+  assert.equal(nextView("chart", undefined), null)
 })

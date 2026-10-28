@@ -31,11 +31,13 @@ defmodule LineaUI.Components.Breadcrumb do
   use LineaUI.Component
   import LineaUI.Components.Icon, only: [glyph: 1]
 
+  @focus "outline-hidden focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary/55 dark:focus-visible:outline-accent/55"
+
   @links %{
     "plain" =>
-      "flex items-center gap-1.5 text-primary transition-colors hover:text-primary-focus dark:text-accent-light dark:hover:text-accent",
+      "flex items-center gap-1.5 text-primary transition-colors hover:text-primary-focus hover:underline hover:underline-offset-4 dark:text-accent-light dark:hover:text-accent",
     "bordered" =>
-      "flex items-center gap-1.5 rounded-lg border border-slate-200 px-1.5 py-1 leading-none text-primary transition-colors hover:text-primary-focus dark:border-navy-500 dark:text-accent-light dark:hover:text-accent"
+      "flex items-center gap-1.5 rounded-lg border border-slate-200 px-1.5 py-1 leading-none text-primary transition-colors hover:border-primary/40 hover:text-primary-focus dark:border-navy-500 dark:text-accent-light dark:hover:border-accent/40 dark:hover:text-accent"
   }
 
   @doc """
@@ -91,10 +93,10 @@ defmodule LineaUI.Components.Breadcrumb do
     """
   end
 
-  defp link_class(variant), do: @links[variant]
+  defp link_class(variant), do: [@links[variant], @focus]
 
   attr(:item, :map, required: true)
-  attr(:link_class, :string, required: true)
+  attr(:link_class, :any, required: true)
   attr(:current, :boolean, required: true)
 
   defp crumb(%{item: item} = assigns) when is_map_key(item, :"phx-click") do
@@ -103,7 +105,7 @@ defmodule LineaUI.Components.Breadcrumb do
     ~H"""
     <button
       type="button"
-      class={merge([@link_class, "cursor-pointer outline-hidden", @item[:class]])}
+      class={merge([@link_class, "cursor-pointer", @item[:class]])}
       aria-current={@current && "page"}
       {@extra}
     >

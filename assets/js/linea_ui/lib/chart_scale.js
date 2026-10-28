@@ -176,14 +176,34 @@ const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", 
 
 const pad = (value) => String(value).padStart(2, "0")
 
+const capital = (text) => text.charAt(0).toUpperCase() + text.slice(1)
+
+const names = new Map()
+
+/** The month and day names of a locale (`pt-BR`), from `Intl`, capitalized and with no abbreviation dot; English when the locale is unknown. */
+const namesOf = (locale) => {
+  if (!locale) return {months: MONTHS, shortMonths: MONTHS.map((name) => name.slice(0, 3)), days: DAYS, shortDays: DAYS.map((name) => name.slice(0, 3))}
+  if (!names.has(locale)) {
+    try {
+      const name = (options, date) => capital(new Intl.DateTimeFormat(locale, {...options, timeZone: "UTC"}).format(date).replace(/\.$/, ""))
+      const months = (month) => Array.from({length: 12}, (_, index) => name({month}, new Date(Date.UTC(2000, index, 1))))
+      const days = (weekday) => Array.from({length: 7}, (_, index) => name({weekday}, new Date(Date.UTC(2000, 0, 2 + index))))
+      names.set(locale, {months: months("long"), shortMonths: months("short"), days: days("long"), shortDays: days("short")})
+    } catch (_error) {
+      names.set(locale, namesOf(null))
+    }
+  }
+  return names.get(locale)
+}
+
 const TOKENS = {
   yyyy: (d) => String(d.getUTCFullYear()),
   yy: (d) => String(d.getUTCFullYear()).slice(-2),
-  MMMM: (d) => MONTHS[d.getUTCMonth()],
-  MMM: (d) => MONTHS[d.getUTCMonth()].slice(0, 3),
+  MMMM: (d, n) => n.months[d.getUTCMonth()],
+  MMM: (d, n) => n.shortMonths[d.getUTCMonth()],
   MM: (d) => pad(d.getUTCMonth() + 1),
-  dddd: (d) => DAYS[d.getUTCDay()],
-  ddd: (d) => DAYS[d.getUTCDay()].slice(0, 3),
+  dddd: (d, n) => n.days[d.getUTCDay()],
+  ddd: (d, n) => n.shortDays[d.getUTCDay()],
   dd: (d) => pad(d.getUTCDate()),
   HH: (d) => pad(d.getUTCHours()),
   hh: (d) => pad(d.getUTCHours() % 12 || 12),
@@ -194,10 +214,11 @@ const TOKENS = {
 
 const TOKEN_PATTERN = /yyyy|yy|MMMM|MMM|MM|dddd|ddd|dd|HH|hh|mm|ss|TT/g
 
-/** Formats a UTC instant with tokens such as `dd MMM yyyy`, `MMM 'yy`, `HH:mm`. */
-export const formatDate = (time, pattern) => {
+/** Formats a UTC instant with tokens such as `dd MMM yyyy`, `MMM 'yy`, `HH:mm`; names of months and days in `locale` (English without). */
+export const formatDate = (time, pattern, locale) => {
   const date = new Date(time)
-  return pattern.replace(TOKEN_PATTERN, (token) => TOKENS[token](date))
+  const set = namesOf(locale)
+  return pattern.replace(TOKEN_PATTERN, (token) => TOKENS[token](date, set))
 }
 
 /** The pattern that fits the spacing between ticks when the chart does not give one. */

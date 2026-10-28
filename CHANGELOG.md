@@ -2,6 +2,31 @@
 
 ## Unreleased
 
+## 0.8.5
+
+New components, from the design refinement:
+
+- `kpi_card`: a metric card with the figure, the change since the last period (`trend`, `delta_tone`), a sparkline or bars drawn as SVG, a goal bar and a loading state.
+- `rating` and `rating_distribution`: read-only stars with fractional values, an interactive radio group (`field`, `on_change`) and the bars of how the notes were given.
+- `notification_center`: a bell with an unread dot and a popover of tabs, grouped items, read-all, footer and empty state (`on_read_all`, `on_read`, `on_change`).
+
+Refinements:
+
+- `table` and `data_table`: `scroll_label`, `sort_label` and `row_label` name the scrolling region, the sort buttons and the row checkboxes for screen readers.
+- `chart`: the `brl`, `brl_thousands` and `number_br` formatters, `chart.defaultLocale` for month and day names, and a keyboard cursor (arrows, Home, End, Esc) on cartesian charts.
+- `avatar_group`: `spread` opens the pile on hover and focus; `label` names the group.
+- `email_layout`: a `:secondary` button slot beside the main one.
+- `timeline_day`: a day separator ("Hoje", "Ontem") on the line of a timeline.
+- `tree_item`: `selected`, `aria-expanded` on the branches and truncated labels.
+- `pagination`: `page_label` names each page link; the gap is hidden from screen readers.
+- `otp_input`: `state="success"` for a verified code. `input_group_addon`: `size`. `radio_group`: the radios take the error border when `errors` is set.
+- `clipboard`: `copied_label` shows the green "copied" state; `icon` adds the copy icon (a check while copied) and `icon_only` makes a square button for a snippet; `clipboard_input` takes `copied_label` and `icon` too. `spinner`: the elastic timing was invalid CSS, and `prefers-reduced-motion` is respected.
+- `textarea`: `counter`, `min_length`, `autogrow` and `max_rows`, a character counter (warns near the limit, red past it) and a height that follows the text, with no server round trip. `checkbox` and `checkbox_group` take the error border when `errors` is set.
+- `tag` follows the design (28px tall, 8px radius, 12.5px text, focus ring) and no longer shares its box with `badge`. **Visible change:** tags in an app get a new size and radius, so check the screens that use them. `tooltip` is a little smaller (12.5px text, 6px radius).
+- `toast`: `steps` and `step` make a batch toast that updates in place under the same `id`. `fab_dial`: a speed-dial of labeled actions, opened by click or keyboard.
+- `chart`: `table_toggle` swaps the drawing for its data table; `legend.showValue` and `legend.showPercent` write "524 · 42%" after each name; the arrow keys also move between the slices of a donut or pie and the spokes of a radar. Fixed the keyboard cursor of cartesian charts, which raised a TypeError.
+- Keyboard focus rings on `collapse`, `breadcrumb`, `pagination`, `treeview` and the kanban card.
+
 ## 0.8.4
 
 - `card_table`: a compact table of row cards for long lists. It answers to its own width (a container query): the columns leave by `priority` at 1180, 960 and 720px, what left shows in a panel when the row is pointed at, and below 520px each row is a card of three lines placed by the `role` of its columns. It has row selection, sortable headers, a status bar per row and a stream-friendly empty state.

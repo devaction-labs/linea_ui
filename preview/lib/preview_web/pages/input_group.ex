@@ -81,9 +81,27 @@ defmodule PreviewWeb.Pages.InputGroup do
       </.input_group>
       <.input_group>
         <.input name="dropdown-search" placeholder="Search...">
-          <:prefix><.lineone_icon name="location" class="size-5 transition-colors duration-200" /></:prefix>
+          <:prefix>
+            <.lineone_icon name="location" class="size-5 transition-colors duration-200" />
+          </:prefix>
         </.input>
         <.button color="primary">Dropdown</.button>
+      </.input_group>
+    </.example>
+    <.example
+      title="Addon Sizes"
+      text="The addon text follows the size of the inputs beside it."
+      class="mt-5 max-w-xl space-y-4"
+    >
+      <.input_group>
+        <.input_group_addon size="sm">@</.input_group_addon>
+        <.input name="addon-sm" size="sm" placeholder="Username" />
+        <.button size="sm" color="primary">Follow</.button>
+      </.input_group>
+      <.input_group>
+        <.input_group_addon size="lg">@</.input_group_addon>
+        <.input name="addon-lg" size="lg" placeholder="Username" />
+        <.button size="lg" color="primary">Follow</.button>
       </.input_group>
     </.example>
     """

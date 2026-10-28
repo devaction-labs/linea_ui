@@ -50,6 +50,7 @@ defmodule PreviewWeb.Pages.Email do
         <.email_facts rows={[{"Estimate", "Thu, Oct 29"}, {"Carrier", "Rapido Sul"}, {"Tracking", "BR482913077XY", :mono}, {"Total", "R$ 1.284,90", :total}]} theme={@theme} />
       </:body>
       <:action href="https://app.example.com/orders/1283">Track delivery</:action>
+      <:secondary href="https://app.example.com/orders/1283/details">View order</:secondary>
       <:footer><b>Acme Ltda</b><br />You got this e-mail because you placed an order.</:footer>
     </.email_layout>
     """)

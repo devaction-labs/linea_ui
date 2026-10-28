@@ -311,6 +311,25 @@ defmodule LineaUI.Components.Table do
 
   attr(:target, :any, default: nil, doc: "`phx-target` of the events.")
   attr(:expand_label, :string, default: nil, doc: "Header of the expand column.")
+
+  attr(:scroll_label, :string,
+    default: nil,
+    doc:
+      "Names the scrolling wrapper (`role=\"region\"` and `aria-label`) and makes it focusable, so a keyboard can scroll a height-bound or wide table."
+  )
+
+  attr(:sort_label, :string,
+    default: nil,
+    doc:
+      "Prefix of the `aria-label` of the sort buttons (\"Sort by\" gives \"Sort by Order\"); without it the button is named by its text."
+  )
+
+  attr(:row_label, :any,
+    default: nil,
+    doc:
+      "A function of the row (after `row_item`) returning the `aria-label` of its selection checkbox (\"Select order #2481\"); \"Select row\" when not given."
+  )
+
   attr(:wrapper_class, :any, default: nil, doc: "Classes of the scrolling wrapper.")
   attr(:class, :any, default: nil)
   attr(:rest, :global)
@@ -466,12 +485,20 @@ defmodule LineaUI.Components.Table do
     keys != [] and Enum.all?(keys, &(&1 in selected))
   end
 
+  defp row_label(%{row_label: nil}, _row), do: "Select row"
+  defp row_label(%{row_label: row_label, row_item: row_item}, row), do: row_label.(row_item.(row))
+
   defp key(%{row_key: nil, row_id: row_id}, row), do: row_id.(row)
   defp key(%{row_key: row_key, row_item: row_item}, row), do: row_key.(row_item.(row))
 
   defp render_table(%{expand: [_ | _]} = assigns) do
     ~H"""
-    <div class={@wrapper}>
+    <div
+      class={@wrapper}
+      role={@scroll_label && "region"}
+      tabindex={@scroll_label && "0"}
+      aria-label={@scroll_label}
+    >
       <table id={@id} class={@table_class} {@rest}>
         <.slot_head :if={!@headless} {assigns} />
         <tbody :for={{dom_id, row} <- expand_rows(assigns)} id={dom_id}>
@@ -513,7 +540,12 @@ defmodule LineaUI.Components.Table do
 
   defp render_table(assigns) do
     ~H"""
-    <div class={@wrapper}>
+    <div
+      class={@wrapper}
+      role={@scroll_label && "region"}
+      tabindex={@scroll_label && "0"}
+      aria-label={@scroll_label}
+    >
       <table id={@id} class={@table_class} {@rest}>
         <.slot_head :if={!@headless} {assigns} />
         <tbody
@@ -574,6 +606,7 @@ defmodule LineaUI.Components.Table do
             on_sort={@on_sort}
             target={@target}
             dir={sort_state(col[:sort_key], @sort_by, @sort_dir)}
+            sort_label={@sort_label}
           />
           <span :if={!(col[:sort_key] && @on_sort)}>{col[:label]}</span>
         </th>
@@ -590,6 +623,7 @@ defmodule LineaUI.Components.Table do
       type="button"
       class="flex w-full cursor-pointer items-center justify-between space-x-2 text-left font-semibold uppercase outline-hidden"
       phx-click={@on_sort}
+      aria-label={@sort_label && "#{@sort_label} #{@col[:label]}"}
       phx-value-column={@col.sort_key}
       phx-value-direction={next_dir(@dir)}
       phx-target={@target}
@@ -628,7 +662,7 @@ defmodule LineaUI.Components.Table do
           type="checkbox"
           class={@checkbox}
           checked={key(assigns, @row) in @selected}
-          aria-label="Select row"
+          aria-label={row_label(assigns, @row)}
           phx-click={@on_select}
           phx-value-id={key(assigns, @row)}
           phx-value-selected={bool(key(assigns, @row) not in @selected)}
@@ -662,7 +696,12 @@ defmodule LineaUI.Components.Table do
 
   defp render_composable(assigns) do
     ~H"""
-    <div class={@wrapper}>
+    <div
+      class={@wrapper}
+      role={@scroll_label && "region"}
+      tabindex={@scroll_label && "0"}
+      aria-label={@scroll_label}
+    >
       <table
         id={@id}
         class={@table_class}

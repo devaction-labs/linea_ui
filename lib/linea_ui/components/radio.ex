@@ -120,12 +120,18 @@ defmodule LineaUI.Components.Radio do
           merge([
             Choice.input_classes("form-radio", %{assigns | color: entry.color || assigns.color}),
             @shapes[assigns.shape],
+            invalid(assigns),
             assigns.radio_class,
             entry.class
           ])
       })
     end)
   end
+
+  defp invalid(%{errors: [_ | _], variant: variant}) when variant != "chip",
+    do: "border-error dark:border-error"
+
+  defp invalid(_assigns), do: nil
 
   defp entries(%{radio: [_ | _] = slots}) do
     Enum.map(slots, fn slot ->

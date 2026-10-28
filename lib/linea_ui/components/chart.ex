@@ -41,6 +41,9 @@ defmodule LineaUI.Components.Chart do
   | `kilo` | `1499` -> `1k`, values under 1000 unchanged |
   | `dollars` | `5` -> `$5` |
   | `dollars_thousands` | `5000` -> `$5k` |
+  | `brl` | `1284.9` -> `R$ 1.284,9` (pt-BR grouping) |
+  | `brl_thousands` | `6000` -> `R$ 6 mil`, `31500` -> `R$ 31,5 mil`, values under 1000 as `brl` |
+  | `number_br` | `1248` -> `1.248` |
   | `percent` | `12.5` -> `12.5%` |
   | `percent_round` | `12.5` -> `13%` |
   | `round` | `2.6` -> `3` |
@@ -70,7 +73,8 @@ defmodule LineaUI.Components.Chart do
   **chart**: `height` (a number, `"200px"`, a share of the width such as `"50%"`, or `"auto"`), `width` (a
   number or text such as `"120px"` that sizes the element; otherwise the chart fills it), `stacked`,
   `stackType` (`normal` or `100%`), `sparkline.enabled`, `dropShadow` (`enabled`, `top`, `left`, `blur`,
-  `color`, `opacity`), `animations.enabled`, `parentHeightOffset`. The entry animation is short and
+  `color`, `opacity`), `animations.enabled`, `parentHeightOffset`, `defaultLocale` (a locale such as `"pt-BR"`: the month and day names of date
+  labels and tooltips, `Fev 2026`, come from it; English without). The entry animation is short and
   is skipped under `prefers-reduced-motion`.
 
   **Data**: `series` (`[%{name, data}]` where `data` is numbers, `null` for a gap, `%{x, y}` or `[x, y]`;
@@ -106,7 +110,22 @@ defmodule LineaUI.Components.Chart do
   `markers.shape`, `itemMargin`, `onItemClick.toggleDataSeries`; clicking an entry hides its series),
   `tooltip` (`enabled`, `shared`, `intersect`, `theme` `light` or `dark`, `fillSeriesColor`, `x.show`,
   `x.format`, `x.formatter`, `y.formatter`, `y.title.formatter`) and `title.text`, which names the chart
-  for assistive technology. Each chart also carries a hidden table with its data.
+  for assistive technology. Each chart also carries a hidden table with its data; the `table_toggle`
+  attribute of `chart/1` adds a Chart / Table switch that shows that table in place of the drawing.
+
+  **Legend figures**: for the parts of a whole (donut, pie, radial bar, and stacked bar or area charts),
+  `legend.showValue` and `legend.showPercent` write `524 · 42%` after each name: the slice value or the
+  series total, and its share of the entries still shown (a hidden entry keeps its value only). Shape them
+  with `legend.value.formatter` (any built-in name, such as `number_br` or `brl`) and
+  `legend.percent.formatter` (receives 0 to 100; the default is the rounded number plus `%`). The
+  percent of a radial bar is not shown, since its values already are percentages.
+
+      legend: %{position: "right", showValue: true, showPercent: true, value: %{formatter: "number_br"}}
+
+  **Keyboard**: a chart that can be walked is a tab stop. On a line, area or bar chart the arrow keys, Home
+  and End move the cursor between the points (the tooltip, crosshair and markers follow); on a pie or donut
+  they move between the slices (the tooltip, the highlighted slice and the middle text follow); on a radar
+  between the spokes (the tooltip lists every series on the spoke). Escape or leaving the chart clears it.
 
   **Circular charts**: `plotOptions.pie` (`startAngle`, `endAngle`, `offsetX`, `offsetY`, `customScale`,
   `donut.size`, `donut.labels` with `show`, `name`, `value` and `total`, `dataLabels.offset`),
@@ -127,6 +146,8 @@ defmodule LineaUI.Components.Chart do
   """
 
   use LineaUI.Component
+
+  alias LineaUI.Components.Segmented
 
   @doc """
   Renders a chart. The `LineaUI.Chart` hook draws it into an inner element LiveView leaves
@@ -165,6 +186,12 @@ defmodule LineaUI.Components.Chart do
       "Options path to built-in formatter name, e.g. `%{\"yaxis.labels.formatter\" => \"thousands\"}`; see the table in the module doc. Applied before every draw."
   )
 
+  attr(:table_toggle, :any,
+    default: false,
+    doc:
+      "`true` adds a Chart / Table switch above the chart (a `segmented` control, answered in the browser) that shows the data table in place of the drawing. A map renames the texts: `%{chart: \"Gráfico\", table: \"Tabela\", label: \"Visualização\"}`."
+  )
+
   attr(:class, :any, default: nil)
   attr(:rest, :global)
 
@@ -173,6 +200,7 @@ defmodule LineaUI.Components.Chart do
       assigns
       |> assign(:json, encode(assigns.options))
       |> assign(:formatters_json, formatters_json(assigns.formatters))
+      |> assign(:toggle, toggle(assigns.table_toggle, assigns.id))
 
     ~H"""
     <div
@@ -181,11 +209,34 @@ defmodule LineaUI.Components.Chart do
       phx-hook="LineaUI.Chart"
       data-options={@json}
       data-formatters={@formatters_json}
+      phx-mounted={JS.ignore_attributes(["data-view"])}
       {@rest}
     >
+      <div :if={@toggle} data-chart-view class="mb-2 flex justify-end">
+        <Segmented.segmented
+          id={@toggle.id}
+          size="sm"
+          value="chart"
+          aria-label={@toggle.label}
+          options={[{@toggle.chart, "chart"}, {@toggle.table, "table"}]}
+        />
+      </div>
       <div id={@id <> "-canvas"} phx-update="ignore" data-chart-canvas></div>
     </div>
     """
+  end
+
+  defp toggle(off, _id) when off in [false, nil], do: nil
+
+  defp toggle(spec, id) do
+    spec = if is_map(spec), do: spec, else: %{}
+
+    %{
+      id: id <> "-view",
+      chart: Map.get(spec, :chart, "Chart"),
+      table: Map.get(spec, :table, "Table"),
+      label: Map.get(spec, :label, "View")
+    }
   end
 
   defp formatters_json(formatters) when map_size(formatters) == 0, do: nil

@@ -46,7 +46,7 @@ export const valueAxis = (config, visible, stacks, {horizontal, size}) => {
   const pattern = datePattern(nice.max - nice.min)
   const text = (value) =>
     time
-      ? formatDate(value, axis.labels?.format ?? pattern)
+      ? formatDate(value, axis.labels?.format ?? pattern, config.chart.defaultLocale)
       : (call(axis.labels?.formatter, value, {}) ?? (percent ? `${value}%` : value.toFixed(decimals).replace(/\.0+$/, "")))
   return {min: nice.min, max: nice.max, ticks: (instants ?? nice.ticks).map((value) => ({value, label: String(text(value))})), time, percent, text, decimals}
 }
@@ -63,15 +63,15 @@ const categoryText = (config, data, slot) => {
 
 const fontOf = (axis) => parseFloat(axis.labels?.style?.fontSize ?? 12)
 
-const timeText = (axis, kind, pattern) => {
+const timeText = (axis, kind, pattern, locale) => {
   const format = axis.labels?.format ?? pattern
-  const options = (value) => ({dateFormatter: (date, text) => formatDate(Number(date), text), timestamp: value})
+  const options = (value) => ({dateFormatter: (date, text) => formatDate(Number(date), text, locale), timestamp: value})
   return kind === "datetime"
-    ? (value) => String(call(axis.labels?.formatter, formatDate(value, format), value, options(value)) ?? formatDate(value, format))
+    ? (value) => String(call(axis.labels?.formatter, formatDate(value, format, locale), value, options(value)) ?? formatDate(value, format, locale))
     : (value) => String(call(axis.labels?.formatter, plain(value), value, {}) ?? plain(value))
 }
 
-const timedAxis = (axis, data, length, {measure, room}) => {
+const timedAxis = (axis, data, length, {measure, room, locale}) => {
   const found = extent(data.series.filter((series) => !series.hidden).flatMap((series) => series.points.map((point) => point.x))) ?? [0, 1]
   const [low, high] = [axis.min ?? found[0], axis.max ?? found[1]]
   const place = linear(low, high, 0, length)
@@ -79,7 +79,7 @@ const timedAxis = (axis, data, length, {measure, room}) => {
     data.kind === "datetime"
       ? timeTicks(low, high, axis.tickAmount ?? Math.max(2, Math.floor(length / 80)))
       : niceScale(low, high, {size: length * 0.7, limits: {tickAmount: axis.tickAmount}}).ticks
-  const text = timeText(axis, data.kind, datePattern(high - low))
+  const text = timeText(axis, data.kind, datePattern(high - low), locale)
   const half = (label) => measure(label.text, fontOf(axis)) / 2
   const labels = ticks
     .map((value) => ({slot: null, pos: place(value), text: text(value)}))
@@ -114,5 +114,5 @@ const slotAxis = (config, axis, data, length, {measure, banded}) => {
 export const categoryAxis = (config, data, length, {measure, horizontal, room = {left: 0, right: 0}}) => {
   const axis = horizontal ? config.yaxis : config.xaxis
   const banded = BAND_TYPES.includes(config.type)
-  return !banded && data.kind !== "category" ? timedAxis(axis, data, length, {measure, room}) : slotAxis(config, axis, data, length, {measure, banded})
+  return !banded && data.kind !== "category" ? timedAxis(axis, data, length, {measure, room, locale: config.chart.defaultLocale}) : slotAxis(config, axis, data, length, {measure, banded})
 }

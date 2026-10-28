@@ -126,6 +126,41 @@ defmodule LineaUI.Components.TableTest do
     assert ["asc", "none"] = html |> find(".table-sort-icon") |> LazyHTML.attribute("data-sort")
   end
 
+  test "labels name the scroll region, the sort buttons and each row's checkbox" do
+    html =
+      render(~H"""
+      <.table
+        id="t"
+        rows={[%{id: "1", n: "#1"}, %{id: "2", n: "#2"}]}
+        row_key={& &1.id}
+        on_select="select"
+        on_sort="sort"
+        scroll_label="Orders list"
+        sort_label="Sort by"
+        row_label={&"Select order #{&1.n}"}
+      >
+        <:col :let={row} label="Order" sort_key="n">{row.n}</:col>
+      </.table>
+      """)
+
+    assert ["region"] = html |> find("div[aria-label]") |> LazyHTML.attribute("role")
+    assert ["0"] = html |> find("div[aria-label]") |> LazyHTML.attribute("tabindex")
+    assert ["Sort by Order"] = html |> find("th button") |> LazyHTML.attribute("aria-label")
+
+    assert ["Select order #1", "Select order #2"] =
+             html |> find("tbody input") |> LazyHTML.attribute("aria-label")
+
+    plain =
+      render(~H"""
+      <.table id="t" rows={[%{id: "1"}]} row_key={& &1.id} on_select="select">
+        <:col :let={row}>{row.id}</:col>
+      </.table>
+      """)
+
+    assert [] = plain |> find("div[tabindex]") |> Enum.to_list()
+    assert ["Select row"] = plain |> find("tbody input") |> LazyHTML.attribute("aria-label")
+  end
+
   test "selection adds checkboxes with their keys" do
     html =
       render(~H"""

@@ -75,6 +75,26 @@ defmodule PreviewWeb.Pages.Fab do
         />
       </div>
     </.example>
+
+    <.example
+      title="Speed-dial"
+      text="Click the button; Escape closes and returns the focus, the arrows walk the actions."
+      class="mt-5"
+    >
+      <div id="stage-dial" class={[@stage, "h-80"]}>
+        <.fab_dial id="fab-dial" label="Quick actions" class={@offset}>
+          <:action label="New contact" phx-click="noop">
+            <.icon name="hero-user-plus" class="size-4.5" />
+          </:action>
+          <:action label="Upload a file" phx-click="noop">
+            <.icon name="hero-arrow-up-tray" class="size-4.5" />
+          </:action>
+          <:action label="New proposal" phx-click="noop">
+            <.icon name="hero-document-plus" class="size-4.5" />
+          </:action>
+        </.fab_dial>
+      </div>
+    </.example>
     """
   end
 

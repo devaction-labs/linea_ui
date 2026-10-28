@@ -24,6 +24,35 @@ defmodule PreviewWeb.Pages.OverlayAdditions do
      )}
   end
 
+  def handle_event("batch", _params, socket) do
+    send(self(), {:batch, 0})
+
+    {:noreply,
+     send_toast(socket,
+       id: "batch",
+       title: "Issuing 5 invoices",
+       steps: 5,
+       step: 0,
+       description: "NF-e of PV-1285 at SEFAZ"
+     )}
+  end
+
+  def handle_info({:batch, 5}, socket) do
+    {:noreply,
+     update_toast(socket, "batch",
+       step: 5,
+       title: "Batch issued",
+       description: "5 NF-e authorized"
+     )}
+  end
+
+  def handle_info({:batch, step}, socket) do
+    Process.send_after(self(), {:batch, step + 1}, 1200)
+
+    {:noreply,
+     update_toast(socket, "batch", step: step, description: "NF-e of PV-128#{5 + step} at SEFAZ")}
+  end
+
   def handle_info({:progress, value}, socket) when value >= 100 do
     {:noreply,
      update_toast(socket, "emit",
@@ -103,6 +132,7 @@ defmodule PreviewWeb.Pages.OverlayAdditions do
         Glow
       </.button>
       <.button id="toast-progress" color="primary" phx-click="progress">Progress</.button>
+      <.button id="toast-batch" color="primary" phx-click="batch">Batch in steps</.button>
       <.aura size="lg" class="w-72 rounded-xl">
         <div class="rounded-xl bg-white p-4 dark:bg-navy-700">Assistant checking the taxes…</div>
       </.aura>

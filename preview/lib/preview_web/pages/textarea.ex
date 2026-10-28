@@ -27,6 +27,43 @@ defmodule PreviewWeb.Pages.Textarea do
       <.textarea name="resizable" resizable placeholder=" Enter Text" />
     </.example>
     <.example
+      title="Counter"
+      text="counter shows the characters typed, updated without a server round trip. maxlength gives the limit; it warns near it and turns red past it."
+      class="mt-5 max-w-xl"
+    >
+      <.textarea
+        name="counter"
+        label="Description"
+        help="Shown in reports."
+        maxlength={200}
+        counter
+        rows={3}
+        value="Review the project scope with Ana Souza before Thursday's meeting."
+      />
+    </.example>
+    <.example
+      title="Minimum Counter"
+      text="min_length makes the counter ask for a minimum while the text is shorter."
+      class="mt-5 max-w-xl"
+    >
+      <.textarea
+        name="minimum"
+        label="Justification"
+        counter
+        min_length={20}
+        rows={3}
+        value="Ok"
+        errors={["Write at least 20 characters."]}
+      />
+    </.example>
+    <.example
+      title="Autogrow Textarea"
+      text="autogrow follows the text from rows up to max_rows lines, then scrolls."
+      class="mt-5 max-w-xl"
+    >
+      <.textarea name="autogrow" autogrow max_rows={8} rows={2} counter placeholder="Keep typing" />
+    </.example>
+    <.example
       title="Disabled Textarea"
       text="The textarea have their own style when disabled. Check out code for detail of usage."
       class="mt-5 max-w-xl"

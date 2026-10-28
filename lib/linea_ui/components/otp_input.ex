@@ -21,7 +21,8 @@ defmodule LineaUI.Components.OtpInput do
   browser (render `value=""` to clear a rejected code), and re-rendering what the browser sent
   does nothing.
 
-  A filled box has a primary border (`data-filled`); with errors it keeps the error border.
+  A filled box has a primary border (`data-filled`); with errors it keeps the error border, and
+  `state="success"` (a verified code) paints every box and the help line green.
 
   ## Accessibility
 
@@ -89,6 +90,11 @@ defmodule LineaUI.Components.OtpInput do
     default: false,
     doc: "Shows dots instead of the characters, like a password."
 
+  attr :state, :string,
+    default: nil,
+    values: [nil, "success"],
+    doc: "`success` for a verified code; `errors` still win."
+
   attr :disabled, :boolean, default: false
   attr :autofocus, :boolean, default: false, doc: "Focuses the first empty box when it mounts."
 
@@ -134,7 +140,7 @@ defmodule LineaUI.Components.OtpInput do
         |> Enum.map(fn {cell, number} ->
           %{number: number, cell: cell, separator: number in separators}
         end),
-      state: Control.state(nil, assigns.errors),
+      state: Control.state(assigns.state, assigns.errors),
       callback: Overlay.callback(assigns.on_complete, assigns.id, assigns.target)
     )
   end
@@ -245,6 +251,7 @@ defmodule LineaUI.Components.OtpInput do
   end
 
   defp filled("error"), do: nil
+  defp filled("success"), do: nil
   defp filled(_state), do: "data-filled:border-primary dark:data-filled:border-accent"
 
   defp mask_type(true), do: "password"

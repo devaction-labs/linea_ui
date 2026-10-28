@@ -57,6 +57,26 @@ defmodule PreviewWeb.Pages.Checkbox do
       <.checkbox name="disabled-on" label="Checked" color="primary" disabled checked />
     </.example>
     <.example
+      title="Checkbox Error"
+      text="Errors paint the unchecked boxes with the error border and show the message below."
+      class="mt-5 max-w-2xl"
+    >
+      <.checkbox
+        name="terms"
+        label="I accept the terms"
+        color="primary"
+        errors={["You must accept the terms to continue."]}
+      />
+      <.checkbox_group
+        name="channels[]"
+        variant="outline"
+        color="primary"
+        options={["E-mail", "WhatsApp"]}
+        errors={["Pick at least one channel."]}
+        class="mt-4"
+      />
+    </.example>
+    <.example
       title="Checkbox Size"
       text="The checkbox component can have various sizes. Check out code for detail of usage."
       class="inline-space mt-5 flex max-w-2xl flex-wrap items-center"

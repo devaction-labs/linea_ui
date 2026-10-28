@@ -28,6 +28,21 @@ defmodule PreviewWeb.Pages.ExtensionClipboard do
       <:lead><code class="inline-code">$clipboard</code>{" "}</:lead>
       <.clipboard_input id="clipboardContent2" placeholder="Enter text" />
     </.narrow>
+    <.narrow title="Copied state" text="With copied_label the button turns green and says so for two seconds." class="mt-5">
+      <div class="flex flex-wrap gap-3">
+        <.clipboard id="copiedState1" value="mix phx.new demo" copied_label="Copied">Copy</.clipboard>
+        <.clipboard id="copiedState2" value="mix phx.new demo" variant="outline" copied_label="Copied">Copy</.clipboard>
+      </div>
+    </.narrow>
+
+    <.narrow title="Icon and icon only" text="icon puts the copy icon before the text (a check while copied); icon_only is a square button for a snippet." class="mt-5">
+      <div class="flex flex-wrap items-center gap-3">
+        <.clipboard id="iconBtn" value="mix phx.new demo" icon copied_label="Copied">Copy</.clipboard>
+        <code id="iconSnippet" class="rounded-lg bg-slate-150 px-3 py-2 text-sm dark:bg-navy-600">mix phx.new demo</code>
+        <.clipboard id="iconOnly" from="#iconSnippet" icon_only variant="flat" aria-label="Copy command" />
+      </div>
+      <.clipboard_input id="iconField" value="https://app.example.com/invite/ana" copied_label="Copied" icon class="mt-4 max-w-xl" />
+    </.narrow>
     """
   end
 end

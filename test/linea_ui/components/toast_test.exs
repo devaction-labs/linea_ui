@@ -194,6 +194,17 @@ defmodule LineaUI.Components.ToastTest do
              Toast.changes("t", value: 64, aura: :dual)
   end
 
+  test "a toast in steps carries steps and step, checked" do
+    assert %{"steps" => 5, "step" => 2} = Toast.payload("Batch", id: "b", steps: 5, step: 2)
+    assert %{"steps" => nil, "step" => nil} = Toast.payload("x", [])
+    assert %{"id" => "b", "step" => 3} = Toast.changes("b", step: 3)
+    assert %{"steps" => 4} = Toast.changes("b", steps: 4)
+    assert_raise ArgumentError, ~r/steps/, fn -> Toast.payload("x", steps: 0) end
+    assert_raise ArgumentError, ~r/steps/, fn -> Toast.payload("x", steps: "5") end
+    assert_raise ArgumentError, ~r/step/, fn -> Toast.payload("x", steps: 5, step: -1) end
+    assert_raise ArgumentError, ~r/step/, fn -> Toast.changes("b", step: 1.5) end
+  end
+
   test "aura wraps any content in the ring of light" do
     html =
       render(~H"""

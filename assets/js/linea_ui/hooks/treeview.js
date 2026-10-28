@@ -56,13 +56,19 @@ const Treeview = {
       this.last[id] = next.lastServer
       this.expected[id] = next.open
       item.open === next.open || (item.open = next.open)
+      this.expose(item)
     })
+  },
+
+  expose(item) {
+    item.querySelector(":scope > summary")?.setAttribute("aria-expanded", String(item.open))
   },
 
   toggled(event) {
     const item = event.target
     const id = item.dataset?.treeItem
     const byPerson = id !== undefined && item.open !== this.expected[id]
+    id !== undefined && this.expose(item)
     byPerson && this.chose(item, id)
   },
 

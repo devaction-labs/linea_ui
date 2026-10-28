@@ -72,7 +72,96 @@ defmodule PreviewWeb.Pages.Apexcharts do
         />
       </div>
     </div>
+
+    <.example
+      title="pt-BR labels"
+      text="chart.defaultLocale names the months of date labels and tooltips; the brl_thousands and number_br formatters group the numbers the Brazilian way. Click the chart (or Tab to it) and use the arrow keys to move the cursor."
+      class="mt-5 max-w-xl"
+    >
+      <.chart
+        id="chart-brl"
+        options={brl()}
+        formatters={%{"yaxis.labels.formatter" => "brl_thousands", "tooltip.y.formatter" => "brl"}}
+      />
+    </.example>
+
+    <.example
+      title="View toggle and legend figures"
+      text="table_toggle adds a Chart / Table switch that swaps the drawing for its data table in the browser. legend.showValue and showPercent write value and share after each name (524 · 42%). Tab to a chart and use the arrow keys: on the donut they move between slices, on the radar between spokes."
+      class="mt-5 max-w-xl"
+    >
+      <.chart
+        id="chart-channels"
+        table_toggle={%{chart: "Gráfico", table: "Tabela", label: "Visualização"}}
+        options={channels()}
+        formatters={%{"tooltip.y.formatter" => "number_br"}}
+      />
+      <.chart
+        id="chart-lines"
+        class="mt-8"
+        table_toggle
+        options={lines()}
+        formatters={%{"yaxis.labels.formatter" => "brl_thousands", "legend.value.formatter" => "brl_thousands"}}
+      />
+      <.chart id="chart-radar-keys" class="mt-8" options={radar()} />
+    </.example>
     """
+  end
+
+  defp channels do
+    %{
+      chart: %{type: "donut", height: 240, defaultLocale: "pt-BR"},
+      labels: ["Site", "Balcão", "WhatsApp"],
+      series: [664, 359, 261],
+      dataLabels: %{enabled: false},
+      legend: %{
+        position: "right",
+        showValue: true,
+        showPercent: true,
+        value: %{formatter: "number_br"}
+      },
+      plotOptions: %{
+        pie: %{
+          donut: %{
+            labels: %{show: true, total: %{show: true, label: "pedidos", formatter: "total"}}
+          }
+        }
+      }
+    }
+  end
+
+  defp lines do
+    %{
+      chart: %{type: "bar", height: 260, stacked: true, toolbar: @no_toolbar, defaultLocale: "pt-BR"},
+      series: [
+        %{name: "Produtos", data: [18_000, 21_000, 19_500, 22_000, 25_000, 27_000]},
+        %{name: "Serviços", data: [8_000, 9_000, 7_500, 10_000, 11_000, 12_000]},
+        %{name: "Assinaturas", data: [4_000, 5_000, 6_000, 7_000, 8_000, 9_000]}
+      ],
+      xaxis: %{categories: ~w(Jan Fev Mar Abr Mai Jun)},
+      dataLabels: %{enabled: false},
+      legend: %{position: "bottom", showValue: true, showPercent: true}
+    }
+  end
+
+  defp brl do
+    %{
+      chart: %{type: "area", height: 260, toolbar: @no_toolbar, defaultLocale: "pt-BR"},
+      series: [
+        %{
+          name: "Receita",
+          data: [
+            %{x: 1_767_225_600_000, y: 18_000},
+            %{x: 1_769_904_000_000, y: 28_000},
+            %{x: 1_772_323_200_000, y: 24_500},
+            %{x: 1_775_001_600_000, y: 31_000}
+          ]
+        }
+      ],
+      xaxis: %{type: "datetime", labels: %{format: "MMM yyyy"}},
+      tooltip: %{x: %{format: "MMM yyyy"}},
+      dataLabels: %{enabled: false}
+    }
   end
 
   attr :title, :string, required: true

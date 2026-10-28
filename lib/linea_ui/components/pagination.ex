@@ -52,6 +52,8 @@ defmodule LineaUI.Components.Pagination do
 
   @shapes %{"rounded" => "rounded-lg", "pill" => "rounded-full"}
 
+  @focus "focus-visible:relative focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-primary/55 dark:focus-visible:outline-accent/55"
+
   @hover "hover:bg-slate-300 focus:bg-slate-300 active:bg-slate-300/80 dark:hover:bg-navy-450 dark:focus:bg-navy-450 dark:active:bg-navy-450/90"
 
   @fill "bg-slate-150 dark:bg-navy-500"
@@ -151,6 +153,12 @@ defmodule LineaUI.Components.Pagination do
   attr(:arrows, :boolean, default: true, doc: "Show the previous and next arrows.")
   attr(:prev_label, :string, default: "Previous page")
   attr(:next_label, :string, default: "Next page")
+
+  attr(:page_label, :string,
+    default: "Page %{page}",
+    doc: "`aria-label` of each page; `%{page}` is replaced."
+  )
+
   attr(:class, :any, default: nil)
   attr(:rest, :global, default: %{"aria-label": "Pagination"})
 
@@ -285,7 +293,7 @@ defmodule LineaUI.Components.Pagination do
             current={kind == :page and number == @page}
             class={entry_class(assigns, kind, number, disabled)}
             icon_class={@icon[@size]}
-            label={entry_label(assigns, kind)}
+            label={entry_label(assigns, kind, number)}
             action={action(assigns, kind, number, disabled)}
           />
         </li>
@@ -307,10 +315,10 @@ defmodule LineaUI.Components.Pagination do
     do: [@item[assigns.size], @shapes[assigns.shape], divided_fill(assigns)]
 
   defp entry_class(%{page: page} = assigns, :page, page, _disabled),
-    do: [@item[assigns.size], @shapes[assigns.shape], @current]
+    do: [@item[assigns.size], @shapes[assigns.shape], @current, @focus]
 
   defp entry_class(assigns, :page, _number, _disabled),
-    do: [@item[assigns.size], @shapes[assigns.shape], divided_fill(assigns), @hover]
+    do: [@item[assigns.size], @shapes[assigns.shape], divided_fill(assigns), @hover, @focus]
 
   defp entry_class(assigns, _arrow, _number, disabled),
     do: [
@@ -318,15 +326,20 @@ defmodule LineaUI.Components.Pagination do
       @shapes[assigns.shape],
       divided_fill(assigns),
       @hover,
+      @focus,
       disabled && @disabled
     ]
 
   defp divided_fill(%{divided: true}), do: @fill
   defp divided_fill(_assigns), do: nil
 
-  defp entry_label(assigns, :prev), do: assigns.prev_label
-  defp entry_label(assigns, :next), do: assigns.next_label
-  defp entry_label(_assigns, _kind), do: nil
+  defp entry_label(assigns, :prev, _number), do: assigns.prev_label
+  defp entry_label(assigns, :next, _number), do: assigns.next_label
+
+  defp entry_label(assigns, :page, number),
+    do: String.replace(assigns.page_label, "%{page}", Integer.to_string(number))
+
+  defp entry_label(_assigns, _kind, _number), do: nil
 
   defp action(_assigns, :gap, _number, _disabled), do: :none
   defp action(_assigns, _kind, _number, true), do: :none
@@ -382,6 +395,7 @@ defmodule LineaUI.Components.Pagination do
       aria-label={@label}
       aria-current={@current && "page"}
       aria-disabled={@kind in [:prev, :next] && "true"}
+      aria-hidden={@kind == :gap && "true"}
     ><.entry_content kind={@kind} number={@number} icon_class={@icon_class} /></span>
     """
   end

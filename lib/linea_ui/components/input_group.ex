@@ -39,6 +39,12 @@ defmodule LineaUI.Components.InputGroup do
       "flex shrink-0 items-center justify-center border border-slate-300 bg-slate-150 px-3.5 font-inter text-slate-800 dark:border-navy-450 dark:bg-navy-500 dark:text-navy-100"
   }
 
+  @addon_sizes %{
+    "sm" => "px-3 text-xs-plus",
+    "md" => nil,
+    "lg" => "px-4 text-base"
+  }
+
   @doc """
   Renders the row. `label` adds a caption above it.
   """
@@ -75,16 +81,20 @@ defmodule LineaUI.Components.InputGroup do
   end
 
   @doc """
-  A text or icon box at either end (or between the inputs) of an `input_group`.
+  A text or icon box at either end (or between the inputs) of an `input_group`. `size` sets the text of
+  the box to match the `size` of the inputs next to it.
   """
   attr(:variant, :string, default: "outline", values: ~w(outline filled))
+  attr(:size, :string, default: "md", values: ~w(sm md lg))
   attr(:class, :any, default: nil)
   attr(:rest, :global)
   slot(:inner_block, required: true)
 
   def input_group_addon(assigns) do
+    assigns = assign(assigns, :addon_sizes, @addon_sizes)
+
     ~H"""
-    <span class={merge([addon_class(@variant), @class])} {@rest}>
+    <span class={merge([addon_class(@variant), @addon_sizes[@size], @class])} {@rest}>
       <span>{render_slot(@inner_block)}</span>
     </span>
     """

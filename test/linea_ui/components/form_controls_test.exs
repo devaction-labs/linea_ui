@@ -57,6 +57,46 @@ defmodule LineaUI.Components.FormControlsTest do
       refute "resize-none" in classes
     end
 
+    test "counter shows the length, the limit and a tone, wired to the hook" do
+      html =
+        render(~H'<.textarea name="t" value="hello" maxlength={10} counter />')
+
+      assert [ta] =
+               find(html, "textarea[phx-hook='LineaUI.Textarea'][data-max='10']")
+               |> Enum.to_list()
+
+      assert [id] = LazyHTML.attribute(ta, "id")
+      assert [_] = find(html, "textarea[aria-describedby='#{id}-counter']") |> Enum.to_list()
+
+      assert [counter] =
+               find(html, "##{id}-counter[aria-live=polite][data-tone=ok]") |> Enum.to_list()
+
+      assert LazyHTML.text(counter) =~ "5 / 10"
+
+      html = render(~H'<.textarea name="t" value="123456789" maxlength={10} counter />')
+      assert [_] = find(html, "[aria-live=polite][data-tone=warn]") |> Enum.to_list()
+
+      html = render(~H'<.textarea name="t" value="ab" counter min_length={20} />')
+      assert [c] = find(html, "[aria-live=polite][data-tone=bad]") |> Enum.to_list()
+      assert LazyHTML.text(c) =~ "2 / 20 mín."
+
+      html = render(~H'<.textarea name="t" />')
+      assert [] = find(html, "[aria-live]") |> Enum.to_list()
+      assert [] = find(html, "[phx-hook]") |> Enum.to_list()
+    end
+
+    test "autogrow hooks the textarea, drops the handle and caps the rows" do
+      html = render(~H'<.textarea name="t" autogrow resizable max_rows={6} />')
+
+      assert [_] =
+               find(html, "textarea[phx-hook][data-autogrow][data-max-rows='6']")
+               |> Enum.to_list()
+
+      classes = classes(html, "textarea")
+      assert "resize-none" in classes
+      assert "overflow-hidden" in classes
+    end
+
     test "header and footer frame the textarea" do
       html =
         render(~H"""
@@ -120,6 +160,23 @@ defmodule LineaUI.Components.FormControlsTest do
       assert "mt-1.5" in classes
       assert "bg-slate-150" in classes(html, "div.flex > span")
       assert [_] = find(html, "div.flex > input[name=p]") |> Enum.to_list()
+    end
+
+    test "addon size follows the inputs" do
+      html =
+        render(~H"""
+        <.input_group>
+          <.input_group_addon size="sm">@</.input_group_addon>
+          <.input_group_addon size="lg">@</.input_group_addon>
+          <.input_group_addon>@</.input_group_addon>
+        </.input_group>
+        """)
+
+      [sm, lg, md] = find(html, "div.flex > span") |> LazyHTML.attribute("class")
+      assert sm =~ "text-xs-plus"
+      assert lg =~ "text-base"
+      refute md =~ "text-xs-plus"
+      refute md =~ "text-base"
     end
 
     test "pill shape" do

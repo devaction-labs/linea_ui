@@ -167,4 +167,64 @@ defmodule LineaUI.Components.FabTest do
     html = render(~H|<.fab id="f" label="Go" />|)
     assert find(html, "#f .bg-error") |> Enum.count() == 0
   end
+
+  describe "fab_dial" do
+    defp dial(opts \\ %{}) do
+      assigns = %{
+        position: opts[:position] || "bottom-right",
+        open: opts[:open] || false,
+        __changed__: nil
+      }
+
+      Phoenix.LiveViewTest.rendered_to_string(~H"""
+      <.fab_dial
+        id="quick"
+        label="Quick actions"
+        position={@position}
+        open={@open}
+      >
+        <:action label="New contact" phx-click="new_contact"><i id="ic-1">1</i></:action>
+        <:action label="Upload" href="/upload"><i>2</i></:action>
+        <:action label="Locked" phx-click="x" disabled><i>3</i></:action>
+      </.fab_dial>
+      """)
+    end
+
+    test "a closed menu of labelled items behind an aria-expanded button" do
+      html = dial()
+
+      assert attr_of(html, "#quick", "phx-hook") == ["LineaUI.FabDial"]
+      assert attr_of(html, "#quick", "data-state") == ["closed"]
+      assert attr_of(html, "#quick-trigger", "aria-expanded") == ["false"]
+      assert attr_of(html, "#quick-trigger", "aria-haspopup") == ["menu"]
+      assert attr_of(html, "#quick-trigger", "aria-controls") == ["quick-menu"]
+      assert attr_of(html, "#quick-trigger", "aria-label") == ["Quick actions"]
+      assert attr_of(html, "#quick-menu", "role") == ["menu"]
+      assert attr_of(html, "#quick-menu", "aria-label") == ["Quick actions"]
+      assert find(html, "#quick-menu [role=menuitem]") |> Enum.count() == 3
+      assert find(html, "#quick-trigger svg path") |> Enum.count() == 1
+    end
+
+    test "an action is a button with phx-click, a link with href, or disabled" do
+      html = dial()
+
+      assert attr_of(html, "button[role=menuitem]", "phx-click") == ["new_contact", "x"]
+
+      assert attr_of(html, "button[role=menuitem]", "disabled") |> length() == 1
+
+      assert attr_of(html, "a[role=menuitem]", "href") == ["/upload"]
+      assert find(html, "#ic-1") |> Enum.count() == 1
+
+      assert find(html, "button[role=menuitem]") |> Enum.at(0) |> LazyHTML.text() =~ "New contact"
+    end
+
+    test "open sets the initial state and the side follows the corner" do
+      html = dial(%{open: true, position: "top-left"})
+
+      assert attr_of(html, "#quick", "data-state") == ["open"]
+      assert attr_of(html, "#quick", "data-side") == ["down"]
+      assert attr_of(html, "#quick-trigger", "aria-expanded") == ["true"]
+      assert attr_of(dial(), "#quick", "data-side") == ["up"]
+    end
+  end
 end

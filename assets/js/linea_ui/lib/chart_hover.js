@@ -42,7 +42,7 @@ const titleOf = (p, slot) => {
   const spec = config.tooltip.x ?? {}
   const point = data.series.map((series) => pointAt(series, slot)).find(Boolean)
   const raw = data.kind === "category" ? data.labels[slot] : point?.x
-  const text = data.kind === "datetime" ? formatDate(raw, spec.format ?? datePattern(p.cat.span ?? 3 * 86400000)) : (data.labels[slot] ?? plain(raw))
+  const text = data.kind === "datetime" ? formatDate(raw, spec.format ?? datePattern(p.cat.span ?? 3 * 86400000), config.chart.defaultLocale) : (data.labels[slot] ?? plain(raw))
   return spec.show === false ? "" : String(call(spec.formatter, raw, {}) ?? text)
 }
 
@@ -56,7 +56,7 @@ const nameText = (p, series, point) =>
   String(call(p.config.tooltip.y?.title?.formatter, series.name, {seriesIndex: series.index, dataPointIndex: point.slot}) ?? series.name)
 
 const rangeText = (p, point) => {
-  const format = (value) => (p.value.time ? formatDate(value, p.config.tooltip.x?.format ?? "dd MMM yyyy") : plain(value))
+  const format = (value) => (p.value.time ? formatDate(value, p.config.tooltip.x?.format ?? "dd MMM yyyy", p.config.chart.defaultLocale) : plain(value))
   return `${format(point.start)} - ${format(point.end)}`
 }
 
@@ -141,3 +141,9 @@ export const hover = (p, boxes, x, y) => {
         yTip: yTipAt(p, y),
       }
 }
+
+/** The slots a keyboard can visit, in order: the ones any visible series has a point in. */
+export const slotsOf = (p) => [...new Set(p.visible.flatMap((series) => series.points.map((point) => point.slot)))].sort((a, b) => a - b)
+
+/** The pointer position (SVG pixels) in the middle of a slot, for `hover` to answer as it does to the pointer. */
+export const slotPoint = (p, slot) => (p.horizontal ? {x: p.plot.x + p.plot.w / 2, y: p.across(slot)} : {x: p.across(slot), y: p.plot.y + p.plot.h / 2})

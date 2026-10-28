@@ -82,8 +82,18 @@ defmodule LineaUI.Components.Checkbox do
   end
 
   defp classes(assigns) do
-    merge([Choice.classes("form-checkbox", assigns), @shapes[assigns.shape], assigns.class])
+    merge([
+      Choice.classes("form-checkbox", assigns),
+      @shapes[assigns.shape],
+      invalid(assigns),
+      assigns.class
+    ])
   end
+
+  defp invalid(%{errors: [_ | _], variant: variant}) when variant != "chip",
+    do: "border-error dark:border-error"
+
+  defp invalid(_assigns), do: nil
 
   defp render_checkbox(assigns) do
     ~H"""
@@ -236,7 +246,11 @@ defmodule LineaUI.Components.Checkbox do
   defp option(value), do: option({value, value})
 
   defp group_input_classes(assigns) do
-    merge([Choice.input_classes("form-checkbox", assigns), @shapes[assigns.shape]])
+    merge([
+      Choice.input_classes("form-checkbox", assigns),
+      @shapes[assigns.shape],
+      invalid(assigns)
+    ])
   end
 
   defp render_group(assigns) do

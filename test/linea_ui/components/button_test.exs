@@ -25,11 +25,11 @@ defmodule LineaUI.Components.ButtonTest do
   end
 
   test "icon makes a square button" do
-    assert "size-9" in classes(render(~H"<.button icon aria-label=\"x\">x</.button>"), "button")
+    assert "size-9" in classes(render(~H(<.button icon aria-label="x">x</.button>)), "button")
   end
 
   test "navigate renders a link, and disabled marks it" do
-    html = render(~H"<.button navigate=\"/orders\" disabled>Orders</.button>")
+    html = render(~H(<.button navigate="/orders" disabled>Orders</.button>))
     assert [_] = find(html, "a[href='/orders'][aria-disabled=true]") |> Enum.to_list()
   end
 

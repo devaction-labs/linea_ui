@@ -48,6 +48,7 @@ defmodule LineaUI.Components.Email do
     card: "#ffffff",
     card_clear: "rgba(255,255,255,0)",
     hair: "#e9eef5",
+    edge: "#cbd5e1",
     ink: "#1e293b",
     body: "#475569",
     muted: "#64748b",
@@ -63,6 +64,7 @@ defmodule LineaUI.Components.Email do
     card: "#26334d",
     card_clear: "rgba(38,51,77,0)",
     hair: "#384766",
+    edge: "#4a5b80",
     ink: "#e7e9ef",
     body: "#c2c9d6",
     muted: "#a3adc2",
@@ -112,6 +114,12 @@ defmodule LineaUI.Components.Email do
   slot :body, required: true, doc: "The text and the helpers."
 
   slot :action, doc: "The main button; the label is the content." do
+    attr :href, :string, required: true
+  end
+
+  slot :secondary,
+    doc:
+      "A quiet outlined button beside the main one (\"View order\" next to \"Track delivery\"); the label is the content." do
     attr :href, :string, required: true
   end
 
@@ -257,6 +265,7 @@ defmodule LineaUI.Components.Email do
                           <.button_row
                             :for={action <- @action}
                             action={action}
+                            secondary={List.first(@secondary)}
                             p={@p}
                             sans={@sans}
                             alt_text={@alt_text}
@@ -287,12 +296,17 @@ defmodule LineaUI.Components.Email do
   end
 
   attr :action, :any, required: true
+  attr :secondary, :any, default: nil
   attr :p, :map, required: true
   attr :sans, :string, required: true
   attr :alt_text, :string, required: true
 
   defp button_row(assigns) do
-    assigns = assign(assigns, href: safe_url(assigns.action.href))
+    assigns =
+      assign(assigns,
+        href: safe_url(assigns.action.href),
+        secondary_href: assigns.secondary && safe_url(assigns.secondary.href)
+      )
 
     ~H"""
     <table role="presentation" border="0" cellpadding="0" cellspacing="0" style="margin:22px 0 4px;">
@@ -309,6 +323,22 @@ defmodule LineaUI.Components.Email do
             style={"display:inline-block;padding:12px 22px;border-radius:9px;color:#ffffff;font-family:#{@sans};font-size:14.5px;line-height:22px;font-weight:500;letter-spacing:.01em;text-decoration:none;"}
           >
             {render_slot(@action)}&nbsp;&nbsp;&rarr;
+          </a>
+        </td>
+        <td :if={@secondary} width="8" style="width:8px;font-size:1px;line-height:1px;">&nbsp;</td>
+        <td
+          :if={@secondary}
+          class="em-edge"
+          align="center"
+          style={"border-radius:9px;border:1px solid #{@p.edge};"}
+        >
+          <a
+            href={@secondary_href}
+            target="_blank"
+            class="em-ink"
+            style={"display:inline-block;padding:11px 21px;border-radius:9px;color:#{@p.ink};font-family:#{@sans};font-size:14.5px;line-height:22px;font-weight:500;letter-spacing:.01em;text-decoration:none;"}
+          >
+            {render_slot(@secondary)}
           </a>
         </td>
       </tr>
@@ -575,6 +605,7 @@ defmodule LineaUI.Components.Email do
       {".em-soft", "background-color:#{p.soft} !important;color:#{p.primary_text} !important"},
       {".em-panel", "background-color:#{p.panel} !important;border-color:#{p.hair} !important"},
       {".em-line", "border-color:#{p.hair} !important"},
+      {".em-edge", "border-color:#{p.edge} !important"},
       {".em-primary",
        "background-color:#{p.primary} !important;border-color:#{p.primary} !important"},
       {".em-logo-light", "display:none !important"},

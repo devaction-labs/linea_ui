@@ -1,3 +1,5 @@
+const PT_NUMBER = new Intl.NumberFormat("pt-BR", {maximumFractionDigits: 2})
+
 export const FORMATTERS = {
   thousands: (value) => `${value / 1000}k`,
   thousands_round: (value) => `${Math.round(value / 1000)}k`,
@@ -5,6 +7,9 @@ export const FORMATTERS = {
   kilo: (value) => (value >= 1000 ? Math.round(value / 1000) + "k" : value),
   dollars: (value) => `$${value}`,
   dollars_thousands: (value) => `$${value / 1000}k`,
+  brl: (value) => `R$ ${PT_NUMBER.format(value)}`,
+  brl_thousands: (value) => (Math.abs(value) >= 1000 ? `R$ ${PT_NUMBER.format(Math.round(value / 100) / 10)} mil` : `R$ ${PT_NUMBER.format(value)}`),
+  number_br: (value) => PT_NUMBER.format(value),
   percent: (value) => `${value}%`,
   percent_round: (value) => `${Math.round(value)}%`,
   round: (value) => `${Math.round(value)}`,

@@ -22,6 +22,22 @@ defmodule LineaUI.Components.TreeviewTest do
     assert "space-y-1" in classes(html, "ul#t")
   end
 
+  test "branches say whether they are open and an item can be selected" do
+    html =
+      render(~H"""
+      <.treeview id="t">
+        <.tree_item id="a" label="A" expanded><.tree_item id="b" label="B" selected /></.tree_item>
+        <.tree_item id="c" label="C"><.tree_item id="d" label="D" /></.tree_item>
+      </.treeview>
+      """)
+
+    assert [_] = find(html, "details#a > summary[aria-expanded=true]") |> Enum.to_list()
+    assert [_] = find(html, "details#c > summary[aria-expanded=false]") |> Enum.to_list()
+    assert [_] = find(html, "[data-tree-leaf=b][aria-selected=true]") |> Enum.to_list()
+    assert [] = find(html, "[data-tree-leaf=d][aria-selected]") |> Enum.to_list()
+    assert "bg-primary/10" in classes(html, "[data-tree-leaf=b]")
+  end
+
   test "a closed branch and a leaf that has only an icon" do
     html =
       render(~H"""

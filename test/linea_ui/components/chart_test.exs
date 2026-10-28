@@ -44,6 +44,36 @@ defmodule LineaUI.Components.ChartTest do
     assert Jason.decode!(json) == %{"yaxis.labels.formatter" => "thousands"}
     assert [] = find(html, "#b[data-formatters]") |> Enum.to_list()
   end
+
+  defp labels(buttons),
+    do: buttons |> Enum.map(&(&1 |> LazyHTML.text() |> String.trim()))
+
+  test "table_toggle adds a pressed-state Chart / Table switch, and is absent by default" do
+    html =
+      render(~H"""
+      <.chart id="a" options={%{}} />
+      <.chart id="b" options={%{}} table_toggle />
+      <.chart
+        id="c"
+        options={%{}}
+        table_toggle={%{chart: "Gráfico", table: "Tabela", label: "Visualização"}}
+      />
+      """)
+
+    assert find(html, "#a [data-chart-view]") |> Enum.to_list() == []
+
+    assert find(html, "#b [data-chart-view] button") |> labels() == ["Chart", "Table"]
+
+    assert find(html, "#b-view") |> LazyHTML.attribute("aria-label") == ["View"]
+
+    assert find(html, "#b-view button") |> LazyHTML.attribute("aria-pressed") == ["true", "false"]
+    assert find(html, "#b-view button") |> LazyHTML.attribute("data-value") == ["chart", "table"]
+
+    assert find(html, "#c-view") |> LazyHTML.attribute("aria-label") == ["Visualização"]
+    assert find(html, "#c-view button") |> labels() == ["Gráfico", "Tabela"]
+
+    assert find(html, "#c-canvas[phx-update=ignore]") |> Enum.to_list() |> length() == 1
+  end
 end
 
 defmodule LineaUI.Components.ChartLiveTest do

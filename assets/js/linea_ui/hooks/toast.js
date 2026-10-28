@@ -17,6 +17,7 @@ import {
   progressOf,
   resumeAfter,
   stack,
+  stepsOf,
   surfaceFor,
   timeLeft,
   timerFor,
@@ -249,14 +250,40 @@ export default {
       kind && el.setAttribute("aria-busy", String(kind === "loading"))
       const icon = kind && this.el.querySelector(`template[data-toast-icon="${kind}"]`)
       icon && el.append(this.part("span", "toast-icon", icon.content.firstElementChild.cloneNode(true)))
-      const body = this.part("div", "toast-body")
-      input.message && body.append(this.part("p", "toast-title", input.message))
-      input.description && body.append(this.part("p", "toast-desc", input.description))
+      const steps = stepsOf(input)
+      const body = steps ? this.stepsBody(el, input, steps) : this.textBody(input)
       const actions = (input.actions ?? []).map((action) => this.action(action, toast))
       el.append(body)
       actions.length > 0 && el.append(this.part("div", "toast-actions", ...actions))
       progress === null || input.bar || el.append(this.part("span", "toast-pct", `${Math.round(progress)}%`))
       closeFor(input, toast.duration) && el.append(this.closeButton())
+    },
+
+    stepsBody(el, input, steps) {
+      el.classList.add("has-steps")
+      el.dataset.state = steps.done ? "done" : "running"
+      const body = this.part("div", "toast-body")
+      const head = this.part("div", "toast-steps-head", this.part("p", "toast-title", input.message ?? ""), this.part("span", "toast-steps-count", `${steps.step}/${steps.total}`))
+      const segs = this.part("span", "toast-segs", ...Array.from({length: steps.total}, (_, index) => this.seg(index, steps)))
+      segs.style.setProperty("--toast-steps", String(steps.total))
+      segs.setAttribute("role", "progressbar")
+      Object.entries({"aria-valuemin": 0, "aria-valuemax": steps.total, "aria-valuenow": steps.step, "aria-label": input.message ?? ""}).forEach(([name, value]) => segs.setAttribute(name, String(value)))
+      body.append(head, segs)
+      input.description && body.append(this.part("p", "toast-desc", input.description))
+      return body
+    },
+
+    seg(index, steps) {
+      const seg = document.createElement("span")
+      seg.dataset.seg = index < steps.step || steps.done ? "done" : index === steps.step ? "current" : "todo"
+      return seg
+    },
+
+    textBody(input) {
+      const body = this.part("div", "toast-body")
+      input.message && body.append(this.part("p", "toast-title", input.message))
+      input.description && body.append(this.part("p", "toast-desc", input.description))
+      return body
     },
 
     part(tag, className, ...children) {

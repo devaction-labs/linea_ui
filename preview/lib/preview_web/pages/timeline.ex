@@ -148,6 +148,21 @@ defmodule PreviewWeb.Pages.Timeline do
         <div class="mt-5">{advanced(%{line_space: true, tags: @tags, icons: @icons})}</div>
       </div>
     </.example>
+    <.example title="Timeline with days" class="">
+      <div class="max-w-xl">
+        <p>A <code>timeline_day</code> splits the events by day, the line running through it.</p>
+        <div class="mt-5">
+          <.timeline class="max-w-sm">
+            <.timeline_day label="Today" />
+            <.timeline_item title="Out for delivery" time="11:42" color="info" />
+            <.timeline_item title="Delay in picking" time="10:15" color="warning" />
+            <.timeline_day label="Yesterday" />
+            <.timeline_item title="Payment confirmed" time="17:30" color="success" />
+            <.timeline_item title="Order created" time="15:48" />
+          </.timeline>
+        </div>
+      </div>
+    </.example>
     <.example title="Streamed Timeline" class="">
       <div class="max-w-xl">
         <p>The items come from a LiveView stream; new events are inserted at the top.</p>

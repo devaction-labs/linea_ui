@@ -34,3 +34,25 @@ export const applyUpdate = (options, payload) => {
 /** The CSS width a `chart.width` option asks for: a number is pixels, `"120px"` or `"50%"` pass, anything else is none. */
 export const widthOf = (spec) =>
   typeof spec === "number" && spec > 0 ? `${spec}px` : /^\d+(\.\d+)?(px|%|rem|em)$/.test(String(spec)) ? String(spec) : ""
+
+/**
+ * The slot a key moves the keyboard cursor to: `slots` are the visitable slots in order, `current` the slot
+ * now under the cursor (or `null`). Arrows step (Up/Left back, Down/Right forward), Home and End jump, and
+ * any other key answers `undefined`. Going back from nothing starts at the end, going forward at the start.
+ */
+export const stepSlot = (slots, current, key) => {
+  const at = slots.indexOf(current)
+  const last = slots.length - 1
+  const moves = {
+    ArrowRight: at < 0 ? 0 : Math.min(at + 1, last),
+    ArrowDown: at < 0 ? 0 : Math.min(at + 1, last),
+    ArrowLeft: at < 0 ? last : Math.max(at - 1, 0),
+    ArrowUp: at < 0 ? last : Math.max(at - 1, 0),
+    Home: 0,
+    End: last,
+  }
+  return slots.length > 0 && Object.hasOwn(moves, key) ? slots[moves[key]] : undefined
+}
+
+/** The view a toggle button asks for (`"chart"` or `"table"`), or `null` when it asks for nothing new: another value, or the view already shown. */
+export const nextView = (current, asked) => ((asked === "chart" || asked === "table") && asked !== current ? asked : null)

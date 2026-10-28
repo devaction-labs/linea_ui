@@ -13,6 +13,15 @@
     display: none;
   }
 
+  .linea-collapse > summary:focus {
+    outline: none;
+  }
+
+  .linea-collapse > summary:focus-visible {
+    outline: 2px solid color-mix(in oklab, var(--color-primary) 55%, transparent);
+    outline-offset: -2px;
+  }
+
   .linea-collapse::details-content {
     block-size: 0;
     overflow-y: clip;
@@ -838,6 +847,54 @@
 
   .toastify[data-state="done"] .toast-pct {
     color: var(--toast-ok);
+  }
+
+  .toastify.rich.has-steps .toast-body {
+    @apply gap-2.5;
+  }
+
+  .toastify .toast-steps-head {
+    @apply flex items-baseline justify-between gap-3;
+  }
+
+  .toastify .toast-steps-count {
+    @apply font-mono text-xs-plus font-medium text-slate-500 dark:text-navy-200;
+  }
+
+  .toastify:is([data-tone="dark"], [data-surface="dark"]) .toast-steps-count {
+    @apply text-navy-200;
+  }
+
+  .toastify .toast-segs {
+    @apply grid gap-1;
+    grid-template-columns: repeat(var(--toast-steps, 5), minmax(0, 1fr));
+  }
+
+  .toastify .toast-segs > span {
+    @apply h-1.5 rounded-sm bg-slate-150 dark:bg-navy-600;
+    transition: background-color 0.3s;
+  }
+
+  .toastify:is([data-tone="dark"], [data-surface="dark"]) .toast-segs > span {
+    background-color: rgb(255 255 255 / 0.12);
+  }
+
+  .toastify .toast-segs > [data-seg="done"] {
+    background-color: var(--toast-ai);
+  }
+
+  .toastify .toast-segs > [data-seg="current"] {
+    background-color: var(--linea-aura-2);
+  }
+
+  .toastify.has-steps[data-state="done"] .toast-segs > [data-seg="done"] {
+    background-color: var(--toast-ok);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .toastify .toast-segs > span {
+      transition: none;
+    }
   }
 
   :root {

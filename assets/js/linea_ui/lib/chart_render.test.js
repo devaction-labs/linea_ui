@@ -73,3 +73,38 @@ test("a tooltip can be turned off", () => {
   const built = build({chart: {type: "donut", height: 280}, series: [1, 1], tooltip: {enabled: false}, legend: {show: false}}, env)
   assert.equal(built.probe(built.g.cx + 5, built.g.cy - built.g.size * 0.8), null)
 })
+
+test("a cartesian chart lists the slots a keyboard visits and answers at each one", () => {
+  const result = build({chart: {type: "line", height: 200}, series: [{name: "A", data: [1, 3, 2]}], xaxis: {categories: ["a", "b", "c"]}}, {width: 400})
+  assert.deepEqual(result.keys.slots, [0, 1, 2])
+  const hit = result.probe(result.keys.at(1).x, result.keys.at(1).y)
+  assert.equal(hit.slot, 1)
+  assert.equal(hit.title, "b")
+  assert.deepEqual(build({chart: {type: "donut"}, series: [1, 2], labels: ["x", "y"]}, {width: 300}).keys.slots, [0, 1])
+})
+
+test("a pie or donut is visited slice by slice from the keyboard, with the tooltip of the slice", () => {
+  const donut = build({chart: {type: "donut", height: 240}, labels: ["Web", "App", "Zero"], series: [60, 40, 0]}, env)
+  assert.deepEqual(donut.keys.slots, [0, 1])
+  const hit = donut.keys.hit(1)
+  assert.equal(hit.rows[0].name, "App")
+  assert.equal(hit.active.slice, 1)
+  assert.equal(hit.center.name, "App")
+  const at = donut.keys.at(1)
+  assert.equal(donut.probe(at.x, at.y).slot, 1)
+  assert.equal(donut.keys.hit(2), null)
+  assert.deepEqual(build({chart: {type: "radialBar", height: 200}, series: [40]}, env).keys.slots, [])
+  assert.equal(build({chart: {type: "donut", height: 240}, tooltip: {enabled: false}, series: [1, 2]}, env).keys.hit(0), null)
+})
+
+test("a radar is visited spoke by spoke, the tooltip listing every series on it", () => {
+  const two = {...radar, series: [{name: "A", data: [80, 50, 30, 40, 100, 20]}, {name: "B", data: [10, 20, 30, 40, 50, 60]}]}
+  const built = build(two, env)
+  assert.deepEqual(built.keys.slots, [0, 1, 2, 3, 4, 5])
+  const hit = built.keys.hit(1)
+  assert.equal(hit.title, "Power")
+  assert.deepEqual(hit.rows.map((row) => row.name), ["A", "B"])
+  assert.equal(hit.markers.length, 2)
+  assert.equal(build(two, {...env, hidden: [0, 1]}).keys.slots.length, 0)
+  assert.equal(build({...two, tooltip: {enabled: false}}, env).keys.hit(1), null)
+})

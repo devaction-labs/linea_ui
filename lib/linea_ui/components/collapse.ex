@@ -81,7 +81,7 @@ defmodule LineaUI.Components.Collapse do
         :for={trigger <- @trigger}
         class={
           merge([
-            "cursor-pointer outline-hidden",
+            "cursor-pointer",
             @chevron && "flex items-center justify-between",
             Map.get(trigger, :class)
           ])
