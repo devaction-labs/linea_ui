@@ -124,8 +124,11 @@ export const isChosen = (iso, dates, mode) => {
 const stepButton = (direction, unit, label, {disabled = false, tabbable = false} = {}) =>
   `<button type="button" class="${direction > 0 ? "arrowUp" : "arrowDown"}" data-step="${direction}" data-unit="${unit}" aria-label="${label}" tabindex="${tabbable ? 0 : -1}"${disabled ? ' aria-disabled="true"' : ""}></button>`
 
-const numInput = (className, value, label, extra, arrows, tabindex = -1) =>
-  `<div class="numInputWrapper"><input class="numInput ${className}" type="number" tabindex="${tabindex}" aria-label="${label}" value="${value}" ${extra}>${arrows}</div>`
+/** A number box with its two arrows `[up, down]`: the arrows after the box, or above and below it when `stacked`. */
+const numInput = (className, value, label, extra, [up, down], tabindex = -1, stacked = false) => {
+  const box = `<input class="numInput ${className}" type="number" tabindex="${tabindex}" aria-label="${label}" value="${value}" ${extra}>`
+  return `<div class="numInputWrapper">${stacked ? up + box + down : box + up + down}</div>`
+}
 
 /**
  * The month header, weekdays and days of the calendar as HTML. The days are a `role="grid"` of rows and
@@ -151,7 +154,7 @@ export const renderDays = (state) => {
     )
   })
   const rows = [...Array(6)].map((_, row) => `<div role="row" class="flatpickr-week">${cells.slice(row * 7, row * 7 + 7).join("")}</div>`)
-  const yearArrows = stepButton(1, "year", text(labels, "picker_year_up")) + stepButton(-1, "year", text(labels, "picker_year_down"))
+  const yearArrows = [stepButton(1, "year", text(labels, "picker_year_up")), stepButton(-1, "year", text(labels, "picker_year_down"))]
   return (
     `<div class="flatpickr-months"><button type="button" class="flatpickr-prev-month" data-month="-1" aria-label="${text(labels, "picker_previous")}">${glyphHtml("angle_left", state.icons)}</button>` +
     `<div class="flatpickr-month"><div class="flatpickr-current-month">` +
@@ -180,23 +183,25 @@ export const canToggle = ({hour, minute}, rules) => {
 
 /**
  * The hour, minute and AM/PM row as HTML: boxes you can Tab to, with arrow buttons that are named and, when `min`/`max`
- * stop a step, `aria-disabled` (dimmed by the CSS).
+ * stop a step, `aria-disabled` (dimmed by the CSS). `stacked` (the popup of the time picker) puts each box between
+ * its up arrow and its down arrow, in that order for Tab as well, instead of the arrows beside the box.
  */
-export const renderTime = ({hour, minute, twentyFour, hourStep = 1, minuteStep = 5, min, max, labels}) => {
+export const renderTime = ({hour, minute, twentyFour, hourStep = 1, minuteStep = 5, min, max, labels, stacked = false}) => {
   const rules = {hourStep, minuteStep, min, max}
   const at = {hour, minute}
   const shown = twentyFour ? pad(hour) : pad(hour % 12 || 12)
   const hours = twentyFour ? 'min="0" max="23"' : 'min="1" max="12"'
-  const arrows = (unit) =>
-    stepButton(1, unit, text(labels, `picker_${unit}_up`), {tabbable: true, disabled: !canStep(at, unit, 1, rules)}) +
-    stepButton(-1, unit, text(labels, `picker_${unit}_down`), {tabbable: true, disabled: !canStep(at, unit, -1, rules)})
+  const arrows = (unit) => [
+    stepButton(1, unit, text(labels, `picker_${unit}_up`), {tabbable: true, disabled: !canStep(at, unit, 1, rules)}),
+    stepButton(-1, unit, text(labels, `picker_${unit}_down`), {tabbable: true, disabled: !canStep(at, unit, -1, rules)}),
+  ]
   const period = hour < 12 ? "AM" : "PM"
   const toggle = `${text(labels, "picker_toggle_period")}: ${period}`
   return (
-    `<div class="flatpickr-time${twentyFour ? " time24hr" : ""}" tabindex="-1">` +
-    numInput("flatpickr-hour", shown, text(labels, "picker_hour"), `step="${hourStep}" ${hours} maxlength="2" data-hour`, arrows("hour"), 0) +
+    `<div class="flatpickr-time${twentyFour ? " time24hr" : ""}${stacked ? " stacked" : ""}" tabindex="-1">` +
+    numInput("flatpickr-hour", shown, text(labels, "picker_hour"), `step="${hourStep}" ${hours} maxlength="2" data-hour`, arrows("hour"), 0, stacked) +
     `<span class="flatpickr-time-separator">:</span>` +
-    numInput("flatpickr-minute", pad(minute), text(labels, "picker_minute"), `step="${minuteStep}" min="0" max="59" maxlength="2" data-minute`, arrows("minute"), 0) +
+    numInput("flatpickr-minute", pad(minute), text(labels, "picker_minute"), `step="${minuteStep}" min="0" max="59" maxlength="2" data-minute`, arrows("minute"), 0, stacked) +
     (twentyFour ? "" : `<button type="button" class="flatpickr-am-pm" aria-label="${toggle}"${canToggle(at, rules) ? "" : ' aria-disabled="true"'} data-ampm>${period}</button>`) +
     `</div>`
   )

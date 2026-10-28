@@ -1,8 +1,9 @@
 defmodule LineaUI.Components.TimePicker do
   @moduledoc """
   LineOne's time picker (flatpickr with no calendar): an input with a clock icon that opens
-  flatpickr's hour and minute row, on a 12-hour clock with AM/PM or a 24-hour one, held inside
-  a minimum and a maximum.
+  a card with the hour and the minute as two columns (an up arrow, a number box and a down
+  arrow each) and, on a 12-hour clock with AM/PM, the AM/PM button beside them (or a 24-hour
+  clock), held inside a minimum and a maximum.
 
       <.time_picker field={@form[:opens_at]} placeholder="Choose time..." />
       <.time_picker name="alarm" time_24hr min_time="15:00" max_time="22:30" />

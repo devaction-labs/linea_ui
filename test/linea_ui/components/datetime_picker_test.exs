@@ -328,6 +328,22 @@ defmodule LineaUI.Components.DatetimePickerTest do
     assert Map.keys(labels) |> Enum.all?(&String.starts_with?(&1, "datetime_"))
   end
 
+  test "the month and year buttons are named by labels, with pt_BR translations" do
+    html = render(~H|<.datetime_picker id="d" name="at" />|)
+    labels = html |> data("#d", "data-labels") |> hd() |> Jason.decode!()
+    assert labels["datetime_choose_month"] == "Choose month"
+    assert labels["datetime_choose_year"] == "Choose year"
+
+    html =
+      render(
+        ~H|<.datetime_picker id="d" name="at" locale="pt_BR" labels={%{datetime_choose_year: "Ano"}} />|
+      )
+
+    labels = html |> data("#d", "data-labels") |> hd() |> Jason.decode!()
+    assert labels["datetime_choose_month"] == "Escolher mês"
+    assert labels["datetime_choose_year"] == "Ano"
+  end
+
   test "the panel is announced as a dialog with a name, per mode and locale" do
     html = render(~H|<.datetime_picker id="d" name="at" />|)
     assert data(html, "#d-panel", "aria-label") == ["Choose date and time"]

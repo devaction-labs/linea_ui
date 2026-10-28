@@ -7,11 +7,12 @@
  * wins when it changes, otherwise the browser's choice survives patches.
  */
 import {notify} from "../lib/dom.js"
-import {dayTarget, shiftMonth, toIso} from "../lib/dates.js"
+import {dayTarget, sameDayIn, shiftMonth, toIso} from "../lib/dates.js"
 import {formatDate} from "../lib/calendar_view.js"
 import {formatTime, formatValue, nearestSlot, parseTimeText, suggestSlots} from "../lib/datetime_format.js"
 import {buildRules, isSlotAvailable, parseDefaultTime, slotTimes} from "../lib/datetime_rules.js"
 import {anchorDay, fromValues, isComplete, isDayAvailable, pickDay, pickTime, rulesFor, showMonth, slotsFor, toValues, viewFor} from "../lib/datetime_state.js"
+import {PAGE, gridTarget, yearPage} from "../lib/datetime_pick.js"
 import {renderPanel, renderSuggestions} from "../lib/datetime_view.js"
 import {rangeInputs} from "../lib/date_range.js"
 import {escapeHtml} from "../lib/date_picker_view.js"
@@ -153,6 +154,7 @@ export const DatetimePicker = {
     this.hover = null
     this.focusIso = anchorDay(this.draft, this.cfg.today, this.cfg.rules)
     this.view = viewFor(this.draft, this.cfg.today, this.cfg.rules)
+    this.picking = null
     this.render()
   },
 
@@ -161,6 +163,7 @@ export const DatetimePicker = {
     this.draft = this.value
     this.hover = null
     this.suggesting = null
+    this.picking = null
   },
 
   ctx() {
@@ -182,6 +185,9 @@ export const DatetimePicker = {
       timeMode: cfg.timeMode,
       hour12: cfg.hour12,
       view: this.view,
+      picking: this.picking,
+      page: this.page,
+      rules: cfg.rules,
       state: draft,
       hover: this.hover,
       focus: inView ? this.focusIso : toIso(this.view.year, this.view.month, 1),
@@ -217,6 +223,8 @@ export const DatetimePicker = {
       [active.dataset.day, `[data-day="${active.dataset.day}"]`],
       [active.dataset.time, `[data-time="${active.dataset.time}"]`],
       [active.dataset.nav, `[data-nav="${active.dataset.nav}"]`],
+      [active.dataset.pickMonth, `[data-pick-month="${active.dataset.pickMonth}"]`],
+      [active.dataset.pickYear, `[data-pick-year="${active.dataset.pickYear}"]`],
       [active.id, `[id="${active.id}"]`],
       [active.hasAttribute?.("data-confirm"), "[data-confirm]"],
       [active.hasAttribute?.("data-cancel"), "[data-cancel]"],
@@ -247,6 +255,8 @@ export const DatetimePicker = {
     const target = event.target
     const day = target.closest("[data-day]")
     const nav = target.closest("[data-nav]")
+    const pick = target.closest("[data-pick]")
+    const item = target.closest("[data-pick-item]")
     const time = target.closest("[data-time]")
     const suggestion = target.closest("[data-suggest]")
     const confirm = target.closest("[data-confirm]")
@@ -254,6 +264,8 @@ export const DatetimePicker = {
     const action =
       (day && (() => this.chooseDay(day.dataset.day))) ||
       (nav && (() => this.navigate(Number(nav.dataset.nav)))) ||
+      (pick && (() => this.togglePick(pick))) ||
+      (item && (() => this.choosePick(item))) ||
       (time && (() => this.chooseTime("start", time.dataset.time))) ||
       (suggestion && (() => this.chooseTime(suggestion.dataset.which, suggestion.dataset.suggest))) ||
       (confirm && (() => this.confirm())) ||
@@ -300,8 +312,53 @@ export const DatetimePicker = {
   },
 
   navigate(delta) {
-    this.view = shiftMonth(this.view, delta)
+    const years = this.picking?.kind === "year"
+    years ? (this.page = yearPage(this.page ?? this.view.year) + delta * PAGE) : (this.view = shiftMonth(this.view, delta * (this.picking ? 12 : 1)))
     this.render()
+  },
+
+  /** The month or year button of a header: opens its grid, or closes it when it is the one already open. */
+  togglePick(button) {
+    const kind = button.dataset.pick
+    const index = Number(button.id.split("-").at(-1))
+    const same = this.picking?.kind === kind && this.picking.index === index
+    this.picking = same ? null : {kind, index}
+    this.page = shiftMonth(this.view, index).year
+    this.render()
+    same ? this.focusSoon() : this.surface().querySelector('[data-pick-item][tabindex="0"]')?.focus({preventScroll: true})
+  },
+
+  /** A month or a year of the open grid: the view moves there and the days come back, with the focus on a day. */
+  choosePick(item) {
+    const index = this.picking.index
+    const shown = shiftMonth(this.view, index)
+    const month = item.dataset.pickMonth !== undefined ? Number(item.dataset.pickMonth) : shown.month
+    const year = item.dataset.pickYear !== undefined ? Number(item.dataset.pickYear) : shown.year
+    const off = item.getAttribute("aria-disabled") === "true"
+    const target = shiftMonth({year, month}, -index)
+    off || ((this.view = target), (this.focusIso = sameDayIn(this.focusIso, shiftMonth(target, index))), (this.picking = null))
+    this.render()
+    off || this.focusSoon()
+  },
+
+  /** Esc inside a grid goes back to the days, with the focus on the button that opened it. */
+  leavePick(event) {
+    const {kind, index} = this.picking
+    this.picking = null
+    event.stopPropagation()
+    this.render()
+    this.surface().querySelector(`[id="${this.el.id}-pick-${kind}-${index}"]`)?.focus({preventScroll: true})
+  },
+
+  pickKey(event) {
+    const items = [...event.target.closest("[data-pick-grid]").querySelectorAll("[data-pick-item]")]
+    const target = gridTarget(event.key, items.indexOf(event.target), items.length)
+    const go = () => {
+      items.forEach((item) => (item.tabIndex = -1))
+      items[target].tabIndex = 0
+      items[target].focus()
+    }
+    target !== null && (event.preventDefault(), go())
   },
 
   changed(event) {
@@ -331,7 +388,11 @@ export const DatetimePicker = {
 
   key(event) {
     const target = event.target
+    const escaping = event.key === "Escape" && this.picking
+    escaping && this.leavePick(event)
     const handlers = [
+      [escaping, () => event.preventDefault()],
+      [target.matches("[data-pick-item]"), () => this.pickKey(event)],
       [target.matches("[data-day]"), () => this.dayKey(event)],
       [target.matches("[data-time]"), () => this.optionKey(event)],
       [target.matches("[data-time-input]"), () => this.inputKey(event)],

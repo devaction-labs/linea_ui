@@ -60,13 +60,23 @@ defmodule LineaUI.Components.DatetimePicker do
         </:trigger>
       </.datetime_picker>
 
+  ## Month and year
+
+  The header of a month has two buttons beside the arrows, the month ("October") and the year
+  ("2026"). The month opens a grid of the twelve months and the year a page of twelve years; picking
+  one goes back to the days of that month. While a grid is open the arrows turn the year (or the
+  page of years), months and years that `min` and `max` close are dimmed, and `Esc` goes back to
+  the days with the focus on the button. The buttons are named by `:datetime_choose_month` and
+  `:datetime_choose_year` in `labels`.
+
   ## Keyboard
 
   `↓` or `Enter` on the input opens the panel with the focus on the chosen day. In the calendar the
   arrows move a day or a week, `Home`/`End` the start and end of the week, `Page Up`/`Page Down` a
   month (with `Shift` a year) and `Enter` or `Space` picks. In the time list `↑`/`↓`/`Home`/`End`
   move and `Enter` picks; in the time field `↓`/`↑` walk the suggestions. `Esc` closes the panel and
-  gives the focus back; leaving the panel with `Tab` closes it.
+  gives the focus back; leaving the panel with `Tab` closes it. In the month and year grids the
+  arrows move over the three columns, `Home`/`End` to the first and the last, `Enter` or `Space` picks.
   """
 
   use LineaUI.Component
@@ -231,7 +241,7 @@ defmodule LineaUI.Components.DatetimePicker do
   attr :labels, :map,
     default: %{},
     doc:
-      "Single texts of the panel: `:datetime_select`, `:datetime_select_range`, `:datetime_cancel`, `:datetime_start`, `:datetime_end`, `:datetime_time`, `:datetime_times`, `:datetime_no_times`, `:datetime_time_placeholder`, `:datetime_previous`, `:datetime_next`, `:datetime_day` (with `%{weekday}`, `%{month}`, `%{day}`, `%{year}`), `:datetime_title` (with `%{month}`, `%{year}`), `:datetime_dialog`, `:datetime_dialog_range`, `:datetime_placeholder`, `:datetime_placeholder_range`."
+      "Single texts of the panel: `:datetime_select`, `:datetime_select_range`, `:datetime_cancel`, `:datetime_start`, `:datetime_end`, `:datetime_time`, `:datetime_times`, `:datetime_no_times`, `:datetime_time_placeholder`, `:datetime_previous`, `:datetime_next`, `:datetime_choose_month` and `:datetime_choose_year` (the names of the month and year buttons of the header), `:datetime_day` (with `%{weekday}`, `%{month}`, `%{day}`, `%{year}`), `:datetime_title` (with `%{month}`, `%{year}`), `:datetime_dialog`, `:datetime_dialog_range`, `:datetime_placeholder`, `:datetime_placeholder_range`."
 
   attr :variant, :string, default: "outlined", values: ~w(outlined filled)
   attr :size, :string, default: "md", values: ~w(sm md lg)

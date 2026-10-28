@@ -140,6 +140,15 @@ test("the time row has named, tabbable buttons that are aria-disabled when min o
   assert.doesNotMatch(held, /data-step="-1" data-unit="hour"[^>]*aria-disabled/)
 })
 
+test("the stacked time row of the time picker puts each box between its arrows, in Tab order", () => {
+  const html = renderTime({hour: 9, minute: 30, twentyFour: false, stacked: true})
+  assert.match(html, /class="flatpickr-time stacked"/)
+  assert.match(html, /class="numInputWrapper"><button[^>]*class="arrowUp"[^>]*data-unit="hour"[^>]*><\/button><input[^>]*data-hour><button[^>]*class="arrowDown"[^>]*data-unit="hour"/)
+  assert.match(html, /<input[^>]*data-minute><button[^>]*class="arrowDown"[^>]*data-unit="minute"/)
+  assert.match(renderTime({hour: 9, minute: 30, twentyFour: false}), /<input[^>]*data-hour><button[^>]*class="arrowUp"/)
+  assert.doesNotMatch(renderTime({hour: 9, minute: 30, twentyFour: false}), /stacked/)
+})
+
 test("canStep and canToggle say when min and max hold a time in place", () => {
   const rules = {min: "15:00", max: "22:30", hourStep: 1, minuteStep: 5}
   assert.equal(canStep({hour: 22, minute: 30}, "minute", 1, rules), false)

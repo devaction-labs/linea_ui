@@ -142,7 +142,7 @@ export const Picker = {
     const clock =
       kind === "date"
         ? ""
-        : renderTime({...time, twentyFour: this.el.dataset.time24 === "true", ...this.timeRules(), labels: this.labels()})
+        : renderTime({...time, twentyFour: this.el.dataset.time24 === "true", ...this.timeRules(), labels: this.labels(), stacked: kind === "time"})
     this.q("[data-calendar]").innerHTML = days + clock + this.presetsHtml()
     this.paintPresets()
     const again = kept && this.q("[data-calendar]").querySelector(kept)
