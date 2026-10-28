@@ -126,6 +126,9 @@ export const colorFor = (input) =>
 export const isRich = (input) =>
   Boolean(kindOf(input.kind) || input.description || input.actions?.length || input.aura || progressOf(input) !== null)
 
+/** Whether a rich toast draws a dot where the icon would be: a dark card with no kind (and no progress to show). */
+export const dotFor = (input) => isRich(input) && !kindOf(progressKind(input)) && colorFor(input) === "dark"
+
 /** Whether a toast waits for the person: it has buttons, a template of its own, or an aura that asks for attention. */
 export const needsAction = ({actions, template, aura}) => Boolean(actions?.length || template || aura === "glow")
 

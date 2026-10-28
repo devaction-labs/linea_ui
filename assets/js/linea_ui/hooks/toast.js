@@ -5,6 +5,7 @@ import {
   auraOf,
   closeFor,
   colorFor,
+  dotFor,
   durationFor,
   encodedJS,
   failedOf,
@@ -249,6 +250,7 @@ export default {
       kind && el.setAttribute("aria-busy", String(kind === "loading"))
       const icon = kind && this.el.querySelector(`template[data-toast-icon="${kind}"]`)
       icon && el.append(this.part("span", "toast-icon", icon.content.firstElementChild.cloneNode(true)))
+      dotFor(input) && el.append(this.part("span", "toast-dot"))
       const body = this.part("div", "toast-body")
       input.message && body.append(this.part("p", "toast-title", input.message))
       input.description && body.append(this.part("p", "toast-desc", input.description))

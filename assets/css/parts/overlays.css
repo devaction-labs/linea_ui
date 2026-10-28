@@ -670,6 +670,13 @@
     color: var(--toast-ai);
   }
 
+  .toastify.rich .toast-dot {
+    @apply size-2.5 shrink-0 rounded-full;
+    background: var(--linea-aura-2, #a855f7);
+    box-shadow: 0 0 0 4px color-mix(in oklab, var(--linea-aura-2, #a855f7) 25%, transparent);
+    margin: 0 4px;
+  }
+
   .toastify.rich .toast-body {
     @apply flex min-w-0 flex-1 flex-col gap-px;
   }
