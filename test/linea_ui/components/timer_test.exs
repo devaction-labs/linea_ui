@@ -133,7 +133,7 @@ defmodule LineaUI.Components.TimerTest do
 
     md = render(~H|<.timer id="a" kicker="K" />|)
     assert "size-42" in classes(md, "#a > div > div")
-    assert "text-[28px]" in classes(md, "[data-time]")
+    assert "text-[26px]" in classes(md, "[data-time]")
 
     lg = render(~H|<.timer id="a" size="lg" kicker="K" />|)
     assert "size-52" in classes(lg, "#a > div > div")

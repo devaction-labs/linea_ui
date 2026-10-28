@@ -95,7 +95,7 @@ defmodule LineaUI.Components.Timer do
     },
     "md" => %{
       box: "size-42",
-      time: "text-[28px] leading-10",
+      time: "text-[26px] leading-9",
       kicker: "text-[11px]",
       label: "text-xs"
     },

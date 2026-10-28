@@ -67,7 +67,7 @@ Refinements from the second pass over the design canvas, artboard by artboard:
 - `textarea`: with a caption, help or errors the `counter` sits on the same row as them, at the right (`field/1` has a new `:aside` slot for it); alone it stays under the control.
 - `accordion`: the divider between the items of the `primary` style is the color of the frame mixed 55% with white (it was a fixed shade). `dropdown_item` `color="primary"`: the text is primary and the hover is the same neutral fill as the other items, not a solid primary.
 - `data_table`: the pagers use the same window as `pagination` (the current page, its neighbours, the ends and a gap where pages are left out) instead of five consecutive pages.
-- `timer`: the time of the `md` ring is 28px (`sm` 20px, `lg` 34px). The year button of the `datetime_picker` is called "Ano" in pt_BR.
+- `timer`: the time of the `md` ring is 26px, a size that fits `hh:mm:ss` inside the ring (`sm` 20px, `lg` 34px). The year button of the `datetime_picker` is called "Ano" in pt_BR.
 
 ## 0.8.4
 
