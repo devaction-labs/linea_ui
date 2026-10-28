@@ -410,4 +410,88 @@ defmodule LineaUI.Components.TableTest do
     assert "only:table-row" in classes(html, "#t-empty")
     assert "hidden" in classes(html, "#t-empty")
   end
+
+  defp marks(html, selector),
+    do: html |> find(selector) |> LazyHTML.attribute("data-p")
+
+  describe "columns that leave by priority" do
+    test "mark the header, cells and foot cells, and make the wrapper a container" do
+      html =
+        render(~H"""
+        <.table id="t" rows={[%{n: "a", o: "b", s: "c"}]}>
+          <:col :let={r} label="Name">{r.n}</:col>
+          <:col :let={r} label="Owner" priority={2}>{r.o}</:col>
+          <:col :let={r} label="Status" priority={1}>{r.s}</:col>
+          <:foot>Total</:foot>
+          <:foot priority={2}>9</:foot>
+          <:foot priority={1}>3</:foot>
+        </.table>
+        """)
+
+      assert "linea-tbox" in classes(html, "div")
+      assert ["2", "1"] = marks(html, "th[data-p]")
+      assert ["2", "1"] = marks(html, "tbody td[data-p]")
+      assert ["2", "1"] = marks(html, "tfoot td[data-p]")
+    end
+
+    test "a table without priority is not a container and carries no marks" do
+      html = render_table(%{})
+
+      refute "linea-tbox" in classes(html, "div")
+      assert [] = html |> find("[data-p]") |> Enum.to_list()
+    end
+
+    test "priority 0 leaves the column alone" do
+      html =
+        render(~H"""
+        <.table id="t" rows={[%{n: "a"}]}>
+          <:col :let={r} label="Name" priority={0}>{r.n}</:col>
+        </.table>
+        """)
+
+      refute "linea-tbox" in classes(html, "div")
+      assert [] = html |> find("[data-p]") |> Enum.to_list()
+    end
+
+    test "the detail and empty rows span every column, hidden or not" do
+      html =
+        render(~H"""
+        <.table id="t" rows={[%{n: "a", o: "b"}]}>
+          <:col :let={r} label="Name">{r.n}</:col>
+          <:col :let={r} label="Owner" priority={1}>{r.o}</:col>
+          <:expand :let={_ctx}>Detail</:expand>
+        </.table>
+        """)
+
+      assert "100" = html |> find("tbody td[colspan]") |> LazyHTML.attribute("colspan") |> hd()
+    end
+
+    test "a hand-written table sets container and marks its own cells" do
+      html =
+        render(~H"""
+        <.table id="t" container>
+          <.table_head>
+            <:col>Name</:col>
+            <:col priority="2">Owner</:col>
+          </.table_head>
+          <.table_body id="b">
+            <.table_row>
+              <:cell>a</:cell>
+              <:cell priority="2">b</:cell>
+              <.table_cell priority={1}>c</.table_cell>
+            </.table_row>
+          </.table_body>
+          <.table_foot>
+            <:cell priority="2">x</:cell>
+          </.table_foot>
+        </.table>
+        """)
+
+      assert "linea-tbox" in classes(html, "div")
+      assert ["2"] = marks(html, "th[data-p]")
+      assert ["2", "1"] = marks(html, "tbody td[data-p]")
+      assert ["2"] = marks(html, "tfoot td[data-p]")
+      assert [] = html |> find("[priority]") |> Enum.to_list()
+    end
+  end
 end
