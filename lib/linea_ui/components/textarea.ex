@@ -24,7 +24,7 @@ defmodule LineaUI.Components.Textarea do
 
   @variants %{
     "outlined" =>
-      "form-textarea w-full rounded-lg border border-slate-300 bg-transparent p-2.5 placeholder:text-slate-400/70 hover:border-slate-400 focus:border-primary disabled:pointer-events-none disabled:select-none disabled:border-none disabled:bg-zinc-100 dark:border-navy-450 dark:hover:border-navy-400 dark:focus:border-accent dark:disabled:bg-navy-600",
+      "form-textarea w-full rounded-lg border border-slate-300 bg-transparent p-2.5 placeholder:text-slate-400/70 ring-primary/25 hover:border-slate-400 focus:border-primary focus:ring-3 disabled:pointer-events-none disabled:select-none disabled:bg-slate-150 disabled:opacity-60 dark:border-navy-450 dark:ring-accent/30 dark:hover:border-navy-400 dark:focus:border-accent dark:disabled:bg-navy-600",
     "filled" =>
       "form-textarea w-full rounded-lg bg-slate-150 p-2.5 placeholder:text-slate-400 disabled:pointer-events-none disabled:select-none disabled:opacity-60 dark:bg-navy-900 dark:placeholder:text-navy-300",
     "plain" => "form-textarea w-full bg-transparent p-3 placeholder:text-slate-400/70"
@@ -32,14 +32,14 @@ defmodule LineaUI.Components.Textarea do
 
   @states %{
     {"outlined", "success"} =>
-      "border-success hover:border-success focus:border-success dark:border-success dark:hover:border-success dark:focus:border-success",
+      "border-success ring-success/25 hover:border-success focus:border-success dark:border-success dark:ring-success/30 dark:hover:border-success dark:focus:border-success",
     {"outlined", "error"} =>
-      "border-error hover:border-error focus:border-error dark:border-error dark:hover:border-error dark:focus:border-error",
+      "border-error ring-error/25 hover:border-error focus:border-error dark:border-error dark:ring-error/30 dark:hover:border-error dark:focus:border-error",
     {"filled", "success"} => "ring-1 ring-success dark:ring-success",
     {"filled", "error"} => "ring-1 ring-error dark:ring-error"
   }
 
-  @frame "rounded-lg border border-slate-300 transition-colors duration-200 focus-within:!border-primary hover:border-slate-400 dark:border-navy-450 dark:focus-within:!border-accent dark:hover:border-navy-400"
+  @frame "rounded-lg border border-slate-300 ring-primary/25 transition-colors duration-200 focus-within:!border-primary focus-within:ring-3 hover:border-slate-400 dark:border-navy-450 dark:ring-accent/30 dark:focus-within:!border-accent dark:hover:border-navy-400"
 
   @framed_padding %{
     {true, false} => "pt-0",
@@ -153,7 +153,7 @@ defmodule LineaUI.Components.Textarea do
       <div class={merge([@frame, @label && "mt-1.5", @frame_class])}>
         <div :for={header <- @header} class="flex justify-between">{render_slot(header)}</div>
         <label class="block"><.control {control_assigns(assigns)} /></label>
-        <div :for={footer <- @footer} class="flex justify-between p-2.5">
+        <div :for={footer <- @footer} class="flex justify-between px-2.5 py-2">
           {render_slot(footer)}
         </div>
       </div>
