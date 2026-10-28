@@ -21,6 +21,31 @@ defmodule LineaUI.Components.RadioTest do
     assert "rounded-full" in classes
   end
 
+  test "the md radio is 18px with the 6px dot; other sizes keep the scale and a checkbox stays 20px" do
+    md = render(~H|<.radio_group name="r" options={~w(a)} />|)
+    assert "size-[18px]" in classes(md, "input")
+    assert "is-md" in classes(md, "input")
+    refute "size-5" in classes(md, "input")
+
+    sm = render(~H|<.radio_group name="r" size="sm" options={~w(a)} />|)
+    assert "size-4" in classes(sm, "input")
+    refute "is-md" in classes(sm, "input")
+
+    lg = render(~H|<.radio_group name="r" size="lg" options={~w(a)} />|)
+    assert "size-6" in classes(lg, "input")
+
+    assert "size-5" in classes(render(~H|<.checkbox name="c" />|), "input")
+  end
+
+  test "the card has 14px side padding, a 1px border and a 3px ring when chosen" do
+    html = render(~H|<.radio_group name="r" variant="card" value="a" options={~w(a b)} />|)
+    card = classes(html, "label")
+    assert "px-3.5" in card
+    assert "border" in card
+    assert "has-checked:ring-3" in card
+    refute "has-checked:ring-4" in card
+  end
+
   test "slots override color and disabled; shape and variant apply to all" do
     html =
       render(~H"""

@@ -13,7 +13,7 @@ import {runKey} from "../lib/keys.js"
 import {caretFor, dropBefore, significantBefore} from "../lib/mask_logic.js"
 import {moveIndex} from "../lib/select_box.js"
 import {COUNTRIES, byIso, flag} from "../lib/phone_countries.js"
-import {arrange, initialCountry, nameOf, resolve, restrict, search} from "../lib/phone_logic.js"
+import {arrange, dialLabel, initialCountry, nameOf, resolve, restrict, search} from "../lib/phone_logic.js"
 
 const codes = (text) => (text ?? "").split(",").filter((code) => code !== "")
 
@@ -255,7 +255,7 @@ const PhoneInput = {
       `<div class="option${chosen ? " selected" : ""}" role="option" id="${this.el.id}-opt-${country.iso}" data-iso="${country.iso}" data-selectable="true" aria-selected="${chosen}">` +
       `<span class="shrink-0 text-base leading-none" aria-hidden="true">${flag(country.iso)}</span>` +
       `<span class="min-w-0 flex-1 truncate">${escapeHtml(nameOf(country, this.locale))}</span>` +
-      `<span class="shrink-0 font-inter text-xs-plus text-slate-400 dark:text-navy-300">+${country.code}</span>` +
+      `<span class="shrink-0 font-inter text-xs-plus text-slate-400 dark:text-navy-300">${escapeHtml(dialLabel(country))}</span>` +
       `</div>`
     )
   },

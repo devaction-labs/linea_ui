@@ -165,6 +165,18 @@ defmodule LineaUI.Components.PhoneInputTest do
       assert [] == find(html, "[data-clear]") |> Enum.to_list()
     end
 
+    test "a 1px divider separates the picker from the number and the list is as wide as the field" do
+      html = render(~H|<.phone_input name="phone" />|)
+
+      divider = classes(html, "[data-prefix] > span[aria-hidden]")
+      assert "w-px" in divider
+      assert "h-[18px]" in divider
+      assert "w-full" in classes(html, "[data-dropdown]")
+      assert "min-w-64" in classes(html, "[data-dropdown]")
+      refute "w-72" in classes(html, "[data-dropdown]")
+      assert "pl-[6.875rem]" in classes(html, "input[data-display]")
+    end
+
     test "starts in Brazil when no country is given" do
       html = render(~H|<.phone_input name="phone" />|)
 
@@ -259,7 +271,7 @@ defmodule LineaUI.Components.PhoneInputTest do
       assert "bg-slate-150" in input
       assert "rounded-full" in input
       assert "font-mono" in input
-      assert "pl-[6.5rem]" in input
+      assert "pl-[6.875rem]" in input
       assert "pe-9" in input
       assert attr_of(html, "input[data-display]", "disabled") == [""]
       assert attr_of(html, "input[data-display]", "placeholder") == ["Phone"]

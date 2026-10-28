@@ -28,6 +28,7 @@ const NumberInput = {
     this.el.addEventListener("keydown", this.onKeyDown)
     this.el.addEventListener("click", this.onClick)
     this.paintSteppers()
+    this.paintSuffix()
   },
 
   updated() {
@@ -40,6 +41,7 @@ const NumberInput = {
     const focused = document.activeElement === this.display()
     ;(changed || !focused) && (this.display().value = displayOf(this.value, this.options))
     this.paintSteppers()
+    this.paintSuffix()
   },
 
   display() {
@@ -72,6 +74,7 @@ const NumberInput = {
     const {display, value} = settle(this.display().value, this.options)
     this.display().value = display
     this.commit(value)
+    this.paintSuffix()
   },
 
   key(event) {
@@ -90,7 +93,16 @@ const NumberInput = {
     this.writeHidden()
     this.display().setAttribute("aria-valuenow", value)
     this.paintSteppers()
+    this.paintSuffix()
     changed && notify(this.hidden())
+  },
+
+  /** A centered value keeps its suffix next to it: the field measures the value in characters (the value is set in mono). */
+  paintSuffix() {
+    const field = this.el.querySelector("[data-field]")
+    const input = this.display()
+    field && field.style.getPropertyValue("--nlen") !== "" &&
+      field.style.setProperty("--nlen", String((input.value || input.placeholder || "").length))
   },
 
   writeHidden() {

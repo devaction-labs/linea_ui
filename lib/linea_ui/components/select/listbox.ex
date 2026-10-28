@@ -26,6 +26,8 @@ defmodule LineaUI.Components.Select.Listbox do
     |> assign_new(:footer_count, fn -> "%{count} of %{total}" end)
     |> assign_new(:footer_hint, fn -> "Esc to close" end)
     |> assign_new(:more_label, fn -> "more" end)
+    |> assign_new(:create_hint, fn -> nil end)
+    |> assign_new(:limit_placeholder, fn -> nil end)
     |> assign_new(:search, fn -> "control" end)
     |> assign_new(:search_placeholder, fn -> "Search…" end)
     |> assign(
@@ -108,6 +110,9 @@ defmodule LineaUI.Components.Select.Listbox do
         data-on-search={@on_search}
         data-debounce={@debounce}
         data-create-label={@create_label}
+        data-create-hint={@create_hint}
+        data-placeholder={limited?(@mode, @max) && @placeholder}
+        data-limit-placeholder={limited?(@mode, @max) && @limit_placeholder}
         data-remove-label={@removable && @remove_label}
         {@rest}
       >
@@ -144,8 +149,8 @@ defmodule LineaUI.Components.Select.Listbox do
             aria-controls={@id <> "-listbox"}
             aria-invalid={@errors != [] && "true"}
             autocomplete="off"
-            placeholder={@placeholder}
-            disabled={@disabled}
+            placeholder={if(limited?(@mode, @max) and @full, do: @limit_placeholder) || @placeholder}
+            disabled={@disabled or (limited?(@mode, @max) and @full)}
             readonly={@search != "control"}
             data-search
           />
@@ -207,10 +212,22 @@ defmodule LineaUI.Components.Select.Listbox do
           </template>
         </div>
         <div hidden data-no-results>{@no_results}</div>
+        <div
+          :if={limited?(@mode, @max)}
+          class="mt-1.5 text-end text-tiny-plus tabular-nums text-slate-400 dark:text-navy-300"
+          hidden={not @full}
+          data-counter
+        >
+          {length(@values)} / {@max}
+        </div>
       </div>
     </Pickers.field>
     """
   end
+
+  # Only a tag input with a `max` shows its limit: the input goes off and a counter appears.
+  defp limited?(:tags, max), do: max != nil
+  defp limited?(_mode, _max), do: false
 
   defp mode_class(true), do: "multi"
   defp mode_class(false), do: "single"

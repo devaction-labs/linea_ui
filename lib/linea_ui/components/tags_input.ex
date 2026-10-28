@@ -10,7 +10,12 @@ defmodule LineaUI.Components.TagsInput do
   `value` is a list of strings or a comma separated string. The tags are submitted as
   `name[]` (plus an empty `name[]` so an empty list still reaches the server) through a
   hidden `<select multiple>`, and each change fires a bubbling `input` event for `phx-change`.
-  `suggestions` are offered in the list while typing.
+  `suggestions` are offered in the list while typing. The `:option` and `:item` slots draw an
+  option in the list and a tag in the field, as in `LineaUI.Components.Select`.
+
+  With `max`, the input is disabled at the limit, its placeholder becomes `limit_placeholder`
+  and a `3 / 3` counter appears under the field. The row that creates a tag reads
+  `Enter Add “pri”`: `create_label` and `create_hint` are its words.
 
   ## Picking from a server-searched list
 
@@ -84,12 +89,30 @@ defmodule LineaUI.Components.TagsInput do
   attr :create_label, :string, default: "Add"
   attr :persist, :boolean, default: true, doc: "A removed tag stays in the list of suggestions."
   attr :restore_on_backspace, :boolean, default: false
-  attr :max, :integer, default: nil, doc: "How many tags can be added."
+
+  attr :create_hint, :string,
+    default: "Enter",
+    doc: "The key shown in the create row (`Enter Add “pri”`); `nil` hides it."
+
+  attr :max, :integer,
+    default: nil,
+    doc:
+      "How many tags can be added. At the limit the input is disabled, shows `limit_placeholder` and a `3 / 3` counter appears under the field."
+
+  attr :limit_placeholder, :string,
+    default: "Limit reached",
+    doc: "The placeholder of the disabled input at `max`."
+
   attr :no_results, :string, default: "No results found"
   attr :disabled, :boolean, default: false
   attr :target, :any, default: nil
   attr :class, :any, default: nil
   attr :rest, :global, include: ~w(form)
+
+  slot :option,
+    doc: "How an option shows in the list; gets the option map (`label`, `value`, `data`)."
+
+  slot :item, doc: "How a chosen tag shows in the control; gets the option map."
 
   def tags_input(assigns) do
     assigns
@@ -100,7 +123,6 @@ defmodule LineaUI.Components.TagsInput do
     |> assign_new(:value, fn -> nil end)
     |> assign(:options, assigns.options || assigns.suggestions)
     |> then(&assign(&1, :debounce, debounce(&1.on_search, &1.debounce)))
-    |> assign(option: [], item: [])
     |> LineaUI.Components.Select.Listbox.prepare(:tags)
     |> LineaUI.Components.Select.Listbox.listbox()
   end

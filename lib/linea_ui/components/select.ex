@@ -17,6 +17,20 @@ defmodule LineaUI.Components.Select do
   `:value` (other keys reach the `:option` and `:item` slots); `{group_label, [options]}` is a
   group. See `LineaUI.Components.Select.Options`.
 
+  ## Pillbox
+
+  A `multiple` listbox is a pillbox by default (`overflow="count"`): it keeps one line, 38px high
+  (`sm` 32px, `lg` 48px), and the chips that do not fit are hidden behind a `+N` chip that
+  names them in its `title` and, for screen readers, in `aria-label` (`more_label` is its word:
+  `3 more: Pix, Boleto…`). The wrapper carries `data-overflow="count"`; the hook measures the
+  chips on mount, on every change and when the control is resized. `overflow="wrap"` lets the
+  chips break into more lines and the control grow instead.
+
+      <.select field={@form[:methods]} options={@methods} multiple removable more_label="more" />
+      <.select field={@form[:tags]} options={@tags} multiple overflow="wrap" />
+
+  The chosen option shows a check in a 16px slot before its label in the list.
+
   The listbox submits through a hidden `<select>` named like the field (`name[]` when
   `multiple`), and fires a bubbling `input` event when the person changes the choice, so a
   surrounding `phx-change` runs. A value the server sends wins over the one in the browser;
@@ -134,6 +148,10 @@ defmodule LineaUI.Components.Select do
   attr :create_label, :string,
     default: "Add",
     doc: "The text before the typed term in the create row."
+
+  attr :create_hint, :string,
+    default: nil,
+    doc: "A key shown in the create row before the label (`\"Enter\"`); none by default."
 
   attr :persist, :boolean,
     default: true,

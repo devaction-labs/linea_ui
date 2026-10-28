@@ -21,8 +21,11 @@ defmodule LineaUI.Components.OtpInput do
   browser (render `value=""` to clear a rejected code), and re-rendering what the browser sent
   does nothing.
 
-  A filled box has a primary border (`data-filled`); with errors it keeps the error border, and
-  `state="success"` (a verified code) paints every box and the help line green.
+  A filled box has a primary border (`data-filled`); with errors it keeps the error border and
+  with `state="success"` the success one. The error line has `role="alert"`; a `help` line under
+  `state="success"` starts with a check-circle icon.
+
+      <.otp_input field={@form[:code]} state="success" help="Code confirmed" />
 
   ## Accessibility
 
@@ -73,6 +76,11 @@ defmodule LineaUI.Components.OtpInput do
   attr :help, :string, default: nil, doc: "The small line under the boxes."
   attr :errors, :list, default: []
 
+  attr :state, :string,
+    default: nil,
+    values: [nil, "success", "error"],
+    doc: "`success` paints the boxes green and the help line gets a check-circle icon."
+
   attr :length, :integer, default: 6, doc: "How many boxes (a code of this many characters)."
 
   attr :mode, :string,
@@ -89,11 +97,6 @@ defmodule LineaUI.Components.OtpInput do
   attr :mask, :boolean,
     default: false,
     doc: "Shows dots instead of the characters, like a password."
-
-  attr :state, :string,
-    default: nil,
-    values: [nil, "success"],
-    doc: "`success` for a verified code; `errors` still win."
 
   attr :disabled, :boolean, default: false
   attr :autofocus, :boolean, default: false, doc: "Focuses the first empty box when it mounts."
@@ -250,8 +253,7 @@ defmodule LineaUI.Components.OtpInput do
     """
   end
 
-  defp filled("error"), do: nil
-  defp filled("success"), do: nil
+  defp filled(state) when state in ["error", "success"], do: nil
   defp filled(_state), do: "data-filled:border-primary dark:data-filled:border-accent"
 
   defp mask_type(true), do: "password"

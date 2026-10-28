@@ -53,6 +53,69 @@ defmodule LineaUI.Components.TagsInputTest do
            ]
   end
 
+  test "at max the input is disabled, says so and a counter shows" do
+    html =
+      render(~H|<.tags_input id="t" name="tags" value={~w(a b c)} max={3} placeholder="Add…" />|)
+
+    assert [_] =
+             find(html, "input[data-search][disabled][placeholder='Limit reached']")
+             |> Enum.to_list()
+
+    assert LazyHTML.text(find(html, "[data-counter]")) |> String.trim() == "3 / 3"
+    assert find(html, "[data-counter][hidden]") |> Enum.to_list() == []
+    assert LazyHTML.attribute(find(html, "#t"), "data-placeholder") == ["Add…"]
+    assert LazyHTML.attribute(find(html, "#t"), "data-limit-placeholder") == ["Limit reached"]
+  end
+
+  test "under max the input is on and the counter is hidden; limit_placeholder is overridable" do
+    html =
+      render(~H|<.tags_input
+  id="t"
+  name="tags"
+  value={~w(a)}
+  max={3}
+  placeholder="Add…"
+  limit_placeholder="Limite atingido"
+/>|)
+
+    assert [_] =
+             find(html, "input[data-search][placeholder='Add…']:not([disabled])")
+             |> Enum.to_list()
+
+    assert [_] = find(html, "[data-counter][hidden]") |> Enum.to_list()
+    assert LazyHTML.attribute(find(html, "#t"), "data-limit-placeholder") == ["Limite atingido"]
+  end
+
+  test "without max there is no counter" do
+    html = render(~H|<.tags_input id="t" name="tags" value={~w(a)} />|)
+    assert find(html, "[data-counter]") |> Enum.to_list() == []
+    refute LazyHTML.attribute(find(html, "#t"), "data-placeholder") != []
+  end
+
+  test "the create row hint and label travel as data attributes" do
+    html =
+      render(~H|<.tags_input id="t" name="tags" create_label="Adicionar" create_hint="Enter" />|)
+
+    assert LazyHTML.attribute(find(html, "#t"), "data-create-hint") == ["Enter"]
+    assert LazyHTML.attribute(find(html, "#t"), "data-create-label") == ["Adicionar"]
+
+    html = render(~H|<.tags_input id="t" name="tags" create_hint={nil} />|)
+    assert LazyHTML.attribute(find(html, "#t"), "data-create-hint") == []
+  end
+
+  test "option and item slots are forwarded" do
+    html =
+      render(~H"""
+      <.tags_input id="t" name="tags" options={[%{value: 1, label: "Jo", job: "Dev"}]} value={[1]}>
+        <:option :let={o}><b class="opt">{o.data.job}</b></:option>
+        <:item :let={o}><i class="chip">{o.label}</i></:item>
+      </.tags_input>
+      """)
+
+    assert html |> find(".option b.opt") |> LazyHTML.text() == "Dev"
+    assert html |> find(".ts-control span.item i.chip") |> LazyHTML.text() == "Jo"
+  end
+
   test "field wiring" do
     assigns = %{__changed__: nil, form: Phoenix.Component.to_form(%{"tags" => ["x"]}, as: :post)}
     html = rendered_to_string(~H|<.tags_input field={@form[:tags]} label="Tags" />|)

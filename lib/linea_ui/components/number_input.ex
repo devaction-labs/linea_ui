@@ -22,6 +22,11 @@ defmodule LineaUI.Components.NumberInput do
   rounds it to `decimals`/`max_decimals` and writes it grouped. Arrow up and down (and the
   steppers) move by `step`, Page up and down by ten steps.
 
+  With `steppers` the field is 40px high at `md` (`sm` 32px, `lg` 48px) and its value is set in
+  mono. The `suffix` then sits at the right edge, or, with `align="center"`, right after the
+  value (the hook keeps its distance in `--nlen`, the number of characters shown). A stepper
+  is `disabled` at `min` and `max`.
+
   The behavior lives in the `LineaUI.NumberInput` hook, so the field needs a stable `id` (it
   gets one from `field` or `name`).
   """
@@ -45,7 +50,7 @@ defmodule LineaUI.Components.NumberInput do
 
   @stepper "flex shrink-0 items-center justify-center border border-slate-300 px-3 text-slate-600 outline-hidden transition-colors hover:bg-slate-100 hover:text-slate-800 focus-visible:bg-slate-100 active:bg-slate-150 disabled:pointer-events-none disabled:opacity-35 dark:border-navy-450 dark:text-navy-100 dark:hover:bg-navy-600 dark:hover:text-navy-50 dark:focus-visible:bg-navy-600 dark:active:bg-navy-500"
 
-  @stepper_sizes %{"sm" => "h-8", "md" => "h-[2.375rem]", "lg" => "h-12"}
+  @stepper_sizes %{"sm" => "h-8", "md" => "h-10", "lg" => "h-12"}
 
   @addon_sizes %{"sm" => "h-8 text-xs-plus", "md" => nil, "lg" => "h-12 text-base"}
 
@@ -204,7 +209,8 @@ defmodule LineaUI.Components.NumberInput do
         group_class: merge([@group, @shapes[assigns.shape]]),
         stepper_class: merge([@stepper, @stepper_sizes[assigns.size]]),
         field_height: @stepper_sizes[assigns.size],
-        addon_class: @addon_sizes[assigns.size]
+        addon_class: @addon_sizes[assigns.size],
+        shown: String.length(assigns.display)
       )
 
     ~H"""
@@ -240,7 +246,11 @@ defmodule LineaUI.Components.NumberInput do
         <InputGroup.input_group_addon :if={@prefix} variant="filled" class={@addon_class}>
           {@prefix}
         </InputGroup.input_group_addon>
-        <div class="relative min-w-0 flex-1 [&_.form-input]:w-full">
+        <div
+          class="relative min-w-0 flex-1 [&_.form-input]:w-full"
+          style={if((@steppers and @suffix) && @align == "center", do: "--nlen: #{@shown}")}
+          data-field
+        >
           <Input.input
             type="text"
             id={@id}
@@ -256,7 +266,7 @@ defmodule LineaUI.Components.NumberInput do
                 @align == "center" && "text-center",
                 @steppers && @field_height,
                 @steppers && "font-mono text-sm-plus font-medium text-slate-800 dark:text-navy-50",
-                @steppers && @suffix && "pe-9",
+                @steppers && @suffix && @align != "center" && "pe-9",
                 @class
               ])
             }
@@ -271,9 +281,17 @@ defmodule LineaUI.Components.NumberInput do
           />
           <span
             :if={@steppers && @suffix}
-            class="pointer-events-none absolute inset-y-0 end-3 flex items-center font-inter text-xs-plus text-slate-400 dark:text-navy-300"
+            class={[
+              "pointer-events-none absolute inset-y-0 flex items-center",
+              (@align == "center" &&
+                 "start-1/2 ms-[calc(var(--nlen,0)*0.5ch+0.5rem)] font-mono text-sm-plus font-medium") ||
+                "end-3"
+            ]}
+            data-suffix
           >
-            {@suffix}
+            <span class="font-inter text-xs-plus font-normal text-slate-400 dark:text-navy-300">
+              {@suffix}
+            </span>
           </span>
         </div>
         <InputGroup.input_group_addon

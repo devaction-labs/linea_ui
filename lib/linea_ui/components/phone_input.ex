@@ -17,7 +17,9 @@ defmodule LineaUI.Components.PhoneInput do
 
   ## The picker
 
-  The button opens a list with a search field. Each entry shows the flag, the country name and its calling code.
+  The button opens a list with a search field, as wide as the field (at least 16rem), and a 1px divider separates
+  the button from the number. Each entry shows the flag, the country name and its calling code; a country that
+  shares its code with others and has its own area codes shows them after it (`+1 787, 939` for Puerto Rico).
   Typing narrows the list by name (in Portuguese or English, and common names such as `usa`), by ISO code (`br`) and
   by calling code (`55` or `+55`), ignoring case and accents. The arrows move, Enter chooses, Esc closes and gives the
   focus back to the button. The names are in the language of `locale`.
@@ -78,7 +80,7 @@ defmodule LineaUI.Components.PhoneInput do
     "lg" => "text-base"
   }
 
-  @input_padding "pl-[6.5rem]"
+  @input_padding "pl-[6.875rem]"
 
   @picker "flex h-full w-full items-center gap-1.5 rounded-l-lg pl-3 pr-1 text-slate-600 outline-hidden transition-colors hover:text-slate-800 focus-visible:text-primary disabled:pointer-events-none dark:text-navy-100 dark:hover:text-navy-50 dark:focus-visible:text-accent"
 
@@ -274,8 +276,16 @@ defmodule LineaUI.Components.PhoneInput do
         data-display
         {@input_rest}
       >
-        <:prefix interactive class="w-[6.25rem] justify-start">
-          <div id={@id <> "-country"} class="flex h-full w-full items-center" phx-update="ignore">
+        <:prefix interactive class="pointer-events-none w-full justify-start">
+          <span
+            aria-hidden="true"
+            class="absolute top-1/2 left-[6.25rem] h-[18px] w-px -translate-y-1/2 bg-slate-300 dark:bg-navy-450"
+          ></span>
+          <div
+            id={@id <> "-country"}
+            class="pointer-events-auto flex h-full w-[6.25rem] items-center"
+            phx-update="ignore"
+          >
             <button
               type="button"
               id={@id <> "-picker"}
@@ -298,7 +308,7 @@ defmodule LineaUI.Components.PhoneInput do
             </button>
             <div
               id={@id <> "-dropdown"}
-              class="ts-dropdown w-72 max-w-[calc(100vw-2rem)] text-left"
+              class="ts-dropdown w-full min-w-64 max-w-[calc(100vw-2rem)] text-left"
               hidden
               data-dropdown
             >

@@ -109,7 +109,7 @@ defmodule LineaUI.Components.Choice do
 
   @chip_count "inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-white px-1.5 text-tiny-plus font-semibold text-slate-600 group-has-checked/choice:bg-white/20 group-has-checked/choice:text-white dark:bg-navy-700 dark:text-navy-100 dark:group-has-checked/choice:bg-white/20 dark:group-has-checked/choice:text-white"
 
-  @card "group/choice relative flex cursor-pointer items-start gap-3 rounded-lg border border-slate-300 px-4 py-3 transition-[border-color,box-shadow,background-color] duration-200 hover:border-slate-400 has-checked:ring-4 has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-primary/50 has-disabled:pointer-events-none has-disabled:opacity-60 dark:border-navy-450 dark:hover:border-navy-400 dark:has-focus-visible:outline-accent/50"
+  @card "group/choice relative flex cursor-pointer items-start gap-3 rounded-lg border border-slate-300 px-3.5 py-3 transition-[border-color,box-shadow,background-color] duration-200 hover:border-slate-400 has-checked:ring-3 has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-primary/50 has-disabled:pointer-events-none has-disabled:opacity-60 dark:border-navy-450 dark:hover:border-navy-400 dark:has-focus-visible:outline-accent/50"
 
   @card_tones %{
     "neutral" =>

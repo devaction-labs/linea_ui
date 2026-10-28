@@ -11,8 +11,10 @@ defmodule LineaUI.Components.Radio do
         <:radio value="error" color="error" disabled>Error</:radio>
       </.radio_group>
 
+  A `md` radio is 18px with a 6px dot (`xs` 12px, `sm` 16px, `lg` 24px).
+
   `variant="card"` lays each option out as a bordered card (title, description, optional icon
-  and count) that rings in `color` when chosen; `variant="chip"` renders pill chips, the
+  and count) with 14px of side padding that rings in `color` (1px border, 3px ring) when chosen; `variant="chip"` renders pill chips, the
   status filter of a list, with an optional count. Both keep a real radio underneath, so the
   arrow keys, the form and `phx-change` work as with plain radios.
 
@@ -38,6 +40,9 @@ defmodule LineaUI.Components.Radio do
     "circle" => "rounded-full",
     "squircle" => "rounded-md"
   }
+
+  # A radio is 18px at `md` with a 6px dot (a checkbox of that size stays 20px); `is-md` carries the dot.
+  @md "is-md size-[18px]"
 
   @colors ~w(neutral primary secondary info success warning error)
 
@@ -119,6 +124,7 @@ defmodule LineaUI.Components.Radio do
         classes:
           merge([
             Choice.input_classes("form-radio", %{assigns | color: entry.color || assigns.color}),
+            assigns.size == "md" && @md,
             @shapes[assigns.shape],
             invalid(assigns),
             assigns.radio_class,

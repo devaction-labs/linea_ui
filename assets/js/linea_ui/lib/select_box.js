@@ -1,7 +1,7 @@
 /**
  * What the select and tag listbox decide without a DOM: which options show for a search, how a label is split
  * around the typed term, where the arrow keys move, what a choice, a removal or a typed delimiter does to the
- * values, and whether the control is full.
+ * values, whether the control is full, what a full tag input shows and how many chips of a pillbox fit.
  */
 import {matches} from "./text.js"
 
@@ -50,3 +50,34 @@ export const splitTags = (text, delimiter = ",") => {
 
 /** Whether two lists hold the same values in the same order. */
 export const sameValues = (a, b) => a.length === b.length && a.every((value, index) => value === b[index])
+
+/** Whether Tab in a tag input turns the typed text into a tag (with nothing typed it moves on). */
+export const createsOnTab = (mode, term) => mode === "tags" && term.trim() !== ""
+
+/**
+ * What a tag input shows at its limit: the input is off, the placeholder says so and a `3 / 3` counter appears.
+ * Without a `max` nothing changes.
+ */
+export const limitState = ({count, max, placeholder, limitPlaceholder}) => {
+  const full = isFull(count, true, max)
+  return {
+    full,
+    disabled: full,
+    placeholder: full && limitPlaceholder ? limitPlaceholder : placeholder,
+    counter: max == null ? null : `${count} / ${max}`,
+    showCounter: full,
+  }
+}
+
+/** The create row's parts: the key hint (none when empty), the label and the term between curly quotes. */
+export const createRow = (hint, label, term) => ({hint: hint || null, label, quoted: `“${term}”`})
+
+/**
+ * How many chips stay on the one line of a pillbox: all when their `widths` fit in `room`, else the most that fit
+ * together with the `+N` badge, whose width `badgeWidth(hidden)` depends on how many are hidden.
+ */
+export const fitCount = (widths, room, badgeWidth) => {
+  const total = widths.reduce((sum, width) => sum + width, 0)
+  const keep = (n, used) => (n === 0 || used + badgeWidth(widths.length - n) <= room ? n : keep(n - 1, used - widths[n - 1]))
+  return total <= room ? widths.length : keep(widths.length, total)
+}

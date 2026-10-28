@@ -113,6 +113,12 @@ export const restrict = (list, {only = [], except = []} = {}) =>
 /** The name of a country in a locale: pt-BR names for `pt` locales, English for the rest. */
 export const nameOf = (country, locale) => (locale.toLowerCase().startsWith("pt") ? country.pt : country.en)
 
+/** The calling code of a list row: `+1`, and for a country with up to three area codes of its own, `+1 787, 939`. */
+export const dialLabel = (country) =>
+  country.leads.length > 0 && country.leads.length <= 3 && country.leads.every((lead) => lead.length === 3)
+    ? `+${country.code} ${country.leads.join(", ")}`
+    : `+${country.code}`
+
 /** The list in the order of the picker: the `first` ISO codes in the order given, then the rest by name in the locale. */
 export const arrange = (list, {locale = "en", first = []} = {}) => {
   const collator = new Intl.Collator(locale)

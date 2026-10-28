@@ -110,7 +110,7 @@ defmodule LineaUI.Components.NumberInputTest do
   end
 
   test "the field is as tall as its steppers, so the group has one height" do
-    for {size, height} <- [{"sm", "h-8"}, {"md", "h-[2.375rem]"}, {"lg", "h-12"}] do
+    for {size, height} <- [{"sm", "h-8"}, {"md", "h-10"}, {"lg", "h-12"}] do
       html =
         Phoenix.LiveViewTest.render_component(
           &number_input/1,
@@ -147,6 +147,35 @@ defmodule LineaUI.Components.NumberInputTest do
     assert attr_of(html, "#q", "phx-debounce") == []
     assert attr_of(html, "#q", "placeholder") == ["0"]
     assert attr_of(html, "#q-number", "data-negative") == ["true"]
+  end
+
+  test "a centered value with steppers keeps its suffix next to it" do
+    html =
+      render(
+        ~H|<.number_input id="q" name="qty" steppers suffix="un" align="center" value={12} />|
+      )
+
+    suffix = classes(html, "span[data-suffix]")
+    assert "start-1/2" in suffix
+    refute "end-3" in suffix
+    assert attr_of(html, "[data-field]", "style") == ["--nlen: 2"]
+    refute "pe-9" in classes(html, "input[data-display]")
+    assert html |> find("span[data-suffix]") |> LazyHTML.text() =~ "un"
+  end
+
+  test "the suffix stays at the edge when the value is not centered or has no steppers" do
+    html = render(~H|<.number_input id="q" name="qty" steppers suffix="un" value={12} />|)
+    assert "end-3" in classes(html, "span[data-suffix]")
+    assert "pe-9" in classes(html, "input[data-display]")
+    refute attr_of(html, "[data-field]", "style") |> Enum.join() =~ "--nlen"
+
+    html = render(~H|<.number_input id="q" name="qty" suffix="un" align="center" />|)
+    assert find(html, "span[data-suffix]") |> Enum.to_list() == []
+  end
+
+  test "steppers are SVG and disabled, not aria-disabled, at a bound by the hook" do
+    html = render(~H|<.number_input id="q" name="qty" steppers />|)
+    assert [_, _] = find(html, "button[data-step-by] svg") |> Enum.to_list()
   end
 
   test "label, help, errors, disabled and the generated id" do

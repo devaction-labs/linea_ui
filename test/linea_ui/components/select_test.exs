@@ -178,6 +178,53 @@ defmodule LineaUI.Components.SelectTest do
     end
   end
 
+  describe "pillbox" do
+    test "a multiple listbox keeps one line and counts what does not fit" do
+      html =
+        render(
+          ~H|<.select id="s" name="m" options={~w(A B C)} value={~w(A B C)} multiple removable />|
+        )
+
+      wrapper = find(html, "#s.ts-wrapper.multi")
+      assert LazyHTML.attribute(wrapper, "data-overflow") == ["count"]
+      assert LazyHTML.attribute(wrapper, "data-more-label") == ["more"]
+      assert find(html, ".ts-control [data-ts-item]") |> Enum.count() == 3
+      # the +N chip is drawn by the hook, from the chips that do not fit
+      assert find(html, ".ts-more") |> Enum.to_list() == []
+    end
+
+    test "more_label names the +N chip and size reaches the wrapper" do
+      html =
+        render(
+          ~H|<.select id="s" name="m" options={~w(A)} multiple size="sm" more_label="mais" />|
+        )
+
+      assert LazyHTML.attribute(find(html, "#s"), "data-more-label") == ["mais"]
+      assert LazyHTML.attribute(find(html, "#s"), "data-size") == ["sm"]
+    end
+
+    test "overflow wrap and a single select are not pillboxes" do
+      wrap = render(~H|<.select id="s" name="m" options={~w(A)} multiple overflow="wrap" />|)
+      assert LazyHTML.attribute(find(wrap, "#s"), "data-overflow") == []
+
+      single = render(~H|<.select id="s" name="m" options={~w(A)} />|)
+      assert LazyHTML.attribute(find(single, "#s"), "data-overflow") == []
+    end
+
+    test "every chosen chip has a template for the hook to rebuild it" do
+      html = render(~H|<.select id="s" name="m" options={~w(A B)} value={~w(A)} multiple />|)
+      assert find(html, "[data-templates] template") |> Enum.count() == 2
+    end
+  end
+
+  test "create_hint travels to the create row" do
+    html = render(~H|<.select id="s" name="m" options={~w(A)} create create_hint="Enter" />|)
+    assert LazyHTML.attribute(find(html, "#s"), "data-create-hint") == ["Enter"]
+
+    html = render(~H|<.select id="s" name="m" options={~w(A)} create />|)
+    assert LazyHTML.attribute(find(html, "#s"), "data-create-hint") == []
+  end
+
   test "an option with keywords carries them for the search to match" do
     html =
       render(~H"""
