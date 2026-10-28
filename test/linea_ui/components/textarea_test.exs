@@ -3,7 +3,11 @@ defmodule LineaUI.Components.TextareaTest do
 
   test "a bare outlined textarea has the primary focus ring and a disabled look that keeps the border" do
     html = render(~H'<.textarea name="bio" placeholder="Enter Text" />')
-    assert [_] = find(html, "textarea[name=bio][rows='4'][placeholder='Enter Text']") |> Enum.to_list()
+
+    assert [_] =
+             find(html, "textarea[name=bio][rows='4'][placeholder='Enter Text']")
+             |> Enum.to_list()
+
     assert find(html, "label") |> Enum.to_list() == []
 
     classes = classes(html, "textarea")
@@ -22,7 +26,10 @@ defmodule LineaUI.Components.TextareaTest do
   end
 
   test "filled variant" do
-    assert "bg-slate-150" in classes(render(~H'<.textarea name="b" variant="filled" />'), "textarea")
+    assert "bg-slate-150" in classes(
+             render(~H'<.textarea name="b" variant="filled" />'),
+             "textarea"
+           )
   end
 
   test "error and success paint the border and ring; error sets aria-invalid" do
