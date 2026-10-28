@@ -324,6 +324,7 @@ defmodule LineaUI.Components.DatetimePickerTest do
     labels = html |> data("#d", "data-labels") |> hd() |> Jason.decode!()
     assert labels["datetime_select_range"] == "Apply"
     assert labels["datetime_start"] == "Start"
+    assert labels["datetime_cancel"] == "Cancel"
     assert Map.keys(labels) |> Enum.all?(&String.starts_with?(&1, "datetime_"))
   end
 

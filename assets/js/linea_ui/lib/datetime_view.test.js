@@ -19,6 +19,7 @@ const LABELS = {
   datetime_end: "End",
   datetime_select: "Select",
   datetime_select_range: "Select range",
+  datetime_cancel: "Cancel",
   datetime_time_placeholder: "hh:mm",
 }
 
@@ -190,10 +191,20 @@ test("text from the server is escaped", () => {
 test("class helpers: the ends are inverted, closed days dimmed, today ringed", () => {
   assert.match(dayClass({edge: true, off: false, today: false}), /bg-primary/)
   assert.match(dayClass({edge: false, off: true, today: false}), /cursor-not-allowed/)
-  assert.match(dayClass({edge: false, off: false, today: true}), /ring-1/)
-  assert.doesNotMatch(dayClass({edge: true, off: false, today: true}), /ring-1/)
+  assert.match(dayClass({edge: false, off: false, today: true}), /after:size-1 after:rounded-full/)
+  assert.doesNotMatch(dayClass({edge: false, off: false, today: true}), /ring-1/)
+  assert.doesNotMatch(dayClass({edge: true, off: false, today: true}), /after:size-1/)
   assert.match(optionClass({selected: true, disabled: false}), /bg-primary/)
   assert.match(optionClass({selected: false, disabled: true}), /cursor-not-allowed/)
+  assert.match(optionClass({selected: false, disabled: true}), /line-through opacity-50/)
+  assert.doesNotMatch(optionClass({selected: false, disabled: false}), /line-through/)
   assert.equal(bandClass({paints: false, roundStart: false, roundEnd: false}), "")
   assert.match(bandClass({paints: true, roundStart: true, roundEnd: false}), /rounded-l-lg/)
+})
+
+test("a range footer has Cancel before the confirm button; a single desktop panel has neither", () => {
+  const range = renderPanel(model({mode: "range", state: {start: null, end: null}, slots: {start: slots("09:00"), end: slots("17:00")}}))
+  assert.match(range, /data-cancel class="[^"]*">Cancel<\/button><button type="button" data-confirm/)
+  assert.equal(count(renderPanel(model()), "data-cancel"), 0)
+  assert.equal(count(renderPanel(model({layout: "mobile"})), "data-cancel"), 1)
 })

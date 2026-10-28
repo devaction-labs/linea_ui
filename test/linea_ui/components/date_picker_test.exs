@@ -167,7 +167,7 @@ defmodule LineaUI.Components.DatePickerTest do
   test "the calendar is a named dialog; labels and the locale change the name and the texts" do
     html = render(~H|<.date_picker id="d" name="d" />|)
     assert html |> find("#d-calendar") |> LazyHTML.attribute("aria-label") == ["Choose date"]
-    labels = html |> find("#d") |> LazyHTML.attribute("data-labels") |> hd() |> JSON.decode!()
+    labels = html |> find("#d") |> LazyHTML.attribute("data-labels") |> hd() |> Jason.decode!()
     assert labels["picker_previous"] == "Previous month"
     assert labels["picker_day"] == "%{weekday}, %{month} %{day}, %{year}"
 
@@ -180,7 +180,7 @@ defmodule LineaUI.Components.DatePickerTest do
       )
 
     assert html |> find("#p-calendar") |> LazyHTML.attribute("aria-label") == ["Escolher data"]
-    labels = html |> find("#p") |> LazyHTML.attribute("data-labels") |> hd() |> JSON.decode!()
+    labels = html |> find("#p") |> LazyHTML.attribute("data-labels") |> hd() |> Jason.decode!()
     assert labels["picker_next"] == "Avançar"
     assert labels["picker_previous"] == "Mês anterior"
     assert labels["picker_day"] == "%{weekday}, %{day} de %{month} de %{year}"

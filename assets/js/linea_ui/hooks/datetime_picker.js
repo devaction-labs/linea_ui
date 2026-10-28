@@ -219,6 +219,7 @@ export const DatetimePicker = {
       [active.dataset.nav, `[data-nav="${active.dataset.nav}"]`],
       [active.id, `[id="${active.id}"]`],
       [active.hasAttribute?.("data-confirm"), "[data-confirm]"],
+      [active.hasAttribute?.("data-cancel"), "[data-cancel]"],
     ]
     return keys && keys.find(([present]) => present)?.[1]
   },
@@ -249,12 +250,14 @@ export const DatetimePicker = {
     const time = target.closest("[data-time]")
     const suggestion = target.closest("[data-suggest]")
     const confirm = target.closest("[data-confirm]")
+    const cancel = target.closest("[data-cancel]")
     const action =
       (day && (() => this.chooseDay(day.dataset.day))) ||
       (nav && (() => this.navigate(Number(nav.dataset.nav)))) ||
       (time && (() => this.chooseTime("start", time.dataset.time))) ||
       (suggestion && (() => this.chooseTime(suggestion.dataset.which, suggestion.dataset.suggest))) ||
-      (confirm && (() => this.confirm()))
+      (confirm && (() => this.confirm())) ||
+      (cancel && (() => this.close(true)))
     action && action()
   },
 
