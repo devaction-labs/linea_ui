@@ -73,6 +73,7 @@ defmodule LineaUI do
     progress: LineaUI.Components.Progress,
     radio: LineaUI.Components.Radio,
     range: LineaUI.Components.Range,
+    rating: LineaUI.Components.Rating,
     scroll_area: LineaUI.Components.ScrollArea,
     segmented: LineaUI.Components.Segmented,
     select: LineaUI.Components.Select,

@@ -298,7 +298,7 @@ defmodule LineaUI.Components.PhoneInput do
             </button>
             <div
               id={@id <> "-dropdown"}
-              class="ts-dropdown w-72 max-w-[calc(100vw-2rem)] text-left"
+              class="ts-dropdown text-left"
               hidden
               data-dropdown
             >

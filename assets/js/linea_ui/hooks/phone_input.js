@@ -13,7 +13,7 @@ import {runKey} from "../lib/keys.js"
 import {caretFor, dropBefore, significantBefore} from "../lib/mask_logic.js"
 import {moveIndex} from "../lib/select_box.js"
 import {COUNTRIES, byIso, flag} from "../lib/phone_countries.js"
-import {arrange, initialCountry, nameOf, resolve, restrict, search} from "../lib/phone_logic.js"
+import {arrange, initialCountry, nameOf, resolve, restrict, search, spanOf} from "../lib/phone_logic.js"
 
 const codes = (text) => (text ?? "").split(",").filter((code) => code !== "")
 
@@ -231,8 +231,17 @@ const PhoneInput = {
   },
 
   paintOpen() {
-    this.q("[data-dropdown]").hidden = !this.isOpen
+    const dropdown = this.q("[data-dropdown]")
+    dropdown.hidden = !this.isOpen
+    this.isOpen && this.fit(dropdown)
     this.q("[data-picker]").setAttribute("aria-expanded", String(this.isOpen))
+  },
+
+  /** The list is as wide as the whole field, not as the prefix it hangs from; measured on every open (the field may have resized). */
+  fit(dropdown) {
+    const parent = dropdown.offsetParent
+    const span = parent && spanOf(this.el.getBoundingClientRect(), parent.getBoundingClientRect(), parent.clientLeft)
+    span && ((dropdown.style.left = `${span.left}px`), (dropdown.style.width = `${span.width}px`))
   },
 
   searched(event) {

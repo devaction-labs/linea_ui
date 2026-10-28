@@ -164,3 +164,11 @@ export const search = (list, term, locale = "en") => {
  */
 export const initialCountry = (iso, pool, first = []) =>
   [iso, ...first].map((code) => pool.find((country) => country.iso === String(code ?? "").toUpperCase())).find(Boolean) ?? pool[0] ?? byIso("BR")
+
+/**
+ * Where the country list sits so that it is as wide as the whole field: the picker is only the prefix of the input,
+ * and an absolutely positioned panel measures itself from that box. `field` and `parent` are bounding rectangles
+ * (`left`, `width`); `border` is the parent's left border, which an offset is measured from the inside of.
+ * Returns the `left` offset and the `width`, in pixels.
+ */
+export const spanOf = (field, parent, border = 0) => ({left: field.left - parent.left - border, width: field.width})

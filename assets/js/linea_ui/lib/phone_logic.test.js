@@ -15,6 +15,7 @@ import {
   resolve,
   restrict,
   search,
+  spanOf,
   stripTrunk,
 } from "./phone_logic.js"
 
@@ -217,4 +218,10 @@ test("the initial country is the one asked for when the pool has it", () => {
   assert.equal(initialCountry("BR", pool).iso, "CA")
   assert.equal(initialCountry("BR", pool, ["US", "CA"]).iso, "US")
   assert.equal(initialCountry("BR", pool, ["XX"]).iso, "CA")
+})
+
+test("spanOf makes the list as wide as the field and starts it at the field's left edge", () => {
+  assert.deepEqual(spanOf({left: 100, width: 320}, {left: 101, width: 100}), {left: -1, width: 320})
+  assert.deepEqual(spanOf({left: 100, width: 320}, {left: 100, width: 100}, 1), {left: -1, width: 320})
+  assert.deepEqual(spanOf({left: 40, width: 280}, {left: 40, width: 100}), {left: 0, width: 280})
 })

@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- `phone_input`: the country list is as wide as the whole field, not the 18rem box it was. The hook measures the field every time the list opens (`spanOf` in `phone_logic.js`) and sets the list's `left` and `width`; the fixed `w-72` is gone.
+- New `rating/1`: a star rating. Read-only (default) it is a `role="img"` with an `aria-label` ("4.5 of 5 stars") and fills the last star by the fraction of `value`; with `readonly={false}` it is a group of native radios (`field`/`name`, `label` as the legend, `star_label`, `disabled`, `errors`), with a hover preview done in CSS. `max`, `size` (`sm md lg`), `count`.
+
 ## 0.6.1
 
 - Dragging no longer draws a 2px primary outline around the list under the pointer. The `[data-list][data-over]` rule is gone from `sortable.css`; the hook still sets `data-over`, and the kanban column only tints its background. The dimmed card and the insertion line stay.
