@@ -24,6 +24,10 @@ defmodule LineaUI.Components.Popover do
   ancestor's `z-index` / `transform` neither clip nor cover it. It follows scrolling, flips when
   there is no room and closes when its trigger scrolls out of sight; it stays in the LiveView's DOM,
   so patches and events inside it work as usual.
+
+  The card is 272px wide (`w-68`, at most 90% of the viewport) so text wraps instead of running on one
+  line; `class` changes it (`w-48`, `w-96`, `w-max`). The panel is a `role="dialog"` named by its
+  `:title` (`aria-labelledby`), or by `label` when there is no title.
   """
 
   use LineaUI.Component
@@ -51,6 +55,11 @@ defmodule LineaUI.Components.Popover do
   attr :on_open, :any, default: nil, doc: "An event name or a `%JS{}`."
   attr :on_close, :any, default: nil, doc: "An event name or a `%JS{}`."
   attr :target, :any, default: nil, doc: "The `phx-target` of `on_open` / `on_close` events."
+
+  attr :label, :string,
+    default: nil,
+    doc: "The dialog's accessible name (`aria-label`) when there is no `:title` slot."
+
   attr :class, :any, default: nil, doc: "Merged into the card (`max-w-xs`, `w-72 p-3`...)."
   attr :rest, :global
   slot :trigger, required: true
@@ -85,6 +94,8 @@ defmodule LineaUI.Components.Popover do
         class="popper-root fixed left-0 top-0 w-max"
         popover="manual"
         role="dialog"
+        aria-labelledby={@title != [] && "#{@id}-title"}
+        aria-label={@title == [] && @label}
         data-panel
         aria-hidden="true"
         phx-mounted={JS.ignore_attributes(["class", "style", "data-popper-placement", "aria-hidden"])}
@@ -92,13 +103,14 @@ defmodule LineaUI.Components.Popover do
         <div class="popper-box">
           <div class={
             merge([
-              "rounded-md border border-slate-150 bg-white p-4 dark:border-navy-600 dark:bg-navy-700",
+              "w-68 max-w-[90vw] rounded-md border border-slate-150 bg-white p-4 dark:border-navy-600 dark:bg-navy-700",
               @class
             ])
           }>
             <h3
               :for={title <- @title}
-              class="text-base font-medium tracking-wide text-slate-700 line-clamp-1 dark:text-navy-100"
+              id={"#{@id}-title"}
+              class="text-[15px] font-medium tracking-[.01em] text-slate-700 line-clamp-1 dark:text-navy-100"
             >
               {render_slot(title)}
             </h3>

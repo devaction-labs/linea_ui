@@ -26,6 +26,35 @@ defmodule LineaUI.Components.PopoverTest do
     assert [_] = find(html, "[data-popper-arrow] svg") |> Enum.to_list()
   end
 
+  test "the dialog is named by its title or by label, and the card has a default width" do
+    html =
+      render(~H"""
+      <.popover id="p">
+        <:trigger><button>Open</button></:trigger>
+        <:title>Lessons</:title>
+        x
+      </.popover>
+      """)
+
+    assert attr_of(html, "#p-panel", "aria-labelledby") == ["p-title"]
+    assert attr_of(html, "#p-panel", "aria-label") == []
+    assert attr_of(html, "#p-title", "id") == ["p-title"]
+    assert ["w-68", "max-w-[90vw]"] -- classes(html, "#p-panel .popper-box > div") == []
+
+    html =
+      render(~H"""
+      <.popover id="q" label="Profile" class="w-48">
+        <:trigger><button>Open</button></:trigger>
+        x
+      </.popover>
+      """)
+
+    assert attr_of(html, "#q-panel", "aria-label") == ["Profile"]
+    assert attr_of(html, "#q-panel", "aria-labelledby") == []
+    assert "w-48" in classes(html, "#q-panel .popper-box > div")
+    refute "w-68" in classes(html, "#q-panel .popper-box > div")
+  end
+
   test "hover, placement, no arrow, open and callbacks" do
     html =
       render(~H"""

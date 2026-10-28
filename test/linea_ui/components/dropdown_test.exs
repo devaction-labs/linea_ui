@@ -82,6 +82,27 @@ defmodule LineaUI.Components.DropdownTest do
     assert find(html, "h3") |> LazyHTML.text() =~ "People"
     assert attr_of(html, "input", "name") == ["q"]
     assert attr_of(html, "input", "phx-debounce") == ["300"]
+    assert ["h-8", "rounded-md"] -- classes(html, "input") == []
+    refute "border-y" in classes(html, "input")
+    assert "m-2" in classes(html, "label")
+  end
+
+  test "the header takes a second line; an item takes a shortcut" do
+    html =
+      render(~H"""
+      <.dropdown_header subtitle="ana@x.com">Ana</.dropdown_header>
+      <.dropdown_item shortcut="Ctrl E" phx-click="edit">Edit</.dropdown_item>
+      <.dropdown_item href="#" shortcut="Ctrl O">Open</.dropdown_item>
+      <.dropdown_item>Plain</.dropdown_item>
+      """)
+
+    assert find(html, "h3 span") |> LazyHTML.text() =~ "ana@x.com"
+
+    assert ["Ctrl E", "Ctrl O"] ==
+             html |> find("span.ml-auto") |> Enum.map(&(&1 |> LazyHTML.text() |> String.trim()))
+
+    assert ["ml-auto", "font-mono"] -- classes(html, "button[phx-click=edit] span") == []
+    assert "h-8.5" in classes(html, "button[phx-click=edit]")
   end
 
   test "toggle_icon draws the flat round dots button" do
@@ -175,7 +196,7 @@ defmodule LineaUI.Components.DropdownTest do
     trigger = find(html, "[data-submenu-trigger]")
     assert LazyHTML.attribute(trigger, "disabled") == [""]
     assert LazyHTML.attribute(trigger, "aria-disabled") == ["true"]
-    assert ["opacity-60", "text-error"] -- classes(html, "[data-submenu-trigger]") == []
+    assert ["opacity-55", "text-error"] -- classes(html, "[data-submenu-trigger]") == []
   end
 
   test "a link item forwards target, rel and download" do
