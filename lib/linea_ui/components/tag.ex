@@ -19,6 +19,9 @@ defmodule LineaUI.Components.Tag do
         <.tag color="primary">55</.tag>
       </.tag_group>
 
+  A selected chip (`active`) is a solid primary fill with white text, for every variant.
+  `count` puts a small pill with a number inside the tag.
+
   With `href`, `navigate` or `patch` a tag is a link; otherwise it is a button.
   """
 
@@ -99,6 +102,8 @@ defmodule LineaUI.Components.Tag do
     }
   }
 
+  @active "border border-primary bg-primary text-white hover:bg-primary-focus focus:bg-primary-focus active:bg-primary-focus/90 dark:border-accent dark:bg-accent dark:hover:bg-accent-focus dark:focus:bg-accent-focus dark:active:bg-accent/90"
+
   @shapes %{"rounded" => "", "pill" => "rounded-full", "square" => "rounded-none"}
 
   @doc """
@@ -116,7 +121,12 @@ defmodule LineaUI.Components.Tag do
   attr(:active, :boolean,
     default: false,
     doc:
-      "The selected state of a filter chip: the tag takes the `primary` color of its `variant` (and `aria-pressed=\"true\"`) whatever its `color`, so a list of chips only toggles this."
+      "The selected state of a filter chip: a solid `primary` fill with white text and a primary border (and `aria-pressed=\"true\"`) whatever its `color` and `variant`, so a list of chips only toggles this."
+  )
+
+  attr(:count, :integer,
+    default: nil,
+    doc: "A small pill with this number inside the tag, after the label (a filter's results)."
   )
 
   attr(:shape, :string, default: "rounded", values: ~w(rounded pill square))
@@ -131,7 +141,7 @@ defmodule LineaUI.Components.Tag do
       :classes,
       merge([
         @base,
-        @variants[assigns.variant][active_color(assigns)],
+        variant_classes(assigns),
         @shapes[assigns.shape],
         assigns.class
       ])
@@ -139,14 +149,14 @@ defmodule LineaUI.Components.Tag do
     |> render_tag()
   end
 
-  defp active_color(%{active: true}), do: "primary"
-  defp active_color(%{color: color}), do: color
+  defp variant_classes(%{active: true}), do: @active
+  defp variant_classes(%{variant: variant, color: color}), do: @variants[variant][color]
 
   defp render_tag(%{rest: rest} = assigns)
        when is_map_key(rest, :href) or is_map_key(rest, :navigate) or is_map_key(rest, :patch) do
     ~H"""
     <.link class={@classes} aria-current={@active && "true"} {@rest}>
-      {render_slot(@inner_block)}
+      {render_slot(@inner_block)}<.tag_count :if={@count} count={@count} />
     </.link>
     """
   end
@@ -154,8 +164,16 @@ defmodule LineaUI.Components.Tag do
   defp render_tag(assigns) do
     ~H"""
     <button type={@type} class={@classes} aria-pressed={@active && "true"} {@rest}>
-      {render_slot(@inner_block)}
+      {render_slot(@inner_block)}<.tag_count :if={@count} count={@count} />
     </button>
+    """
+  end
+
+  defp tag_count(assigns) do
+    ~H"""
+    <span class="tag-count ml-1.5 inline-flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-current/15 px-1.5 align-middle text-[11px] font-semibold leading-none">
+      {@count}
+    </span>
     """
   end
 
