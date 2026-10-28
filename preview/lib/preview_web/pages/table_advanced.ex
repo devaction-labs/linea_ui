@@ -301,6 +301,33 @@ defmodule PreviewWeb.Pages.TableAdvanced do
       </:col>
       <:col :let={project} label="Deadline">{project.deadline}</:col>
     </.data_table>
+
+    <div class="mt-8 space-y-6">
+      <h3 class="text-base font-medium text-slate-700 dark:text-navy-100">
+        Columns that leave by priority
+      </h3>
+      <div :for={width <- [820, 560, 380]} class="max-w-full" style={"width: #{width}px"}>
+        <p class="mb-2 text-xs text-slate-400">{width}px box</p>
+        <.card class="p-3">
+          <.table id={"priority-#{width}"} rows={inner_rows()} hoverable>
+            <:col :let={row} label="Name">
+              <div class="flex items-center gap-2">
+                <img
+                  class="table-narrow-hide size-7 rounded-full"
+                  src={avatar_src(row.id)}
+                  alt=""
+                />
+                {row.name}
+              </div>
+            </:col>
+            <:col :let={row} label="Job" priority={3}>{row.job}</:col>
+            <:col :let={row} label="Owner" priority={2}>{row.color}</:col>
+            <:col :let={row} label="Status" priority={1}>Active</:col>
+            <:col :let={row} label="Id" align="right">{row.id}</:col>
+          </.table>
+        </.card>
+      </div>
+    </div>
     """
   end
 

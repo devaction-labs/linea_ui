@@ -51,6 +51,26 @@ defmodule LineaUI.Components.Table do
   and attributes (`phx-click`, `data-*`) of its `<tr>`; `:foot` cells make a totals row in a
   `<tfoot>`; `sticky_header` pins the header inside a height-bound wrapper.
 
+  ## Columns leave by priority
+
+  A `:col` takes a `priority`: `0` (default) always stays; `1`, `2` and `3` leave, in this order, when the
+  table's own box (a container query, not the window) gets narrower than 720px, 560px and 420px. The header, the
+  cells and the `:foot` cell of the same priority go together, so a wide table fits a narrow column without a
+  horizontal scroll. Mark the `:foot` cells like the columns they sit under (a `colspan` is the app's own, so
+  give it the span of what stays). Tables without a priority are not touched.
+
+      <.table id="people" rows={@people}>
+        <:col :let={p} label="Name">{p.name}</:col>
+        <:col :let={p} label="Owner" priority={2}>{p.owner}</:col>
+        <:col :let={p} label="Status" priority={1}>{p.status}</:col>
+        <:col :let={p} label="Team"><.avatar src={p.photo} class="table-narrow-hide" /> {p.team}</:col>
+      </.table>
+
+  The class `table-narrow-hide` hides what carries it (an avatar, an icon) when the box is narrower than 420px.
+  The wrapper becomes the container only when some column has a priority; a hand-written table sets
+  `container` and marks its `:col` and `:cell` entries (and `table_cell/1`) with `priority` itself.
+  What left is not shown anywhere else: use `expand` or a `row_click` to open the record.
+
   ## Hand-written tables
 
   Without `rows`, the table renders its inner block and its cells take the look of `variant`,
@@ -198,9 +218,9 @@ defmodule LineaUI.Components.Table do
 
   @aligns %{"left" => "text-left", "center" => "text-center", "right" => "text-right"}
 
-  @head_col_keys ~w(__slot__ inner_block label class align colspan sort_key)a
+  @head_col_keys ~w(__slot__ inner_block label class align colspan sort_key priority)a
 
-  @cell_keys ~w(__slot__ inner_block class align colspan rowspan)a
+  @cell_keys ~w(__slot__ inner_block class align colspan rowspan priority)a
 
   @checkbox "form-checkbox is-basic size-5 rounded-sm border-slate-400/70 checked:border-primary checked:bg-primary hover:border-primary focus:border-primary dark:border-navy-400 dark:checked:border-accent dark:checked:bg-accent dark:hover:border-accent dark:focus:border-accent"
 
@@ -319,6 +339,12 @@ defmodule LineaUI.Components.Table do
       "Runs the table edge to edge of the card it sits in (the body's padding as a negative margin, given back to the first and last cells), and to the top and bottom of the body when it is the only thing in it."
   )
 
+  attr(:container, :boolean,
+    default: nil,
+    doc:
+      "Makes the wrapper a container for columns that leave by priority. Automatic when a `:col` has a `priority`; set it on a hand-written table."
+  )
+
   attr(:target, :any, default: nil, doc: "`phx-target` of the events.")
   attr(:expand_label, :string, default: nil, doc: "Header of the expand column.")
 
@@ -369,6 +395,10 @@ defmodule LineaUI.Components.Table do
     )
 
     attr(:sort_key, :string, doc: "Makes the header sortable; sent as `\"column\"` in `on_sort`.")
+
+    attr(:priority, :integer,
+      doc: "0 (default) stays; 1, 2 and 3 leave when the table's box is under 720, 560 and 420px."
+    )
   end
 
   slot(:action, doc: "Cells appended to every row, after the columns.")
@@ -383,6 +413,7 @@ defmodule LineaUI.Components.Table do
     attr(:class, :any, doc: "Extra classes of the cell.")
     attr(:align, :string, values: ~w(left center right), doc: "Text alignment of the cell.")
     attr(:colspan, :any, doc: "Columns the cell spans.")
+    attr(:priority, :integer, doc: "Leaves with the columns of that priority.")
   end
 
   slot(:inner_block,
@@ -392,7 +423,10 @@ defmodule LineaUI.Components.Table do
 
   def table(%{rows: nil} = assigns) do
     assigns
-    |> assign(:wrapper, merge([@wrapper[assigns.variant], bleed(assigns), assigns.wrapper_class]))
+    |> assign(
+      :wrapper,
+      merge([@wrapper[assigns.variant], box(assigns), bleed(assigns), assigns.wrapper_class])
+    )
     |> assign(:table_class, merge(["linea-table", table_class(assigns), assigns.class]))
     |> render_composable()
   end
@@ -423,6 +457,7 @@ defmodule LineaUI.Components.Table do
       merge([
         @wrapper[assigns.variant],
         no_border(assigns),
+        box(assigns),
         bleed(assigns),
         assigns.wrapper_class
       ])
@@ -450,6 +485,15 @@ defmodule LineaUI.Components.Table do
 
   defp compact(%{compact: true}), do: @compact
   defp compact(%{compact: false}), do: nil
+
+  # The wrapper answers to its own width only when a column can leave.
+  defp box(%{col: [_ | _] = cols}), do: if(Enum.any?(cols, &(priority(&1) > 0)), do: "linea-tbox")
+  defp box(%{container: true}), do: "linea-tbox"
+  defp box(_assigns), do: nil
+
+  defp priority(entry), do: entry[:priority] || 0
+
+  defp data_p(entry), do: if(priority(entry) > 0, do: priority(entry))
 
   defp bleed(%{bleed: true}), do: @bleed
   defp bleed(%{bleed: false}), do: nil
@@ -618,6 +662,7 @@ defmodule LineaUI.Components.Table do
         <th
           :for={col <- @col}
           class={merge([@th_class, align(col[:align]), col[:head_class]])}
+          data-p={data_p(col)}
           aria-sort={aria_sort(col[:sort_key], @sort_by, @sort_dir)}
         >
           <.sort_header
@@ -676,6 +721,7 @@ defmodule LineaUI.Components.Table do
         <td
           :for={cell <- @foot}
           colspan={cell[:colspan]}
+          data-p={data_p(cell)}
           class={merge([@td_class, @foot_td, align(cell[:align]), cell[:class]])}
         >
           {render_slot(cell)}
@@ -704,6 +750,7 @@ defmodule LineaUI.Components.Table do
     <td
       :for={col <- @col}
       class={merge([@td_class, align(col[:align]), @row_click && "cursor-pointer", col[:class]])}
+      data-p={data_p(col)}
       phx-click={@row_click && @row_click.(@row)}
     >
       {render_slot(col, @row_item.(@row))}
@@ -808,7 +855,7 @@ defmodule LineaUI.Components.Table do
   slot(:col,
     validate_attrs: false,
     doc:
-      "A header cell; its content is the label (or give `label`). Takes `label` (text when the slot has no content), `class`, `align` (`left center right`), `colspan` and `sort_key` (makes it sortable; sent as `\"column\"` in `on_sort`). Any other attribute (`id`, `data-*`, `phx-*`, `title`, `aria-*`) lands on the `<th>`."
+      "A header cell; its content is the label (or give `label`). Takes `label` (text when the slot has no content), `class`, `align` (`left center right`), `colspan`, `priority` and `sort_key` (makes it sortable; sent as `\"column\"` in `on_sort`). Any other attribute (`id`, `data-*`, `phx-*`, `title`, `aria-*`) lands on the `<th>`."
   )
 
   slot(:inner_block, doc: "Extra `<th>` cells after the columns, or further header rows.")
@@ -836,6 +883,7 @@ defmodule LineaUI.Components.Table do
         <th
           :for={col <- @col}
           colspan={col[:colspan]}
+          data-p={data_p(col)}
           class={merge([align(col[:align]), col[:class]])}
           aria-sort={aria_sort(col[:sort_key], @sort_by, @sort_dir)}
           {slot_rest(col, @head_col_keys)}
@@ -942,7 +990,7 @@ defmodule LineaUI.Components.Table do
   slot(:cell,
     validate_attrs: false,
     doc:
-      "A `<td>` of the row. Takes `class`, `align` (`left center right`), `colspan` and `rowspan`; any other attribute (`id`, `data-*`, `phx-*`, `title`, `aria-*`) lands on the `<td>`."
+      "A `<td>` of the row. Takes `class`, `align` (`left center right`), `colspan`, `rowspan` and `priority`; any other attribute (`id`, `data-*`, `phx-*`, `title`, `aria-*`) lands on the `<td>`."
   )
 
   slot(:inner_block, doc: "Free cells after the `:cell` ones.")
@@ -972,6 +1020,7 @@ defmodule LineaUI.Components.Table do
         :for={cell <- @cell}
         colspan={cell[:colspan]}
         rowspan={cell[:rowspan]}
+        data-p={data_p(cell)}
         class={merge([align(cell[:align]), cell[:class]])}
         {slot_rest(cell, @cell_keys)}
       >
@@ -995,6 +1044,7 @@ defmodule LineaUI.Components.Table do
   attr(:align, :string, default: nil, values: [nil | ~w(left center right)])
   attr(:colspan, :any, default: nil)
   attr(:rowspan, :any, default: nil)
+  attr(:priority, :integer, default: nil, doc: "See \"Columns leave by priority\" in `table/1`.")
   attr(:class, :any, default: nil)
   attr(:rest, :global)
   slot(:inner_block)
@@ -1005,6 +1055,7 @@ defmodule LineaUI.Components.Table do
       scope="row"
       colspan={@colspan}
       rowspan={@rowspan}
+      data-p={@priority && @priority > 0 && @priority}
       class={merge([align(@align), @class])}
       {@rest}
     >
@@ -1015,7 +1066,13 @@ defmodule LineaUI.Components.Table do
 
   def table_cell(assigns) do
     ~H"""
-    <td colspan={@colspan} rowspan={@rowspan} class={merge([align(@align), @class])} {@rest}>
+    <td
+      colspan={@colspan}
+      rowspan={@rowspan}
+      data-p={@priority && @priority > 0 && @priority}
+      class={merge([align(@align), @class])}
+      {@rest}
+    >
       {render_slot(@inner_block)}
     </td>
     """
@@ -1036,7 +1093,7 @@ defmodule LineaUI.Components.Table do
   slot(:cell,
     validate_attrs: false,
     doc:
-      "A `<td>` of the totals row. Takes `class`, `align` (`left center right`) and `colspan`; any other attribute (`id`, `data-*`, `phx-*`, `title`, `aria-*`) lands on the `<td>`."
+      "A `<td>` of the totals row. Takes `class`, `align` (`left center right`), `colspan` and `priority`; any other attribute (`id`, `data-*`, `phx-*`, `title`, `aria-*`) lands on the `<td>`."
   )
 
   slot(:inner_block, doc: "Free `<tr>` rows after the `:cell` row.")
@@ -1050,6 +1107,7 @@ defmodule LineaUI.Components.Table do
         <td
           :for={cell <- @cell}
           colspan={cell[:colspan]}
+          data-p={data_p(cell)}
           class={merge([align(cell[:align]), cell[:class]])}
           {slot_rest(cell, @cell_keys)}
         >

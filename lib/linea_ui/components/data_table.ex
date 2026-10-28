@@ -34,7 +34,8 @@ defmodule LineaUI.Components.DataTable do
   Rows may be a stream (`rows={@streams.users}`); the body then renders with
   `phx-update="stream"` and `total` drives the footer. `:col`, `:action`, `:expand`,
   `:empty`, `row_id`, `row_key`, `row_item`, `row_click` and selection work as in
-  `LineaUI.Components.Table.table/1`.
+  `LineaUI.Components.Table.table/1`, and so do the columns that leave by `priority` when the
+  box gets narrow.
   """
 
   use LineaUI.Component
@@ -252,6 +253,10 @@ defmodule LineaUI.Components.DataTable do
     )
 
     attr(:sort_key, :string, doc: "Makes the header sortable; sent as `\"column\"` in `on_sort`.")
+
+    attr(:priority, :integer,
+      doc: "0 (default) stays; 1, 2 and 3 leave when the table's box is under 720, 560 and 420px."
+    )
   end
 
   slot(:title, doc: "The `advanced` variant's heading.")
@@ -274,6 +279,7 @@ defmodule LineaUI.Components.DataTable do
     attr(:class, :any, doc: "Extra classes of the cell.")
     attr(:align, :string, values: ~w(left center right), doc: "Text alignment of the cell.")
     attr(:colspan, :any, doc: "Columns the cell spans.")
+    attr(:priority, :integer, doc: "Leaves with the columns of that priority.")
   end
 
   def data_table(assigns) do

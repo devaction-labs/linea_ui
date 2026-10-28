@@ -1120,3 +1120,25 @@
     .linea-ctable-pop { display: none !important; }
   }
 }
+
+/* table: columns that leave by priority. The wrapper is a container only when a column has a priority
+   (`linea-tbox`), so it answers to its own width: 1 leaves under 720px, 2 under 560px, 3 under 420px. */
+@layer components {
+  .linea-tbox {
+    container-type: inline-size;
+    container-name: tbox;
+  }
+
+  @container tbox (max-width: 719.98px) {
+    .linea-tbox [data-p="1"] { display: none; }
+  }
+
+  @container tbox (max-width: 559.98px) {
+    .linea-tbox [data-p="2"] { display: none; }
+  }
+
+  @container tbox (max-width: 419.98px) {
+    .linea-tbox [data-p="3"] { display: none; }
+    .linea-tbox .table-narrow-hide { display: none !important; }
+  }
+}
