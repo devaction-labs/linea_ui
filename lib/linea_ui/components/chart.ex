@@ -103,7 +103,7 @@ defmodule LineaUI.Components.Chart do
 
   **Text**: `dataLabels` (`enabled`, `formatter`, `offsetX`, `offsetY`, `style.fontSize`), `legend`
   (`show`, `showForSingleSeries`, `position`, `horizontalAlign`, `fontSize`, `markers.size`,
-  `markers.shape`, `itemMargin`, `onItemClick.toggleDataSeries`; clicking an entry hides its series),
+  `markers.shape`, `itemMargin`, `onItemClick.toggleDataSeries`; clicking an entry hides its series; pointing at or tabbing to one puts its series in front: the others dim and a slice or ring grows),
   `tooltip` (`enabled`, `shared`, `intersect`, `theme` `light` or `dark`, `fillSeriesColor`, `x.show`,
   `x.format`, `x.formatter`, `y.formatter`, `y.title.formatter`) and `title.text`, which names the chart
   for assistive technology. Each chart also carries a hidden table with its data.

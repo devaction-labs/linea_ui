@@ -531,6 +531,22 @@
     filter: brightness(1.12);
   }
 
+  .linea-chart-series,
+  .linea-chart-slice,
+  .linea-chart-ring {
+    transition: opacity 150ms;
+  }
+
+  .linea-chart-series.is-dim,
+  .linea-chart-slice.is-dim,
+  .linea-chart-ring.is-dim {
+    opacity: 0.3;
+  }
+
+  .linea-chart-legend-item:focus-visible {
+    @apply rounded-sm outline-2 outline-offset-1 outline-primary;
+  }
+
   .linea-chart-slice-label {
     @apply fill-white font-inter font-semibold;
     pointer-events: none;
