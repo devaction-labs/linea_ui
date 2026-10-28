@@ -12,6 +12,8 @@ const LABELS = {
   datetime_title: "%{month} %{year}",
   datetime_previous: "Previous month",
   datetime_next: "Next month",
+  datetime_choose_month: "Choose month",
+  datetime_choose_year: "Choose year",
   datetime_times: "Times",
   datetime_no_times: "No times available",
   datetime_time: "Time",
@@ -44,6 +46,9 @@ const model = (extra = {}) => ({
   slots: {start: slots("09:00", "10:30", "12:00"), end: []},
   dateText: (iso) => iso,
   canConfirm: true,
+  rules: {min: null, max: null},
+  picking: null,
+  page: undefined,
   ...extra,
 })
 
@@ -207,4 +212,45 @@ test("a range footer has Cancel before the confirm button; a single desktop pane
   assert.match(range, /data-cancel class="[^"]*">Cancel<\/button><button type="button" data-confirm/)
   assert.equal(count(renderPanel(model()), "data-cancel"), 0)
   assert.equal(count(renderPanel(model({layout: "mobile"})), "data-cancel"), 1)
+})
+
+test("the header of a month has a month button and a year button, named by labels", () => {
+  const html = renderMonth({year: 2026, month: 9}, {previous: true, next: true, index: 0}, model({labels: {...LABELS, datetime_choose_month: "Escolher mês"}}))
+  assert.match(html, /<button type="button" id="dt-pick-month-0" data-pick="month" aria-label="Escolher mês" aria-haspopup="true" aria-expanded="false"[^>]*>October<svg/)
+  assert.match(html, /data-pick="year" aria-label="Choose year" aria-haspopup="true" aria-expanded="false"[^>]*>2026<\/button>/)
+  assert.match(html, /role="grid" aria-labelledby="dt-title-2026-9"/)
+  assert.match(html, /id="dt-title-2026-9" aria-live="polite" class="sr-only">October 2026/)
+})
+
+test("picking a month swaps the days of that month for a grid of twelve months with one Tab stop", () => {
+  const html = renderMonth({year: 2026, month: 9}, {previous: true, next: true, index: 0}, model({picking: {kind: "month", index: 0}}))
+  assert.equal(count(html, "data-pick-month="), 12)
+  assert.equal(count(html, "data-day="), 0)
+  assert.equal(count(html, 'role="grid"'), 0)
+  assert.match(html, /data-pick-grid="month"/)
+  assert.match(html, /aria-expanded="true"/)
+  assert.equal(count(html, 'tabindex="0"'), 1)
+  assert.match(html, /data-pick-month="9" tabindex="0" aria-label="October" aria-pressed="true"[^>]*>Oct</)
+  assert.match(html, /data-pick-month="0" tabindex="-1" aria-label="January" aria-pressed="false"[^>]*>Jan</)
+})
+
+test("the year grid is a page of twelve years and the rules dim the months and years they close", () => {
+  const years = renderMonth({year: 2026, month: 9}, {previous: true, next: true, index: 0}, model({picking: {kind: "year", index: 0}, rules: {min: {date: "2020-06-01", time: null}, max: null}}))
+  assert.equal(count(years, "data-pick-year="), 12)
+  assert.match(years, /data-pick-year="2016"[^>]*aria-disabled="true"/)
+  assert.doesNotMatch(years, /data-pick-year="2020"[^>]*aria-disabled/)
+  assert.match(years, /data-pick-year="2026" tabindex="0" aria-label="2026" aria-pressed="true"/)
+  assert.match(years, /aria-label="Choose year \(2016\u20132027\)"/)
+  const next = renderMonth({year: 2026, month: 9}, {previous: true, next: true, index: 0}, model({picking: {kind: "year", index: 0}, page: 2028}))
+  assert.match(next, /data-pick-year="2028" tabindex="0"/)
+  assert.match(next, /data-pick-year="2039"/)
+  const months = renderMonth({year: 2026, month: 9}, {previous: true, next: true, index: 0}, model({picking: {kind: "month", index: 0}, rules: {min: {date: "2026-10-05", time: null}, max: null}}))
+  assert.match(months, /data-pick-month="8"[^>]*aria-disabled="true"/)
+  assert.doesNotMatch(months, /data-pick-month="9"[^>]*aria-disabled/)
+})
+
+test("in a range only the month that was asked for shows its grid", () => {
+  const html = renderPanel(model({mode: "range", state: {start: null, end: null}, picking: {kind: "month", index: 1}}))
+  assert.equal(count(html, "data-pick-month="), 12)
+  assert.equal(count(html, "data-day="), 31)
 })

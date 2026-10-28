@@ -7,6 +7,7 @@
 import {bandCell, daysInMonth, leadingDays, previewRange, shiftMonth, toIso, weekdayIndex} from "./dates.js"
 import {escapeHtml} from "./date_picker_view.js"
 import {fill, formatTime} from "./datetime_format.js"
+import {monthOff, yearOff, yearPage, PAGE} from "./datetime_pick.js"
 import {glyphHtml} from "./glyphs.js"
 
 const DAY = "relative mx-auto flex size-9 items-center justify-center rounded-lg text-sm text-slate-600 outline-hidden transition-colors focus-visible:ring-2 focus-visible:ring-primary/50 dark:text-navy-100 dark:focus-visible:ring-accent/50"
@@ -20,6 +21,10 @@ const OPTION = "flex w-full items-center rounded-lg px-3 py-1.5 text-left text-s
 const FIELD = "w-full rounded-lg border border-slate-300 bg-transparent px-3 py-2 text-sm text-slate-700 placeholder:text-slate-400/70 hover:border-slate-400 focus:border-primary disabled:pointer-events-none disabled:bg-zinc-100 disabled:opacity-70 dark:border-navy-450 dark:text-navy-100 dark:hover:border-navy-400 dark:focus:border-accent dark:disabled:bg-navy-600"
 const CANCEL = "inline-flex h-9 items-center justify-center rounded-lg border border-slate-300 px-4 text-sm font-medium text-slate-700 outline-hidden transition-colors hover:bg-slate-150 focus-visible:ring-2 focus-visible:ring-primary/50 dark:border-navy-450 dark:text-navy-100 dark:hover:bg-navy-500 dark:focus-visible:ring-accent/50"
 const CONFIRM = "inline-flex h-9 items-center justify-center rounded-lg bg-primary px-4 text-sm font-medium text-white outline-hidden transition-colors hover:bg-primary-focus focus-visible:ring-2 focus-visible:ring-primary/50 disabled:pointer-events-none disabled:opacity-60 dark:bg-accent dark:hover:bg-accent-focus dark:focus-visible:ring-accent/50"
+
+const PICK = "inline-flex h-8 items-center gap-0.5 rounded-lg px-2 text-sm font-medium text-slate-700 outline-hidden transition-colors hover:bg-slate-150 focus-visible:ring-2 focus-visible:ring-primary/50 aria-expanded:bg-slate-150 dark:text-navy-100 dark:hover:bg-navy-500 dark:focus-visible:ring-accent/50 dark:aria-expanded:bg-navy-500"
+const CELL = "flex h-full w-full items-center justify-center rounded-lg text-sm outline-hidden transition-colors focus-visible:ring-2 focus-visible:ring-primary/50 dark:focus-visible:ring-accent/50"
+const CHEVRON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="size-3.5 text-slate-400 dark:text-navy-300"><path d="m19.5 8.25-7.5 7.5-7.5-7.5"/></svg>'
 
 const attr = escapeHtml
 
@@ -53,11 +58,39 @@ const dayCell = (iso, number, column, vm, shown) => {
   )
 }
 
+const pickButton = (kind, content, label, picking, side, vm) =>
+  `<button type="button" id="${vm.id}-pick-${kind}-${side.index ?? 0}" data-pick="${kind}" aria-label="${attr(label)}" aria-haspopup="true" aria-expanded="${picking === kind}" class="${PICK}">${content}</button>`
+
+/** The cell of a month or a year in its grid; `stop` holds the Tab stop, `off` is out of reach, `current` is the one shown. */
+const pickCell = ({kind, value, text, label, current, off, stop}) =>
+  `<button type="button" data-pick-item data-pick-${kind}="${value}" tabindex="${stop ? 0 : -1}" aria-label="${attr(label)}"${current ? ' aria-pressed="true"' : ' aria-pressed="false"'}${off ? ' aria-disabled="true"' : ""} ` +
+  `class="${CELL} ${current ? EDGE : off ? OFF : `${IDLE} text-slate-600 dark:text-navy-100`}">${text}</button>`
+
+/** The twelve months of a year, or the page of twelve years around it, as a grid of three columns replacing the days of that month. */
+const pickGrid = (kind, month, side, vm) => {
+  const first = yearPage(vm.page ?? month.year)
+  const items = Array.from({length: PAGE}, (_, index) =>
+    kind === "month"
+      ? {value: index, text: attr(vm.names.months[index].slice(0, 3)), label: vm.names.months[index], current: index === month.month, off: monthOff({year: month.year, month: index}, vm.rules)}
+      : {value: first + index, text: first + index, label: String(first + index), current: first + index === month.year, off: yearOff(first + index, vm.rules)},
+  )
+  const open = items.filter((item) => !item.off)
+  const stop = items.find((item) => item.current && !item.off) ?? open[0]
+  const title = kind === "month" ? vm.labels.datetime_choose_month : `${vm.labels.datetime_choose_year} (${first}\u2013${first + PAGE - 1})`
+  return (
+    `<div role="group" aria-label="${attr(title)}" data-pick-grid="${kind}" class="mt-2 grid h-[13.25rem] grid-cols-3 grid-rows-4 gap-2">` +
+    items.map((item) => pickCell({...item, kind, stop: item === stop})).join("") +
+    `</div>`
+  )
+}
+
 /**
- * One month: its header with the buttons to the previous (`side.previous`) and the next (`side.next`) month,
- * the weekday names and the grid of days.
+ * One month: its header with the buttons to the previous (`side.previous`) and the next (`side.next`) month and
+ * the buttons of its month and year, the weekday names and the grid of days. While `vm.picking` (`{kind: "month" | "year", index}`)
+ * points at it (`side.index`), a grid of months or of years takes the place of the days.
  */
 export const renderMonth = (month, side, vm) => {
+  const picking = vm.picking && vm.picking.index === (side.index ?? 0) ? vm.picking.kind : null
   const shown = range(vm)
   const title = fill(vm.labels.datetime_title, {month: vm.names.months[month.month], year: month.year})
   const titleId = `${vm.id}-title-${month.year}-${month.month}`
@@ -79,11 +112,14 @@ export const renderMonth = (month, side, vm) => {
   return (
     `<div class="w-full min-w-0 sm:w-[17.5rem]" data-month="${month.year}-${month.month}">` +
     `<div class="flex h-8 items-center justify-between">${nav(-1, vm.labels.datetime_previous, "angle_left", side.previous)}` +
-    `<span id="${titleId}" aria-live="polite" class="text-sm font-medium text-slate-700 dark:text-navy-100">${attr(title)}</span>` +
+    `<div class="flex items-center gap-0.5"><span id="${titleId}" aria-live="polite" class="sr-only">${attr(title)}</span>` +
+    `${pickButton("month", attr(vm.names.months[month.month]) + CHEVRON, vm.labels.datetime_choose_month, picking, side, vm)}` +
+    `${pickButton("year", month.year, vm.labels.datetime_choose_year, picking, side, vm)}</div>` +
     `${nav(1, vm.labels.datetime_next, "angle_right", side.next)}</div>` +
-    `<div role="grid" aria-labelledby="${titleId}" class="mt-2">` +
+    (picking ? pickGrid(picking, month, side, vm) : "") +
+    (picking ? "" : `<div role="grid" aria-labelledby="${titleId}" class="mt-2">` +
     `<div role="row" class="grid grid-cols-7">${heads.map((name) => `<span role="columnheader" aria-label="${attr(name)}" class="py-1 text-center text-xs font-medium text-slate-400 dark:text-navy-300">${attr(name.slice(0, 3))}</span>`).join("")}</div>` +
-    `${rows.join("")}</div></div>`
+    `${rows.join("")}</div>`) + `</div>`
   )
 }
 
@@ -179,7 +215,7 @@ const footer = (vm) => {
 export const renderPanel = (vm) => {
   const count = vm.mode === "range" && vm.layout === "desktop" ? 2 : 1
   const months = Array.from({length: count}, (_, index) =>
-    renderMonth(shiftMonth(vm.view, index), {previous: index === 0, next: index === count - 1}, vm),
+    renderMonth(shiftMonth(vm.view, index), {previous: index === 0, next: index === count - 1, index}, vm),
   )
   const list = vm.mode === "single" && vm.layout === "desktop" && vm.timeMode === "list" ? renderTimeList(vm.slots.start, vm.state.start?.time, vm) : ""
   return (
