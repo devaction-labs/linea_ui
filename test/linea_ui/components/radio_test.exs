@@ -92,4 +92,55 @@ defmodule LineaUI.Components.RadioTest do
     html = render(~H'<.radio_group name="plan" options={["free", "pro"]} />')
     refute "border-error" in classes(html, "input")
   end
+
+  describe "variant segmented" do
+    test "real radios hidden inside segments on the segmented track" do
+      html =
+        render(~H"""
+        <.radio_group
+          id="period"
+          name="period"
+          value="week"
+          variant="segmented"
+          options={[
+            %{label: "Day", value: "day"},
+            %{label: "Week", value: "week", count: 3},
+            %{label: "Month", value: "month", disabled: true}
+          ]}
+        />
+        """)
+
+      assert [_, _, _] = find(html, "input[type=radio][name=period]") |> Enum.to_list()
+      assert [_] = find(html, "input#period-1[value=week][checked]") |> Enum.to_list()
+      assert [_] = find(html, "input#period-2[disabled]") |> Enum.to_list()
+      assert "sr-only" in classes(html, "#period-0")
+      refute "form-radio" in classes(html, "#period-0")
+
+      track = classes(html, "[role=radiogroup]")
+      assert "bg-slate-150" in track
+      assert "inline-flex" in track
+
+      assert "has-checked:bg-white" in classes(html, "label")
+      assert "h-7.5" in classes(html, "label")
+      assert LazyHTML.text(find(html, "label:nth-child(2)")) =~ "Week"
+      assert LazyHTML.text(find(html, "label:nth-child(2)")) =~ "3"
+    end
+
+    test "sizes follow segmented and errors ring the track" do
+      form =
+        Phoenix.Component.to_form(%{"plan" => "free"}, as: :s, errors: [plan: {"is invalid", []}])
+
+      assigns = %{form: form}
+
+      html =
+        rendered_to_string(
+          ~H'<.radio_group field={@form[:plan]} variant="segmented" size="lg" options={["free", "pro"]} />'
+        )
+
+      assert "h-9.5" in classes(html, "label")
+      assert "ring-error" in classes(html, "[role=radiogroup]")
+      refute "border-error" in classes(html, "input")
+      assert LazyHTML.text(find(html, ".text-error")) =~ "is invalid"
+    end
+  end
 end

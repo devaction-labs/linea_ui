@@ -6,6 +6,8 @@ defmodule LineaUI.Components.Choice do
   import LineaUI.ClassMerge, only: [merge: 1]
   import LineaUI.Components.Icon, only: [icon: 1]
 
+  alias LineaUI.Components.Segmented
+
   @tones %{
     {"basic", false} => %{
       "neutral" =>
@@ -143,11 +145,19 @@ defmodule LineaUI.Components.Choice do
 
   @card_count "ml-auto inline-flex h-5 min-w-5 shrink-0 items-center justify-center rounded-full bg-slate-150 px-1.5 text-tiny-plus font-semibold text-slate-600 dark:bg-navy-500 dark:text-navy-100"
 
+  # A segment of `radio_group variant="segmented"`: the look of `segmented`'s buttons, chosen through `:checked`.
+  @segment "group/choice inline-flex cursor-pointer select-none items-center justify-center whitespace-nowrap rounded-md font-medium text-slate-500 transition-colors duration-200 hover:not-has-checked:text-slate-700 has-focus-visible:outline-2 has-focus-visible:outline-offset-1 has-focus-visible:outline-primary/50 has-disabled:pointer-events-none has-disabled:opacity-60 has-checked:bg-white has-checked:text-slate-800 has-checked:shadow-soft dark:text-navy-200 dark:hover:not-has-checked:text-navy-50 dark:has-focus-visible:outline-accent/50 dark:has-checked:bg-navy-500 dark:has-checked:text-navy-50 dark:has-checked:shadow-soft-dark"
+
+  @segment_count "ml-1.5 font-inter text-tiny-plus font-medium text-slate-400 group-has-checked/choice:text-primary dark:text-navy-300 dark:group-has-checked/choice:text-accent-light"
+
+  @segment_sizes %{"xs" => "sm", "sm" => "sm", "md" => "md", "lg" => "lg"}
+
   @layouts %{
     "basic" => "inline-space flex flex-wrap",
     "outline" => "inline-space flex flex-wrap",
     "card" => "grid gap-3",
-    "chip" => "flex flex-wrap gap-2"
+    "chip" => "flex flex-wrap gap-2",
+    "segmented" => nil
   }
 
   @doc false
@@ -155,12 +165,18 @@ defmodule LineaUI.Components.Choice do
   def variants, do: ~w(basic outline card chip)
 
   @doc false
+  @spec radio_variants() :: [String.t()]
+  def radio_variants, do: variants() ++ ["segmented"]
+
+  @doc false
   @spec layout(String.t()) :: String.t()
+  def layout("segmented"), do: Segmented.track()
   def layout(variant), do: @layouts[variant]
 
   @doc false
   @spec input_classes(String.t(), map()) :: [String.t()] | String.t()
-  def input_classes(_base, %{variant: "chip"}), do: "peer sr-only"
+  def input_classes(_base, %{variant: variant}) when variant in ~w(chip segmented),
+    do: "peer sr-only"
 
   def input_classes(base, %{variant: "card"} = assigns),
     do: classes(base, %{assigns | variant: "basic"})
@@ -214,9 +230,27 @@ defmodule LineaUI.Components.Choice do
   attr(:description, :string, default: nil)
   attr(:count, :any, default: nil)
   attr(:icon, :string, default: nil)
+  attr(:size, :string, default: "md")
   attr(:content, :list, default: [])
   attr(:class, :any, default: nil)
   slot(:inner_block, required: true)
+
+  def item(%{variant: "segmented"} = assigns) do
+    assigns =
+      assign(assigns,
+        segment: @segment,
+        sized: Segmented.size_class(@segment_sizes[assigns.size]),
+        count_class: @segment_count
+      )
+
+    ~H"""
+    <label class={merge([@segment, @sized, @class])}>
+      {render_slot(@inner_block)}
+      <span>{@label}{render_slot(@content)}</span>
+      <span :if={@count != nil} class={@count_class}>{@count}</span>
+    </label>
+    """
+  end
 
   def item(%{variant: "chip"} = assigns) do
     assigns =

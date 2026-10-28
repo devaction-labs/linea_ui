@@ -13,6 +13,19 @@ defmodule LineaUI.Components.Radio do
 
   A `md` radio is 18px with a 6px dot (`xs` 12px, `sm` 16px, `lg` 24px).
 
+  `variant="segmented"` renders the look of `segmented`: a row of toggle buttons on one track, where exactly one
+  is chosen. The buttons are real radios (visually hidden), so the form submits the choice, `field` and its errors
+  work, the arrow keys move the choice and the chosen segment is the one the radio checks, with a focus ring around
+  the segment that has the focus. `count` shows a small number after the label and `disabled` dims a segment;
+  `color` and `filled` do not apply. `size` follows `segmented` (`xs` and `sm` are its `sm`). Unlike `segmented`,
+  the choice is a form value, so the server learns of it with the form's `phx-change`.
+
+      <.radio_group field={@form[:period]} variant="segmented" options={[
+        %{label: "Day", value: "day"},
+        %{label: "Week", value: "week", count: 3},
+        %{label: "Month", value: "month", disabled: true}
+      ]} />
+
   `variant="card"` lays each option out as a bordered card (title, description, optional icon
   and count) with 14px of side padding that rings in `color` (1px border, 3px ring) when chosen; `variant="chip"` renders pill chips, the
   status filter of a list, with an optional count. Both keep a real radio underneath, so the
@@ -53,7 +66,7 @@ defmodule LineaUI.Components.Radio do
   one by one.
 
   `variant` picks the look: `basic` and `outline` are LineOne's radios, `card` a bordered card
-  per option, `chip` a pill per option. Choosing one fires the form's `phx-change` like any
+  per option, `chip` a pill per option, `segmented` a segmented control of radios. Choosing one fires the form's `phx-change` like any
   radio; on its own (outside a form) put `phx-click` or `phx-change` in `rest`.
   """
   attr(:field, Phoenix.HTML.FormField, default: nil)
@@ -65,8 +78,9 @@ defmodule LineaUI.Components.Radio do
 
   attr(:variant, :string,
     default: "basic",
-    values: Choice.variants(),
-    doc: "`basic`/`outline` radios, `card` cards, `chip` pill chips."
+    values: Choice.radio_variants(),
+    doc:
+      "`basic`/`outline` radios, `card` cards, `chip` pill chips, `segmented` a segmented control."
   )
 
   attr(:filled, :boolean, default: false)
@@ -134,7 +148,7 @@ defmodule LineaUI.Components.Radio do
     end)
   end
 
-  defp invalid(%{errors: [_ | _], variant: variant}) when variant != "chip",
+  defp invalid(%{errors: [_ | _], variant: variant}) when variant not in ~w(chip segmented),
     do: "border-error dark:border-error"
 
   defp invalid(_assigns), do: nil
@@ -190,7 +204,14 @@ defmodule LineaUI.Components.Radio do
         id={@id}
         role="radiogroup"
         aria-labelledby={@label && "#{@id}-label"}
-        class={merge([Choice.layout(@variant), @label && "mt-1.5", @class])}
+        class={
+          merge([
+            Choice.layout(@variant),
+            @label && "mt-1.5",
+            @variant == "segmented" && @errors != [] && "ring-1 ring-error",
+            @class
+          ])
+        }
       >
         <Choice.item
           :for={item <- @items}
@@ -200,6 +221,7 @@ defmodule LineaUI.Components.Radio do
           description={item.description}
           count={item.count}
           icon={item.icon}
+          size={@size}
           content={Choice.slot_content(item.content)}
         >
           <input
