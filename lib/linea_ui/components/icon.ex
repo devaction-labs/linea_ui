@@ -277,6 +277,12 @@ defmodule LineaUI.Components.Icon do
       body:
         ~S|<path class="ql-fill" d="M16.73975,13.81445v.43945a.54085.54085,0,0,1-.605.60547H11.855a.58392.58392,0,0,1-.64893-.60547V14.0127c0-2.90527,3.39941-3.42187,3.39941-4.55469a.77675.77675,0,0,0-.84717-.78125,1.17684,1.17684,0,0,0-.83594.38477c-.2749.26367-.561.374-.85791.13184l-.4292-.34082c-.30811-.24219-.38525-.51758-.1543-.81445a2.97155,2.97155,0,0,1,2.45361-1.17676,2.45393,2.45393,0,0,1,2.68408,2.40918c0,2.45312-3.1792,2.92676-3.27832,3.93848h2.79443A.54085.54085,0,0,1,16.73975,13.81445ZM9,3A.99974.99974,0,0,0,8,4V8H3V4A1,1,0,0,0,1,4V14a1,1,0,0,0,2,0V10H8v4a1,1,0,0,0,2,0V4A.99974.99974,0,0,0,9,3Z"></path>|
     },
+    editor_image: %{
+      view: "0 0 18 18",
+      paint: :bare,
+      body:
+        ~S|<rect class="ql-stroke" height="12" width="14" x="2" y="3" rx="1.5"></rect><circle class="ql-stroke" cx="6.5" cy="7" r="1.25"></circle><polyline class="ql-stroke" points="2.5 13.5 7 9.5 10 12.5 12.5 10 15.5 13"></polyline>|
+    },
     editor_indent_minus1: %{
       view: "0 0 18 18",
       paint: :bare,
@@ -312,6 +318,12 @@ defmodule LineaUI.Components.Icon do
       paint: :bare,
       body:
         ~S|<line class="ql-stroke" x1="7" x2="15" y1="4" y2="4"></line><line class="ql-stroke" x1="7" x2="15" y1="9" y2="9"></line><line class="ql-stroke" x1="7" x2="15" y1="14" y2="14"></line><line class="ql-stroke ql-thin" x1="2.5" x2="4.5" y1="5.5" y2="5.5"></line><path class="ql-fill" d="M3.5,6A0.5,0.5,0,0,1,3,5.5V3.085l-0.276.138A0.5,0.5,0,0,1,2.053,3c-0.124-.247-0.023-0.324.224-0.447l1-.5A0.5,0.5,0,0,1,4,2.5v3A0.5,0.5,0,0,1,3.5,6Z"></path><path class="ql-stroke ql-thin" d="M4.5,10.5h-2c0-.234,1.85-1.076,1.85-2.234A0.959,0.959,0,0,0,2.5,8.156"></path><path class="ql-stroke ql-thin" d="M2.5,14.846a0.959,0.959,0,0,0,1.85-.109A0.7,0.7,0,0,0,3.75,14a0.688,0.688,0,0,0,.6-0.736,0.959,0.959,0,0,0-1.85-.109"></path>|
+    },
+    editor_mark: %{
+      view: "0 0 18 18",
+      paint: :bare,
+      body:
+        ~S|<path class="ql-stroke" d="M10.5,3.5l4,4-5.5,5.5H6.5V10.5z"></path><line class="ql-stroke" x1="9" x2="12" y1="5" y2="8"></line><line class="ql-stroke" x1="3" x2="15" y1="16" y2="16"></line>|
     },
     editor_picker_align: %{
       view: "0 0 18 18",
@@ -354,6 +366,12 @@ defmodule LineaUI.Components.Icon do
       paint: :bare,
       body:
         ~S|<path class="ql-stroke" d="M5,3V9a4.012,4.012,0,0,0,4,4H9a4.012,4.012,0,0,0,4-4V3"></path><rect class="ql-fill" height="1" rx="0.5" ry="0.5" width="12" x="3" y="15"></rect>|
+    },
+    editor_variable: %{
+      view: "0 0 18 18",
+      paint: :bare,
+      body:
+        ~S|<path class="ql-stroke" d="M6.5,3C5,3,4.5,3.8,4.5,5v2c0,1-.7,2-1.5,2,.8,0,1.5,1,1.5,2v2c0,1.2.5,2,2,2"></path><path class="ql-stroke" d="M11.5,3C13,3,13.5,3.8,13.5,5v2c0,1,.7,2,1.5,2-.8,0-1.5,1-1.5,2v2c0,1.2-.5,2-2,2"></path>|
     }
   }
 
@@ -401,19 +419,22 @@ defmodule LineaUI.Components.Icon do
     editor_dropdown: "huge-unfold-more",
     editor_header_1: "huge-heading-01",
     editor_header_2: "huge-heading-02",
+    editor_image: "huge-image-01",
     editor_indent_minus1: "huge-text-indent-less",
     editor_indent_plus1: "huge-text-indent-more",
     editor_italic: "huge-text-italic",
     editor_link: "huge-link-02",
     editor_list_bullet: "huge-left-to-right-list-bullet",
     editor_list_ordered: "huge-left-to-right-list-number",
+    editor_mark: "huge-highlighter",
     editor_picker_align: "huge-text-align-left",
     editor_picker_background: "huge-paint-bucket",
     editor_picker_color: "huge-text-color",
     editor_script_sub: "huge-text-subscript",
     editor_script_super: "huge-text-superscript",
     editor_strike: "huge-text-strikethrough",
-    editor_underline: "huge-text-underline"
+    editor_underline: "huge-text-underline",
+    editor_variable: "huge-variable"
   }
 
   @markup Map.new(@lineone, fn {name, %{body: body} = entry} ->

@@ -46,6 +46,31 @@ export function safeHref(text) {
   return value && allowed.test(withScheme) ? withScheme : null
 }
 
+/** An image address the editor accepts: http(s) or a relative path; `data:`, `javascript:`, `//host` and anything else is dropped. */
+export function safeSrc(text) {
+  const value = (text ?? "").trim()
+  const compact = value.replace(/[\u0000- \u007f-\u009f]/g, "")
+  const scheme = /^[a-z][a-z0-9+.-]*:/i.test(compact)
+  const allowed = scheme ? /^https?:\/\/[^/]/i.test(compact) : compact !== "" && !/^[/\\]{2}/.test(compact)
+  return allowed ? value : null
+}
+
+/** The size of an image (`width` or `height`): whole pixels from 1 to 4000, or `null`. */
+export function imageSize(text) {
+  const value = String(text ?? "").trim()
+  return /^\d{1,4}$/.test(value) && Number(value) >= 1 && Number(value) <= 4000 ? String(Number(value)) : null
+}
+
+/** The `<img>` the image popover inserts, with its address and description escaped; `null` for an address that is not safe. */
+export function imageHtml(src, alt) {
+  const url = safeSrc(src)
+  const escape = (text) => text.replace(/[&<>"']/g, (c) => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"})[c])
+  return url ? `<img src="${escape(url)}" alt="${escape((alt ?? "").trim())}">` : null
+}
+
+/** What a toggle (the highlight) does with a selection: `unwrap` it when it is already inside the element, `wrap` it otherwise. */
+export const toggleAction = (inside) => (inside ? "unwrap" : "wrap")
+
 const imageTypes = ["image/png", "image/jpeg", "image/gif", "image/webp"]
 
 /** Why an image cannot be sent, as a key of the errors the page gives (`unsupported`, `too_large`), or `null` when it can. */
@@ -206,3 +231,6 @@ export const slashKind = (key) =>
 
 /** The words of the editor's footer: the count and its label. */
 export const wordsLabel = (text, label) => `${wordCount(text)} ${label}`
+
+/** The entries of the variable menu (the toolbar button and the "/" menu): one chip `{name}` each, with `hint` after it. */
+export const variableItems = (names, hint) => names.map((name) => ({key: `variable:${name}`, label: `{${name}}`, hint}))

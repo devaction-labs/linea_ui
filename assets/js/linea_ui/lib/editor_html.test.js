@@ -38,3 +38,31 @@ test("tool helpers", () => {
   assert.equal(headerValue("h3"), "3")
   assert.equal(headerValue("p"), "")
 })
+
+test("an image stays only where images are on, and mark is always kept", () => {
+  assert.equal(tagAction("IMG"), "drop")
+  assert.equal(tagAction("IMG", true), "keep")
+  assert.equal(tagAction("MARK"), "keep")
+})
+
+test("an image keeps a safe src, a short alt and sizes in pixels, and nothing else", () => {
+  assert.equal(cleanAttribute("IMG", "src", "https://example.com/a.png"), "https://example.com/a.png")
+  assert.equal(cleanAttribute("IMG", "src", "/uploads/a.png"), "/uploads/a.png")
+  assert.equal(cleanAttribute("IMG", "src", "data:image/png;base64,AAAA"), null)
+  assert.equal(cleanAttribute("IMG", "src", "javascript:alert(1)"), null)
+  assert.equal(cleanAttribute("IMG", "src", "java\nscript:alert(1)"), null)
+  assert.equal(cleanAttribute("SPAN", "src", "https://example.com/a.png"), null)
+  assert.equal(cleanAttribute("IMG", "alt", "A photo"), "A photo")
+  assert.equal(cleanAttribute("IMG", "alt", "x".repeat(400)).length, 300)
+  assert.equal(cleanAttribute("IMG", "width", "320"), "320")
+  assert.equal(cleanAttribute("IMG", "width", "100%"), null)
+  assert.equal(cleanAttribute("IMG", "height", "99999"), null)
+  assert.equal(cleanAttribute("IMG", "onerror", "x()"), null)
+  assert.equal(cleanAttribute("IMG", "srcset", "https://example.com/a.png 2x"), null)
+})
+
+test("the new tools are in TOOLS", () => {
+  assert.equal(TOOLS.image.special, "image")
+  assert.equal(TOOLS.variable.special, "variable")
+  assert.equal(TOOLS.mark.special, "mark")
+})

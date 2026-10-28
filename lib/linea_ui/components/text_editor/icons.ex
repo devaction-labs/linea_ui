@@ -14,12 +14,14 @@ defmodule LineaUI.Components.TextEditor.Icons do
     "dropdown" => :editor_dropdown,
     "header-1" => :editor_header_1,
     "header-2" => :editor_header_2,
+    "image" => :editor_image,
     "indent-minus1" => :editor_indent_minus1,
     "indent-plus1" => :editor_indent_plus1,
     "italic" => :editor_italic,
     "link" => :editor_link,
     "list-bullet" => :editor_list_bullet,
     "list-ordered" => :editor_list_ordered,
+    "mark" => :editor_mark,
     "picker-align" => :editor_picker_align,
     "picker-background" => :editor_picker_background,
     "picker-color" => :editor_picker_color,
@@ -27,6 +29,7 @@ defmodule LineaUI.Components.TextEditor.Icons do
     "script-super" => :editor_script_super,
     "strike" => :editor_strike,
     "underline" => :editor_underline,
+    "variable" => :editor_variable,
     "direction-rtl" => :editor_direction
   }
 

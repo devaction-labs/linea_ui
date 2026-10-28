@@ -53,6 +53,26 @@ defmodule PreviewWeb.Pages.TextEditor do
     </.example>
 
     <.example
+      title="Image, variable and highlight"
+      text="Opt-in buttons: an inline field for the picture address, a menu of variables, and a toggle for the highlight."
+      class="max-w-xl"
+    >
+      <.text_editor
+        id="media-editor"
+        name="media"
+        variables={~w(cliente preço vendedor)}
+        toolbar={[~w(bold italic underline mark), ~w(link image variable), ~w(clean)]}
+        tool_labels={%{"image" => "Imagem", "variable" => "Variável", "mark" => "Destacar"}}
+        image_label="Endereço da imagem:"
+        image_alt_label="Descrição"
+        image_save_label="Inserir"
+        variable_title="Inserir variável"
+        value="<p>Analgésico de <b>venda livre</b>, <mark>validade mínima de 18 meses</mark> na entrega para {cliente}.</p>"
+        content_class="h-40"
+      />
+    </.example>
+
+    <.example
       title="Commands, variables and comments"
       text="The / menu, {variables} as chips, the assistant, a footer with the word count, and the compact comment editor."
       class="mt-5 grid items-start gap-6 lg:grid-cols-2"

@@ -161,6 +161,78 @@ defmodule LineaUI.Components.TextEditorTest do
     assert find(html, "#c [data-submit]") |> LazyHTML.text() =~ "Comentar"
   end
 
+  test "image, variable and mark are not in the default toolbar" do
+    html = render(~H|<.text_editor id="e" name="b" />|)
+
+    for tool <- ~w(image variable mark),
+        do: assert(find(html, "#e [data-tool=#{tool}]") |> Enum.to_list() == [])
+
+    assert attr_of(html, "#e", "data-images") == ["false"]
+    assert find(html, "#e [data-image-box]") |> Enum.to_list() == []
+  end
+
+  test "the mark, variable and image buttons, with names that can be overridden" do
+    html =
+      render(~H"""
+      <.text_editor
+        id="e"
+        name="b"
+        variables={~w(cliente)}
+        toolbar={[~w(mark variable image)]}
+        tool_labels={%{"mark" => "Destacar", "image" => "Imagem"}}
+      />
+      """)
+
+    assert attr_of(html, "#e", "data-images") == ["true"]
+    assert attr_of(html, "#e", "data-variable-title") == ["Insert variable"]
+    assert find(html, "#e button.ql-mark[data-tool=mark] svg") |> Enum.count() == 1
+
+    assert html |> find("#e [data-tool=mark]") |> LazyHTML.attribute("aria-label") == ["Destacar"]
+    assert html |> find("#e [data-tool=mark]") |> LazyHTML.attribute("aria-pressed") == ["false"]
+    assert html |> find("#e [data-tool=image]") |> LazyHTML.attribute("aria-label") == ["Imagem"]
+
+    assert html |> find("#e [data-tool=variable]") |> LazyHTML.attribute("aria-label") ==
+             ["Variable"]
+
+    assert html |> find("#e [data-tool=variable]") |> LazyHTML.attribute("disabled") == []
+    assert [_] = find(html, "#e [data-image-box] [data-image-input]") |> Enum.to_list()
+    assert [_] = find(html, "#e [data-image-box] [data-image-alt]") |> Enum.to_list()
+    assert find(html, "#e [data-image-save]") |> LazyHTML.text() == "Insert"
+  end
+
+  test "the variable button is disabled without variables" do
+    html = render(~H|<.text_editor id="e" name="b" toolbar={[~w(variable)]} />|)
+
+    assert html |> find("#e [data-tool=variable]") |> LazyHTML.attribute("disabled") == [""]
+  end
+
+  test "on_image replaces the address field, and turns images on" do
+    html =
+      render(~H|<.text_editor id="e" name="b" on_image="image" toolbar={[~w(image)]} />|)
+
+    assert attr_of(html, "#e", "data-on-image") == ["image"]
+    assert attr_of(html, "#e", "data-images") == ["true"]
+    assert find(html, "#e [data-image-box]") |> Enum.to_list() == []
+
+    html = render(~H|<.text_editor id="e" name="b" images />|)
+    assert attr_of(html, "#e", "data-images") == ["true"]
+  end
+
+  test "insert_image pushes an escaped img to the editor" do
+    socket =
+      LineaUI.Components.TextEditor.insert_image(
+        %Phoenix.LiveView.Socket{},
+        "e",
+        "/a.png?x=1&y=\"2",
+        "A <b>photo</b>"
+      )
+
+    assert [["linea:editor-insert", %{id: "e", html: html}]] =
+             socket.private.live_temp.push_events
+
+    assert html == ~s(<img src="/a.png?x=1&amp;y=&quot;2" alt="A &lt;b&gt;photo&lt;/b&gt;">)
+  end
+
   test "insert_html pushes the answer to the editor" do
     socket =
       LineaUI.Components.TextEditor.insert_html(%Phoenix.LiveView.Socket{}, "e", "<p>x</p>")

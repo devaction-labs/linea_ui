@@ -35,6 +35,32 @@ defmodule LineaUI.Components.TextEditor do
 
       def handle_event("slash", %{"id" => id, "key" => "image"}, socket), do: ...
 
+  ## Image, variable and highlight buttons
+
+  Three toolbar buttons are opt-in (the default toolbar does not have them), added to a group of `toolbar`:
+
+      <.text_editor name="post" variables={~w(cliente preço)}
+        toolbar={[~w(bold italic mark), ~w(link image variable)]} />
+
+    * `mark` toggles a `<mark>` around the selection (the highlight; pressed while the caret is in one).
+      It is styled by `.ql-editor mark`, so rendering the saved HTML inside a `ql-editor` element draws it too,
+      in dark mode as well.
+    * `variable` opens a menu of `variables` at the caret and inserts the chosen `{name}` as a chip, like the
+      "/" menu does; it is disabled while `variables` is empty.
+    * `image` opens a small field for the address and the description of a picture and inserts an `<img src alt>`.
+      With `on_image` set no field opens: the event is pushed with `%{"id" => id}` so the app can upload the file,
+      and answers with `insert_image/4`:
+
+          <.text_editor id="post" name="post" on_image="image" toolbar={[~w(bold image)]} />
+
+          def handle_event("image", %{"id" => id}, socket),
+            do: {:noreply, TextEditor.insert_image(socket, id, ~p"/uploads/photo.png", "A photo")}
+
+  An `<img>` is kept by the HTML cleaning only in an editor with the image button, `on_image` or `images`, and
+  only with an `http(s)` or relative `src` (never `data:`, `javascript:` or `//host`), a `width` and `height` of
+  1 to 4000 pixels and an `alt` of up to 300 characters. `<mark>` is kept everywhere. The names of the buttons
+  come from `tool_labels` (`%{"image" => "Imagem", "variable" => "Variável", "mark" => "Destacar"}`).
+
   ## Comments
 
   `variant="comment"` is the compact editor of a thread: no toolbar, a bar with a "mention" button,
@@ -90,7 +116,21 @@ defmodule LineaUI.Components.TextEditor do
   def insert_html(%Phoenix.LiveView.Socket{} = socket, id, html),
     do: Phoenix.LiveView.push_event(socket, "linea:editor-insert", %{id: id, html: html})
 
-  @buttons ~w(bold italic underline strike blockquote code-block code header-1 header-2 list-ordered list-bullet script-sub script-super indent-minus1 indent-plus1 direction-rtl link clean)
+  @doc """
+  Pushes an image to the editor `id`, inserted at the caret: the answer to `on_image`, once the app
+  has the address of the uploaded file. The editor drops it unless the `src` is `http(s)` or relative.
+  """
+  @spec insert_image(Phoenix.LiveView.Socket.t(), String.t(), String.t(), String.t()) ::
+          Phoenix.LiveView.Socket.t()
+  def insert_image(%Phoenix.LiveView.Socket{} = socket, id, src, alt \\ "") do
+    insert_html(socket, id, ~s(<img src="#{escape(src)}" alt="#{escape(alt)}">))
+  end
+
+  defp escape(text), do: text |> Phoenix.HTML.html_escape() |> Phoenix.HTML.safe_to_string()
+
+  @buttons ~w(bold italic underline strike blockquote code-block code header-1 header-2 list-ordered list-bullet script-sub script-super indent-minus1 indent-plus1 direction-rtl link image variable mark clean)
+
+  @tool_labels %{"image" => "Image", "variable" => "Variable", "mark" => "Highlight"}
 
   @doc """
   Renders a rich text editor.
@@ -99,8 +139,9 @@ defmodule LineaUI.Components.TextEditor do
 
   `toolbar` is a list of groups, each a list of tools: `bold italic underline strike blockquote
   code-block code header-1 header-2 list-ordered list-bullet script-sub script-super
-  indent-minus1 indent-plus1 direction-rtl link clean` (buttons) and `size header color
-  background font align` (pickers). The default is LineOne's full toolbar.
+  indent-minus1 indent-plus1 direction-rtl link image variable mark clean` (buttons) and `size
+  header color background font align` (pickers). The default is LineOne's full toolbar, without
+  `image`, `variable` and `mark`: those are buttons you add yourself.
 
   Events: `on_change` is pushed with `%{"id" => id, "value" => html}` after edits (debounced by
   `debounce` ms), to `target` or to the LiveView/LiveComponent the editor is in.
@@ -124,6 +165,25 @@ defmodule LineaUI.Components.TextEditor do
     doc: "Classes of the text area, its height above all."
 
   attr :link_label, :string, default: "Enter link:"
+
+  attr :tool_labels, :map,
+    default: %{},
+    doc:
+      "The accessible names of the buttons by tool, e.g. `%{\"mark\" => \"Destacar\"}`; the others keep their English name."
+
+  attr :on_image, :string,
+    default: nil,
+    doc:
+      "The event the `image` button pushes, with `%{\"id\" => id}`, instead of opening the address field; answer with `insert_image/4`."
+
+  attr :images, :boolean,
+    default: false,
+    doc:
+      "Keeps `<img>` in the HTML the editor loads and pastes. On by itself with the `image` button or `on_image`."
+
+  attr :image_label, :string, default: "Image URL:"
+  attr :image_alt_label, :string, default: "Description"
+  attr :image_save_label, :string, default: "Insert"
   attr :save_label, :string, default: "Save"
   attr :disabled, :boolean, default: false
   attr :on_change, :string, default: nil
@@ -158,6 +218,10 @@ defmodule LineaUI.Components.TextEditor do
       "Names of the placeholders of a template (`[\"cliente\"]`): `{cliente}` is shown as a chip, sent as plain text, and offered in the \"/\" menu."
 
   attr :variable_label, :string, default: "Variable", doc: "The hint of a variable in the menu."
+
+  attr :variable_title, :string,
+    default: "Insert variable",
+    doc: "The caption of the menu the `variable` button opens."
 
   attr :mentions, :list,
     default: [],
@@ -210,8 +274,11 @@ defmodule LineaUI.Components.TextEditor do
     |> assign_new(:value, fn -> nil end)
     |> then(&assign(&1, :value, &1.value || ""))
     |> then(&assign(&1, :content_class, content_class(&1.variant, &1.content_class)))
+    |> then(&assign(&1, :images, &1.images || &1.on_image != nil || image_tool?(&1.toolbar)))
     |> render_editor()
   end
+
+  defp image_tool?(toolbar), do: Enum.any?(toolbar, &("image" in &1))
 
   defp content_class("comment", "h-48"), do: "min-h-16"
   defp content_class(_variant, content_class), do: content_class
@@ -242,6 +309,9 @@ defmodule LineaUI.Components.TextEditor do
         data-slash-title={@slash_title}
         data-variables={Jason.encode!(@variables)}
         data-variable-label={@variable_label}
+        data-variable-title={@variable_title}
+        data-images={to_string(@images)}
+        data-on-image={@on_image}
         data-mentions={Jason.encode!(@mentions)}
         data-mention-title={@mention_title}
         data-on-ai={@on_ai}
@@ -261,7 +331,14 @@ defmodule LineaUI.Components.TextEditor do
           data-toolbar
         >
           <span :for={group <- @toolbar} class="ql-formats">
-            <.tool :for={tool <- group} tool={tool} id={@id} disabled={@disabled} />
+            <.tool
+              :for={tool <- group}
+              tool={tool}
+              id={@id}
+              disabled={@disabled}
+              labels={@tool_labels}
+              no_variables={@variables == []}
+            />
           </span>
           <button :if={@ai != []} type="button" class="ql-ai" disabled={@disabled} data-ai>
             <svg
@@ -306,6 +383,23 @@ defmodule LineaUI.Components.TextEditor do
             <input type="text" placeholder="https://" data-link-input />
             <button type="button" data-link-save>{@save_label}</button>
           </div>
+          <div
+            :if={@images and @on_image == nil and not @disabled}
+            class="ql-tooltip ql-snow ql-image-box"
+            hidden
+            data-image-box
+            style="left: 15px; top: 10px;"
+          >
+            <span>{@image_label}</span>
+            <input type="text" placeholder="https://" aria-label={@image_label} data-image-input />
+            <input
+              type="text"
+              placeholder={@image_alt_label}
+              aria-label={@image_alt_label}
+              data-image-alt
+            />
+            <button type="button" data-image-save>{@image_save_label}</button>
+          </div>
           <input type="hidden" id={@id <> "-input"} name={@name} value={@value} data-input />
         </div>
         <div :if={@footer} class="ql-footer" data-footer>
@@ -348,15 +442,18 @@ defmodule LineaUI.Components.TextEditor do
   attr :tool, :string, required: true
   attr :id, :string, required: true
   attr :disabled, :boolean, required: true
+  attr :labels, :map, default: %{}
+  attr :no_variables, :boolean, default: false
 
   defp tool(%{tool: tool} = assigns) when tool in @buttons do
     ~H"""
     <button
       type="button"
       class={button_class(@tool)}
-      aria-label={label(@tool)}
-      aria-pressed="false"
-      disabled={@disabled}
+      aria-label={Map.get(@labels, @tool, label(@tool))}
+      aria-pressed={pressable?(@tool) && "false"}
+      aria-haspopup={@tool in ~w(variable image) && "true"}
+      disabled={@disabled or (@tool == "variable" and @no_variables)}
       data-tool={@tool}
     >
       <.glyph name={Icons.glyph(icon(@tool))} class={nil} />
@@ -467,7 +564,9 @@ defmodule LineaUI.Components.TextEditor do
   defp base_name(_name, "code-block"), do: "code-block"
   defp base_name(name, _tool), do: name
 
-  defp label(tool), do: String.replace(tool, "-", " ")
+  defp label(tool), do: Map.get(@tool_labels, tool, String.replace(tool, "-", " "))
+
+  defp pressable?(tool), do: tool not in ~w(variable image)
 
   defp icon("code"), do: "code"
   defp icon(tool), do: tool
