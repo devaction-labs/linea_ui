@@ -23,6 +23,9 @@ defmodule LineaUI.Components.Carousel do
   A `:background` slot with `data-carousel-parallax="-23%"` on it, and elements inside slides
   with `data-carousel-parallax="-300"`, move at their own pace while the track scrolls.
 
+  The previous arrow comes before the next one in the DOM (the tab order), and both point
+  to the track with `aria-controls`.
+
   ## State
 
   `index` is the server's slide. The person can move freely in the browser, and their slide
@@ -124,16 +127,17 @@ defmodule LineaUI.Components.Carousel do
       {@rest}
     >
       {render_slot(@background)}
-      <div data-carousel-track class="carousel-track">
+      <div id={"#{@id}-track"} data-carousel-track class="carousel-track">
         {render_slot(@inner_block)}
       </div>
       <button
         :if={@navigation not in [false, nil]}
         type="button"
         class="carousel-button"
-        data-carousel-next
-        aria-label={@next_label}
-        aria-controls={@id}
+        data-carousel-prev
+        aria-label={@prev_label}
+        aria-controls={"#{@id}-track"}
+        disabled={!@loop && @index == 0}
       >
         <.glyph name={:carousel_arrow} class={nil} />
       </button>
@@ -141,10 +145,9 @@ defmodule LineaUI.Components.Carousel do
         :if={@navigation not in [false, nil]}
         type="button"
         class="carousel-button"
-        data-carousel-prev
-        aria-label={@prev_label}
-        aria-controls={@id}
-        disabled={!@loop && @index == 0}
+        data-carousel-next
+        aria-label={@next_label}
+        aria-controls={"#{@id}-track"}
       >
         <.glyph name={:carousel_arrow} class={nil} />
       </button>

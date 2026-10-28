@@ -55,10 +55,11 @@ defmodule LineaUI.Components.TimelineTest do
     assert "[--size:1.5rem]" in classes(html, "ol")
     assert "border-success" in classes(html, "li:first-child .timeline-item-point")
     point = classes(html, "li:last-child .timeline-item-point")
-    assert "border-current" in point
     assert "text-error" in point
+    assert Enum.any?(point, &String.starts_with?(&1, "bg-[color-mix"))
+    refute "bg-white" in point
     assert html |> find(".timeline-item-point #icon") |> Enum.count() == 1
-    assert "animate-ping" in classes(html, "li:last-child .timeline-item-point span")
+    assert "motion-safe:animate-ping" in classes(html, "li:last-child .timeline-item-point span")
   end
 
   test "rows from a list with row_id" do

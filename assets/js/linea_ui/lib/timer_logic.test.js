@@ -20,6 +20,7 @@ test("formats hours, minutes and seconds padded, or the short hours and minutes"
   assert.equal(formatTime(3 * 3600 + 12 * 60 + 45), "03:12:45")
   assert.equal(formatTime(3 * 3600 + 12 * 60 + 45, "hm"), "3h12")
   assert.equal(formatTime(59, "hm"), "0h00")
+  assert.equal(formatTime(3 * 3600 + 12 * 60 + 45, "hh:mm"), "03:12")
   assert.equal(formatTime(0), "00:00:00")
   assert.equal(formatTime(-5), "00:00:00")
   assert.equal(formatTime(100 * 3600), "100:00:00")

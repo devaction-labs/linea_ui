@@ -37,7 +37,7 @@ defmodule LineaUI.Components.CardTable do
   ## Rows
 
   `rows` is a list or a stream. `status` is a function of the row that returns a color (`success`, `info`,
-  `warning`, `error`, `primary`...) for the thin bar at the left of the row, or `nil` for none. `on_select`
+  `warning`, `error`, `primary`...) for the thin bar at the left of the row, or `nil` for the neutral (input border) bar. `on_select`
   adds a checkbox column (the events and keys work as in `table/1`: `selected`, `row_key`, `on_select_all`).
   `row_attrs` gives extra attributes of a row (`phx-click`, `data-*`).
 

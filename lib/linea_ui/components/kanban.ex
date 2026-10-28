@@ -31,6 +31,11 @@ defmodule LineaUI.Components.Kanban do
         <.kanban_lost label="Lost" count={3} meta="R$ 6.410,00" />
       </.kanban>
 
+  The board is a `role="group"`; give it an `aria-label` (`aria-label="Sales funnel"`) so it is announced.
+  A column with a `limit` (a work in progress limit) writes `count/limit` in its pill and, when the
+  count goes over the limit, turns the pill, the stats line and the bar red (`data-wip="exceeded"`).
+  A `disabled` column is drawn at 60% opacity.
+
   The board is one `LineaUI.Sortable` hook: every column is a list (`data-list`), every card an item
   (`data-id`), and all the columns of the board are in one group, so a card can be dropped on any of them or
   reordered inside its own. Dropping pushes `event` (to `target` when given, else the LiveView) with the card's
@@ -91,7 +96,7 @@ defmodule LineaUI.Components.Kanban do
 
   @board "flex items-start gap-3.5 overflow-x-auto px-0.5 pb-3"
 
-  @column "flex w-[272px] flex-none flex-col gap-2.5 rounded-[14px] bg-slate-50 p-2.5 ring-1 ring-slate-150 ring-inset data-[over]:bg-primary/5 dark:bg-navy-800 dark:ring-navy-600 dark:data-[over]:bg-accent/10"
+  @column "flex w-[272px] flex-none flex-col gap-2.5 rounded-[14px] bg-slate-50 p-2.5 ring-1 ring-slate-150 ring-inset data-[over]:bg-primary/5 data-[disabled=true]:opacity-60 dark:bg-navy-800 dark:ring-navy-600 dark:data-[over]:bg-accent/10"
 
   @colors %{
     "neutral" => %{
@@ -122,6 +127,8 @@ defmodule LineaUI.Components.Kanban do
   @risk "!shadow-[0_0_0_1px_color-mix(in_oklab,var(--color-warning)_45%,var(--color-slate-150)),0_1px_2px_rgb(0_0_0/0.05)]"
 
   @lost "flex w-[52px] flex-none flex-col items-center gap-2.5 self-stretch rounded-[14px] bg-slate-50 py-3 text-slate-500 ring-1 ring-slate-150 ring-inset data-[over]:bg-primary/5 dark:bg-navy-800 dark:text-navy-200 dark:ring-navy-600 dark:data-[over]:bg-accent/10"
+
+  @over_limit "text-error ring-error/40"
 
   @pill "rounded-full bg-white px-1.5 py-[3px] font-mono text-[11px]/none font-semibold ring-1 ring-slate-150 dark:bg-navy-700 dark:ring-navy-500"
 
@@ -174,6 +181,7 @@ defmodule LineaUI.Components.Kanban do
     ~H"""
     <div
       id={@id}
+      role="group"
       phx-hook="LineaUI.Sortable"
       data-group={@group || @id}
       data-event={@event}
@@ -221,6 +229,11 @@ defmodule LineaUI.Components.Kanban do
     values: ~w(neutral info warning primary teal success),
     doc: "The color of the icon tile and of the progress bar."
 
+  attr :limit, :integer,
+    default: nil,
+    doc:
+      "A work in progress limit: the pill reads `count/limit`, and with a `count` above it the pill, the stats line and the bar turn red."
+
   attr :meta, :string,
     default: nil,
     doc: "The text on the left of the stats line, e.g. `60% chance`."
@@ -255,8 +268,10 @@ defmodule LineaUI.Components.Kanban do
     assigns
     |> assign(:look, Map.fetch!(@colors, assigns.color))
     |> assign(:width, bar_width(assigns.progress))
+    |> assign(:exceeded, exceeded?(assigns.count, assigns.limit))
     |> assign(:classes, merge([@column, assigns.class]))
     |> assign(:pill, @pill)
+    |> assign(:over_limit, @over_limit)
     |> render_column()
   end
 
@@ -266,6 +281,7 @@ defmodule LineaUI.Components.Kanban do
       id={@id}
       data-list={@list || @id}
       data-disabled={@disabled && "true"}
+      data-wip={@exceeded && "exceeded"}
       aria-label={@label}
       class={@classes}
       {@rest}
@@ -278,11 +294,16 @@ defmodule LineaUI.Components.Kanban do
           {render_slot(@icon)}
         </span>
         <span class="font-semibold text-slate-800 dark:text-navy-50">{@label}</span>
-        <span :if={@count} class={[@pill, "text-slate-500 dark:text-navy-200"]}>{@count}</span>
+        <span
+          :if={@count}
+          class={[@pill, if(@exceeded, do: @over_limit, else: "text-slate-500 dark:text-navy-200")]}
+        >
+          {@count}{@limit && "/#{@limit}"}
+        </span>
         <span :if={@actions != []} class="ml-auto flex">{render_slot(@actions)}</span>
       </div>
       <div :if={@meta || @total} class="flex items-center justify-between px-0.5 text-xs">
-        <span>{@meta}</span>
+        <span class={@exceeded && "text-error"}>{@meta}</span>
         <b class="font-semibold text-slate-800 tabular-nums dark:text-navy-50">{@total}</b>
       </div>
       <div
@@ -290,7 +311,10 @@ defmodule LineaUI.Components.Kanban do
         class="mx-0.5 h-1 overflow-hidden rounded-full bg-slate-150 dark:bg-navy-600"
         aria-hidden="true"
       >
-        <span class={["block h-full rounded-full", @look.bar]} style={"width: #{@width}%"}></span>
+        <span
+          class={["block h-full rounded-full", if(@exceeded, do: "bg-error", else: @look.bar)]}
+          style={"width: #{@width}%"}
+        ></span>
       </div>
       {render_slot(@inner_block)}
       <div
@@ -312,6 +336,9 @@ defmodule LineaUI.Components.Kanban do
     </section>
     """
   end
+
+  defp exceeded?(count, limit) when is_integer(count) and is_integer(limit), do: count > limit
+  defp exceeded?(_count, _limit), do: false
 
   defp bar_width(nil), do: nil
   defp bar_width(progress), do: progress |> max(0) |> min(100)

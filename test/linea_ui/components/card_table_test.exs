@@ -89,6 +89,14 @@ defmodule LineaUI.Components.CardTableTest do
     assert find(html, "#order-2[data-status]") |> Enum.count() == 0
   end
 
+  test "a row without a status still draws the bar, in the neutral color" do
+    css = File.read!("assets/css/parts/data.css")
+
+    assert css =~ ~r/\.linea-ctable-row::before \{/
+    assert css =~ "--ct-st: var(--color-slate-300)"
+    assert css =~ "--ct-st: var(--color-navy-400)"
+  end
+
   test "on_select adds a checkbox column and marks the selected rows" do
     html = orders(%{on_select: "select", selected: [1]})
 

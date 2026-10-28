@@ -1,7 +1,7 @@
 defmodule LineaUI.Components.Mask do
   @moduledoc """
-  Crops its content to one of LineOne's mask shapes: squircle, reuleaux triangle, diamond,
-  hexagon, octagon, star or heart.
+  Crops its content to one of LineOne's nine mask shapes: `squircle`, `reuleaux-triangle`,
+  `diamond`, `hexagon`, `hexagon-2`, `octagon`, `star`, `star-2` and `heart`.
 
       <.mask shape="heart" src="/images/avatar.jpg" alt="Jane" class="size-36" />
       <.mask shape="hexagon" class="size-20 bg-primary">
@@ -9,6 +9,8 @@ defmodule LineaUI.Components.Mask do
       </.mask>
 
   With `src` it renders the masked image itself; otherwise a block holding the inner content.
+  The block keeps its inner content readable by screen readers; to name a decorative one, pass
+  `role="img"` and an `aria-label`.
   """
 
   use LineaUI.Component

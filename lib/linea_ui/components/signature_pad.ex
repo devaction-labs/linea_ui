@@ -16,8 +16,9 @@ defmodule LineaUI.Components.SignaturePad do
       <img src={"data:image/svg+xml;base64," <> Base.encode64(@signature)} alt="Signature" />
 
   Drawing needs a pointer, so the `type` mode is the keyboard and screen reader way to sign; keep both
-  modes unless the signature must be drawn. The pad is a white surface in both themes, because the SVG it
-  exports has dark ink on a transparent background.
+  modes unless the signature must be drawn. The pad is a white surface in the light theme and a navy one in
+  the dark theme (the ink and the typed name are inverted to stay readable there); the SVG it exports always
+  has dark ink on a transparent background.
 
   The behavior lives in the `LineaUI.SignaturePad` hook, so the pad needs a stable `id`.
   """

@@ -209,4 +209,26 @@ defmodule LineaUI.Components.KanbanTest do
 
     assert find(html, "aside #own") |> Enum.count() == 1
   end
+
+  test "a column over its limit turns the pill, the meta and the bar red" do
+    html =
+      render(~H"""
+      <.kanban id="b" aria-label="Funnel">
+        <.kanban_column id="over" label="Doing" count={4} limit={3} meta="WIP" progress={50} />
+        <.kanban_column id="ok" label="Todo" count={2} limit={3} meta="WIP" progress={50} />
+        <.kanban_column id="off" label="Done" count={2} disabled />
+      </.kanban>
+      """)
+
+    assert [_] = find(html, ~s|#b[role="group"][aria-label="Funnel"]|) |> Enum.to_list()
+    assert [_] = find(html, ~s|#over[data-wip="exceeded"]|) |> Enum.to_list()
+    assert [] = find(html, "#ok[data-wip]") |> Enum.to_list()
+    assert find(html, "#over > div:first-child span:nth-child(2)") |> LazyHTML.text() =~ "4/3"
+    assert find(html, "#ok > div:first-child span:nth-child(2)") |> LazyHTML.text() =~ "2/3"
+    assert "text-error" in classes(html, "#over > div:first-child span:nth-child(2)")
+    assert "text-error" in classes(html, "#over > div:nth-child(2) > span")
+    assert "bg-error" in classes(html, "#over span.block")
+    refute "bg-error" in classes(html, "#ok span.block")
+    assert "data-[disabled=true]:opacity-60" in classes(html, "#off")
+  end
 end

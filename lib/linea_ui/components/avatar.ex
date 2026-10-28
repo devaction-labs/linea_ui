@@ -40,6 +40,7 @@ defmodule LineaUI.Components.Avatar do
   use LineaUI.Component
 
   alias LineaUI.Components.Mask
+  alias LineaUI.Components.Popover
 
   @sizes %{
     "3xs" => "size-6",
@@ -231,6 +232,24 @@ defmodule LineaUI.Components.Avatar do
   }
 
   @overlaps %{"2" => "-space-x-2", "3" => "-space-x-3"}
+
+  # A fifth of the avatar's width, for `overlap="auto"`.
+  @auto_overlaps %{
+    "3xs" => "-space-x-[5px]",
+    "2xs" => "-space-x-[6px]",
+    "xs" => "-space-x-[6px]",
+    "xs-plus" => "-space-x-[7px]",
+    "sm" => "-space-x-[8px]",
+    "md" => "-space-x-[10px]",
+    "lg" => "-space-x-[13px]",
+    "xl" => "-space-x-[16px]",
+    "2xl" => "-space-x-[19px]",
+    "24" => "-space-x-[5px]",
+    "32" => "-space-x-[6px]",
+    "40" => "-space-x-[8px]",
+    "48" => "-space-x-[10px]",
+    "64" => "-space-x-[13px]"
+  }
 
   @doc "Renders an avatar."
   attr(:src, :string, default: nil)
@@ -526,25 +545,41 @@ defmodule LineaUI.Components.Avatar do
 
   @doc """
   Stacks avatars so they overlap, as LineOne's avatar group. Give the avatars `ring` so each
-  one is outlined against the next.
+  one is outlined against the next. The avatar under the pointer lifts 2px above its neighbors.
 
       <.avatar_group>
         <.avatar src="/a.jpg" size="xs" ring />
         <.avatar initials="jd" color="info" size="xs" ring />
+      </.avatar_group>
+
+  `overlap="auto"` overlaps by a fifth of the `size`. Given the people that did not fit as
+  `hidden`, the "+N" avatar is a button that opens a popover listing them (the group needs an `id`):
+
+      <.avatar_group id="team" size="32" overlap="auto" hidden={[%{name: "Carla Lima"}, %{name: "Bruno Melo"}]}>
+        <.avatar name="Ana Souza" size="32" ring />
       </.avatar_group>
   """
   attr(:pulse, :boolean, default: false, doc: "Pulses the whole group, for skeletons.")
 
   attr(:overlap, :string,
     default: "2",
-    values: ~w(2 3),
-    doc: "How far the avatars overlap: `2` is `-space-x-2`, `3` is `-space-x-3`."
+    values: ~w(2 3 auto),
+    doc:
+      "How far the avatars overlap: `2` is `-space-x-2`, `3` is `-space-x-3`, `auto` a fifth of the `size`."
   )
 
   attr(:more, :integer,
     default: nil,
     doc: "How many more people there are than avatars: draws a \"+N\" avatar at the end."
   )
+
+  attr(:hidden, :list,
+    default: nil,
+    doc:
+      "The people that did not fit, maps with `:name` and optionally `:src`: sets `more` to their number and the \"+N\" avatar opens a list of them. Needs the group's `id`."
+  )
+
+  attr(:id, :string, default: nil, doc: "Required with `hidden`.")
 
   attr(:size, :string,
     default: "xs",
@@ -568,15 +603,21 @@ defmodule LineaUI.Components.Avatar do
   slot(:inner_block, required: true)
 
   def avatar_group(assigns) do
+    assigns =
+      assigns
+      |> assign(:more, assigns.more || (assigns.hidden && length(assigns.hidden)))
+      |> assign(:listed, assigns.hidden not in [nil, []])
+
     ~H"""
     <div
+      id={@id}
       role={@label && "group"}
       aria-label={@label}
       tabindex={@spread && "0"}
       class={
         merge([
-          "flex flex-wrap",
-          overlap(@overlap),
+          "flex flex-wrap [&>.avatar]:transition-transform [&>.avatar:hover]:z-[2] [&>.avatar:hover]:-translate-y-0.5",
+          overlap(@overlap, @size),
           @spread &&
             "rounded-full outline-hidden focus-visible:ring-2 focus-visible:ring-primary/50 hover:space-x-1 focus-within:space-x-1 motion-reduce:*:transition-none *:transition-[margin] *:duration-200",
           @pulse && "animate-pulse",
@@ -586,17 +627,44 @@ defmodule LineaUI.Components.Avatar do
       {@rest}
     >
       {render_slot(@inner_block)}
-      <.avatar
-        :if={@more}
-        initials={"+#{@more}"}
-        variant="soft"
-        size={@size}
-        face_class="bg-slate-150 text-slate-500 dark:bg-navy-800 dark:text-navy-200"
-        ring
-      />
+      <Popover.popover
+        :if={@more && @listed}
+        id={"#{@id}-more"}
+        placement="bottom-start"
+        class="w-56 p-1.5"
+      >
+        <:trigger>
+          <button type="button" class="rounded-full" aria-label={"#{@more} more"}>
+            <.more_avatar more={@more} size={@size} />
+          </button>
+        </:trigger>
+        <ul class="space-y-0.5">
+          <li
+            :for={person <- @hidden}
+            class="flex items-center gap-2.5 rounded-md px-2 py-1.5 text-sm text-slate-700 dark:text-navy-100"
+          >
+            <.avatar src={person[:src]} name={person[:name]} color="auto" size="3xs" />
+            <span class="truncate">{person[:name]}</span>
+          </li>
+        </ul>
+      </Popover.popover>
+      <.more_avatar :if={@more && !@listed} more={@more} size={@size} />
     </div>
     """
   end
 
-  defp overlap(overlap), do: @overlaps[overlap]
+  defp more_avatar(assigns) do
+    ~H"""
+    <.avatar
+      initials={"+#{@more}"}
+      variant="soft"
+      size={@size}
+      face_class="bg-slate-150 text-slate-500 shadow-[inset_0_0_0_1px_rgb(0_0_0/0.1)] dark:bg-navy-800 dark:text-navy-200 dark:shadow-[inset_0_0_0_1px_rgb(255_255_255/0.12)]"
+      ring
+    />
+    """
+  end
+
+  defp overlap("auto", size), do: @auto_overlaps[size]
+  defp overlap(overlap, _size), do: @overlaps[overlap]
 end

@@ -32,6 +32,25 @@ defmodule LineaUI.Components.BreadcrumbTest do
     assert [_] = find(html, "span.sep") |> Enum.to_list()
     assert [] = find(html, "li > svg") |> Enum.to_list()
     assert "border-slate-200" in classes(html, "a")
+    assert "px-2" in classes(html, "a")
+    assert "py-[5px]" in classes(html, "a")
+  end
+
+  test "the current page is soft and cut with an ellipsis, with its title" do
+    html =
+      render(~H"""
+      <.breadcrumb>
+        <:item href="/">Home</:item>
+        <:item title="A very long page name">A very long page name</:item>
+      </.breadcrumb>
+      """)
+
+    assert "text-slate-600" in classes(html, "[aria-current=page]")
+    assert "min-w-0" in classes(html, "[aria-current=page]")
+    assert "truncate" in classes(html, "[aria-current=page] > span")
+
+    assert [_] =
+             find(html, "[aria-current=page][title='A very long page name']") |> Enum.to_list()
   end
 
   test "items with phx-click are buttons and pass their attributes on" do

@@ -25,6 +25,9 @@ defmodule LineaUI.Components.Timeline do
         </.timeline_item>
       </.timeline>
 
+  The line is 2px and stops at the last item. `ping` stops for people who prefer reduced
+  motion. An avatar point can also be a tinted disc with initials (`<.avatar initials="mc" color="info" class="size-full" />`).
+
   The inner block of an item comes after its description: images, links, tags, members.
 
   A `timeline_day` splits the events by day with a small label, the line running through it:
@@ -70,17 +73,17 @@ defmodule LineaUI.Components.Timeline do
     "error" => "border-2 border-error"
   }
 
+  @icon_disc "bg-[color-mix(in_srgb,currentColor_13%,transparent)] shadow-[inset_0_0_0_1px_color-mix(in_srgb,currentColor_38%,transparent)]"
+
   @icon %{
-    "neutral" =>
-      "border border-current bg-white text-slate-400 dark:bg-navy-700 dark:text-navy-300",
-    "primary" => "border border-current bg-white text-primary dark:bg-navy-700 dark:text-accent",
-    "secondary" =>
-      "border border-current bg-white text-secondary dark:bg-navy-700 dark:text-secondary-light",
-    "accent" => "border border-current bg-white text-accent dark:bg-navy-700 dark:text-accent",
-    "info" => "border border-current bg-white text-info dark:bg-navy-700",
-    "success" => "border border-current bg-white text-success dark:bg-navy-700",
-    "warning" => "border border-current bg-white text-warning dark:bg-navy-700",
-    "error" => "border border-current bg-white text-error dark:bg-navy-700"
+    "neutral" => "#{@icon_disc} text-slate-400 dark:text-navy-300",
+    "primary" => "#{@icon_disc} text-primary dark:text-accent",
+    "secondary" => "#{@icon_disc} text-secondary dark:text-secondary-light",
+    "accent" => "#{@icon_disc} text-accent",
+    "info" => "#{@icon_disc} text-info",
+    "success" => "#{@icon_disc} text-success",
+    "warning" => "#{@icon_disc} text-warning",
+    "error" => "#{@icon_disc} text-error"
   }
 
   @avatar Map.new(~w(neutral primary secondary accent info success warning error), &{&1, nil})
@@ -199,7 +202,7 @@ defmodule LineaUI.Components.Timeline do
     default: "solid",
     values: ~w(solid outline icon avatar),
     doc:
-      "`icon` is a white point ringed in the color, holding the `:point` slot; `avatar` draws no disc, so the `:point` slot can hold an avatar."
+      "`icon` is a disc tinted 13% with the color and ringed by 1px of it, holding the `:point` slot (an icon of 1rem on a `xl` timeline is the LineOne size); `avatar` draws no disc, so the `:point` slot can hold an avatar."
   )
 
   attr(:point_class, :any, default: nil, doc: "Merged into the point (`size-8` ...).")
@@ -222,7 +225,7 @@ defmodule LineaUI.Components.Timeline do
       <div class={merge(["timeline-item-point rounded-full", @point_class, @point_extra])}>
         <span
           :if={@ping}
-          class={["inline-flex h-full w-full animate-ping rounded-full opacity-80", @ping_class]}
+          class={["inline-flex h-full w-full motion-safe:animate-ping rounded-full opacity-80", @ping_class]}
         ></span>
         {render_slot(@point)}
       </div>

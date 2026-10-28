@@ -285,4 +285,34 @@ defmodule LineaUI.Components.AvatarTest do
              )
              |> Enum.to_list()
   end
+
+  test "avatar_group: overlap follows the size, hover lifts, +N has an inset border" do
+    html =
+      render(~H"""
+      <.avatar_group id="g" overlap="auto" size="40" more={2}>
+        <.avatar name="Ana Souza" size="40" ring />
+      </.avatar_group>
+      """)
+
+    group = classes(html, "#g")
+    assert "-space-x-[8px]" in group
+    assert "[&>.avatar:hover]:-translate-y-0.5" in group
+    assert "[&>.avatar:hover]:z-[2]" in group
+    more = classes(html, "#g > .avatar:last-child .is-initial")
+    assert Enum.any?(more, &String.starts_with?(&1, "shadow-[inset_0_0_0_1px"))
+  end
+
+  test "avatar_group: the hidden people open from the +N in a popover" do
+    html =
+      render(~H"""
+      <.avatar_group id="g" hidden={[%{name: "Carla Lima"}, %{name: "Bruno Melo"}]}>
+        <.avatar name="Ana Souza" ring />
+      </.avatar_group>
+      """)
+
+    assert [_] = find(html, "#g-more button[aria-label='2 more']") |> Enum.to_list()
+    assert find(html, "#g-more button") |> LazyHTML.text() =~ "+2"
+    assert find(html, "#g-more li") |> Enum.count() == 2
+    assert find(html, "#g-more li") |> LazyHTML.text() =~ "Carla Lima"
+  end
 end

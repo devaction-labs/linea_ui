@@ -1,7 +1,8 @@
 defmodule LineaUI.Components.Typography do
   @moduledoc """
   LineOne's typography: headings in every level and weight, display headings, gradient and
-  decorated text, decorated links, inline code and keyboard keys.
+  decorated text, decorated links, inline code and keyboard keys. A `display` heading is semibold unless
+  `weight` says otherwise.
 
       <.heading level={1}>Heading H1</.heading>
       <.heading level={3} weight="light" color="info">Light H3</.heading>
@@ -124,7 +125,13 @@ defmodule LineaUI.Components.Typography do
   attr(:level, :integer, default: nil, values: [nil, 1, 2, 3, 4, 5, 6])
   attr(:size, :string, default: nil, values: [nil | Map.keys(@named_sizes)])
   attr(:display, :integer, default: nil, values: [nil, 1, 2, 3, 4, 5])
-  attr(:weight, :string, default: "normal", values: ~w(normal light medium semibold bold))
+
+  attr(:weight, :string,
+    default: nil,
+    values: [nil | ~w(normal light medium semibold bold)],
+    doc: "`normal` by default, `semibold` for a `display` heading."
+  )
+
   attr(:color, :string, default: "default", values: @text_colors)
   attr(:class, :any, default: nil)
   attr(:rest, :global)
@@ -135,6 +142,7 @@ defmodule LineaUI.Components.Typography do
       assigns
       |> assign(:tag, "h#{heading_level(assigns)}")
       |> assign(:type_size, heading_size(assigns))
+      |> assign(:weight, heading_weight(assigns))
 
     ~H"""
     <.dynamic_tag
@@ -150,6 +158,10 @@ defmodule LineaUI.Components.Typography do
   defp heading_level(%{level: level}) when is_integer(level), do: level
   defp heading_level(%{display: display}) when is_integer(display), do: 1
   defp heading_level(_assigns), do: 2
+
+  defp heading_weight(%{weight: weight}) when is_binary(weight), do: weight
+  defp heading_weight(%{display: display}) when is_integer(display), do: "semibold"
+  defp heading_weight(_assigns), do: "normal"
 
   defp heading_size(%{size: size}) when is_binary(size), do: @named_sizes[size]
   defp heading_size(%{display: display}) when is_integer(display), do: @display_sizes[display]
@@ -202,8 +214,9 @@ defmodule LineaUI.Components.Typography do
   end
 
   @doc """
-  Renders a link inside running text, underlined in a theme color and style as LineOne's text
-  decoration examples.
+  Renders a link inside running text, underlined (1px) in a theme color and style as LineOne's
+  text decoration examples. It keeps the weight of the text around it; give it
+  `class="font-semibold"` for a heavier one.
 
       <.text_link navigate={~p"/about"} decoration_color="secondary" decoration_style="dotted">
         About us
@@ -228,7 +241,7 @@ defmodule LineaUI.Components.Typography do
     <.link
       class={
         merge([
-          "font-semibold underline decoration-2",
+          "underline decoration-1",
           decoration_color(@decoration_color),
           decoration_style(@decoration_style),
           @class
@@ -242,7 +255,8 @@ defmodule LineaUI.Components.Typography do
   end
 
   @doc """
-  Renders code inside running text, the way LineOne's pages show class names.
+  Renders code inside running text, the way LineOne's pages show class names: mono 12.5px on
+  the fill color, in the primary text color.
 
       Use the <.inline_code>rounded-full</.inline_code> utility.
   """
@@ -257,7 +271,7 @@ defmodule LineaUI.Components.Typography do
   end
 
   @doc """
-  Renders a keyboard key.
+  Renders a keyboard key: mono 11.5px, with a 1px inset border and a 1px shadow under it.
 
       <.kbd>Ctrl</.kbd> + <.kbd>K</.kbd>
   """
@@ -270,7 +284,7 @@ defmodule LineaUI.Components.Typography do
     <kbd
       class={
         merge([
-          "inline-flex h-5 min-w-5 items-center justify-center rounded-sm border border-b-2 border-slate-300 bg-slate-100 px-1.5 font-inter text-tiny-plus font-medium leading-none text-slate-700 dark:border-navy-450 dark:bg-navy-800 dark:text-navy-100",
+          "inline-flex h-5 min-w-5 items-center justify-center rounded-[5px] bg-slate-100 px-1.5 py-0.5 font-mono text-[11.5px] leading-none text-slate-700 shadow-[inset_0_0_0_1px_var(--color-slate-300),0_1px_0_var(--color-slate-300)] dark:bg-navy-800 dark:text-navy-100 dark:shadow-[inset_0_0_0_1px_var(--color-navy-450),0_1px_0_var(--color-navy-450)]",
           @class
         ])
       }

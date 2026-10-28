@@ -221,12 +221,12 @@ defmodule LineaUI.Components.Treeview do
             "btn size-5 rounded-lg p-0 hover:bg-slate-300/20 focus:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25",
             @layout == :advanced && "mr-1"
           ]}>
-            <.glyph name={:chevron_right_solid} class="tree-chevron size-4.5 transition-transform" />
+            <.glyph name={:chevron_right_solid} class="tree-chevron size-4 transition-transform" />
           </span>
           <span :for={icon <- @icon} class="mr-3 flex">{render_slot(icon)}</span>
           <span class="truncate">{@label}</span>
         </summary>
-        <ul role="group" class="pl-4">
+        <ul role="group" class="mt-1 space-y-1 pl-4">
           {render_slot(@inner_block)}
         </ul>
       </details>

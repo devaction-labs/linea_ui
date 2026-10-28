@@ -78,6 +78,19 @@ defmodule LineaUI.Components.SimpleElementsTest do
       assert "rounded-full" in classes(html, "#p")
       refute "skeleton" in classes(html, "#n")
     end
+
+    test "a group announces the loading and keeps the blocks hidden" do
+      html =
+        render(~H"""
+        <.skeleton_group id="g" label="Loading orders"><.skeleton class="h-3" /></.skeleton_group>
+        <.skeleton_group id="d"><.skeleton class="h-3" /></.skeleton_group>
+        """)
+
+      assert [_] = find(html, ~s|#g[role="status"][aria-busy="true"]|) |> Enum.to_list()
+      assert html |> find("#g .sr-only") |> Enum.map(&LazyHTML.text/1) == ["Loading orders"]
+      assert html |> find("#d .sr-only") |> Enum.map(&LazyHTML.text/1) == ["Loading…"]
+      assert [_] = find(html, ~s|#g .skeleton[aria-hidden="true"]|) |> Enum.to_list()
+    end
   end
 
   describe "spinner" do
@@ -96,7 +109,7 @@ defmodule LineaUI.Components.SimpleElementsTest do
       assert "is-elastic" in classes(html, "#s")
       assert "size-12" in classes(html, "#s")
       assert [_, _] = find(html, "#g > span.bg-error") |> Enum.to_list()
-      assert [_] = find(html, "#v > svg") |> Enum.to_list()
+      assert [_] = find(html, ~s|#v > svg[aria-hidden="true"]|) |> Enum.to_list()
       assert [_] = find(html, "#b[role=status][aria-label=Loading]") |> Enum.to_list()
     end
   end

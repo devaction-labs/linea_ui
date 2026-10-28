@@ -47,6 +47,10 @@ defmodule LineaUI.Components.TimerTest do
     assert text_of(short, "[data-time]") == "3h12"
     assert attr_of(short, "#a", "data-format") == ["hm"]
 
+    clock = render(~H|<.timer id="a" elapsed={11565} format="hh:mm" />|)
+    assert text_of(clock, "[data-time]") == "03:12"
+    assert attr_of(clock, "#a", "data-format") == ["hh:mm"]
+
     assert render(~H|<.timer id="a" elapsed={0} />|) |> text_of("[data-time]") == "00:00:00"
     assert render(~H|<.timer id="a" elapsed={-9} />|) |> text_of("[data-time]") == "00:00:00"
   end

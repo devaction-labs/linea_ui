@@ -403,7 +403,7 @@ nav.header .header-container {
 
 /* Demo inline code style */
 code.inline-code {
-  @apply rounded-sm bg-slate-100 py-0.5 px-1 text-xs-plus text-secondary dark:bg-navy-800 dark:text-secondary-light;
+  @apply rounded-[5px] bg-slate-100 px-1.5 py-0.5 font-mono text-[12.5px] text-primary dark:bg-navy-800 dark:text-accent-light;
 }
 
 /* Scrollbar styles */
@@ -461,13 +461,24 @@ code.inline-code {
 
 /* skeleton */
 .skeleton {
-  @apply relative overflow-hidden [--sk-color:#ffffff80] dark:[--sk-color:#5C6B8A];
+  @apply relative overflow-hidden [--sk-color:#ffffffa6] dark:[--sk-color:#ffffff12];
 }
 
 .skeleton.animate-wave:after {
   @apply absolute inset-0 content-[''];
   background: linear-gradient(90deg, transparent, var(--sk-color), transparent);
   animation: skeleton-wave 1.5s ease-in-out 0.5s infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton.animate-wave:after {
+    animation: none;
+    display: none;
+  }
+
+  .animate-pulse {
+    animation: none;
+  }
 }
 
 @keyframes skeleton-wave {
@@ -494,8 +505,12 @@ code.inline-code {
 }
 
 /* spinner */
+.spinner:not(.is-grow, .is-elastic) {
+  animation-duration: 0.75s;
+}
+
 .spinner.is-grow span {
-  animation: spinner-grow 1.5s ease-in-out infinite;
+  animation: spinner-grow 1s ease-in-out infinite;
 }
 
 .spinner.is-elastic {
@@ -522,7 +537,7 @@ code.inline-code {
 }
 
 .spinner.is-grow span:nth-child(1) {
-  animation-delay: -750ms;
+  animation-delay: -500ms;
 }
 
 @keyframes spinner-grow {
@@ -979,7 +994,7 @@ code.inline-code {
 
 /* timeline */
 .timeline {
-  @apply flex flex-col [--size:12px] [--line:1px];
+  @apply flex flex-col [--size:12px] [--line:2px];
 }
 
 .timeline.line-space {
@@ -1000,10 +1015,6 @@ code.inline-code {
 
 .timeline .timeline-item:not(:last-child) {
   @apply before:bg-slate-300 dark:before:bg-navy-400;
-}
-
-.timeline .timeline-item:last-child {
-  @apply before:bg-gradient-to-b before:from-slate-300 before:to-transparent dark:before:from-navy-400;
 }
 
 .timeline .timeline-item:last-child {

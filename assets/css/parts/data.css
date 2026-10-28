@@ -840,7 +840,7 @@
     --ct-soft: var(--color-slate-500);
     --ct-line: var(--color-slate-200);
     --ct-card: #fff;
-    --ct-st: var(--color-slate-400);
+    --ct-st: var(--color-slate-300);
   }
 
   .dark .linea-ctable {
@@ -848,6 +848,7 @@
     --ct-soft: var(--color-navy-200);
     --ct-line: var(--color-navy-500);
     --ct-card: var(--color-navy-700);
+    --ct-st: var(--color-navy-400);
   }
 
   .linea-ctable-all {
@@ -908,7 +909,7 @@
     transition: box-shadow 0.15s, background 0.15s;
   }
 
-  .linea-ctable-row[data-status]::before {
+  .linea-ctable-row::before {
     content: "";
     position: absolute;
     top: 10px;
