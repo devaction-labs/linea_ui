@@ -4,6 +4,7 @@ import {COUNTRIES, byIso, flag} from "./phone_countries.js"
 import {
   arrange,
   codeOf,
+  dialLabel,
   digitsOf,
   e164,
   formatNational,
@@ -20,6 +21,17 @@ import {
 
 const br = byIso("BR")
 const us = byIso("US")
+
+test("a row of a shared calling code shows the area codes the table knows", () => {
+  assert.equal(dialLabel(byIso("PR")), "+1 787, 939")
+  assert.equal(dialLabel(byIso("JM")), "+1 876, 658")
+  assert.equal(dialLabel(byIso("AG")), "+1 268")
+  assert.equal(dialLabel(byIso("US")), "+1")
+  assert.equal(dialLabel(byIso("CA")), "+1")
+  assert.equal(dialLabel(br), "+55")
+  assert.equal(dialLabel(byIso("KZ")), "+7")
+  assert.equal(dialLabel(byIso("GG")), "+44")
+})
 
 test("the table covers every country once, with a calling code and a pattern", () => {
   assert.equal(COUNTRIES.length, new Set(COUNTRIES.map((country) => country.iso)).size)
