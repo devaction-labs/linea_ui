@@ -7,6 +7,16 @@ defmodule LineaUI.Components.Skeleton do
       <.skeleton class="h-3 w-full" />
       <.skeleton class="h-48 w-full" shape="square" />
 
+  The wave and the pulse stop for people who prefer reduced motion.
+
+  The blocks are `aria-hidden`; wrap a whole placeholder in `skeleton_group/1` so a screen
+  reader hears that something is loading:
+
+      <.skeleton_group label="Loading orders">
+        <.skeleton class="h-3 w-full" />
+        <.skeleton class="h-3 w-8/12" />
+      </.skeleton_group>
+
   For the pulse, put `animation="none"` blocks inside an element with `animate-pulse` (as
   LineOne does), or give a single block `animation="pulse"`.
   """
@@ -51,6 +61,28 @@ defmodule LineaUI.Components.Skeleton do
       class={merge([animation(@animation), "bg-slate-150 dark:bg-navy-500", shape(@shape), @class])}
       {@rest}
     >
+    </div>
+    """
+  end
+
+  @doc """
+  Wraps the skeleton blocks of one placeholder: `role="status"` and `aria-busy="true"` with
+  a screen-reader-only `label`.
+
+      <.skeleton_group label="Loading orders" class="space-y-2">
+        <.skeleton class="h-3 w-full" />
+      </.skeleton_group>
+  """
+  attr(:label, :string, default: "Loading…", doc: "Read by screen readers; not drawn.")
+  attr(:class, :any, default: nil)
+  attr(:rest, :global)
+  slot(:inner_block, required: true)
+
+  def skeleton_group(assigns) do
+    ~H"""
+    <div role="status" aria-busy="true" class={@class} {@rest}>
+      <span class="sr-only">{@label}</span>
+      {render_slot(@inner_block)}
     </div>
     """
   end

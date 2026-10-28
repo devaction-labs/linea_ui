@@ -7,6 +7,23 @@ defmodule LineaUI.Components.Spinner do
       <.spinner color="primary" variant="soft" elastic />
       <.spinner color="success" variant="grow" size="lg" />
       <.spinner color="error" variant="svg" />
+
+  The ring turns in 0.75s (the elastic one keeps its own pace) and the growing dot pulses in 1s.
+
+  In a button, a `current` spinner takes the text color of the button and sits before its label:
+
+      <.button disabled>
+        <.spinner color="current" size="xs" label="Saving" /> Saving
+      </.button>
+
+  Over a block that loads, the spinner is centered on a veil that covers it:
+
+      <div class="relative">
+        …the content…
+        <div class="absolute inset-0 grid place-items-center bg-white/70 dark:bg-navy-900/70">
+          <.spinner color="primary" size="md" />
+        </div>
+      </div>
   """
 
   use LineaUI.Component
@@ -132,7 +149,13 @@ defmodule LineaUI.Components.Spinner do
       }
       {@rest}
     >
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-full w-full" fill="none" viewBox="0 0 28 28">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        aria-hidden="true"
+        class="h-full w-full"
+        fill="none"
+        viewBox="0 0 28 28"
+      >
         <path
           fill="currentColor"
           fill-rule="evenodd"
