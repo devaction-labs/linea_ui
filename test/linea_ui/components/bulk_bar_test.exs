@@ -52,6 +52,13 @@ defmodule LineaUI.Components.BulkBarTest do
     assert attr_of(html, "#b [data-bulk-clear]", "phx-click") == ["clear"]
     assert attr_of(html, "#b [data-bulk-clear]", "phx-target") == ["#list"]
     assert attr_of(html, "#b [data-bulk-clear]", "aria-label") == ["Limpar (Esc)"]
+    assert [] = find(html, "#b kbd") |> Enum.to_list()
+  end
+
+  test "show_esc writes an Esc key chip in the close button" do
+    html = render(~H|<.bulk_bar id="b" count={2} show_esc />|)
+
+    assert find(html, "#b [data-bulk-clear] kbd.linea-bulk-esc") |> LazyHTML.text() == "Esc"
   end
 
   test "select all shows only with an event and more in all than selected" do
@@ -82,9 +89,14 @@ defmodule LineaUI.Components.BulkBarTest do
       """)
 
     assert attr_of(html, "#b .linea-bulk-btn", "data-variant") == ["primary", "danger", "default"]
-    assert attr_of(html, "#b .linea-bulk-btn", "phx-click") == ["apply", "delete"]
+    assert attr_of(html, "#b .linea-bulk-btn", "phx-click") == ["delete"]
     assert attr_of(html, "#b .linea-bulk-btn[data-variant=danger]", "phx-value-kind") == ["soft"]
-    assert attr_of(html, "#b .linea-bulk-btn[data-variant=primary]", "disabled") == [""]
+    # disabled stays focusable (aria-disabled, no native disabled) and runs nothing
+    primary = "#b .linea-bulk-btn[data-variant=primary]"
+    assert attr_of(html, primary, "aria-disabled") == ["true"]
+    assert attr_of(html, primary, "disabled") == []
+    assert attr_of(html, primary, "phx-click") == []
+    assert attr_of(html, "#b .linea-bulk-btn[data-variant=danger]", "aria-disabled") == []
 
     assert find(
              html,

@@ -833,6 +833,7 @@ code.inline-code {
   @apply p-0;
 }
 
+/* solid tips: the darker -focus shade on a light page (white text needs it), the lighter token on a dark one */
 .tippy-box[data-theme~="primary"] {
   @apply bg-primary text-white dark:bg-accent;
 }
@@ -842,43 +843,43 @@ code.inline-code {
 }
 
 .tippy-box[data-theme~="secondary"] {
-  @apply bg-secondary text-white;
+  @apply bg-secondary text-white dark:bg-secondary-light;
 }
 
 .tippy-box[data-theme~="secondary"] > .tippy-svg-arrow svg {
-  @apply text-secondary;
+  @apply text-secondary dark:text-secondary-light;
 }
 
 .tippy-box[data-theme~="info"] {
-  @apply bg-info text-white;
+  @apply bg-info-focus text-white dark:bg-info;
 }
 
 .tippy-box[data-theme~="info"] > .tippy-svg-arrow svg {
-  @apply text-info;
+  @apply text-info-focus dark:text-info;
 }
 
 .tippy-box[data-theme~="success"] {
-  @apply bg-success text-white;
+  @apply bg-success-focus text-white dark:bg-success;
 }
 
 .tippy-box[data-theme~="success"] > .tippy-svg-arrow svg {
-  @apply text-success;
+  @apply text-success-focus dark:text-success;
 }
 
 .tippy-box[data-theme~="warning"] {
-  @apply bg-warning text-white;
+  @apply bg-warning-focus text-white dark:bg-warning;
 }
 
 .tippy-box[data-theme~="warning"] > .tippy-svg-arrow svg {
-  @apply text-warning;
+  @apply text-warning-focus dark:text-warning;
 }
 
 .tippy-box[data-theme~="error"] {
-  @apply bg-error text-white;
+  @apply bg-error-focus text-white dark:bg-error;
 }
 
 .tippy-box[data-theme~="error"] > .tippy-svg-arrow svg {
-  @apply text-error;
+  @apply text-error-focus dark:text-error;
 }
 
 .tippy-box[data-theme~="light"] {

@@ -39,6 +39,39 @@
     @apply -rotate-180;
   }
 
+  /* collapse variants: framed (a card with an inset 1px border), flat (a rule under it), section (a small caps label) */
+  .linea-collapse[data-variant="framed"] {
+    @apply rounded-xl shadow-[inset_0_0_0_1px_var(--color-slate-150)] dark:shadow-[inset_0_0_0_1px_var(--color-navy-500)];
+  }
+
+  .linea-collapse[data-variant="framed"] > summary {
+    @apply rounded-xl px-4 py-3.5 text-slate-700 transition-colors hover:bg-slate-100 dark:text-navy-100 dark:hover:bg-navy-600;
+  }
+
+  .linea-collapse[data-variant="framed"][open] > summary {
+    @apply rounded-b-none;
+  }
+
+  .linea-collapse[data-variant="framed"] > .ac-panel {
+    @apply px-4 pb-4;
+  }
+
+  .linea-collapse[data-variant="flat"] {
+    @apply border-b border-slate-150 dark:border-navy-500;
+  }
+
+  .linea-collapse[data-variant="flat"] > summary {
+    @apply py-3.5 text-slate-700 dark:text-navy-100;
+  }
+
+  .linea-collapse[data-variant="flat"] > .ac-panel {
+    @apply pb-4;
+  }
+
+  .linea-collapse[data-variant="section"] > summary {
+    @apply py-2 text-xs font-semibold tracking-wider text-slate-400 uppercase dark:text-navy-300;
+  }
+
   .toastify {
     @apply fixed inline-block cursor-pointer opacity-0;
     padding: 12px 20px;
@@ -272,6 +305,15 @@
     @apply text-indigo-100 dark:text-indigo-100;
   }
 
+  /* the warning fill is too light for white text */
+  [data-accordion][data-variant="primary"][data-color="warning"] > .ac > .ac-trigger {
+    color: #1f1300;
+  }
+
+  [data-accordion][data-variant="primary"][data-color="warning"] > .ac > .ac-trigger .ac-icon {
+    color: color-mix(in oklab, #1f1300 70%, transparent);
+  }
+
   [data-accordion]:is([data-variant="primary"], [data-variant="advanced"]) > .ac > .ac-panel > .ac-body {
     @apply px-4 py-4 sm:px-5;
   }
@@ -305,6 +347,12 @@
 
   .drawer > .drawer-content {
     z-index: calc(var(--linea-z-overlay) + var(--linea-layer, 0) * 10 + 1);
+  }
+
+  /* a focusable scroll_area shows where the keyboard is */
+  [data-scroll-area]:focus-visible {
+    outline: 2px solid color-mix(in oklab, var(--color-primary) 55%, transparent);
+    outline-offset: 2px;
   }
 
   /* LineOne's scrollbar-sm for Firefox, which has no ::-webkit-scrollbar; scrollbar-always keeps the thumb shown */
@@ -462,6 +510,11 @@
     color: var(--bb-fg);
   }
 
+  .linea-bulk-esc {
+    @apply rounded-md px-1.5 font-mono text-[11px] leading-5;
+    background: var(--bb-film);
+  }
+
   .linea-bulk :is(button, a):focus-visible {
     outline: 2px solid color-mix(in oklab, var(--color-primary) 70%, white);
     outline-offset: 2px;
@@ -491,7 +544,8 @@
     background: color-mix(in oklab, var(--color-error) 18%, transparent);
   }
 
-  .linea-bulk-btn:disabled {
+  .linea-bulk-btn:disabled,
+  .linea-bulk-btn[aria-disabled="true"] {
     @apply cursor-not-allowed;
     background: var(--bb-film);
     color: var(--bb-soft);

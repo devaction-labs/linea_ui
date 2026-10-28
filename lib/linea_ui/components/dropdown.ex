@@ -211,7 +211,7 @@ defmodule LineaUI.Components.Dropdown do
         <div
           class={
             merge([
-              "popper-box rounded-md border border-slate-150 bg-white font-inter dark:border-navy-500 dark:bg-navy-700 [&>:first-child]:rounded-t-[5px] [&>:last-child]:rounded-b-[5px]",
+              "popper-box rounded-lg border border-slate-150 bg-white py-1 font-inter dark:border-navy-500 dark:bg-navy-700",
               @class
             ])
           }
@@ -242,11 +242,11 @@ defmodule LineaUI.Components.Dropdown do
   @item_styles %{
     "default" => %{
       "neutral" =>
-        "flex h-8 items-center px-3 pr-8 font-medium tracking-wide outline-hidden transition-all hover:bg-slate-100 hover:text-slate-800 focus:bg-slate-100 focus:text-slate-800 dark:hover:bg-navy-600 dark:hover:text-navy-100 dark:focus:bg-navy-600 dark:focus:text-navy-100",
+        "flex h-8.5 items-center px-3 pr-8 font-medium tracking-wide outline-hidden transition-all hover:bg-slate-100 hover:text-slate-800 focus:bg-slate-100 focus:text-slate-800 dark:hover:bg-navy-600 dark:hover:text-navy-100 dark:focus:bg-navy-600 dark:focus:text-navy-100",
       "primary" =>
-        "flex h-8 items-center px-3 pr-8 font-medium tracking-wide outline-hidden transition-all hover:bg-primary hover:text-white focus:bg-primary focus:text-white dark:hover:bg-accent dark:focus:bg-accent",
+        "flex h-8.5 items-center px-3 pr-8 font-medium tracking-wide outline-hidden transition-all hover:bg-primary hover:text-white focus:bg-primary focus:text-white dark:hover:bg-accent dark:focus:bg-accent",
       "error" =>
-        "flex h-8 items-center px-3 pr-8 font-medium tracking-wide text-error outline-hidden transition-all hover:bg-error/20 focus:bg-error/20"
+        "flex h-8.5 items-center px-3 pr-8 font-medium tracking-wide text-error outline-hidden transition-all hover:bg-error/20 focus:bg-error/20"
     },
     "media" => %{
       "neutral" =>
@@ -274,6 +274,12 @@ defmodule LineaUI.Components.Dropdown do
     doc: "`media` is the taller row LineOne uses for people (an avatar and two lines)."
 
   attr :disabled, :boolean, default: false
+
+  attr :shortcut, :string,
+    default: nil,
+    doc:
+      "A keyboard hint at the end of the row, in mono text (`Ctrl E`). Text only: it binds no key."
+
   attr :type, :string, default: "button"
   attr :class, :any, default: nil
 
@@ -292,7 +298,7 @@ defmodule LineaUI.Components.Dropdown do
         merge([
           @item_styles[assigns.variant][assigns.color],
           assigns.icon != [] && "gap-3",
-          assigns.disabled && "pointer-events-none opacity-60",
+          assigns.disabled && "pointer-events-none opacity-55",
           "w-full text-left",
           assigns.class
         ])
@@ -311,7 +317,7 @@ defmodule LineaUI.Components.Dropdown do
       aria-disabled={@disabled && "true"}
       {@rest}
     >
-      {render_slot(@icon)}{render_slot(@inner_block)}
+      {render_slot(@icon)}{render_slot(@inner_block)}<.shortcut_hint :if={@shortcut} text={@shortcut} />
     </.link>
     """
   end
@@ -327,8 +333,18 @@ defmodule LineaUI.Components.Dropdown do
       aria-disabled={@disabled && "true"}
       {@rest}
     >
-      {render_slot(@icon)}{render_slot(@inner_block)}
+      {render_slot(@icon)}{render_slot(@inner_block)}<.shortcut_hint :if={@shortcut} text={@shortcut} />
     </button>
+    """
+  end
+
+  attr :text, :string, required: true
+
+  defp shortcut_hint(assigns) do
+    ~H"""
+    <span class="ml-auto pl-4 font-mono text-[11px] font-normal text-slate-400 dark:text-navy-300">
+      {@text}
+    </span>
     """
   end
 
@@ -390,7 +406,7 @@ defmodule LineaUI.Components.Dropdown do
             @item_class,
             "h-9 w-full gap-2.5 pr-3 font-inter text-sm font-normal tracking-normal text-slate-600 dark:text-navy-100",
             "text-left",
-            @disabled && "pointer-events-none opacity-60",
+            @disabled && "pointer-events-none opacity-55",
             @trigger_class
           ])
         }
@@ -419,7 +435,7 @@ defmodule LineaUI.Components.Dropdown do
           id={"#{@id}-menu"}
           class={
             merge([
-              "w-max min-w-40 rounded-md border border-slate-150 bg-white font-inter shadow-[0_10px_30px_-8px_rgb(48_46_56/0.18)] dark:border-navy-500 dark:bg-navy-700 dark:shadow-soft-dark [&>:first-child]:rounded-t-[5px] [&>:last-child]:rounded-b-[5px]",
+              "w-max min-w-40 rounded-lg border border-slate-150 bg-white py-1 font-inter shadow-[0_10px_30px_-8px_rgb(48_46_56/0.18)] dark:border-navy-500 dark:bg-navy-700 dark:shadow-soft-dark",
               @class
             ])
           }
@@ -433,7 +449,8 @@ defmodule LineaUI.Components.Dropdown do
     """
   end
 
-  @doc "A title over the items, as in LineOne's \"HTML Content\" dropdown."
+  @doc "A title over the items, as in LineOne's \"HTML Content\" dropdown, with an optional small line under it."
+  attr :subtitle, :string, default: nil, doc: "A second, smaller line (an e-mail, a role)."
   attr :class, :any, default: nil
   attr :rest, :global
   slot :inner_block, required: true
@@ -445,6 +462,12 @@ defmodule LineaUI.Components.Dropdown do
       {@rest}
     >
       {render_slot(@inner_block)}
+      <span
+        :if={@subtitle}
+        class="block text-xs font-normal tracking-normal text-slate-400 dark:text-navy-300"
+      >
+        {@subtitle}
+      </span>
     </h3>
     """
   end
@@ -465,7 +488,7 @@ defmodule LineaUI.Components.Dropdown do
   end
 
   @doc """
-  The search field across the menu, with LineOne's magnifier. Typing in it is not taken by the
+  The search field of the menu, an inset field (8px margins, 32px high, 6px radius) with LineOne's magnifier. Typing in it is not taken by the
   menu's keys; `phx-change`, `phx-debounce` and `name` pass through.
   """
   attr :placeholder, :string, default: nil
@@ -476,7 +499,7 @@ defmodule LineaUI.Components.Dropdown do
 
   def dropdown_search(assigns) do
     ~H"""
-    <label class="relative flex">
+    <label class="relative m-2 flex">
       <input
         type="text"
         name={@name}
@@ -484,7 +507,7 @@ defmodule LineaUI.Components.Dropdown do
         placeholder={@placeholder}
         class={
           merge([
-            "form-input peer w-full border-y border-slate-150 bg-transparent px-4 py-2 pl-9 text-xs-plus placeholder:text-slate-400/70 dark:border-navy-600",
+            "form-input peer h-8 w-full rounded-md border border-slate-150 bg-transparent px-3 py-0 pl-9 text-xs-plus placeholder:text-slate-400/70 dark:border-navy-600",
             @class
           ])
         }
@@ -575,7 +598,7 @@ defmodule LineaUI.Components.Dropdown do
         item_class:
           merge([
             @choice_item,
-            assigns.disabled && "pointer-events-none opacity-60",
+            assigns.disabled && "pointer-events-none opacity-55",
             assigns.class
           ])
       )

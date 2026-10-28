@@ -35,13 +35,15 @@ defmodule LineaUI.Components.BulkBar do
   `:field` holds a control (a `select`, an `input`); it is skinned as a quiet field the height of the buttons,
   and a listbox inside it opens upwards when the bar is floating. `:action` is a button: `variant` is
   `default`, `primary` (the one main action, `disabled` until there is something to apply) or `danger` (last,
-  in red, and ask for confirmation before it runs); `icon` is a Hugeicons name; every other attribute
-  (`phx-click`, `phx-value-*`, `data-*`) goes to the button.
+  in red; it only looks the part, so confirm in your handler or with `data-confirm`); `icon` is a Hugeicons
+  name; every other attribute (`phx-click`, `phx-value-*`, `data-*`) goes to the button. A `disabled` action
+  keeps the focus (it is `aria-disabled`, not a native `disabled`) and does nothing: its `phx-*` attributes
+  are not rendered.
 
   ## Keyboard
 
   Esc clears the selection (it presses the close button), unless it was meant for an open list or another
-  control. The bar is a labelled region and announces the count as it changes.
+  control. `show_esc` writes the key as a chip in the close button. The bar is a labelled region and announces the count as it changes.
   """
 
   use LineaUI.Component
@@ -87,6 +89,12 @@ defmodule LineaUI.Components.BulkBar do
 
   attr :target, :any, default: nil, doc: "The `phx-target` of both."
   attr :clear_label, :string, default: "Clear selection"
+
+  attr :show_esc, :boolean,
+    default: false,
+    doc:
+      "Writes a visible `Esc` key chip in the close button (the button is always labelled with it)."
+
   attr :variant, :string, default: "inverse", values: @variants
 
   attr :floating, :boolean,
@@ -154,10 +162,10 @@ defmodule LineaUI.Components.BulkBar do
       <button
         :for={action <- @action}
         type="button"
-        disabled={action[:disabled]}
+        aria-disabled={action[:disabled] && "true"}
         class="linea-bulk-btn"
         data-variant={action[:variant] || "default"}
-        {assigns_to_attributes(action, [:variant, :disabled, :icon])}
+        {action_attrs(action)}
       >
         <.icon :if={action[:icon]} name={action[:icon]} class="size-4 shrink-0" />{render_slot(action)}
       </button>
@@ -172,9 +180,20 @@ defmodule LineaUI.Components.BulkBar do
         data-bulk-clear
       >
         <.glyph name={:close} class="size-4" />
+        <kbd :if={@show_esc} class="linea-bulk-esc" aria-hidden="true">Esc</kbd>
       </button>
     </div>
     """
+  end
+
+  # a disabled action stays focusable (aria-disabled) but runs nothing: its phx-* bindings are left out
+  defp action_attrs(action) do
+    attrs = assigns_to_attributes(action, [:variant, :disabled, :icon])
+
+    case action[:disabled] do
+      true -> Enum.reject(attrs, fn {name, _} -> String.starts_with?(to_string(name), "phx-") end)
+      _ -> attrs
+    end
   end
 
   defp label_for(1, label, _plural), do: label
