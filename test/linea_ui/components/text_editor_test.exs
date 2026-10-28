@@ -110,7 +110,9 @@ defmodule LineaUI.Components.TextEditorTest do
     }
 
     html =
-      render(~H|<.text_editor id="e" name="b" slash slash_items={@items} on_slash="slash" />|)
+      rendered_to_string(
+        ~H|<.text_editor id="e" name="b" slash slash_items={@items} on_slash="slash" />|
+      )
 
     assert attr_of(html, "#e", "data-on-slash") == ["slash"]
     assert [slash] = attr_of(html, "#e", "data-slash")
