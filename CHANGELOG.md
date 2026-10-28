@@ -70,6 +70,7 @@ Refinements from the second pass over the design canvas, artboard by artboard:
 - `timer`: the time of the `md` ring is 26px, a size that fits `hh:mm:ss` inside the ring (`sm` 20px, `lg` 34px). The year button of the `datetime_picker` is called "Ano" in pt_BR.
 - `datetime_picker`: new `layout` (`auto` by default, `compact`): `compact` always uses the narrow panel (one month and a Select button), for a picker in a sidebar or a modal; `auto` still follows the width of the screen.
 - `mask`: new `label` for a block mask: it makes the block a named `role="img"`; without it the block stays plain content, so the text inside is still read.
+- `table` and `data_table`: opt-in `peek` shows a panel with the label and value of the columns hidden by `priority` when a row is hovered or focused (the row gets `tabindex="0"`, the panel is a `role="group"` named by `peek_label`, drawn only while the container hides columns, opening upward for the last rows). Nothing changes without `peek`.
 
 ## 0.8.4
 
