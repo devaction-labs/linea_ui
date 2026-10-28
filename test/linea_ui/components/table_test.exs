@@ -494,4 +494,82 @@ defmodule LineaUI.Components.TableTest do
       assert [] = html |> find("[priority]") |> Enum.to_list()
     end
   end
+
+  describe "peek at the columns that left" do
+    defp peek_marks(html),
+      do: html |> find(".linea-tpeek > div") |> LazyHTML.attribute("data-peek-p")
+
+    test "a row gets a focusable panel with one entry per column of priority, by its label" do
+      html =
+        render(~H"""
+        <.table id="t" rows={[%{n: "a", o: "b", s: "c"}]} peek peek_label="More">
+          <:col :let={r} label="Name">{r.n}</:col>
+          <:col :let={r} label="Owner" priority={2}>{r.o}</:col>
+          <:col :let={r} label="Status" priority={1}><b>{r.s}</b></:col>
+        </.table>
+        """)
+
+      assert ["0"] = html |> find("tbody tr") |> LazyHTML.attribute("tabindex")
+      assert [_] = html |> find("tbody tr[data-peek]") |> Enum.to_list()
+      assert ["group"] = html |> find("tbody td .linea-tpeek") |> LazyHTML.attribute("role")
+      assert ["More"] = html |> find(".linea-tpeek") |> LazyHTML.attribute("aria-label")
+      assert ["2", "1"] = peek_marks(html)
+      assert [_] = html |> find(".linea-tpeek > div[data-peek-p='1'] b") |> Enum.to_list()
+      owner = html |> find(".linea-tpeek > div[data-peek-p='2']") |> LazyHTML.text()
+      assert owner =~ "Owner"
+      assert owner =~ "b"
+      # the panel is in the first column's cell, which always stays
+      assert [_] = html |> find("tbody td:first-child .linea-tpeek") |> Enum.to_list()
+    end
+
+    test "nothing without peek, and nothing without a priority" do
+      plain =
+        render(~H"""
+        <.table id="t" rows={[%{n: "a", o: "b"}]}>
+          <:col :let={r} label="Name">{r.n}</:col>
+          <:col :let={r} label="Owner" priority={1}>{r.o}</:col>
+        </.table>
+        """)
+
+      flat =
+        render(~H"""
+        <.table id="t" rows={[%{n: "a"}]} peek>
+          <:col :let={r} label="Name">{r.n}</:col>
+        </.table>
+        """)
+
+      for html <- [plain, flat] do
+        assert [] = html |> find(".linea-tpeek") |> Enum.to_list()
+        assert [] = html |> find("[data-peek], [tabindex]") |> Enum.to_list()
+      end
+    end
+
+    test "expandable rows and selection keep their cells; the panel stays in a data cell" do
+      html =
+        render(~H"""
+        <.table id="t" rows={[%{id: 1, n: "a", o: "b"}]} peek on_select="sel" row_key={& &1.id}>
+          <:col :let={r} label="Name">{r.n}</:col>
+          <:col :let={r} label="Owner" priority={1}>{r.o}</:col>
+          <:expand :let={_ctx}>Detail</:expand>
+        </.table>
+        """)
+
+      assert [_] = html |> find("tbody[data-expandable] tr[data-peek]") |> Enum.to_list()
+      assert [_] = html |> find("tbody input[type=checkbox]") |> Enum.to_list()
+      assert [_] = html |> find(".linea-tpeek") |> Enum.to_list()
+      assert [] = html |> find("td input[type=checkbox] ~ .linea-tpeek") |> Enum.to_list()
+    end
+
+    test "data_table passes peek through" do
+      html =
+        render(~H"""
+        <.data_table id="d" rows={[%{n: "a", o: "b"}]} peek>
+          <:col :let={r} label="Name">{r.n}</:col>
+          <:col :let={r} label="Owner" priority={3}>{r.o}</:col>
+        </.data_table>
+        """)
+
+      assert ["3"] = peek_marks(html)
+    end
+  end
 end

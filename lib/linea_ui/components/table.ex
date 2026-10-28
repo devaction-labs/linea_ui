@@ -69,7 +69,21 @@ defmodule LineaUI.Components.Table do
   The class `table-narrow-hide` hides what carries it (an avatar, an icon) when the box is narrower than 420px.
   The wrapper becomes the container only when some column has a priority; a hand-written table sets
   `container` and marks its `:col` and `:cell` entries (and `table_cell/1`) with `priority` itself.
-  What left is not shown anywhere else: use `expand` or a `row_click` to open the record.
+  What left is not shown anywhere else: use `expand` or a `row_click` to open the record, or turn on `peek`.
+
+  ### Peek at what left
+
+  `peek` makes a row show a small panel with `label: value` of each column the box has hidden, while the row is
+  hovered or has the keyboard focus (the row gets `tabindex="0"`; on touch, the first tap focuses it). The values
+  come from the same `:col` render, so custom cell content works, and the `label` is the caption. The panel is
+  in the DOM next to the first column that always stays, is a `role="group"` named by `peek_label`, and is drawn
+  only while some column is actually hidden, so a wide table shows none. It opens upward for the last rows.
+  Nothing changes without `peek`, or when no `:col` has a priority. Hand-written tables have no `peek`.
+
+      <.table id="people" rows={@people} peek peek_label="More about this person">
+        <:col :let={p} label="Name">{p.name}</:col>
+        <:col :let={p} label="Owner" priority={2}>{p.owner}</:col>
+      </.table>
 
   ## Hand-written tables
 
@@ -207,7 +221,9 @@ defmodule LineaUI.Components.Table do
     foot: [],
     select_all_label: "Select all rows",
     select_label: "Select row",
-    sort_label: nil
+    sort_label: nil,
+    peek: false,
+    peek_label: "Hidden columns"
   }
 
   @sort_button "-mx-1.5 inline-flex h-7 max-w-full cursor-pointer items-center gap-1.5 rounded-md px-1.5 text-left font-semibold uppercase outline-hidden transition-colors hover:bg-slate-300/40 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-primary/55 dark:hover:bg-navy-450/40"
@@ -343,6 +359,17 @@ defmodule LineaUI.Components.Table do
     default: nil,
     doc:
       "Makes the wrapper a container for columns that leave by priority. Automatic when a `:col` has a `priority`; set it on a hand-written table."
+  )
+
+  attr(:peek, :boolean,
+    default: false,
+    doc:
+      "Rows show a panel with the label and value of the columns hidden by `priority`, on hover and keyboard focus. See \"Peek at what left\"."
+  )
+
+  attr(:peek_label, :string,
+    default: "Hidden columns",
+    doc: "`aria-label` of the `peek` panel."
   )
 
   attr(:target, :any, default: nil, doc: "`phx-target` of the events.")
@@ -493,6 +520,17 @@ defmodule LineaUI.Components.Table do
 
   defp priority(entry), do: entry[:priority] || 0
 
+  # The panel sits in the first column that stays; without one (or without a priority) there is no peek.
+  defp peek_at(%{peek: true, col: cols}) do
+    if Enum.any?(cols, &(priority(&1) > 0)), do: Enum.find_index(cols, &(priority(&1) == 0))
+  end
+
+  defp peek_at(_assigns), do: nil
+
+  defp peek_row(assigns), do: if(peek_at(assigns), do: "")
+
+  defp peek_cols(cols), do: Enum.filter(cols, &(priority(&1) > 0))
+
   defp data_p(entry), do: if(priority(entry) > 0, do: priority(entry))
 
   defp bleed(%{bleed: true}), do: @bleed
@@ -565,9 +603,11 @@ defmodule LineaUI.Components.Table do
     >
       <table id={@id} class={@table_class} {@rest}>
         <.slot_head :if={!@headless} {assigns} />
-        <tbody :for={{dom_id, row} <- expand_rows(assigns)} id={dom_id}>
+        <tbody :for={{dom_id, row} <- expand_rows(assigns)} id={dom_id} data-expandable>
           <tr
             class={merge(["border-y border-transparent", row_class(assigns, row)])}
+            data-peek={peek_row(assigns)}
+            tabindex={peek_row(assigns) && "0"}
             {row_attrs(assigns, row)}
           >
             <.slot_cells {assigns} row={row} />
@@ -621,6 +661,8 @@ defmodule LineaUI.Components.Table do
             id={@row_id && @row_id.(row)}
             class={merge([@body_row_class, row_class(assigns, row)])}
             data-selected={@selectable && bool(key(assigns, row) in @selected)}
+            data-peek={peek_row(assigns)}
+            tabindex={peek_row(assigns) && "0"}
             {row_attrs(assigns, row)}
           >
             <.slot_cells {assigns} row={row} />
@@ -748,12 +790,18 @@ defmodule LineaUI.Components.Table do
       </label>
     </td>
     <td
-      :for={col <- @col}
+      :for={{col, index} <- Enum.with_index(@col)}
       class={merge([@td_class, align(col[:align]), @row_click && "cursor-pointer", col[:class]])}
       data-p={data_p(col)}
       phx-click={@row_click && @row_click.(@row)}
     >
       {render_slot(col, @row_item.(@row))}
+      <div :if={index == peek_at(assigns)} class="linea-tpeek" role="group" aria-label={@peek_label}>
+        <div :for={hidden <- peek_cols(@col)} data-peek-p={priority(hidden)}>
+          <span>{hidden[:label]}</span>
+          <span>{render_slot(hidden, @row_item.(@row))}</span>
+        </div>
+      </div>
     </td>
     <td :if={@action != []} class={@td_class}>
       {render_slot(@action, @row_item.(@row))}

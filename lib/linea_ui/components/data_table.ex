@@ -35,7 +35,7 @@ defmodule LineaUI.Components.DataTable do
   `phx-update="stream"` and `total` drives the footer. `:col`, `:action`, `:expand`,
   `:empty`, `row_id`, `row_key`, `row_item`, `row_click` and selection work as in
   `LineaUI.Components.Table.table/1`, and so do the columns that leave by `priority` when the
-  box gets narrow.
+  box gets narrow, and `peek` to read them in a panel.
   """
 
   use LineaUI.Component
@@ -183,6 +183,14 @@ defmodule LineaUI.Components.DataTable do
   attr(:row_attrs, :any, default: nil, doc: "Extra attributes of a row's `<tr>`, see `table/1`.")
   attr(:sticky_header, :boolean, default: false, doc: "Sticky header row, see `table/1`.")
   attr(:scroll_label, :string, default: nil, doc: "Names the scrolling wrapper, see `table/1`.")
+
+  attr(:peek, :boolean,
+    default: false,
+    doc:
+      "Rows show the columns hidden by `priority` in a panel on hover and focus, see `table/1`."
+  )
+
+  attr(:peek_label, :string, default: "Hidden columns", doc: "`aria-label` of the panel.")
 
   attr(:sort_label, :string,
     default: nil,
@@ -494,7 +502,7 @@ defmodule LineaUI.Components.DataTable do
 
   @table_keys ~w(row_id row_key row_item row_click sort_by sort_dir on_sort on_select on_select_all
                  selected all_selected expand_label target col action expand empty compact headless
-                 borderless row_class row_attrs sticky_header foot scroll_label sort_label row_label select_all_label select_label)a
+                 borderless row_class row_attrs sticky_header foot scroll_label sort_label row_label select_all_label select_label peek peek_label)a
 
   defp data_table_body(assigns) do
     assigns =

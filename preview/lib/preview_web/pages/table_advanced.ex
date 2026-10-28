@@ -328,6 +328,26 @@ defmodule PreviewWeb.Pages.TableAdvanced do
         </.card>
       </div>
     </div>
+
+    <div class="mt-8 space-y-6">
+      <h3 class="text-base font-medium text-slate-700 dark:text-navy-100">
+        The same, with <code>peek</code>: hover or focus a row
+      </h3>
+      <div :for={width <- [560, 380]} class="max-w-full" style={"width: #{width}px"}>
+        <p class="mb-2 text-xs text-slate-400">{width}px box</p>
+        <.card class="p-3">
+          <.table id={"peek-#{width}"} rows={inner_rows()} hoverable peek>
+            <:col :let={row} label="Name">{row.name}</:col>
+            <:col :let={row} label="Job" priority={3}>{row.job}</:col>
+            <:col :let={row} label="Owner" priority={2}>{row.color}</:col>
+            <:col :let={row} label="Status" priority={1}>
+              <.badge color="success">Active</.badge>
+            </:col>
+            <:col :let={row} label="Id" align="right">{row.id}</:col>
+          </.table>
+        </.card>
+      </div>
+    </div>
     """
   end
 

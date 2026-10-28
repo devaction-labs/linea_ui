@@ -1168,3 +1168,95 @@
     .linea-tbox .table-narrow-hide { display: none !important; }
   }
 }
+
+/* table `peek`: the panel of the columns that left, in the first column that stays. It is drawn only while the
+   container hides some column (each entry shows with the columns of its priority), under the row, or over it
+   for the last rows, while the row is hovered or has the focus. */
+@layer components {
+  .linea-tbox tr[data-peek] {
+    position: relative;
+  }
+
+  .linea-tbox tr[data-peek]:focus-visible {
+    outline: 2px solid color-mix(in oklab, var(--color-primary) 55%, transparent);
+    outline-offset: -2px;
+  }
+
+  .linea-tpeek {
+    position: absolute;
+    z-index: 8;
+    top: calc(100% + 4px);
+    left: 12px;
+    display: none;
+    width: max-content;
+    max-width: min(520px, calc(100% - 24px));
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 10px 22px;
+    padding: 12px 14px;
+    border-radius: 10px;
+    background: var(--color-slate-800);
+    color: var(--color-slate-100);
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.4;
+    text-align: left;
+    white-space: normal;
+    box-shadow: 0 14px 30px -12px rgb(15 23 42 / 0.5);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-4px);
+    pointer-events: none;
+  }
+
+  .dark .linea-tpeek {
+    background: var(--color-navy-50);
+    color: var(--color-slate-800);
+  }
+
+  .linea-tpeek > div {
+    display: none;
+    flex-direction: column;
+    gap: 1px;
+    min-width: 0;
+  }
+
+  .linea-tpeek > div > :first-child {
+    font-size: 11px;
+    opacity: 0.6;
+  }
+
+  .linea-tbox tbody:not([data-expandable]) > tr[data-peek]:nth-last-child(-n + 2) .linea-tpeek,
+  .linea-tbox tbody[data-expandable]:nth-last-of-type(-n + 2) > tr[data-peek] .linea-tpeek {
+    top: auto;
+    bottom: calc(100% + 4px);
+    transform: translateY(4px);
+  }
+
+  .linea-tbox tr[data-peek]:hover .linea-tpeek,
+  .linea-tbox tr[data-peek]:focus-within .linea-tpeek {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+  }
+
+  @media not (prefers-reduced-motion: reduce) {
+    .linea-tpeek {
+      transition: opacity 0.15s, transform 0.15s, visibility 0.15s;
+    }
+  }
+
+  @container tbox (max-width: 719.98px) {
+    .linea-tpeek:has(> [data-peek-p="1"]) { display: grid; }
+    .linea-tpeek > [data-peek-p="1"] { display: flex; }
+  }
+
+  @container tbox (max-width: 559.98px) {
+    .linea-tpeek:has(> [data-peek-p="2"]) { display: grid; }
+    .linea-tpeek > [data-peek-p="2"] { display: flex; }
+  }
+
+  @container tbox (max-width: 419.98px) {
+    .linea-tpeek:has(> [data-peek-p="3"]) { display: grid; }
+    .linea-tpeek > [data-peek-p="3"] { display: flex; }
+  }
+}
