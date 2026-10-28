@@ -68,6 +68,8 @@ Refinements from the second pass over the design canvas, artboard by artboard:
 - `accordion`: the divider between the items of the `primary` style is the color of the frame mixed 55% with white (it was a fixed shade). `dropdown_item` `color="primary"`: the text is primary and the hover is the same neutral fill as the other items, not a solid primary.
 - `data_table`: the pagers use the same window as `pagination` (the current page, its neighbours, the ends and a gap where pages are left out) instead of five consecutive pages.
 - `timer`: the time of the `md` ring is 26px, a size that fits `hh:mm:ss` inside the ring (`sm` 20px, `lg` 34px). The year button of the `datetime_picker` is called "Ano" in pt_BR.
+- `datetime_picker`: new `layout` (`auto` by default, `compact`): `compact` always uses the narrow panel (one month and a Select button), for a picker in a sidebar or a modal; `auto` still follows the width of the screen.
+- `mask`: new `label` for a block mask: it makes the block a named `role="img"`; without it the block stays plain content, so the text inside is still read.
 
 ## 0.8.4
 

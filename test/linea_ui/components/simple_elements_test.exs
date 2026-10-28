@@ -32,6 +32,18 @@ defmodule LineaUI.Components.SimpleElementsTest do
       assert "is-star-2" in classes(html, "#b")
       assert "heart" in mask_shapes()
     end
+
+    test "a block is plain content until it is given a label" do
+      html =
+        render(~H"""
+        <.mask id="plain" shape="star"><span>JD</span></.mask>
+        <.mask id="named" shape="star" label="Favorite" />
+        """)
+
+      assert [] = html |> find("#plain") |> LazyHTML.attribute("role")
+      assert ["img"] = html |> find("#named") |> LazyHTML.attribute("role")
+      assert ["Favorite"] = html |> find("#named") |> LazyHTML.attribute("aria-label")
+    end
   end
 
   describe "progress" do

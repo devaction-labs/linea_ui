@@ -79,6 +79,21 @@ defmodule PreviewWeb.Pages.Datetimepicker do
         />
       </div>
     </.example>
+    <.example title="Compact range" class="max-w-xl">
+      <p>
+        <code>layout="compact"</code> keeps the narrow panel (one month and a Select button) on a wide screen, for a picker in a sidebar or a modal.
+      </p>
+      <div class="mt-5 max-w-xs">
+        <.datetime_picker
+          id="dtp-compact"
+          name="compact"
+          mode="range"
+          layout="compact"
+          label="Period"
+          today={~D[2026-10-14]}
+        />
+      </div>
+    </.example>
     """
   end
 

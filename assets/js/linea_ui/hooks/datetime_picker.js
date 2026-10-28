@@ -131,7 +131,7 @@ export const DatetimePicker = {
   },
 
   layout() {
-    return this.media.matches ? "mobile" : "desktop"
+    return this.media.matches || this.el.dataset.layout === "compact" ? "mobile" : "desktop"
   },
 
   immediate() {

@@ -40,6 +40,11 @@ defmodule LineaUI.Components.Mask do
   with `class`.
 
       <.mask shape="hexagon" src={@user.photo} alt={@user.name} class="size-20" />
+
+  A block mask around text or an icon is plain content; give it a `label` when the shape itself
+  carries the meaning (a status badge, a rating star) and the text inside does not say it:
+
+      <.mask shape="star" label="Favorite" class="size-8 bg-warning" />
   """
   attr(:shape, :string,
     default: "squircle",
@@ -48,6 +53,13 @@ defmodule LineaUI.Components.Mask do
 
   attr(:src, :string, default: nil)
   attr(:alt, :string, default: "")
+
+  attr(:label, :string,
+    default: nil,
+    doc:
+      "Names a block mask for assistive technology (`role=\"img\"` and `aria-label`). Without it the block stays plain content, so the text inside is still read; an image mask takes `alt`."
+  )
+
   attr(:class, :any, default: nil)
   attr(:rest, :global)
   slot(:inner_block)
@@ -66,7 +78,14 @@ defmodule LineaUI.Components.Mask do
 
   def mask(assigns) do
     ~H"""
-    <div class={merge([mask_class(@shape), @class])} {@rest}>{render_slot(@inner_block)}</div>
+    <div
+      role={@label && "img"}
+      aria-label={@label}
+      class={merge([mask_class(@shape), @class])}
+      {@rest}
+    >
+      {render_slot(@inner_block)}
+    </div>
     """
   end
 end

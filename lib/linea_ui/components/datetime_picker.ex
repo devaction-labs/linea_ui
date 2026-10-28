@@ -243,6 +243,12 @@ defmodule LineaUI.Components.DatetimePicker do
     doc:
       "Single texts of the panel: `:datetime_select`, `:datetime_select_range`, `:datetime_cancel`, `:datetime_start`, `:datetime_end`, `:datetime_time`, `:datetime_times`, `:datetime_no_times`, `:datetime_time_placeholder`, `:datetime_previous`, `:datetime_next`, `:datetime_choose_month` and `:datetime_choose_year` (the names of the month and year buttons of the header), `:datetime_day` (with `%{weekday}`, `%{month}`, `%{day}`, `%{year}`), `:datetime_title` (with `%{month}`, `%{year}`), `:datetime_dialog`, `:datetime_dialog_range`, `:datetime_placeholder`, `:datetime_placeholder_range`."
 
+  attr :layout, :string,
+    default: "auto",
+    values: ~w(auto compact),
+    doc:
+      "`auto` picks the panel by the width of the screen (one month and a Select button under 640px, two months side by side above). `compact` always uses the narrow panel, for a picker in a narrow space such as a sidebar or a modal."
+
   attr :variant, :string, default: "outlined", values: ~w(outlined filled)
   attr :size, :string, default: "md", values: ~w(sm md lg)
 
@@ -504,6 +510,7 @@ defmodule LineaUI.Components.DatetimePicker do
         class={["relative", @label && "mt-1.5"]}
         data-mode={@mode}
         data-time-mode={@time}
+        data-layout={@layout}
         data-interval={@interval}
         data-default-time={@default_time}
         data-hour12={bool(@hour12)}

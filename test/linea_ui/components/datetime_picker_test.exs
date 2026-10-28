@@ -38,6 +38,17 @@ defmodule LineaUI.Components.DatetimePickerTest do
     assert find(html, "#d-field span svg") |> Enum.count() == 1
   end
 
+  test "the layout is picked by the screen unless it is compact" do
+    html =
+      render(~H"""
+      <.datetime_picker id="a" name="a" />
+      <.datetime_picker id="b" name="b" layout="compact" />
+      """)
+
+    assert ["auto"] = data(html, "#a", "data-layout")
+    assert ["compact"] = data(html, "#b", "data-layout")
+  end
+
   test "values: strings, structs and bad text, the clock is never converted" do
     for {value, expected} <- [
           {"2026-10-14T10:30", ~s(["2026-10-14T10:30"])},
