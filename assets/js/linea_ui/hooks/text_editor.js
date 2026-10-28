@@ -6,10 +6,11 @@
  * the "@" menu (`data-mentions`, a JSON list of `{handle, label}`); variables (`data-variables`) and mentions drawn as
  * chips and kept in the submitted HTML as plain `{name}` and `@handle`; an AI button (`data-on-ai` is pushed with the
  * HTML and the selected text; the server answers with `linea:editor-insert`); Ctrl+Enter or the submit button
- * (`data-on-submit` is pushed with the HTML and the mentioned handles); and a word count in the footer.
+ * (`data-on-submit` is pushed with the HTML and the mentioned handles); an entry of the "/" menu that is not a built-in
+ * block is pushed to `data-on-slash` with its key; and a word count in the footer.
  */
 import {notify} from "../lib/dom.js"
-import {filterItems, mentionsIn, nextIndex, safeHref, sends, slashActions, tokenize, triggerOf, wordsLabel} from "../lib/editor_logic.js"
+import {filterItems, mentionsIn, nextIndex, safeHref, sends, slashActions, slashKind, tokenize, triggerOf, wordsLabel} from "../lib/editor_logic.js"
 import {TOOLS, alignCommand, cleanAttribute, headerValue, isEmptyHtml, tagAction, toggleBlock} from "../lib/editor_html.js"
 
 const STATES = {
@@ -467,11 +468,18 @@ const TextEditor = {
 
   apply(item) {
     const [type, name] = item.key.split(":")
-    const command = slashActions[item.key]
     const chips = {variable: `{${name}}`, mention: `@${name}`}
-    command
-      ? this.exec(...command)
-      : this.exec("insertHTML", `${this.chip(type, chips[type]).outerHTML}&nbsp;`)
+    const applies = {
+      command: () => this.exec(...slashActions[item.key]),
+      custom: () => this.pushSlash(item.key),
+    }
+    ;(applies[slashKind(item.key)] ?? (() => this.exec("insertHTML", `${this.chip(type, chips[type]).outerHTML}&nbsp;`)))()
+  },
+
+  pushSlash(key) {
+    const event = this.el.dataset.onSlash
+    const target = this.el.getAttribute("phx-target")
+    event && this.pushEventTo(target || this.el, event, {id: this.el.id, key})
   },
 
   push(html) {

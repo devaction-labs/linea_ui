@@ -101,6 +101,26 @@ defmodule LineaUI.Components.TextEditorTest do
     assert [_] = find(html, "#e #e-menu[phx-update=ignore][data-menu][hidden]") |> Enum.to_list()
   end
 
+  test "the slash menu takes custom entries and the event they push" do
+    assigns = %{
+      items: [
+        %{key: "paragraph", label: "Text"},
+        %{key: "image", label: "Image", hint: "Upload a picture"}
+      ]
+    }
+
+    html =
+      render(~H|<.text_editor id="e" name="b" slash slash_items={@items} on_slash="slash" />|)
+
+    assert attr_of(html, "#e", "data-on-slash") == ["slash"]
+    assert [slash] = attr_of(html, "#e", "data-slash")
+
+    assert [_, %{"key" => "image", "hint" => "Upload a picture"}] = Jason.decode!(slash)
+
+    assert attr_of(render(~H|<.text_editor id="e" name="b" slash />|), "#e", "data-on-slash") ==
+             []
+  end
+
   test "without slash there is no slash menu, and no assistant button without its slot" do
     html = render(~H|<.text_editor id="e" name="b" />|)
 
