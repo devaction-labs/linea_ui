@@ -20,6 +20,8 @@ defmodule LineaUI.Components.TreeviewTest do
              find(html, "details ul.pl-4 [data-tree-leaf=readme][tabindex='0']") |> Enum.to_list()
 
     assert "space-y-1" in classes(html, "ul#t")
+    assert ["mt-1", "space-y-1", "pl-4"] -- classes(html, "details > ul") == []
+    assert "size-4" in classes(html, "details summary .tree-chevron")
   end
 
   test "a closed branch and a leaf that has only an icon" do
