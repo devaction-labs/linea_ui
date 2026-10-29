@@ -254,31 +254,55 @@
 
 @layer components {
   .ac > summary.ac-trigger {
-    @apply text-slate-700 dark:text-navy-100;
+    @apply py-[15px] text-[15px] leading-[1.35] text-slate-700 dark:text-navy-100;
   }
 
   .ac > summary.ac-trigger .ac-icon {
     @apply text-slate-400 dark:text-navy-300;
   }
 
-  [data-accordion][data-variant="border-bottom"] > .ac > .ac-panel > .ac-body {
+  /* the text of every panel: 13.5px on a 1.6 line, in the softer color */
+  .ac > .ac-panel > .ac-body {
+    @apply text-[13.5px] leading-[1.6] text-slate-500 dark:text-navy-200;
+  }
+
+  /* basic and border-bottom: the trigger is a row that sticks out 8px on each side, so its hover and focus
+     fill a rounded box while the text stays on the card's padding */
+  [data-accordion]:is([data-variant="basic"], [data-variant="border-bottom"]) > .ac > .ac-trigger {
+    @apply -mx-2 rounded-lg px-2 transition-colors hover:text-primary dark:hover:text-accent-light;
+  }
+
+  [data-accordion]:is([data-variant="basic"], [data-variant="border-bottom"]) > .ac > .ac-trigger:focus-visible {
+    outline-offset: 2px;
+  }
+
+  [data-accordion]:is([data-variant="basic"], [data-variant="border-bottom"]) > .ac > .ac-panel > .ac-body {
     @apply pb-4;
   }
 
   [data-accordion]:is([data-variant="bordered"], [data-variant="divided"]) > .ac > .ac-trigger {
-    @apply px-4 sm:px-5;
+    @apply px-4;
+  }
+
+  [data-accordion][data-variant="divided"] > .ac > .ac-trigger {
+    @apply py-3.5;
   }
 
   [data-accordion]:is([data-variant="bordered"], [data-variant="divided"]) > .ac > .ac-panel > .ac-body {
-    @apply px-4 pb-4 sm:px-5;
+    @apply px-4 pb-4;
   }
 
   [data-accordion][data-variant="divided"] > .ac {
-    @apply rounded-lg border border-slate-150 dark:border-navy-500;
+    @apply rounded-[10px] border border-slate-150 dark:border-navy-500;
   }
 
   [data-accordion][data-variant="primary"] > .ac > .ac-trigger {
-    @apply bg-primary px-4 text-white dark:bg-accent dark:text-white sm:px-5;
+    @apply bg-primary px-4 py-[13px] text-[14.5px] text-white transition-[filter] hover:brightness-[1.06] dark:bg-accent dark:text-white;
+  }
+
+  [data-accordion][data-variant="primary"] > .ac > .ac-trigger:focus-visible {
+    outline-color: #fff;
+    outline-offset: -3px;
   }
 
   [data-accordion][data-variant="primary"][data-color="secondary"] > .ac > .ac-trigger {
@@ -302,7 +326,7 @@
   }
 
   [data-accordion][data-variant="primary"] > .ac > .ac-trigger .ac-icon {
-    @apply text-indigo-100 dark:text-indigo-100;
+    @apply text-white dark:text-white;
   }
 
   /* the warning fill is too light for white text */
@@ -310,16 +334,28 @@
     color: #1f1300;
   }
 
-  [data-accordion][data-variant="primary"][data-color="warning"] > .ac > .ac-trigger .ac-icon {
-    color: color-mix(in oklab, #1f1300 70%, transparent);
+  [data-accordion][data-variant="primary"][data-color="warning"] > .ac > .ac-trigger:focus-visible {
+    outline-color: #1f1300;
   }
 
-  [data-accordion]:is([data-variant="primary"], [data-variant="advanced"]) > .ac > .ac-panel > .ac-body {
-    @apply px-4 py-4 sm:px-5;
+  [data-accordion][data-variant="primary"][data-color="warning"] > .ac > .ac-trigger .ac-icon {
+    color: #1f1300;
+  }
+
+  [data-accordion][data-variant="primary"] > .ac > .ac-panel > .ac-body {
+    @apply px-4 pt-3.5 pb-4;
+  }
+
+  [data-accordion][data-variant="advanced"] > .ac > .ac-panel > .ac-body {
+    @apply px-4 pt-3.5 pb-4;
+  }
+
+  [data-accordion][data-variant="advanced"] > .ac > .ac-header:focus-visible {
+    outline-offset: -3px;
   }
 
   [data-accordion][data-variant="advanced"] > .ac {
-    @apply overflow-hidden rounded-lg border border-slate-150 dark:border-navy-500;
+    @apply overflow-hidden rounded-[10px] border border-slate-150 dark:border-navy-500;
   }
 }
 
