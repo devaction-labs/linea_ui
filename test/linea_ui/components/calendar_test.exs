@@ -162,7 +162,7 @@ defmodule LineaUI.Components.CalendarTest do
 />|)
 
       assert attr_of(html, "#cal", "data-columns") == ["7"]
-      assert texts(html, "#cal-title") == ["19 – 25 Out 2026"]
+      assert texts(html, "#cal-title") == ["19 – 25 out 2026"]
       assert texts(html, "[role=columnheader]") |> Enum.take(3) == ["", "Seg 19", "Ter 20"]
 
       assert texts(html, "[role=rowheader]") |> Enum.take(5) == [
@@ -176,7 +176,7 @@ defmodule LineaUI.Components.CalendarTest do
       assert texts(html, "[data-date='2026-10-19'] .absolute") == ["VisitSanta Mônica"]
 
       assert attr_of(html, "[data-date='2026-10-19'] .absolute", "style") == [
-               "top: 2px; height: 74px; left: 0%; width: 100%"
+               "top: 1px; height: 63px; left: calc(0% + 2px); width: calc(100% - 4px)"
              ]
 
       assert texts(html, "[data-date='2026-10-19'] button, [data-date='2026-10-19'] span")
@@ -302,7 +302,7 @@ defmodule LineaUI.Components.CalendarTest do
   day_end={12}
 />|)
 
-    today = classes(html, "[role=gridcell][data-date='2026-10-19']")
+    today = classes(html, "[role=gridcell][data-date='2026-10-19'].h-11")
 
     assert Enum.any?(
              today,
@@ -312,6 +312,59 @@ defmodule LineaUI.Components.CalendarTest do
     other = classes(html, "[role=gridcell][data-date='2026-10-20']")
     refute Enum.any?(other, &String.starts_with?(&1, "bg-[color-mix"))
     assert "border-l-[3px]" in classes(html, "[data-date='2026-10-19'] .absolute > *")
+  end
+
+  test "events of a day keep the order they came in, an hour row is 44px and all-day cells are not tinted" do
+    events = [
+      %{id: 1, title: "Zeta", date: ~D[2026-10-19]},
+      %{id: 2, title: "Alpha", date: ~D[2026-10-19]},
+      %{id: 3, title: "Meet", date: ~D[2026-10-19], start: "08:00", end: "09:00"}
+    ]
+
+    assigns = %{events: events}
+
+    month =
+      rendered_to_string(
+        ~H|<.calendar id="cal" date={~D[2026-10-19]} events={@events} on_event="pick" />|
+      )
+
+    assert texts(month, "[data-date='2026-10-19'] button") == ["Zeta", "Alpha", "Meet"]
+
+    week =
+      rendered_to_string(~H|<.calendar
+  id="cal"
+  view="week"
+  date={~D[2026-10-19]}
+  today={~D[2026-10-19]}
+  week_start={1}
+  events={@events}
+  day_start={8}
+  day_end={10}
+/>|)
+
+    assert "h-11" in classes(week, "[role=gridcell][data-date='2026-10-19'][tabindex='0']")
+
+    assert attr_of(week, "[data-date='2026-10-19'] .absolute", "style") == [
+             "top: 1px; height: 41px; left: calc(0% + 2px); width: calc(100% - 4px)"
+           ]
+
+    all_day =
+      classes(
+        week,
+        "[role=gridcell][aria-label$='Dia todo'], [role=gridcell][aria-label$='All day']"
+      )
+
+    refute Enum.any?(all_day, &String.starts_with?(&1, "bg-[color-mix"))
+  end
+
+  test "the week header sets the day number apart and pt_BR writes the month in lower case" do
+    html =
+      render(
+        ~H|<.calendar id="cal" view="week" date={~D[2026-10-21]} week_start={1} locale="pt_BR" />|
+      )
+
+    assert texts(html, "[role=columnheader] b") |> Enum.take(2) == ["19", "20"]
+    assert texts(html, "#cal-title") == ["19 – 25 out 2026"]
   end
 
   test "the legend swatches are solid colours" do
