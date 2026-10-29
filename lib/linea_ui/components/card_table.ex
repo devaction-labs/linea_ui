@@ -30,9 +30,11 @@ defmodule LineaUI.Components.CardTable do
 
   ## The details panel
 
-  Clicking a row (on any part that is not a control) opens a panel under it with more than the row shows. It stays
-  until you close it (click outside, `Esc`, or open another row), so it can be read and used: every line has a
-  copy button (the licitação, the AFM...). Using a control of the row (the action menu, a checkbox) closes it, so
+  Clicking a row (on any part that is not a control) opens a panel under it with more than the row shows. Opened
+  with the mouse, it goes away a third of a second after the pointer leaves the row and the panel, so it never
+  lingers over the next row; being on the panel (or text selected in it, or the focus inside it) keeps it, so it
+  can be read and used: every line has a copy button (the licitação, the AFM...). Opened with the keyboard (Enter
+  or Space) it stays until `Esc`, a click outside or another row. Using a control of the row (the action menu, a checkbox) closes it, so
   it never competes with a dropdown. Give `detail` slots
   (`<:detail :let={o} label="Due date">{o.due}</:detail>`) and the panel lists exactly those, in the order given,
   at every width above 520px, whether or not their column is on screen. With no `detail`, the panel only has

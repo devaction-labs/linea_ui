@@ -7,6 +7,7 @@
 //              the preview reads; `?theme=dark` works on the preview too.
 // --click      a real click on the first element matching the selector (focus, a row that opens a panel).
 // --hover      (after --click) moves the real mouse over the first element matching the selector (a :hover panel, a tooltip).
+// --settle     milliseconds to wait after --click and --hover, before the shot (a delayed close, a transition).
 // --select     clips the shot to the first element matching the selector (scrolled into view).
 // --eval       runs JavaScript in the page before the shot (click a trigger, open a menu...).
 // --full       the whole page height instead of the viewport.
@@ -96,7 +97,7 @@ try {
     })()`)
     if (!at) throw new Error(`no element matches ${opt.hover}`)
     await send("Input.dispatchMouseEvent", {type: "mouseMoved", x: at.x, y: at.y})
-    await sleep(500)
+    await sleep(500 + Number(opt.settle ?? 0))
   }
   if (opt.full || opt.select) {
     const docHeight = await evaluate(`document.documentElement.scrollHeight`)
