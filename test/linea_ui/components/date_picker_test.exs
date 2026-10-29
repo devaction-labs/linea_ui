@@ -115,6 +115,8 @@ defmodule LineaUI.Components.DatePickerTest do
            |> Enum.count() == 1
 
     assert "border-error" in classes(html, "#task_due-display")
+    assert "dark:border-error" in classes(html, "#task_due-display")
+    refute "dark:border-navy-450" in classes(html, "#task_due-display")
     assert html |> find(".text-error") |> LazyHTML.text() =~ "is late"
   end
 

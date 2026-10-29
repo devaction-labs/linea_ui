@@ -260,7 +260,7 @@ defmodule LineaUI.Components.DatePicker.Shell do
           merge([
             input_base(assigns.grouped),
             icon_pad(assigns.grouped, assigns.show_icon or assigns.icon != []),
-            assigns.errors != [] && "border-error",
+            assigns.errors != [] && "border-error dark:border-error",
             assigns.class
           ])
       )
