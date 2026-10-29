@@ -14,7 +14,10 @@ defmodule LineaUI.Components.TimelineTest do
     assert ["timeline", "max-w-sm"] == classes(html, "ol")
     assert "bg-primary" in classes(html, ".timeline-item-point")
 
-    assert html |> find(".timeline-item-content p.py-1") |> Enum.map(&LazyHTML.text/1) == [
+    assert html
+           |> find(".timeline-item-content p.py-1")
+           |> Enum.map(&LazyHTML.text/1)
+           |> Enum.map(&String.trim/1) == [
              "New video"
            ]
 
@@ -93,5 +96,30 @@ defmodule LineaUI.Components.TimelineTest do
     assert ["rounded-full", "ring-2"] -- point == []
     refute Enum.any?(point, &String.starts_with?(&1, "bg-"))
     assert "size-full" in classes(html, "#a .timeline-item-point .avatar")
+  end
+
+  test "compact density, and a description with markup" do
+    html =
+      render(~H"""
+      <.timeline id="c" density="compact">
+        <.timeline_item id="a" title="Out">
+          <:details>Took <b>3 items</b></:details>
+        </.timeline_item>
+        <.timeline_item id="b" title="Plain" description="Text" />
+      </.timeline>
+      <.timeline id="d"><.timeline_item title="Default" description="Text" /></.timeline>
+      """)
+
+    assert ["timeline", "line-space", "is-compact"] -- classes(html, "#c") == []
+    refute "is-compact" in classes(html, "#d")
+    refute "line-space" in classes(html, "#d")
+    assert html |> find("#a .timeline-item-description b") |> Enum.count() == 1
+
+    assert html
+           |> find("#b .timeline-item-description")
+           |> Enum.map(&LazyHTML.text/1)
+           |> Enum.map(&String.trim/1) == ["Text"]
+
+    assert "timeline-item-title" in classes(html, "#a p.timeline-item-title")
   end
 end

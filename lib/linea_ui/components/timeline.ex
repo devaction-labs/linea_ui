@@ -133,6 +133,13 @@ defmodule LineaUI.Components.Timeline do
       "The width of the points (and where the line runs): `md` 12px, `lg` 1.5rem for an icon, `xl` 2rem and `2xl` 2.5rem for avatar points."
   )
 
+  attr(:density, :string,
+    default: "default",
+    values: ~w(default compact),
+    doc:
+      "`compact` is the tighter LineOne look of the canvas: 22px between items, 14px between the point and the text, a 13px semibold title, a 13px muted description and a 4px gap between a point and the line (as with `line_space`)."
+  )
+
   attr(:id, :string, default: nil, doc: "Required with a stream.")
   attr(:rows, :any, default: nil, doc: "A list or a stream of rows rendered by the `:item` slot.")
 
@@ -156,7 +163,15 @@ defmodule LineaUI.Components.Timeline do
     ~H"""
     <ol
       id={@id}
-      class={merge(["timeline", @line_space && "line-space", @size_class, @class])}
+      class={
+        merge([
+          "timeline",
+          (@line_space || @density == "compact") && "line-space",
+          @density == "compact" && "is-compact",
+          @size_class,
+          @class
+        ])
+      }
       phx-update={@stream}
       {@rest}
     >
@@ -211,6 +226,11 @@ defmodule LineaUI.Components.Timeline do
   attr(:class, :any, default: nil)
   attr(:rest, :global)
   slot(:point, doc: "What the point shows, usually an icon.")
+
+  slot(:details,
+    doc: "The description with markup (`<b>3 items</b>`); it replaces the `description` text."
+  )
+
   slot(:inner_block)
 
   def timeline_item(assigns) do
@@ -237,12 +257,16 @@ defmodule LineaUI.Components.Timeline do
           :if={@title || @time}
           class="flex flex-col justify-between pb-2 sm:flex-row sm:pb-0"
         >
-          <p class="pb-2 font-medium leading-none text-slate-600 dark:text-navy-100 sm:pb-0">
+          <p class="timeline-item-title pb-2 font-medium leading-none text-slate-600 dark:text-navy-100 sm:pb-0">
             {@title}
           </p>
-          <span :if={@time} class="text-xs text-slate-400 dark:text-navy-300">{@time}</span>
+          <span :if={@time} class="timeline-item-time text-xs text-slate-400 dark:text-navy-300">
+            {@time}
+          </span>
         </div>
-        <p :if={@description} class="py-1">{@description}</p>
+        <p :if={@details != [] || @description} class="timeline-item-description py-1">
+          {if @details == [], do: @description, else: render_slot(@details)}
+        </p>
         {render_slot(@inner_block)}
       </div>
     </li>
