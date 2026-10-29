@@ -140,7 +140,8 @@ defmodule LineaUI.Components.KpiCard do
         spark_color: Map.fetch!(@colors, assigns.color),
         bar_color: Map.fetch!(@bars, assigns.color),
         bleed: assigns.spark_type == "area" and length(assigns.spark) > 1,
-        gradient: "kpi-#{:erlang.phash2({assigns.label, assigns.value, assigns.spark, assigns.color})}",
+        gradient:
+          "kpi-#{:erlang.phash2({assigns.label, assigns.value, assigns.spark, assigns.color})}",
         line: if(assigns.spark_type in ~w(line area), do: line(assigns.spark)),
         bars: if(assigns.spark_type == "bar", do: bars(assigns.spark)),
         end_dot: end_dot(assigns.spark),
@@ -164,7 +165,10 @@ defmodule LineaUI.Components.KpiCard do
         preserveAspectRatio="none"
         aria-hidden="true"
         data-spark-bleed
-        class={["pointer-events-none absolute inset-x-0 bottom-0 -z-10 block h-1/2 w-full opacity-80", @spark_color]}
+        class={[
+          "pointer-events-none absolute inset-x-0 bottom-0 -z-10 block h-1/2 w-full opacity-80",
+          @spark_color
+        ]}
       >
         <defs>
           <linearGradient id={@gradient} x1="0" y1="0" x2="0" y2="1">

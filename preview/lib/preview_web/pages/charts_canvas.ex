@@ -10,8 +10,20 @@ defmodule PreviewWeb.Pages.ChartsCanvas do
   @orange "#eb6834"
   @green "#1baf7a"
   @amber "#eda100"
-  @toggle %{chart: "Gráfico", table: "Tabela", label: "Visualização"}
+  @toggle %{
+    chart: "Gráfico",
+    table: "Tabela",
+    label: "Visualização",
+    class: "absolute top-[18px] right-5 mb-0"
+  }
   @pt %{defaultLocale: "pt-BR", toolbar: %{show: false}}
+  @axis_font %{labels: %{style: %{fontSize: "11px"}}}
+  @center %{
+    show: true,
+    layout: "figure",
+    total: %{show: true, label: "pedidos", formatter: "total_br"},
+    value: %{showPercent: true, formatter: "number_br"}
+  }
   @legend %{
     position: "bottom",
     horizontalAlign: "left",
@@ -36,35 +48,35 @@ defmodule PreviewWeb.Pages.ChartsCanvas do
 
     ~H"""
     <div class="grid grid-cols-1 gap-4 sm:gap-5 lg:grid-cols-3 lg:gap-6">
-      <.panel title="Receita e despesas" text="Área, 2 séries · últimos 7 meses">
+      <.panel toggle title="Receita e despesas" text="Área, 2 séries · últimos 7 meses">
         <.chart
-          id="cv-area"
-          table_toggle={@toggle}
+          id="cv-area" class="static"
+                    table_toggle={@toggle}
           options={@revenue}
           formatters={%{"yaxis.labels.formatter" => "kilo", "tooltip.y.formatter" => "brl_thousands"}}
         />
       </.panel>
 
-      <.panel title="Receita por mês" text="Colunas agrupadas, topo arredondado de 4px">
+      <.panel toggle title="Receita por mês" text="Colunas agrupadas, topo arredondado de 4px">
         <.chart
-          id="cv-columns"
+          id="cv-columns" class="static"
           table_toggle={@toggle}
           options={@columns}
           formatters={%{"yaxis.labels.formatter" => "kilo", "tooltip.y.formatter" => "brl_thousands"}}
         />
       </.panel>
 
-      <.panel title="Pedidos por canal" text="Rosca com total no centro; hover mostra a fatia">
+      <.panel toggle title="Pedidos por canal" text="Rosca com total no centro; hover mostra a fatia">
         <.chart
-          id="cv-donut"
+          id="cv-donut" class="static"
           table_toggle={@toggle}
           options={@donut}
           formatters={%{"tooltip.y.formatter" => "number_br"}}
         />
       </.panel>
 
-      <.panel title="Pedidos por canal" text="Barras horizontais, uma série">
-        <.chart id="cv-bars" table_toggle={@toggle} options={@bars} />
+      <.panel toggle title="Pedidos por canal" text="Barras horizontais, uma série">
+        <.chart id="cv-bars" class="static" table_toggle={@toggle} options={@bars} />
       </.panel>
 
       <.panel
@@ -154,16 +166,17 @@ defmodule PreviewWeb.Pages.ChartsCanvas do
 
   attr :title, :string, required: true
   attr :text, :string, default: nil
+  attr :toggle, :boolean, default: false
   attr :class, :any, default: nil
   slot :inner_block, required: true
 
   defp panel(assigns) do
     ~H"""
     <section class={[
-      "min-w-0 rounded-[14px] bg-white px-5 pt-[18px] pb-4 ring-1 ring-slate-150 dark:bg-navy-700 dark:ring-navy-600",
+      "relative min-w-0 rounded-[14px] bg-white px-5 pt-[18px] pb-4 ring-1 ring-slate-150 dark:bg-navy-700 dark:ring-navy-600",
       @class
     ]}>
-      <header class="mb-3">
+      <header class={["mb-3", @toggle && "pr-32"]}>
         <h3 class="text-sm font-semibold text-slate-800 dark:text-navy-50">{@title}</h3>
         <p :if={@text} class="mt-0.5 text-xs text-slate-400 dark:text-navy-300">{@text}</p>
       </header>
@@ -180,8 +193,8 @@ defmodule PreviewWeb.Pages.ChartsCanvas do
         %{name: "Receita", data: Enum.map([18, 22, 19, 27, 31, 29, 36], &(&1 * 1000))},
         %{name: "Despesas", data: Enum.map([12, 14, 16, 15, 19, 21, 22], &(&1 * 1000))}
       ],
-      xaxis: %{categories: @months},
-      yaxis: %{min: 0, max: 40_000, tickAmount: 4},
+      xaxis: Map.merge(%{categories: @months}, @axis_font),
+      yaxis: %{min: 0, max: 40_000, tickAmount: 4, labels: @axis_font.labels},
       stroke: %{curve: "smooth", width: 2},
       fill: %{
         type: "gradient",
@@ -201,8 +214,8 @@ defmodule PreviewWeb.Pages.ChartsCanvas do
         %{name: "Receita", data: Enum.map([24, 28, 22, 34, 38, 33], &(&1 * 1000))},
         %{name: "Despesas", data: Enum.map([14, 16, 17, 18, 21, 20], &(&1 * 1000))}
       ],
-      xaxis: %{categories: Enum.take(@months, 6)},
-      yaxis: %{min: 0, max: 50_000, tickAmount: 5},
+      xaxis: Map.merge(%{categories: Enum.take(@months, 6)}, @axis_font),
+      yaxis: %{min: 0, max: 50_000, tickAmount: 5, labels: @axis_font.labels},
       plotOptions: %{bar: %{columnWidth: "55%", borderRadius: 4, borderRadiusApplication: "end"}},
       tooltip: %{shared: true, intersect: false},
       dataLabels: %{enabled: false},
@@ -230,7 +243,7 @@ defmodule PreviewWeb.Pages.ChartsCanvas do
         pie: %{
           donut: %{
             size: "70%",
-            labels: %{show: true, total: %{show: true, label: "pedidos", formatter: "total"}}
+            labels: @center
           }
         }
       }
@@ -242,7 +255,8 @@ defmodule PreviewWeb.Pages.ChartsCanvas do
       chart: %{type: "bar", height: 190, toolbar: %{show: false}},
       colors: [@blue],
       series: [%{name: "Pedidos", data: [524, 349, 225, 150, 100]}],
-      xaxis: %{categories: ["Web", "App", "Parceiros", "Balcão", "Outros"]},
+      xaxis: %{categories: ["Web", "App", "Parceiros", "Balcão", "Outros"], labels: %{show: false}, axisBorder: %{show: false}, axisTicks: %{show: false}},
+      yaxis: %{labels: @axis_font.labels},
       plotOptions: %{
         bar: %{
           horizontal: true,
@@ -304,7 +318,7 @@ defmodule PreviewWeb.Pages.ChartsCanvas do
         categories: Enum.map(0..23, &"#{String.pad_leading(Integer.to_string(&1), 2, "0")}:00"),
         tickAmount: 4
       },
-      yaxis: %{min: 0, max: 6000, tickAmount: 3},
+      yaxis: %{min: 0, max: 6000, tickAmount: 3, labels: @axis_font.labels},
       stroke: %{curve: "smooth", width: [2, 1.5], dashArray: [0, 4]},
       fill: %{
         type: "gradient",
@@ -321,7 +335,7 @@ defmodule PreviewWeb.Pages.ChartsCanvas do
 
   defp legend do
     %{
-      chart: %{type: "donut", height: 330, defaultLocale: "pt-BR"},
+      chart: %{type: "donut", height: 260, defaultLocale: "pt-BR"},
       colors: [@blue, @orange, @green],
       labels: ["Site", "Balcão", "WhatsApp"],
       series: [664, 359, 261],
@@ -332,6 +346,7 @@ defmodule PreviewWeb.Pages.ChartsCanvas do
         fontSize: "13px",
         markers: %{size: 8, shape: "square"},
         showValue: true,
+        layout: "table",
         showPercent: true,
         value: %{formatter: "number_br"}
       },
@@ -339,7 +354,7 @@ defmodule PreviewWeb.Pages.ChartsCanvas do
         pie: %{
           donut: %{
             size: "72%",
-            labels: %{show: true, total: %{show: true, label: "pedidos", formatter: "total"}}
+            labels: @center
           }
         }
       }
@@ -355,8 +370,8 @@ defmodule PreviewWeb.Pages.ChartsCanvas do
         %{name: "Serviços", data: [7_200, 8_200, 6_200, 9_200, 11_000, 11_200]},
         %{name: "Assinaturas", data: [4_000, 5_000, 5_500, 6_000, 8_000, 9_000]}
       ],
-      xaxis: %{categories: Enum.take(@months, 6)},
-      yaxis: %{min: 0, max: 50_000, tickAmount: 5},
+      xaxis: Map.merge(%{categories: Enum.take(@months, 6)}, @axis_font),
+      yaxis: %{min: 0, max: 50_000, tickAmount: 5, labels: @axis_font.labels},
       plotOptions: %{bar: %{columnWidth: "46%", borderRadius: 4}},
       tooltip: %{shared: true, intersect: false},
       dataLabels: %{enabled: false},
@@ -374,8 +389,8 @@ defmodule PreviewWeb.Pages.ChartsCanvas do
         %{name: "App", data: [2.2, 2.6, 3.0, 2.8, 3.3, 3.6, 3.9]},
         %{name: "Balcão", data: [4.0, 3.8, 4.1, 3.7, 3.9, 3.6, 3.8]}
       ],
-      xaxis: %{categories: ~w(Seg Ter Qua Qui Sex Sáb Dom)},
-      yaxis: %{min: 0, max: 6, tickAmount: 3},
+      xaxis: Map.merge(%{categories: ~w(Seg Ter Qua Qui Sex Sáb Dom)}, @axis_font),
+      yaxis: %{min: 0, max: 6, tickAmount: 3, labels: @axis_font.labels},
       stroke: %{curve: "smooth", width: 2},
       markers: %{size: 3.5},
       dataLabels: %{enabled: false},

@@ -64,7 +64,13 @@ defmodule LineaUI.Components.KpiCardTest do
 
     html =
       rendered_to_string(~H"""
-      <.kpi_card label="Receita" value="R$ 12.345" hint="Últimos 30 dias" spark={[1, 4, 2, 6]} spark_type="area" />
+      <.kpi_card
+        label="Receita"
+        value="R$ 12.345"
+        hint="Últimos 30 dias"
+        spark={[1, 4, 2, 6]}
+        spark_type="area"
+      />
       """)
 
     assert html =~ "data-spark-bleed"
