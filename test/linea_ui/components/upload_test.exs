@@ -87,11 +87,96 @@ defmodule LineaUI.Components.UploadTest do
              "Only 3 files"
   end
 
+  defp with_entries(entries, errors \\ []) do
+    upload = config(max_entries: 4)
+
+    entries =
+      for {ref, name, size, progress, done?} <- entries do
+        struct!(Phoenix.LiveView.UploadEntry,
+          ref: ref,
+          upload_ref: upload.ref,
+          client_name: name,
+          client_size: size,
+          client_type: "application/pdf",
+          progress: progress,
+          done?: done?,
+          valid?: true,
+          upload_config: upload.name
+        )
+      end
+
+    %{upload | entries: entries, errors: errors}
+  end
+
+  test "the panel does not cover the errors of the whole upload" do
+    upload = with_entries([{"a", "a.pdf", 1000, 10, false}])
+    upload = %{upload | errors: [{upload.ref, :too_many_files}]}
+    assigns = %{__changed__: nil, upload: upload}
+    html = rendered_to_string(~H|<.upload upload={@upload} />|)
+
+    assert find(html, ".filepond--pond > .filepond--panel-root") |> Enum.count() == 1
+    assert find(html, ".filepond--pond > .filepond--drop-label") |> Enum.count() == 1
+    assert find(html, ".filepond--pond > .filepond--list .filepond--item") |> Enum.count() == 1
+    assert find(html, ".filepond--root > .filepond--errors li") |> Enum.count() == 1
+    assert find(html, ".filepond--pond .filepond--errors") |> Enum.count() == 0
+    assert find(html, ".filepond--root > input[type=file]") |> Enum.count() == 1
+  end
+
+  test "an entry shows its state, progress and the error of its own" do
+    upload =
+      with_entries(
+        [
+          {"a", "a.pdf", 1_800_000, 62, false},
+          {"b", "b.pdf", 420_000, 100, true},
+          {"c", "c.xlsx", 14_200_000, 0, false}
+        ],
+        [{"c", :too_large}]
+      )
+
+    assigns = %{__changed__: nil, upload: upload}
+    html = rendered_to_string(~H|<.upload upload={@upload} />|)
+
+    assert find(html, ".filepond--item[data-state=processing]") |> Enum.count() == 1
+    assert find(html, ".filepond--item[data-state=complete]") |> Enum.count() == 1
+    assert find(html, ".filepond--item[data-state=error]") |> Enum.count() == 1
+    assert find(html, "[role=progressbar][aria-valuenow='62']") |> Enum.count() == 1
+
+    assert html
+           |> find(".filepond--item[data-state=error] .filepond--file-status-main")
+           |> LazyHTML.text() =~ "File is too large"
+  end
+
+  test "sizes drop a zero decimal" do
+    upload =
+      with_entries([
+        {"a", "a", 210_000, 100, true},
+        {"b", "b", 1_800_000, 100, true},
+        {"c", "c", 500, 100, true}
+      ])
+
+    assigns = %{__changed__: nil, upload: upload}
+    html = rendered_to_string(~H|<.upload upload={@upload} />|)
+
+    sizes = html |> find(".filepond--file-info-sub") |> LazyHTML.text()
+    assert sizes =~ "210 KB"
+    assert sizes =~ "1.8 MB"
+    assert sizes =~ "500 bytes"
+    refute sizes =~ ".0"
+  end
+
+  test "data-dragging passes through to the drop panel" do
+    assigns = %{__changed__: nil, upload: config()}
+    html = rendered_to_string(~H|<.upload upload={@upload} bordered data-dragging />|)
+    assert find(html, ".filepond--root[data-dragging]") |> Enum.count() == 1
+  end
+
   test "upload_button is enabled by default and shows a focus outline" do
     html = render(~H|<.upload_button name="doc">Choose</.upload_button>|)
     assert find(html, "input[disabled]") |> Enum.count() == 0
     refute html =~ "opacity-55"
-    assert html =~ "has-[input:focus-visible]:outline-primary"
+    assert html =~ "has-[input:focus-visible]:outline-primary/50"
+    # .btn sets the outline style to none; the ring needs its own solid style to show
+    assert html =~ "has-[input:focus-visible]:outline-solid"
   end
 
   test "a disabled upload_button disables its input and dims" do

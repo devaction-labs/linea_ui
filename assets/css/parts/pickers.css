@@ -2019,6 +2019,9 @@ span.flatpickr-day.selected {
   box-sizing: inherit;
   line-height: inherit;
 }
+.filepond--pond {
+  position: relative;
+}
 .filepond--panel-root {
   background-color: #f1f0ef;
   border-radius: .5em;
@@ -2068,7 +2071,7 @@ span.flatpickr-day.selected {
 }
 .filepond--drop-label:focus-visible {
   border-radius: .5em;
-  outline: 2px solid var(--color-primary);
+  outline: 2px solid color-mix(in oklab, var(--color-primary) 50%, transparent);
   outline-offset: 2px;
 }
 .filepond.label-icon .filepond--drop-label {
@@ -2080,7 +2083,7 @@ span.flatpickr-day.selected {
 .filepond--drop-label label {
   cursor: default;
   display: block;
-  font-size: 1em;
+  font-size: .875em;
   font-weight: 400;
   line-height: 1.5;
   margin: 0;
@@ -2217,6 +2220,10 @@ span.flatpickr-day.selected {
   border-radius: 99999rem;
   overflow: hidden;
 }
+.filepond--root[data-layout="circle"] .filepond--pond {
+  border-radius: inherit;
+  height: 100%;
+}
 .filepond--root[data-layout="circle"] .filepond--panel-root {
   border-radius: inherit;
 }
@@ -2253,6 +2260,12 @@ span.flatpickr-day.selected {
   left: calc(50% - .8125em);
   position: absolute;
   top: .75em;
+}
+.filepond--root[data-layout="circle"] .filepond--item[data-state="processing"] .filepond--file::before {
+  background-color: rgba(0, 0, 0, .28);
+  content: "";
+  inset: 0;
+  position: absolute;
 }
 .filepond--root[data-layout="circle"] .filepond--progress {
   bottom: 1em;

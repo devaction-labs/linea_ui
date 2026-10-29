@@ -40,8 +40,8 @@
 }
 
 .filepond--file-action-button [class*="huge-"] {
-  width: 60%;
-  height: 60%;
+  width: .875rem;
+  height: .875rem;
 }
 
 .ql-snow.ql-toolbar [class*="huge-"] {

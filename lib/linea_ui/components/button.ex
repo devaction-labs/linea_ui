@@ -11,9 +11,16 @@ defmodule LineaUI.Components.Button do
       <.button variant="glass">On a gradient card</.button>
 
   With `href`, `navigate` or `patch` it renders a link that looks the same.
+
+  While work runs, `loading` disables the button (no double submit), marks it `aria-busy` and
+  puts a small spinner in the color of its text before the label; change the label to the
+  gerund yourself:
+
+      <.button color="primary" loading={@saving}>{if @saving, do: "Saving…", else: "Save"}</.button>
   """
 
   use LineaUI.Component
+  import LineaUI.Components.Spinner, only: [spinner: 1]
 
   @base "btn font-medium disabled:pointer-events-none disabled:select-none disabled:opacity-60 aria-disabled:pointer-events-none aria-disabled:select-none aria-disabled:opacity-60"
 
@@ -174,6 +181,17 @@ defmodule LineaUI.Components.Button do
   attr(:icon, :boolean, default: false, doc: "A square button that holds only an icon.")
   attr(:type, :string, default: "button")
   attr(:disabled, :boolean, default: false)
+
+  attr(:loading, :boolean,
+    default: false,
+    doc: "Disables the button, marks it `aria-busy` and shows a spinner before the label."
+  )
+
+  attr(:loading_label, :string,
+    default: "Loading",
+    doc: "Read by screen readers for the spinner."
+  )
+
   attr(:class, :any, default: nil)
 
   attr(:rest, :global,
@@ -185,6 +203,7 @@ defmodule LineaUI.Components.Button do
   def button(assigns) do
     assigns
     |> assign(:classes, classes(assigns))
+    |> assign(:inactive, assigns.disabled or assigns.loading)
     |> render_button()
   end
 
@@ -194,6 +213,7 @@ defmodule LineaUI.Components.Button do
       variant_class(assigns.variant, assigns.color),
       size_class(assigns),
       @shapes[assigns.shape],
+      assigns.loading && "disabled:opacity-85 aria-disabled:opacity-85",
       assigns.class
     ])
   end
@@ -209,10 +229,12 @@ defmodule LineaUI.Components.Button do
     ~H"""
     <.link
       class={@classes}
-      aria-disabled={@disabled && "true"}
-      tabindex={@disabled && "-1"}
+      aria-disabled={@inactive && "true"}
+      aria-busy={@loading && "true"}
+      tabindex={@inactive && "-1"}
       {@rest}
     >
+      <.spinner :if={@loading} color="current" size="xs" label={@loading_label} />
       {render_slot(@inner_block)}
     </.link>
     """
@@ -220,7 +242,8 @@ defmodule LineaUI.Components.Button do
 
   defp render_button(assigns) do
     ~H"""
-    <button type={@type} class={@classes} disabled={@disabled} {@rest}>
+    <button type={@type} class={@classes} disabled={@inactive} aria-busy={@loading && "true"} {@rest}>
+      <.spinner :if={@loading} color="current" size="xs" label={@loading_label} />
       {render_slot(@inner_block)}
     </button>
     """
