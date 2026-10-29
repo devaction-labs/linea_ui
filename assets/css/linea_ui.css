@@ -848,11 +848,11 @@ code.inline-code {
 
 /* tooltip */
 .tippy-box {
-  @apply bg-slate-150 text-slate-800 dark:bg-navy-500 dark:text-navy-50;
+  @apply bg-slate-150 text-slate-800 dark:bg-navy-600 dark:text-navy-50;
 }
 
 .tippy-svg-arrow svg {
-  @apply fill-current text-slate-150 shadow-lg dark:text-navy-500;
+  @apply fill-current text-slate-150 shadow-lg dark:text-navy-600;
 }
 
 .tippy-box[data-theme~="content"] .tippy-content {

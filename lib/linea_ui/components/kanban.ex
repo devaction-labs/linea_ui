@@ -32,8 +32,8 @@ defmodule LineaUI.Components.Kanban do
       </.kanban>
 
   The board is a `role="group"`; give it an `aria-label` (`aria-label="Sales funnel"`) so it is announced.
-  A column with a `limit` (a work in progress limit) writes `count/limit` in its pill and, when the
-  count goes over the limit, turns the pill, the stats line and the bar red (`data-wip="exceeded"`).
+  A column with a `limit` (a work in progress limit) turns the pill and the bar red when the count goes over
+  it (`data-wip="exceeded"`); the text of the stats line is yours (`meta="limit of 3 in progress" total="4 of 3"`).
   A `disabled` column is drawn at 60% opacity.
 
   The board is one `LineaUI.Sortable` hook: every column is a list (`data-list`), every card an item
@@ -96,41 +96,44 @@ defmodule LineaUI.Components.Kanban do
 
   @board "flex items-start gap-3.5 overflow-x-auto px-0.5 pb-3"
 
-  @column "flex w-[272px] flex-none flex-col gap-2.5 rounded-[14px] bg-slate-50 p-2.5 ring-1 ring-slate-150 ring-inset data-[over]:bg-primary/5 data-[disabled=true]:opacity-60 dark:bg-navy-800 dark:ring-navy-600 dark:data-[over]:bg-accent/10"
+  @column "flex w-[272px] flex-none flex-col gap-2.5 rounded-[14px] bg-slate-50 p-2.5 ring-1 ring-slate-150 ring-inset data-[over]:bg-primary/10 data-[disabled=true]:opacity-60 dark:bg-navy-900 dark:ring-navy-500 dark:data-[over]:bg-accent/[.18]"
 
   @colors %{
     "neutral" => %{
-      tile: "bg-slate-150 text-slate-500 dark:bg-navy-600 dark:text-navy-200",
-      bar: "bg-slate-400"
+      tile: "bg-slate-500/[.13] text-slate-500 dark:bg-navy-200/[.13] dark:text-navy-200",
+      bar: "bg-slate-500 dark:bg-navy-200"
     },
-    "info" => %{tile: "bg-info/10 text-info", bar: "bg-info"},
+    "info" => %{
+      tile: "bg-info-focus/[.13] text-info-focus dark:bg-info/[.13] dark:text-info",
+      bar: "bg-info-focus dark:bg-info"
+    },
     "warning" => %{
-      tile: "bg-warning/10 text-warning-focus dark:text-warning",
-      bar: "bg-warning"
+      tile: "bg-warning-focus/[.13] text-warning-focus dark:bg-warning/[.13] dark:text-warning",
+      bar: "bg-warning-focus dark:bg-warning"
     },
     "primary" => %{
-      tile: "bg-primary/10 text-primary dark:bg-accent/20 dark:text-accent-light",
-      bar: "bg-primary dark:bg-accent"
+      tile: "bg-primary/[.13] text-primary dark:bg-accent-light/[.13] dark:text-accent-light",
+      bar: "bg-primary dark:bg-accent-light"
     },
     "teal" => %{
       tile: "bg-teal-500/10 text-teal-600 dark:text-teal-300",
       bar: "bg-teal-500"
     },
     "success" => %{
-      tile: "bg-success/10 text-success-focus dark:text-success",
-      bar: "bg-success"
+      tile: "bg-success-focus/[.13] text-success-focus dark:bg-success/[.13] dark:text-success",
+      bar: "bg-success-focus dark:bg-success"
     }
   }
 
-  @card "group relative flex cursor-grab flex-col gap-[9px] rounded-xl bg-white p-3 shadow-[0_0_0_1px_var(--color-slate-150),0_1px_2px_rgb(0_0_0/0.05)] transition-shadow hover:shadow-[0_0_0_1px_var(--color-slate-300),0_8px_20px_-10px_rgb(16_24_64/0.3)] active:cursor-grabbing focus-within:outline-2 focus-within:outline-offset-1 focus-within:outline-primary/50 dark:focus-within:outline-accent/50 data-[dragging]:shadow-none dark:bg-navy-700 dark:shadow-[0_0_0_1px_var(--color-navy-500)] dark:hover:shadow-[0_0_0_1px_var(--color-navy-450)]"
+  @card "group relative flex cursor-grab flex-col gap-[9px] rounded-xl bg-white p-3 shadow-[0_0_0_1px_var(--color-slate-200),0_1px_2px_rgb(0_0_0/0.05)] transition-shadow hover:shadow-[0_0_0_1px_var(--color-slate-300),0_8px_20px_-10px_rgb(16_24_64/0.3)] active:cursor-grabbing focus-within:outline-2 focus-within:outline-offset-1 focus-within:outline-primary/50 dark:focus-within:outline-accent/50 data-[dragging]:shadow-none dark:bg-navy-700 dark:shadow-[0_0_0_1px_var(--color-navy-500)] dark:hover:shadow-[0_0_0_1px_var(--color-navy-450)]"
 
-  @risk "!shadow-[0_0_0_1px_color-mix(in_oklab,var(--color-warning)_45%,var(--color-slate-150)),0_1px_2px_rgb(0_0_0/0.05)]"
+  @risk "!shadow-[0_0_0_1px_color-mix(in_oklab,var(--color-warning)_55%,var(--color-slate-200)),0_1px_2px_rgb(0_0_0/0.05)] dark:!shadow-[0_0_0_1px_color-mix(in_oklab,var(--color-warning)_55%,var(--color-navy-500))]"
 
-  @lost "flex w-[52px] flex-none flex-col items-center gap-2.5 self-stretch rounded-[14px] bg-slate-50 py-3 text-slate-500 ring-1 ring-slate-150 ring-inset data-[over]:bg-primary/5 dark:bg-navy-800 dark:text-navy-200 dark:ring-navy-600 dark:data-[over]:bg-accent/10"
+  @lost "flex w-[52px] flex-none flex-col items-center gap-2.5 self-stretch rounded-[14px] bg-slate-50 py-3 text-slate-500 ring-1 ring-slate-150 ring-inset data-[over]:bg-primary/10 dark:bg-navy-900 dark:text-navy-200 dark:ring-navy-500 dark:data-[over]:bg-accent/[.18]"
 
-  @over_limit "text-error ring-error/40"
+  @over_limit "bg-error-focus/10 text-error-focus ring-error-focus/50 dark:bg-error/10 dark:text-error dark:ring-error/50"
 
-  @pill "rounded-full bg-white px-1.5 py-[3px] font-mono text-[11px]/none font-semibold ring-1 ring-slate-150 dark:bg-navy-700 dark:ring-navy-500"
+  @pill "inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-white px-1.5 font-mono text-[11px]/none font-semibold ring-1 ring-slate-200 dark:bg-navy-700 dark:ring-navy-500"
 
   @doc """
   Renders the board: a row of columns that scrolls sideways, and the drag and drop between them.
@@ -232,7 +235,7 @@ defmodule LineaUI.Components.Kanban do
   attr :limit, :integer,
     default: nil,
     doc:
-      "A work in progress limit: the pill reads `count/limit`, and with a `count` above it the pill, the stats line and the bar turn red."
+      "A work in progress limit: with a `count` above it the pill and the bar turn red (`data-wip=\"exceeded\"`). The words of the limit go in `meta` and `total`."
 
   attr :meta, :string,
     default: nil,
@@ -296,23 +299,28 @@ defmodule LineaUI.Components.Kanban do
         <span class="font-semibold text-slate-800 dark:text-navy-50">{@label}</span>
         <span
           :if={@count}
-          class={[@pill, if(@exceeded, do: @over_limit, else: "text-slate-500 dark:text-navy-200")]}
+          class={
+            merge([@pill, if(@exceeded, do: @over_limit, else: "text-slate-500 dark:text-navy-200")])
+          }
         >
-          {@count}{@limit && "/#{@limit}"}
+          {@count}
         </span>
         <span :if={@actions != []} class="ml-auto flex">{render_slot(@actions)}</span>
       </div>
-      <div :if={@meta || @total} class="flex items-center justify-between px-0.5 text-xs">
-        <span class={@exceeded && "text-error"}>{@meta}</span>
+      <div :if={@meta || @total} class="font-inter flex items-center justify-between px-0.5 text-xs">
+        <span>{@meta}</span>
         <b class="font-semibold text-slate-800 tabular-nums dark:text-navy-50">{@total}</b>
       </div>
       <div
         :if={@width}
-        class="mx-0.5 h-1 overflow-hidden rounded-full bg-slate-150 dark:bg-navy-600"
+        class="mx-0.5 h-1 overflow-hidden rounded-full bg-slate-200 dark:bg-navy-500"
         aria-hidden="true"
       >
         <span
-          class={["block h-full rounded-full", if(@exceeded, do: "bg-error", else: @look.bar)]}
+          class={[
+            "block h-full rounded-full",
+            if(@exceeded, do: "bg-error-focus dark:bg-error", else: @look.bar)
+          ]}
           style={"width: #{@width}%"}
         ></span>
       </div>
@@ -325,10 +333,10 @@ defmodule LineaUI.Components.Kanban do
       >
         <.icon
           name={empty[:icon] || "huge-inbox"}
-          class="mb-2 size-10 text-slate-300 dark:text-navy-400"
+          class="mb-2 size-10 text-slate-300 dark:text-navy-450"
         />
-        <b class="text-[15px] font-semibold text-slate-600 dark:text-navy-100">{empty[:title]}</b>
-        <span class="text-[13px]/[18px] text-slate-400 dark:text-navy-300">
+        <b class="text-[14.5px] font-semibold text-slate-600 dark:text-navy-100">{empty[:title]}</b>
+        <span class="font-inter text-[13px]/[18px] text-slate-500 dark:text-navy-200">
           {render_slot(empty)}
         </span>
       </div>
@@ -347,7 +355,8 @@ defmodule LineaUI.Components.Kanban do
   Renders a card: a white rounded surface with a hairline ring that is dragged between columns.
 
   The content is yours, the inner block (the canvas's card is a number in mono, the customer, the value in bold,
-  tags and a dashed footer with a button that advances it). `risk` gives it the warning ring.
+  tags and a dashed footer with a button that advances it). `risk` gives it the warning ring and `grip` the
+  drag handle that shows on hover.
 
       <.kanban_card id="order-2462" item="2462" risk>
         <span class="font-mono text-xs text-slate-400">#2462</span>
@@ -367,6 +376,12 @@ defmodule LineaUI.Components.Kanban do
       "The id the server gets as `id` in the drop event (the hook's `data-id`); defaults to `id`."
 
   attr :risk, :boolean, default: false, doc: "The warning ring of a card that needs attention."
+
+  attr :grip, :boolean,
+    default: false,
+    doc:
+      "A six dot handle in the top right corner that shows while the card is hovered or has the focus, the cue that it can be dragged. Keep the first line of the content clear of it."
+
   attr :class, :any, default: nil
   attr :rest, :global
   slot :inner_block, required: true
@@ -385,6 +400,14 @@ defmodule LineaUI.Components.Kanban do
       class={@classes}
       {@rest}
     >
+      <span
+        :if={@grip}
+        data-grip
+        aria-hidden="true"
+        class="pointer-events-none absolute top-3 right-3 grid grid-cols-[repeat(2,3px)] gap-x-[3px] gap-y-0.5 p-[3px] text-slate-500 opacity-0 transition-opacity group-focus-within:opacity-90 group-hover:opacity-90 motion-reduce:transition-none dark:text-navy-200"
+      >
+        <i :for={_ <- 1..6} class="block size-[3px] rounded-full bg-current"></i>
+      </span>
       {render_slot(@inner_block)}
     </article>
     """
@@ -441,7 +464,7 @@ defmodule LineaUI.Components.Kanban do
   end
 
   defp lost_icon(assigns) do
-    ~H|<.icon name="huge-cancel-circle" class="size-5 text-error" />|
+    ~H|<.icon name="huge-cancel-circle" class="size-5 text-error-focus dark:text-error" />|
   end
 
   defp lost_text(label, nil), do: label

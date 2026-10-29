@@ -55,6 +55,22 @@ defmodule LineaUI.Components.PopoverTest do
     refute "w-68" in classes(html, "#q-panel .popper-box > div")
   end
 
+  test "the card has the canvas's 300 border and soft shadow, and the arrow border matches" do
+    html =
+      render(~H"""
+      <.popover id="p">
+        <:trigger><button>Open</button></:trigger>
+        x
+      </.popover>
+      """)
+
+    card = classes(html, "#p-panel .popper-box > div")
+
+    assert ["border-slate-300", "dark:border-navy-500"] -- card == []
+    assert Enum.any?(card, &String.starts_with?(&1, "shadow-[0_10px_30px"))
+    assert "text-slate-300" in classes(html, "[data-popper-arrow] path:first-child")
+  end
+
   test "hover, placement, no arrow, open and callbacks" do
     html =
       render(~H"""
