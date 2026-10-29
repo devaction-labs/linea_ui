@@ -75,7 +75,7 @@ defmodule PreviewWeb.Pages.AccordionCanvas do
               open={o}
             >
               <:header>
-                <.avatar name={name} color={color} size="36" />
+                <.avatar name={name} color={color} size="xs-plus" />
                 <div>
                   <p class="text-sm font-medium text-slate-700 dark:text-navy-100">{name}</p>
                   <p class="text-xs text-slate-500 dark:text-navy-300">{role}</p>
@@ -98,11 +98,11 @@ defmodule PreviewWeb.Pages.AccordionCanvas do
                 Meus arquivos
               </:trigger>
               <ul class="flex flex-col gap-1.5 pb-3 text-sm">
-                <li :for={f <- ~w(Contratos Propostas briefing.pdf)}>{f}</li>
+                <li :for={{f, i} <- [{"Contratos", "huge-folder-01"}, {"Propostas", "huge-folder-01"}, {"briefing.pdf", "huge-file-01"}]} class="flex items-center gap-2 text-[13.5px] text-slate-600 dark:text-navy-100"><.icon name={i} class="size-4 text-slate-400" />{f}</li>
               </ul>
             </.collapse>
             <.collapse id="co-2" chevron="down" variant="section">
-              <:trigger class="-mx-2 rounded-lg px-2 py-3.5 text-xs! tracking-[.06em] text-slate-700! dark:text-navy-100!">
+              <:trigger class="-mx-2 rounded-lg px-2 py-3.5 text-xs! tracking-[.06em] text-slate-700! outline-2 outline-offset-2 outline-primary/55 outline-solid dark:text-navy-100!">
                 Compartilhados
               </:trigger>
               <p class="pb-3 text-sm">Contratos</p>
@@ -162,6 +162,7 @@ defmodule PreviewWeb.Pages.AccordionCanvas do
           id={"#{@id}-#{n}"}
           title={q}
           open={n == @open}
+          trigger_class={@variant == "border-bottom" && n == 2 && "outline-2 outline-offset-2 outline-primary/55 outline-solid"}
         >
           <p>{a}</p>
         </.accordion_item>

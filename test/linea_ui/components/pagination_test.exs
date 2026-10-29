@@ -126,6 +126,42 @@ defmodule LineaUI.Components.PaginationTest do
     assert "Showing 1–4 of 4" = html |> find("[role=status]") |> LazyHTML.text() |> String.trim()
   end
 
+  test "the numbers of the summary are bold and the words around them are escaped" do
+    html =
+      render(~H"""
+      <.pagination
+        page={1}
+        page_size={15}
+        total_entries={128}
+        on_change="go"
+        summary="<i>Mostrando</i> %{first}–%{last} de %{total}"
+      />
+      """)
+
+    assert ["1", "15", "128"] =
+             html
+             |> find("[role=status] b")
+             |> Enum.map(&(&1 |> LazyHTML.text() |> String.trim()))
+
+    assert "font-semibold" in classes(html, "[role=status] b")
+    assert [] = html |> find("[role=status] i") |> Enum.to_list()
+    assert html =~ "&lt;i&gt;Mostrando&lt;/i&gt;"
+  end
+
+  test "the labels are 12.5, 13.5 and 14.5px, the large one with 14px of padding" do
+    html =
+      render(~H"""
+      <.pagination page={1} total_pages={3} on_change="go" size="sm" />
+      <.pagination page={1} total_pages={3} on_change="go" />
+      <.pagination page={1} total_pages={3} on_change="go" size="lg" />
+      """)
+
+    assert "text-[12.5px]" in classes(html, "button[phx-value-page='2'].h-7")
+    assert "text-[13.5px]" in classes(html, "button[phx-value-page='2'].h-8")
+    assert "text-[14.5px]" in classes(html, "button[phx-value-page='2'].h-10")
+    assert "px-3.5" in classes(html, "button[phx-value-page='2'].h-10")
+  end
+
   test "page_sizes add a rows-per-page select in its own form" do
     html =
       render(~H"""

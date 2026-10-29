@@ -19,27 +19,27 @@ defmodule PreviewWeb.Pages.PaginationCanvas do
       <div class="grid w-full gap-x-7 gap-y-5 lg:grid-cols-2">
         <.panel>
           <.line label="rounded · barra unida (padrão)">
-            <.pagination page={1} total_pages={5} on_change="noop" class={@fc3} />
+            <.pagination page={1} total_pages={5} siblings={2} on_change="noop" class={@fc3} />
           </.line>
           <.line label="pill · barra unida">
-            <.pagination page={2} total_pages={5} on_change="noop" shape="pill" />
+            <.pagination page={2} total_pages={5} siblings={2} on_change="noop" shape="pill" />
           </.line>
           <.line label="rounded · divided">
-            <.pagination page={3} total_pages={5} on_change="noop" divided />
+            <.pagination page={3} total_pages={5} siblings={2} on_change="noop" divided />
           </.line>
           <.line label="pill · divided">
-            <.pagination page={3} total_pages={5} on_change="noop" divided shape="pill" />
+            <.pagination page={3} total_pages={5} siblings={2} on_change="noop" divided shape="pill" />
           </.line>
         </.panel>
         <.panel>
           <.line label={~s(size="sm")}>
-            <.pagination page={2} total_pages={5} on_change="noop" size="sm" />
+            <.pagination page={2} total_pages={5} siblings={2} on_change="noop" size="sm" />
           </.line>
           <.line label={"size=\"md\" (padrão)"}>
-            <.pagination page={2} total_pages={5} on_change="noop" />
+            <.pagination page={2} total_pages={5} siblings={2} on_change="noop" />
           </.line>
           <.line label={~s(size="lg")}>
-            <.pagination page={2} total_pages={5} on_change="noop" size="lg" />
+            <.pagination page={2} total_pages={5} siblings={2} on_change="noop" size="lg" />
           </.line>
         </.panel>
       </div>
@@ -62,7 +62,7 @@ defmodule PreviewWeb.Pages.PaginationCanvas do
             <.pagination page={10} total_pages={10} on_change="noop" />
           </.line>
           <.line label="Hover em uma página e foco do teclado">
-            <.pagination page={2} total_pages={5} on_change="noop" class={[@hv3, @fc4]} />
+            <.pagination page={2} total_pages={5} siblings={2} on_change="noop" class={[@hv3, @fc4]} />
           </.line>
         </.panel>
         <div class="flex flex-col gap-5">
