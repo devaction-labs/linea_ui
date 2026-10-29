@@ -8,23 +8,28 @@ import {bandCell, daysInMonth, leadingDays, previewRange, shiftMonth, toIso, wee
 import {escapeHtml} from "./date_picker_view.js"
 import {fill, formatTime} from "./datetime_format.js"
 import {monthOff, yearOff, yearPage, PAGE} from "./datetime_pick.js"
-import {glyphHtml} from "./glyphs.js"
 
-const DAY = "relative mx-auto flex size-9 items-center justify-center rounded-lg text-sm text-slate-600 outline-hidden transition-colors focus-visible:ring-2 focus-visible:ring-primary/50 dark:text-navy-100 dark:focus-visible:ring-accent/50"
+const DAY = "relative flex h-9 w-full items-center justify-center rounded-lg text-[13px] tabular-nums text-slate-600 outline-hidden transition-colors focus-visible:ring-2 focus-visible:ring-primary/50 dark:text-navy-100 dark:focus-visible:ring-accent/50"
 const EDGE = "bg-primary font-medium text-white hover:bg-primary-focus dark:bg-accent dark:hover:bg-accent-focus"
 const IDLE = "hover:bg-slate-150 dark:hover:bg-navy-500"
 const OFF = "cursor-not-allowed text-slate-300 dark:text-navy-400"
-const TODAY = "font-semibold text-primary after:absolute after:bottom-[5px] after:left-1/2 after:-ml-0.5 after:size-1 after:rounded-full after:bg-current after:content-[''] dark:text-accent-light"
+const OUT = "flex h-9 w-full items-center justify-center text-[13px] tabular-nums text-slate-400 select-none dark:text-navy-300"
+const DOT = "font-semibold after:absolute after:bottom-[5px] after:left-1/2 after:-ml-0.5 after:size-1 after:rounded-full after:bg-current after:content-['']"
+const TODAY = `${DOT} text-primary dark:text-accent-light`
 const SLOT_OFF = "cursor-not-allowed text-slate-400 line-through opacity-50 dark:text-navy-300"
 const NAV = "flex size-8 items-center justify-center rounded-lg text-slate-500 outline-hidden transition-colors hover:bg-slate-150 focus-visible:ring-2 focus-visible:ring-primary/50 dark:text-navy-200 dark:hover:bg-navy-500 dark:focus-visible:ring-accent/50"
-const OPTION = "flex w-full items-center rounded-lg px-3 py-1.5 text-left text-sm outline-hidden transition-colors focus-visible:ring-2 focus-visible:ring-primary/50 dark:focus-visible:ring-accent/50"
-const FIELD = "w-full rounded-lg border border-slate-300 bg-transparent px-3 py-2 text-sm text-slate-700 placeholder:text-slate-400/70 hover:border-slate-400 focus:border-primary disabled:pointer-events-none disabled:bg-zinc-100 disabled:opacity-70 dark:border-navy-450 dark:text-navy-100 dark:hover:border-navy-400 dark:focus:border-accent dark:disabled:bg-navy-600"
-const CANCEL = "inline-flex h-9 items-center justify-center rounded-lg border border-slate-300 px-4 text-sm font-medium text-slate-700 outline-hidden transition-colors hover:bg-slate-150 focus-visible:ring-2 focus-visible:ring-primary/50 dark:border-navy-450 dark:text-navy-100 dark:hover:bg-navy-500 dark:focus-visible:ring-accent/50"
-const CONFIRM = "inline-flex h-9 items-center justify-center rounded-lg bg-primary px-4 text-sm font-medium text-white outline-hidden transition-colors hover:bg-primary-focus focus-visible:ring-2 focus-visible:ring-primary/50 disabled:pointer-events-none disabled:opacity-60 dark:bg-accent dark:hover:bg-accent-focus dark:focus-visible:ring-accent/50"
+const OPTION = "flex h-[30px] w-full flex-none items-center justify-center rounded-lg text-center text-[13px] tabular-nums outline-hidden transition-colors focus-visible:ring-2 focus-visible:ring-primary/50 dark:focus-visible:ring-accent/50"
+const FIELD = "h-8 w-full min-w-0 rounded-lg border border-slate-300 bg-transparent pl-8 pr-2 text-[13px] text-slate-700 placeholder:text-slate-400/70 hover:border-slate-400 focus:border-primary disabled:pointer-events-none disabled:bg-zinc-100 disabled:opacity-70 dark:border-navy-450 dark:text-navy-100 dark:hover:border-navy-400 dark:focus:border-accent dark:disabled:bg-navy-600"
+const CANCEL = "inline-flex h-8 items-center justify-center rounded-lg border border-slate-300 px-3.5 text-[13px] font-medium text-slate-700 outline-hidden transition-colors hover:bg-slate-150 focus-visible:ring-2 focus-visible:ring-primary/50 dark:border-navy-450 dark:text-navy-100 dark:hover:bg-navy-500 dark:focus-visible:ring-accent/50"
+const CONFIRM = "inline-flex h-8 items-center justify-center rounded-lg bg-primary px-3.5 text-[13px] font-medium text-white outline-hidden transition-colors hover:bg-primary-focus focus-visible:ring-2 focus-visible:ring-primary/50 disabled:pointer-events-none disabled:opacity-60 dark:bg-accent dark:hover:bg-accent-focus dark:focus-visible:ring-accent/50"
 
-const PICK = "inline-flex h-8 items-center gap-0.5 rounded-lg px-2 text-sm font-medium text-slate-700 outline-hidden transition-colors hover:bg-slate-150 focus-visible:ring-2 focus-visible:ring-primary/50 aria-expanded:bg-slate-150 dark:text-navy-100 dark:hover:bg-navy-500 dark:focus-visible:ring-accent/50 dark:aria-expanded:bg-navy-500"
+const PICK = "inline-flex h-[30px] items-center gap-0.5 rounded-lg px-2 text-sm font-semibold text-slate-700 outline-hidden transition-colors hover:bg-slate-150 focus-visible:ring-2 focus-visible:ring-primary/50 aria-expanded:bg-slate-150 dark:text-navy-100 dark:hover:bg-navy-500 dark:focus-visible:ring-accent/50 dark:aria-expanded:bg-navy-500"
 const CELL = "flex h-full w-full items-center justify-center rounded-lg text-sm outline-hidden transition-colors focus-visible:ring-2 focus-visible:ring-primary/50 dark:focus-visible:ring-accent/50"
 const CHEVRON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="size-3.5 text-slate-400 dark:text-navy-300"><path d="m19.5 8.25-7.5 7.5-7.5-7.5"/></svg>'
+
+const icon = (path, className) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="${className}"><path d="${path}"/></svg>`
+const CLOCK = icon("M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z", "pointer-events-none absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-slate-400 dark:text-navy-300")
+const ARROW = {"-1": "m15.75 19.5-7.5-7.5 7.5-7.5", 1: "m8.25 4.5 7.5 7.5-7.5 7.5"}
 
 const attr = escapeHtml
 
@@ -34,7 +39,7 @@ export const bandClass = ({paints, roundStart, roundEnd}) =>
 
 /** The classes of the button of a day, from what it is: an end of the choice, out of reach, today. */
 export const dayClass = ({edge, off, today}) =>
-  [DAY, edge ? EDGE : off ? OFF : IDLE, today && !edge && TODAY].filter(Boolean).join(" ")
+  [DAY, edge ? EDGE : off ? OFF : IDLE, today && (edge ? DOT : TODAY)].filter(Boolean).join(" ")
 
 /** The classes of an option of the time list: a closed slot is struck through and dimmed. */
 export const optionClass = ({selected, disabled}) =>
@@ -57,6 +62,9 @@ const dayCell = (iso, number, column, vm, shown) => {
     `${off ? ' aria-disabled="true"' : ""}${iso === vm.today ? ' aria-current="date"' : ""} class="${dayClass({edge, off, today: iso === vm.today})}">${number}</button></div>`
   )
 }
+
+/** A day of the next or the previous month that fills the first or the last week: shown dim, not a control. */
+const outCell = (number) => `<div role="gridcell" aria-hidden="true" class="${OUT}">${number}</div>`
 
 const pickButton = (kind, content, label, picking, side, vm) =>
   `<button type="button" id="${vm.id}-pick-${kind}-${side.index ?? 0}" data-pick="${kind}" aria-label="${attr(label)}" aria-haspopup="true" aria-expanded="${picking === kind}" class="${PICK}">${content}</button>`
@@ -95,30 +103,35 @@ export const renderMonth = (month, side, vm) => {
   const title = fill(vm.labels.datetime_title, {month: vm.names.months[month.month], year: month.year})
   const titleId = `${vm.id}-title-${month.year}-${month.month}`
   const blanks = leadingDays(month, vm.weekStart)
+  const total = daysInMonth(month)
+  const trailing = (7 - ((blanks + total) % 7)) % 7
+  const before = shiftMonth(month, -1)
+  const lastBefore = daysInMonth(before)
   const cells = [
-    ...Array.from({length: blanks}, () => '<div role="gridcell"></div>'),
-    ...Array.from({length: daysInMonth(month)}, (_, index) => {
+    ...Array.from({length: blanks}, (_, index) => outCell(lastBefore - blanks + index + 1)),
+    ...Array.from({length: total}, (_, index) => {
       const iso = toIso(month.year, month.month, index + 1)
       return dayCell(iso, index + 1, weekdayIndex(iso, vm.weekStart), vm, shown)
     }),
+    ...Array.from({length: trailing}, (_, index) => outCell(index + 1)),
   ]
-  const rows = Array.from({length: Math.ceil(cells.length / 7)}, (_, row) => `<div role="row" class="grid grid-cols-7 gap-y-0.5">${cells.slice(row * 7, row * 7 + 7).join("")}</div>`)
-  const nav = (direction, label, glyph, shows) =>
+  const rows = Array.from({length: Math.ceil(cells.length / 7)}, (_, row) => `<div role="row" class="grid grid-cols-7">${cells.slice(row * 7, row * 7 + 7).join("")}</div>`)
+  const nav = (direction, label, shows) =>
     shows
-      ? `<button type="button" data-nav="${direction}" aria-label="${attr(label)}" class="${NAV}">${glyphHtml(glyph, vm.icons, {className: "size-4"})}</button>`
+      ? `<button type="button" data-nav="${direction}" aria-label="${attr(label)}" class="${NAV}">${icon(ARROW[direction], "size-4")}</button>`
       : '<span class="size-8"></span>'
   const heads = Array.from({length: 7}, (_, index) => vm.names.weekdays[(index + vm.weekStart) % 7])
 
   return (
-    `<div class="w-full min-w-0 sm:w-[17.5rem]" data-month="${month.year}-${month.month}">` +
-    `<div class="flex h-8 items-center justify-between">${nav(-1, vm.labels.datetime_previous, "angle_left", side.previous)}` +
+    `<div class="w-full min-w-0 ${side.wide ? "sm:w-[17.25rem]" : "sm:w-[16.5rem]"}" data-month="${month.year}-${month.month}">` +
+    `<div class="flex h-8 items-center justify-between">${nav(-1, vm.labels.datetime_previous, side.previous)}` +
     `<div class="flex items-center gap-0.5"><span id="${titleId}" aria-live="polite" class="sr-only">${attr(title)}</span>` +
     `${pickButton("month", attr(vm.names.months[month.month]) + CHEVRON, vm.labels.datetime_choose_month, picking, side, vm)}` +
     `${pickButton("year", month.year, vm.labels.datetime_choose_year, picking, side, vm)}</div>` +
-    `${nav(1, vm.labels.datetime_next, "angle_right", side.next)}</div>` +
+    `${nav(1, vm.labels.datetime_next, side.next)}</div>` +
     (picking ? pickGrid(picking, month, side, vm) : "") +
     (picking ? "" : `<div role="grid" aria-labelledby="${titleId}" class="mt-2">` +
-    `<div role="row" class="grid grid-cols-7">${heads.map((name) => `<span role="columnheader" aria-label="${attr(name)}" class="py-1 text-center text-xs font-medium text-slate-400 dark:text-navy-300">${attr(name.slice(0, 3))}</span>`).join("")}</div>` +
+    `<div role="row" class="grid grid-cols-7">${heads.map((name) => `<span role="columnheader" aria-label="${attr(name)}" class="flex h-7 items-center justify-center text-[11px] font-semibold uppercase tracking-[.04em] text-slate-500 dark:text-navy-200">${attr(name.slice(0, 3))}</span>`).join("")}</div>` +
     `${rows.join("")}</div>`) + `</div>`
   )
 }
@@ -134,8 +147,8 @@ export const renderTimeList = (slots, selected, vm) => {
     )
     .join("")
   return (
-    `<div class="relative w-40 shrink-0 border-l border-slate-150 dark:border-navy-600">` +
-    `<div role="listbox" aria-label="${attr(vm.labels.datetime_times)}" data-time-list class="scrollbar-sm absolute inset-0 space-y-0.5 overflow-y-auto p-1.5">` +
+    `<div class="relative w-[7.5rem] shrink-0 border-l border-slate-150 dark:border-navy-600">` +
+    `<div role="listbox" aria-label="${attr(vm.labels.datetime_times)}" data-time-list class="scrollbar-sm absolute inset-0 flex flex-col overflow-y-auto p-2">` +
     `${options || `<p class="px-3 py-2 text-sm text-slate-400 dark:text-navy-300">${attr(vm.labels.datetime_no_times)}</p>`}</div></div>`
   )
 }
@@ -148,8 +161,9 @@ const select = (which, slots, moment, vm) => {
     .map((slot) => `<option value="${slot.time}"${slot.time === moment?.time ? " selected" : ""}${slot.disabled ? " disabled" : ""}>${formatTime(slot.time, vm.hour12)}</option>`)
     .join("")
   return (
+    `<div class="relative min-w-0 flex-1">${CLOCK}` +
     `<select id="${vm.id}-time-${which}" data-time-select="${which}" aria-label="${attr(controlLabel(which, vm))}"${slots.length === 0 ? " disabled" : ""} ` +
-    `class="${FIELD} dark:*:bg-navy-700 dark:*:text-navy-100">${slots.length === 0 ? "<option>–</option>" : placeholder + options}</select>`
+    `class="${FIELD} cursor-pointer appearance-none dark:*:bg-navy-700 dark:*:text-navy-100">${slots.length === 0 ? "<option>–</option>" : placeholder + options}</select></div>`
   )
 }
 
@@ -168,7 +182,7 @@ export const renderSuggestions = (which, slots, selected, active, vm) =>
 const combo = (which, slots, moment, vm) => {
   const listId = `${vm.id}-suggestions-${which}`
   return (
-    `<div class="relative" data-combo="${which}">` +
+    `<div class="relative min-w-0 flex-1" data-combo="${which}">${CLOCK}` +
     `<input type="text" id="${vm.id}-time-${which}" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="${listId}" aria-label="${attr(controlLabel(which, vm))}" ` +
     `autocomplete="off" spellcheck="false" data-time-input="${which}" placeholder="${attr(vm.labels.datetime_time_placeholder)}" value="${moment?.time ? formatTime(moment.time, vm.hour12) : ""}"${slots.length === 0 ? " disabled" : ""} class="${FIELD}">` +
     `<ul id="${listId}" role="listbox" hidden data-suggestions="${which}" aria-label="${attr(vm.labels.datetime_times)}" class="scrollbar-sm absolute inset-x-0 bottom-full z-20 mb-1 max-h-52 space-y-0.5 overflow-y-auto rounded-lg border border-slate-150 bg-white p-1 shadow-soft dark:border-navy-500 dark:bg-navy-700 dark:shadow-none">` +
@@ -186,10 +200,10 @@ const controlBlock = (which, vm) => {
   const moment = which === "end" ? vm.state.end : vm.state.start
   const dateText = moment?.date ? vm.dateText(moment.date) : "–"
   return (
-    `<div class="min-w-0 flex-1 basis-36">` +
-    `<div class="text-xs font-medium text-slate-500 dark:text-navy-200">${attr(controlLabel(which, vm))}</div>` +
-    `<div class="mb-1.5 truncate text-sm text-slate-700 dark:text-navy-100" data-date-text="${which}">${attr(dateText)}</div>` +
-    `${control(which, vm)}</div>`
+    `<div class="min-w-0">` +
+    `<div class="mb-1.5 text-[11px] font-semibold uppercase tracking-[.08em] text-slate-500 dark:text-navy-200">${attr(controlLabel(which, vm))}</div>` +
+    `<div class="flex items-center gap-2.5"><span class="shrink-0 whitespace-nowrap text-[13px] font-medium text-slate-700 dark:text-navy-100" data-date-text="${which}">${attr(dateText)}</span>` +
+    `${control(which, vm)}</div></div>`
   )
 }
 
@@ -200,14 +214,14 @@ const footer = (vm) => {
   const confirm = vm.mode === "range" || vm.layout === "mobile"
   const label = vm.mode === "range" ? vm.labels.datetime_select_range : vm.labels.datetime_select
   return (
-    `<div class="flex flex-wrap items-end gap-3 border-t border-slate-150 p-3 dark:border-navy-600">` +
+    `<div class="grid grid-cols-[repeat(auto-fit,minmax(12.5rem,1fr))] gap-3 border-t border-slate-150 px-[18px] py-3 dark:border-navy-600">` +
     ends.map((which) => controlBlock(which, vm)).join("") +
+    `</div>` +
     (confirm
-      ? `<div class="flex w-full gap-2 sm:w-auto">` +
-        `<button type="button" data-cancel class="${CANCEL} flex-1 sm:flex-none">${attr(vm.labels.datetime_cancel)}</button>` +
-        `<button type="button" data-confirm class="${CONFIRM} flex-1 sm:flex-none"${vm.canConfirm ? "" : " disabled"}>${attr(label)}</button></div>`
-      : "") +
-    `</div>`
+      ? `<div class="flex justify-end gap-2 rounded-b-xl border-t border-slate-150 bg-slate-50 px-[18px] py-3 dark:border-navy-600 dark:bg-navy-800">` +
+        `<button type="button" data-cancel class="${CANCEL} ${vm.layout === "mobile" ? "flex-1" : ""}">${attr(vm.labels.datetime_cancel)}</button>` +
+        `<button type="button" data-confirm class="${CONFIRM} ${vm.layout === "mobile" ? "flex-1" : ""}"${vm.canConfirm ? "" : " disabled"}>${attr(label)}</button></div>`
+      : "")
   )
 }
 
@@ -215,13 +229,13 @@ const footer = (vm) => {
 export const renderPanel = (vm) => {
   const count = vm.mode === "range" && vm.layout === "desktop" ? 2 : 1
   const months = Array.from({length: count}, (_, index) =>
-    renderMonth(shiftMonth(vm.view, index), {previous: index === 0, next: index === count - 1, index}, vm),
+    renderMonth(shiftMonth(vm.view, index), {previous: index === 0, next: index === count - 1, index, wide: count > 1}, vm),
   )
   const list = vm.mode === "single" && vm.layout === "desktop" && vm.timeMode === "list" ? renderTimeList(vm.slots.start, vm.state.start?.time, vm) : ""
   return (
     `<div class="${vm.layout === "mobile" ? "w-[min(21rem,calc(100vw-1rem))]" : "w-max"} max-w-full">` +
     `<div class="flex ${vm.layout === "mobile" ? "flex-col" : ""}">` +
-    `<div class="flex gap-4 p-3 ${count === 1 ? "min-w-0 flex-1" : ""}">${months.join("")}</div>${list}</div>` +
+    `<div class="flex ${count === 1 ? `min-w-0 flex-1 px-3 ${list ? "pb-[1.375rem] pt-[1.125rem]" : "py-3"}` : "gap-3 px-3 pb-2 pt-3"}">${months.join("")}</div>${list}</div>` +
     `${needsFooter(vm) ? footer(vm) : ""}</div>`
   )
 }
