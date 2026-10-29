@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 0.8.9
+
 - `card_table`: the panel of a row is now a small popover you can use. A click on the row (any part that is not a control, or Enter and Space) opens it and it stays until you close it with `Esc`, a click outside or another row; every line has a copy button with a tooltip (`copy_label`, `copied_label`, `panel_label`); using a control of the row (the action menu, a checkbox) closes it, so it never competes with a dropdown. It no longer closes when the mouse leaves. **Needs the `LineaUI.CardTable` hook** (`...LineaHooks`) and a rebuilt JS bundle.
 
 ## 0.8.8
