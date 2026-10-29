@@ -40,6 +40,7 @@ defmodule PreviewWeb.Pages.DataTableCanvas do
           on_select="noop"
           on_select_all="noop"
           selected={["#2480", "#2478"]}
+          row_class={&(&1.id == "#2479" && "[&>td]:bg-slate-200/90! dark:[&>td]:bg-navy-600!")}
           page={1}
           page_size={10}
           total={50}
@@ -55,16 +56,41 @@ defmodule PreviewWeb.Pages.DataTableCanvas do
         >
           <:title>Pedidos</:title>
           <:actions>
-            <.button color="primary" size="sm">Novo pedido</.button>
+            <.button color="primary" size="sm">
+              <.glyph name={:plus} class="size-3.5" stroke_width="2" /> Novo pedido
+            </.button>
           </:actions>
+          <:filters :let={toggle}>
+            <p class="text-sm" phx-click={toggle}>Filtros</p>
+          </:filters>
           <:summary><b>1</b> - <b>5</b> de <b>15</b> registros</:summary>
-          <:col :let={r} label="Pedido" sort_key="number">{r.id}</:col>
-          <:col :let={r} label="Cliente" sort_key="name">
+          <:col
+            :let={r}
+            label="Pedido"
+            sort_key="number"
+            class="font-mono text-[12.5px] font-medium text-slate-700 dark:text-navy-100"
+          >
+            {r.id}
+          </:col>
+          <:col
+            :let={r}
+            label="Cliente"
+            sort_key="name"
+            head_class="[&_button]:outline-2 [&_button]:outline-offset-1 [&_button]:outline-solid [&_button]:outline-primary/55"
+          >
             <.who r={r} />
           </:col>
           <:col :let={r} label="Responsável" priority={3}>{r.owner}</:col>
           <:col :let={r} label="Status" priority={2}><.status r={r} /></:col>
-          <:col :let={r} label="Total" sort_key="total" align="right">{r.total}</:col>
+          <:col
+            :let={r}
+            label="Total"
+            sort_key="total"
+            align="right"
+            class="font-medium text-slate-700 tabular-nums dark:text-navy-100"
+          >
+            {r.total}
+          </:col>
         </.data_table>
       </div>
     </.example>
@@ -82,6 +108,7 @@ defmodule PreviewWeb.Pages.DataTableCanvas do
           row_id={&"dt-grid-#{&1.id}"}
           compact
           sticky_header
+          wrapper_class="max-h-[236px]"
           scroll_label="Lista de pedidos"
           search_placeholder="Digite uma palavra-chave..."
           on_search="noop"
@@ -96,47 +123,115 @@ defmodule PreviewWeb.Pages.DataTableCanvas do
           next_label="Próxima"
           summary_label="Mostrando %{from} a %{to} de %{total} resultados"
         >
-          <:col :let={r} label="Pedido" sort_key="number">{r.id}</:col>
+          <:col
+            :let={r}
+            label="Pedido"
+            sort_key="number"
+            class="font-mono text-[12.5px] font-medium text-slate-700 dark:text-navy-100"
+          >
+            {r.id}
+          </:col>
           <:col :let={r} label="Cliente" sort_key="name"><.who r={r} /></:col>
           <:col :let={r} label="Responsável" priority={3}>{r.owner}</:col>
           <:col :let={r} label="Status" priority={2}><.status r={r} /></:col>
-          <:col :let={r} label="Total" sort_key="total" align="right">{r.total}</:col>
+          <:col
+            :let={r}
+            label="Total"
+            sort_key="total"
+            align="right"
+            class="font-medium text-slate-700 tabular-nums dark:text-navy-100"
+          >
+            {r.total}
+          </:col>
         </.data_table>
       </div>
     </.example>
 
     <div class="mt-5 grid gap-x-7 gap-y-5 lg:grid-cols-2">
       <.example title="Carregando" text="table_skeleton, aria-busy" class="">
-        <div class="w-full">
+        <div class="w-full overflow-hidden rounded-xl shadow-soft ring-1 ring-slate-150 dark:ring-navy-500">
           <.table_skeleton
             id="dt-skel"
             rows={4}
-            variant="hoverable"
-            rounded="top"
+            variant="data"
             columns={["Pedido", "Cliente", "Responsável", "Status", "Total"]}
+            shapes={["text", "avatar", "text", "pill", "number"]}
             label="Carregando pedidos"
           />
         </div>
       </.example>
       <.example title="Vazio" text="slot :empty" class="">
         <div class="w-full">
-          <.data_table id="dt-empty" rows={[]} search="Souza" on_search="noop" footer={false}>
+          <.data_table id="dt-empty" rows={[]} footer={false}>
             <:col label="Pedido">{nil}</:col>
             <:col label="Cliente">{nil}</:col>
-            <:col label="Responsável">{nil}</:col>
-            <:col label="Status">{nil}</:col>
+            <:col label="Responsável" priority={3}>{nil}</:col>
+            <:col label="Status" priority={2}>{nil}</:col>
             <:col label="Total" align="right">{nil}</:col>
             <:empty>
-              <.empty_state variant="inline" icon="huge-inbox" title="Nenhum pedido encontrado">
+              <.empty_state variant="table" icon="huge-inbox" title="Nenhum pedido encontrado">
                 Nada corresponde a "Souza". Ajuste a busca ou limpe os filtros.
                 <:action>
-                  <.button variant="ghost" color="primary" size="sm">Limpar busca</.button>
+                  <a href="#" class="text-primary hover:underline dark:text-accent-light">
+                    Limpar busca
+                  </a>
                 </:action>
               </.empty_state>
             </:empty>
           </.data_table>
         </div>
       </.example>
+    </div>
+
+    <.example title="Cabeçalho ordenável" text="sort_key, sort_by, sort_dir" class="mt-5">
+      <div class="grid w-full gap-2.5 sm:grid-cols-2 lg:grid-cols-5">
+        <.sort_cell
+          :for={
+            {label, key, by, dir, force, caption} <- [
+              {"Cliente", "name", nil, "asc", nil, "Sem ordenação"},
+              {"Cliente", "name", nil, "asc", :hover, "Hover"},
+              {"Cliente", "name", nil, "asc", :focus, "Foco do teclado"},
+              {"Pedido", "number", "number", "asc", nil, "Crescente (asc)"},
+              {"Total", "total", "total", "desc", nil, "Decrescente (desc)"}
+            ]
+          }
+          label={label}
+          key={key}
+          by={by}
+          dir={dir}
+          force={force}
+          caption={caption}
+        />
+      </div>
+    </.example>
+    """
+  end
+
+  attr :label, :string, required: true
+  attr :key, :string, required: true
+  attr :by, :string, default: nil
+  attr :dir, :string, required: true
+  attr :force, :atom, default: nil
+  attr :caption, :string, required: true
+
+  defp sort_cell(assigns) do
+    ~H"""
+    <div class="flex flex-col gap-2">
+      <.table
+        id={"sort-" <> Base.encode16(@caption, case: :lower)}
+        variant="data"
+        class={[
+          "rounded-lg",
+          @force == :hover && "[&_button]:bg-slate-300/40 dark:[&_button]:bg-navy-450/40",
+          @force == :focus &&
+            "[&_button]:outline-2 [&_button]:outline-offset-1 [&_button]:outline-solid [&_button]:outline-primary/55"
+        ]}
+      >
+        <.table_head on_sort="noop" sort_by={@by} sort_dir={@dir}>
+          <:col sort_key={@key} label={@label} />
+        </.table_head>
+      </.table>
+      <small class="text-[11.5px] font-medium text-slate-400 dark:text-navy-300">{@caption}</small>
     </div>
     """
   end
@@ -146,7 +241,7 @@ defmodule PreviewWeb.Pages.DataTableCanvas do
   defp who(assigns) do
     ~H"""
     <div class="flex items-center gap-2.5">
-      <.avatar name={@r.name} color="auto" size="28" />
+      <.avatar name={@r.name} color="auto" size="2xs" />
       <span class="font-medium text-slate-700 dark:text-navy-100">{@r.name}</span>
     </div>
     """

@@ -21,6 +21,41 @@ defmodule LineaUI.Components.DataTableTest do
     assert [] = find(html, "#c [role=status]") |> Enum.to_list()
   end
 
+  test "advanced and grid draw the lean data look" do
+    html =
+      render(~H"""
+      <.data_table
+        id="a"
+        rows={[%{n: 1}]}
+        row_id={&"r#{&1.n}"}
+        on_select="select"
+        selected={[]}
+        on_page="page"
+      >
+        <:col :let={row} label="N" sort_key="n">{row.n}</:col>
+      </.data_table>
+      <.data_table id="g" variant="grid" rows={[%{n: 1}]} compact sticky_header wrapper_class="max-h-60">
+        <:col :let={row} label="N">{row.n}</:col>
+      </.data_table>
+      """)
+
+    assert "linea-dt" in classes(html, "#a-table")
+    assert "is-dt-hover" in classes(html, "#a-table")
+    assert "h-10" in classes(html, "#a-table th")
+    assert "text-[11.5px]" in classes(html, "#a-table th")
+    assert "h-12" in classes(html, "#a-table td")
+    assert "size-4" in classes(html, "#a-table td input")
+    assert "rounded-xl" in classes(html, "#a .card")
+
+    assert "linea-dt" in classes(html, "#g-table")
+    assert "rounded-[10px]" in classes(html, "#g > div")
+    assert "max-h-60" in classes(html, "#g > div")
+    assert "h-[34px]" in classes(html, "#g-table th")
+    assert "h-[38px]" in classes(html, "#g-table td")
+    assert "sticky" in classes(html, "#g-table th")
+    assert "border-slate-150" in classes(html, "#g-table td")
+  end
+
   test "density options reach the table" do
     html =
       render(~H"""
@@ -30,7 +65,7 @@ defmodule LineaUI.Components.DataTableTest do
       """)
 
     assert [] = find(html, "thead") |> Enum.to_list()
-    assert "py-2" in classes(html, "td")
+    assert "h-[38px]" in classes(html, "td")
     assert "text-right" in classes(html, "td")
     assert "border-0" in classes(html, "tbody tr")
   end
@@ -157,7 +192,7 @@ defmodule LineaUI.Components.DataTableTest do
       </.data_table>
       """)
 
-    assert ["…", "…"] =
+    assert ["...", "..."] =
              html |> find("#a ol.pagination span[aria-hidden=true]") |> Enum.map(&LazyHTML.text/1)
 
     assert ["4", "5", "6"] --
@@ -166,6 +201,6 @@ defmodule LineaUI.Components.DataTableTest do
               |> Enum.map(&LazyHTML.text/1)
               |> Enum.map(&String.trim/1)) == []
 
-    assert ["…"] = html |> find("#b span[aria-hidden=true]") |> Enum.map(&LazyHTML.text/1)
+    assert ["..."] = html |> find("#b span[aria-hidden=true]") |> Enum.map(&LazyHTML.text/1)
   end
 end

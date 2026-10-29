@@ -55,9 +55,9 @@ defmodule LineaUI.Components.EmptyState do
   """
   attr :variant, :string,
     default: "card",
-    values: ~w(card inline),
+    values: ~w(card inline table),
     doc:
-      "`card` fills an area, `inline` is a compact notice for tables, lists and search results."
+      "`card` fills an area, `inline` is a compact notice for lists and search results, `table` is the centered notice (a 48px disc, a title, the reason and the next step) for the body of an empty table."
 
   attr :title, :string, required: true, doc: "What is missing, as a short sentence."
 
@@ -136,6 +136,28 @@ defmodule LineaUI.Components.EmptyState do
         {render_slot(@action)}
       </div>
     </section>
+    """
+  end
+
+  def empty_state(%{variant: "table"} = assigns) do
+    ~H"""
+    <div
+      class={merge(["flex flex-col items-center gap-1.5 px-5 pt-10 pb-11 text-center", @class])}
+      {@rest}
+    >
+      <span
+        class="mb-2 grid size-12 place-items-center rounded-full bg-slate-100 text-slate-400 dark:bg-navy-600 dark:text-navy-300"
+        aria-hidden="true"
+      >
+        <.icon :if={@icon && @illustration == []} name={@icon} class="size-6" />
+        {render_slot(@illustration)}
+      </span>
+      <b class="text-[15px] font-semibold text-slate-800 dark:text-navy-50">{@title}</b>
+      <span :if={@inner_block != []} class="text-[13px] text-slate-500 dark:text-navy-200">
+        {render_slot(@inner_block)}
+      </span>
+      <div :if={@action != []} class="mt-2.5 text-[13px] font-medium">{render_slot(@action)}</div>
+    </div>
     """
   end
 

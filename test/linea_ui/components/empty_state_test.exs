@@ -23,6 +23,22 @@ defmodule LineaUI.Components.EmptyStateTest do
     assert "shadow-soft" in classes(html, "section")
   end
 
+  test "the table variant is a centered notice with a disc, the reason and the next step" do
+    html =
+      render(~H"""
+      <.empty_state variant="table" icon="huge-inbox" title="No order found">
+        Nothing matches "Souza".
+        <:action><a href="#">Clear search</a></:action>
+      </.empty_state>
+      """)
+
+    assert [_] = find(html, "span.size-12.rounded-full span.huge-inbox") |> Enum.to_list()
+    assert texts(html, "b") == ["No order found"]
+    assert texts(html, "div > span:not([aria-hidden])") == ["Nothing matches \"Souza\"."]
+    assert texts(html, "a") == ["Clear search"]
+    assert [] = find(html, "section") |> Enum.to_list()
+  end
+
   test "the heading level" do
     html = render(~H|<.empty_state title="Empty" level={3} />|)
     assert texts(html, "h3") == ["Empty"]

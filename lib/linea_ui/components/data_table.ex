@@ -70,25 +70,27 @@ defmodule LineaUI.Components.DataTable do
 
   @pager_page %{
     "rounded" =>
-      "flex h-8 min-w-[2rem] items-center justify-center rounded-lg px-3 leading-tight transition-colors hover:bg-slate-300 focus:bg-slate-300 active:bg-slate-300/80 dark:hover:bg-navy-450 dark:focus:bg-navy-450 dark:active:bg-navy-450/90",
+      "flex h-8 min-w-[2rem] items-center justify-center rounded-lg px-2.5 text-[13px] leading-tight focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-primary/55 dark:focus-visible:outline-accent/55 transition-colors hover:bg-slate-300 focus:bg-slate-300 active:bg-slate-300/80 dark:hover:bg-navy-450 dark:focus:bg-navy-450 dark:active:bg-navy-450/90",
     "pill" =>
-      "flex h-8 min-w-[2rem] items-center justify-center rounded-full px-3 leading-tight transition-colors hover:bg-slate-300 focus:bg-slate-300 active:bg-slate-300/80 dark:hover:bg-navy-450 dark:focus:bg-navy-450 dark:active:bg-navy-450/90",
+      "flex h-8 min-w-[2rem] items-center justify-center rounded-full px-2.5 text-[13px] leading-tight focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-primary/55 dark:focus-visible:outline-accent/55 transition-colors hover:bg-slate-300 focus:bg-slate-300 active:bg-slate-300/80 dark:hover:bg-navy-450 dark:focus:bg-navy-450 dark:active:bg-navy-450/90",
     "circle" =>
-      "flex h-8 min-w-[2rem] items-center justify-center rounded-full bg-slate-150 px-3 leading-tight transition-colors hover:bg-slate-300 focus:bg-slate-300 active:bg-slate-300/80 dark:bg-navy-500 dark:hover:bg-navy-450 dark:focus:bg-navy-450 dark:active:bg-navy-450/90"
+      "flex h-8 min-w-[2rem] items-center justify-center rounded-full bg-slate-150 px-2.5 text-[13px] leading-tight focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-primary/55 dark:focus-visible:outline-accent/55 transition-colors hover:bg-slate-300 focus:bg-slate-300 active:bg-slate-300/80 dark:bg-navy-500 dark:hover:bg-navy-450 dark:focus:bg-navy-450 dark:active:bg-navy-450/90"
   }
 
   @pager_current %{
     "rounded" =>
-      "flex h-8 min-w-[2rem] items-center justify-center rounded-lg bg-primary px-3 leading-tight text-white transition-colors hover:bg-primary-focus focus:bg-primary-focus active:bg-primary-focus/90 dark:bg-accent dark:hover:bg-accent-focus dark:focus:bg-accent-focus dark:active:bg-accent/90",
+      "flex h-8 min-w-[2rem] items-center justify-center rounded-lg bg-primary px-2.5 text-[13px] leading-tight focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-primary/55 dark:focus-visible:outline-accent/55 text-white transition-colors hover:bg-primary-focus focus:bg-primary-focus active:bg-primary-focus/90 dark:bg-accent dark:hover:bg-accent-focus dark:focus:bg-accent-focus dark:active:bg-accent/90",
     "pill" =>
-      "flex h-8 min-w-[2rem] items-center justify-center rounded-full bg-primary px-3 leading-tight text-white transition-colors hover:bg-primary-focus focus:bg-primary-focus active:bg-primary-focus/90 dark:bg-accent dark:hover:bg-accent-focus dark:focus:bg-accent-focus dark:active:bg-accent/90",
+      "flex h-8 min-w-[2rem] items-center justify-center rounded-full bg-primary px-2.5 text-[13px] leading-tight focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-primary/55 dark:focus-visible:outline-accent/55 text-white transition-colors hover:bg-primary-focus focus:bg-primary-focus active:bg-primary-focus/90 dark:bg-accent dark:hover:bg-accent-focus dark:focus:bg-accent-focus dark:active:bg-accent/90",
     "circle" =>
-      "flex h-8 min-w-[2rem] items-center justify-center rounded-full bg-primary px-3 leading-tight text-white transition-colors hover:bg-primary-focus focus:bg-primary-focus active:bg-primary-focus/90 dark:bg-accent dark:hover:bg-accent-focus dark:focus:bg-accent-focus dark:active:bg-accent/90"
+      "flex h-8 min-w-[2rem] items-center justify-center rounded-full bg-primary px-2.5 text-[13px] leading-tight focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-primary/55 dark:focus-visible:outline-accent/55 text-white transition-colors hover:bg-primary-focus focus:bg-primary-focus active:bg-primary-focus/90 dark:bg-accent dark:hover:bg-accent-focus dark:focus:bg-accent-focus dark:active:bg-accent/90"
   }
 
-  @grid_button "flex h-8 min-w-[2rem] items-center justify-center rounded-full bg-slate-150 px-3 leading-tight transition-colors hover:bg-slate-300 focus:bg-slate-300 disabled:pointer-events-none disabled:opacity-60 aria-disabled:pointer-events-none aria-disabled:opacity-60 dark:bg-navy-500 dark:hover:bg-navy-450 dark:focus:bg-navy-450"
+  @grid_button "flex h-8 min-w-[2rem] items-center justify-center rounded-full bg-slate-150 px-2.5 text-[13px] leading-tight focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-primary/55 dark:focus-visible:outline-accent/55 transition-colors hover:bg-slate-300 focus:bg-slate-300 disabled:pointer-events-none disabled:opacity-60 aria-disabled:pointer-events-none aria-disabled:opacity-60 dark:bg-navy-500 dark:hover:bg-navy-450 dark:focus:bg-navy-450"
 
-  @grid_current "flex h-8 min-w-[2rem] items-center justify-center rounded-full bg-primary px-3 leading-tight text-white transition-colors dark:bg-accent"
+  @grid_current "flex h-8 min-w-[2rem] items-center justify-center rounded-full bg-primary px-2.5 text-[13px] leading-tight focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-primary/55 dark:focus-visible:outline-accent/55 text-white transition-colors dark:bg-accent"
+
+  @numbers "[&_b]:font-semibold [&_b]:text-slate-700 dark:[&_b]:text-navy-50"
 
   @icon_button "btn size-8 rounded-full p-0 hover:bg-slate-300/20 focus:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25"
 
@@ -244,6 +246,13 @@ defmodule LineaUI.Components.DataTable do
   attr(:expand_label, :string, default: nil, doc: "Header of the expand column.")
   attr(:target, :any, default: nil, doc: "`phx-target` of every event.")
   attr(:class, :any, default: nil)
+
+  attr(:wrapper_class, :any,
+    default: nil,
+    doc:
+      "Merged into the box that scrolls the table, e.g. `max-h-60` to scroll the rows under a `sticky_header`."
+  )
+
   attr(:rest, :global)
 
   slot :col, required: true, doc: "A column; receives the row (after `row_item`)." do
@@ -296,6 +305,7 @@ defmodule LineaUI.Components.DataTable do
     |> assign_pages()
     |> assign(:paginated, assigns.footer and (assigns.on_page != nil or assigns.page_path != nil))
     |> assign(:icon_button, @icon_button)
+    |> assign(:numbers, @numbers)
     |> render_data_table()
   end
 
@@ -337,12 +347,7 @@ defmodule LineaUI.Components.DataTable do
 
   defp bold(number), do: "<b>#{number}</b>"
 
-  defp advanced_summary_text(template, range) do
-    (template || @advanced_summary)
-    |> String.replace("%{from}", to_string(range.first))
-    |> String.replace("%{to}", to_string(range.last))
-    |> String.replace("%{total}", to_string(range.total))
-  end
+  defp advanced_default, do: @advanced_summary
 
   defp render_data_table(%{variant: "grid"} = assigns) do
     ~H"""
@@ -350,7 +355,7 @@ defmodule LineaUI.Components.DataTable do
       <form
         :if={@on_search}
         id={@id <> "-search-form"}
-        class="flex justify-end px-4 pb-5 sm:px-5"
+        class="flex justify-end pb-3"
         phx-change={@on_search}
         phx-submit={@on_search}
         phx-target={@target}
@@ -369,16 +374,16 @@ defmodule LineaUI.Components.DataTable do
           />
         </label>
       </form>
-      <.data_table_body {assigns} table_variant="grid" rounded="none" />
+      <.data_table_body {assigns} table_variant="data-grid" rounded="none" />
       <div
         :if={@paginated}
-        class="flex flex-col justify-between space-y-4 px-4 py-4 sm:flex-row sm:items-center sm:space-y-0 sm:px-5"
+        class="flex flex-col justify-between gap-3.5 px-4 py-3.5 text-[12.5px] text-slate-500 sm:flex-row sm:items-center sm:px-0 dark:text-navy-200"
       >
-        <div role="status" aria-live="polite">
+        <div role="status" aria-live="polite" class={@numbers}>
           <span :if={@summary == []}>{grid_summary(@summary_label, @range)}</span>
           {render_slot(@summary, @range)}
         </div>
-        <div class="flex flex-wrap space-x-1 text-slate-600 dark:text-slate-300">
+        <div class="flex flex-wrap gap-1 text-slate-600 dark:text-slate-300">
           <.pager_link
             {pager_link_assigns(assigns)}
             to={@page - 1}
@@ -393,7 +398,7 @@ defmodule LineaUI.Components.DataTable do
               :if={n == :gap}
               aria-hidden="true"
               class="flex h-8 items-center justify-center px-2"
-            >…</span>
+            >...</span>
             <.pager_link
               :if={n != :gap}
               {pager_link_assigns(assigns)}
@@ -444,7 +449,18 @@ defmodule LineaUI.Components.DataTable do
             aria-expanded="false"
             phx-click={data_table_toggle_filters(@id)}
           >
-            <.glyph name={:filter} class="size-4.5" />
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="size-4.5"
+              aria-hidden="true"
+            >
+              <path d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 0 1-.659 1.591l-5.432 5.432a2.25 2.25 0 0 0-.659 1.591v2.927a2.25 2.25 0 0 1-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 0 0-.659-1.591L3.659 7.409A2.25 2.25 0 0 1 3 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0 1 12 3Z" />
+            </svg>
           </button>
           {render_slot(@actions)}
         </div>
@@ -454,16 +470,16 @@ defmodule LineaUI.Components.DataTable do
           {render_slot(@filters, data_table_toggle_filters(@id))}
         </div>
       </div>
-      <div class="card mt-3">
-        <.data_table_body {assigns} table_variant="hoverable" rounded="top" />
+      <div class="card mt-3 overflow-hidden rounded-xl">
+        <.data_table_body {assigns} table_variant="data" rounded="top" />
         <div
           :if={@paginated}
-          class="flex flex-col justify-between space-y-4 px-4 py-4 sm:flex-row sm:items-center sm:space-y-0 sm:px-5"
+          class="flex flex-col justify-between gap-3.5 px-[18px] py-3.5 text-[12.5px] text-slate-500 sm:flex-row sm:items-center dark:text-navy-200"
         >
           <form
             :if={@page_sizes != []}
             id={@id <> "-page-size-form"}
-            class="flex items-center space-x-2 text-xs-plus"
+            class="flex items-center gap-2 text-[12.5px]"
             phx-change={@on_page_size}
             phx-target={@target}
           >
@@ -472,7 +488,7 @@ defmodule LineaUI.Components.DataTable do
               <select
                 name="page_size"
                 aria-label={@show_label <> " " <> @entries_label}
-                class="form-select rounded-full border border-slate-300 bg-white px-2 py-1 pr-6 hover:border-slate-400 focus:border-primary dark:border-navy-450 dark:bg-navy-700 dark:hover:border-navy-400 dark:focus:border-accent"
+                class="form-select h-7 rounded-full border border-slate-300 bg-white py-0 pr-7 pl-3 font-inter text-[12.5px] font-medium text-slate-700 hover:border-slate-400 focus:border-primary dark:border-navy-450 dark:bg-navy-700 dark:text-navy-100 dark:hover:border-navy-400 dark:focus:border-accent"
               >
                 <option :for={size <- @page_sizes} value={size} selected={size == @page_size}>
                   {size}
@@ -519,7 +535,7 @@ defmodule LineaUI.Components.DataTable do
           hoverable: hoverable(assigns.hoverable, assigns.expand),
           rest: %{},
           class: nil,
-          wrapper_class: nil,
+          wrapper_class: assigns.wrapper_class,
           __changed__: nil
         })
       )
@@ -533,9 +549,15 @@ defmodule LineaUI.Components.DataTable do
   defp hoverable(value, _expand), do: value
 
   defp advanced_summary(assigns) do
+    assigns = assign(assigns, :numbers, @numbers)
+
     ~H"""
-    <div class="text-xs-plus" role="status" aria-live="polite">
-      <span :if={@summary == []}>{advanced_summary_text(@summary_label, @range)}</span>
+    <div
+      class={["text-[12.5px] text-slate-500 dark:text-navy-200", @numbers]}
+      role="status"
+      aria-live="polite"
+    >
+      <span :if={@summary == []}>{grid_summary(@summary_label || advanced_default(), @range)}</span>
       {render_slot(@summary, @range)}
     </div>
     """
@@ -569,7 +591,7 @@ defmodule LineaUI.Components.DataTable do
           :if={n == :gap}
           aria-hidden="true"
           class={[@page_class, "pointer-events-none"]}
-        >…</span>
+        >...</span>
         <.pager_link
           :if={n != :gap}
           {pager_link_assigns(assigns)}

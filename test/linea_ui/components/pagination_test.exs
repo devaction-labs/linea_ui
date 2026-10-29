@@ -143,7 +143,7 @@ defmodule LineaUI.Components.PaginationTest do
              |> find("[role=status] b")
              |> Enum.map(&(&1 |> LazyHTML.text() |> String.trim()))
 
-    assert "font-semibold" in classes(html, "[role=status] b")
+    assert "[&_b]:font-semibold" in classes(html, "[role=status]")
     assert [] = html |> find("[role=status] i") |> Enum.to_list()
     assert html =~ "&lt;i&gt;Mostrando&lt;/i&gt;"
   end

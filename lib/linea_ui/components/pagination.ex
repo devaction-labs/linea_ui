@@ -215,7 +215,7 @@ defmodule LineaUI.Components.Pagination do
     |> Enum.map(fn part ->
       case numbers do
         %{^part => number} ->
-          ~s(<b class="font-semibold text-slate-700 dark:text-navy-50">#{number}</b>)
+          "<b>#{number}</b>"
 
         _ ->
           part |> Phoenix.HTML.html_escape() |> Phoenix.HTML.safe_to_string()
@@ -269,7 +269,7 @@ defmodule LineaUI.Components.Pagination do
         :if={@total_entries}
         role="status"
         aria-live="polite"
-        class="text-slate-500 dark:text-navy-200"
+        class="text-slate-500 dark:text-navy-200 [&_b]:font-semibold [&_b]:text-slate-700 dark:[&_b]:text-navy-50"
       >
         {summary(assigns)}
       </span>
