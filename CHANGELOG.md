@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- `notification_center` and `kanban_column`: the empty state draws the LineOne illustration (a girl with a box, the new `empty_box`) instead of an icon; `kanban_column`'s `<:empty icon=...>` still shows an icon.
+
 ## 0.8.5
 
 New components, from the design refinement:

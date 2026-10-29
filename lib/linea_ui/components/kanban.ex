@@ -93,6 +93,7 @@ defmodule LineaUI.Components.Kanban do
 
   use LineaUI.Component
   import LineaUI.Components.Icon, only: [icon: 1]
+  import LineaUI.Components.Illustration, only: [empty_box: 1]
 
   @board "flex items-start gap-3.5 overflow-x-auto px-0.5 pb-3"
 
@@ -262,7 +263,9 @@ defmodule LineaUI.Components.Kanban do
 
   slot :empty, doc: "Shown instead of cards when `count` is `0`: `title` and the text." do
     attr :title, :string
-    attr :icon, :string, doc: "A Hugeicons name; `huge-inbox` by default."
+
+    attr :icon, :string,
+      doc: "A Hugeicons name; the LineOne illustration (a girl with a box) by default."
   end
 
   slot :footer, doc: "After the cards, e.g. the dashed add button."
@@ -332,9 +335,11 @@ defmodule LineaUI.Components.Kanban do
         class="flex flex-col items-center gap-1 px-2 pt-5 pb-6 text-center"
       >
         <.icon
-          name={empty[:icon] || "huge-inbox"}
+          :if={empty[:icon]}
+          name={empty[:icon]}
           class="mb-2 size-10 text-slate-300 dark:text-navy-450"
         />
+        <.empty_box :if={!empty[:icon]} class="mb-2 h-28" />
         <b class="text-[14.5px] font-semibold text-slate-600 dark:text-navy-100">{empty[:title]}</b>
         <span class="font-inter text-[13px]/[18px] text-slate-500 dark:text-navy-200">
           {render_slot(empty)}

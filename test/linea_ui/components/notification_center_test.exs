@@ -81,6 +81,7 @@ defmodule LineaUI.Components.NotificationCenterTest do
     refute html =~ "bg-error ring-2"
     assert html =~ ~s(aria-label="Notificações")
     assert html =~ "Tudo em dia"
+    assert html =~ ~s(viewBox="0 0 236 298")
     assert html =~ "disabled"
     refute html =~ "Ver todas"
   end

@@ -50,7 +50,8 @@ defmodule LineaUI.Components.NotificationCenter do
   import LineaUI.Components.Icon, only: [glyph: 1, icon: 1]
   import LineaUI.Components.Popover, only: [popover: 1]
   import LineaUI.Components.Tabs, only: [tabs: 1]
-  import LineaUI.Components.EmptyState, only: [empty_state: 1]
+
+  import LineaUI.Components.Illustration, only: [empty_box: 1]
 
   alias LineaUI.Components.Overlay
 
@@ -300,14 +301,14 @@ defmodule LineaUI.Components.NotificationCenter do
 
   defp list(%{items: []} = assigns) do
     ~H"""
-    <.empty_state
-      title={@empty}
-      icon="huge-notification-01"
-      class="bg-transparent shadow-none dark:bg-transparent dark:ring-0"
-    >
-      {@empty_text}
-      <:action :if={@empty_action != []}>{render_slot(@empty_action)}</:action>
-    </.empty_state>
+    <div class="flex flex-col items-center gap-1.5 px-7 pb-7 pt-6 text-center">
+      <.empty_box />
+      <h4 class="mt-3 text-[15px] font-semibold text-slate-800 dark:text-navy-50">{@empty}</h4>
+      <p class="max-w-60 text-xs-plus leading-5 text-slate-500 dark:text-navy-200">{@empty_text}</p>
+      <div :if={@empty_action != []} class="mt-2 flex flex-wrap justify-center gap-2">
+        {render_slot(@empty_action)}
+      </div>
+    </div>
     """
   end
 

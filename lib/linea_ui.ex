@@ -64,6 +64,7 @@ defmodule LineaUI do
     filter_menu: LineaUI.Components.FilterMenu,
     form: LineaUI.Components.Form,
     icon: LineaUI.Components.Icon,
+    illustration: LineaUI.Components.Illustration,
     input: LineaUI.Components.Input,
     input_group: LineaUI.Components.InputGroup,
     kanban: LineaUI.Components.Kanban,

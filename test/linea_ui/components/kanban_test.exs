@@ -135,6 +135,7 @@ defmodule LineaUI.Components.KanbanTest do
 
     assert find(template.(2), "b") |> Enum.count() == 0
     assert find(empty, "section > div[data-empty]") |> Enum.count() == 1
+    assert find(empty, "div[data-empty] svg[viewBox]") |> Enum.count() == 1
   end
 
   test "the column and the lost aside tint when a card is over them and draw no ring or outline" do
