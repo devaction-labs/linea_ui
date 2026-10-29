@@ -33,6 +33,31 @@ defmodule LineaUI.Components.ButtonTest do
     assert [_] = find(html, "a[href='/orders'][aria-disabled=true]") |> Enum.to_list()
   end
 
+  test "loading disables the button, marks it busy and shows a spinner of the text color" do
+    html = render(~H(<.button loading loading_label="Saving">Saving…</.button>))
+
+    assert [_] = find(html, "button[disabled][aria-busy=true]") |> Enum.to_list()
+    assert [_] = find(html, "button [role=status][aria-label=Saving]") |> Enum.to_list()
+    assert "border-current" in classes(html, "[role=status]")
+    assert "size-5" in classes(html, "[role=status]")
+    # a busy button stays more readable than a disabled one
+    assert "disabled:opacity-85" in classes(html, "button")
+    refute "disabled:opacity-60" in classes(html, "button")
+  end
+
+  test "loading on a link marks it disabled and busy" do
+    html = render(~H(<.button navigate="/orders" loading>Orders</.button>))
+
+    assert [_] =
+             find(html, "a[aria-disabled=true][aria-busy=true] [role=status]") |> Enum.to_list()
+  end
+
+  test "an idle button has no spinner nor aria-busy" do
+    html = render(~H(<.button>Save</.button>))
+    assert find(html, "[role=status]") |> Enum.to_list() == []
+    assert find(html, "[aria-busy]") |> Enum.to_list() == []
+  end
+
   test "current color inherits the parent's text" do
     html =
       render(~H"""

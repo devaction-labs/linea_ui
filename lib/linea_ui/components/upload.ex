@@ -99,75 +99,77 @@ defmodule LineaUI.Components.Upload do
       data-layout={@layout}
       {@rest}
     >
-      <div class="filepond--panel-root"></div>
-      <div
-        :if={@layout != "circle" or @upload.entries == []}
-        class="filepond--drop-label"
-        role="button"
-        tabindex="0"
-        data-browse
-      >
-        <label for={@upload.ref}>
-          {render_slot(@label) ||
-            default_label(%{drop: @drop_label, browse: @browse_label})}
-        </label>
+      <div class="filepond--pond">
+        <div class="filepond--panel-root"></div>
+        <div
+          :if={@layout != "circle" or @upload.entries == []}
+          class="filepond--drop-label"
+          role="button"
+          tabindex="0"
+          data-browse
+        >
+          <label for={@upload.ref}>
+            {render_slot(@label) ||
+              default_label(%{drop: @drop_label, browse: @browse_label})}
+          </label>
+        </div>
+        <ul :if={@upload.entries != []} class="filepond--list" role="list">
+          <li
+            :for={entry <- @upload.entries}
+            class="filepond--item"
+            data-state={state(@upload, entry)}
+            id={"#{@id}-#{entry.ref}"}
+          >
+            <div class="filepond--item-panel"></div>
+            <div class="filepond--file">
+              <button
+                type="button"
+                class="filepond--file-action-button"
+                title={@remove_label}
+                aria-label={@remove_label}
+                phx-click={@on_cancel}
+                phx-value-ref={entry.ref}
+                phx-target={@target}
+              >
+                <.glyph name={:close_solid} class={nil} />
+              </button>
+              <.live_img_preview
+                :if={@previews and image?(entry)}
+                entry={entry}
+                class="filepond--file-preview"
+              />
+              <div class="filepond--file-info">
+                <span class="filepond--file-info-main" title={entry.client_name}>
+                  {entry.client_name}
+                </span>
+                <span class="filepond--file-info-sub">{size(entry.client_size)}</span>
+              </div>
+              <div class="filepond--file-status">
+                <span class="filepond--file-status-main">
+                  {status(@upload, entry, assigns)}
+                </span>
+                <span
+                  :if={not entry.done? and entry_errors(@upload, entry) == []}
+                  class="filepond--file-status-sub"
+                >
+                  {entry.progress}%
+                </span>
+              </div>
+              <div
+                :if={not entry.done? and entry_errors(@upload, entry) == []}
+                class="filepond--progress"
+                role="progressbar"
+                aria-valuenow={entry.progress}
+                aria-valuemin="0"
+                aria-valuemax="100"
+              >
+                <span style={"width: #{entry.progress}%"}></span>
+              </div>
+            </div>
+          </li>
+        </ul>
       </div>
       <.live_file_input upload={@upload} class="sr-only" tabindex="-1" />
-      <ul :if={@upload.entries != []} class="filepond--list" role="list">
-        <li
-          :for={entry <- @upload.entries}
-          class="filepond--item"
-          data-state={state(@upload, entry)}
-          id={"#{@id}-#{entry.ref}"}
-        >
-          <div class="filepond--item-panel"></div>
-          <div class="filepond--file">
-            <button
-              type="button"
-              class="filepond--file-action-button"
-              title={@remove_label}
-              aria-label={@remove_label}
-              phx-click={@on_cancel}
-              phx-value-ref={entry.ref}
-              phx-target={@target}
-            >
-              <.glyph name={:close_solid} class={nil} />
-            </button>
-            <.live_img_preview
-              :if={@previews and image?(entry)}
-              entry={entry}
-              class="filepond--file-preview"
-            />
-            <div class="filepond--file-info">
-              <span class="filepond--file-info-main" title={entry.client_name}>
-                {entry.client_name}
-              </span>
-              <span class="filepond--file-info-sub">{size(entry.client_size)}</span>
-            </div>
-            <div class="filepond--file-status">
-              <span class="filepond--file-status-main">
-                {status(@upload, entry, assigns)}
-              </span>
-              <span
-                :if={not entry.done? and entry_errors(@upload, entry) == []}
-                class="filepond--file-status-sub"
-              >
-                {entry.progress}%
-              </span>
-            </div>
-            <div
-              :if={not entry.done? and entry_errors(@upload, entry) == []}
-              class="filepond--progress"
-              role="progressbar"
-              aria-valuenow={entry.progress}
-              aria-valuemin="0"
-              aria-valuemax="100"
-            >
-              <span style={"width: #{entry.progress}%"}></span>
-            </div>
-          </div>
-        </li>
-      </ul>
       <ul :if={@upload_errors != []} class="filepond--errors">
         <li :for={error <- @upload_errors}>
           {error_text(@error_texts, error, @upload.max_entries)}
@@ -213,8 +215,16 @@ defmodule LineaUI.Components.Upload do
   defp image?(_entry), do: false
 
   defp size(bytes) when bytes < 1000, do: "#{bytes} bytes"
-  defp size(bytes) when bytes < 1_000_000, do: "#{Float.round(bytes / 1000, 1)} KB"
-  defp size(bytes), do: "#{Float.round(bytes / 1_000_000, 1)} MB"
+  defp size(bytes) when bytes < 1_000_000, do: "#{decimal(bytes / 1000)} KB"
+  defp size(bytes), do: "#{decimal(bytes / 1_000_000)} MB"
+
+  # One decimal place, none when it would be a zero: "210 KB", "1.8 MB".
+  defp decimal(number) do
+    number
+    |> Float.round(1)
+    |> :erlang.float_to_binary(decimals: 1)
+    |> String.replace_suffix(".0", "")
+  end
 
   @button_styles %{
     {"solid", "neutral"} =>
@@ -247,7 +257,8 @@ defmodule LineaUI.Components.Upload do
       </.upload_button>
 
   With `upload` it renders `live_file_input`; otherwise a plain `<input type="file" name>`. The
-  button shows a 2px primary outline while its input has keyboard focus.
+  button shows a 2px primary outline (half opaque, as the other focus rings) while its input has
+  keyboard focus.
   """
   attr :upload, Phoenix.LiveView.UploadConfig, default: nil
   attr :name, :string, default: nil, doc: "Name of the plain file input, without `upload`."
@@ -274,7 +285,7 @@ defmodule LineaUI.Components.Upload do
         merge([
           "btn relative font-medium",
           @button_styles[{assigns.variant, assigns.color}],
-          "has-[input:focus-visible]:outline-2 has-[input:focus-visible]:outline-offset-2 has-[input:focus-visible]:outline-primary",
+          "has-[input:focus-visible]:outline-2 has-[input:focus-visible]:outline-solid has-[input:focus-visible]:outline-offset-2 has-[input:focus-visible]:outline-primary/50",
           assigns.icon && "size-9 p-0",
           assigns.disabled && "pointer-events-none opacity-55",
           assigns.shape == "pill" && "rounded-full",
