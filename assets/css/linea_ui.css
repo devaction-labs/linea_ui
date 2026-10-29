@@ -1030,6 +1030,43 @@ code.inline-code {
   @apply top-[calc(var(--size)+var(--space))] bottom-[var(--space)];
 }
 
+/* compact timeline: the canvas look */
+.timeline.is-compact {
+  --space: 4px;
+}
+
+.timeline.is-compact .timeline-item {
+  @apply pb-[22px];
+}
+
+.timeline.is-compact .timeline-item:last-child {
+  @apply pb-0;
+}
+
+.timeline.is-compact .timeline-day {
+  @apply pb-3.5;
+}
+
+.timeline.is-compact .timeline-item-content {
+  @apply pt-1 pl-3.5 text-[13px] leading-normal;
+}
+
+.timeline.is-compact .timeline-item-title {
+  @apply font-inter text-[13.5px] leading-[1.35] font-semibold text-slate-700 dark:text-navy-50;
+}
+
+.timeline.is-compact .timeline-item-time {
+  @apply text-xs leading-[1.35];
+}
+
+.timeline.is-compact .timeline-item-description {
+  @apply mt-[3px] p-0 text-slate-500 dark:text-navy-200;
+}
+
+.timeline.is-compact .timeline-item-description b {
+  @apply font-semibold text-slate-700 dark:text-navy-50;
+}
+
 /* pagination */
 .pagination {
     @apply font-inter font-medium flex text-slate-600 dark:text-navy-100
