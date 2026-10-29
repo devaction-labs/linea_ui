@@ -8,6 +8,9 @@ import {areaPath, bandPath, barPath, columnPath, linePath, segments} from "./cha
 import {plain} from "./chart_scale.js"
 import {h} from "./chart_svg.js"
 
+/** The gap between the end of a row and its label. */
+const END_GAP = 6
+
 const CANDLE_COLORS = {upward: "#00B746", downward: "#EF403C"}
 
 const call = (formatter, ...args) => (typeof formatter === "function" ? formatter(...args) : undefined)
@@ -183,22 +186,30 @@ const anchors = (p, boxes) =>
         )
       : []
 
-/** The data labels: on each bar (at its center, or its end with `position: "top"`) or above each point. */
+/** Whether the labels of a row chart sit past the end of each bar (`plotOptions.bar.dataLabels.position: "end"`). */
+export const END_LABEL_GAP = END_GAP
+
+export const endLabels = (config) => config.dataLabels.enabled !== false && config.type === "bar" && config.plotOptions.bar.horizontal === true && config.plotOptions.bar.dataLabels.position === "end"
+
+/** The text of a data label for `value` of series `series` at slot `slot`. */
+export const labelText = (config, value, series, slot) => String(call(config.dataLabels.formatter, value, {seriesIndex: series, dataPointIndex: slot, w: {config}}) ?? plain(value))
+
+/** The data labels: on each bar (at its center, or its end with `position: "top"`, or just past it with `"end"` on rows) or above each point. */
 export const dataLabels = (p, boxes) => {
   const {config} = p
   const size = parseFloat(config.dataLabels.style?.fontSize ?? 12)
   const top = config.plotOptions.bar.dataLabels.position === "top"
-  const format = (value, meta) => String(call(config.dataLabels.formatter, value, meta) ?? plain(value))
+  const outside = endLabels(config)
   return config.dataLabels.enabled === false
     ? []
     : anchors(p, boxes).map(({series, slot, v, x, y, box: bar}) => {
         const at = bar
-          ? {x: top && p.horizontal ? bar.x + bar.w - 10 : bar.x + bar.w / 2, y: top && !p.horizontal ? bar.y + 10 : bar.y + bar.h / 2}
+          ? {x: outside ? bar.x + bar.w + END_GAP : top && p.horizontal ? bar.x + bar.w - 10 : bar.x + bar.w / 2, y: top && !p.horizontal && !outside ? bar.y + 10 : bar.y + bar.h / 2}
           : {x, y: y - 10}
         return h(
           "text",
-          {class: "linea-chart-datalabel", x: at.x + config.dataLabels.offsetX, y: at.y + config.dataLabels.offsetY, "text-anchor": "middle", "dominant-baseline": "central", "font-size": size},
-          format(v, {seriesIndex: series, dataPointIndex: slot, w: {config}})
+          {class: outside ? "linea-chart-datalabel linea-chart-datalabel--end" : "linea-chart-datalabel", x: at.x + config.dataLabels.offsetX, y: at.y + config.dataLabels.offsetY, "text-anchor": outside ? "start" : "middle", "dominant-baseline": "central", "font-size": size},
+          labelText(config, v, series, slot)
         )
       })
 }

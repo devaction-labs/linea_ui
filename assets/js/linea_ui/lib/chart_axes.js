@@ -87,13 +87,14 @@ const timedAxis = (axis, data, length, {measure, room, locale}) => {
   return {kind: "points", timed: true, width: length / Math.max(ticks.length, 1), center: place, count: Math.max(data.count, 1), labels, edges: ticks.map(place)}
 }
 
-const slotAxis = (config, axis, data, length, {measure, banded}) => {
+const slotAxis = (config, axis, data, length, {measure, banded, horizontal}) => {
   const count = Math.max(data.count, 1)
   const grid = bands(count, length)
   const centers = banded ? grid.centers : spread(count, length)
   const spacing = banded ? grid.width : length / Math.max(count - 1, 1)
   const all = Array.from({length: data.count}, (_, slot) => ({slot, pos: centers[slot], text: categoryText(config, data, slot)}))
-  const widest = Math.max(0, ...all.map((label) => measure(label.text, fontOf(axis))))
+  // Labels down the side of a row chart collide by their height, not their width.
+  const widest = horizontal ? fontOf(axis) : Math.max(0, ...all.map((label) => measure(label.text, fontOf(axis))))
   return {
     kind: banded ? "bands" : "points",
     timed: false,
@@ -114,5 +115,5 @@ const slotAxis = (config, axis, data, length, {measure, banded}) => {
 export const categoryAxis = (config, data, length, {measure, horizontal, room = {left: 0, right: 0}}) => {
   const axis = horizontal ? config.yaxis : config.xaxis
   const banded = BAND_TYPES.includes(config.type)
-  return !banded && data.kind !== "category" ? timedAxis(axis, data, length, {measure, room, locale: config.chart.defaultLocale}) : slotAxis(config, axis, data, length, {measure, banded})
+  return !banded && data.kind !== "category" ? timedAxis(axis, data, length, {measure, room, locale: config.chart.defaultLocale}) : slotAxis(config, axis, data, length, {measure, banded, horizontal})
 }

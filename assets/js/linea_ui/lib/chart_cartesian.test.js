@@ -178,3 +178,23 @@ test("candles show open, high, low and close", () => {
   const hit = hover(layout, drawn.boxes, layout.across(0), layout.plot.y + 10)
   assert.deepEqual(hit.rows.map((row) => [row.name, row.value]), [["Open", "1"], ["High", "5"], ["Low", "0"], ["Close", "3"]])
 })
+
+const rows = {...columns, chart: {type: "bar", height: 190}, xaxis: {categories: ["Web", "App", "Parceiros", "Balcão", "Outros"]}, yaxis: {}, series: [{name: "Pedidos", data: [524, 349, 225, 150, 100]}], plotOptions: {bar: {horizontal: true, barHeight: "55%"}}}
+
+test("the categories of a row chart are thinned by their height, not their width", () => {
+  const {layout} = build(rows, {width: 300})
+  assert.equal(layout.cat.labels.length, 5)
+})
+
+test("row labels at the end sit past each bar, in room kept at the right of the plot", () => {
+  const on = {...rows, dataLabels: {enabled: true}, plotOptions: {bar: {horizontal: true, barHeight: "55%", dataLabels: {position: "end"}}}}
+  const plain = build({...on, plotOptions: {bar: {horizontal: true, barHeight: "55%"}}}, {width: 300})
+  const {layout, drawn, svg} = build(on, {width: 300})
+  assert.equal(layout.plot.w < plain.layout.plot.w, true)
+  const first = drawn.boxes.find((box) => box.slot === 0)
+  const label = drawn.layers.labels[0]
+  assert.equal(label.attrs.x, first.x + first.w + 6)
+  assert.equal(label.attrs["text-anchor"], "start")
+  assert.equal(count(svg, /linea-chart-datalabel--end/g), 5)
+  assert.equal(count(svg, />524</g), 1)
+})

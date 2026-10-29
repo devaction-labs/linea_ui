@@ -502,6 +502,10 @@
     pointer-events: none;
   }
 
+  .linea-chart-datalabel--end {
+    @apply fill-slate-700 dark:fill-navy-50;
+  }
+
   .linea-chart-marker {
     @apply stroke-slate-150 dark:stroke-navy-800;
     stroke-width: 2;
