@@ -30,7 +30,7 @@ defmodule LineaUI.Components.CardTable do
 
   ## The details panel
 
-  Clicking a row (or tabbing to it) can open a panel under it with more than the row shows. Give `detail` slots
+  Clicking a row (or tabbing to it) can open a panel under it with more than the row shows; it closes when the mouse leaves the row or the open row is clicked again. Give `detail` slots
   (`<:detail :let={o} label="Due date">{o.due}</:detail>`) and the panel lists exactly those, in the order given,
   at every width above 520px, whether or not their column is on screen. With no `detail`, the panel only has
   the columns that left.
@@ -152,7 +152,12 @@ defmodule LineaUI.Components.CardTable do
     assigns = assign(assigns, :all_checked, all_selected(assigns))
 
     ~H"""
-    <div id={@id <> "-box"} class={merge(["linea-ctable", @class])} style={@tracks}>
+    <div
+      id={@id <> "-box"}
+      class={merge(["linea-ctable", @class])}
+      style={@tracks}
+      phx-hook={(@hidable or @detail != []) && "LineaUI.CardTable"}
+    >
       <label :if={@selectable} class="linea-ctable-all">
         <input
           type="checkbox"

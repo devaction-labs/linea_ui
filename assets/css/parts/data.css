@@ -1060,6 +1060,11 @@
     box-shadow: 0 0 0 1px var(--color-slate-300), 0 8px 20px -14px rgb(15 23 42 / 0.4);
   }
 
+  /* The row that holds the open panel stays above the row the mouse moves over. */
+  .linea-ctable-row:focus-within {
+    z-index: 4;
+  }
+
   .dark .linea-ctable-row:hover,
   .dark .linea-ctable-row:focus-within {
     box-shadow: 0 0 0 1px var(--color-navy-400), 0 8px 20px -14px rgb(0 0 0 / 0.6);
