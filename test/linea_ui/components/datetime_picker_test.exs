@@ -295,6 +295,19 @@ defmodule LineaUI.Components.DatetimePickerTest do
     assert find(html, "#d-field span #mine") |> Enum.count() == 1
   end
 
+  test "the calendar icon follows the size and the panel has the rounded, bordered card" do
+    small = render(~H|<.datetime_picker id="d" name="at" size="sm" />|)
+    medium = render(~H|<.datetime_picker id="d" name="at" />|)
+    large = render(~H|<.datetime_picker id="d" name="at" size="lg" />|)
+    assert "size-4" in classes(small, "#d-field svg")
+    assert "size-[18px]" in classes(medium, "#d-field svg")
+    assert "size-5" in classes(large, "#d-field svg")
+
+    html = render(~H|<.datetime_picker id="d" name="at" />|)
+    assert "rounded-xl" in classes(html, "#d-panel .popper-box")
+    assert "focus:ring-3" in classes(html, "#d-display")
+  end
+
   test "disabled disables the input and the hidden fields" do
     html = render(~H|<.datetime_picker id="d" name="at" value="2026-10-14T10:30" disabled />|)
     assert data(html, "#d", "data-disabled") == ["true"]

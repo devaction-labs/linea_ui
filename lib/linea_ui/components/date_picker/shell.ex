@@ -28,8 +28,10 @@ defmodule LineaUI.Components.DatePicker.Shell do
 
   @preset "rounded-full bg-slate-150 px-2.5 py-1 text-xs-plus font-medium text-slate-600 transition-colors hover:bg-slate-200 hover:text-slate-800 focus-visible:outline-2 focus-visible:outline-primary/50 data-active:bg-primary data-active:text-white dark:bg-navy-500 dark:text-navy-100 dark:hover:bg-navy-450 dark:hover:text-navy-50 dark:data-active:bg-accent dark:data-active:text-white"
 
-  @input "form-input flatpickr-input peer w-full rounded-lg border border-slate-300 bg-transparent px-3 py-2 placeholder:text-slate-400/70 hover:border-slate-400 focus:border-primary dark:border-navy-450 dark:hover:border-navy-400 dark:focus:border-accent"
+  @input "form-input flatpickr-input peer w-full rounded-lg border border-slate-300 bg-transparent px-3 py-2 placeholder:text-slate-400/70 hover:border-slate-400 focus:border-primary focus:ring-3 focus:ring-primary/20 disabled:pointer-events-none disabled:select-none disabled:border-none disabled:bg-zinc-100 dark:border-navy-450 dark:hover:border-navy-400 dark:focus:border-accent dark:focus:ring-accent/20 dark:disabled:bg-navy-600"
   @input_grouped "form-input flatpickr-input w-full rounded-l-lg border border-slate-300 bg-transparent px-3 py-2 placeholder:text-slate-400/70 hover:z-10 hover:border-slate-400 focus:z-10 focus:border-primary dark:border-navy-450 dark:hover:border-navy-400 dark:focus:border-accent"
+
+  @error "border-error hover:border-error focus:border-error focus:ring-error/20 dark:border-error dark:hover:border-error dark:focus:border-error dark:focus:ring-error/20"
 
   @doc false
   def months, do: @months
@@ -57,7 +59,7 @@ defmodule LineaUI.Components.DatePicker.Shell do
 
     locale = @locales[Map.get(assigns, :locale, "en")]
     values = hidden_values(assigns.value, kind, assigns.mode)
-    format = assigns.display_format || locale.formats[kind]
+    format = assigns.display_format || default_format(kind, assigns, locale)
     separator = Map.get(assigns, :range_separator) || locale.separator
 
     names = %{
@@ -82,6 +84,9 @@ defmodule LineaUI.Components.DatePicker.Shell do
       grouped: assigns.trailing != []
     )
   end
+
+  defp default_format(:time, %{time_24hr: false}, _locale), do: "h:i K"
+  defp default_format(kind, _assigns, locale), do: locale.formats[kind]
 
   defp texts(locale, labels) do
     locale
@@ -259,7 +264,7 @@ defmodule LineaUI.Components.DatePicker.Shell do
           merge([
             input_base(assigns.grouped),
             icon_pad(assigns.grouped, assigns.show_icon or assigns.icon != []),
-            assigns.errors != [] && "border-error",
+            assigns.errors != [] && @error,
             assigns.class
           ])
       )
@@ -353,7 +358,7 @@ defmodule LineaUI.Components.DatePicker.Shell do
           aria-label={@dialog}
           tabindex="-1"
           class={calendar_class(@kind, @mode, @inline)}
-          style={calendar_style(@inline)}
+          style={calendar_style(@inline, @kind)}
           data-calendar
         >
         </div>
@@ -395,8 +400,9 @@ defmodule LineaUI.Components.DatePicker.Shell do
     ]
   end
 
-  defp calendar_style(true), do: "position: relative; top: 2px; display: block;"
-  defp calendar_style(false), do: "top: calc(100% + 2px); left: 0;"
+  defp calendar_style(true, _kind), do: "position: relative; top: 2px; display: block;"
+  defp calendar_style(false, :time), do: "top: calc(100% + 6px); left: 0;"
+  defp calendar_style(false, _kind), do: "top: calc(100% + 2px); left: 0;"
 
   defp default_icon(:time) do
     assigns = %{}

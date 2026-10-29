@@ -49,7 +49,8 @@ defmodule LineaUI.Components.TimePicker do
 
   attr :display_format, :string,
     default: nil,
-    doc: "The text of the input in flatpickr tokens; `H:i` by default (`h:i K` for 12-hour text)."
+    doc:
+      "The text of the input in flatpickr tokens; `h:i K` (`9:30 AM`) by default, `H:i` with `time_24hr`."
 
   attr :locale, :string,
     default: "en",

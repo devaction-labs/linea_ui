@@ -58,6 +58,7 @@ const evaluate = async (expression) =>
 
 try {
   await send("Page.enable")
+  await send("Emulation.setFocusEmulationEnabled", {enabled: true}) // a headless page has no focus, so :focus would never match
   await send("Emulation.setDeviceMetricsOverride", {width, height, deviceScaleFactor: 1, mobile: false})
   await send("Page.navigate", {url})
   await sleep(wait)

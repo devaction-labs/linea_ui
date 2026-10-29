@@ -90,14 +90,14 @@ defmodule LineaUI.Components.DatetimePicker do
 
   @variants %{
     "outlined" =>
-      "form-input peer w-full cursor-pointer rounded-lg border border-slate-300 bg-transparent px-3 py-2 placeholder:text-slate-400/70 hover:border-slate-400 focus:border-primary disabled:pointer-events-none disabled:select-none disabled:border-none disabled:bg-zinc-100 dark:border-navy-450 dark:hover:border-navy-400 dark:focus:border-accent dark:disabled:bg-navy-600",
+      "form-input peer w-full cursor-pointer rounded-lg border border-slate-300 bg-transparent px-3 py-2 placeholder:text-slate-400/70 hover:border-slate-400 focus:border-primary focus:ring-3 focus:ring-primary/20 disabled:pointer-events-none disabled:select-none disabled:border-none disabled:bg-zinc-100 dark:border-navy-450 dark:hover:border-navy-400 dark:focus:border-accent dark:focus:ring-accent/20 dark:disabled:bg-navy-600",
     "filled" =>
       "form-input peer w-full cursor-pointer rounded-lg bg-slate-150 px-3 py-2 ring-primary/50 placeholder:text-slate-400 hover:bg-slate-200 focus:ring-3 disabled:pointer-events-none disabled:select-none disabled:opacity-60 dark:bg-navy-900/90 dark:ring-accent/50 dark:placeholder:text-navy-300 dark:hover:bg-navy-900 dark:focus:bg-navy-900"
   }
 
   @errors %{
     "outlined" =>
-      "border-error hover:border-error focus:border-error dark:border-error dark:hover:border-error dark:focus:border-error",
+      "border-error hover:border-error focus:border-error focus:ring-error/20 dark:border-error dark:hover:border-error dark:focus:border-error dark:focus:ring-error/20",
     "filled" => "ring-1 ring-error focus:ring-error/50 dark:ring-error"
   }
 
@@ -563,7 +563,7 @@ defmodule LineaUI.Components.DatetimePicker do
               data-display
             />
             <span :if={@show_icon or @icon != []} class={icon_class()}>
-              {render_slot(@icon) || default_icon()}
+              {render_slot(@icon) || default_icon(@size)}
             </span>
           </div>
           {render_slot(@trigger)}
@@ -587,7 +587,7 @@ defmodule LineaUI.Components.DatetimePicker do
           data-panel
           phx-update="ignore"
         >
-          <div class="popper-box rounded-lg border border-slate-150 bg-white font-inter shadow-soft dark:border-navy-500 dark:bg-navy-700 dark:shadow-none">
+          <div class="popper-box rounded-xl border border-slate-300 bg-white font-inter shadow-soft dark:border-navy-450 dark:bg-navy-700 dark:shadow-none">
             <div data-surface></div>
           </div>
         </div>
@@ -610,11 +610,13 @@ defmodule LineaUI.Components.DatetimePicker do
 
   defp icon_class, do: @icon
 
-  defp default_icon do
-    assigns = %{}
+  @icon_sizes %{"sm" => "size-4", "md" => "size-[18px]", "lg" => "size-5"}
+
+  defp default_icon(size) do
+    assigns = %{class: ["transition-colors duration-200", @icon_sizes[size]]}
 
     ~H"""
-    <.glyph name={:calendar} class="size-5 transition-colors duration-200" stroke_width="1.5" />
+    <.glyph name={:calendar} class={@class} stroke_width="1.5" />
     """
   end
 end

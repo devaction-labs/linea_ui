@@ -57,7 +57,7 @@ const count = (html, needle) => html.split(needle).length - 1
 test("a month has its title, 31 days and the days before its first as empty cells", () => {
   const html = renderMonth({year: 2026, month: 9}, {previous: true, next: true}, model())
   assert.equal(count(html, "data-day="), 31)
-  assert.equal(count(html, 'role="gridcell"></div>'), 4)
+  assert.equal(count(html, 'role="gridcell" aria-hidden="true"'), 4)
   assert.match(html, /October 2026/)
   assert.match(html, /data-nav="-1"/)
   assert.match(html, /data-nav="1"/)
@@ -66,8 +66,17 @@ test("a month has its title, 31 days and the days before its first as empty cell
 
 test("the week starts where week_start says", () => {
   const html = renderMonth({year: 2026, month: 9}, {previous: true, next: true}, model({weekStart: 1}))
-  assert.equal(count(html, 'role="gridcell"></div>'), 3)
+  assert.equal(count(html, 'role="gridcell" aria-hidden="true"'), 4)
+  assert.match(html, /role="gridcell" aria-hidden="true" class="[^"]*">28<\/div>/)
   assert.ok(html.indexOf('aria-label="Monday"') < html.indexOf('aria-label="Sunday"'))
+})
+
+test("the days of the neighbour months fill the first and the last week, dim and out of the tab order", () => {
+  const html = renderMonth({year: 2026, month: 10}, {previous: true, next: true}, model({view: {year: 2026, month: 10}, today: "2026-11-03", focus: "2026-11-03", state: {start: null, end: null}}))
+  assert.equal(count(html, "data-day="), 30)
+  assert.equal(count(html, 'role="gridcell" aria-hidden="true"'), 5)
+  assert.match(html, /role="gridcell" aria-hidden="true" class="[^"]*">5<\/div><\/div>/)
+  assert.doesNotMatch(html, /data-day="2026-12-01"/)
 })
 
 test("only the focused day is in the tab order, today is marked and the chosen day is pressed", () => {
@@ -198,7 +207,8 @@ test("class helpers: the ends are inverted, closed days dimmed, today ringed", (
   assert.match(dayClass({edge: false, off: true, today: false}), /cursor-not-allowed/)
   assert.match(dayClass({edge: false, off: false, today: true}), /after:size-1 after:rounded-full/)
   assert.doesNotMatch(dayClass({edge: false, off: false, today: true}), /ring-1/)
-  assert.doesNotMatch(dayClass({edge: true, off: false, today: true}), /after:size-1/)
+  assert.match(dayClass({edge: true, off: false, today: true}), /after:size-1/)
+  assert.doesNotMatch(dayClass({edge: true, off: false, today: true}), /text-primary/)
   assert.match(optionClass({selected: true, disabled: false}), /bg-primary/)
   assert.match(optionClass({selected: false, disabled: true}), /cursor-not-allowed/)
   assert.match(optionClass({selected: false, disabled: true}), /line-through opacity-50/)

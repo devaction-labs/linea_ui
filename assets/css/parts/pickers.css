@@ -1646,6 +1646,10 @@ span.flatpickr-day.selected {
   position: static;
   width: 7px;
 }
+.flatpickr-calendar.noCalendar .flatpickr-time.stacked :is(.numInputWrapper button, button.flatpickr-am-pm):focus-visible {
+  outline: 2px solid color-mix(in oklab, var(--tp-ring) 55%, transparent);
+  outline-offset: 1px;
+}
 .flatpickr-calendar.noCalendar .flatpickr-time.stacked .arrowUp::after { margin-top: 4px; transform: rotate(225deg); }
 .flatpickr-calendar.noCalendar .flatpickr-time.stacked .arrowDown::after { margin-bottom: 4px; transform: rotate(45deg); }
 .flatpickr-calendar.noCalendar .flatpickr-time.stacked .flatpickr-time-separator {
