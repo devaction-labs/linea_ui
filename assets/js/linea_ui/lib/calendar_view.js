@@ -133,7 +133,8 @@ const numInput = (className, value, label, extra, [up, down], tabindex = -1, sta
 /**
  * The month header, weekdays and days of the calendar as HTML. The days are a `role="grid"` of rows and
  * gridcells (`aria-selected`, `aria-disabled`, `aria-current="date"`, a long name in `aria-label`) with one Tab
- * stop, the day `focus` points at. `state.labels` has the texts (`LABELS` by default), `state.dayLabel(iso)` the name of a day.
+ * stop, the day `focus` points at. `state.compact` draws only the weeks of the month (4 to 6), not always six.
+ * `state.labels` has the texts (`LABELS` by default), `state.dayLabel(iso)` the name of a day.
  */
 export const renderDays = (state) => {
   const {view, weekStart, names = {}, labels, dates, mode} = state
@@ -153,7 +154,8 @@ export const renderDays = (state) => {
       `${off ? ' aria-disabled="true"' : ""}${iso === state.today ? ' aria-current="date"' : ""} tabindex="${iso === stop ? 0 : -1}" data-date="${iso}">${Number(iso.slice(8))}</span>`
     )
   })
-  const rows = [...Array(6)].map((_, row) => `<div role="row" class="flatpickr-week">${cells.slice(row * 7, row * 7 + 7).join("")}</div>`)
+  const weeks = state.compact ? Math.ceil((leadingDays(view, weekStart) + daysInMonth(view)) / 7) : 6
+  const rows = [...Array(weeks)].map((_, row) => `<div role="row" class="flatpickr-week">${cells.slice(row * 7, row * 7 + 7).join("")}</div>`)
   const yearArrows = [stepButton(1, "year", text(labels, "picker_year_up")), stepButton(-1, "year", text(labels, "picker_year_down"))]
   return (
     `<div class="flatpickr-months"><button type="button" class="flatpickr-prev-month" data-month="-1" aria-label="${text(labels, "picker_previous")}">${glyphHtml("angle_left", state.icons)}</button>` +
