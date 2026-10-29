@@ -26,6 +26,9 @@ defmodule PreviewWeb.Pages.FramedShell do
             >
               <:brand><.glyph name={:apps} class="size-5 text-primary" /></:brand>
               <:wordmark>Signetum</:wordmark>
+              <:workspace>
+                <.rail_workspace name="Acme Ltda" subtitle="HQ · Professional plan" phx-click="noop" />
+              </:workspace>
               <:search aria-label="Search" phx-click="noop">
                 <.glyph name={:search} class="size-4.5 shrink-0" />
                 <span class="flex-1">Search</span>
@@ -70,7 +73,7 @@ defmodule PreviewWeb.Pages.FramedShell do
             <:crumb navigate="/framed-shell">Orders</:crumb>
             <:crumb>PV-1283</:crumb>
             <:badge>
-              <.badge color="info">Approved</.badge>
+              <.badge color="info" variant="soft" size="sm">Approved</.badge>
             </:badge>
             <:actions>
               <.button variant="outline">Duplicate</.button>

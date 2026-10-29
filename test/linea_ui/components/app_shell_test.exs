@@ -504,6 +504,46 @@ defmodule LineaUI.Components.AppShellTest do
       assert find(html, ".rail-user .rail-label") |> LazyHTML.text() =~ "Admin"
     end
 
+    test "the workspace switcher: initials, name, line and the chevrons, a button the page can wire" do
+      html =
+        render(
+          ~H|<.rail_workspace name="Acme Ltda" subtitle="HQ" phx-click="workspaces" id="ws" />|
+        )
+
+      assert attr_of(html, "button#ws", "phx-click") == ["workspaces"]
+      assert attr_of(html, "button#ws", "type") == ["button"]
+      assert find(html, ".rail-workspace-avatar") |> LazyHTML.text() == "AL"
+      assert find(html, ".rail-workspace-text") |> LazyHTML.text() =~ "Acme Ltda"
+      assert find(html, ".rail-workspace-text") |> LazyHTML.text() =~ "HQ"
+      assert [_] = find(html, "button svg") |> Enum.to_list()
+
+      own =
+        render(
+          ~H|<.rail_workspace name="Acme" initials="FS"><img id="logo" src="/l.png" alt="" /></.rail_workspace>|
+        )
+
+      assert [_] = find(own, ".rail-workspace-avatar > #logo") |> Enum.to_list()
+
+      assert find(
+               render(~H|<.rail_workspace name="Acme" initials="FS" />|),
+               ".rail-workspace-avatar"
+             )
+             |> LazyHTML.text() == "FS"
+    end
+
+    test "the crumbs of the page variant are quiet links, not primary coloured" do
+      html =
+        render(~H"""
+        <.page_header variant="page" title="T">
+          <:crumb navigate="/orders">Orders</:crumb>
+          <:crumb>PV</:crumb>
+        </.page_header>
+        """)
+
+      refute "text-primary" in classes(html, "nav a")
+      assert "hover:text-slate-800" in classes(html, "nav a")
+    end
+
     test "the page variant of the header: crumbs, clock, bell, badge, title, context, actions and tabs" do
       html =
         render(~H"""

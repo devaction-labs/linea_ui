@@ -245,7 +245,7 @@ defmodule LineaUI.Components.AppShell do
       {render_slot(@aside)}
       <main class={
         merge([
-          "flex min-w-0 flex-1 flex-col gap-[18px] overflow-y-auto bg-white px-4 py-5 shadow-[0_3px_10px_rgb(48_46_56/.06)] md:rounded-xl md:px-7 md:py-[22px] dark:bg-navy-700 dark:shadow-none dark:md:ring-1 dark:md:ring-navy-500",
+          "flex min-w-0 flex-1 flex-col gap-[18px] overflow-y-auto bg-white px-4 py-5 shadow-[0_3px_10px_rgb(48_46_56/.06)] md:rounded-xl md:px-7 md:py-[22px] dark:bg-navy-700 dark:shadow-none dark:md:ring-1 dark:md:ring-navy-600",
           @main_class
         ])
       }>
@@ -1792,6 +1792,61 @@ defmodule LineaUI.Components.AppShell do
   end
 
   @doc """
+  The workspace switcher under the brand of the framed menu: the workspace's initials (or your own picture),
+  its name and a line under it, with the up-down chevrons. It is a button, so `phx-click` (or a dropdown
+  around it) opens your list of workspaces. It goes in the `:workspace` slot of `framed_sidebar/1` and is
+  hidden in the rail.
+
+      <:workspace>
+        <.rail_workspace name="Acme Ltda" subtitle="HQ · Professional plan" phx-click="workspaces" />
+      </:workspace>
+  """
+  attr :name, :string, required: true
+  attr :subtitle, :string, default: nil
+  attr :initials, :string, default: nil, doc: "Defaults to the first letters of the name."
+  attr :class, :any, default: nil
+  attr :rest, :global
+  slot :inner_block, doc: "Replaces the initials, a picture for the workspace."
+
+  def rail_workspace(assigns) do
+    assigns = assign(assigns, :initials, assigns.initials || workspace_initials(assigns.name))
+
+    ~H"""
+    <button type="button" class={merge(["rail-workspace", @class])} {@rest}>
+      <span class="rail-workspace-avatar">{render_slot(@inner_block) || @initials}</span>
+      <span class="rail-workspace-text">
+        <span class="block truncate text-[13px] font-medium text-slate-800 dark:text-navy-50">
+          {@name}
+        </span>
+        <span :if={@subtitle} class="block truncate text-xs text-slate-400 dark:text-navy-300">
+          {@subtitle}
+        </span>
+      </span>
+      <svg
+        class="size-4 shrink-0 text-slate-400 dark:text-navy-300"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <path d="m8 9 4-4 4 4M8 15l4 4 4-4" />
+      </svg>
+    </button>
+    """
+  end
+
+  defp workspace_initials(name) do
+    name
+    |> String.split()
+    |> Enum.take(2)
+    |> Enum.map_join(&String.first/1)
+    |> String.upcase()
+  end
+
+  @doc """
   The person at the bottom of the framed menu: their picture and, outside the rail, their name and subtitle.
 
       <.rail_user name="Ana Souza" subtitle="Admin"><.avatar name="Ana Souza" color="auto" size="32" /></.rail_user>
@@ -1887,7 +1942,7 @@ defmodule LineaUI.Components.AppShell do
           <%= for {crumb, last} <- @crumbs do %>
             <.link
               :if={link?(crumb)}
-              class="text-primary transition-colors hover:text-primary-focus dark:text-accent-light dark:hover:text-accent"
+              class="transition-colors hover:text-slate-800 dark:hover:text-navy-50"
               {link_attrs(crumb)}
             >
               {render_slot(crumb)}
