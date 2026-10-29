@@ -1061,7 +1061,7 @@
   }
 
   /* The row that holds the open panel stays above the row the mouse moves over. */
-  .linea-ctable-row:focus-within {
+  .linea-ctable-row[data-open] {
     z-index: 4;
   }
 
@@ -1114,7 +1114,7 @@
     color: var(--ct-soft);
   }
 
-  /* The panel of the columns that left: label over value, under the row, shown while the row has focus (a click on it, or Tab). */
+  /* The panel of the columns that left: label over value, under the row, opened by the hook and kept until it is closed. */
   .linea-ctable-pop {
     position: absolute;
     z-index: 8;
@@ -1152,16 +1152,80 @@
     min-width: 0;
   }
 
-  .linea-ctable-pop dt {
+  .linea-ctable-pk {
     font-size: 11px;
     opacity: 0.6;
   }
 
-  .linea-ctable-pop dd {
-    margin: 0;
+  .linea-ctable-pv {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+  }
+
+  .linea-ctable-pop > div {
+    position: relative;
+    padding-right: 24px;
+  }
+
+  /* The copy button of a line: shown on the line's hover or focus, with its own tooltip. */
+  .linea-ctable-pcp {
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: flex;
+    width: 22px;
+    height: 22px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    background: transparent;
+    color: inherit;
+    opacity: 0;
+    cursor: pointer;
+    transition: opacity 0.12s, background 0.12s;
+  }
+
+  .linea-ctable-pop > div:hover .linea-ctable-pcp,
+  .linea-ctable-pcp:focus-visible,
+  .linea-ctable-pcp[data-copied] {
+    opacity: 1;
+  }
+
+  .linea-ctable-pcp:hover { background: rgb(128 128 128 / 0.22); }
+  .linea-ctable-pcp svg { width: 13px; height: 13px; }
+  .linea-ctable-pcp .ok { display: none; }
+  .linea-ctable-pcp[data-copied] { color: var(--color-success); }
+  .linea-ctable-pcp[data-copied] .cp { display: none; }
+  .linea-ctable-pcp[data-copied] .ok { display: block; }
+
+  .linea-ctable-pcp::after {
+    content: attr(data-tip);
+    position: absolute;
+    bottom: calc(100% + 6px);
+    right: 0;
+    padding: 4px 8px;
+    border-radius: 6px;
+    background: var(--color-slate-100);
+    color: var(--color-slate-800);
+    font-size: 11px;
+    white-space: nowrap;
+    box-shadow: 0 6px 16px -6px rgb(15 23 42 / 0.5);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.12s;
+    pointer-events: none;
+  }
+
+  .dark .linea-ctable-pcp::after {
+    background: var(--color-slate-800);
+    color: var(--color-slate-100);
+  }
+
+  .linea-ctable-pcp:hover::after,
+  .linea-ctable-pcp:focus-visible::after {
+    opacity: 1;
+    visibility: visible;
   }
 
   .linea-ctable-row:nth-last-child(-n + 2) .linea-ctable-pop {
@@ -1169,11 +1233,17 @@
     bottom: calc(100% + 6px);
   }
 
-  .linea-ctable-row:focus-within .linea-ctable-pop {
+  /* Open by the hook (click on the row, Enter or Space) and kept until it is closed: it can be read and used. */
+  .linea-ctable-row[data-open] .linea-ctable-pop {
     opacity: 1;
     visibility: visible;
     transform: none;
+    pointer-events: auto;
+    user-select: text;
+    cursor: auto;
   }
+
+  .linea-ctable-row[aria-expanded] { cursor: pointer; }
 
   /* With `detail` slots the panel lists them at every width above 520px, not only the columns that left. */
   .linea-ctable-pop[data-detail] { display: grid; }

@@ -151,7 +151,7 @@ defmodule LineaUI.Components.CardTableTest do
       </.card_table>
       """)
 
-    pop = find(html, "#order-1 dl.linea-ctable-pop")
+    pop = find(html, "#order-1 .linea-ctable-pop")
     assert pop |> LazyHTML.attribute("data-detail") == [""]
     assert LazyHTML.text(pop) =~ "Due"
     assert LazyHTML.text(pop) =~ "Secretaria de Saúde"

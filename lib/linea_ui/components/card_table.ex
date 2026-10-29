@@ -30,7 +30,10 @@ defmodule LineaUI.Components.CardTable do
 
   ## The details panel
 
-  Clicking a row (or tabbing to it) can open a panel under it with more than the row shows; it closes when the mouse leaves the row or the open row is clicked again. Give `detail` slots
+  Clicking a row (on any part that is not a control) opens a panel under it with more than the row shows. It stays
+  until you close it (click outside, `Esc`, or open another row), so it can be read and used: every line has a
+  copy button (the licitação, the AFM...). Using a control of the row (the action menu, a checkbox) closes it, so
+  it never competes with a dropdown. Give `detail` slots
   (`<:detail :let={o} label="Due date">{o.due}</:detail>`) and the panel lists exactly those, in the order given,
   at every width above 520px, whether or not their column is on screen. With no `detail`, the panel only has
   the columns that left.
@@ -104,6 +107,13 @@ defmodule LineaUI.Components.CardTable do
 
   attr :select_all_label, :string, default: "Select all rows"
   attr :select_label, :string, default: "Select row"
+  attr :panel_label, :string, default: "Details", doc: "The accessible name of the details panel."
+
+  attr :copy_label, :string,
+    default: "Copy",
+    doc: "The tooltip of the copy button of a panel line."
+
+  attr :copied_label, :string, default: "Copied", doc: "The tooltip for two seconds after a copy."
   attr :on_sort, :any, default: nil, doc: "Event sent when a sortable header is clicked."
   attr :sort_by, :string, default: nil
   attr :sort_dir, :string, default: "asc", values: ~w(asc desc)
@@ -218,6 +228,7 @@ defmodule LineaUI.Components.CardTable do
             id={@row_id && @row_id.(row)}
             class="linea-ctable-row"
             tabindex="0"
+            aria-expanded={(@hidable or @detail != []) && "false"}
             data-status={status_of(assigns, row)}
             data-selected={@selectable && bool(key(assigns, row) in @selected)}
             {row_attrs(assigns, row)}
@@ -264,21 +275,24 @@ defmodule LineaUI.Components.CardTable do
             <div :if={@action != []} class="linea-ctable-act">
               {render_slot(@action, @row_item.(row))}
             </div>
-            <dl
+            <div
               :if={@hidable or @detail != []}
               class="linea-ctable-pop"
               data-detail={@detail != [] && ""}
-              role="tooltip"
+              role="group"
+              aria-label={@panel_label}
             >
               <div :for={col <- hidden(@col)} :if={@detail == []} data-p={priority(col)}>
-                <dt>{col.label}</dt>
-                <dd>{render_slot(col, @row_item.(row))}</dd>
+                <span class="linea-ctable-pk">{col.label}</span>
+                <span class="linea-ctable-pv">{render_slot(col, @row_item.(row))}</span>
+                <.pop_copy label={@copy_label} copied={@copied_label} />
               </div>
               <div :for={detail <- @detail} data-d>
-                <dt>{detail.label}</dt>
-                <dd>{render_slot(detail, @row_item.(row))}</dd>
+                <span class="linea-ctable-pk">{detail.label}</span>
+                <span class="linea-ctable-pv">{render_slot(detail, @row_item.(row))}</span>
+                <.pop_copy label={@copy_label} copied={@copied_label} />
               </div>
-            </dl>
+            </div>
           </li>
           <li
             :if={@empty != [] and (@rows == [] or stream?(@rows))}
@@ -290,6 +304,47 @@ defmodule LineaUI.Components.CardTable do
         </ul>
       </div>
     </div>
+    """
+  end
+
+  attr :label, :string, required: true
+  attr :copied, :string, required: true
+
+  defp pop_copy(assigns) do
+    ~H"""
+    <button
+      type="button"
+      class="linea-ctable-pcp"
+      data-copy-line
+      data-tip={@label}
+      data-copied-tip={@copied}
+      aria-label={@label}
+    >
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+        class="cp"
+      >
+        <rect x="9" y="9" width="11" height="11" rx="2.5" /><path d="M5 15V6.5A1.5 1.5 0 0 1 6.5 5H15" />
+      </svg>
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+        class="ok"
+      >
+        <path d="m5 12.5 4.5 4.5L19 7.5" />
+      </svg>
+    </button>
     """
   end
 

@@ -30,7 +30,7 @@ defmodule PreviewWeb.Pages.CardTable do
     assigns = assign(assigns, rows: @rows)
 
     ~H"""
-    <.example title="Columns leave by priority" text="The table answers to its own width: below 1180, 960 and 720px the columns of priority 1, 2 and 3 leave. Click a row to open the panel with its details (the detail slots); the copy button of the order number has a tooltip. Below 520px each row is a card." class="mt-5">
+    <.example title="Columns leave by priority" text="The table answers to its own width: below 1180, 960 and 720px the columns of priority 1, 2 and 3 leave. Click a row to open the panel with its details (the detail slots), where each line can be copied; the copy button of the order number has a tooltip. Below 520px each row is a card." class="mt-5">
       <div class="flex flex-col gap-8">
         <div :for={{width, id} <- [{"w-full", "ct-full"}, {"max-w-[1000px]", "ct-1000"}, {"max-w-[800px]", "ct-800"}, {"max-w-[600px]", "ct-600"}, {"max-w-[400px]", "ct-400"}]} class={width}>
           <.card_table
