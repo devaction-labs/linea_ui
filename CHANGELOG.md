@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- `card_table`: the panel of a row (the `detail` slots, or the columns that left) opens when the row is clicked or reached with Tab, and closes when the focus leaves it, instead of on hover. The copy button keeps its hover tooltip.
+
 ## 0.8.7
 
 - `card_table`: `<:detail label=...>` slots make the panel of a pointed-at row list exactly those lines at every width above 520px (the board's "Prazo", "Recebido em", "AFM"), not only the columns that left; and a column with `copy` (a function of the row) becomes a copy button with a tooltip (`copy_label`, `copied_label`), with its content visible only in the card.

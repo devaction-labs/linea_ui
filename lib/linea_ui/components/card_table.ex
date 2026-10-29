@@ -19,8 +19,8 @@ defmodule LineaUI.Components.CardTable do
 
   The table answers to the width of its own box, not of the window (a container query), so it behaves the same
   in a narrow column or beside a sidebar. A column has a `priority`: `0` (default) always stays; `1`, `2` and `3`
-  leave, in this order, when the box gets narrower than 1180px, 960px and 720px. What left is not lost: pointing
-  at a row (or focusing it) opens a panel under it with the label and the value of every column that is hidden.
+  leave, in this order, when the box gets narrower than 1180px, 960px and 720px. What left is not lost: clicking
+  a row (or tabbing to it) opens a panel under it with the label and the value of every column that is hidden.
 
   Below 520px the rows become cards of three lines, and the `role` of a column says where it goes: `head` (the
   first line, at the left), `status` (the first line, at the right), `title` (the second line, up to two lines of
@@ -30,7 +30,7 @@ defmodule LineaUI.Components.CardTable do
 
   ## The details panel
 
-  Pointing at a row (or focusing it) can open a panel under it with more than the row shows. Give `detail` slots
+  Clicking a row (or tabbing to it) can open a panel under it with more than the row shows. Give `detail` slots
   (`<:detail :let={o} label="Due date">{o.due}</:detail>`) and the panel lists exactly those, in the order given,
   at every width above 520px, whether or not their column is on screen. With no `detail`, the panel only has
   the columns that left.
@@ -133,7 +133,7 @@ defmodule LineaUI.Components.CardTable do
 
   slot :detail,
     doc:
-      "A line of the panel that opens when a row is pointed at; receives the row. When given, the panel lists these and not the hidden columns." do
+      "A line of the panel that opens when a row is clicked; receives the row. When given, the panel lists these and not the hidden columns." do
     attr :label, :string, required: true
   end
 

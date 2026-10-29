@@ -5,6 +5,7 @@
 //
 // --dark       sets LineOne's localStorage key ("dark-mode" = "dark") and reloads, which is also what
 //              the preview reads; `?theme=dark` works on the preview too.
+// --click      a real click on the first element matching the selector (focus, a row that opens a panel).
 // --hover      moves the real mouse over the first element matching the selector (a :hover panel, a tooltip).
 // --select     clips the shot to the first element matching the selector (scrolled into view).
 // --eval       runs JavaScript in the page before the shot (click a trigger, open a menu...).
@@ -82,6 +83,19 @@ try {
     })()`)
     if (!at) throw new Error(`no element matches ${opt.hover}`)
     await send("Input.dispatchMouseEvent", {type: "mouseMoved", x: at.x, y: at.y})
+    await sleep(500)
+  }
+  if (opt.click) {
+    const at = await evaluate(`(() => {
+      const el = document.querySelector(${JSON.stringify(opt.click)})
+      if (!el) return null
+      el.scrollIntoView({block: "center"})
+      const r = el.getBoundingClientRect()
+      return {x: r.left + r.width / 2, y: r.top + r.height / 2}
+    })()`)
+    if (!at) throw new Error(`no element matches ${opt.click}`)
+    for (const type of ["mousePressed", "mouseReleased"])
+      await send("Input.dispatchMouseEvent", {type, x: at.x, y: at.y, button: "left", clickCount: 1})
     await sleep(500)
   }
   if (opt.full || opt.select) {
