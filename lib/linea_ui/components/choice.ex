@@ -94,7 +94,7 @@ defmodule LineaUI.Components.Choice do
     [base, @variants[variant], @sizes[size], @tones[{variant, filled}][color], @disabled]
   end
 
-  @chip "group/choice inline-flex h-[30px] cursor-pointer select-none items-center gap-1.5 rounded-full bg-slate-150 px-3 text-xs-plus font-medium tracking-wide text-slate-600 transition-colors duration-200 hover:not-has-checked:text-slate-800 has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-primary/50 has-disabled:pointer-events-none has-disabled:opacity-60 dark:bg-navy-800 dark:text-navy-200 dark:hover:not-has-checked:text-navy-50 dark:has-focus-visible:outline-accent/50"
+  @chip "group/choice inline-flex h-[30px] cursor-pointer select-none items-center gap-1.5 rounded-full bg-slate-150 px-3 text-xs-plus font-medium tracking-wide text-slate-600 transition-colors duration-200 hover:not-has-checked:text-slate-800 has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-primary/50 has-disabled:pointer-events-none has-disabled:opacity-60 dark:bg-navy-500 dark:text-navy-200 dark:hover:not-has-checked:text-navy-50 dark:has-focus-visible:outline-accent/50"
 
   @chip_tones %{
     "neutral" =>

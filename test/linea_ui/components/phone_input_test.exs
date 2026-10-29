@@ -167,6 +167,16 @@ defmodule LineaUI.Components.PhoneInputTest do
       assert [] == find(html, "[data-clear]") |> Enum.to_list()
     end
 
+    test "the number's border takes the focus color while the picker is open" do
+      html = render(~H|<.phone_input name="phone" />|)
+      root = classes(html, "[phx-hook='LineaUI.PhoneInput']")
+
+      assert "[&:has([data-picker][aria-expanded=true])_[data-display]]:border-primary" in root
+
+      assert "dark:[&:has([data-picker][aria-expanded=true])_[data-display]]:border-accent" in root
+      assert "has-boxed-search" in classes(html, "[data-dropdown]")
+    end
+
     test "flags brings the emoji back in place of the ISO code" do
       html = render(~H|<.phone_input name="phone" country="US" flags />|)
 

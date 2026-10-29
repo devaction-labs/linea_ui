@@ -83,6 +83,9 @@ defmodule LineaUI.Components.PhoneInput do
 
   @input_padding "pl-[6.875rem]"
 
+  # While the picker is open the number's border takes the focus color, as the field's own focus does.
+  @open "[&:has([data-picker][aria-expanded=true])_[data-display]]:border-primary dark:[&:has([data-picker][aria-expanded=true])_[data-display]]:border-accent"
+
   @code "font-inter font-normal text-slate-400 dark:text-navy-300"
 
   @picker "flex h-full w-full items-center gap-1.5 rounded-l-lg pl-3 pr-1 text-slate-600 outline-hidden transition-colors hover:text-slate-800 focus-visible:text-primary disabled:pointer-events-none dark:text-navy-100 dark:hover:text-navy-50 dark:focus-visible:text-accent"
@@ -199,6 +202,7 @@ defmodule LineaUI.Components.PhoneInput do
       order: codes(assigns.country_order),
       state: error_state(assigns.errors),
       input_class: merge([@input_padding, assigns.clearable && "pe-9", assigns.class]),
+      open: @open,
       code_class: @code,
       picker_class: merge([@picker, @picker_sizes[assigns.size]]),
       forwarded: Pickers.forwarded(assigns.rest),
@@ -256,7 +260,7 @@ defmodule LineaUI.Components.PhoneInput do
     ~H"""
     <div
       id={@id <> "-phone"}
-      class={merge(["ts-wrapper w-full", @wrapper_class])}
+      class={merge(["ts-wrapper w-full", @open, @wrapper_class])}
       phx-hook="LineaUI.PhoneInput"
       phx-target={@target}
       data-country={@selected.iso}
@@ -319,7 +323,7 @@ defmodule LineaUI.Components.PhoneInput do
             </button>
             <div
               id={@id <> "-dropdown"}
-              class="ts-dropdown w-full min-w-64 max-w-[calc(100vw-2rem)] text-left"
+              class="ts-dropdown has-boxed-search w-full min-w-64 max-w-[calc(100vw-2rem)] text-left"
               hidden
               data-dropdown
             >

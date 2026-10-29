@@ -773,6 +773,16 @@
 .dark .ts-dropdown .ts-search input::placeholder {
   color:var(--color-navy-300)
 }
+/* A search field drawn as a box of its own inside the list, as the country list of the phone field has it. */
+.ts-dropdown.has-boxed-search .ts-search {
+  border:1px solid var(--color-slate-300);
+  border-radius:.375rem;
+  margin:.375rem .375rem .125rem;
+  padding:.375rem .625rem
+}
+.dark .ts-dropdown.has-boxed-search .ts-search {
+  border-color:var(--color-navy-450)
+}
 .ts-wrapper:is([data-search-mode="panel"],[data-search-mode="none"]) .ts-control,.ts-wrapper:is([data-search-mode="panel"],[data-search-mode="none"]) .ts-control input {
   cursor:pointer
 }

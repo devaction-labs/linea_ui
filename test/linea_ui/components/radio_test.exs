@@ -143,4 +143,11 @@ defmodule LineaUI.Components.RadioTest do
       assert LazyHTML.text(find(html, ".text-error")) =~ "is invalid"
     end
   end
+
+  test "a radio shows the keyboard focus as a ring around it" do
+    css = File.read!(Path.expand("../../../assets/css/linea_ui.css", __DIR__))
+
+    assert css =~
+             ~r/\.form-radio \{\s*@apply focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary\/50/
+  end
 end
