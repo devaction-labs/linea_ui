@@ -58,4 +58,32 @@ defmodule LineaUI.Components.KpiCardTest do
            <.kpi_card value="1" spark={[2, 2, 2]} />
            """) =~ "<svg"
   end
+
+  test "an area spark bleeds behind the text, clipped by the card, with no end dot" do
+    assigns = %{}
+
+    html =
+      rendered_to_string(~H"""
+      <.kpi_card label="Receita" value="R$ 12.345" hint="Últimos 30 dias" spark={[1, 4, 2, 6]} spark_type="area" />
+      """)
+
+    assert html =~ "data-spark-bleed"
+    assert html =~ "overflow-hidden"
+    assert html =~ "-z-10"
+    assert html =~ ~r/fill="url\(#kpi-\d+\)"/
+    assert html =~ "vector-effect"
+    refute html =~ "ring-2"
+    refute html =~ "mt-auto pt-1.5"
+  end
+
+  test "an area spark with too few points draws nothing" do
+    assigns = %{}
+
+    html =
+      rendered_to_string(~H"""
+      <.kpi_card value="1" spark={[3]} spark_type="area" />
+      """)
+
+    refute html =~ "data-spark-bleed"
+  end
 end

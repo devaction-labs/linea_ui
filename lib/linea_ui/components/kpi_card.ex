@@ -14,6 +14,12 @@ defmodule LineaUI.Components.KpiCard do
       </.kpi_card>
       <.kpi_card loading />
 
+  `spark_type="area"` lets the series bleed across the bottom of the card, behind the text, as a faded area
+  with a thin line on top (the card clips it at its rounded edges):
+
+      <.kpi_card label="Receita" value="R$ 12.345" hint="Últimos 30 dias" spark_type="area"
+        spark={[2, 5, 4, 8, 7, 11]} color="info" />
+
   `trend` draws the arrow and `delta_tone` colors the change: a rise is good by default
   (`success`) and a fall is bad (`error`); pass `delta_tone="error"` for a rise that hurts
   (delinquency, churn) or `"success"` for a fall that helps. `spark` takes the numbers, the
@@ -83,7 +89,13 @@ defmodule LineaUI.Components.KpiCard do
 
   attr(:hint, :string, default: nil, doc: "What the change is measured against (`vs. setembro`).")
   attr(:spark, :list, default: [], doc: "Numbers for the mini chart under the figure.")
-  attr(:spark_type, :string, default: "line", values: ~w(line bar))
+
+  attr(:spark_type, :string,
+    default: "line",
+    values: ~w(line bar area),
+    doc:
+      "`line` and `bar` sit under the text; `area` fills the lower half of the card behind the text, edge to edge."
+  )
 
   attr(:color, :string,
     default: "primary",
@@ -127,7 +139,9 @@ defmodule LineaUI.Components.KpiCard do
         tone: Map.fetch!(@tones, assigns.delta_tone || default_tone(assigns.trend)),
         spark_color: Map.fetch!(@colors, assigns.color),
         bar_color: Map.fetch!(@bars, assigns.color),
-        line: if(assigns.spark_type == "line", do: line(assigns.spark)),
+        bleed: assigns.spark_type == "area" and length(assigns.spark) > 1,
+        gradient: "kpi-#{:erlang.phash2({assigns.label, assigns.value, assigns.spark, assigns.color})}",
+        line: if(assigns.spark_type in ~w(line area), do: line(assigns.spark)),
         bars: if(assigns.spark_type == "bar", do: bars(assigns.spark)),
         end_dot: end_dot(assigns.spark),
         goal_percent: assigns.goal && max(0, min(100, assigns.goal))
@@ -136,10 +150,39 @@ defmodule LineaUI.Components.KpiCard do
     ~H"""
     <div
       class={
-        merge(["flex flex-col gap-2.5 rounded-xl bg-white p-5 shadow-soft dark:bg-navy-700", @class])
+        merge([
+          "flex flex-col gap-2.5 rounded-xl bg-white p-5 shadow-soft dark:bg-navy-700",
+          @bleed && "relative isolate min-h-36 overflow-hidden",
+          @class
+        ])
       }
       {@rest}
     >
+      <svg
+        :if={@bleed}
+        viewBox="0 0 120 44"
+        preserveAspectRatio="none"
+        aria-hidden="true"
+        data-spark-bleed
+        class={["pointer-events-none absolute inset-x-0 bottom-0 -z-10 block h-1/2 w-full opacity-80", @spark_color]}
+      >
+        <defs>
+          <linearGradient id={@gradient} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" style="stop-color:currentColor;stop-opacity:0.34" />
+            <stop offset="1" style="stop-color:currentColor;stop-opacity:0" />
+          </linearGradient>
+        </defs>
+        <path d={@line.area} fill={"url(##{@gradient})"} />
+        <path
+          d={@line.stroke}
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          vector-effect="non-scaling-stroke"
+        />
+      </svg>
       <div
         :if={@label || @icon != []}
         class="flex min-h-[1.875rem] items-center justify-between text-sm+ font-medium text-slate-500 dark:text-navy-200"
@@ -185,7 +228,7 @@ defmodule LineaUI.Components.KpiCard do
         <div class={["h-full rounded", @bar_color]} style={"width: #{@goal_percent}%"}></div>
       </div>
 
-      <div :if={@spark != []} class={["relative mt-auto pt-1.5", @spark_color]}>
+      <div :if={@spark != [] and not @bleed} class={["relative mt-auto pt-1.5", @spark_color]}>
         <svg
           viewBox="0 0 120 44"
           preserveAspectRatio="none"
