@@ -38,9 +38,9 @@ defmodule LineaUI.Components.Breadcrumb do
 
   @links %{
     "plain" =>
-      "flex items-center gap-1.5 text-primary transition-colors hover:text-primary-focus hover:underline hover:underline-offset-4 dark:text-accent-light dark:hover:text-accent",
+      "flex items-center gap-1.5 rounded-md text-primary transition-colors hover:text-primary-focus hover:underline hover:underline-offset-3 dark:text-accent-light dark:hover:text-indigo-300",
     "bordered" =>
-      "flex items-center gap-1.5 rounded-lg border border-slate-200 px-2 py-[5px] leading-none text-primary transition-colors hover:border-primary/40 hover:text-primary-focus dark:border-navy-500 dark:text-accent-light dark:hover:border-accent/40 dark:hover:text-accent"
+      "flex items-center gap-1.5 rounded-lg px-2 py-[5px] leading-none text-primary shadow-[inset_0_0_0_1px_var(--color-slate-200)] transition-colors hover:text-primary-focus hover:shadow-[inset_0_0_0_1px_color-mix(in_oklab,var(--color-primary)_40%,transparent)] dark:text-accent-light dark:shadow-[inset_0_0_0_1px_var(--color-navy-500)] dark:hover:text-indigo-300 dark:hover:shadow-[inset_0_0_0_1px_color-mix(in_oklab,var(--color-accent)_40%,transparent)]"
   }
 
   @doc """
@@ -162,7 +162,7 @@ defmodule LineaUI.Components.Breadcrumb do
 
   defp separator(%{separator: []} = assigns) do
     ~H"""
-    <.glyph name={:chevron_right} class="size-3.5" />
+    <.glyph name={:chevron_right} class="size-3.5 shrink-0 text-slate-400 dark:text-navy-300" />
     """
   end
 

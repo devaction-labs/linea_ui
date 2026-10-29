@@ -237,6 +237,25 @@ defmodule LineaUI.Components.TableComposableTest do
     assert "ml-1" in classes(html, "input")
   end
 
+  test "table_skeleton shapes: a disc with a bar, a pill and a number at the right" do
+    html =
+      render(~H"""
+      <.table_skeleton
+        id="s"
+        variant="data"
+        rows={2}
+        columns={["Order", "Client", "Status", "Total"]}
+        shapes={["text", "avatar", "pill", "number"]}
+      />
+      """)
+
+    assert 2 = html |> find("tbody td:nth-child(2) .rounded-full") |> Enum.count()
+    assert 2 = html |> find("tbody td:nth-child(3) .w-\\[70px\\]") |> Enum.count()
+    assert 2 = html |> find("tbody td:nth-child(4) .ml-auto") |> Enum.count()
+    assert "text-right" in classes(html, "th:nth-child(4)")
+    assert "linea-dt" in classes(html, "table")
+  end
+
   test "table_skeleton draws placeholder rows in the table look" do
     html =
       render(~H"""

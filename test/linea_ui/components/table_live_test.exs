@@ -50,17 +50,19 @@ defmodule LineaUI.Components.TableLiveTest do
     assert ["false"] = html |> find("tr#people-1") |> LazyHTML.attribute("data-selected")
   end
 
+  defp status(html), do: html |> find("[role=status]") |> LazyHTML.text() |> String.trim()
+
   test "the pager moves pages and changes the page size", %{conn: conn} do
     {:ok, view, html} = live_isolated(conn, TableLive)
 
-    assert html =~ "Showing 1–15 of 40"
+    assert status(html) == "Showing 1–15 of 40"
 
     html = view |> element("#pager button[phx-value-page='3']") |> render_click()
-    assert html =~ "Showing 31–40 of 40"
+    assert status(html) == "Showing 31–40 of 40"
 
     html = view |> element("#pager-page-size") |> render_change(%{"page_size" => "30"})
     assert html =~ "page=1 per_page=30"
-    assert html =~ "Showing 1–30 of 40"
+    assert status(html) == "Showing 1–30 of 40"
     assert [] = html |> find("#pager button[phx-value-page='3']") |> Enum.to_list()
   end
 end

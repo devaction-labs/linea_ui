@@ -17,6 +17,9 @@ defmodule LineaUI.Components.BreadcrumbTest do
     assert String.trim(LazyHTML.text(current)) == "Breadcrumb"
     assert [_, _] = find(html, "li > svg") |> Enum.to_list()
     assert "text-primary" in classes(html, "a")
+    assert "rounded-md" in classes(html, "a")
+    assert "hover:underline-offset-3" in classes(html, "a")
+    assert "text-slate-400" in classes(html, "li > svg")
   end
 
   test "a custom separator and the bordered variant" do
@@ -31,7 +34,8 @@ defmodule LineaUI.Components.BreadcrumbTest do
 
     assert [_] = find(html, "span.sep") |> Enum.to_list()
     assert [] = find(html, "li > svg") |> Enum.to_list()
-    assert "border-slate-200" in classes(html, "a")
+    assert "shadow-[inset_0_0_0_1px_var(--color-slate-200)]" in classes(html, "a")
+    refute "border" in classes(html, "a")
     assert "px-2" in classes(html, "a")
     assert "py-[5px]" in classes(html, "a")
   end

@@ -39,10 +39,10 @@ defmodule LineaUI.Components.Accordion do
     "basic" => "flex flex-col",
     "border-bottom" => "flex flex-col divide-y divide-slate-150 dark:divide-navy-500",
     "bordered" =>
-      "flex flex-col divide-y divide-slate-150 rounded-lg border border-slate-150 dark:divide-navy-500 dark:border-navy-500",
-    "divided" => "flex flex-col space-y-4 rounded-lg sm:space-y-5 lg:space-y-6",
-    "primary" => "flex flex-col divide-y overflow-hidden rounded-lg border",
-    "advanced" => "flex flex-col space-y-4 sm:space-y-5 lg:space-y-6"
+      "flex flex-col divide-y divide-slate-150 overflow-hidden rounded-[10px] border border-slate-150 dark:divide-navy-500 dark:border-navy-500",
+    "divided" => "flex flex-col space-y-3",
+    "primary" => "flex flex-col divide-y overflow-hidden rounded-[10px] border",
+    "advanced" => "flex flex-col space-y-3"
   }
 
   @frames %{
@@ -126,6 +126,11 @@ defmodule LineaUI.Components.Accordion do
     doc: "The accessible name of the `:header` chevron button."
 
   attr :class, :any, default: nil, doc: "Merged into the item."
+
+  attr :trigger_class, :any,
+    default: nil,
+    doc: "Merged into the trigger (the `<summary>`), e.g. a smaller one in a narrow cell."
+
   attr :rest, :global
 
   slot :header,
@@ -144,12 +149,17 @@ defmodule LineaUI.Components.Accordion do
       class={merge(["ac", @class])}
       {@rest}
     >
-      <:trigger class="ac-header pointer-events-none flex items-center justify-between bg-slate-150 px-4 py-4 dark:bg-navy-500 sm:px-5">
-        <div class="flex items-center gap-3.5 tracking-wide outline-hidden transition-all">
+      <:trigger class={
+        merge([
+          "ac-header pointer-events-none flex items-center justify-between bg-slate-150 px-3.5 py-3 dark:bg-navy-500",
+          @trigger_class
+        ])
+      }>
+        <div class="flex items-center gap-3 tracking-wide outline-hidden transition-all">
           {render_slot(@header)}
         </div>
         <span
-          class="ac-trigger btn pointer-events-auto -mr-1.5 size-8 rounded-full p-0 hover:bg-slate-300/20 focus:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25"
+          class="ac-trigger btn pointer-events-auto size-8 rounded-full p-0 hover:bg-slate-300/20 focus:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25"
           aria-label={@toggle_label}
         >
           <.chevron class="ac-icon text-sm transition-transform" />
@@ -171,9 +181,14 @@ defmodule LineaUI.Components.Accordion do
       class={merge(["ac", @class])}
       {@rest}
     >
-      <:trigger class="ac-trigger flex items-center justify-between py-4 text-base font-medium">
+      <:trigger class={
+        merge([
+          "ac-trigger flex items-center justify-between gap-3 font-medium",
+          @trigger_class
+        ])
+      }>
         <p>{@title}</p>
-        <div class="ac-icon text-sm font-normal leading-none transition-transform duration-300">
+        <div class="ac-icon text-sm font-normal leading-none transition-transform duration-[250ms]">
           <.chevron />
         </div>
       </:trigger>

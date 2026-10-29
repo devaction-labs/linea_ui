@@ -133,6 +133,11 @@ defmodule LineaUI.Components.Table do
 
   alias Phoenix.LiveView.LiveStream
 
+  # The look of `data_table/1`: 40px header and 48px rows of 13.5px Inter, 14px of padding at the sides.
+  @data_table "linea-dt w-full text-left font-inter text-[13.5px] text-slate-600 dark:text-navy-200"
+
+  @data_variants ~w(data data-grid)
+
   # `relative` so an absolute child of the table (an `sr-only` label) is clipped by the scroller instead of
   # widening the page around it.
   @wrapper %{
@@ -141,7 +146,10 @@ defmodule LineaUI.Components.Table do
       "is-scrollbar-hidden relative min-w-full overflow-x-auto rounded-lg border border-slate-200 dark:border-navy-500",
     "hoverable" => "is-scrollbar-hidden relative min-w-full overflow-x-auto",
     "zebra" => "is-scrollbar-hidden relative min-w-full overflow-x-auto",
-    "grid" => "is-scrollbar-hidden relative min-w-full overflow-x-auto"
+    "grid" => "is-scrollbar-hidden relative min-w-full overflow-x-auto",
+    "data" => "is-scrollbar-hidden relative min-w-full overflow-x-auto",
+    "data-grid" =>
+      "is-scrollbar-hidden relative min-w-full overflow-auto rounded-[10px] shadow-[0_0_0_1px_var(--color-slate-150)] dark:shadow-[0_0_0_1px_var(--color-navy-500)]"
   }
 
   @table %{
@@ -149,7 +157,9 @@ defmodule LineaUI.Components.Table do
     "bordered" => "w-full text-left",
     "hoverable" => "is-hoverable w-full text-left",
     "zebra" => "is-zebra w-full text-left",
-    "grid" => "is-hoverable w-full text-left"
+    "grid" => "is-hoverable w-full text-left",
+    "data" => @data_table,
+    "data-grid" => @data_table
   }
 
   @head_row %{
@@ -157,7 +167,9 @@ defmodule LineaUI.Components.Table do
     "bordered" => "",
     "hoverable" => "",
     "zebra" => "",
-    "grid" => "border border-transparent border-b-slate-200 dark:border-b-navy-500"
+    "grid" => "border border-transparent border-b-slate-200 dark:border-b-navy-500",
+    "data" => "",
+    "data-grid" => ""
   }
 
   @body_row %{
@@ -165,8 +177,13 @@ defmodule LineaUI.Components.Table do
     "bordered" => "[&:last-child>td]:border-b-0",
     "hoverable" => "border-y border-transparent border-b-slate-200 dark:border-b-navy-500",
     "zebra" => "",
-    "grid" => "border border-transparent border-b-slate-200 dark:border-b-navy-500"
+    "grid" => "border border-transparent border-b-slate-200 dark:border-b-navy-500",
+    "data" =>
+      "border-y border-transparent border-b-slate-150 last:border-b-transparent dark:border-b-navy-500",
+    "data-grid" => ""
   }
+
+  @data_th "h-10 whitespace-nowrap bg-slate-200 px-3.5 py-0 font-inter text-[11.5px] font-semibold tracking-[.05em] uppercase text-slate-800 dark:bg-navy-800 dark:text-navy-100"
 
   @th %{
     "basic" =>
@@ -178,7 +195,11 @@ defmodule LineaUI.Components.Table do
     "zebra" =>
       "whitespace-nowrap bg-slate-200 px-4 py-3 font-semibold uppercase text-slate-800 dark:bg-navy-800 dark:text-navy-100 lg:px-5",
     "grid" =>
-      "whitespace-nowrap bg-slate-200 px-3 py-3 font-semibold uppercase text-slate-800 dark:bg-navy-800 dark:text-navy-100 lg:px-4"
+      "whitespace-nowrap bg-slate-200 px-3 py-3 font-semibold uppercase text-slate-800 dark:bg-navy-800 dark:text-navy-100 lg:px-4",
+    "data" => @data_th,
+    "data-grid" =>
+      @data_th <>
+        " border border-t-0 border-slate-150 first:border-l-0 last:border-r-0 dark:border-navy-500"
   }
 
   @td %{
@@ -187,7 +208,10 @@ defmodule LineaUI.Components.Table do
       "whitespace-nowrap border border-slate-200 px-3 py-3 first:border-l-0 last:border-r-0 dark:border-navy-500 lg:px-5",
     "hoverable" => "whitespace-nowrap px-4 py-3 sm:px-5",
     "zebra" => "whitespace-nowrap px-4 py-3 sm:px-5",
-    "grid" => "whitespace-nowrap px-4 py-3"
+    "grid" => "whitespace-nowrap px-4 py-3",
+    "data" => "h-12 whitespace-nowrap px-3.5 py-0",
+    "data-grid" =>
+      "h-12 whitespace-nowrap border border-t-0 border-slate-150 px-3.5 py-0 first:border-l-0 last:border-r-0 dark:border-navy-500 [tr:last-child>&]:border-b-0"
   }
 
   @th_rounded %{
@@ -204,12 +228,16 @@ defmodule LineaUI.Components.Table do
 
   @filled ~w(hoverable zebra)
 
+  @data_sticky "sticky top-0 z-10 shadow-[0_1px_0_var(--color-slate-300),0_6px_8px_-6px_rgb(15_23_42/0.25)] dark:shadow-[0_1px_0_var(--color-navy-450),0_6px_8px_-6px_rgb(0_0_0/0.5)]"
+
   @sticky %{
     "basic" => "sticky top-0 z-10 bg-white dark:bg-navy-700",
     "bordered" => "sticky top-0 z-10 bg-white dark:bg-navy-700",
     "hoverable" => "sticky top-0 z-10",
     "zebra" => "sticky top-0 z-10",
-    "grid" => "sticky top-0 z-10"
+    "grid" => "sticky top-0 z-10",
+    "data" => @data_sticky,
+    "data-grid" => @data_sticky
   }
 
   @bleed "min-w-[calc(100%+var(--card-bleed-x,1rem)*2)] mx-[calc(var(--card-bleed-x,1rem)*-1)] rounded-none border-0 first:mt-[calc(var(--card-bleed-t,0px)*-1)] last:mb-[calc(var(--card-bleed-b,0px)*-1)] first:rounded-t-[var(--card-bleed-rt,0px)] last:rounded-b-[var(--card-bleed-rb,0px)] [&_tbody>tr:last-child]:border-b-transparent [&_tr>:first-child]:pl-[var(--card-bleed-x,1rem)] [&_tr>:last-child]:pr-[var(--card-bleed-x,1rem)]"
@@ -232,11 +260,16 @@ defmodule LineaUI.Components.Table do
 
   @compact "px-3 py-2 sm:px-3 lg:px-3"
 
+  # the `data` look is compact by height: 34px headers and 38px rows
+  @compact_data %{th: "h-[34px]", td: "h-[38px]"}
+
   @aligns %{"left" => "text-left", "center" => "text-center", "right" => "text-right"}
 
   @head_col_keys ~w(__slot__ inner_block label class align colspan sort_key priority)a
 
   @cell_keys ~w(__slot__ inner_block class align colspan rowspan priority)a
+
+  @checkbox_data "form-checkbox is-basic size-4 rounded-[4px] border-slate-400/70 checked:border-primary checked:bg-primary hover:border-primary focus:border-primary dark:border-navy-400 dark:checked:border-accent dark:checked:bg-accent dark:hover:border-accent dark:focus:border-accent"
 
   @checkbox "form-checkbox is-basic size-5 rounded-sm border-slate-400/70 checked:border-primary checked:bg-primary hover:border-primary focus:border-primary dark:border-navy-400 dark:checked:border-accent dark:checked:bg-accent dark:hover:border-accent dark:focus:border-accent"
 
@@ -301,8 +334,9 @@ defmodule LineaUI.Components.Table do
 
   attr(:variant, :string,
     default: "basic",
-    values: ~w(basic bordered hoverable zebra grid),
-    doc: "`grid` is the gridjs look of LineOne's Grid Table page."
+    values: ~w(basic bordered hoverable zebra grid data data-grid),
+    doc:
+      "`grid` is the gridjs look of LineOne's Grid Table page; `data` and `data-grid` are the lean look of `data_table/1` (40px headers, 48px rows, 13.5px text)."
   )
 
   attr(:rounded, :string,
@@ -468,14 +502,19 @@ defmodule LineaUI.Components.Table do
       merge([
         @th[assigns.variant],
         th_rounded(assigns),
-        compact(assigns),
+        compact(assigns, :th),
         no_border(assigns),
         sticky(assigns)
       ])
     )
     |> assign(
       :td_class,
-      merge([@td[assigns.variant], td_rounded(assigns), compact(assigns), no_border(assigns)])
+      merge([
+        @td[assigns.variant],
+        td_rounded(assigns),
+        compact(assigns, :td),
+        no_border(assigns)
+      ])
     )
     |> assign(:head_row_class, merge([@head_row[assigns.variant], no_border(assigns)]))
     |> assign(:body_row_class, merge([@body_row[assigns.variant], no_border(assigns)]))
@@ -490,7 +529,10 @@ defmodule LineaUI.Components.Table do
       ])
     )
     |> assign(:table_class, merge([table_class(assigns), assigns.class]))
-    |> assign(:checkbox, @checkbox)
+    |> assign(
+      :checkbox,
+      if(assigns.variant in @data_variants, do: @checkbox_data, else: @checkbox)
+    )
     |> assign(:expand_button, @expand_button)
     |> render_table()
   end
@@ -510,8 +552,11 @@ defmodule LineaUI.Components.Table do
   defp empty_row_class(%LiveStream{}), do: "hidden only:table-row"
   defp empty_row_class(_rows), do: nil
 
-  defp compact(%{compact: true}), do: @compact
-  defp compact(%{compact: false}), do: nil
+  defp compact(%{compact: true, variant: variant}, cell) when variant in @data_variants,
+    do: @compact_data[cell]
+
+  defp compact(%{compact: true}, _cell), do: @compact
+  defp compact(%{compact: false}, _cell), do: nil
 
   # The wrapper answers to its own width only when a column can leave.
   defp box(%{col: [_ | _] = cols}), do: if(Enum.any?(cols, &(priority(&1) > 0)), do: "linea-tbox")
@@ -541,6 +586,9 @@ defmodule LineaUI.Components.Table do
 
   defp align(nil), do: nil
   defp align(align), do: @aligns[align]
+
+  defp table_class(%{variant: variant, hoverable: hoverable}) when variant in @data_variants,
+    do: [@table[variant], hoverable != false && "is-dt-hover"]
 
   defp table_class(%{hoverable: nil, variant: variant}), do: @table[variant]
   defp table_class(%{hoverable: true}), do: "is-hoverable w-full text-left"
@@ -1329,12 +1377,19 @@ defmodule LineaUI.Components.Table do
 
   attr(:variant, :string,
     default: "basic",
-    values: ~w(basic bordered hoverable zebra grid)
+    values: ~w(basic bordered hoverable zebra grid data data-grid)
   )
 
   attr(:rounded, :string, default: "row", values: ~w(row top none))
   attr(:compact, :boolean, default: false)
   attr(:headless, :boolean, default: false)
+
+  attr(:shapes, :list,
+    default: [],
+    doc:
+      "What each column's placeholders look like: `text` (a bar, the default), `avatar` (a disc and a bar), `pill` (a rounded tag) or `number` (a short bar at the right edge), one per column."
+  )
+
   attr(:label, :string, default: "Loading", doc: "The table's `aria-label`.")
   attr(:class, :any, default: nil)
   attr(:rest, :global)
@@ -1360,7 +1415,10 @@ defmodule LineaUI.Components.Table do
     >
       <thead :if={!@headless}>
         <tr>
-          <th :for={index <- @column_indexes}>
+          <th
+            :for={index <- @column_indexes}
+            class={Enum.at(@shapes, index) == "number" && "text-right"}
+          >
             <span :if={@columns != []}>{Enum.at(@columns, index)}</span>
             <.skeleton :if={@columns == []} class="h-3 w-16" />
           </th>
@@ -1369,13 +1427,47 @@ defmodule LineaUI.Components.Table do
       <tbody>
         <tr :for={row <- @row_indexes}>
           <td :for={column <- @column_indexes}>
-            <.skeleton class={["h-3", skeleton_width(row, column)]} />
+            <.skeleton_cell shape={Enum.at(@shapes, column, "text")} row={row} column={column} />
           </td>
         </tr>
       </tbody>
     </.table>
     """
   end
+
+  attr(:shape, :string, required: true)
+  attr(:row, :integer, required: true)
+  attr(:column, :integer, required: true)
+
+  defp skeleton_cell(%{shape: "avatar"} = assigns) do
+    ~H"""
+    <div class="flex items-center gap-2.5">
+      <.skeleton shape="circle" class="size-7 shrink-0" />
+      <.skeleton class={["h-2.5", skeleton_bar(@row, @column)]} />
+    </div>
+    """
+  end
+
+  defp skeleton_cell(%{shape: "pill"} = assigns) do
+    ~H"""
+    <.skeleton shape="pill" class="h-5 w-[70px]" />
+    """
+  end
+
+  defp skeleton_cell(%{shape: "number"} = assigns) do
+    ~H"""
+    <.skeleton class="ml-auto h-2.5 w-16" />
+    """
+  end
+
+  defp skeleton_cell(assigns) do
+    ~H"""
+    <.skeleton class={["h-3", skeleton_width(@row, @column)]} />
+    """
+  end
+
+  defp skeleton_bar(row, column),
+    do: Enum.at(~w(w-[70px] w-[84px] w-[98px] w-[72px]), rem(row + column, 4))
 
   defp skeleton_columns(%{columns: [], cols: cols}), do: max(cols, 1)
   defp skeleton_columns(%{columns: columns}), do: length(columns)

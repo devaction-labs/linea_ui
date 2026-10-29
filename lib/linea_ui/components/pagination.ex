@@ -32,11 +32,11 @@ defmodule LineaUI.Components.Pagination do
 
   @item %{
     "sm" =>
-      "flex h-7 min-w-[1.75rem] items-center justify-center px-2 text-xs-plus leading-tight transition-colors",
+      "flex h-7 min-w-[1.75rem] items-center justify-center px-2 text-[12.5px] leading-tight transition-colors",
     "md" =>
-      "flex h-8 min-w-[2rem] items-center justify-center px-3 leading-tight transition-colors",
+      "flex h-8 min-w-[2rem] items-center justify-center px-3 text-[13.5px] leading-tight transition-colors",
     "lg" =>
-      "flex h-10 min-w-[2.5rem] items-center justify-center px-3 text-sm-plus leading-tight transition-colors"
+      "flex h-10 min-w-[2.5rem] items-center justify-center px-3.5 text-[14.5px] leading-tight transition-colors"
   }
 
   @arrow %{
@@ -62,7 +62,7 @@ defmodule LineaUI.Components.Pagination do
 
   @disabled "pointer-events-none opacity-60"
 
-  @page_size_select "form-select h-8 rounded-lg border border-slate-300 bg-white px-2.5 pr-8 text-xs-plus hover:border-slate-400 focus:border-primary dark:border-navy-450 dark:bg-navy-700 dark:hover:border-navy-400 dark:focus:border-accent"
+  @page_size_select "form-select h-8 rounded-lg border border-slate-300 bg-white pr-7 pl-3 text-[12.5px] font-medium text-slate-700 hover:border-slate-400 focus:border-primary dark:border-navy-450 dark:bg-navy-700 dark:text-navy-100 dark:hover:border-navy-400 dark:focus:border-accent"
 
   @joined_ends %{
     {"rounded", :first} => "rounded-l-lg",
@@ -194,21 +194,34 @@ defmodule LineaUI.Components.Pagination do
   defp footer?(%{total_entries: nil, page_sizes: []}), do: false
   defp footer?(_assigns), do: true
 
+  # `%{first}`, `%{last}` and `%{total}` of the summary are semibold and in the text color,
+  # the words around them stay soft
   defp summary(%{total_entries: total, page_size: size, page: page, summary: text})
        when is_integer(size) do
-    first = first_entry(total, page, size)
-
-    text
-    |> String.replace("%{first}", Integer.to_string(first))
-    |> String.replace("%{last}", Integer.to_string(min(page * size, total)))
-    |> String.replace("%{total}", Integer.to_string(total))
+    summary_html(text, %{
+      "%{first}" => first_entry(total, page, size),
+      "%{last}" => min(page * size, total),
+      "%{total}" => total
+    })
   end
 
   defp summary(%{total_entries: total, summary: text}) do
-    text
-    |> String.replace("%{first}", Integer.to_string(min(total, 1)))
-    |> String.replace("%{last}", Integer.to_string(total))
-    |> String.replace("%{total}", Integer.to_string(total))
+    summary_html(text, %{"%{first}" => min(total, 1), "%{last}" => total, "%{total}" => total})
+  end
+
+  defp summary_html(text, numbers) do
+    ~r/%\{(?:first|last|total)\}/
+    |> then(&String.split(text, &1, include_captures: true))
+    |> Enum.map(fn part ->
+      case numbers do
+        %{^part => number} ->
+          "<b>#{number}</b>"
+
+        _ ->
+          part |> Phoenix.HTML.html_escape() |> Phoenix.HTML.safe_to_string()
+      end
+    end)
+    |> Phoenix.HTML.raw()
   end
 
   defp first_entry(0, _page, _size), do: 0
@@ -251,12 +264,12 @@ defmodule LineaUI.Components.Pagination do
     assigns = assign(assigns, :select_class, @page_size_select)
 
     ~H"""
-    <div class={merge(["flex flex-wrap items-center justify-between gap-3 text-xs-plus", @class])}>
+    <div class={merge(["flex flex-wrap items-center justify-between gap-3 text-[12.5px]", @class])}>
       <span
         :if={@total_entries}
         role="status"
         aria-live="polite"
-        class="text-slate-500 dark:text-navy-200"
+        class="text-slate-500 dark:text-navy-200 [&_b]:font-semibold [&_b]:text-slate-700 dark:[&_b]:text-navy-50"
       >
         {summary(assigns)}
       </span>

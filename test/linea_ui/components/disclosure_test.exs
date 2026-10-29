@@ -43,7 +43,42 @@ defmodule LineaUI.Components.DisclosureTest do
   <.accordion_item id="i">x</.accordion_item>
 </.accordion>|)
     assert attr_of(html, "#a", "data-exclusive") == ["false"]
-    assert "space-y-4" in classes(html, "#a")
+    assert "space-y-3" in classes(html, "#a")
+  end
+
+  test "the canvas sizes: 10px frames, 12px between divided and advanced items" do
+    html =
+      render(~H"""
+      <.accordion id="b" variant="bordered">
+        <.accordion_item id="b1" title="T">x</.accordion_item>
+      </.accordion>
+      <.accordion id="p" variant="primary">
+        <.accordion_item id="p1" title="T">x</.accordion_item>
+      </.accordion>
+      <.accordion id="v" variant="advanced">
+        <.accordion_item id="v1">x</.accordion_item>
+      </.accordion>
+      """)
+
+    assert "rounded-[10px]" in classes(html, "#b")
+    assert "rounded-[10px]" in classes(html, "#p")
+    assert "space-y-3" in classes(html, "#v")
+    assert "gap-3" in classes(html, "#b1 > summary")
+  end
+
+  test "trigger_class reaches the summary, with and without a header" do
+    html =
+      render(~H"""
+      <.accordion_item id="a" title="T" trigger_class="py-2.5 text-[13px]">x</.accordion_item>
+      <.accordion_item id="b" trigger_class="py-2.5">
+        <:header>Simon</:header>
+        x
+      </.accordion_item>
+      """)
+
+    assert "text-[13px]" in classes(html, "#a > summary")
+    assert "py-2.5" in classes(html, "#b > summary")
+    refute "-mr-1.5" in classes(html, "#b .ac-trigger")
   end
 
   test "an item with a header puts the chevron in a button of its own" do
