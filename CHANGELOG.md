@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 0.8.7
+
 - `card_table`: `<:detail label=...>` slots make the panel of a pointed-at row list exactly those lines at every width above 520px (the board's "Prazo", "Recebido em", "AFM"), not only the columns that left; and a column with `copy` (a function of the row) becomes a copy button with a tooltip (`copy_label`, `copied_label`), with its content visible only in the card.
 
 ## 0.8.6
