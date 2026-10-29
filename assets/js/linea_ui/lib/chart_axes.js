@@ -52,7 +52,7 @@ export const valueAxis = (config, visible, stacks, {horizontal, size}) => {
 }
 
 const thinned = (labels, spacing, widest, hide) => {
-  const every = hide ? Math.max(1, Math.ceil((widest + 10) / Math.max(spacing, 1))) : 1
+  const every = hide ? Math.max(1, Math.ceil((widest + 6) / Math.max(spacing, 1))) : 1
   return labels.filter((_, index) => index % every === 0)
 }
 

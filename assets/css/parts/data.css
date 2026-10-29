@@ -586,6 +586,14 @@
     @apply fill-slate-600 font-inter dark:fill-navy-100;
   }
 
+  .linea-chart-center-figure {
+    @apply fill-slate-800 font-inter dark:fill-navy-50;
+  }
+
+  .linea-chart-center-caption {
+    @apply fill-slate-400 font-inter dark:fill-navy-300;
+  }
+
   .linea-chart-center-value {
     @apply fill-slate-500 font-inter dark:fill-navy-200;
   }

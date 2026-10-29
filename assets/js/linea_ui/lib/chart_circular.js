@@ -73,7 +73,21 @@ const sweep = (delay, duration, ease) => `--linea-chart-delay:${Math.round(delay
 const arcNode = (cls, d, color, width, attrs = {}) =>
   h("path", {class: cls, d, fill: "none", stroke: color, "stroke-width": width, pathLength: 100, "stroke-dasharray": 100, ...attrs})
 
+/** The middle of a donut with `labels.layout: "figure"`: a large figure over a small caption, the top line being the `name` slot (the total at rest, the slice name on hover). */
+const figureNodes = (config, g, items, spec) => {
+  const label = spec.total?.show === true ? spec.total : spec.name
+  const size = parseFloat(label?.fontSize ?? 20)
+  const caption = parseFloat(spec.value?.fontSize ?? 11)
+  return h(
+    "g",
+    {class: "linea-chart-center", opacity: items.opacity},
+    h("text", {class: "linea-chart-center-figure", "data-center": "name", x: g.cx, y: g.cy + size * 0.2, "text-anchor": "middle", "font-size": size, "font-weight": label?.fontWeight ?? 600}, items.name),
+    h("text", {class: "linea-chart-center-caption", "data-center": "value", x: g.cx, y: g.cy + size * 0.2 + caption + 4, "text-anchor": "middle", "font-size": caption, "font-weight": spec.value?.fontWeight ?? 400}, items.value)
+  )
+}
+
 const centerNodes = (config, g, items, spec) => {
+  if (spec.layout === "figure") return figureNodes(config, g, items, spec)
   const x = g.cx
   const total = spec.total?.show === true
   const anchor = spec.total?.label ? g.cy : g.cy - g.cy / 6
@@ -106,15 +120,19 @@ export const centerText = (config, slices) => {
   const format = labels.value?.formatter
   const value = total.show ? (call(total.formatter, w) ?? plain(sum)) : single ? (call(format, live[0].value, w) ?? (radialType ? `${live[0].value}%` : plain(live[0].value))) : ""
   const name = total.show ? (total.label ?? "") : single ? live[0].name : ""
+  const figure = labels.layout === "figure" && total.show
   const shown = radialType ? total.show || live.length === 1 : labels.show === true
-  return {spec: labels, name: String(call(labels.name?.formatter, name, total.show, w) ?? name), value: String(value), opacity: shown ? 1 : 0, show: labels.show !== false}
+  const top = String(call(labels.name?.formatter, name, total.show, w) ?? name)
+  return {spec: labels, name: figure ? String(value) : top, value: figure ? top : String(value), opacity: shown ? 1 : 0, show: labels.show !== false}
 }
 
 /** The center text for a hovered slice. */
 export const hoverText = (config, slice, slices) => {
   const labels = radial(config.type) ? config.plotOptions.radialBar.dataLabels : config.plotOptions.pie.donut.labels
   const w = world(config, slices.filter((one) => !one.hidden))
-  const value = call(labels.value?.formatter, slice.value, w) ?? (radial(config.type) ? `${slice.value}%` : plain(slice.value))
+  const shown = String(call(labels.value?.formatter, slice.value, w) ?? (radial(config.type) ? `${slice.value}%` : plain(slice.value)))
+  const whole = slices.filter((one) => !one.hidden).reduce((sum, one) => sum + Math.max(one.value, 0), 0)
+  const value = labels.value?.showPercent === true && whole > 0 ? `${shown} · ${Math.round((Math.max(slice.value, 0) / whole) * 100)}%` : shown
   return {name: String(call(labels.name?.formatter, slice.name, false, w) ?? slice.name), value: String(value)}
 }
 
