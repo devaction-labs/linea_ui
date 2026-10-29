@@ -126,4 +126,55 @@ defmodule LineaUI.Components.TagsInputTest do
 
     assert html |> find("label > span") |> LazyHTML.text() == "Tags"
   end
+
+  test "suggestions can carry a hint, and the create row can sit under them" do
+    html =
+      render(~H"""
+      <.tags_input
+        id="t"
+        name="tags"
+        create_position="bottom"
+        compact
+        suggestions={[%{label: "Prioridade", value: "Prioridade", hint: "12 usos"}, "Privado"]}
+      />
+      <.tags_input id="u" name="u" />
+      """)
+
+    assert html |> find("#t .option [data-hint]") |> LazyHTML.text() =~ "12 usos"
+    assert [_] = find(html, "#t .option [data-hint]") |> Enum.to_list()
+    assert "compact" in classes(html, "#t")
+    assert LazyHTML.attribute(find(html, "#t"), "data-create-position") == ["bottom"]
+    assert LazyHTML.attribute(find(html, "#u"), "data-create-position") == []
+    refute "compact" in classes(html, "#u")
+
+    # the create row is the last child of the list when `create_position` is bottom, the first otherwise
+    assert [_] = find(html, "#t [role=listbox] > :last-child[data-create-row]") |> Enum.to_list()
+    assert [_] = find(html, "#u [role=listbox] > :first-child[data-create-row]") |> Enum.to_list()
+  end
+
+  test "a disabled field draws its tags without remove buttons" do
+    html =
+      render(~H"""
+      <.tags_input id="t" name="tags" value={~w(a b)} removable disabled />
+      <.tags_input id="u" name="u" value={~w(a b)} removable />
+      """)
+
+    assert [] == find(html, "#t .item .remove, #t [data-remove]") |> Enum.to_list()
+    refute "plugin-remove_button" in classes(html, "#t")
+    assert "plugin-remove_button" in classes(html, "#u")
+    assert LazyHTML.attribute(find(html, "#t"), "data-remove-label") == []
+  end
+
+  test "the counter sits on the help line when there is one, under the control otherwise" do
+    html =
+      render(~H"""
+      <.tags_input id="t" name="t" value={~w(a b c)} max={3} help="Remova um." />
+      <.tags_input id="u" name="u" value={~w(a b c)} max={3} />
+      """)
+
+    assert "absolute" in classes(html, "#t [data-counter]")
+    assert "end-0" in classes(html, "#t [data-counter]")
+    assert "text-end" in classes(html, "#u [data-counter]")
+    refute "absolute" in classes(html, "#u [data-counter]")
+  end
 end

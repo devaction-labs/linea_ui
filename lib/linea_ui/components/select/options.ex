@@ -4,7 +4,8 @@ defmodule LineaUI.Components.Select.Options do
 
   An option is a string or number (label and value alike), a `{label, value}` tuple, a
   keyword entry `label: value`, or a map with `:label` and `:value` (and optionally
-  `:disabled` and `:keywords`, extra terms the search matches though the list does not show them: a
+  `:disabled`, `:hint`, a short note drawn on the right of the option in the autocomplete and tags
+  suggestions, and `:keywords`, extra terms the search matches though the list does not show them: a
   string or a list of strings; any other keys are kept for the `:option` and `:item` slots). A group is
   `{group_label, [options]}`.
 
@@ -27,6 +28,11 @@ defmodule LineaUI.Components.Select.Options do
   @doc "Reads a list of options and groups."
   @spec normalize(list()) :: [option() | group()]
   def normalize(options), do: Enum.map(options, &entry/1)
+
+  @doc "The `hint:` of a map entry (a short note drawn on the right of the option: an e-mail, a count), or `nil`."
+  @spec hint(option()) :: String.t() | nil
+  def hint(%{data: %{hint: hint}}) when hint not in [nil, ""], do: text(hint)
+  def hint(_option), do: nil
 
   @doc "The options alone, with the groups flattened."
   @spec flat([option() | group()]) :: [option()]

@@ -72,7 +72,7 @@ defmodule LineaUI.Components.AutocompleteTest do
     assert "plugin-clear_button" in root
     assert "is-invalid" in root
     assert "disabled" in root
-    assert "[&_.ts-control]:py-1" in root
+    assert "[&_.ts-control]:h-8" in root
     assert [_] = find(html, "button[type=button][data-clear]") |> Enum.to_list()
     assert attr_of(html, "[data-clear]", "aria-label") == ["Clear"]
     assert [_] = find(html, "[data-clear] svg[aria-hidden=true]") |> Enum.to_list()
@@ -114,5 +114,25 @@ defmodule LineaUI.Components.AutocompleteTest do
     assert [_] = find(html, "#rich-control svg.search") |> Enum.to_list()
     assert [_, _, _, generated] = attr_of(html, "[phx-hook='LineaUI.Autocomplete']", "id")
     assert generated =~ "autocomplete-"
+  end
+
+  test "a hint draws a note on the right of the row, only when the option has one" do
+    html =
+      render(~H"""
+      <.autocomplete
+        id="c"
+        name="c"
+        options={[
+          %{label: "Ana", value: "1", hint: "ana@exemplo.com"},
+          %{label: "Off", value: "2", hint: "inativo", disabled: true},
+          %{label: "Bia", value: "3"}
+        ]}
+      />
+      """)
+
+    assert html |> find(".option [data-hint]") |> LazyHTML.text() =~ "ana@exemplo.com"
+    assert [_, _] = find(html, ".option [data-hint]") |> Enum.to_list()
+    assert [_] = find(html, ".option[data-disabled] [data-hint]") |> Enum.to_list()
+    assert [_, _, _] = find(html, ".option [data-text]") |> Enum.to_list()
   end
 end

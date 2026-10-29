@@ -14,7 +14,9 @@ defmodule LineaUI.Components.TagsInput do
   option in the list and a tag in the field, as in `LineaUI.Components.Select`.
 
   With `max`, the input is disabled at the limit, its placeholder becomes `limit_placeholder`
-  and a `3 / 3` counter appears under the field. The row that creates a tag reads
+  and a `3 / 3` counter appears under the field (on the right of the `help` line when there is one).
+  A suggestion given as a map can carry a `hint` (`%{label: "Priority", value: "Priority", hint: "12 uses"}`),
+  a dimmed note on the right of its row. A disabled field draws its tags without remove buttons. The row that creates a tag reads
   `Enter Add “pri”`: `create_label` and `create_hint` are its words.
 
   ## Picking from a server-searched list
@@ -102,6 +104,16 @@ defmodule LineaUI.Components.TagsInput do
   attr :limit_placeholder, :string,
     default: "Limit reached",
     doc: "The placeholder of the disabled input at `max`."
+
+  attr :create_position, :string,
+    default: "top",
+    values: ~w(top bottom),
+    doc: "Where the row that creates the typed tag sits: above the suggestions or under them."
+
+  attr :compact, :boolean,
+    default: false,
+    doc:
+      "The design canvas look: suggestion rows without the check column, the create row in plain text, the clear button always visible while there are tags and a focus ring."
 
   attr :no_results, :string, default: "No results found"
   attr :disabled, :boolean, default: false

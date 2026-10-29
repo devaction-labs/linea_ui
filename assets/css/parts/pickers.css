@@ -118,6 +118,10 @@
 .ts-wrapper.plugin-clear_button .clear-button:hover { background-color: color-mix(in oklab, currentColor 16%, transparent); color: var(--color-slate-700); }
 .dark .ts-wrapper.plugin-clear_button .clear-button:hover { color: var(--color-navy-50); }
 
+/* The autocomplete holds one input (and maybe an icon before it): they stay on one line, the input takes what is left. */
+.ts-wrapper.autocomplete .ts-control { flex-wrap: nowrap; }
+.ts-wrapper.autocomplete .ts-control > input { flex: 1 1 0; min-width: 0; }
+
 /* The autocomplete's clear button is a real 22px square button with an SVG cross (no mask), reachable with Tab. */
 .ts-wrapper.autocomplete.plugin-clear_button .clear-button { border-radius: 6px; height: 1.375rem; width: 1.375rem; }
 .ts-wrapper.autocomplete.plugin-clear_button .clear-button::before { content: none; }
@@ -128,6 +132,41 @@
 }
 .dark .ts-wrapper.autocomplete.plugin-clear_button .clear-button:focus-visible { outline-color: color-mix(in oklab, var(--color-accent) 50%, transparent); }
 .ts-wrapper.autocomplete:not(.has-items) .clear-button { display: none; }
+/* With a value the clear button is always there, 10px from the edge (no caret to clear), and the text stops before it. */
+.ts-wrapper.autocomplete.plugin-clear_button.has-items:not(.disabled) .clear-button { opacity: 1; right: .625rem; }
+.ts-wrapper.autocomplete.plugin-clear_button .ts-control:not(.rtl) { padding-right: 2.25rem !important; }
+
+/* A disabled control keeps the dark surface (tom-select's #fafafa fill glared on it). */
+.ts-wrapper.disabled .ts-control:where(.dark, .dark *) { background-color: var(--color-navy-600); }
+
+/* The list of the autocomplete and of a compact tags input: no check column (a chosen row is told by its colour). */
+.ts-wrapper:is(.autocomplete, .compact) .ts-dropdown .option { padding-left: .75rem; }
+.ts-wrapper:is(.autocomplete, .compact) .ts-dropdown .option.selected::before { content: none; }
+/* The note on the right of a row (`hint:` of an option), and the label that gives way to it. */
+.ts-wrapper .ts-dropdown .option [data-hint] { color: var(--color-slate-400); flex: none; font-size: .75rem; font-weight: 400; white-space: nowrap; }
+.dark .ts-wrapper .ts-dropdown .option [data-hint] { color: var(--color-navy-300); }
+.ts-wrapper .ts-dropdown .option:has([data-hint]) [data-text] { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* A field with errors keeps its red border on hover and focus. */
+.ts-wrapper.is-invalid .ts-control,
+.ts-wrapper.is-invalid .ts-control:hover,
+.ts-wrapper.is-invalid.input-active .ts-control { border-color: var(--color-error); }
+
+/* The focus ring of the autocomplete and the compact tags input: the border plus a 3px halo. */
+.ts-wrapper:is(.autocomplete, .compact).input-active .ts-control { box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-primary) 18%, transparent); }
+.dark .ts-wrapper:is(.autocomplete, .compact).input-active .ts-control { box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-accent) 22%, transparent); }
+.ts-wrapper:is(.autocomplete, .compact).is-invalid.input-active .ts-control { box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-error) 18%, transparent); }
+
+/* A disabled field keeps its tags' fill (the control itself is dimmed), in both themes. */
+.ts-wrapper.multi.disabled .ts-control > div { background-color: var(--color-slate-150); border-color: transparent; color: var(--color-slate-800); }
+.dark .ts-wrapper.multi.disabled .ts-control > div { background-color: var(--color-navy-500); color: var(--color-navy-50); }
+
+/* The compact tags input: the create row is plain text, and the clear button stays while there are tags. */
+.ts-wrapper.compact .ts-dropdown .create { color: var(--color-slate-600); }
+.dark .ts-wrapper.compact .ts-dropdown .create { color: var(--color-navy-100); }
+.ts-wrapper.compact .ts-dropdown .create strong { font-weight: 400; }
+.ts-wrapper.compact.plugin-clear_button.has-items:not(.disabled) .clear-button { opacity: 1; right: .625rem; }
+.ts-wrapper.compact.plugin-clear_button .ts-control:not(.rtl) { padding-right: 2.25rem !important; }
 
 /* The loading row of the autocomplete: a 16px ring turning beside the text. */
 .ts-dropdown .no-results[data-kind="loading"] { align-items: center; display: flex; gap: .5rem; justify-content: center; }
