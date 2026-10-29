@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.8.10
 
 - `card_table`: a panel opened with the mouse closes 350 ms after the pointer leaves the row and the panel (the delay also crosses the gap between them), and stays while the pointer is on it, text is selected in it or the focus is inside it. Opened with Enter or Space it stays until `Esc`, a click outside or another row.
 
