@@ -1171,6 +1171,84 @@
     transform: none;
   }
 
+  /* With `detail` slots the panel lists them at every width above 520px, not only the columns that left. */
+  .linea-ctable-pop[data-detail] { display: grid; }
+  .linea-ctable-pop[data-detail] > div { display: flex; }
+
+  /* A column with `copy`: the cell is a copy button and a tooltip; its own content shows only in the card. */
+  .linea-ctable-cell:has(> .linea-ctable-cp) {
+    position: relative;
+    overflow: visible;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .linea-ctable-nn {
+    display: none;
+    font-family: var(--font-mono, ui-monospace, monospace);
+    font-size: 12.5px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .linea-ctable-cp[data-copied] {
+    color: var(--color-success);
+    box-shadow: inset 0 0 0 1px var(--color-success);
+  }
+
+  .linea-ctable-ctip {
+    position: absolute;
+    z-index: 9;
+    bottom: calc(100% + 6px);
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    padding: 7px 11px;
+    border-radius: 8px;
+    background: var(--color-slate-800);
+    color: var(--color-slate-100);
+    font-size: 12px;
+    font-weight: 500;
+    white-space: nowrap;
+    box-shadow: 0 10px 24px -10px rgb(15 23 42 / 0.5);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(3px);
+    transition: opacity 0.12s, transform 0.12s, visibility 0.12s;
+    pointer-events: none;
+  }
+
+  .dark .linea-ctable-ctip {
+    background: var(--color-navy-50);
+    color: var(--color-slate-800);
+  }
+
+  .linea-ctable-ctip b {
+    font-family: var(--font-mono, ui-monospace, monospace);
+    font-size: 12.5px;
+    font-weight: 600;
+  }
+
+  .linea-ctable-ctip i {
+    font-size: 11px;
+    font-style: normal;
+    opacity: 0.65;
+  }
+
+  .linea-ctable-ctip .l2 { display: none; }
+
+  .linea-ctable-cp:hover + .linea-ctable-ctip,
+  .linea-ctable-cp:focus-visible + .linea-ctable-ctip {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+  }
+
+  .linea-ctable-cp[data-copied] + .linea-ctable-ctip .l1 { display: none; }
+  .linea-ctable-cp[data-copied] + .linea-ctable-ctip .l2 { display: inline; }
+
   /* 1: without the columns of priority 1 */
   @container ctable (max-width: 1179.98px) {
     .linea-ctable-grid { grid-template-columns: var(--ct-c1); }
@@ -1228,6 +1306,8 @@
       -webkit-box-orient: vertical;
     }
     .linea-ctable-pop { display: none !important; }
+    .linea-ctable-nn { display: inline; }
+    .linea-ctable-ctip { display: none; }
   }
 }
 

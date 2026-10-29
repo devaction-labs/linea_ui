@@ -28,6 +28,20 @@ defmodule LineaUI.Components.CardTable do
   is not drawn in the card (it is in the panel of the other widths only). The header row is not drawn either, and
   the select all checkbox goes on a line of its own above the list.
 
+  ## The details panel
+
+  Pointing at a row (or focusing it) can open a panel under it with more than the row shows. Give `detail` slots
+  (`<:detail :let={o} label="Due date">{o.due}</:detail>`) and the panel lists exactly those, in the order given,
+  at every width above 520px, whether or not their column is on screen. With no `detail`, the panel only has
+  the columns that left.
+
+  ## Copy button
+
+  `copy` on a column (a function of the row that returns the text) turns its cell into a copy button with a
+  tooltip, as in the order number of the design: the cell shows the button, the tooltip says what it copies
+  (`copy_label`, then `copied_label` for two seconds) and the column's own content stays visible only in the
+  card, where there is no tooltip.
+
   ## Columns
 
   `width` is the CSS track of the column (`max-content` by default; `minmax(120px,1.3fr)` to let it take what is
@@ -46,6 +60,8 @@ defmodule LineaUI.Components.CardTable do
   """
 
   use LineaUI.Component
+
+  import LineaUI.Components.Clipboard, only: [clipboard: 1]
 
   alias Phoenix.LiveView.LiveStream
 
@@ -104,6 +120,21 @@ defmodule LineaUI.Components.CardTable do
     attr :truncate, :boolean, doc: "Cut the text with an ellipsis (default) or let it wrap."
     attr :class, :any, doc: "Extra classes of the column's cells."
     attr :sort_key, :string, doc: "Makes the header sortable; sent as `\"column\"` in `on_sort`."
+
+    attr :copy, :any,
+      doc:
+        "A function of the row returning the text to copy; the cell becomes a copy button with a tooltip."
+
+    attr :copy_label, :string, doc: "The tooltip of the copy button. Default `Copy`."
+
+    attr :copied_label, :string,
+      doc: "The tooltip for two seconds after a copy. Default `Copied`."
+  end
+
+  slot :detail,
+    doc:
+      "A line of the panel that opens when a row is pointed at; receives the row. When given, the panel lists these and not the hidden columns." do
+    attr :label, :string, required: true
   end
 
   slot :action, doc: "The last cell of every row (a menu button); receives the row."
@@ -204,15 +235,43 @@ defmodule LineaUI.Components.CardTable do
               data-p={priority(col)}
               data-role={col[:role]}
             >
-              {render_slot(col, @row_item.(row))}
+              <%= if col[:copy] do %>
+                <span class="linea-ctable-nn">{render_slot(col, @row_item.(row))}</span>
+                <.clipboard
+                  id={"#{@row_id.(row)}-copy"}
+                  value={col.copy.(@row_item.(row))}
+                  icon_only
+                  size="xs"
+                  variant="outline"
+                  toast={nil}
+                  class="linea-ctable-cp"
+                  aria-label={col[:copy_label] || "Copy"}
+                />
+                <span class="linea-ctable-ctip" role="tooltip">
+                  <b>{col.copy.(@row_item.(row))}</b>
+                  <i class="l1">{col[:copy_label] || "Copy"}</i>
+                  <i class="l2">{col[:copied_label] || "Copied"}</i>
+                </span>
+              <% else %>
+                {render_slot(col, @row_item.(row))}
+              <% end %>
             </div>
             <div :if={@action != []} class="linea-ctable-act">
               {render_slot(@action, @row_item.(row))}
             </div>
-            <dl :if={@hidable} class="linea-ctable-pop" role="tooltip">
-              <div :for={col <- hidden(@col)} data-p={priority(col)}>
+            <dl
+              :if={@hidable or @detail != []}
+              class="linea-ctable-pop"
+              data-detail={@detail != [] && ""}
+              role="tooltip"
+            >
+              <div :for={col <- hidden(@col)} :if={@detail == []} data-p={priority(col)}>
                 <dt>{col.label}</dt>
                 <dd>{render_slot(col, @row_item.(row))}</dd>
+              </div>
+              <div :for={detail <- @detail} data-d>
+                <dt>{detail.label}</dt>
+                <dd>{render_slot(detail, @row_item.(row))}</dd>
               </div>
             </dl>
           </li>

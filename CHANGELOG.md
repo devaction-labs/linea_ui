@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- `card_table`: `<:detail label=...>` slots make the panel of a pointed-at row list exactly those lines at every width above 520px (the board's "Prazo", "Recebido em", "AFM"), not only the columns that left; and a column with `copy` (a function of the row) becomes a copy button with a tooltip (`copy_label`, `copied_label`), with its content visible only in the card.
+
 ## 0.8.6
 
 - `notification_center` and `kanban_column`: the empty state draws the LineOne illustration (a girl with a box, the new `empty_box`) instead of an icon; `kanban_column`'s `<:empty icon=...>` still shows an icon.

@@ -130,6 +130,40 @@ defmodule LineaUI.Components.CardTableTest do
     assert LazyHTML.text(find(html, "#t-empty")) =~ "Nothing here"
   end
 
+  test "detail slots make the panel list exactly them, and a copy column gets a button and a tooltip" do
+    assigns = %{rows: @rows}
+
+    html =
+      rendered_to_string(~H"""
+      <.card_table id="orders" rows={@rows} row_id={&"order-#{&1.id}"}>
+        <:col
+          :let={o}
+          label="Order"
+          role="head"
+          copy={& &1.number}
+          copy_label="Copy order"
+          copied_label="Order copied"
+        >
+          {o.number}
+        </:col>
+        <:col :let={o} label="Issuer" priority={2}>{o.issuer}</:col>
+        <:detail :let={o} label="Due">{o.client}</:detail>
+      </.card_table>
+      """)
+
+    pop = find(html, "#order-1 dl.linea-ctable-pop")
+    assert pop |> LazyHTML.attribute("data-detail") == [""]
+    assert LazyHTML.text(pop) =~ "Due"
+    assert LazyHTML.text(pop) =~ "Secretaria de Saúde"
+    refute LazyHTML.text(pop) =~ "Issuer"
+
+    assert find(html, "#order-1-copy") |> LazyHTML.attribute("data-value") == ["PED-1"]
+    tip = find(html, "#order-1 .linea-ctable-ctip") |> LazyHTML.text()
+    assert tip =~ "PED-1"
+    assert tip =~ "Copy order"
+    assert tip =~ "Order copied"
+  end
+
   defp html_attr(html, selector, name),
     do: html |> find(selector) |> LazyHTML.attribute(name) |> hd()
 end
