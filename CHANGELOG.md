@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 0.8.8
+
 - `card_table`: the panel of a row (the `detail` slots, or the columns that left) opens when the row is clicked or reached with Tab, instead of on hover; it closes when the mouse leaves the row or the open row is clicked again (the new `LineaUI.CardTable` hook), and the open row stays above the row the mouse moves over. The copy button keeps its hover tooltip.
 
 ## 0.8.7
