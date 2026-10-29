@@ -14,7 +14,9 @@ defmodule LineaUI.Components.Autocomplete do
       <.autocomplete field={@form[:city]} options={["Salvador", "Santos", "São Paulo"]} free_text />
 
   Options are strings, `{label, value}` tuples or maps with `:label` and `:value` (other keys
-  reach the `:option` slot as `option.data`), as in `LineaUI.Components.Select.Options`.
+  reach the `:option` slot as `option.data`), as in `LineaUI.Components.Select.Options`. A
+  `:hint` key (`%{label: "Ana Souza", value: "1", hint: "ana@exemplo.com"}`) draws a small dimmed
+  note on the right of the row without needing the `:option` slot, and a disabled option is dimmed.
 
   The choice is submitted through a hidden input named like the field; the visible input only
   shows the chosen option's label. A bubbling `input` event fires from the hidden input when
@@ -29,7 +31,7 @@ defmodule LineaUI.Components.Autocomplete do
   server answers by re-rendering `options`.
 
   The text typed shows in bold primary colour inside each suggestion (no background). While the
-  server searches the list is `aria-busy` and `loading_text` shows with a 16px spinner as a
+  server searches the list is `aria-busy`, the previous suggestions leave and `loading_text` shows with a 16px spinner as a
   `role="status"`; "no results" is a status too. The clear button is a real button
   (`clear_label` names it) that can be reached with `Tab` and pressed with `Enter` or `Space`.
 
@@ -44,9 +46,10 @@ defmodule LineaUI.Components.Autocomplete do
 
   @sizes %{
     "sm" =>
-      "[&_.ts-control]:py-1 [&_.ts-control]:text-xs-plus [&_.ts-control_input]:text-xs-plus",
+      "[&_.ts-control]:h-8 [&_.ts-control]:py-0 [&_.ts-control]:text-xs-plus [&_.ts-control_input]:text-xs-plus",
     "md" => nil,
-    "lg" => "[&_.ts-control]:py-2.5 [&_.ts-control]:text-base [&_.ts-control_input]:text-base"
+    "lg" =>
+      "[&_.ts-control]:h-11 [&_.ts-control]:py-0 [&_.ts-control]:text-base [&_.ts-control_input]:text-base"
   }
 
   @doc """
@@ -290,6 +293,9 @@ defmodule LineaUI.Components.Autocomplete do
       aria-selected="false"
     >
       <span :if={@option_slot == []} data-text>{@entry.label}</span>
+      <small :if={@option_slot == [] and Options.hint(@entry)} data-hint>
+        {Options.hint(@entry)}
+      </small>
       {render_slot(@option_slot, @entry)}
     </div>
     """

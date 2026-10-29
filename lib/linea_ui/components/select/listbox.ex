@@ -28,6 +28,9 @@ defmodule LineaUI.Components.Select.Listbox do
     |> assign_new(:more_label, fn -> "more" end)
     |> assign_new(:create_hint, fn -> nil end)
     |> assign_new(:limit_placeholder, fn -> nil end)
+    |> assign_new(:create_position, fn -> "top" end)
+    |> assign_new(:compact, fn -> false end)
+    |> assign_new(:help, fn -> nil end)
     |> assign_new(:search, fn -> "control" end)
     |> assign_new(:search_placeholder, fn -> "Search…" end)
     |> assign(
@@ -40,6 +43,7 @@ defmodule LineaUI.Components.Select.Listbox do
       known: known,
       name: field_name(assigns.name, multiple),
       full: full?(multiple, count, assigns.max),
+      removable: assigns.removable and not assigns.disabled,
       forwarded: Pickers.forwarded(assigns.rest)
     )
   end
@@ -86,6 +90,7 @@ defmodule LineaUI.Components.Select.Listbox do
             @label && "mt-1.5",
             mode_class(@multiple),
             @removable && "plugin-remove_button",
+            @compact && "compact",
             @clearable && "plugin-clear_button",
             @values != [] && "has-items",
             @full && "full",
@@ -111,6 +116,7 @@ defmodule LineaUI.Components.Select.Listbox do
         data-debounce={@debounce}
         data-create-label={@create_label}
         data-create-hint={@create_hint}
+        data-create-position={@create_position == "bottom" && "bottom"}
         data-placeholder={limited?(@mode, @max) && @placeholder}
         data-limit-placeholder={limited?(@mode, @max) && @limit_placeholder}
         data-remove-label={@removable && @remove_label}
@@ -192,9 +198,22 @@ defmodule LineaUI.Components.Select.Listbox do
             role="listbox"
             aria-multiselectable={@multiple && "true"}
           >
-            <div id={@id <> "-create"} phx-update="ignore" data-create-row></div>
+            <div
+              :if={@create_position != "bottom"}
+              id={@id <> "-create"}
+              phx-update="ignore"
+              data-create-row
+            >
+            </div>
             <.entry :for={entry <- @entries} entry={entry} id={@id} option_slot={@option} />
             <div id={@id <> "-extra"} phx-update="ignore" data-extra></div>
+            <div
+              :if={@create_position == "bottom"}
+              id={@id <> "-create"}
+              phx-update="ignore"
+              data-create-row
+            >
+            </div>
           </div>
           <div
             :if={@footer and @multiple}
@@ -214,7 +233,10 @@ defmodule LineaUI.Components.Select.Listbox do
         <div hidden data-no-results>{@no_results}</div>
         <div
           :if={limited?(@mode, @max)}
-          class="mt-1.5 text-end text-tiny-plus tabular-nums text-slate-400 dark:text-navy-300"
+          class={[
+            "text-tiny-plus tabular-nums text-slate-400 dark:text-navy-300",
+            if(@help, do: "absolute end-0 top-full mt-1", else: "mt-1.5 text-end")
+          ]}
           hidden={not @full}
           data-counter
         >
@@ -289,6 +311,7 @@ defmodule LineaUI.Components.Select.Listbox do
       aria-selected="false"
     >
       <span data-text>{@entry.label}</span>
+      <small :if={Options.hint(@entry)} data-hint>{Options.hint(@entry)}</small>
     </div>
     """
   end

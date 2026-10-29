@@ -236,7 +236,7 @@ const Autocomplete = {
     this.options().forEach((row) => {
       const chosen = row.dataset.value === this.value && this.value !== ""
       const text = row.querySelector("[data-text]")
-      row.hidden = !matches(row.dataset.label, term)
+      row.hidden = this.loading || !matches(row.dataset.label, term)
       row.classList.toggle("selected", chosen)
       row.setAttribute("aria-selected", String(chosen))
       text && (text.innerHTML = this.marked(row.dataset.label))
