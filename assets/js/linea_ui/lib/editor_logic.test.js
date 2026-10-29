@@ -158,6 +158,7 @@ test("the slash menu knows its commands and the footer its words", () => {
 
 test("a slash entry is a built-in block, a chip, or a custom command for the server", () => {
   assert.equal(slashKind("h2"), "command")
+  assert.equal(slashKind("constructor"), "custom")
   assert.equal(slashKind("variable:cliente"), "variable")
   assert.equal(slashKind("mention:ana"), "mention")
   assert.equal(slashKind("insert-image"), "custom")

@@ -315,4 +315,14 @@ defmodule LineaUI.Components.AvatarTest do
     assert find(html, "#g-more li") |> Enum.count() == 2
     assert find(html, "#g-more li") |> LazyHTML.text() =~ "Carla Lima"
   end
+
+  test "avatar_group draws no +0 when nobody was left out" do
+    html =
+      render(~H"""
+      <.avatar_group id="g" hidden={[]}><.avatar src="/a.jpg" ring /></.avatar_group>
+      <.avatar_group id="z" more={0}><.avatar src="/a.jpg" ring /></.avatar_group>
+      """)
+
+    refute html =~ "+0"
+  end
 end

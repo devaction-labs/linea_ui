@@ -103,7 +103,8 @@ const numeralParts = (value, options) => {
   const mark = options.decimal_mark ?? "."
   const text = String(value ?? "")
   const negative = !options.positive && text.trimStart().startsWith("-")
-  const [integerText, ...decimalTexts] = text.split(mark)
+  const body = stripPrefix(negative ? text.trimStart().slice(1) : text, options.prefix ?? "")
+  const [integerText, ...decimalTexts] = body.split(mark)
   const integer = digitsOf(integerText).replace(/^0+(?=\d)/, "")
   const decimals = digitsOf(decimalTexts.join("")).slice(0, options.decimals ?? 2)
   return {negative, integer, decimals, hasMark: decimalTexts.length > 0 && (options.decimals ?? 2) > 0, mark}

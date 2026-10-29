@@ -74,7 +74,12 @@ defmodule LineaUI.Components.InputGroup do
   and the row gets `aria-invalid` and an `aria-describedby` that points at the messages; to
   mark the control itself, give the `input` inside `state="error"` too.
   """
-  attr(:id, :string, default: nil, doc: "The row's id; the caption and messages derive theirs.")
+  attr(:id, :string,
+    default: nil,
+    doc:
+      "The row's id; the caption and messages derive theirs. Without it the id comes from the label, so give each group its own `id` when two share a label (rows of a repeated form)."
+  )
+
   attr(:shape, :string, default: "rounded", values: ~w(rounded pill))
 
   attr(:size, :string,

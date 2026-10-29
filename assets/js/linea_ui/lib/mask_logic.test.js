@@ -66,6 +66,14 @@ test("a numeral prefix shows before the figure and stays out of the raw value", 
   assert.equal(format("-1234", "numeral", options), "-R$ 1.234")
 })
 
+test("a numeral prefix with the decimal mark or a digit in it is not read as part of the number", () => {
+  const dotted = {delimiter: ",", decimal_mark: ".", prefix: "S/. "}
+  assert.equal(format("S/. 12.5", "numeral", dotted), "S/. 12.5")
+  assert.equal(format("-S/. 12.5", "numeral", dotted), "-S/. 12.5")
+  assert.equal(raw("S/. 12.5", "numeral", dotted), "12.5")
+  assert.equal(format("+1 25", "numeral", {prefix: "+1 "}), "+1 25")
+})
+
 test("numerals group thousands in three styles", () => {
   assert.equal(format("1234567.891", "numeral"), "1,234,567.89")
   assert.equal(format("1234567", "numeral", {thousands: "lakh"}), "12,34,567")

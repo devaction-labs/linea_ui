@@ -86,6 +86,17 @@ Third pass, from comparing the design canvas with the screen (preview pages `*_c
 - `accordion`: the sizes of the canvas (15px triggers, 10px frames, 13.5px panel text; basic and border-bottom rows are rounded boxes on hover and focus; a white chevron and focus ring on `primary`); new `trigger_class` on `accordion_item`. **Visible change:** accordions get new sizes. `breadcrumb`: a bordered link is 24px tall with an inset 1px shadow, links are rounded, the chevron is in the softer color. `pagination`: item labels are 12.5, 13.5 and 14.5px, the numbers of the summary are semibold, the page-size select looks like the canvas button.
 - `data_table` and `table`: the `data` and `data-grid` variants are the look of `data_table/1` (40px headers, 48px rows, 16px checkboxes, thin arrow sort icons, a lavender selection with no left bar, a 10px frame with cell borders for the grid); new `wrapper_class` on `data_table`; the page gap is `...`. **Visible change:** every `data_table` gets the new look; `table/1` keeps its variants. `table_skeleton`: `shapes` per column. `empty_state`: `variant="table"`.
 
+Review pass:
+
+- `timeline`: the neutral point (solid, outline, icon, ping) is darker, as in the canvas (`slate-500`, `navy-200` in the dark). **Visible change.**
+- `select` (`multiple`, `removable`) and `tags_input`: a disabled field draws its chips without remove buttons.
+- `calendar`: in `pt_BR` the month abbreviations of a week title are lowercase (`23 out – 29 out 2026`).
+- `avatar_group`: an empty `hidden` list or `more={0}` no longer draws a "+0" avatar.
+- `input_group`: without an `id` the caption's id comes from the label; give each group an `id` when two share a label.
+- `table`/`data_table` `peek`: the hidden columns are rendered again inside the panel, so do not put ids in cells that are hidden by priority.
+- `input` mask `numeral`: a `prefix` holding the decimal mark or a digit (`"S/. "`, `"+1 "`) is no longer read back as part of the number.
+- `text_editor`: a custom slash command named like an object property (`constructor`) is no longer taken for a built-in.
+
 ## 0.8.4
 
 - `card_table`: a compact table of row cards for long lists. It answers to its own width (a container query): the columns leave by `priority` at 1180, 960 and 720px, what left shows in a panel when the row is pointed at, and below 520px each row is a card of three lines placed by the `role` of its columns. It has row selection, sortable headers, a status bar per row and a stream-friendly empty state.

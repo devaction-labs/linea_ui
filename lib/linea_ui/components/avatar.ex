@@ -605,7 +605,7 @@ defmodule LineaUI.Components.Avatar do
   def avatar_group(assigns) do
     assigns =
       assigns
-      |> assign(:more, assigns.more || (assigns.hidden && length(assigns.hidden)))
+      |> assign(:more, positive(assigns.more || (assigns.hidden && length(assigns.hidden))))
       |> assign(:listed, assigns.hidden not in [nil, []])
 
     ~H"""
@@ -667,4 +667,7 @@ defmodule LineaUI.Components.Avatar do
 
   defp overlap("auto", size), do: @auto_overlaps[size]
   defp overlap(overlap, _size), do: @overlaps[overlap]
+
+  defp positive(count) when is_integer(count) and count > 0, do: count
+  defp positive(_count), do: nil
 end
