@@ -64,3 +64,7 @@ test("the spec comes from JSON and bad input is empty", () => {
   assert.deepEqual(parseSpec("nope"), {})
   assert.deepEqual(parseSpec("[1]"), {})
 })
+
+test("total_br sums the series and groups the number the Brazilian way", () => {
+  assert.equal(FORMATTERS.total_br({config: {series: [524, 349, 225, 150]}}), "1.248")
+})

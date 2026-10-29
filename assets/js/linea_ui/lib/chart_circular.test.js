@@ -101,3 +101,23 @@ test("a donut shows its middle only when labels are on, and on hover names the s
   assert.deepEqual(hoverText(config, slices[1], slices), {name: "B", value: "3"})
   assert.equal(centerText(configure({...options, plotOptions: {}}), slices).opacity, 0)
 })
+
+const figured = {chart: {type: "donut", height: 190}, labels: ["Web", "App"], series: [524, 349], plotOptions: {pie: {donut: {labels: {show: true, layout: "figure", total: {show: true, label: "pedidos", formatter: () => "1.248"}, value: {showPercent: true}}}}}}
+
+test("a figure layout puts the total over its caption, and the hovered slice name over value and share", () => {
+  const {config, slices, svg} = setup(figured)
+  const rest = centerText(config, slices)
+  assert.deepEqual([rest.name, rest.value], ["1.248", "pedidos"])
+  assert.equal(svg.includes("linea-chart-center-figure"), true)
+  assert.equal(svg.includes("linea-chart-center-caption"), true)
+  const hover = hoverText(config, slices[0], slices)
+  assert.deepEqual([hover.name, hover.value], ["Web", "524 · 60%"])
+})
+
+test("without showPercent the hover keeps the bare value, and the default layout keeps the label first", () => {
+  const plain = {...figured, plotOptions: {pie: {donut: {labels: {show: true, total: {show: true, label: "pedidos"}}}}}}
+  const {config, slices, svg} = setup(plain)
+  assert.equal(hoverText(config, slices[0], slices).value, "524")
+  assert.deepEqual([centerText(config, slices).name, centerText(config, slices).value], ["pedidos", "873"])
+  assert.equal(svg.includes("linea-chart-center-figure"), false)
+})

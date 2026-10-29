@@ -2,16 +2,24 @@
  * The plan of a cartesian chart: the axes, the plot rectangle and the functions that turn values and
  * categories into pixels. Drawing and the pointer both read it.
  */
-import {categoryAxis, horizontalOf, stacksOf, valueAxis} from "./chart_axes.js"
+import {categoryAxis, categoryText, horizontalOf, stacksOf, valueAxis} from "./chart_axes.js"
 import {frame, labelled} from "./chart_frame.js"
+import {END_LABEL_GAP, endLabels, labelText} from "./chart_marks.js"
 import {linear, timeTicks} from "./chart_scale.js"
 
 const call = (formatter, ...args) => (typeof formatter === "function" ? formatter(...args) : undefined)
 
+/** The room a row chart keeps at the right of the longest bar for the label past its end. */
+const endRoom = (config, visible, measure) => {
+  const size = parseFloat(config.dataLabels.style?.fontSize ?? 12)
+  const widest = Math.max(0, ...visible.flatMap((series) => series.points.filter((point) => point.value !== null).map((point) => measure(labelText(config, point.value, series.index, point.slot), size))))
+  return widest + END_LABEL_GAP + 2
+}
+
 export const fontOf = (axis) => parseFloat(axis.labels?.style?.fontSize ?? 12)
 
 const categoryTexts = (config, data) =>
-  Array.from({length: data.count}, (_, slot) => String(call(config.xaxis.labels?.formatter, data.labels[slot] ?? "", undefined, {}) ?? data.labels[slot] ?? ""))
+  Array.from({length: data.count}, (_, slot) => categoryText(config, data, slot))
 
 const retimed = (axis, length) =>
   timeTicks(axis.min, axis.max, Math.max(2, Math.floor(length / 55))).map((instant) => ({value: instant, label: axis.text(instant)}))
@@ -31,7 +39,7 @@ export const plan = (config, data, {width, height, measure, legend}) => {
   const sideWidth = Math.max(0, ...sideTexts.map((text) => measure(text, fontOf(config.yaxis))))
   const topLabels = !horizontal && labelled(config.xaxis) && config.xaxis.position === "top"
   const bottomLabels = horizontal ? labelled(config.xaxis) : labelled(config.xaxis) && !topLabels
-  const reach = !horizontal && data.kind === "category" && labelled(config.xaxis) ? measure(texts.at(-1) ?? "", fontOf(config.xaxis)) / 2 + 1 : 0
+  const reach = !horizontal && data.kind === "category" && labelled(config.xaxis) ? measure(texts.at(-1) ?? "", fontOf(config.xaxis)) / 2 + 1 : horizontal && endLabels(config) ? endRoom(config, visible, measure) : 0
   const {plot, sideEdge} = frame(config, {width, height, legend, horizontal, sideWidth, lastLabel: reach, bottomLabels, topLabels})
   const value = first.time ? {...first, ticks: retimed(first, plot.w)} : first
   const cat = categoryAxis(config, data, horizontal ? plot.h : plot.w, {measure, horizontal, room: {left: plot.x, right: width - plot.x - plot.w}})

@@ -81,3 +81,21 @@ test("legend figures show in the markup and widen the entries", () => {
   assert.equal(legendHtml(rich).includes('<span class="linea-chart-legend-figures">524 · 60%</span>'), true)
   assert.equal(legendHtml(plain).includes("legend-figures"), false)
 })
+
+test("legend.layout table lists one row per entry with the value and the share in columns of their own", () => {
+  const table = box({chart: {type: "donut"}, labels: ["Site", "Balcão"], series: [664, 359], legend: {position: "bottom", layout: "table", showValue: true, showPercent: true}})
+  assert.equal(table.layout, "table")
+  assert.equal(table.rows, 2)
+  assert.equal(Math.round(table.height) > 40, true)
+  assert.deepEqual(table.items.map((item) => item.parts), [["664", "65%"], ["359", "35%"]])
+  const html = legendHtml(table)
+  assert.equal(html.includes('class="linea-chart-legend-value">664<'), true)
+  assert.equal(html.includes('class="linea-chart-legend-percent">65%<'), true)
+  assert.equal(html.includes("linea-chart-legend-figures"), false)
+})
+
+test("the default legend layout stays inline", () => {
+  const inline = box({chart: {type: "donut"}, labels: ["A", "B"], series: [1, 1], legend: {showPercent: true}})
+  assert.equal(inline.layout, "inline")
+  assert.equal(legendHtml(inline).includes("linea-chart-legend-figures"), true)
+})

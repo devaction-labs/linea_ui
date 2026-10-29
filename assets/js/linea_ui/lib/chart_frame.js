@@ -42,7 +42,7 @@ export const frame = (config, {width, height, legend, horizontal, sideWidth, las
   const tip = config.yaxis.tooltip?.enabled && !horizontal ? TIP_EXTRA : 0
   const x = reserve + tip + pad.left + (legend.position === "left" ? legend.width : 0)
   const y = TOP + pad.top + (legend.position === "top" ? legend.height : 0) + (topLabels ? LABELS_HEIGHT / 2 : 0)
-  const right = pad.right + (horizontal ? 0 : lastLabel) + (legend.position === "right" ? legend.width : 0)
+  const right = pad.right + lastLabel + (legend.position === "right" ? legend.width : 0)
   const bottom = BOTTOM + pad.bottom + (bottomLabels ? LABELS_HEIGHT : 0) + (legend.position === "bottom" ? legend.height : 0)
   const spark = config.chart.sparkline.enabled
   const plot = spark ? {x: 0, y: 1, w: width, h: Math.max(height - 2, 1)} : {x, y, w: Math.max(width - x - right, 1), h: Math.max(height - y - bottom, 1)}

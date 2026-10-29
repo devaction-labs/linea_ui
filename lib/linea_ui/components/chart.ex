@@ -44,6 +44,7 @@ defmodule LineaUI.Components.Chart do
   | `brl` | `1284.9` -> `R$ 1.284,9` (pt-BR grouping) |
   | `brl_thousands` | `6000` -> `R$ 6 mil`, `31500` -> `R$ 31,5 mil`, values under 1000 as `brl` |
   | `number_br` | `1248` -> `1.248` |
+  | `total_br` | for gauges and the donut total: the sum of the series as `number_br` (takes ApexCharts' `w`) |
   | `percent` | `12.5` -> `12.5%` |
   | `percent_round` | `12.5` -> `13%` |
   | `round` | `2.6` -> `3` |
@@ -110,7 +111,7 @@ defmodule LineaUI.Components.Chart do
 
   **Bars**: `plotOptions.bar` with `horizontal`, `columnWidth` and `barHeight` (a share such as `"55%"`,
   a number meaning the same percentage, or pixels as `"24px"`), `borderRadius`, `borderRadiusApplication`,
-  `distributed`, `rangeBarOverlap` and `dataLabels.position` (`center` or `top`). A stacked bar rounds
+  `distributed`, `rangeBarOverlap` and `dataLabels.position` (`center` or `top`; `end` on rows writes the value just past the end of each bar, in room kept at the right of the plot). A stacked bar rounds
   the ends of the whole pile. `plotOptions.candlestick.colors` takes `upward` and `downward`.
 
   **Axes**: `xaxis` (`type` `category`, `datetime` or `numeric`, `categories`, `min`, `max`, `tickAmount`,
@@ -125,7 +126,7 @@ defmodule LineaUI.Components.Chart do
   `grid.padding` (`top`, `right`, `bottom`, `left`, negative values allowed, as in ApexCharts).
 
   **Text**: `dataLabels` (`enabled`, `formatter`, `offsetX`, `offsetY`, `style.fontSize`), `legend`
-  (`show`, `showForSingleSeries`, `position`, `horizontalAlign`, `fontSize`, `markers.size`,
+  (`show`, `showForSingleSeries`, `position`, `layout` (`table`: one row per entry with the name, the value and the share in aligned columns), `horizontalAlign`, `fontSize`, `markers.size`,
   `markers.shape`, `itemMargin`, `onItemClick.toggleDataSeries`; clicking an entry hides its series; pointing at or tabbing to one puts its series in front: the others dim and a slice or ring grows),
   `tooltip` (`enabled`, `shared`, `intersect`, `theme` `light` or `dark`, `fillSeriesColor`, `x.show`,
   `x.format`, `x.formatter`, `y.formatter`, `y.title.formatter`) and `title.text`, which names the chart
@@ -147,7 +148,7 @@ defmodule LineaUI.Components.Chart do
   between the spokes (the tooltip lists every series on the spoke). Escape or leaving the chart clears it.
 
   **Circular charts**: `plotOptions.pie` (`startAngle`, `endAngle`, `offsetX`, `offsetY`, `customScale`,
-  `donut.size`, `donut.labels` with `show`, `name`, `value` and `total`, `dataLabels.offset`),
+  `donut.size`, `donut.labels` with `show`, `name`, `value` (`value.showPercent` writes `524 · 42%` for the hovered slice), `total` and `layout: "figure"`, the total large over its label and the hovered slice name over its value, `dataLabels.offset`),
   `plotOptions.radialBar` (`startAngle`, `endAngle`, `hollow.size`, `track.show`,
   `track.margin`, `track.strokeWidth`, `track.opacity`, `dataLabels` with `show`, `name`, `value` and
   `total`, each taking `show`, `fontSize`, `fontWeight`, `color`, `offsetY` and `formatter`) and
@@ -209,7 +210,7 @@ defmodule LineaUI.Components.Chart do
   attr(:table_toggle, :any,
     default: false,
     doc:
-      "`true` adds a Chart / Table switch above the chart (a `segmented` control, answered in the browser) that shows the data table in place of the drawing. A map renames the texts: `%{chart: \"Gráfico\", table: \"Tabela\", label: \"Visualização\"}`."
+      "`true` adds a Chart / Table switch above the chart (a `segmented` control, answered in the browser) that shows the data table in place of the drawing. A map renames the texts: `%{chart: \"Gráfico\", table: \"Tabela\", label: \"Visualização\"}`, and its `class` goes on the row of the switch, to place it elsewhere (for instance `\"absolute top-4 right-5\"` with the chart element `static`, to sit in the header of a card)."
   )
 
   attr(:summary, :boolean,
@@ -245,7 +246,7 @@ defmodule LineaUI.Components.Chart do
       phx-mounted={JS.ignore_attributes(["data-view"])}
       {@rest}
     >
-      <div :if={@toggle} data-chart-view class="mb-2 flex justify-end">
+      <div :if={@toggle} data-chart-view class={merge(["mb-2 flex justify-end", @toggle.class])}>
         <Segmented.segmented
           id={@toggle.id}
           size="sm"
@@ -277,7 +278,8 @@ defmodule LineaUI.Components.Chart do
       id: id <> "-view",
       chart: Map.get(spec, :chart, "Chart"),
       table: Map.get(spec, :table, "Table"),
-      label: Map.get(spec, :label, "View")
+      label: Map.get(spec, :label, "View"),
+      class: Map.get(spec, :class)
     }
   end
 

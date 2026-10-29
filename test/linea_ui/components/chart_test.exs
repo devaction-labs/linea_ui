@@ -75,6 +75,20 @@ defmodule LineaUI.Components.ChartTest do
     assert find(html, "#c-canvas[phx-update=ignore]") |> Enum.to_list() |> length() == 1
   end
 
+  test "table_toggle takes a class for the row of the switch, replacing the default margin" do
+    html =
+      render(~H"""
+      <.chart id="a" options={%{}} table_toggle />
+      <.chart id="b" options={%{}} table_toggle={%{class: "absolute top-4 right-5 mb-0"}} />
+      """)
+
+    [default] = find(html, "#a [data-chart-view]") |> LazyHTML.attribute("class")
+    [placed] = find(html, "#b [data-chart-view]") |> LazyHTML.attribute("class")
+    assert default =~ "mb-2"
+    assert placed =~ "absolute top-4 right-5"
+    refute placed =~ "mb-2"
+  end
+
   test "summary adds a quiet header line, on_cursor names the pushed event, both off by default" do
     html =
       render(~H"""

@@ -41,13 +41,13 @@ defmodule PreviewWeb.Pages.Apexcharts do
       assign(assigns,
         left: [
           {"Area Chart", area()},
-          {"Bar Chart", gradient_area()},
-          {"Candlestick", horizontal_bar()},
-          {"Bubble Chart", gradient_line()},
-          {"Radar Chart", candlestick()}
+          {"Gradient Area Chart", gradient_area()},
+          {"Horizontal Bar Chart", horizontal_bar()},
+          {"Gradient Line Chart", gradient_line()},
+          {"Candlestick Chart", candlestick()}
         ],
         right: [
-          {"Stacked Column Chart", stacked_bar()},
+          {"100% Stacked Column Chart", stacked_bar()},
           {"Radialbar Chart", radial_bar()},
           {"Radar Chart", radar()}
         ]
@@ -317,7 +317,7 @@ defmodule PreviewWeb.Pages.Apexcharts do
       chart: %{height: 350, type: "candlestick", toolbar: @no_toolbar},
       grid: @grid_lines,
       tooltip: %{enabled: true},
-      xaxis: %{type: "category"},
+      xaxis: %{type: "datetime", labels: %{format: "MMM dd HH:mm"}},
       yaxis: %{tooltip: %{enabled: true}}
     }
   end

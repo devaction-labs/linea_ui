@@ -502,6 +502,10 @@
     pointer-events: none;
   }
 
+  .linea-chart-datalabel--end {
+    @apply fill-slate-700 dark:fill-navy-50;
+  }
+
   .linea-chart-marker {
     @apply stroke-slate-150 dark:stroke-navy-800;
     stroke-width: 2;
@@ -580,6 +584,14 @@
 
   .linea-chart-center-label {
     @apply fill-slate-600 font-inter dark:fill-navy-100;
+  }
+
+  .linea-chart-center-figure {
+    @apply fill-slate-800 font-inter dark:fill-navy-50;
+  }
+
+  .linea-chart-center-caption {
+    @apply fill-slate-400 font-inter dark:fill-navy-300;
   }
 
   .linea-chart-center-value {
@@ -692,6 +704,31 @@
 
   .linea-chart-legend[data-position="right"] {
     @apply right-0;
+  }
+
+  /* `legend.layout: "table"`: one row per entry, the name, the value and the share in columns shared by every row. */
+  .linea-chart-legend[data-layout="table"] {
+    @apply grid grid-cols-[auto_1fr_auto_auto] items-center gap-x-2 px-2;
+  }
+
+  .linea-chart-legend[data-layout="table"] .linea-chart-legend-item {
+    @apply col-span-4 grid grid-cols-subgrid items-center gap-x-2 rounded-lg px-0 py-1.5 hover:bg-slate-150/60 dark:hover:bg-navy-600/60;
+  }
+
+  .linea-chart-legend[data-layout="table"] .linea-chart-legend-marker {
+    @apply mr-0 size-2 rounded-xs;
+  }
+
+  .linea-chart-legend-value {
+    @apply text-end text-xs-plus text-slate-400 tabular-nums dark:text-navy-300;
+  }
+
+  .linea-chart-legend-percent {
+    @apply min-w-11 text-end font-semibold text-slate-700 tabular-nums dark:text-navy-50;
+  }
+
+  .linea-chart-legend-text {
+    @apply text-start;
   }
 
   .linea-chart-legend-item {

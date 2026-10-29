@@ -17,6 +17,7 @@ export const FORMATTERS = {
   minutes: (value) => `${value} min`,
   none: () => "",
   total: (w) => w.config.series.reduce((sum, value) => sum + value, 0),
+  total_br: (w) => PT_NUMBER.format(w.config.series.reduce((sum, value) => sum + value, 0)),
 }
 
 const lookup = (name, table) => (typeof name === "string" && Object.hasOwn(table, name) ? table[name] : undefined)
