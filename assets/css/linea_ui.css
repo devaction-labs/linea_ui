@@ -704,6 +704,12 @@ code.inline-code {
   before:w-full before:scale-0 checked:before:scale-100 hover:shadow-lg;
 }
 
+/* The keyboard focus of a radio: a ring around it, the way a chip or a card shows it. */
+.form-radio {
+  @apply focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary/50
+  dark:focus-visible:outline-accent-light/50;
+}
+
 .form-radio.is-basic,
 .form-checkbox.is-basic {
   @apply bg-origin-border before:bg-center before:bg-no-repeat before:[background-size:100%_100%] before:[background-image:var(--tw-thumb)];

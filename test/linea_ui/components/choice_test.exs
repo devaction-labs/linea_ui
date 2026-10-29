@@ -35,6 +35,7 @@ defmodule LineaUI.Components.ChoiceTest do
       assert "rounded-full" in label
       assert "has-checked:bg-primary" in label
       assert "dark:has-checked:bg-accent" in label
+      assert "dark:bg-navy-500" in label
 
       assert html |> find("label") |> Enum.map(&LazyHTML.text/1) |> Enum.map(&String.split/1) == [
                ["Todos", "128"],
