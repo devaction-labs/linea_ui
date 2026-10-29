@@ -49,7 +49,7 @@ defmodule LineaUI.Components.KanbanTest do
     assert attr_of(html, "section > article", "data-id") == ["1", "2"]
     assert "w-[272px]" in classes(html, "section")
     assert "rounded-[14px]" in classes(html, "section")
-    assert "dark:bg-navy-800" in classes(html, "section")
+    assert "dark:bg-navy-900" in classes(html, "section")
     assert LazyHTML.text(find(html, "section > div")) =~ "2"
   end
 
@@ -67,12 +67,12 @@ defmodule LineaUI.Components.KanbanTest do
 
   test "the color picks the icon tile and the bar" do
     for {color, tile, bar} <- [
-          {"neutral", "bg-slate-150", "bg-slate-400"},
-          {"info", "bg-info/10", "bg-info"},
-          {"warning", "bg-warning/10", "bg-warning"},
-          {"primary", "bg-primary/10", "bg-primary"},
+          {"neutral", "bg-slate-500/[.13]", "bg-slate-500"},
+          {"info", "bg-info-focus/[.13]", "bg-info-focus"},
+          {"warning", "bg-warning-focus/[.13]", "bg-warning-focus"},
+          {"primary", "bg-primary/[.13]", "bg-primary"},
           {"teal", "bg-teal-500/10", "bg-teal-500"},
-          {"success", "bg-success/10", "bg-success"}
+          {"success", "bg-success-focus/[.13]", "bg-success-focus"}
         ] do
       assigns = %{color: color}
 
@@ -145,8 +145,8 @@ defmodule LineaUI.Components.KanbanTest do
       """)
 
     for tag <- ["section", "aside"] do
-      assert "data-[over]:bg-primary/5" in classes(html, tag)
-      assert "dark:data-[over]:bg-accent/10" in classes(html, tag)
+      assert "data-[over]:bg-primary/10" in classes(html, tag)
+      assert "dark:data-[over]:bg-accent/[.18]" in classes(html, tag)
       refute Enum.any?(classes(html, tag), &(&1 =~ ~r/data-\[over\]:(ring|outline)/))
     end
   end
@@ -210,12 +210,20 @@ defmodule LineaUI.Components.KanbanTest do
     assert find(html, "aside #own") |> Enum.count() == 1
   end
 
-  test "a column over its limit turns the pill, the meta and the bar red" do
+  test "a column over its limit turns the pill and the bar red, and the words of the limit are the consumer's" do
     html =
       render(~H"""
       <.kanban id="b" aria-label="Funnel">
-        <.kanban_column id="over" label="Doing" count={4} limit={3} meta="WIP" progress={50} />
-        <.kanban_column id="ok" label="Todo" count={2} limit={3} meta="WIP" progress={50} />
+        <.kanban_column
+          id="over"
+          label="Doing"
+          count={4}
+          limit={3}
+          meta="limit of 3"
+          total="4 of 3"
+          progress={100}
+        />
+        <.kanban_column id="ok" label="Todo" count={2} limit={3} meta="limit of 3" progress={50} />
         <.kanban_column id="off" label="Done" count={2} disabled />
       </.kanban>
       """)
@@ -223,12 +231,26 @@ defmodule LineaUI.Components.KanbanTest do
     assert [_] = find(html, ~s|#b[role="group"][aria-label="Funnel"]|) |> Enum.to_list()
     assert [_] = find(html, ~s|#over[data-wip="exceeded"]|) |> Enum.to_list()
     assert [] = find(html, "#ok[data-wip]") |> Enum.to_list()
-    assert find(html, "#over > div:first-child span:nth-child(2)") |> LazyHTML.text() =~ "4/3"
-    assert find(html, "#ok > div:first-child span:nth-child(2)") |> LazyHTML.text() =~ "2/3"
-    assert "text-error" in classes(html, "#over > div:first-child span:nth-child(2)")
-    assert "text-error" in classes(html, "#over > div:nth-child(2) > span")
-    assert "bg-error" in classes(html, "#over span.block")
-    refute "bg-error" in classes(html, "#ok span.block")
+    assert find(html, "#over > div:first-child span:nth-child(2)") |> LazyHTML.text() =~ "4"
+    refute find(html, "#over > div:first-child span:nth-child(2)") |> LazyHTML.text() =~ "/"
+    assert "text-error-focus" in classes(html, "#over > div:first-child span:nth-child(2)")
+    assert "bg-error-focus/10" in classes(html, "#over > div:first-child span:nth-child(2)")
+    refute "text-error-focus" in classes(html, "#ok > div:first-child span:nth-child(2)")
+    refute "text-error-focus" in classes(html, "#over > div:nth-child(2) > span")
+    assert find(html, "#over > div:nth-child(2)") |> LazyHTML.text() =~ "4 of 3"
+    assert "bg-error-focus" in classes(html, "#over span.block")
+    refute "bg-error-focus" in classes(html, "#ok span.block")
     assert "data-[disabled=true]:opacity-60" in classes(html, "#off")
+  end
+
+  test "a card with grip draws the drag handle that shows on hover" do
+    plain = render(~H|<.kanban_card id="a">A</.kanban_card>|)
+    assert [] = find(plain, "article [data-grip]") |> Enum.to_list()
+
+    html = render(~H|<.kanban_card id="a" grip>A</.kanban_card>|)
+    assert [_] = find(html, ~s|article [data-grip][aria-hidden="true"]|) |> Enum.to_list()
+    assert find(html, "article [data-grip] i") |> Enum.count() == 6
+    assert "group-hover:opacity-90" in classes(html, "[data-grip]")
+    assert "opacity-0" in classes(html, "[data-grip]")
   end
 end

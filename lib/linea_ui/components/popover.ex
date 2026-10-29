@@ -103,7 +103,7 @@ defmodule LineaUI.Components.Popover do
         <div class="popper-box">
           <div class={
             merge([
-              "w-68 max-w-[90vw] rounded-md border border-slate-150 bg-white p-4 dark:border-navy-600 dark:bg-navy-700",
+              "w-68 max-w-[90vw] rounded-md border border-slate-300 bg-white p-4 shadow-[0_10px_30px_-8px_rgb(48_46_56/0.18)] dark:border-navy-500 dark:bg-navy-700 dark:shadow-[0_3px_10px_rgb(25_33_50/0.3)]",
               @class
             ])
           }>
@@ -124,7 +124,7 @@ defmodule LineaUI.Components.Popover do
               fill="currentColor"
             >
               <path
-                class="text-slate-150 dark:text-navy-600"
+                class="text-slate-300 dark:text-navy-500"
                 d="M1.5 8.357s-.48.624 2.754-4.779C5.583 1.35 6.796.01 8 0c1.204-.009 2.417 1.33 3.76 3.578 3.253 5.43 2.74 4.78 2.74 4.78h-13z"
               />
               <path
