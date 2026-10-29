@@ -159,6 +159,12 @@ defmodule LineaUI.Components.DatePicker do
     doc:
       "The calendar icon inside the input; `false` leaves a bare input (and drops the left padding)."
 
+  attr :skin, :string,
+    default: nil,
+    values: [nil, "linea"],
+    doc:
+      "`\"linea\"` draws the calendar as LineaUI's own: a compact 300px panel with the month and year as buttons, 36px rounded days, a dot under today, a continuous band for a range and pill presets. Without it the calendar is LineOne's flatpickr."
+
   attr :disabled, :boolean, default: false
   attr :on_change, :string, default: nil
   attr :target, :any, default: nil

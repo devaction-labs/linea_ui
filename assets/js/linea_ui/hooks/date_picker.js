@@ -120,6 +120,7 @@ export const Picker = {
       today: data.today,
       hover: this.hover,
       weekStart: Number(data.weekStart || 0),
+      compact: data.skin === "linea",
       names: this.names(),
       labels: this.labels(),
       dayLabel: (iso) => dayName(iso, this.labels().picker_day ?? DAY_LABEL, this.names()),

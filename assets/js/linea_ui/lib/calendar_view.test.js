@@ -80,6 +80,15 @@ test("renderDays and renderTime build flatpickr's panels", () => {
   assert.doesNotMatch(renderTime({hour: 13, minute: 5, twentyFour: true}), /flatpickr-am-pm/)
 })
 
+test("renderDays draws six weeks, or only the weeks of the month when compact", () => {
+  const state = {view: {year: 2026, month: 9}, dates: [], mode: "single", today: "2026-10-23", rules: {}, weekStart: 0}
+  const weeks = (html) => html.match(/class="flatpickr-week"/g).length
+  assert.equal(weeks(renderDays(state)), 6)
+  assert.equal(weeks(renderDays({...state, compact: true})), 5)
+  assert.equal(weeks(renderDays({...state, compact: true, view: {year: 2026, month: 1}})), 4)
+  assert.equal(weeks(renderDays({...state, compact: true, view: {year: 2026, month: 7}})), 6)
+})
+
 test("time arithmetic", () => {
   assert.deepEqual(stepTime({hour: 23, minute: 55}, "minute", 1), {hour: 0, minute: 0})
   assert.deepEqual(stepTime({hour: 10, minute: 0}, "hour", -1), {hour: 9, minute: 0})

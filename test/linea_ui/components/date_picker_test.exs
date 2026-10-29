@@ -115,6 +115,8 @@ defmodule LineaUI.Components.DatePickerTest do
            |> Enum.count() == 1
 
     assert "border-error" in classes(html, "#task_due-display")
+    assert "dark:border-error" in classes(html, "#task_due-display")
+    refute "dark:border-navy-450" in classes(html, "#task_due-display")
     assert html |> find(".text-error") |> LazyHTML.text() =~ "is late"
   end
 
@@ -185,5 +187,30 @@ defmodule LineaUI.Components.DatePickerTest do
     assert labels["picker_previous"] == "Mês anterior"
     assert labels["picker_day"] == "%{weekday}, %{day} de %{month} de %{year}"
     refute Map.has_key?(labels, "datetime_select")
+  end
+
+  test "skin linea marks the picker and its calendar, and sits the calendar 6px under the field" do
+    plain = render(~H|<.date_picker id="p" name="p" />|)
+    skinned = render(~H|<.date_picker id="p" name="p" skin="linea" />|)
+
+    refute plain |> find("#p") |> LazyHTML.attribute("data-skin") == ["linea"]
+    assert skinned |> find("#p") |> LazyHTML.attribute("data-skin") == ["linea"]
+    assert skinned |> find("#p-calendar") |> LazyHTML.attribute("data-skin") == ["linea"]
+
+    assert skinned |> find("#p-calendar") |> LazyHTML.attribute("style") == [
+             "top: calc(100% + 6px); left: 0;"
+           ]
+
+    assert plain |> find("#p-calendar") |> LazyHTML.attribute("style") == [
+             "top: calc(100% + 2px); left: 0;"
+           ]
+  end
+
+  test "a disabled input looks disabled" do
+    html = render(~H|<.date_picker id="p" name="p" disabled />|)
+
+    assert find(html, "#p-display[disabled]") |> Enum.count() == 1
+    assert "disabled:opacity-60" in classes(html, "#p-display")
+    assert "disabled:cursor-not-allowed" in classes(html, "#p-display")
   end
 end

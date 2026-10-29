@@ -28,8 +28,8 @@ defmodule LineaUI.Components.DatePicker.Shell do
 
   @preset "rounded-full bg-slate-150 px-2.5 py-1 text-xs-plus font-medium text-slate-600 transition-colors hover:bg-slate-200 hover:text-slate-800 focus-visible:outline-2 focus-visible:outline-primary/50 data-active:bg-primary data-active:text-white dark:bg-navy-500 dark:text-navy-100 dark:hover:bg-navy-450 dark:hover:text-navy-50 dark:data-active:bg-accent dark:data-active:text-white"
 
-  @input "form-input flatpickr-input peer w-full rounded-lg border border-slate-300 bg-transparent px-3 py-2 placeholder:text-slate-400/70 hover:border-slate-400 focus:border-primary focus:ring-3 focus:ring-primary/20 disabled:pointer-events-none disabled:select-none disabled:border-none disabled:bg-zinc-100 dark:border-navy-450 dark:hover:border-navy-400 dark:focus:border-accent dark:focus:ring-accent/20 dark:disabled:bg-navy-600"
-  @input_grouped "form-input flatpickr-input w-full rounded-l-lg border border-slate-300 bg-transparent px-3 py-2 placeholder:text-slate-400/70 hover:z-10 hover:border-slate-400 focus:z-10 focus:border-primary dark:border-navy-450 dark:hover:border-navy-400 dark:focus:border-accent"
+  @input "form-input flatpickr-input peer w-full rounded-lg border border-slate-300 bg-transparent px-3 py-2 placeholder:text-slate-400/70 hover:border-slate-400 focus:border-primary focus:ring-3 focus:ring-primary/20 disabled:pointer-events-none disabled:select-none disabled:border-none disabled:bg-zinc-100 dark:border-navy-450 dark:hover:border-navy-400 dark:focus:border-accent dark:focus:ring-accent/20 dark:disabled:bg-navy-600 disabled:opacity-60"
+  @input_grouped "form-input flatpickr-input w-full rounded-l-lg border border-slate-300 bg-transparent px-3 py-2 placeholder:text-slate-400/70 hover:z-10 hover:border-slate-400 focus:z-10 focus:border-primary dark:border-navy-450 dark:hover:border-navy-400 dark:focus:border-accent disabled:cursor-not-allowed disabled:border-transparent disabled:bg-zinc-100 disabled:opacity-60 dark:disabled:bg-navy-600"
 
   @error "border-error hover:border-error focus:border-error focus:ring-error/20 dark:border-error dark:hover:border-error dark:focus:border-error dark:focus:ring-error/20"
 
@@ -251,6 +251,7 @@ defmodule LineaUI.Components.DatePicker.Shell do
   def render_picker(assigns, kind, hook) do
     assigns
     |> assign(:hook, hook)
+    |> assign_new(:skin, fn -> nil end)
     |> assign(:today, assigns.today || Date.utc_today())
     |> prepare(kind)
     |> shell()
@@ -277,6 +278,7 @@ defmodule LineaUI.Components.DatePicker.Shell do
         phx-target={@target}
         class={["relative", @label && "mt-1.5"]}
         data-kind={@kind}
+        data-skin={@skin}
         data-mode={@mode}
         data-value={Pickers.json(@values)}
         data-name={@input_name}
@@ -358,7 +360,8 @@ defmodule LineaUI.Components.DatePicker.Shell do
           aria-label={@dialog}
           tabindex="-1"
           class={calendar_class(@kind, @mode, @inline)}
-          style={calendar_style(@inline, @kind)}
+          style={calendar_style(@inline, @kind, @skin)}
+          data-skin={@skin}
           data-calendar
         >
         </div>
@@ -400,9 +403,11 @@ defmodule LineaUI.Components.DatePicker.Shell do
     ]
   end
 
-  defp calendar_style(true, _kind), do: "position: relative; top: 2px; display: block;"
-  defp calendar_style(false, :time), do: "top: calc(100% + 6px); left: 0;"
-  defp calendar_style(false, _kind), do: "top: calc(100% + 2px); left: 0;"
+  defp calendar_style(true, _kind, nil), do: "position: relative; top: 2px; display: block;"
+  defp calendar_style(true, _kind, _skin), do: "position: relative; top: 6px; display: block;"
+  defp calendar_style(false, :time, _skin), do: "top: calc(100% + 6px); left: 0;"
+  defp calendar_style(false, _kind, nil), do: "top: calc(100% + 2px); left: 0;"
+  defp calendar_style(false, _kind, _skin), do: "top: calc(100% + 6px); left: 0;"
 
   defp default_icon(:time) do
     assigns = %{}

@@ -1,7 +1,7 @@
 defmodule LineaUI.Components.Calendar.Grid do
   @moduledoc false
 
-  @row_px 52
+  @row_px 44
   @weekdays %{
     0 => :sunday,
     1 => :monday,
@@ -90,7 +90,7 @@ defmodule LineaUI.Components.Calendar.Grid do
   def events(events) do
     events
     |> Enum.flat_map(&event/1)
-    |> Enum.sort_by(&{&1.from || -1, &1.title})
+    |> Enum.sort_by(&(&1.from || -1))
     |> Enum.group_by(& &1.date)
   end
 
@@ -134,14 +134,14 @@ defmodule LineaUI.Components.Calendar.Grid do
 
   defp block(event, hour, index, count, day_start) do
     inside? = div(event.from, 60) == hour and hour >= day_start
-    top = (inside? && round(rem(event.from, 60) / 60 * @row_px) + 2) || 2
-    height = max(round((event.to - event.from) / 60 * @row_px) - 4, 20)
+    top = (inside? && round(rem(event.from, 60) / 60 * @row_px) + 1) || 1
+    height = max(round((event.to - event.from) / 60 * @row_px) - 3, 20)
 
     %{
       event: event,
       hour: hour,
       style:
-        "top: #{top}px; height: #{height}px; left: #{round(index * 100 / count)}%; width: #{round(100 / count)}%"
+        "top: #{top}px; height: #{height}px; left: calc(#{round(index * 100 / count)}% + 2px); width: calc(#{round(100 / count)}% - 4px)"
     }
   end
 end
