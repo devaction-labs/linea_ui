@@ -209,7 +209,7 @@ defmodule LineaUI.Components.Chart do
   attr(:table_toggle, :any,
     default: false,
     doc:
-      "`true` adds a Chart / Table switch above the chart (a `segmented` control, answered in the browser) that shows the data table in place of the drawing. A map renames the texts: `%{chart: \"Gráfico\", table: \"Tabela\", label: \"Visualização\"}`."
+      "`true` adds a Chart / Table switch above the chart (a `segmented` control, answered in the browser) that shows the data table in place of the drawing. A map renames the texts: `%{chart: \"Gráfico\", table: \"Tabela\", label: \"Visualização\"}`, and its `class` goes on the row of the switch, to place it elsewhere (for instance `\"absolute top-4 right-5\"` with the chart element `static`, to sit in the header of a card)."
   )
 
   attr(:summary, :boolean,
@@ -245,7 +245,7 @@ defmodule LineaUI.Components.Chart do
       phx-mounted={JS.ignore_attributes(["data-view"])}
       {@rest}
     >
-      <div :if={@toggle} data-chart-view class="mb-2 flex justify-end">
+      <div :if={@toggle} data-chart-view class={merge(["mb-2 flex justify-end", @toggle.class])}>
         <Segmented.segmented
           id={@toggle.id}
           size="sm"
@@ -277,7 +277,8 @@ defmodule LineaUI.Components.Chart do
       id: id <> "-view",
       chart: Map.get(spec, :chart, "Chart"),
       table: Map.get(spec, :table, "Table"),
-      label: Map.get(spec, :label, "View")
+      label: Map.get(spec, :label, "View"),
+      class: Map.get(spec, :class)
     }
   end
 

@@ -198,3 +198,24 @@ test("row labels at the end sit past each bar, in room kept at the right of the 
   assert.equal(count(svg, /linea-chart-datalabel--end/g), 5)
   assert.equal(count(svg, />524</g), 1)
 })
+
+const candles = [[1538778600000, [10, 12, 9, 11]], [1538780400000, [11, 13, 10, 12]], [1538782200000, [12, 14, 11, 13]]]
+
+test("a candlestick on a date axis prints dates, not raw timestamps, and honours labels.format", () => {
+  const options = {chart: {type: "candlestick", height: 300}, series: [{name: "c", data: candles.map(([x, y]) => ({x, y}))}], xaxis: {type: "datetime"}}
+  const {layout} = build(options, {width: 500})
+  assert.equal(layout.cat.labels.every((one) => /^\d\d:\d\d$/.test(one.text)), true)
+  const formatted = build({...options, xaxis: {type: "datetime", labels: {format: "MMM dd HH:mm"}}}, {width: 500})
+  assert.equal(formatted.layout.cat.labels.every((one) => /^[A-Z][a-z]{2} \d\d \d\d:\d\d$/.test(one.text)), true)
+})
+
+test("a date axis formatter that reads opts.dateFormatter does not break the plan of a line chart", () => {
+  const options = {
+    chart: {type: "line", height: 300},
+    series: [{name: "s", data: [1, 2, 3]}],
+    xaxis: {type: "datetime", categories: ["2000-11-01", "2000-11-02", "2000-11-03"], labels: {formatter: (_text, timestamp, opts) => opts.dateFormatter(new Date(timestamp), "dd MMM")}},
+  }
+  const {layout} = build(options, {width: 500})
+  assert.equal(layout.cat.labels.length > 0, true)
+  assert.equal(layout.cat.labels.every((one) => /^\d\d [A-Z][a-z]{2}$/.test(one.text)), true)
+})

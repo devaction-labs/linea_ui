@@ -52,16 +52,9 @@ export const valueAxis = (config, visible, stacks, {horizontal, size}) => {
 }
 
 const thinned = (labels, spacing, widest, hide) => {
-  const every = hide ? Math.max(1, Math.ceil((widest + 6) / Math.max(spacing, 1))) : 1
+  const every = hide ? Math.max(1, Math.ceil((widest + 4) / Math.max(spacing, 1))) : 1
   return labels.filter((_, index) => index % every === 0)
 }
-
-const categoryText = (config, data, slot) => {
-  const raw = data.labels[slot] ?? ""
-  return String(call(config.xaxis.labels?.formatter, raw, undefined, {}) ?? raw)
-}
-
-const fontOf = (axis) => parseFloat(axis.labels?.style?.fontSize ?? 12)
 
 const timeText = (axis, kind, pattern, locale) => {
   const format = axis.labels?.format ?? pattern
@@ -70,6 +63,23 @@ const timeText = (axis, kind, pattern, locale) => {
     ? (value) => String(call(axis.labels?.formatter, formatDate(value, format, locale), value, options(value)) ?? formatDate(value, format, locale))
     : (value) => String(call(axis.labels?.formatter, plain(value), value, {}) ?? plain(value))
 }
+
+/**
+ * The text of the category at `slot` on a slotted axis (bars, candles, and the labels a plan measures): the label
+ * through `xaxis.labels.formatter`; on a date axis the time of the slot, formatted with `labels.format` (or the
+ * pattern that fits the span) before the formatter sees it, as on a date axis of lines.
+ */
+export const categoryText = (config, data, slot) => {
+  const raw = data.labels[slot] ?? ""
+  const axis = config.xaxis
+  if (data.kind !== "datetime") return String(call(axis.labels?.formatter, raw, undefined, {}) ?? raw)
+  const times = data.series.flatMap((series) => series.points.map((point) => point.x)).filter(Number.isFinite)
+  const point = data.series.flatMap((series) => series.points).find((one) => one.slot === slot && Number.isFinite(one.x))
+  const span = times.length > 0 ? Math.max(...times) - Math.min(...times) : 0
+  return point ? timeText(axis, "datetime", datePattern(span), config.chart.defaultLocale)(point.x) : String(raw)
+}
+
+const fontOf = (axis) => parseFloat(axis.labels?.style?.fontSize ?? 12)
 
 const timedAxis = (axis, data, length, {measure, room, locale}) => {
   const found = extent(data.series.filter((series) => !series.hidden).flatMap((series) => series.points.map((point) => point.x))) ?? [0, 1]

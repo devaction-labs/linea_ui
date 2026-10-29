@@ -2,7 +2,7 @@
  * The plan of a cartesian chart: the axes, the plot rectangle and the functions that turn values and
  * categories into pixels. Drawing and the pointer both read it.
  */
-import {categoryAxis, horizontalOf, stacksOf, valueAxis} from "./chart_axes.js"
+import {categoryAxis, categoryText, horizontalOf, stacksOf, valueAxis} from "./chart_axes.js"
 import {frame, labelled} from "./chart_frame.js"
 import {END_LABEL_GAP, endLabels, labelText} from "./chart_marks.js"
 import {linear, timeTicks} from "./chart_scale.js"
@@ -19,7 +19,7 @@ const endRoom = (config, visible, measure) => {
 export const fontOf = (axis) => parseFloat(axis.labels?.style?.fontSize ?? 12)
 
 const categoryTexts = (config, data) =>
-  Array.from({length: data.count}, (_, slot) => String(call(config.xaxis.labels?.formatter, data.labels[slot] ?? "", undefined, {}) ?? data.labels[slot] ?? ""))
+  Array.from({length: data.count}, (_, slot) => categoryText(config, data, slot))
 
 const retimed = (axis, length) =>
   timeTicks(axis.min, axis.max, Math.max(2, Math.floor(length / 55))).map((instant) => ({value: instant, label: axis.text(instant)}))
