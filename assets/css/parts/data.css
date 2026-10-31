@@ -156,6 +156,19 @@
     @apply border-b-0;
   }
 
+  /*
+    In dark, the panels of a tinted card (soft, muted, filled, and a card inside a card) are lighter than the page, close to the
+    navy-500 of the row lines, so the lines of a table inside a card vanished (both about rgb(57 71 100)). Inside a card the
+    lines are a veil of white instead, which reads on any of those panels.
+  */
+  .dark .card table > :is(thead, tbody) > tr:not(:last-child) {
+    border-bottom-color: rgb(255 255 255 / 0.09);
+  }
+
+  .dark .card table > :is(thead, tbody, tfoot) > tr > :is(th, td) {
+    border-color: rgb(255 255 255 / 0.09);
+  }
+
   table > tbody > tr[data-selected="true"] > td {
     @apply bg-primary/5 dark:bg-accent/10;
   }
