@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Dark theme: the tinted cards (`soft`, `muted`, `filled`) were one faint step from the page and their edges disappeared (about 1.06:1). The tints are stronger (`soft` 9% to 12%, `muted` and `filled` 16% to 20%, edges 26 to 38% and 34 to 45% in dark; light gets the same small raise), and a tinted card inside another tinted card now has its own fill: level 2 is recessed (`rgb(0 0 0 / .18)` in dark) and level 3 is raised again, each with an edge, so a list box inside a card and the rows inside the box can all be told apart.
 - `phone_input`: the country list is as wide as the whole field, not the 18rem box it was. The hook measures the field every time the list opens (`spanOf` in `phone_logic.js`) and sets the list's `left` and `width`; the fixed `w-72` is gone.
 - New `rating/1`: a star rating. Read-only (default) it is a `role="img"` with an `aria-label` ("4.5 of 5 stars") and fills the last star by the fraction of `value`; with `readonly={false}` it is a group of native radios (`field`/`name`, `label` as the legend, `star_label`, `disabled`, `errors`), with a hover preview done in CSS. `max`, `size` (`sm md lg`), `count`.
 

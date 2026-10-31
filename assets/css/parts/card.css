@@ -132,42 +132,65 @@
 
   .card:is([data-variant="muted"], [data-variant="soft"], [data-variant="filled"]) {
     --card-panel-bg: #fff;
-    --card-panel-edge: rgb(15 23 42 / 0.09);
+    --card-panel-edge: rgb(15 23 42 / 0.11);
     --card-panel-shadow: 0 1px 2px rgb(15 23 42 / 0.06);
     box-shadow: var(--card-highlight, 0 0 #0000);
 
     @variant dark {
-      --card-panel-bg: rgb(105 122 155 / 0.14);
-      --card-panel-edge: rgb(105 122 155 / 0.32);
+      --card-panel-bg: rgb(105 122 155 / 0.2);
+      --card-panel-edge: rgb(105 122 155 / 0.45);
       --card-panel-shadow: 0 1px 2px rgb(0 0 0 / 0.25);
     }
   }
 
   .card[data-variant="muted"] {
-    --card-edge: rgb(15 23 42 / 0.08);
-    background-color: rgb(15 23 42 / 0.05);
+    --card-edge: rgb(15 23 42 / 0.11);
+    background-color: rgb(15 23 42 / 0.06);
 
     @variant dark {
-      --card-edge: rgb(105 122 155 / 0.34);
-      background-color: rgb(105 122 155 / 0.16);
+      --card-edge: rgb(105 122 155 / 0.45);
+      background-color: rgb(105 122 155 / 0.2);
     }
   }
 
   .card[data-variant="soft"] {
-    --card-edge: rgb(15 23 42 / 0.07);
-    background-color: rgb(15 23 42 / 0.03);
+    --card-edge: rgb(15 23 42 / 0.1);
+    background-color: rgb(15 23 42 / 0.04);
 
     @variant dark {
-      --card-edge: rgb(105 122 155 / 0.26);
-      background-color: rgb(105 122 155 / 0.09);
+      --card-edge: rgb(105 122 155 / 0.38);
+      background-color: rgb(105 122 155 / 0.12);
     }
   }
 
   .card[data-variant="filled"] {
+    background-color: rgb(15 23 42 / 0.06);
+
+    @variant dark {
+      background-color: rgb(105 122 155 / 0.2);
+    }
+  }
+
+  /*
+    Tinted cards are translucent, so one inside another would sit one faint step above its parent
+    (and rows inside a list box would match the box). Each level of nesting gets its own fill and
+    keeps an edge: level 1 is the tint, level 2 is recessed, level 3 is raised again.
+  */
+  .card .card:is([data-variant="muted"], [data-variant="soft"], [data-variant="filled"]) {
+    --card-edge: rgb(15 23 42 / 0.12);
     background-color: rgb(15 23 42 / 0.05);
 
     @variant dark {
-      background-color: rgb(105 122 155 / 0.16);
+      --card-edge: rgb(105 122 155 / 0.4);
+      background-color: rgb(0 0 0 / 0.18);
+    }
+  }
+
+  .card .card .card:is([data-variant="muted"], [data-variant="soft"], [data-variant="filled"]) {
+    background-color: #fff;
+
+    @variant dark {
+      background-color: rgb(105 122 155 / 0.18);
     }
   }
 
