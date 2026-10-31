@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.8.11
+
+- Dark theme: the tinted cards (`soft`, `muted`, `filled`) were one faint step from the page and their edges disappeared (about 1.06:1). The tints are stronger (`soft` 9% to 12%, `muted` and `filled` 16% to 20%, edges 26 to 38% and 34 to 45% in dark; light gets the same small raise), and a tinted card inside another tinted card now has its own fill: level 2 is recessed (`rgb(0 0 0 / .18)` in dark) and level 3 is raised again, each with an edge, so a list box inside a card and the rows inside the box can all be told apart.
+
 ## 0.8.10
 
 - `card_table`: a panel opened with the mouse closes 350 ms after the pointer leaves the row and the panel (the delay also crosses the gap between them), and stays while the pointer is on it, text is selected in it or the focus is inside it. Opened with Enter or Space it stays until `Esc`, a click outside or another row.
