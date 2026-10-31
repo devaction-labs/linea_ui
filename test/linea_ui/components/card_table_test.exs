@@ -166,4 +166,27 @@ defmodule LineaUI.Components.CardTableTest do
 
   defp html_attr(html, selector, name),
     do: html |> find(selector) |> LazyHTML.attribute(name) |> hd()
+
+  describe "heading" do
+    test "title, description and actions are drawn above the table" do
+      assigns = %{rows: @rows}
+
+      html =
+        rendered_to_string(~H"""
+        <.card_table id="h" rows={@rows} title="Portal access" description="Who can see it.">
+          <:actions><button>Invite</button></:actions>
+          <:col :let={o} label="Order">{o.number}</:col>
+        </.card_table>
+        """)
+
+      assert html =~ "linea-ctable-top"
+      assert html =~ "Portal access"
+      assert html =~ "Who can see it."
+      assert html =~ "Invite"
+    end
+
+    test "no heading without title, description or actions" do
+      refute orders() =~ "linea-ctable-top"
+    end
+  end
 end

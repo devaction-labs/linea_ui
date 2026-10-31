@@ -15,6 +15,16 @@ defmodule LineaUI.Components.CardTable do
         <:empty>No orders.</:empty>
       </.card_table>
 
+  ## Heading
+
+  `title`, `description` and `<:actions>` draw a heading above the table, so a list needs no card around it to
+  say what it is and how to add to it:
+
+      <.card_table id="portal" rows={@users} title="Portal access" description="Who can see the orders." ...>
+        <:actions><.button size="sm">Invite</.button></:actions>
+        ...
+      </.card_table>
+
   ## Columns leave by priority
 
   The table answers to the width of its own box, not of the window (a container query), so it behaves the same
@@ -120,8 +130,16 @@ defmodule LineaUI.Components.CardTable do
   attr :sort_by, :string, default: nil
   attr :sort_dir, :string, default: "asc", values: ~w(asc desc)
   attr :target, :any, default: nil, doc: "`phx-target` of the events."
+
+  attr :title, :string,
+    default: nil,
+    doc: "A heading drawn above the table, with `description` and `<:actions>`."
+
+  attr :description, :string, default: nil, doc: "A line under the `title`."
   attr :class, :any, default: nil
   attr :rest, :global
+
+  slot :actions, doc: "Buttons at the right of the heading (`title`, `description`)."
 
   slot :col, required: true, doc: "A column; receives the row (after `row_item`)." do
     attr :label, :string, required: true, doc: "Header text, and the label in the hidden panel."
@@ -170,6 +188,13 @@ defmodule LineaUI.Components.CardTable do
       style={@tracks}
       phx-hook={(@hidable or @detail != []) && "LineaUI.CardTable"}
     >
+      <div :if={@title || @description || @actions != []} class="linea-ctable-top">
+        <div class="linea-ctable-top-text">
+          <h3 :if={@title} class="linea-ctable-title">{@title}</h3>
+          <p :if={@description} class="linea-ctable-desc">{@description}</p>
+        </div>
+        <div :if={@actions != []} class="linea-ctable-top-act">{render_slot(@actions)}</div>
+      </div>
       <label :if={@selectable} class="linea-ctable-all">
         <input
           type="checkbox"

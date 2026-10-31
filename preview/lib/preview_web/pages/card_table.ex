@@ -70,6 +70,22 @@ defmodule PreviewWeb.Pages.CardTable do
         </div>
       </div>
     </.example>
+    <.example title="Heading, actions and empty list" text="title, description and the actions slot draw a heading above the table. With no rows the column titles are hidden and the empty slot sits in a dashed box." class="mt-5">
+      <div class="flex max-w-[1000px] flex-col gap-8">
+        <.card_table id="ct-head" rows={Enum.take(@rows, 2)} row_key={& &1.id} row_id={&"ct-head-#{&1.id}"} status={& &1.state} title="Acesso ao portal" description="Quem tem estes acessos enxerga os pedidos, documentos e saldos deste cliente.">
+          <:actions><.button size="sm">Convidar comprador</.button></:actions>
+          <:col :let={o} label="Pedido" role="head"><span class="font-mono text-[12.5px] font-semibold">{o.number}</span></:col>
+          <:col :let={o} label="Cliente" role="title" width="minmax(120px,1.3fr)">{o.client}</:col>
+          <:col :let={o} label="Status" role="status"><.badge variant="soft" color={to_string(o.state)} size="sm" dot>{o.label}</.badge></:col>
+        </.card_table>
+        <.card_table id="ct-head-empty" rows={[]} title="Acesso ao portal" description="Quem tem estes acessos enxerga os pedidos, documentos e saldos deste cliente.">
+          <:actions><.button size="sm">Convidar comprador</.button></:actions>
+          <:col :let={o} label="Acesso" role="head">{o.number}</:col>
+          <:col :let={o} label="Situação" role="status">{o.label}</:col>
+          <:empty>Nenhum acesso ao portal ainda.</:empty>
+        </.card_table>
+      </div>
+    </.example>
     """
   end
 end

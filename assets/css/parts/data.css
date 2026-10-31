@@ -1119,12 +1119,60 @@
     justify-self: end;
   }
 
+  .linea-ctable-top {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.5rem 1rem;
+    padding-bottom: 0.875rem;
+  }
+
+  .linea-ctable-top-text {
+    min-width: 0;
+    flex: 1 1 16rem;
+  }
+
+  .linea-ctable-title {
+    margin: 0;
+    font-size: 0.9375rem;
+    line-height: 1.375rem;
+    font-weight: 500;
+    color: var(--ct-ink);
+  }
+
+  .linea-ctable-desc {
+    margin: 0.125rem 0 0;
+    font-size: 0.8125rem;
+    line-height: 1.125rem;
+    color: var(--ct-soft);
+  }
+
+  .linea-ctable-top-act {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
   .linea-ctable-empty {
     grid-column: 1 / -1;
-    padding: 2rem 1rem;
+    padding: 2.5rem 1rem;
+    border: 1px dashed color-mix(in srgb, var(--ct-soft) 40%, transparent);
+    border-radius: 0.75rem;
     text-align: center;
     font-size: 0.875rem;
     color: var(--ct-soft);
+  }
+
+  /* With nothing to list, the column titles would hang over an empty box: the box alone says it. */
+  .linea-ctable:has(.linea-ctable-empty:only-child) .linea-ctable-head {
+    display: none;
+  }
+
+  /* The tracks were sized by the titles and the rows: with neither, the box takes the whole width. */
+  .linea-ctable:has(.linea-ctable-empty:only-child) .linea-ctable-grid {
+    grid-template-columns: minmax(0, 1fr);
   }
 
   /* The panel of the columns that left: label over value, under the row, opened by the hook and kept until it is closed. */

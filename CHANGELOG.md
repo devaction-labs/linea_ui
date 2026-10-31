@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.8.14
+
+- `card_table`: `title`, `description` and `<:actions>` draw a heading above the table (title, line under it, buttons at the right), so a list no longer needs a card around it just to say what it is.
+- `card_table`: with no rows the column titles are hidden and the empty message sits in a dashed box, so the table no longer shows headers over nothing.
+
 ## 0.8.13
 
 - Dark theme: the default `card` (and `kpi_card`) is one step lighter, `navy-600` instead of `navy-700`, with a `navy-450` edge, so it no longer melts into a page painted `navy-700`. `kpi_card` also gets a thin `navy-450` ring in dark. The tinted variants and the panels inside a card are unchanged.

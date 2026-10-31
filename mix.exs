@@ -1,7 +1,7 @@
 defmodule LineaUI.MixProject do
   use Mix.Project
 
-  @version "0.8.13"
+  @version "0.8.14"
   @source_url "https://github.com/devaction-labs/linea_ui"
 
   def project do
