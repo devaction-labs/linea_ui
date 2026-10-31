@@ -107,7 +107,7 @@
     box-shadow: var(--shadow-soft), var(--card-highlight, 0 0 #0000);
 
     @variant dark {
-      --card-edge: var(--color-navy-500);
+      --card-edge: var(--color-navy-450);
       box-shadow: none;
     }
   }

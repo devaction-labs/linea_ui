@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.8.13
+
+- Dark theme: the default `card` (and `kpi_card`) is one step lighter, `navy-600` instead of `navy-700`, with a `navy-450` edge, so it no longer melts into a page painted `navy-700`. `kpi_card` also gets a thin `navy-450` ring in dark. The tinted variants and the panels inside a card are unchanged.
+
 ## 0.8.12
 
 - Dark theme: the row lines of a table inside a card disappeared on the lighter panels of 0.8.11 (both were about `rgb(57 71 100)`). Inside a `.card` the row lines and cell borders of any table (`table/1`, `data_table`) are now white at 9%. Outside a card and in light nothing changes.

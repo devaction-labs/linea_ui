@@ -121,7 +121,7 @@ defmodule LineaUI.Components.KpiCard do
       aria-busy="true"
       aria-label="Carregando métrica"
       class={
-        merge(["flex flex-col gap-2.5 rounded-xl bg-white p-5 shadow-soft dark:bg-navy-700", @class])
+        merge(["flex flex-col gap-2.5 rounded-xl bg-white p-5 shadow-soft dark:bg-navy-600 dark:ring-1 dark:ring-navy-450", @class])
       }
       {@rest}
     >
@@ -152,7 +152,7 @@ defmodule LineaUI.Components.KpiCard do
     <div
       class={
         merge([
-          "flex flex-col gap-2.5 rounded-xl bg-white p-5 shadow-soft dark:bg-navy-700",
+          "flex flex-col gap-2.5 rounded-xl bg-white p-5 shadow-soft dark:bg-navy-600 dark:ring-1 dark:ring-navy-450",
           @bleed && "relative isolate min-h-36 overflow-hidden",
           @class
         ])
