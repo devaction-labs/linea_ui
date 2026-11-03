@@ -88,18 +88,7 @@ defmodule LineaUI.Components.SideMenu do
           aria-controls={@shell}
           phx-click={JS.toggle_attribute({"data-collapsed", "true", "false"}, to: "#" <> @shell)}
         >
-          <svg
-            class="size-4"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.75"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true"
-          >
-            <path d="M4 5v14M20 12H9m0 0 4-4m-4 4 4 4" />
-          </svg>
+          <span class="ki-filled-black-left-line size-4" aria-hidden="true"></span>
         </button>
       </div>
       <nav class="flex min-h-0 grow flex-col gap-1 overflow-y-auto overflow-x-hidden py-5 ps-5 pe-3">
@@ -219,26 +208,8 @@ defmodule LineaUI.Components.SideMenu do
           class="-me-2.5 ms-1 flex w-5 shrink-0 justify-end text-slate-500 group-data-[collapsed=true]/shell:not-group-hover/side:hidden dark:text-navy-300"
           aria-hidden="true"
         >
-          <svg
-            class="size-3.5 group-open/g:hidden"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.75"
-            stroke-linecap="round"
-          >
-            <path d="M12 5v14M5 12h14" />
-          </svg>
-          <svg
-            class="hidden size-3.5 group-open/g:block"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.75"
-            stroke-linecap="round"
-          >
-            <path d="M5 12h14" />
-          </svg>
+          <span class="ki-filled-plus size-3.5 group-open/g:hidden"></span>
+          <span class="ki-filled-minus hidden size-3.5 group-open/g:block"></span>
         </span>
       </summary>
       <div class="relative mt-1 flex flex-col gap-1 ps-2.5 before:absolute before:inset-y-0 before:start-5 before:border-s before:border-slate-200 group-data-[collapsed=true]/shell:not-group-hover/side:hidden dark:before:border-navy-450">
@@ -326,17 +297,7 @@ defmodule LineaUI.Components.SideMenu do
             aria-controls={@shell}
             phx-click={JS.toggle_attribute({"data-mobile", "true", "false"}, to: "#" <> @shell)}
           >
-            <svg
-              class="size-5"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.75"
-              stroke-linecap="round"
-              aria-hidden="true"
-            >
-              <path d="M4 7h16M4 12h10M4 17h16" />
-            </svg>
+            <span class="ki-filled-burger-menu-2 size-5" aria-hidden="true"></span>
           </button>
         </div>
         <nav class="hidden items-stretch gap-7.5 lg:flex">{render_slot(@nav)}</nav>
