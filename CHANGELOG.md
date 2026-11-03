@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- `rating_row` and `rating_cell` (`LineaUI.Components.RatingParts`): Metronic's static star rating as parts.
 - `avatar_frame`, `avatar_picture`, `avatar_fallback`, `avatar_indicator`, `avatar_status` (`LineaUI.Components.AvatarParts`) and `progress_track`, `progress_fill` (`ProgressParts`): Metronic's avatar and progress bar as parts.
 - `table_plain` (`LineaUI.Components.PlainTable`): Metronic's bare table, styled through its own `th`, `td` and `tr`; `border` and `highlight` options.
 - `checkbox_input`, `radio_input` and `switch_input` (`LineaUI.Components.Toggles`): the bare inputs of Metronic's forms, one `<input>` each and no wrapper, drawn by the state of the browser. The switch is 26x18, 30x20 or 34x22 by `size`. `box` and its parts are Metronic's card; `button` has the `ghost` and `dim` variants and the `mono` color.

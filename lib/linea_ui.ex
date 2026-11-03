@@ -40,6 +40,7 @@ defmodule LineaUI do
     plain_table: LineaUI.Components.PlainTable,
     avatar_parts: LineaUI.Components.AvatarParts,
     progress_parts: LineaUI.Components.ProgressParts,
+    rating_parts: LineaUI.Components.RatingParts,
     image_input: LineaUI.Components.ImageInput,
     password_input: LineaUI.Components.PasswordInput,
     sticky: LineaUI.Components.Sticky,

@@ -48,3 +48,13 @@
   .dark .table-plain-border td,
   .dark .table-plain-border th { border-color: var(--color-navy-450); }
 }
+
+/* Metronic's static star rating: a row of cells, each showing the solid star when it is on and the outline when it is off. */
+@layer components {
+  .rating-row { align-items: stretch; display: inline-flex; }
+  .rating-cell { align-items: center; display: inline-flex; }
+  .rating-cell .rating-on { color: var(--color-yellow-400); display: none; }
+  .rating-cell .rating-off { color: var(--color-slate-500); display: inline-flex; }
+  .rating-cell[data-on] .rating-on { display: inline-flex; }
+  .rating-cell[data-on] .rating-off { display: none; }
+}
