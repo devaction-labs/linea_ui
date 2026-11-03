@@ -10,6 +10,7 @@
 // --settle     milliseconds to wait after --click and --hover, before the shot (a delayed close, a transition).
 // --select     clips the shot to the first element matching the selector (scrolled into view).
 // --eval       runs JavaScript in the page before the shot (click a trigger, open a menu...).
+// --dump       a JavaScript expression whose value is written, as JSON, to <out>.json (a layout check without an image).
 // --full       the whole page height instead of the viewport.
 import {spawn} from "node:child_process"
 import {mkdtempSync, writeFileSync} from "node:fs"
@@ -99,6 +100,7 @@ try {
     await send("Input.dispatchMouseEvent", {type: "mouseMoved", x: at.x, y: at.y})
     await sleep(500 + Number(opt.settle ?? 0))
   }
+  if (opt.dump) writeFileSync(out + ".json", JSON.stringify(await evaluate(opt.dump)))
   if (opt.full || opt.select) {
     const docHeight = await evaluate(`document.documentElement.scrollHeight`)
     await send("Emulation.setDeviceMetricsOverride", {width, height: docHeight, deviceScaleFactor: 1, mobile: false})
