@@ -111,23 +111,16 @@ defmodule LineaUI.Components.Choice do
 
   @chip_count "inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-white px-1.5 text-tiny-plus font-semibold text-slate-600 group-has-checked/choice:bg-white/20 group-has-checked/choice:text-white dark:bg-navy-700 dark:text-navy-100 dark:group-has-checked/choice:bg-white/20 dark:group-has-checked/choice:text-white"
 
-  @card "group/choice relative flex cursor-pointer items-start gap-3 rounded-lg border border-slate-300 px-3.5 py-3 transition-[border-color,box-shadow,background-color] duration-200 hover:border-slate-400 has-checked:ring-3 has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-primary/50 has-disabled:pointer-events-none has-disabled:opacity-60 dark:border-navy-450 dark:hover:border-navy-400 dark:has-focus-visible:outline-accent/50"
+  @card "group/choice relative flex cursor-pointer flex-col items-start gap-3 rounded-xl border border-slate-200 p-4 transition-[border-color,box-shadow,background-color] duration-200 hover:border-slate-300 has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-primary/50 has-disabled:pointer-events-none has-disabled:opacity-60 dark:border-navy-450 dark:hover:border-navy-400 dark:has-focus-visible:outline-accent/50"
 
   @card_tones %{
-    "neutral" =>
-      "has-checked:border-slate-500 has-checked:bg-slate-500/5 has-checked:ring-slate-500/15 dark:has-checked:border-navy-300 dark:has-checked:bg-navy-300/5 dark:has-checked:ring-navy-300/15",
-    "primary" =>
-      "has-checked:border-primary has-checked:bg-primary/5 has-checked:ring-primary/15 dark:has-checked:border-accent dark:has-checked:bg-accent/10 dark:has-checked:ring-accent/20",
-    "secondary" =>
-      "has-checked:border-secondary has-checked:bg-secondary/5 has-checked:ring-secondary/15 dark:has-checked:border-secondary-light dark:has-checked:bg-secondary-light/10 dark:has-checked:ring-secondary-light/20",
-    "info" =>
-      "has-checked:border-info has-checked:bg-info/5 has-checked:ring-info/15 dark:has-checked:border-info dark:has-checked:bg-info/10",
-    "success" =>
-      "has-checked:border-success has-checked:bg-success/5 has-checked:ring-success/15 dark:has-checked:border-success dark:has-checked:bg-success/10",
-    "warning" =>
-      "has-checked:border-warning has-checked:bg-warning/5 has-checked:ring-warning/15 dark:has-checked:border-warning dark:has-checked:bg-warning/10",
-    "error" =>
-      "has-checked:border-error has-checked:bg-error/5 has-checked:ring-error/15 dark:has-checked:border-error dark:has-checked:bg-error/10"
+    "neutral" => "has-checked:border-slate-500 dark:has-checked:border-navy-300",
+    "primary" => "has-checked:border-primary dark:has-checked:border-accent",
+    "secondary" => "has-checked:border-secondary dark:has-checked:border-secondary-light",
+    "info" => "has-checked:border-info dark:has-checked:border-info",
+    "success" => "has-checked:border-success dark:has-checked:border-success",
+    "warning" => "has-checked:border-warning dark:has-checked:border-warning",
+    "error" => "has-checked:border-error dark:has-checked:border-error"
   }
 
   @card_icons %{
@@ -277,7 +270,7 @@ defmodule LineaUI.Components.Choice do
 
     ~H"""
     <label class={merge([@card, @tone, @class])}>
-      <span class="mt-0.5 flex shrink-0">{render_slot(@inner_block)}</span>
+      <span class="flex shrink-0">{render_slot(@inner_block)}</span>
       <span
         :if={@icon}
         class={[
@@ -288,10 +281,10 @@ defmodule LineaUI.Components.Choice do
         <.icon name={@icon} class="size-5" />
       </span>
       <span class="flex min-w-0 flex-col">
-        <span class="font-medium text-slate-700 dark:text-navy-100">
+        <span class="text-[13px] leading-4 font-semibold text-slate-950 dark:text-navy-50">
           {@label}{render_slot(@content)}
         </span>
-        <span :if={@description} class="mt-0.5 text-xs-plus text-slate-400 dark:text-navy-300">
+        <span :if={@description} class="mt-1 text-[13px] text-slate-600 dark:text-navy-200">
           {@description}
         </span>
       </span>

@@ -86,7 +86,7 @@ defmodule LineaUI.Components.PhoneInput do
   # While the picker is open the number's border takes the focus color, as the field's own focus does.
   @open "[&:has([data-picker][aria-expanded=true])_[data-display]]:border-primary dark:[&:has([data-picker][aria-expanded=true])_[data-display]]:border-accent"
 
-  @code "font-inter font-normal text-slate-400 dark:text-navy-300"
+  @code "font-inter font-normal text-[13px] text-slate-950 dark:text-navy-50"
 
   @picker "flex h-full w-full items-center gap-1.5 rounded-l-lg pl-3 pr-1 text-slate-600 outline-hidden transition-colors hover:text-slate-800 focus-visible:text-primary disabled:pointer-events-none dark:text-navy-100 dark:hover:text-navy-50 dark:focus-visible:text-accent"
 
@@ -293,11 +293,11 @@ defmodule LineaUI.Components.PhoneInput do
         <:prefix interactive class="pointer-events-none w-full justify-start">
           <span
             aria-hidden="true"
-            class="absolute top-1/2 left-[6.25rem] h-[18px] w-px -translate-y-1/2 bg-slate-300 dark:bg-navy-450"
+            class="absolute inset-y-0 left-0 w-[6.25rem] rounded-s-md border-e border-slate-200 bg-slate-100 dark:border-navy-450 dark:bg-navy-600"
           ></span>
           <div
             id={@id <> "-country"}
-            class="pointer-events-auto flex h-full w-[6.25rem] items-center"
+            class="pointer-events-auto relative z-10 flex h-full w-[6.25rem] items-center"
             phx-update="ignore"
           >
             <button
