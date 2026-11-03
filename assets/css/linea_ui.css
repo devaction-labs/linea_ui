@@ -46,13 +46,13 @@
   --color-slate-200: #e6e8f0;
   --color-slate-300: #dbdfe9;
   --color-slate-400: #a4abbf;
-  --color-slate-500: #78829d;
+  --color-slate-500: #667089;
   --color-slate-600: #4b5675;
   --color-slate-700: #27314b;
   --color-slate-800: #111b37;
   --color-slate-900: #0b1226;
 
-  --color-primary: #1379f0;
+  --color-primary: #1373e8;
   --color-primary-focus: #086de3;
   --color-primary-soft: #e7f2ff;
 
@@ -63,7 +63,7 @@
 
   /* dark theme primary: same blue, brighter on hover (Metronic Dark-Mode/Primary) */
   --color-accent-light: #4da3ff;
-  --color-accent: #1379f0;
+  --color-accent: #1373e8;
   --color-accent-focus: #2d8eff;
   --color-accent-soft: #0a1726;
 
