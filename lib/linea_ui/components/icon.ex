@@ -471,7 +471,7 @@ defmodule LineaUI.Components.Icon do
 
   def icon(%{name: "ki-" <> _} = assigns) do
     ~H"""
-    <span class={[@name, @class]} aria-hidden="true" {@rest}></span>
+    <i class={[@name, @class]} aria-hidden="true" {@rest}></i>
     """
   end
 
