@@ -38,6 +38,8 @@ defmodule LineaUI do
     box: LineaUI.Components.Box,
     toggles: LineaUI.Components.Toggles,
     plain_table: LineaUI.Components.PlainTable,
+    avatar_parts: LineaUI.Components.AvatarParts,
+    progress_parts: LineaUI.Components.ProgressParts,
     image_input: LineaUI.Components.ImageInput,
     password_input: LineaUI.Components.PasswordInput,
     sticky: LineaUI.Components.Sticky,

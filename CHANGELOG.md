@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- `avatar_frame`, `avatar_picture`, `avatar_fallback`, `avatar_indicator`, `avatar_status` (`LineaUI.Components.AvatarParts`) and `progress_track`, `progress_fill` (`ProgressParts`): Metronic's avatar and progress bar as parts.
 - `table_plain` (`LineaUI.Components.PlainTable`): Metronic's bare table, styled through its own `th`, `td` and `tr`; `border` and `highlight` options.
 - `checkbox_input`, `radio_input` and `switch_input` (`LineaUI.Components.Toggles`): the bare inputs of Metronic's forms, one `<input>` each and no wrapper, drawn by the state of the browser. The switch is 26x18, 30x20 or 34x22 by `size`. `box` and its parts are Metronic's card; `button` has the `ghost` and `dim` variants and the `mono` color.
 - New components for what Metronic's layout script does: `image_input` (an avatar or logo field with a camera strip and a remove or revert button), `password_input` (the eye that shows the password, with `JS` only), `sticky` (a block that takes classes while the page is scrolled; `shell_header` uses it for its edge), `scrollspy` (anchors that follow the scroll) and `context_menu` (a menu under the pointer on a right click). Their hooks are in `assets/js/linea_ui/hooks/layout.js`.
