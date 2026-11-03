@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- `container_fixed` and `container_fluid` (`LineaUI.Components.Container`): the page containers of Metronic.
 - `select_input` (`LineaUI.Components.SelectInput`): Metronic's bare select, a native `<select>` that keeps the `data-kt-select` attribute its script reads.
 - `tab_group` (`LineaUI.Components.TabGroup`): the container of Metronic's tabs, which carries the `data-kt-tabs` attribute its script reads.
 - `rating_row` and `rating_cell` (`LineaUI.Components.RatingParts`): Metronic's static star rating as parts.

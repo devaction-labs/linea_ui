@@ -44,6 +44,7 @@ defmodule LineaUI do
     disclosure_parts: LineaUI.Components.DisclosureParts,
     tab_group: LineaUI.Components.TabGroup,
     select_input: LineaUI.Components.SelectInput,
+    container: LineaUI.Components.Container,
     image_input: LineaUI.Components.ImageInput,
     password_input: LineaUI.Components.PasswordInput,
     sticky: LineaUI.Components.Sticky,
