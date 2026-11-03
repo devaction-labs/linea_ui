@@ -43,6 +43,7 @@ defmodule LineaUI do
     rating_parts: LineaUI.Components.RatingParts,
     disclosure_parts: LineaUI.Components.DisclosureParts,
     tab_group: LineaUI.Components.TabGroup,
+    select_input: LineaUI.Components.SelectInput,
     image_input: LineaUI.Components.ImageInput,
     password_input: LineaUI.Components.PasswordInput,
     sticky: LineaUI.Components.Sticky,
