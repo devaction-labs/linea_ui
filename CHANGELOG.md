@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- `tab_group` (`LineaUI.Components.TabGroup`): the container of Metronic's tabs, which carries the `data-kt-tabs` attribute its script reads.
 - `rating_row` and `rating_cell` (`LineaUI.Components.RatingParts`): Metronic's static star rating as parts.
 - `avatar_frame`, `avatar_picture`, `avatar_fallback`, `avatar_indicator`, `avatar_status` (`LineaUI.Components.AvatarParts`) and `progress_track`, `progress_fill` (`ProgressParts`): Metronic's avatar and progress bar as parts.
 - `table_plain` (`LineaUI.Components.PlainTable`): Metronic's bare table, styled through its own `th`, `td` and `tr`; `border` and `highlight` options.
