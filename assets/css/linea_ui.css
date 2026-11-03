@@ -16,6 +16,7 @@
 @import "./parts/sortable.css";
 @import "./parts/icons.css";
 @import "./parts/toggles.css";
+@import "./parts/plain_table.css";
 
 @source "../../lib";
 @source "../js";

@@ -1,0 +1,50 @@
+/*
+  Metronic's `kt-table`: a table styled through its own tags (th, td, tr), so the markup stays bare.
+*/
+@layer components {
+  .table-plain {
+    border-collapse: collapse;
+    caption-side: bottom;
+    color: var(--color-slate-900);
+    font-size: 0.8125rem;
+    line-height: 1.125rem;
+    text-align: left;
+    vertical-align: bottom;
+    width: 100%;
+  }
+  .table-plain caption { color: var(--color-slate-500); margin-top: 1rem; }
+  .table-plain thead th,
+  .table-plain tfoot th {
+    color: var(--color-slate-700);
+    font-weight: 400;
+    height: 2.5rem;
+    padding-inline: 1rem;
+    text-align: left;
+    vertical-align: middle;
+  }
+  .table-plain thead th { background-color: var(--color-slate-50); }
+  .table-plain thead tr { border-bottom-width: 1px; }
+  .table-plain tbody td { padding: 0.75rem 1rem; vertical-align: middle; }
+  .table-plain tbody tr { border-bottom-width: 1px; }
+  .table-plain tbody tr:last-child { border-width: 0; }
+  .table-plain tfoot { background-color: var(--color-slate-50); border-top-width: 1px; font-weight: 500; }
+  .table-plain tr { border-color: var(--color-slate-200); }
+  .table-plain-border td,
+  .table-plain-border th {
+    border-color: var(--color-slate-200);
+    border-inline-end-width: 1px;
+  }
+  .box-table .table-plain th:last-child,
+  .box-table .table-plain td:last-child { padding-inline-end: 1.25rem; }
+  .box-table .table-plain th:first-child,
+  .box-table .table-plain td:first-child { padding-inline-start: 1.25rem; }
+  .box-grid .box-body .table-plain { border: 0; }
+  .table-plain-highlight tr:hover { background-color: var(--color-slate-50); }
+  .dark .table-plain { color: var(--color-navy-50); }
+  .dark .table-plain thead th,
+  .dark .table-plain tfoot,
+  .dark .table-plain tfoot th { background-color: var(--color-navy-800); color: var(--color-navy-100); }
+  .dark .table-plain tr,
+  .dark .table-plain-border td,
+  .dark .table-plain-border th { border-color: var(--color-navy-450); }
+}
