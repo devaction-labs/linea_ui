@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- `select`: Home, End, PageUp and PageDown move round an open list (in a control you type in they still move the caret), and ArrowUp opens a closed list like ArrowDown does. `tabs`: `activation="manual"` moves focus with the arrows and selects with Enter or Space, for panels that are slow to load; `auto` (default) is unchanged.
 - Dark theme primary: `accent` is `#4567ed` (was `#5f5af6`), `accent-focus` `#3a5be5` (was `#4d47f5`) and `accent-light`, the dark text and link color, `#819df8` (was `#818cf8`). The old values (hue 242) read as violet on the navy surfaces (hue 220); the new ones (hue 228) sit with them. White on `accent` is 4.8:1 and `accent-light` on `navy-700` is 4.9:1 (it was 4.2:1). The light theme is unchanged.
 - `accordion` `variant="primary"`: the dividers derive from the chosen color (`divide-{color}/55`) instead of a fixed Tailwind shade, so `secondary` is no longer violet next to a magenta frame and `primary` follows the dark accent.
 - Dark theme: the tinted cards (`soft`, `muted`, `filled`) were one faint step from the page and their edges disappeared (about 1.06:1). The tints are stronger (`soft` 9% to 12%, `muted` and `filled` 16% to 20%, edges 26 to 38% and 34 to 45% in dark; light gets the same small raise), and a tinted card inside another tinted card now has its own fill: level 2 is recessed (`rgb(0 0 0 / .18)` in dark) and level 3 is raised again, each with an edge, so a list box inside a card and the rows inside the box can all be told apart.

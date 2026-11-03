@@ -25,9 +25,24 @@ export const highlight = (label, term) => {
 export const shows = ({value, label, keywords = ""}, {values, multiple, term, local}) =>
   !(multiple && values.includes(value)) && (!local || matches(label, term) || (keywords !== "" && matches(keywords, term)))
 
-/** The row the arrow keys move to among `count` rows, from `index` (-1 for none); it stops at both ends. */
+/** How many rows PageUp and PageDown jump. */
+const PAGE = 10
+
+/**
+ * The row the navigation keys move to among `count` rows, from `index` (-1 for none); it stops at both ends. The
+ * arrows move by one, PageUp and PageDown by ten, Home and End go to the first and last row.
+ */
 export const moveIndex = (index, key, count) =>
-  count === 0 ? -1 : ({ArrowDown: Math.min(index + 1, count - 1), ArrowUp: Math.max(index - 1, 0)}[key] ?? index)
+  count === 0
+    ? -1
+    : ({
+        ArrowDown: Math.min(index + 1, count - 1),
+        ArrowUp: Math.max(index - 1, 0),
+        PageDown: Math.min(Math.max(index, 0) + PAGE, count - 1),
+        PageUp: Math.max(index - PAGE, 0),
+        Home: 0,
+        End: count - 1,
+      }[key] ?? index)
 
 /** Whether the listbox takes no more choices. */
 export const isFull = (count, multiple, max) => (multiple ? max != null && count >= max : count >= 1)

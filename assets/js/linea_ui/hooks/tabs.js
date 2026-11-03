@@ -55,7 +55,7 @@ export default {
         rtl: getComputedStyle(this.el).direction === "rtl",
       })
       const target = at === null ? undefined : open[at]
-      target && (event.preventDefault(), target.focus(), "link" in target.dataset || this.choose(target))
+      target && (event.preventDefault(), target.focus(), "link" in target.dataset || this.el.dataset.activation === "manual" || this.choose(target))
     },
 
     choose(tab) {

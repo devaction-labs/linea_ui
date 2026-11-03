@@ -170,7 +170,8 @@ export const Listbox = {
     const rows = this.rows()
     const handlers = {
       ArrowDown: () => (this.isOpen ? this.setActive(moveIndex(this.active, "ArrowDown", rows.length)) : this.open()),
-      ArrowUp: () => this.setActive(moveIndex(this.active, "ArrowUp", rows.length)),
+      ArrowUp: () => (this.isOpen ? this.setActive(moveIndex(this.active, "ArrowUp", rows.length)) : this.open()),
+      ...this.listKeys(rows),
       Enter: () => (!this.isOpen ? this.open() : rows[this.active] ? this.pickRow(rows[this.active]) : this.createTyped()),
       " ": () => !this.typesInControl() && !this.isOpen && this.open(),
       Escape: () => this.close(),
@@ -180,10 +181,17 @@ export const Listbox = {
     const handler = handlers[event.key]
     const prevents =
       ["ArrowDown", "ArrowUp", "Enter", "Escape"].includes(event.key) ||
+      (["Home", "End", "PageUp", "PageDown"].includes(event.key) && this.isOpen && !this.typesInControl()) ||
       (event.key === "Backspace" && this.erases()) ||
       (event.key === " " && !this.typesInControl())
     prevents && event.preventDefault()
     handler && handler()
+  },
+
+  /** Home, End, PageUp and PageDown move round an open list; in a control that is typed in they move the caret instead. */
+  listKeys(rows) {
+    const move = (key) => () => this.isOpen && !this.typesInControl() && this.setActive(moveIndex(this.active, key, rows.length))
+    return Object.fromEntries(["Home", "End", "PageUp", "PageDown"].map((key) => [key, move(key)]))
   },
 
   erases() {

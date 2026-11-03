@@ -34,7 +34,7 @@ test("moveIndex stops at the ends", () => {
   assert.equal(moveIndex(-1, "ArrowDown", 3), 0)
   assert.equal(moveIndex(2, "ArrowDown", 3), 2)
   assert.equal(moveIndex(0, "ArrowUp", 3), 0)
-  assert.equal(moveIndex(1, "Home", 3), 1)
+  assert.equal(moveIndex(1, "Tab", 3), 1)
   assert.equal(moveIndex(1, "ArrowDown", 0), -1)
 })
 
@@ -65,4 +65,14 @@ test("sameValues compares in order", () => {
   assert.equal(sameValues(["a", "b"], ["a", "b"]), true)
   assert.equal(sameValues(["a", "b"], ["b", "a"]), false)
   assert.equal(sameValues([], []), true)
+})
+
+test("moveIndex jumps by pages and to the ends", () => {
+  assert.equal(moveIndex(-1, "Home", 30), 0)
+  assert.equal(moveIndex(4, "End", 30), 29)
+  assert.equal(moveIndex(-1, "PageDown", 30), 10)
+  assert.equal(moveIndex(25, "PageDown", 30), 29)
+  assert.equal(moveIndex(12, "PageUp", 30), 2)
+  assert.equal(moveIndex(3, "PageUp", 30), 0)
+  assert.equal(moveIndex(2, "Home", 0), -1)
 })

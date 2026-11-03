@@ -165,4 +165,10 @@ defmodule LineaUI.Components.TabsTest do
     assert count(html, "#mix-tab-a[aria-controls=mix-panel-a]") == 1
     assert count(html, "#mix-tab-b[aria-controls]") == 0
   end
+
+  test "activation is exposed for the hook" do
+    html = render_tabs(%{activation: "manual"})
+    assert count(html, "#t[data-activation=manual]") == 1
+    assert count(render_tabs(%{}), "#t[data-activation=auto]") == 1
+  end
 end

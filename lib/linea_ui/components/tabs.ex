@@ -183,6 +183,13 @@ defmodule LineaUI.Components.Tabs do
 
   attr(:orientation, :string, default: "horizontal", values: ~w(horizontal vertical))
 
+  attr(:activation, :string,
+    default: "auto",
+    values: ~w(auto manual),
+    doc:
+      "`auto` selects a tab as the arrow keys reach it; `manual` only moves focus and Enter or Space selects (for panels that are slow to load)."
+  )
+
   attr(:bordered, :boolean,
     default: false,
     doc: "For `line`: draws the gray rule the tabs sit on."
@@ -303,6 +310,7 @@ defmodule LineaUI.Components.Tabs do
       data-on-change={@on_change_js}
       phx-target={@target}
       data-orientation={@orientation}
+      data-activation={@activation}
       {@rest}
     >
       <div class={@scroll_class}>
