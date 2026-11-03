@@ -17,7 +17,7 @@ defmodule LineaUI.Components.ButtonTest do
     classes = classes(html, "button")
     assert "border-primary" in classes
     assert "dark:text-accent-light" in classes
-    assert "h-8" in classes
+    assert "h-7" in classes
     assert "rounded-full" in classes
     assert "px-8" in classes
     refute "px-4" in classes
@@ -25,7 +25,7 @@ defmodule LineaUI.Components.ButtonTest do
   end
 
   test "icon makes a square button" do
-    assert "size-9" in classes(render(~H(<.button icon aria-label="x">x</.button>)), "button")
+    assert "size-8.5" in classes(render(~H(<.button icon aria-label="x">x</.button>)), "button")
   end
 
   test "navigate renders a link, and disabled marks it" do
@@ -99,6 +99,6 @@ defmodule LineaUI.Components.ButtonTest do
     end
 
     refute "bg-primary" in classes(html, "#b")
-    assert "h-8" in classes(html, "#b")
+    assert "h-7" in classes(html, "#b")
   end
 end

@@ -1,7 +1,7 @@
 @import "tom-select/dist/css/tom-select.css";
 
 .ts-control {
-  @apply rounded-lg border-slate-300 px-3 py-2 font-inter font-medium outline-hidden
+  @apply rounded-md border-slate-300 px-3 py-0 font-inter font-medium outline-hidden
     transition duration-300 ease-in-out hover:border-slate-400 dark:border-navy-450
     dark:bg-navy-700 dark:text-navy-100 dark:hover:border-navy-400;
 }

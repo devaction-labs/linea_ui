@@ -105,7 +105,7 @@ defmodule LineaUI.Components.FilterMenuTest do
     assert find(html, "#f [data-trigger] button svg") |> Enum.to_list() == []
     assert "border-dashed" in classes(html, "#f [data-trigger] button")
     assert "bg-primary/10" in classes(html, "#f [data-trigger] button")
-    assert "h-8" in classes(html, "#f [data-trigger] button")
+    assert "h-7" in classes(html, "#f [data-trigger] button")
   end
 
   test "the locale names the trigger, Clear and Apply" do

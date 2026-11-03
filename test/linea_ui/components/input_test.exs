@@ -25,7 +25,7 @@ defmodule LineaUI.Components.InputTest do
     classes = classes(html, "input")
     assert "bg-slate-150" in classes
     assert "focus:ring-3" in classes
-    assert "h-12" in classes
+    assert "h-10" in classes
     assert "rounded-full" in classes
     assert "px-6" in classes
     refute "px-4" in classes

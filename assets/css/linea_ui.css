@@ -756,8 +756,8 @@ code.inline-code {
 
 /* button */
 .btn {
-  @apply inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg px-5 py-2
-   text-center tracking-wide outline-hidden transition-all duration-200
+  @apply inline-flex h-8.5 cursor-pointer items-center justify-center gap-1.5 rounded-md px-3 py-0 text-[13px]
+   text-center outline-hidden transition-all duration-200
    focus:outline-hidden disabled:pointer-events-none;
 }
 

@@ -288,7 +288,7 @@ defmodule LineaUI.Components.PhoneInputTest do
         """)
 
       input = classes(html, "input[data-display]")
-      assert "h-12" in input
+      assert "h-10" in input
       assert "bg-slate-150" in input
       assert "rounded-full" in input
       assert "font-mono" in input

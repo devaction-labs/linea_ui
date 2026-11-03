@@ -46,10 +46,11 @@ defmodule LineaUI.Components.Autocomplete do
 
   @sizes %{
     "sm" =>
-      "[&_.ts-control]:h-8 [&_.ts-control]:py-0 [&_.ts-control]:text-xs-plus [&_.ts-control_input]:text-xs-plus",
-    "md" => nil,
+      "[&_.ts-control]:h-7 [&_.ts-control]:py-0 [&_.ts-control]:text-xs [&_.ts-control_input]:text-xs",
+    "md" =>
+      "[&_.ts-control]:h-8.5 [&_.ts-control]:py-0 [&_.ts-control]:text-[13px] [&_.ts-control_input]:text-[13px]",
     "lg" =>
-      "[&_.ts-control]:h-11 [&_.ts-control]:py-0 [&_.ts-control]:text-base [&_.ts-control_input]:text-base"
+      "[&_.ts-control]:h-10 [&_.ts-control]:py-0 [&_.ts-control]:text-sm [&_.ts-control_input]:text-sm"
   }
 
   @doc """
@@ -197,7 +198,7 @@ defmodule LineaUI.Components.Autocomplete do
         <div id={@id <> "-control"} class="ts-control items-center" phx-update="ignore">
           <span
             :for={prefix <- @prefix}
-            class="-my-px -ms-3 me-3 flex shrink-0 items-center self-stretch rounded-s-lg border-e border-slate-300 bg-slate-100 px-3 text-slate-950 dark:border-navy-450 dark:bg-navy-600 dark:text-navy-50"
+            class="-my-px -ms-3 me-3 flex shrink-0 items-center self-stretch rounded-s-md border-e border-slate-300 bg-slate-100 px-3 text-slate-950 dark:border-navy-450 dark:bg-navy-600 dark:text-navy-50"
           >
             {render_slot(prefix)}
           </span>

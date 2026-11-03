@@ -72,7 +72,7 @@ defmodule LineaUI.Components.AutocompleteTest do
     assert "plugin-clear_button" in root
     assert "is-invalid" in root
     assert "disabled" in root
-    assert "[&_.ts-control]:h-8" in root
+    assert "[&_.ts-control]:h-7" in root
     assert [_] = find(html, "button[type=button][data-clear]") |> Enum.to_list()
     assert attr_of(html, "[data-clear]", "aria-label") == ["Clear"]
     assert [_] = find(html, "[data-clear] svg[aria-hidden=true]") |> Enum.to_list()

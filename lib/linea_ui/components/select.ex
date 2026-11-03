@@ -50,12 +50,12 @@ defmodule LineaUI.Components.Select do
   }
 
   @native_sizes %{
-    {"sm", true} => "mt-1 h-8 px-2.5 text-xs-plus",
-    {"md", true} => "mt-1.5 px-3 py-2",
-    {"lg", true} => "mt-1 h-12 px-2.5 text-base",
-    {"sm", false} => "h-8 px-2.5 text-xs-plus",
-    {"md", false} => "px-3 py-2",
-    {"lg", false} => "h-12 px-2.5 text-base"
+    {"sm", true} => "mt-1 h-7 px-2.5 text-xs",
+    {"md", true} => "mt-1.5 h-8.5 px-3 py-0 text-[13px]",
+    {"lg", true} => "mt-1 h-10 px-4 text-sm",
+    {"sm", false} => "h-7 px-2.5 text-xs",
+    {"md", false} => "h-8.5 px-3 py-0 text-[13px]",
+    {"lg", false} => "h-10 px-4 text-sm"
   }
 
   @native_shapes %{"rounded" => "rounded-lg", "pill" => "rounded-full px-4"}

@@ -21,8 +21,8 @@ defmodule LineaUI.Components.SelectTest do
                "select"
              )
 
-      assert "h-8" in classes(render(~H|<.select native size="sm" options={[]} />|), "select")
-      assert "h-12" in classes(render(~H|<.select native size="lg" options={[]} />|), "select")
+      assert "h-7" in classes(render(~H|<.select native size="sm" options={[]} />|), "select")
+      assert "h-10" in classes(render(~H|<.select native size="lg" options={[]} />|), "select")
 
       assert "rounded-full" in classes(
                render(~H|<.select native shape="pill" options={[]} />|),

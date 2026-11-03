@@ -3043,22 +3043,24 @@ span.flatpickr-day.selected {
 }
 .flatpickr-calendar[data-skin="linea"] :is(.flatpickr-innerContainer, .flatpickr-rContainer, .flatpickr-days, .dayContainer) { border: 0; box-shadow: none; }
 
-/* The Metronic look of the suggestion list: a rounded panel with a soft shadow, compact rows, a neutral active row. */
+/* The suggestion list of Metronic's select: a 6px panel with a thin edge and a soft shadow, 4px of padding, rows of
+   7px by 10px in 14px text and a neutral hovered row. */
 .ts-wrapper .ts-dropdown {
   background-color: #fff;
   border: 1px solid var(--color-slate-200);
-  border-radius: .75rem;
-  box-shadow: 0 10px 15px -3px rgb(0 0 0 / .08), 0 4px 6px -4px rgb(0 0 0 / .06);
+  border-radius: .375rem;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / .05), 0 2px 4px -2px rgb(0 0 0 / .05);
   margin-top: .25rem;
-  padding: .375rem;
+  padding: .25rem;
 }
-.dark .ts-wrapper .ts-dropdown { background-color: var(--color-navy-700); border-color: var(--color-navy-450); }
+.dark .ts-wrapper .ts-dropdown { background-color: var(--color-navy-900); border-color: var(--color-navy-450); }
 .ts-wrapper .ts-dropdown .ts-dropdown-content { padding: 0; }
 .ts-wrapper .ts-dropdown .option {
   border-radius: .375rem;
   color: var(--color-slate-950);
-  font-size: 13px;
-  padding: .5rem .625rem;
+  font-size: .875rem;
+  line-height: 1.25rem;
+  padding: .4375rem .625rem;
 }
 .dark .ts-wrapper .ts-dropdown .option { color: var(--color-navy-50); }
 .ts-wrapper .ts-dropdown .option.active { background-color: var(--color-slate-100); color: var(--color-slate-950); }
