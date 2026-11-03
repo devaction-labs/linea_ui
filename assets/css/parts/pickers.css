@@ -3042,3 +3042,27 @@ span.flatpickr-day.selected {
   box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-error) 20%, transparent);
 }
 .flatpickr-calendar[data-skin="linea"] :is(.flatpickr-innerContainer, .flatpickr-rContainer, .flatpickr-days, .dayContainer) { border: 0; box-shadow: none; }
+
+/* The Metronic look of the suggestion list: a rounded panel with a soft shadow, compact rows, a neutral active row. */
+.ts-wrapper .ts-dropdown {
+  background-color: #fff;
+  border: 1px solid var(--color-slate-200);
+  border-radius: .75rem;
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / .08), 0 4px 6px -4px rgb(0 0 0 / .06);
+  margin-top: .25rem;
+  padding: .375rem;
+}
+.dark .ts-wrapper .ts-dropdown { background-color: var(--color-navy-700); border-color: var(--color-navy-450); }
+.ts-wrapper .ts-dropdown .ts-dropdown-content { padding: 0; }
+.ts-wrapper .ts-dropdown .option {
+  border-radius: .375rem;
+  color: var(--color-slate-950);
+  font-size: 13px;
+  padding: .5rem .625rem;
+}
+.dark .ts-wrapper .ts-dropdown .option { color: var(--color-navy-50); }
+.ts-wrapper .ts-dropdown .option.active { background-color: var(--color-slate-100); color: var(--color-slate-950); }
+.dark .ts-wrapper .ts-dropdown .option.active { background-color: var(--color-navy-600); color: var(--color-navy-50); }
+.ts-wrapper .ts-dropdown .option .highlight { background: none; color: inherit; font-weight: 600; }
+.ts-wrapper.autocomplete .ts-control > input { color: var(--color-slate-950); }
+.dark .ts-wrapper.autocomplete .ts-control > input { color: var(--color-navy-50); }

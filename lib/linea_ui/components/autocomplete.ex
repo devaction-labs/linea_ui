@@ -197,7 +197,7 @@ defmodule LineaUI.Components.Autocomplete do
         <div id={@id <> "-control"} class="ts-control items-center" phx-update="ignore">
           <span
             :for={prefix <- @prefix}
-            class="flex shrink-0 items-center pr-2 text-slate-400 dark:text-navy-300"
+            class="-my-px -ms-3 me-3 flex shrink-0 items-center self-stretch rounded-s-lg border-e border-slate-300 bg-slate-100 px-3 text-slate-950 dark:border-navy-450 dark:bg-navy-600 dark:text-navy-50"
           >
             {render_slot(prefix)}
           </span>

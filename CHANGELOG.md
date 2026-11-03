@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- `autocomplete`: the suggestion list of the Metronic board: a rounded panel with a soft shadow and compact rows with a neutral active row (it also reaches `select`, `phone_input` and the other Tom Select lists), the matched text in bold without the color, and the `prefix` slot as an addon box beside the field.
 - Keenicons, the icon set of Metronic: `assets/css/keenicons.cjs` turns a folder of SVGs into `ki-<style>-<name>` mask classes (`ki-filled-element-11`), and `icon/1` draws them as a `<span>`. `scripts/keenicons.py` writes the SVGs from a Metronic checkout; they are covered by Metronic's license, so `assets/keenicons` is ignored by git and not part of the package.
 - `command_palette`: the look of the Metronic search modal: 520px wide, a 67px search row with the `Esc` key, compact 13px rows with the icon beside the label and a neutral selected row (the icon tile and the primary tint are gone).
 - `app_shell layout="demo1"`: the Metronic layout. `shell_sidebar/1` is 280px, collapses to an 80px rail (and opens while the pointer is over it) and its button flips `data-collapsed` on the shell with `JS`; the menu is `side_menu_heading/1`, `side_menu_link/1` (with an optional tag such as "Soon"), `side_menu_group/1` (a `<details>` with + and −) and `side_menu_sublink/1`; `shell_header/1` is the fixed top bar with `shell_header_link/1` and the actions; the new `:footer` slot sits under the page. They live in `LineaUI.Components.SideMenu`.
