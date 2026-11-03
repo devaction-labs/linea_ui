@@ -185,6 +185,10 @@ defmodule LineaUI.Components.SideMenu do
   attr :label, :string, required: true
   attr :open, :boolean, default: false
 
+  attr :depth, :integer,
+    default: 0,
+    doc: "How deep the group sits (0 to 3), so its plus and minus follow its own state."
+
   attr :nested, :boolean,
     default: false,
     doc: "A group inside a group: no icon, the smaller text of a sub-item."
@@ -196,7 +200,7 @@ defmodule LineaUI.Components.SideMenu do
 
   def side_menu_group(assigns) do
     ~H"""
-    <details class={merge(["group/g", @class])} open={@open} {@rest}>
+    <details class={merge([depth_group(@depth), @class])} open={@open} {@rest}>
       <summary class={
         merge([
           link(),
@@ -217,8 +221,8 @@ defmodule LineaUI.Components.SideMenu do
           class="-me-2.5 ms-1 flex w-5 shrink-0 justify-end text-slate-500 group-data-[collapsed=true]/shell:not-group-hover/side:hidden dark:text-navy-300"
           aria-hidden="true"
         >
-          <span class="ki-filled-plus size-3.5 group-open/g:hidden"></span>
-          <span class="ki-filled-minus hidden size-3.5 group-open/g:block"></span>
+          <span class={["ki-filled-plus size-3.5", depth_plus(@depth)]}></span>
+          <span class={["ki-filled-minus hidden size-3.5", depth_minus(@depth)]}></span>
         </span>
       </summary>
       <div class="relative mt-1 flex flex-col gap-1 ps-2.5 before:absolute before:inset-y-0 before:start-5 before:border-s before:border-slate-200 group-data-[collapsed=true]/shell:not-group-hover/side:hidden dark:before:border-navy-450">
@@ -343,6 +347,21 @@ defmodule LineaUI.Components.SideMenu do
     </.link>
     """
   end
+
+  defp depth_group(0), do: "group/g0"
+  defp depth_group(1), do: "group/g1"
+  defp depth_group(2), do: "group/g2"
+  defp depth_group(_depth), do: "group/g3"
+
+  defp depth_plus(0), do: "group-open/g0:hidden"
+  defp depth_plus(1), do: "group-open/g1:hidden"
+  defp depth_plus(2), do: "group-open/g2:hidden"
+  defp depth_plus(_depth), do: "group-open/g3:hidden"
+
+  defp depth_minus(0), do: "group-open/g0:block"
+  defp depth_minus(1), do: "group-open/g1:block"
+  defp depth_minus(2), do: "group-open/g2:block"
+  defp depth_minus(_depth), do: "group-open/g3:block"
 
   defp link, do: @link
   defp active, do: @active
