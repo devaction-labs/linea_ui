@@ -17,9 +17,9 @@ defmodule LineaUI.Components.Switch do
 
   @variants %{
     {"basic", false} =>
-      "form-switch bg-slate-300 before:bg-slate-50 checked:before:bg-white dark:bg-navy-900 dark:before:bg-navy-300 dark:checked:before:bg-white",
+      "form-switch bg-slate-200 before:bg-white dark:bg-navy-450 dark:before:bg-white",
     {"basic", true} =>
-      "form-switch bg-slate-300 before:bg-slate-50 checked:before:bg-white dark:bg-navy-900 dark:before:bg-navy-300 dark:checked:before:bg-white",
+      "form-switch bg-slate-200 before:bg-white dark:bg-navy-450 dark:before:bg-white",
     {"outline", false} =>
       "form-switch is-outline border border-slate-400/70 bg-transparent before:bg-slate-300 dark:border-navy-400 dark:before:bg-navy-300",
     {"outline", true} =>
