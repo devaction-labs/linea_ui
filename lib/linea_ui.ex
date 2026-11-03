@@ -41,6 +41,7 @@ defmodule LineaUI do
     avatar_parts: LineaUI.Components.AvatarParts,
     progress_parts: LineaUI.Components.ProgressParts,
     rating_parts: LineaUI.Components.RatingParts,
+    disclosure_parts: LineaUI.Components.DisclosureParts,
     image_input: LineaUI.Components.ImageInput,
     password_input: LineaUI.Components.PasswordInput,
     sticky: LineaUI.Components.Sticky,
