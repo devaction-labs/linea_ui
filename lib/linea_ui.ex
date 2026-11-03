@@ -34,6 +34,7 @@ defmodule LineaUI do
     accordion: LineaUI.Components.Accordion,
     alert: LineaUI.Components.Alert,
     app_shell: LineaUI.Components.AppShell,
+    side_menu: LineaUI.Components.SideMenu,
     autocomplete: LineaUI.Components.Autocomplete,
     avatar: LineaUI.Components.Avatar,
     badge: LineaUI.Components.Badge,

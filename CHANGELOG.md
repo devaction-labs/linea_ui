@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- `app_shell layout="demo1"`: the Metronic layout. `shell_sidebar/1` is 280px, collapses to an 80px rail (and opens while the pointer is over it) and its button flips `data-collapsed` on the shell with `JS`; the menu is `side_menu_heading/1`, `side_menu_link/1` (with an optional tag such as "Soon"), `side_menu_group/1` (a `<details>` with + and −) and `side_menu_sublink/1`; `shell_header/1` is the fixed top bar with `shell_header_link/1` and the actions; the new `:footer` slot sits under the page. They live in `LineaUI.Components.SideMenu`.
 - Theme: the LineOne palette gives way to the Metronic one. Inter replaces Poppins as the app font, `slate-*` and `navy-*` are now the zinc scale (dark page `#09090b`, card `#18181b`, edge `#27272a`), `primary` is blue-500 (blue-600 as `accent` in dark), `secondary` orange, `info` violet, `success` green, `warning` yellow and `error` red. Class names do not change; the e-mail palette follows. `indigo-*` classes became `blue-*`.
 
 ## 0.8.14
