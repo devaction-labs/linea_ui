@@ -82,7 +82,7 @@ defmodule LineaUI.Components.Typography do
     "amber-orange" =>
       "bg-gradient-to-r from-amber-400 to-orange-600 bg-clip-text text-transparent",
     "purple-indigo" =>
-      "bg-gradient-to-r from-purple-500 to-indigo-600 bg-clip-text text-transparent"
+      "bg-gradient-to-r from-purple-500 to-blue-600 bg-clip-text text-transparent"
   }
 
   @decorations %{

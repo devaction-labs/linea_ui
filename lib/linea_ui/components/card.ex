@@ -104,7 +104,7 @@ defmodule LineaUI.Components.Card do
   }
 
   @gradients %{
-    "purple-indigo" => "rounded-lg bg-gradient-to-br from-purple-500 to-indigo-600 text-white",
+    "purple-indigo" => "rounded-lg bg-gradient-to-br from-purple-500 to-blue-600 text-white",
     "fuchsia-pink" => "rounded-lg bg-gradient-to-r from-fuchsia-600 to-pink-600 text-white",
     "amber-orange" => "rounded-lg bg-gradient-to-br from-amber-400 to-orange-600 text-white",
     "sky-blue" => "rounded-lg bg-gradient-to-r from-sky-400 to-blue-600 text-white",
@@ -112,7 +112,7 @@ defmodule LineaUI.Components.Card do
   }
 
   @gradient_outlines %{
-    "purple-indigo" => "rounded-lg bg-gradient-to-r from-purple-500 to-indigo-600 p-1",
+    "purple-indigo" => "rounded-lg bg-gradient-to-r from-purple-500 to-blue-600 p-1",
     "fuchsia-pink" => "rounded-lg bg-gradient-to-r from-fuchsia-600 to-pink-600 p-1",
     "amber-orange" => "rounded-lg bg-gradient-to-r from-amber-400 to-orange-600 p-1",
     "sky-blue" => "rounded-lg bg-gradient-to-r from-sky-400 to-blue-600 p-1",

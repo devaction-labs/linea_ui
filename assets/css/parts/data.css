@@ -202,7 +202,7 @@
 
   .carousel {
     --carousel-theme: #7e75fa;
-    --carousel-pagination: #4f46e5;
+    --carousel-pagination: #2b7fff;
     position: relative;
     overflow: hidden;
     z-index: 1;

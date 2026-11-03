@@ -183,7 +183,7 @@ defmodule LineaUI.Components.Avatar do
     "pink-rose" => "bg-gradient-to-r from-pink-500 to-rose-500",
     "purple-orange" => "bg-gradient-to-r from-purple-500 to-orange-600",
     "green-fuchsia" => "bg-gradient-to-r from-green-400 to-fuchsia-400",
-    "purple-indigo" => "bg-gradient-to-r from-purple-500 to-indigo-600",
+    "purple-indigo" => "bg-gradient-to-r from-purple-500 to-blue-600",
     "fuchsia-pink" => "bg-gradient-to-r from-fuchsia-600 to-pink-600"
   }
 

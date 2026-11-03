@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Theme: the LineOne palette gives way to the Metronic one. Inter replaces Poppins as the app font, `slate-*` and `navy-*` are now the zinc scale (dark page `#09090b`, card `#18181b`, edge `#27272a`), `primary` is blue-500 (blue-600 as `accent` in dark), `secondary` orange, `info` violet, `success` green, `warning` yellow and `error` red. Class names do not change; the e-mail palette follows. `indigo-*` classes became `blue-*`.
+
 ## 0.8.14
 
 - `card_table`: `title`, `description` and `<:actions>` draw a heading above the table (title, line under it, buttons at the right), so a list no longer needs a card around it just to say what it is.

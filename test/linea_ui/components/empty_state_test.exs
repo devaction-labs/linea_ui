@@ -71,7 +71,7 @@ defmodule LineaUI.Components.EmptyStateTest do
       <.empty_state title="B" icon="huge-search-01" tone="gradient" class="mt-4" />
       """)
 
-    assert find(html, ".from-indigo-600") |> Enum.count() == 1
+    assert find(html, ".from-blue-600") |> Enum.count() == 1
     assert find(html, "section > span.size-15") |> Enum.count() == 2
     assert find(html, "section.mt-4") |> Enum.count() == 1
   end

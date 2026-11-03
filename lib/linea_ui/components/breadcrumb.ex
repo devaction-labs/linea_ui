@@ -38,9 +38,9 @@ defmodule LineaUI.Components.Breadcrumb do
 
   @links %{
     "plain" =>
-      "flex items-center gap-1.5 rounded-md text-primary transition-colors hover:text-primary-focus hover:underline hover:underline-offset-3 dark:text-accent-light dark:hover:text-indigo-300",
+      "flex items-center gap-1.5 rounded-md text-primary transition-colors hover:text-primary-focus hover:underline hover:underline-offset-3 dark:text-accent-light dark:hover:text-blue-300",
     "bordered" =>
-      "flex items-center gap-1.5 rounded-lg px-2 py-[5px] leading-none text-primary shadow-[inset_0_0_0_1px_var(--color-slate-200)] transition-colors hover:text-primary-focus hover:shadow-[inset_0_0_0_1px_color-mix(in_oklab,var(--color-primary)_40%,transparent)] dark:text-accent-light dark:shadow-[inset_0_0_0_1px_var(--color-navy-500)] dark:hover:text-indigo-300 dark:hover:shadow-[inset_0_0_0_1px_color-mix(in_oklab,var(--color-accent)_40%,transparent)]"
+      "flex items-center gap-1.5 rounded-lg px-2 py-[5px] leading-none text-primary shadow-[inset_0_0_0_1px_var(--color-slate-200)] transition-colors hover:text-primary-focus hover:shadow-[inset_0_0_0_1px_color-mix(in_oklab,var(--color-primary)_40%,transparent)] dark:text-accent-light dark:shadow-[inset_0_0_0_1px_var(--color-navy-500)] dark:hover:text-blue-300 dark:hover:shadow-[inset_0_0_0_1px_color-mix(in_oklab,var(--color-accent)_40%,transparent)]"
   }
 
   @doc """

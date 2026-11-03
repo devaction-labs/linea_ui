@@ -619,7 +619,7 @@
     --toast-bad: var(--color-error-focus);
     --toast-bg: #fff;
     --toast-ring: transparent;
-    --toast-track: var(--color-indigo-100);
+    --toast-track: var(--color-blue-100);
     --toast-shadow: 0 12px 30px rgb(15 23 42 / 0.1);
     @apply flex items-center gap-3 rounded-xl px-4 py-3.5 font-normal text-slate-800;
     width: 26.25rem;
@@ -629,7 +629,7 @@
   }
 
   .dark .toastify.rich {
-    --toast-ai: var(--color-indigo-300);
+    --toast-ai: var(--color-blue-300);
     --toast-ok: var(--color-success);
     --toast-bad: var(--color-error);
     --toast-bg: var(--color-navy-700);
@@ -651,7 +651,7 @@
   }
 
   .toastify.rich[data-surface="dark"] {
-    --toast-ai: var(--color-indigo-300);
+    --toast-ai: var(--color-blue-300);
     --toast-ok: var(--color-success);
     --toast-bad: var(--color-error);
   }
@@ -662,7 +662,7 @@
     --toast-bad: var(--color-error-focus);
     --toast-bg: #fff;
     --toast-ring: transparent;
-    --toast-track: var(--color-indigo-100);
+    --toast-track: var(--color-blue-100);
     @apply text-slate-800;
   }
 
