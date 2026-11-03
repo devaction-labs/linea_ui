@@ -27,10 +27,16 @@ defmodule LineaUI.Components.Textarea do
 
   @variants %{
     "outlined" =>
-      "form-textarea w-full rounded-lg border border-slate-300 bg-transparent p-2.5 placeholder:text-slate-400/70 ring-primary/25 hover:border-slate-400 focus:border-primary focus:ring-3 disabled:pointer-events-none disabled:select-none disabled:bg-slate-150 disabled:opacity-60 dark:border-navy-450 dark:ring-accent/30 dark:hover:border-navy-400 dark:focus:border-accent dark:disabled:bg-navy-600",
+      "form-textarea w-full rounded-md border border-slate-300 bg-transparent p-3 text-[13px] placeholder:text-slate-500 ring-primary/25 hover:border-slate-400 focus:border-primary focus:ring-3 disabled:pointer-events-none disabled:select-none disabled:bg-slate-150 disabled:opacity-60 dark:border-navy-450 dark:ring-accent/30 dark:hover:border-navy-400 dark:focus:border-accent dark:disabled:bg-navy-600",
     "filled" =>
-      "form-textarea w-full rounded-lg bg-slate-150 p-2.5 placeholder:text-slate-400 disabled:pointer-events-none disabled:select-none disabled:opacity-60 dark:bg-navy-900 dark:placeholder:text-navy-300",
-    "plain" => "form-textarea w-full bg-transparent p-3 placeholder:text-slate-400/70"
+      "form-textarea w-full rounded-md bg-slate-150 p-3 text-[13px] placeholder:text-slate-500 disabled:pointer-events-none disabled:select-none disabled:opacity-60 dark:bg-navy-900 dark:placeholder:text-navy-300",
+    "plain" => "form-textarea w-full bg-transparent p-3 placeholder:text-slate-500"
+  }
+
+  @sizes %{
+    "sm" => "p-2.5 text-xs",
+    "md" => nil,
+    "lg" => "p-4 text-sm"
   }
 
   @states %{
@@ -42,7 +48,7 @@ defmodule LineaUI.Components.Textarea do
     {"filled", "error"} => "ring-1 ring-error dark:ring-error"
   }
 
-  @frame "rounded-lg border border-slate-300 ring-primary/25 transition-colors duration-200 focus-within:!border-primary focus-within:ring-3 hover:border-slate-400 dark:border-navy-450 dark:ring-accent/30 dark:focus-within:!border-accent dark:hover:border-navy-400"
+  @frame "rounded-md border border-slate-300 ring-primary/25 transition-colors duration-200 focus-within:!border-primary focus-within:ring-3 hover:border-slate-400 dark:border-navy-450 dark:ring-accent/30 dark:focus-within:!border-accent dark:hover:border-navy-400"
 
   @framed_padding %{
     {true, false} => "pt-0",
@@ -60,6 +66,13 @@ defmodule LineaUI.Components.Textarea do
   attr(:value, :any)
   attr(:rows, :integer, default: 4)
   attr(:variant, :string, default: "outlined", values: ~w(outlined filled plain))
+
+  attr(:size, :string,
+    default: "md",
+    values: ~w(sm md lg),
+    doc: "Metronic's three paddings and text sizes: 10px and 12px, 12px and 13px, 16px and 14px."
+  )
+
   attr(:resizable, :boolean, default: false)
 
   attr(:counter, :boolean,
@@ -126,6 +139,7 @@ defmodule LineaUI.Components.Textarea do
   defp classes(%{header: [], footer: []} = assigns) do
     merge([
       @variants[assigns.variant],
+      @sizes[assigns.size],
       resize(assigns.resizable and not assigns.autogrow),
       grow(assigns.autogrow),
       @states[{assigns.variant, assigns.state}],

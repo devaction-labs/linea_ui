@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- `switch` has Metronic's sizes: 26x18, 30x20 and 34x22 with a 10, 12 and 14px thumb. `textarea` gets `size` (`sm`, `md`, `lg`: 10, 12 and 16px of padding), a 6px radius and 13px text, and the placeholder of every field is the muted `slate-500` as in Metronic.
 - Sizes of the controls follow Metronic: `button`, `input`, `select` and `autocomplete` are 28px (`sm`), 34px (`md`) and 40px (`lg`) high with a 6px radius, `md` text is 13px (they were 32, 40 and 48px with an 8px radius). `xl` buttons stay 48px. The icon button is `size-7`, `size-8.5` and `size-10`.
 - `autocomplete`: the suggestion list of the Metronic board: a rounded panel with a soft shadow and rows of 7px by 10px in 14px text with a neutral active row, a 6px panel as in Metronic's select (it also reaches `select`, `phone_input` and the other Tom Select lists), the matched text in bold without the color, and the `prefix` slot as an addon box beside the field.
 - Keenicons, the icon set of Metronic: `assets/css/keenicons.cjs` turns a folder of SVGs into `ki-<style>-<name>` mask classes (`ki-filled-element-11`), and `icon/1` draws them as a `<span>`. `scripts/keenicons.py` writes the SVGs from a Metronic checkout; they are covered by Metronic's license, so `assets/keenicons` is ignored by git and not part of the package.

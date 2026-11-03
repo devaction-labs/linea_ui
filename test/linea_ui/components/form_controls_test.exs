@@ -58,7 +58,7 @@ defmodule LineaUI.Components.FormControlsTest do
       classes = classes(html, "textarea")
       assert "form-textarea" in classes
       assert "resize-none" in classes
-      assert "p-2.5" in classes
+      assert "p-3" in classes
     end
 
     test "filled and resizable" do
@@ -118,8 +118,8 @@ defmodule LineaUI.Components.FormControlsTest do
         </.textarea>
         """)
 
-      assert [_] = find(html, "div.rounded-lg.border > div.flex .h") |> Enum.to_list()
-      assert [_] = find(html, "div.rounded-lg.border > div.py-2 .f") |> Enum.to_list()
+      assert [_] = find(html, "div.rounded-md.border > div.flex .h") |> Enum.to_list()
+      assert [_] = find(html, "div.rounded-md.border > div.py-2 .f") |> Enum.to_list()
       classes = classes(html, "textarea")
       assert "py-0" in classes
       refute "border" in classes

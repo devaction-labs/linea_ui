@@ -507,7 +507,7 @@ defmodule LineaUI.Components.Dropdown do
         placeholder={@placeholder}
         class={
           merge([
-            "form-input peer h-8 w-full rounded-md border border-slate-150 bg-transparent px-3 py-0 pl-9 text-xs-plus placeholder:text-slate-400/70 dark:border-navy-600",
+            "form-input peer h-8 w-full rounded-md border border-slate-150 bg-transparent px-3 py-0 pl-9 text-xs-plus placeholder:text-slate-500 dark:border-navy-600",
             @class
           ])
         }

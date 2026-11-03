@@ -56,9 +56,9 @@ defmodule LineaUI.Components.Switch do
   }
 
   @sizes %{
-    "sm" => "h-3.5 w-7",
-    "md" => "h-5 w-10",
-    "lg" => "h-7 w-14"
+    "sm" => "h-4.5 w-6.5 [--thumb-border:4px] before:w-2.5 checked:before:translate-x-2",
+    "md" => "h-5 w-7.5 [--thumb-border:4px] before:w-3 checked:before:translate-x-2.5",
+    "lg" => "h-5.5 w-8.5 [--thumb-border:4px] before:w-3.5 checked:before:translate-x-3"
   }
 
   @label_sizes %{

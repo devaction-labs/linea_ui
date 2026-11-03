@@ -60,7 +60,7 @@ defmodule LineaUI.Components.TextareaTest do
       </.textarea>
       """)
 
-    frame = classes(html, "div.rounded-lg")
+    frame = classes(html, "div.rounded-md")
     assert "focus-within:!border-primary" in frame
     assert "focus-within:ring-3" in frame
     assert "mt-1.5" in frame

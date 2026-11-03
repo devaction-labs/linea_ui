@@ -370,7 +370,7 @@ defmodule LineaUI.Components.DataTable do
             aria-label={@search_placeholder || "Type a keyword..."}
             autocomplete="off"
             phx-debounce="300"
-            class="min-w-0 flex-1 appearance-none border-0 bg-transparent p-0 font-medium text-slate-700 outline-hidden placeholder:font-normal placeholder:text-slate-400/70 focus:ring-0 dark:text-navy-100"
+            class="min-w-0 flex-1 appearance-none border-0 bg-transparent p-0 font-medium text-slate-700 outline-hidden placeholder:font-normal placeholder:text-slate-500 focus:ring-0 dark:text-navy-100"
           />
         </label>
       </form>
