@@ -63,10 +63,12 @@ defmodule LineaUI.Components.SideMenu do
     <aside
       id={@id}
       aria-label={@label}
+      phx-hook="LineaUI.ShellSidebar"
+      phx-mounted={JS.ignore_attributes(["data-animating"])}
       class={
         merge([
           "group/side fixed inset-y-0 start-0 z-20 hidden w-[280px] shrink-0 flex-col items-stretch border-e border-slate-200 bg-white transition-[width] duration-300 ease-in-out lg:flex dark:border-navy-450 dark:bg-navy-900",
-          "group-data-[mobile=true]/shell:flex group-data-[collapsed=true]/shell:w-[80px] group-data-[collapsed=true]/shell:hover:w-[280px]",
+          "group-data-[mobile=true]/shell:flex data-[animating=true]:pointer-events-none group-data-[collapsed=true]/shell:w-[80px] group-data-[collapsed=true]/shell:not-data-[animating=true]:hover:w-[280px]",
           @class
         ])
       }
@@ -86,12 +88,19 @@ defmodule LineaUI.Components.SideMenu do
           class="absolute start-full top-1/2 z-40 hidden size-[30px] -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-md border border-slate-200 bg-white text-slate-500 shadow-xs outline-none hover:bg-slate-100 hover:text-slate-950 focus-visible:ring-2 focus-visible:ring-primary/50 lg:inline-flex dark:border-navy-450 dark:bg-navy-900 dark:text-navy-300 dark:hover:bg-navy-600 dark:hover:text-navy-50"
           aria-label={@toggle_label}
           aria-controls={@shell}
+          data-shell-toggle
           phx-click={JS.toggle_attribute({"data-collapsed", "true", "false"}, to: "#" <> @shell)}
         >
-          <span class="ki-filled-black-left-line size-4" aria-hidden="true"></span>
+          <span
+            class="ki-filled-black-left-line size-4 transition-all duration-300 group-data-[collapsed=true]/shell:rotate-180"
+            aria-hidden="true"
+          ></span>
         </button>
       </div>
-      <nav class="flex min-h-0 grow flex-col gap-1 overflow-y-auto overflow-x-hidden py-5 ps-5 pe-3">
+      <nav
+        data-shell-scroll
+        class="flex min-h-0 grow flex-col gap-1 overflow-y-auto overflow-x-hidden py-5 ps-5 pe-3"
+      >
         {render_slot(@inner_block)}
       </nav>
     </aside>

@@ -40,7 +40,12 @@ defmodule LineaUI.Components.SideMenuTest do
       </.shell_sidebar>
       """)
 
-    assert [_] = find(html, ~s(aside[aria-label="Main menu"])) |> Enum.to_list()
+    assert [_] =
+             find(html, ~s(aside[aria-label="Main menu"][phx-hook="LineaUI.ShellSidebar"]))
+             |> Enum.to_list()
+
+    assert [_] = find(html, "button[data-shell-toggle]") |> Enum.to_list()
+    assert [_] = find(html, "nav[data-shell-scroll]") |> Enum.to_list()
 
     assert [button] = find(html, ~s(button[aria-label="Collapse the menu"])) |> Enum.to_list()
     [click] = LazyHTML.attribute(button, "phx-click")
