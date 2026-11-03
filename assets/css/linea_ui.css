@@ -47,9 +47,9 @@
   --color-secondary: #f000b9;
   --color-secondary-focus: #bd0090;
 
-  --color-accent-light: #818cf8; /* colors.indigo[400] */
-  --color-accent: #5f5af6;
-  --color-accent-focus: #4d47f5;
+  --color-accent-light: #819df8; /* the dark theme's primary text: blue-indigo, 4.9:1 on navy-700 */
+  --color-accent: #4567ed; /* the dark theme's primary: a blue-indigo that sits with the navy, not the violet it was */
+  --color-accent-focus: #3a5be5;
 
   --color-info: #0ea5e9; /* colors.sky[500] */
   --color-info-focus: #0284c7; /* colors.sky[600] */

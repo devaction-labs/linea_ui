@@ -44,12 +44,12 @@ defmodule LineaUI.Components.Accordion do
   }
 
   @frames %{
-    "primary" => "divide-indigo-400 border-primary dark:border-accent",
-    "secondary" => "divide-violet-400 border-secondary dark:border-secondary",
-    "info" => "divide-sky-400 border-info dark:border-info",
-    "success" => "divide-emerald-400 border-success dark:border-success",
-    "warning" => "divide-yellow-400 border-warning dark:border-warning",
-    "error" => "divide-rose-400 border-error dark:border-error"
+    "primary" => "divide-primary/55 border-primary dark:divide-accent/55 dark:border-accent",
+    "secondary" => "divide-secondary/55 border-secondary",
+    "info" => "divide-info/55 border-info",
+    "success" => "divide-success/55 border-success",
+    "warning" => "divide-warning/55 border-warning",
+    "error" => "divide-error/55 border-error"
   }
 
   @doc """
