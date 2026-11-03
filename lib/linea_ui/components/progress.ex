@@ -63,7 +63,7 @@ defmodule LineaUI.Components.Progress do
     "white" => "bg-gradient-to-r from-transparent via-white to-transparent"
   }
 
-  @sizes %{"sm" => "h-1", "md" => "h-2", "lg" => "h-3", "xl" => "h-4"}
+  @sizes %{"sm" => "h-1", "md" => "h-1.5", "lg" => "h-3", "xl" => "h-4"}
 
   @heights %{"1" => "h-1", "1.5" => "h-1.5", "2" => "h-2", "3" => "h-3", "4" => "h-4"}
 

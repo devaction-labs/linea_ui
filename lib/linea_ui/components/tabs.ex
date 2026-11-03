@@ -97,9 +97,9 @@ defmodule LineaUI.Components.Tabs do
     {"line", "horizontal"} => "is-scrollbar-hidden overflow-x-auto",
     {"line", "vertical"} => "shrink-0",
     {"boxed", "horizontal"} =>
-      "is-scrollbar-hidden overflow-x-auto rounded-lg bg-slate-200 text-slate-600 dark:bg-navy-800 dark:text-navy-200",
+      "is-scrollbar-hidden overflow-x-auto rounded-md bg-slate-200 text-slate-600 dark:bg-navy-800 dark:text-navy-200",
     {"boxed", "vertical"} =>
-      "shrink-0 self-start rounded-lg bg-slate-200 text-slate-600 dark:bg-navy-800 dark:text-navy-200",
+      "shrink-0 self-start rounded-md bg-slate-200 text-slate-600 dark:bg-navy-800 dark:text-navy-200",
     {"pill", "horizontal"} => "is-scrollbar-hidden overflow-x-auto",
     {"pill", "vertical"} => "shrink-0",
     {"text", "horizontal"} => "is-scrollbar-hidden overflow-x-auto",

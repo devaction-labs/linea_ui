@@ -37,14 +37,14 @@ defmodule LineaUI.Components.Select do
 
   @native_sizes %{
     {"sm", true} => "mt-1 h-8 px-2.5 text-xs-plus",
-    {"md", true} => "mt-1.5 px-3 py-2",
+    {"md", true} => "mt-1.5 h-10 px-3",
     {"lg", true} => "mt-1 h-12 px-2.5 text-base",
     {"sm", false} => "h-8 px-2.5 text-xs-plus",
-    {"md", false} => "px-3 py-2",
+    {"md", false} => "h-10 px-3",
     {"lg", false} => "h-12 px-2.5 text-base"
   }
 
-  @native_shapes %{"rounded" => "rounded-lg", "pill" => "rounded-full px-4"}
+  @native_shapes %{"rounded" => "rounded-md", "pill" => "rounded-full px-4"}
 
   @native_disabled "disabled:pointer-events-none disabled:select-none disabled:border-none disabled:bg-zinc-100 dark:disabled:bg-navy-600"
 

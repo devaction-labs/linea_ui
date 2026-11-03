@@ -73,7 +73,7 @@ defmodule LineaUI.Components.Alert do
     }
   }
 
-  @shapes %{"rounded" => "rounded-lg", "pill" => "rounded-full"}
+  @shapes %{"rounded" => "rounded-md", "pill" => "rounded-full"}
 
   @bars %{
     "neutral" => "w-1.5 bg-slate-400 dark:bg-navy-300",

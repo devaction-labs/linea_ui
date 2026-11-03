@@ -50,7 +50,7 @@ defmodule LineaUI.Components.Pagination do
 
   @icon %{"sm" => "size-4", "md" => "size-4", "lg" => "size-4.5"}
 
-  @shapes %{"rounded" => "rounded-lg", "pill" => "rounded-full"}
+  @shapes %{"rounded" => "rounded-md", "pill" => "rounded-full"}
 
   @hover "hover:bg-slate-300 focus:bg-slate-300 active:bg-slate-300/80 dark:hover:bg-navy-450 dark:focus:bg-navy-450 dark:active:bg-navy-450/90"
 
@@ -60,7 +60,7 @@ defmodule LineaUI.Components.Pagination do
 
   @disabled "pointer-events-none opacity-60"
 
-  @page_size_select "form-select h-8 rounded-lg border border-slate-300 bg-white px-2.5 pr-8 text-xs-plus hover:border-slate-400 focus:border-primary dark:border-navy-450 dark:bg-navy-700 dark:hover:border-navy-400 dark:focus:border-accent"
+  @page_size_select "form-select h-8 rounded-md border border-slate-300 bg-white px-2.5 pr-8 text-xs-plus hover:border-slate-400 focus:border-primary dark:border-navy-450 dark:bg-navy-700 dark:hover:border-navy-400 dark:focus:border-accent"
 
   @joined_ends %{
     {"rounded", :first} => "rounded-l-lg",

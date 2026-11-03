@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Controls follow a 28/32/40/48/56px scale (`button`/`input`/`select` `xs`–`xl`; icon buttons match), and default radius is now 6px (`rounded-md`) on button, input, select, tabs, pagination and alert. `progress` md is 6px. Visual change: default controls grow from 36px to 40px.
+
 - `select`: Home, End, PageUp and PageDown move round an open list (in a control you type in they still move the caret), and ArrowUp opens a closed list like ArrowDown does. `tabs`: `activation="manual"` moves focus with the arrows and selects with Enter or Space, for panels that are slow to load; `auto` (default) is unchanged.
 - Dark theme primary: `accent` is `#4567ed` (was `#5f5af6`), `accent-focus` `#3a5be5` (was `#4d47f5`) and `accent-light`, the dark text and link color, `#819df8` (was `#818cf8`). The old values (hue 242) read as violet on the navy surfaces (hue 220); the new ones (hue 228) sit with them. White on `accent` is 4.8:1 and `accent-light` on `navy-700` is 4.9:1 (it was 4.2:1). The light theme is unchanged.
 - `accordion` `variant="primary"`: the dividers derive from the chosen color (`divide-{color}/55`) instead of a fixed Tailwind shade, so `secondary` is no longer violet next to a magenta frame and `primary` follows the dark accent.

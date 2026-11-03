@@ -131,19 +131,19 @@ defmodule LineaUI.Components.Button do
   @glass "border border-white/10 bg-white/20 text-white hover:bg-white/30 focus:bg-white/30 active:bg-white/40 dark:bg-white/20 dark:text-white dark:hover:bg-white/30 dark:focus:bg-white/30"
 
   @sizes %{
-    "xs" => "h-6 rounded-sm px-3 text-xs",
+    "xs" => "h-7 rounded-md px-3 text-xs",
     "sm" => "h-8 rounded-md px-4 text-xs-plus",
-    "md" => "",
-    "lg" => "h-11 text-base",
-    "xl" => "h-12 text-base"
+    "md" => "h-10",
+    "lg" => "h-12 text-base",
+    "xl" => "h-14 text-base"
   }
 
   @icon_sizes %{
-    "xs" => "size-6 rounded-sm p-0 text-xs",
-    "sm" => "size-7 rounded-md p-0 text-xs-plus",
-    "md" => "size-9 p-0",
-    "lg" => "size-11 p-0 text-base",
-    "xl" => "size-12 p-0 text-base"
+    "xs" => "size-7 rounded-md p-0 text-xs",
+    "sm" => "size-8 rounded-md p-0 text-xs-plus",
+    "md" => "size-10 p-0",
+    "lg" => "size-12 p-0 text-base",
+    "xl" => "size-14 p-0 text-base"
   }
 
   @shapes %{
