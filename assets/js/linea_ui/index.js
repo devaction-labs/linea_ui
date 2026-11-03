@@ -22,6 +22,7 @@ import Dialog from "./hooks/dialog.js"
 import Dropdown from "./hooks/dropdown.js"
 import Fab from "./hooks/fab.js"
 import InputMask from "./hooks/input_mask.js"
+import Layout from "./hooks/layout.js"
 import NumberInput from "./hooks/number_input.js"
 import Otp from "./hooks/otp.js"
 import PhoneInput from "./hooks/phone_input.js"
@@ -62,6 +63,7 @@ export const Hooks = {
   ...Dropdown,
   ...Fab,
   ...InputMask,
+  ...Layout,
   ...NumberInput,
   ...Otp,
   ...PhoneInput,

@@ -281,6 +281,7 @@ defmodule LineaUI.Components.SideMenu do
         <:actions><.avatar name="Ana" /></:actions>
       </.shell_header>
   """
+  attr :id, :string, default: "shell-header"
   attr :shell, :string, default: "app-shell", doc: "The id of the `app_shell/1`."
   attr :menu_label, :string, default: "Open the menu"
   attr :class, :any, default: nil
@@ -292,6 +293,11 @@ defmodule LineaUI.Components.SideMenu do
   def shell_header(assigns) do
     ~H"""
     <header
+      id={@id}
+      phx-hook="LineaUI.Sticky"
+      phx-mounted={JS.ignore_attributes(["data-stuck", "class"])}
+      data-offset="0"
+      data-stuck-class="border-b border-slate-200 dark:border-navy-450"
       class={
         merge([
           "fixed inset-x-0 top-0 z-10 flex h-[60px] items-stretch bg-white transition-[inset] duration-300 lg:start-[280px] lg:h-[70px] group-data-[collapsed=true]/shell:lg:start-[80px] dark:bg-navy-900",

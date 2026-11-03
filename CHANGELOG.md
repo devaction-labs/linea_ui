@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- New components for what Metronic's layout script does: `image_input` (an avatar or logo field with a camera strip and a remove or revert button), `password_input` (the eye that shows the password, with `JS` only), `sticky` (a block that takes classes while the page is scrolled; `shell_header` uses it for its edge), `scrollspy` (anchors that follow the scroll) and `context_menu` (a menu under the pointer on a right click). Their hooks are in `assets/js/linea_ui/hooks/layout.js`.
 - Field captions are 13px in the text color and the text of every field is `slate-950` (Metronic's foreground) without the letter spacing of LineOne. `radio_group variant="chip"` (the pill select) is a 28px pill with a thin edge on white, the chosen one in the color; `rating` lights its stars in `yellow-400`.
 - `date_picker` calendar: Metronic's 12px popover with a plain header (the month and the year as one bold title), bold weekdays and days of 30px with an 8px radius; today is a muted tile with the primary color and the chosen day a primary tile. The gray header and the round days of LineOne are gone.
 - `upload`: the dropzone of Metronic: a 1px dashed edge in `slate-400` that turns to the primary color on hover, a 6px radius and 13px text. The multiple select and `tags_input` chips are Metronic's 24px secondary badge on one line with the field, and the field is 34px high.
