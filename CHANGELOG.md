@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- `date_picker` calendar: Metronic's 12px popover with a plain header (the month and the year as one bold title), bold weekdays and days of 30px with an 8px radius; today is a muted tile with the primary color and the chosen day a primary tile. The gray header and the round days of LineOne are gone.
 - `upload`: the dropzone of Metronic: a 1px dashed edge in `slate-400` that turns to the primary color on hover, a 6px radius and 13px text. The multiple select and `tags_input` chips are Metronic's 24px secondary badge on one line with the field, and the field is 34px high.
 - `radio_group variant="card"` (and the checkbox cards): a 12px box with 16px of padding, the radio above the title and a border that turns to the color when chosen, without the tint and the ring. `phone_input`: the country button sits on a muted addon fill with the dial code in the text color.
 - `shell_sidebar`: the collapse works the way Metronic's layout script does. The hook `LineaUI.ShellSidebar` marks the sidebar `data-animating` while the width animates (it takes no pointer, so the hover that opens the rail does not reopen it under the pointer that just collapsed it), the arrow of the button turns 180 degrees when collapsed, and the page open now is scrolled into view on mount.
