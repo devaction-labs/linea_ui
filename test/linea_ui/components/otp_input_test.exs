@@ -60,18 +60,16 @@ defmodule LineaUI.Components.OtpInputTest do
     classes = classes(html, "#code-1")
 
     assert [
-             "h-[54px]",
-             "rounded-xl",
-             "text-[22px]",
-             "font-mono",
+             "size-10",
+             "rounded-md",
+             "text-base",
              "font-semibold",
              "text-center",
              "px-0"
            ] --
              classes == []
 
-    assert "data-filled:border-primary" in classes
-    assert "dark:data-filled:border-accent" in classes
+    refute "data-filled:border-primary" in classes
   end
 
   test "sizes" do
@@ -81,9 +79,9 @@ defmodule LineaUI.Components.OtpInputTest do
       <.otp_input name="b" size="lg" />
       """)
 
-    assert "h-10" in classes(html, "#a-1")
-    assert "h-16" in classes(html, "#b-1")
-    assert "text-2xl" in classes(html, "#b-1")
+    assert "size-8.5" in classes(html, "#a-1")
+    assert "size-12" in classes(html, "#b-1")
+    assert "text-lg" in classes(html, "#b-1")
   end
 
   test "length cuts the value and pads the boxes" do

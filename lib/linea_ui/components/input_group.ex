@@ -38,26 +38,26 @@ defmodule LineaUI.Components.InputGroup do
 
   @shapes %{
     "rounded" =>
-      "[&>:first-child]:rounded-l-lg [&>:first-child_.form-input]:rounded-l-lg [&>:last-child]:rounded-r-lg [&>:last-child_.form-input]:rounded-r-lg",
+      "[&>:first-child]:rounded-l-md [&>:first-child_.form-input]:rounded-l-md [&>:last-child]:rounded-r-md [&>:last-child_.form-input]:rounded-r-md",
     "pill" =>
       "[&>:first-child]:rounded-l-full [&>:first-child_.form-input]:rounded-l-full [&>:last-child]:rounded-r-full [&>:last-child_.form-input]:rounded-r-full"
   }
 
   @sizes %{
     "sm" =>
-      "[&>*]:!h-8 [&>*]:!text-[13px] [&_.form-input]:!h-8 [&_.form-input]:!text-[13px] [&_.form-select]:!h-8 [&_.form-select]:!text-[13px]",
+      "[&>*]:!h-7 [&>*]:!text-xs [&_.form-input]:!h-7 [&_.form-input]:!text-xs [&_.form-select]:!h-7 [&_.form-select]:!text-xs",
     "md" => nil,
     "lg" =>
-      "[&>*]:!h-11 [&>*]:!text-base [&_.form-input]:!h-11 [&_.form-input]:!text-base [&_.form-select]:!h-11 [&_.form-select]:!text-base"
+      "[&>*]:!h-10 [&>*]:!text-sm [&_.form-input]:!h-10 [&_.form-input]:!text-sm [&_.form-select]:!h-10 [&_.form-select]:!text-sm"
   }
 
   @invalid "[&>*]:!border-error [&>*_.form-input]:!border-error [&>*_.form-select]:!border-error"
 
   @addons %{
     "outline" =>
-      "flex shrink-0 items-center justify-center border border-slate-300 px-3.5 font-inter text-slate-500 dark:border-navy-450 dark:text-navy-200",
+      "flex h-8.5 min-w-8.5 shrink-0 items-center justify-center border border-slate-200 px-3 text-[13px] text-slate-500 shadow-xs dark:border-navy-450 dark:text-navy-200",
     "filled" =>
-      "flex shrink-0 items-center justify-center border border-slate-300 bg-slate-150 px-3.5 font-inter text-slate-800 dark:border-navy-450 dark:bg-navy-500 dark:text-navy-100"
+      "flex h-8.5 min-w-8.5 shrink-0 items-center justify-center border border-slate-200 bg-slate-100 px-3 text-[13px] text-slate-900 shadow-xs dark:border-navy-450 dark:bg-navy-600 dark:text-navy-50"
   }
 
   @addon_sizes %{

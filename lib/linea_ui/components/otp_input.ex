@@ -21,7 +21,7 @@ defmodule LineaUI.Components.OtpInput do
   browser (render `value=""` to clear a rejected code), and re-rendering what the browser sent
   does nothing.
 
-  A filled box has a primary border (`data-filled`); with errors it keeps the error border and
+  A filled box keeps the border of the others (it only carries `data-filled`); with errors it keeps the error border and
   with `state="success"` the success one. The error line has `role="alert"`; a `help` line under
   `state="success"` starts with a check-circle icon.
 
@@ -46,12 +46,12 @@ defmodule LineaUI.Components.OtpInput do
   alias LineaUI.Components.Overlay
 
   @sizes %{
-    "sm" => "h-10 rounded-lg text-base",
-    "md" => "h-[54px] rounded-xl text-[22px]",
-    "lg" => "h-16 rounded-xl text-2xl"
+    "sm" => "size-8.5 rounded-md text-sm",
+    "md" => "size-10 rounded-md text-base",
+    "lg" => "size-12 rounded-md text-lg"
   }
 
-  @box "min-w-0 flex-1 px-0 text-center font-mono font-semibold shadow-soft"
+  @box "shrink-0 px-0 text-center font-semibold text-slate-950 focus:border-primary/10 focus:ring-3 focus:ring-primary/10 dark:text-navy-50 dark:focus:border-accent/20 dark:focus:ring-accent/20"
 
   @doc """
   Renders the boxes, with their caption, help and errors when given.
@@ -196,7 +196,8 @@ defmodule LineaUI.Components.OtpInput do
       assign(assigns,
         box_class: merge([@box, @sizes[assigns.size], filled(assigns.state), assigns.class]),
         labelledby: assigns.label && assigns.id <> "-label",
-        group_class: merge(["flex w-full items-center gap-2", assigns.label && "mt-1.5"]),
+        group_class:
+          merge(["flex w-full flex-wrap items-center gap-2.5", assigns.label && "mt-1.5"]),
         group_label: assigns.label || assigns.aria_label
       )
 
@@ -253,8 +254,7 @@ defmodule LineaUI.Components.OtpInput do
     """
   end
 
-  defp filled(state) when state in ["error", "success"], do: nil
-  defp filled(_state), do: "data-filled:border-primary dark:data-filled:border-accent"
+  defp filled(_state), do: nil
 
   defp mask_type(true), do: "password"
   defp mask_type(false), do: "text"

@@ -202,13 +202,13 @@ defmodule LineaUI.Components.FormControlsTest do
 
     test "size sizes the parts together" do
       sm = classes(render(~H'<.input_group size="sm"><.input name="p" /></.input_group>'), "div")
-      assert "[&>*]:!h-8" in sm
-      assert "[&>*]:!text-[13px]" in sm
+      assert "[&>*]:!h-7" in sm
+      assert "[&>*]:!text-xs" in sm
       lg = classes(render(~H'<.input_group size="lg"><.input name="p" /></.input_group>'), "div")
-      assert "[&>*]:!h-11" in lg
-      assert "[&>*]:!text-base" in lg
+      assert "[&>*]:!h-10" in lg
+      assert "[&>*]:!text-sm" in lg
 
-      refute "[&>*]:!h-8" in classes(
+      refute "[&>*]:!h-7" in classes(
                render(~H'<.input_group><.input name="p" /></.input_group>'),
                "div"
              )
@@ -232,9 +232,9 @@ defmodule LineaUI.Components.FormControlsTest do
 
       classes = classes(html, "div.flex")
       assert "-space-x-px" in classes
-      assert "[&>:first-child]:rounded-l-lg" in classes
+      assert "[&>:first-child]:rounded-l-md" in classes
       assert "mt-1.5" in classes
-      assert "bg-slate-150" in classes(html, "div.flex > span")
+      assert "bg-slate-100" in classes(html, "div.flex > span")
       assert [_] = find(html, "div.flex > input[name=p]") |> Enum.to_list()
     end
 

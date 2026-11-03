@@ -44,7 +44,7 @@ defmodule LineaUI.Components.Select do
 
   @native %{
     "outline" =>
-      "border border-slate-300 bg-white hover:border-slate-400 focus:border-primary dark:border-navy-450 dark:bg-navy-700 dark:hover:border-navy-400 dark:focus:border-accent",
+      "border border-slate-200 bg-white hover:border-slate-400 focus:border-primary dark:border-navy-450 dark:bg-navy-700 dark:hover:border-navy-400 dark:focus:border-accent",
     "filled" =>
       "bg-slate-150 ring-primary/50 hover:bg-slate-200 focus:ring-3 dark:bg-navy-900/90 dark:ring-accent/50 dark:hover:bg-navy-900 dark:focus:bg-navy-900"
   }

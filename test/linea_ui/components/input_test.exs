@@ -12,7 +12,7 @@ defmodule LineaUI.Components.InputTest do
     assert find(html, "label") |> Enum.to_list() == []
     classes = classes(html, "input")
     assert "form-input" in classes
-    assert "border-slate-300" in classes
+    assert "border-slate-200" in classes
     assert "dark:focus:border-accent" in classes
   end
 
@@ -46,7 +46,7 @@ defmodule LineaUI.Components.InputTest do
   test "state paints the border and the help line" do
     html = render(~H'<.input name="u" state="success" help="Username is valid" />')
     assert "border-success" in classes(html, "input")
-    refute "border-slate-300" in classes(html, "input")
+    refute "border-slate-200" in classes(html, "input")
     assert "text-success" in classes(html, "label + span")
   end
 

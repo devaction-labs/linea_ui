@@ -8,7 +8,7 @@ defmodule LineaUI.Components.SelectTest do
       html = render(~H|<.select native name="e" label="Event" options={~w(A B)} value="B" />|)
       classes = classes(html, "select")
       assert "form-select" in classes
-      assert "border-slate-300" in classes
+      assert "border-slate-200" in classes
       assert "mt-1.5" in classes
       assert "rounded-lg" in classes
       assert html |> find("label > span") |> LazyHTML.text() == "Event"
