@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Theme re-based on the Metronic v9.5 palette: `slate` is now its cool light greys, `navy` its neutral dark "coal" greys, `primary` is `#1379f0` (dark theme brightens to `#2d8eff` on hover), `info` is violet `#4921ea`, `success` `#0bc33f`, `warning` `#f5bf00`, `error` `#ed143b`, `secondary` orange `#ff6f1e`. Adds `-soft` colors for each, and `shadow-widget`, `shadow-dropdown`, `shadow-primary|success|danger|info|warning`. Indigo/purple gradients are now primary to info.
+
 - Controls follow a 28/32/40/48/56px scale (`button`/`input`/`select` `xs`–`xl`; icon buttons match), and default radius is now 6px (`rounded-md`) on button, input, select, tabs, pagination and alert. `progress` md is 6px. Visual change: default controls grow from 36px to 40px.
 
 - `select`: Home, End, PageUp and PageDown move round an open list (in a control you type in they still move the caret), and ArrowUp opens a closed list like ArrowDown does. `tabs`: `activation="manual"` moves focus with the arrows and selects with Enter or Space, for panels that are slow to load; `auto` (default) is unchanged.

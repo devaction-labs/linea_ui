@@ -25,46 +25,74 @@
   --font-sans: "Poppins", ui-sans-serif, system-ui, sans-serif,
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   --font-inter: "Inter", sans-serif;
-  --color-navy-50: #e7e9ef;
-  --color-navy-100: #c2c9d6;
-  --color-navy-200: #a3adc2;
-  --color-navy-300: #697a9b;
-  --color-navy-400: #5c6b8a;
-  --color-navy-450: #465675;
-  --color-navy-500: #384766;
-  --color-navy-600: #313e59;
-  --color-navy-700: #26334d;
-  --color-navy-750: #222e45;
-  --color-navy-800: #202b40;
-  --color-navy-900: #192132;
+  /* Metronic v9.5 dark neutrals ("coal"), mapped onto the navy scale the components use */
+  --color-navy-50: #dbdce4;
+  --color-navy-100: #b5b7c8;
+  --color-navy-200: #9a9cae;
+  --color-navy-300: #808290;
+  --color-navy-400: #636674;
+  --color-navy-450: #464852;
+  --color-navy-500: #363843;
+  --color-navy-600: #2d2f39;
+  --color-navy-700: #1e2029;
+  --color-navy-750: #1b1c22;
+  --color-navy-800: #15171c;
+  --color-navy-900: #0f1014;
 
-  --color-slate-150: #e9eef5;
+  /* Metronic v9.5 light greys, mapped onto the slate scale */
+  --color-slate-50: #f9f9f9;
+  --color-slate-100: #f0f1f6;
+  --color-slate-150: #eceef4;
+  --color-slate-200: #e6e8f0;
+  --color-slate-300: #dbdfe9;
+  --color-slate-400: #a4abbf;
+  --color-slate-500: #78829d;
+  --color-slate-600: #4b5675;
+  --color-slate-700: #27314b;
+  --color-slate-800: #111b37;
+  --color-slate-900: #0b1226;
 
-  --color-primary: #4f46e5; /* colors.indigo[600] */
-  --color-primary-focus: #4338ca; /* colors.indigo[700] */
+  --color-primary: #1379f0;
+  --color-primary-focus: #086de3;
+  --color-primary-soft: #e7f2ff;
 
-  --color-secondary-light: #ff57d8;
-  --color-secondary: #f000b9;
-  --color-secondary-focus: #bd0090;
+  --color-secondary-light: #ff8a4a;
+  --color-secondary: #ff6f1e;
+  --color-secondary-focus: #f15700;
+  --color-secondary-soft: #fff5ef;
 
-  --color-accent-light: #819df8; /* the dark theme's primary text: blue-indigo, 4.9:1 on navy-700 */
-  --color-accent: #4567ed; /* the dark theme's primary: a blue-indigo that sits with the navy, not the violet it was */
-  --color-accent-focus: #3a5be5;
+  /* dark theme primary: same blue, brighter on hover (Metronic Dark-Mode/Primary) */
+  --color-accent-light: #4da3ff;
+  --color-accent: #1379f0;
+  --color-accent-focus: #2d8eff;
+  --color-accent-soft: #0a1726;
 
-  --color-info: #0ea5e9; /* colors.sky[500] */
-  --color-info-focus: #0284c7; /* colors.sky[600] */
+  --color-info: #4921ea;
+  --color-info-focus: #3d17d4;
+  --color-info-soft: #f0ecff;
 
-  --color-success: #10b981; /* colors.emerald[500] */
-  --color-success-focus: #059669; /* colors.emerald[600] */
+  --color-success: #0bc33f;
+  --color-success-focus: #06b838;
+  --color-success-soft: #e1fce9;
 
-  --color-warning: #ff9800;
-  --color-warning-focus: #e68200;
+  --color-warning: #f5bf00;
+  --color-warning-focus: #e8b500;
+  --color-warning-soft: #fffae9;
 
-  --color-error: #ff5724;
-  --color-error-focus: #f03000;
+  --color-error: #ed143b;
+  --color-error-focus: #d80d31;
+  --color-error-soft: #ffeaee;
 
-  --shadow-soft: 0 3px 10px 0 rgb(48 46 56 / 6%);
-  --shadow-soft-dark: 0 3px 10px 0 rgb(25 33 50 / 30%);
+  --shadow-widget: 0 4px 5px 0 rgb(0 0 0 / 3%);
+  --shadow-widget-intense: 0 10px 14px 0 rgb(15 42 81 / 3%);
+  --shadow-dropdown: 0 3px 11px 0 rgb(45 72 126 / 10%);
+  --shadow-primary: 0 3px 8px 0 rgb(40 132 239 / 35%);
+  --shadow-success: 0 4px 12px 0 rgb(53 189 100 / 35%);
+  --shadow-danger: 0 4px 12px 0 rgb(241 65 108 / 35%);
+  --shadow-info: 0 4px 12px 0 rgb(114 57 234 / 35%);
+  --shadow-warning: 0 4px 12px 0 rgb(246 192 0 / 35%);
+  --shadow-soft: 0 3px 6px 0 rgb(0 0 0 / 6%);
+  --shadow-soft-dark: 0 3px 10px 0 rgb(0 0 0 / 35%);
 
   --text-tiny: 0.625rem;
   --text-tiny--line-height: 0.8125rem;

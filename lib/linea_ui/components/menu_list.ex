@@ -67,8 +67,8 @@ defmodule LineaUI.Components.MenuList do
     {"solid", "neutral"} => "bg-slate-150 text-slate-800 dark:bg-navy-500 dark:text-navy-50",
     {"pill", "primary"} => "bg-primary text-white dark:bg-accent",
     {"pill", "neutral"} => "bg-slate-150 text-slate-800 dark:bg-navy-500 dark:text-navy-50",
-    {"gradient", "primary"} => "bg-gradient-to-r from-purple-500 to-purple-600 text-white",
-    {"gradient", "neutral"} => "bg-gradient-to-r from-purple-500 to-purple-600 text-white",
+    {"gradient", "primary"} => "bg-gradient-to-r from-primary to-info text-white",
+    {"gradient", "neutral"} => "bg-gradient-to-r from-primary to-info text-white",
     {"bordered", "primary"} =>
       "border border-slate-150 text-primary shadow-xs dark:border-navy-500 dark:text-accent-light",
     {"bordered", "neutral"} =>

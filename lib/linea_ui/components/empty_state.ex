@@ -32,7 +32,7 @@ defmodule LineaUI.Components.EmptyState do
     "default" =>
       "bg-white text-primary shadow-[0_0_0_1px_var(--color-slate-200),0_10px_24px_-10px_rgb(79_70_229/0.45)] dark:bg-navy-700 dark:text-accent-light dark:shadow-[0_0_0_1px_var(--color-navy-600),0_10px_24px_-10px_rgb(79_70_229/0.45)]",
     "gradient" =>
-      "bg-gradient-to-br from-indigo-600 to-purple-500 text-white shadow-[0_10px_24px_-8px_rgb(124_58_237/0.6)]"
+      "bg-gradient-to-br from-primary to-info text-white shadow-[0_10px_24px_-8px_rgb(19_121_240/0.6)]"
   }
 
   @inline_colors %{

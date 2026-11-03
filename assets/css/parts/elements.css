@@ -101,8 +101,8 @@
 @layer components {
   .empty-grid {
     background-image:
-      linear-gradient(rgb(79 70 229 / 0.08) 1px, transparent 1px),
-      linear-gradient(90deg, rgb(79 70 229 / 0.08) 1px, transparent 1px);
+      linear-gradient(rgb(19 121 240 / 0.08) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(19 121 240 / 0.08) 1px, transparent 1px);
     background-size: 20px 20px;
     background-position: -1px -1px;
     mask-image: radial-gradient(closest-side, #000 30%, transparent 100%);
@@ -116,8 +116,8 @@
 
   .timer-checker {
     background-image:
-      linear-gradient(rgb(79 70 229 / 0.08) 1px, transparent 1px),
-      linear-gradient(90deg, rgb(79 70 229 / 0.08) 1px, transparent 1px);
+      linear-gradient(rgb(19 121 240 / 0.08) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(19 121 240 / 0.08) 1px, transparent 1px);
     background-size: 20px 20px;
     background-position: -1px -1px;
   }

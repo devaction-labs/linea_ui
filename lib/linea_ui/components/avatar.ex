@@ -208,7 +208,7 @@ defmodule LineaUI.Components.Avatar do
     "company" => "rounded-[10px] bg-navy-900 text-white",
     "customer" => "rounded-[10px] bg-success-focus text-white",
     "supplier" => "rounded-[10px] bg-warning-focus text-white",
-    "assistant" => "bg-linear-to-br from-primary to-purple-500 text-white",
+    "assistant" => "bg-linear-to-br from-primary to-info text-white",
     "invite" =>
       "border-[1.5px] border-slate-300 bg-transparent text-slate-500 dark:border-navy-450 dark:text-navy-200"
   }

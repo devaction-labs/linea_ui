@@ -55,7 +55,7 @@ defmodule LineaUI.Components.Fab do
   @colors %{
     "assistant" => %{
       root: "bg-navy-900 text-white dark:bg-navy-700 dark:ring-1 dark:ring-white/10",
-      tile: "bg-linear-to-br from-primary to-purple-500 text-white",
+      tile: "bg-linear-to-br from-primary to-info text-white",
       label: "text-white"
     },
     "primary" => %{

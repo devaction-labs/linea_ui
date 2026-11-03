@@ -54,7 +54,7 @@ defmodule LineaUI.Components.CommandPalette do
 
   @key "rounded-[4px] border-0 bg-slate-150 px-1.5 text-slate-500 shadow-[inset_0_-1px_0_var(--color-slate-300)] dark:bg-navy-800 dark:text-navy-200 dark:shadow-[inset_0_-1px_0_var(--color-navy-450)]"
 
-  @assistant_icon "flex size-8 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-600 to-purple-500 text-white"
+  @assistant_icon "flex size-8 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-600 to-info text-white"
 
   @doc """
   Renders the palette, closed unless `open`.

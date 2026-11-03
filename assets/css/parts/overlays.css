@@ -147,7 +147,7 @@
   }
 
   [data-accordion][data-variant="primary"] > .ac > .ac-trigger .ac-icon {
-    @apply text-indigo-100 dark:text-indigo-100;
+    @apply text-primary-soft;
   }
 
   [data-accordion]:is([data-variant="primary"], [data-variant="advanced"]) > .ac > .ac-panel > .ac-body {
@@ -269,7 +269,7 @@
     --toast-bad: var(--color-error-focus);
     --toast-bg: #fff;
     --toast-ring: transparent;
-    --toast-track: var(--color-indigo-100);
+    --toast-track: var(--color-primary-soft);
     --toast-shadow: 0 12px 30px rgb(15 23 42 / 0.1);
     @apply flex items-center gap-3 rounded-xl px-4 py-3.5 font-normal text-slate-800;
     width: 26.25rem;
@@ -279,7 +279,7 @@
   }
 
   .dark .toastify.rich {
-    --toast-ai: var(--color-indigo-300);
+    --toast-ai: var(--color-accent-light);
     --toast-ok: var(--color-success);
     --toast-bad: var(--color-error);
     --toast-bg: var(--color-navy-700);
@@ -301,7 +301,7 @@
   }
 
   .toastify.rich[data-surface="dark"] {
-    --toast-ai: var(--color-indigo-300);
+    --toast-ai: var(--color-accent-light);
     --toast-ok: var(--color-success);
     --toast-bad: var(--color-error);
   }
@@ -312,7 +312,7 @@
     --toast-bad: var(--color-error-focus);
     --toast-bg: #fff;
     --toast-ring: transparent;
-    --toast-track: var(--color-indigo-100);
+    --toast-track: var(--color-primary-soft);
     @apply text-slate-800;
   }
 
