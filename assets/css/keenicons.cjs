@@ -9,6 +9,8 @@ const path = require("path")
  *
  *   @plugin "../../deps/linea_ui/assets/css/keenicons.cjs" { dir: "assets/keenicons"; }
  *
+ * The icon is 1em wide and high, so it follows the font size around it as an icon font does (`text-lg`).
+ *
  * `dir` holds one folder per style with one SVG per icon (`filled/eye.svg`), relative to where Tailwind runs. The
  * SVGs are the glyphs of the Keenicons fonts that come with Metronic and are covered by its license, so LineaUI
  * does not ship them: the app brings its own copy.
@@ -41,8 +43,8 @@ module.exports = plugin.withOptions(
               "background-color": "currentColor",
               "vertical-align": "middle",
               display: "inline-block",
-              width: theme("spacing.5"),
-              height: theme("spacing.5"),
+              width: "1em",
+              height: "1em",
             }
           },
         },

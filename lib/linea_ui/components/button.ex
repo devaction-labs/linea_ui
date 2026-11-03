@@ -40,6 +40,8 @@ defmodule LineaUI.Components.Button do
         "bg-warning text-white hover:bg-warning-focus focus:bg-warning-focus active:bg-warning-focus/90",
       "error" =>
         "bg-error text-white hover:bg-error-focus focus:bg-error-focus active:bg-error-focus/90",
+      "mono" =>
+        "bg-slate-950 text-white hover:bg-slate-950/90 focus:bg-slate-950/90 active:bg-slate-950/80 dark:bg-navy-200 dark:text-black dark:hover:bg-navy-200/90",
       "white" =>
         "bg-white text-slate-800 hover:bg-slate-100 focus:bg-slate-100 active:bg-slate-100/80"
     },
@@ -118,6 +120,18 @@ defmodule LineaUI.Components.Button do
       "current" =>
         "border border-current/30 bg-current/10 text-current hover:bg-current/20 focus:bg-current/20 active:bg-current/25"
     },
+    "ghost" => %{
+      "neutral" =>
+        "text-slate-900 hover:bg-slate-100 focus:bg-slate-100 active:bg-slate-150 dark:text-navy-50 dark:hover:bg-navy-600 dark:focus:bg-navy-600",
+      "primary" => "text-primary hover:bg-primary/10 focus:bg-primary/10 active:bg-primary/15",
+      "error" => "text-error hover:bg-error/10 focus:bg-error/10 active:bg-error/15",
+      "mono" =>
+        "text-slate-950 hover:bg-slate-100 focus:bg-slate-100 dark:text-navy-50 dark:hover:bg-navy-600"
+    },
+    "dim" => %{
+      "neutral" =>
+        "text-slate-500 hover:text-slate-950 focus:text-slate-950 dark:text-navy-300 dark:hover:text-navy-50"
+    },
     "flat" => %{
       "neutral" =>
         "text-slate-700 hover:bg-slate-300/20 focus:bg-slate-300/20 active:bg-slate-300/25 dark:text-navy-100 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25",
@@ -164,16 +178,16 @@ defmodule LineaUI.Components.Button do
   """
   attr(:color, :string,
     default: "neutral",
-    values: ~w(neutral primary secondary info success warning error white current),
+    values: ~w(neutral primary secondary info success warning error white current mono),
     doc:
       "`white` is for buttons on colored or gradient surfaces; `current` takes the parent's text color (`solid` and `glow` have no `current`)."
   )
 
   attr(:variant, :string,
     default: "solid",
-    values: ~w(solid glow outline soft bordered flat glass),
+    values: ~w(solid glow outline soft bordered flat glass ghost dim),
     doc:
-      "`solid` is filled, `glow` adds the colored shadow, `bordered` is soft with a tinted border, `flat` has no background until hovered, `glass` is translucent white with white text for gradient and colored cards (it ignores `color`)."
+      "`solid` is filled, `glow` adds the colored shadow, `ghost` is transparent until hovered and `dim` is muted text that darkens on hover (Metronic's `kt-btn-ghost` and `kt-btn-dim`; `mono` is its black button), `bordered` is soft with a tinted border, `flat` has no background until hovered, `glass` is translucent white with white text for gradient and colored cards (it ignores `color`)."
   )
 
   attr(:size, :string, default: "md", values: ~w(xs sm md lg xl))
