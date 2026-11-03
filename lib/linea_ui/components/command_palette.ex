@@ -48,13 +48,13 @@ defmodule LineaUI.Components.CommandPalette do
   alias LineaUI.Components.Overlay
   alias LineaUI.Components.Select.Options
 
-  @item_row "group/item flex w-full cursor-pointer items-center gap-3 px-4.5 py-2 text-left no-underline outline-hidden aria-selected:bg-primary/10 dark:aria-selected:bg-accent/15"
+  @item_row "group/item flex w-full cursor-pointer items-center gap-2.5 px-2.5 py-2 text-left no-underline outline-hidden rounded-md aria-selected:bg-slate-100 dark:aria-selected:bg-navy-600"
 
-  @item_icon "flex size-8 shrink-0 items-center justify-center rounded-lg bg-slate-150 text-slate-600 group-aria-selected/item:bg-primary group-aria-selected/item:text-white dark:bg-navy-800 dark:text-navy-100 dark:group-aria-selected/item:bg-accent"
+  @item_icon "flex size-4.5 shrink-0 items-center justify-center text-slate-950 dark:text-navy-50"
 
-  @key "rounded-[4px] border-0 bg-slate-150 px-1.5 text-slate-500 shadow-[inset_0_-1px_0_var(--color-slate-300)] dark:bg-navy-800 dark:text-navy-200 dark:shadow-[inset_0_-1px_0_var(--color-navy-450)]"
+  @key "rounded-[4px] border-0 bg-slate-100 px-1.5 text-slate-950 shadow-none dark:bg-navy-600 dark:text-navy-50"
 
-  @assistant_icon "flex size-8 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-blue-600 to-purple-500 text-white"
+  @assistant_icon "flex size-6 shrink-0 items-center justify-center rounded-md bg-gradient-to-br from-blue-600 to-purple-500 text-white"
 
   @doc """
   Renders the palette, closed unless `open`.
@@ -174,7 +174,7 @@ defmodule LineaUI.Components.CommandPalette do
       on_close={@on_close}
       target={@target}
       aria-label={@label}
-      class={merge(["mt-[10vh] max-w-160 rounded-xl", @class])}
+      class={merge(["mt-[10vh] max-w-130 rounded-xl", @class])}
       {@rest}
     >
       <div
@@ -188,8 +188,8 @@ defmodule LineaUI.Components.CommandPalette do
         data-on-assistant={@on_assistant_js}
         data-assistant-mode={@assistant_mode}
       >
-        <div class="flex h-14 items-center gap-3 border-b border-slate-150 px-4.5 dark:border-navy-700">
-          <.glyph name={:search} class="size-4.5 shrink-0 text-slate-400 dark:text-navy-300" />
+        <div class="flex h-[67px] items-center gap-2.5 border-b border-slate-200 px-5 dark:border-navy-450">
+          <.glyph name={:search} class="size-4 shrink-0 text-slate-950 dark:text-navy-50" />
           <input
             type="text"
             role="combobox"
@@ -201,14 +201,14 @@ defmodule LineaUI.Components.CommandPalette do
             autofocus
             placeholder={@placeholder}
             phx-mounted={JS.ignore_attributes(["value"])}
-            class="h-full min-w-0 flex-1 bg-transparent text-sm-plus text-slate-800 outline-hidden placeholder:font-light placeholder:text-slate-400 dark:text-navy-50 dark:placeholder:text-navy-300"
+            class="h-full min-w-0 flex-1 bg-transparent text-sm text-slate-950 outline-hidden placeholder:text-slate-500 dark:text-navy-50 dark:placeholder:text-navy-300"
             data-query
           />
           <.kbd class={key()}>Esc</.kbd>
         </div>
         <div
           :if={@chips != []}
-          class="flex flex-wrap gap-1.5 border-b border-slate-150 px-3.5 py-2.5 dark:border-navy-700"
+          class="flex flex-wrap gap-1.5 border-b border-slate-200 px-3.5 py-2.5 dark:border-navy-450"
           role="group"
           aria-label={@scopes_label}
         >
@@ -228,7 +228,7 @@ defmodule LineaUI.Components.CommandPalette do
           id={@id <> "-list"}
           role="listbox"
           aria-label={@label}
-          class="scrollbar-sm max-h-95 overflow-y-auto py-1.5"
+          class="scrollbar-sm max-h-95 overflow-y-auto p-1.5"
         >
           <div
             :for={group <- @groups}
@@ -239,7 +239,7 @@ defmodule LineaUI.Components.CommandPalette do
             <div
               :if={group.label}
               id={group.id}
-              class="px-4.5 pb-1 pt-2.5 text-tiny-plus font-semibold uppercase tracking-[.08em] text-slate-400 dark:text-navy-300"
+              class="px-2.5 pb-1 pt-2.5 text-xs font-medium uppercase text-slate-500 dark:text-navy-300"
             >
               {group.label}
             </div>
@@ -294,7 +294,7 @@ defmodule LineaUI.Components.CommandPalette do
             {@empty}
           </div>
         </div>
-        <div class="flex items-center gap-4 border-t border-slate-150 bg-slate-50 px-4.5 py-2.5 text-xs text-slate-400 dark:border-navy-700 dark:bg-navy-750 dark:text-navy-300">
+        <div class="flex items-center gap-4 border-t border-slate-200 bg-slate-50 px-5 py-2.5 text-xs text-slate-500 dark:border-navy-450 dark:bg-navy-800 dark:text-navy-300">
           <span class="inline-flex items-center gap-1.5"><.kbd class={key()}>↑↓</.kbd>{@hint_navigate}</span>
           <span class="inline-flex items-center gap-1.5"><.kbd class={key()}>↵</.kbd>{@hint_open}</span>
           <span class="inline-flex items-center gap-1.5"><.kbd class={key()}>Ctrl ↵</.kbd>{@hint_new_tab}</span>
@@ -356,10 +356,10 @@ defmodule LineaUI.Components.CommandPalette do
   defp palette_item_body(assigns) do
     ~H"""
     <span class={item_icon()}>
-      <.icon :if={@item.icon} name={@item.icon} class="size-4.5" />
+      <.icon :if={@item.icon} name={@item.icon} class="size-4" />
     </span>
     <span class="min-w-0">
-      <span class="block truncate text-sm text-slate-800 dark:text-navy-50">{@item.label}</span>
+      <span class="block truncate text-[13px] text-slate-950 dark:text-navy-50">{@item.label}</span>
       <span :if={@item.sub} class="block truncate text-xs text-slate-400 dark:text-navy-300">{@item.sub}</span>
     </span>
     <span :if={@item.keys != []} class="ml-auto flex gap-1">

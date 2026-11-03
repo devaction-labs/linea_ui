@@ -44,7 +44,7 @@ defmodule LineaUI.Components.CommandPaletteTest do
     assert attr_of(html, "#palette", "aria-label") == ["Search"]
     assert attr_of(html, "#palette-palette", "phx-hook") == ["LineaUI.CommandPalette"]
     assert attr_of(html, "#palette-palette", "data-shortcut") == ["Mod+k"]
-    assert "max-w-160" in classes(html, "#palette-panel")
+    assert "max-w-130" in classes(html, "#palette-panel")
   end
 
   test "the input is a combobox controlling the listbox" do
