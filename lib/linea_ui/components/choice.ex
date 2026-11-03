@@ -94,19 +94,23 @@ defmodule LineaUI.Components.Choice do
     [base, @variants[variant], @sizes[size], @tones[{variant, filled}][color], @disabled]
   end
 
-  @chip "group/choice inline-flex h-[30px] cursor-pointer select-none items-center gap-1.5 rounded-full bg-slate-150 px-3 text-xs-plus font-medium tracking-wide text-slate-600 transition-colors duration-200 hover:not-has-checked:text-slate-800 has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-primary/50 has-disabled:pointer-events-none has-disabled:opacity-60 dark:bg-navy-500 dark:text-navy-200 dark:hover:not-has-checked:text-navy-50 dark:has-focus-visible:outline-accent/50"
+  @chip "group/choice inline-flex h-7 cursor-pointer select-none items-center gap-1.5 rounded-full border border-slate-200 bg-white px-2.5 text-xs font-medium text-slate-950 shadow-xs transition-colors duration-200 hover:not-has-checked:bg-slate-100 has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-primary/50 has-disabled:pointer-events-none has-disabled:opacity-60 dark:border-navy-450 dark:bg-navy-900 dark:text-navy-50 dark:hover:not-has-checked:bg-navy-600 dark:has-focus-visible:outline-accent/50"
 
   @chip_tones %{
     "neutral" =>
-      "has-checked:bg-slate-700 has-checked:text-white dark:has-checked:bg-navy-450 dark:has-checked:text-white",
+      "has-checked:border-slate-700 has-checked:bg-slate-700 has-checked:text-white dark:has-checked:border-navy-450 dark:has-checked:bg-navy-450 dark:has-checked:text-white",
     "primary" =>
-      "has-checked:bg-primary has-checked:text-white dark:has-checked:bg-accent dark:has-checked:text-white",
+      "has-checked:border-primary has-checked:bg-primary has-checked:text-white dark:has-checked:border-accent dark:has-checked:bg-accent dark:has-checked:text-white",
     "secondary" =>
-      "has-checked:bg-secondary has-checked:text-white dark:has-checked:bg-secondary-light dark:has-checked:text-white",
-    "info" => "has-checked:bg-info has-checked:text-white dark:has-checked:text-white",
-    "success" => "has-checked:bg-success has-checked:text-white dark:has-checked:text-white",
-    "warning" => "has-checked:bg-warning has-checked:text-white dark:has-checked:text-white",
-    "error" => "has-checked:bg-error has-checked:text-white dark:has-checked:text-white"
+      "has-checked:border-secondary has-checked:bg-secondary has-checked:text-white dark:has-checked:border-secondary-light dark:has-checked:bg-secondary-light dark:has-checked:text-white",
+    "info" =>
+      "has-checked:border-info has-checked:bg-info has-checked:text-white dark:has-checked:text-white",
+    "success" =>
+      "has-checked:border-success has-checked:bg-success has-checked:text-white dark:has-checked:text-white",
+    "warning" =>
+      "has-checked:border-warning has-checked:bg-warning has-checked:text-white dark:has-checked:text-white",
+    "error" =>
+      "has-checked:border-error has-checked:bg-error has-checked:text-white dark:has-checked:text-white"
   }
 
   @chip_count "inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-white px-1.5 text-tiny-plus font-semibold text-slate-600 group-has-checked/choice:bg-white/20 group-has-checked/choice:text-white dark:bg-navy-700 dark:text-navy-100 dark:group-has-checked/choice:bg-white/20 dark:group-has-checked/choice:text-white"

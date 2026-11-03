@@ -131,7 +131,7 @@ defmodule LineaUI.Components.Rating do
             "relative inline-flex flex-row-reverse justify-end",
             @styles.gap,
             @disabled && "pointer-events-none opacity-50",
-            "[&_input:checked~label_svg]:text-warning [&_label:hover_svg]:text-warning [&_label:hover~label_svg]:text-warning [&_label:hover_svg]:scale-110",
+            "[&_input:checked~label_svg]:text-yellow-400 [&_label:hover_svg]:text-yellow-400 [&_label:hover~label_svg]:text-yellow-400 [&_label:hover_svg]:scale-110",
             @class
           ])
         }
@@ -207,7 +207,7 @@ defmodule LineaUI.Components.Rating do
       </span>
       <span
         :if={@fill > 0}
-        class="absolute inset-0 block overflow-hidden text-warning"
+        class="absolute inset-0 block overflow-hidden text-yellow-400"
         style={"width: #{percent(@fill)}%"}
       >
         <svg viewBox="0 0 24 24" fill="currentColor" class={["block", @box]}><path d={@path} /></svg>

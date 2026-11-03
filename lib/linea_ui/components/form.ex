@@ -129,7 +129,12 @@ defmodule LineaUI.Components.Form do
     ~H"""
     <div class={@class} {@rest}>
       <label class="block" for={@id}>
-        <span :if={@label} class={@label_class}>{@label}</span>
+        <span
+          :if={@label}
+          class={merge(["text-[13px] text-slate-950 dark:text-navy-50", @label_class])}
+        >
+          {@label}
+        </span>
         <span class={control_class(@label)}>{render_slot(@inner_block)}</span>
       </label>
       <.message_row help={@help} errors={@errors} state={@state} aside={@aside} />
@@ -140,7 +145,11 @@ defmodule LineaUI.Components.Form do
   defp render_field(%{as: "div"} = assigns) do
     ~H"""
     <div class={@class} {@rest}>
-      <span :if={@label} class={merge(["block", @label_class])} id={@id && "#{@id}-label"}>
+      <span
+        :if={@label}
+        class={merge(["block text-[13px] text-slate-950 dark:text-navy-50", @label_class])}
+        id={@id && "#{@id}-label"}
+      >
         {@label}
       </span>
       {render_slot(@inner_block)}

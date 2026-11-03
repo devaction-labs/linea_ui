@@ -653,7 +653,7 @@ code.inline-code {
 .form-textarea,
 .form-select,
 .form-multiselect {
-  @apply appearance-none tracking-wide outline-hidden placeholder:font-light focus:outline-hidden;
+  @apply appearance-none text-slate-950 outline-hidden focus:outline-hidden dark:text-navy-50;
   contain: paint;
 }
 
