@@ -36,6 +36,7 @@ defmodule LineaUI do
     app_shell: LineaUI.Components.AppShell,
     side_menu: LineaUI.Components.SideMenu,
     box: LineaUI.Components.Box,
+    toggles: LineaUI.Components.Toggles,
     image_input: LineaUI.Components.ImageInput,
     password_input: LineaUI.Components.PasswordInput,
     sticky: LineaUI.Components.Sticky,

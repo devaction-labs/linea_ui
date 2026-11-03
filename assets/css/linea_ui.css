@@ -15,6 +15,7 @@
 @import "./parts/card.css";
 @import "./parts/sortable.css";
 @import "./parts/icons.css";
+@import "./parts/toggles.css";
 
 @source "../../lib";
 @source "../js";
