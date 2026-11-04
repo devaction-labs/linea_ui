@@ -1,6 +1,8 @@
 # Changelog
 
-## Unreleased
+## 0.9.0 (2026-11-03)
+
+The theme is Metronic's now (Inter, zinc neutrals, a blue primary, the `demo1` shell layout), with the components below.
 
 - `container_fixed` and `container_fluid` (`LineaUI.Components.Container`): the page containers of Metronic.
 - `select_input` (`LineaUI.Components.SelectInput`): Metronic's bare select, a native `<select>` that keeps the `data-kt-select` attribute its script reads.
