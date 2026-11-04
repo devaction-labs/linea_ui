@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- `dropdown` takes `hover`: the menu opens when the pointer is over the trigger or the menu and closes shortly after it leaves.
+- `rating_cell` takes `half`; `radio_input` is 20px (`size="sm"` 18px); `box` with `grid` pads the first and last column of a `table_plain`.
+- The keenicon box behaves as Metronic's in a line of text (`line-height: 1`, `inline-flex`, an offset for the baseline of its glyph).
+
 ## 0.9.0 (2026-11-03)
 
 The theme is Metronic's now (Inter, zinc neutrals, a blue primary, the `demo1` shell layout), with the components below.

@@ -133,6 +133,12 @@ defmodule LineaUI.Components.Dropdown do
       "The shape of the trigger button. `nil` is `rounded` for the `label` button and `pill` for the `toggle_icon` one."
 
   attr :open, :boolean, default: false
+
+  attr :hover, :boolean,
+    default: false,
+    doc:
+      "Opens when the pointer is over the trigger or the menu, and closes shortly after it leaves (a click still works)."
+
   attr :placement, :string, default: "bottom-start", values: @placements
   attr :offset, :integer, default: 4, doc: "Pixels between the trigger and the menu."
   attr :close_on_select, :boolean, default: true
@@ -167,6 +173,7 @@ defmodule LineaUI.Components.Dropdown do
       phx-hook="LineaUI.Dropdown"
       data-popup="menu"
       data-open={bool(@open)}
+      data-hover={bool(@hover)}
       data-placement={@placement}
       data-offset={@offset}
       data-close-on-select={bool(@close_on_select)}
