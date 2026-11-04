@@ -27,15 +27,16 @@ defmodule LineaUI.Components.RatingParts do
     """
   end
 
-  @doc "One star; `on` shows the solid one."
+  @doc "One star; `on` shows the solid one, `half` the solid one over the left half of the outline (give the solid icon `style=\"width: 50%\"`)."
   attr :on, :boolean, default: false
+  attr :half, :boolean, default: false
   attr :class, :any, default: nil
   attr :rest, :global
   slot :inner_block, required: true
 
   def rating_cell(assigns) do
     ~H"""
-    <div class={merge(["rating-cell", @class])} data-on={@on || nil} {@rest}>
+    <div class={merge(["rating-cell", @class])} data-on={@on || nil} data-half={@half || nil} {@rest}>
       {render_slot(@inner_block)}
     </div>
     """

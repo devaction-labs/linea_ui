@@ -34,16 +34,21 @@ defmodule LineaUI.Components.Toggles do
   end
 
   @doc """
-  A radio, 18px.
+  A radio, 20px (`size="sm"` 18px).
 
       <.radio_input name="plan" value="starter" />
   """
+  attr :size, :string, default: "md", values: ~w(sm md)
   attr :class, :any, default: nil
   attr :rest, :global, include: @fields
 
   def radio_input(assigns) do
     ~H"""
-    <input type="radio" class={merge(["radio-input", @class])} {@rest} />
+    <input
+      type="radio"
+      class={merge(["radio-input", @size == "sm" && "radio-input-sm", @class])}
+      {@rest}
+    />
     """
   end
 

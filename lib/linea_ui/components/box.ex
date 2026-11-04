@@ -135,7 +135,7 @@ defmodule LineaUI.Components.Box do
     """
   end
 
-  @grid "[&_.box-body]:p-0 [&_.box-body_table]:border-0"
+  @grid "[&_.box-body]:p-0 [&_.box-body_table]:border-0 [&_.box-body_.table-plain_:is(th,td):first-child]:ps-5 [&_.box-body_.table-plain_:is(th,td):last-child]:pe-5"
 
   defp grid_class, do: @grid
   defp accent, do: @accent

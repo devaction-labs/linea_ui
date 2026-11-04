@@ -53,8 +53,21 @@
 @layer components {
   .rating-row { align-items: stretch; display: inline-flex; }
   .rating-cell { align-items: center; display: inline-flex; }
-  .rating-cell .rating-on { color: var(--color-yellow-400); display: none; }
-  .rating-cell .rating-off { color: var(--color-slate-500); display: inline-flex; }
-  .rating-cell[data-on] .rating-on { display: inline-flex; }
-  .rating-cell[data-on] .rating-off { display: none; }
+  /* !important: the keenicon class of an icon sets its display (`inline-flex`) and sits in a later layer */
+  .rating-cell .rating-on { color: var(--color-yellow-400); display: none !important; }
+  .rating-cell .rating-off { color: var(--color-slate-500); display: inline-flex !important; }
+  .rating-cell[data-on] .rating-on { display: inline-flex !important; }
+  .rating-cell[data-on] .rating-off { display: none !important; }
+  .rating-cell[data-half] { position: relative; }
+  .rating-cell[data-half] .rating-on {
+    display: inline-flex !important;
+    inset-inline-start: 0;
+    mask-size: auto 100%;
+    -webkit-mask-size: auto 100%;
+    mask-position: left;
+    overflow: hidden;
+    position: absolute;
+    z-index: 1;
+  }
+  .rating-cell[data-half] .rating-off { display: inline-flex !important; }
 }
