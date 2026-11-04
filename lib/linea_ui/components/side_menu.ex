@@ -205,7 +205,7 @@ defmodule LineaUI.Components.SideMenu do
         merge([
           link(),
           "list-none [&::-webkit-details-marker]:hidden",
-          @nested && "py-2"
+          @nested && "py-2 ps-[31px]"
         ])
       }>
         <span :if={@icon != []} class={icon()} aria-hidden="true">{render_slot(@icon)}</span>
@@ -225,7 +225,10 @@ defmodule LineaUI.Components.SideMenu do
           <span class={["ki-filled-minus hidden size-3.5", depth_minus(@depth)]}></span>
         </span>
       </summary>
-      <div class="relative mt-1 flex flex-col gap-1 ps-2.5 before:absolute before:inset-y-0 before:start-5 before:border-s before:border-slate-200 group-data-[collapsed=true]/shell:not-group-hover/side:hidden dark:before:border-navy-450">
+      <div class={[
+        "relative mt-1 flex flex-col gap-1 ps-2.5 before:absolute before:inset-y-0 before:start-5 before:border-s before:border-slate-200 group-data-[collapsed=true]/shell:not-group-hover/side:hidden dark:before:border-navy-450",
+        @nested && "ms-[11px] [&_a>span:first-child]:hidden [&_a]:gap-0 [&_a]:ps-[21px]"
+      ]}>
         {render_slot(@inner_block)}
       </div>
     </details>
