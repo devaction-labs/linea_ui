@@ -77,7 +77,7 @@
   .linea-rail {
     --rail-pill: #fff;
     --rail-panel: #fff;
-    --rail-shadow: 0 1px 2px rgb(15 23 42 / 0.06), 0 0 0 1px rgb(15 23 42 / 0.04);
+    --rail-shadow: 0 1px 2px rgb(9 9 11 / 0.06), 0 0 0 1px rgb(9 9 11 / 0.04);
     display: flex;
     flex: none;
     flex-direction: column;
@@ -559,7 +559,7 @@
       padding: 0.5rem;
       overflow-y: auto;
       background: var(--color-slate-150);
-      box-shadow: 0 16px 24px -12px rgb(15 23 42 / 0.2);
+      box-shadow: 0 16px 24px -12px rgb(9 9 11 / 0.2);
     }
 
     .dark .rail-body {

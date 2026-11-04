@@ -1070,7 +1070,7 @@
   .linea-ctable-row:hover,
   .linea-ctable-row:focus-within {
     z-index: 3;
-    box-shadow: 0 0 0 1px var(--color-slate-300), 0 8px 20px -14px rgb(15 23 42 / 0.4);
+    box-shadow: 0 0 0 1px var(--color-slate-300), 0 8px 20px -14px rgb(9 9 11 / 0.4);
   }
 
   /* The row that holds the open panel stays above the row the mouse moves over. */
@@ -1193,7 +1193,7 @@
     color: var(--color-slate-100);
     font-size: 12px;
     font-weight: 500;
-    box-shadow: 0 14px 30px -12px rgb(15 23 42 / 0.5);
+    box-shadow: 0 14px 30px -12px rgb(9 9 11 / 0.5);
     opacity: 0;
     visibility: hidden;
     transform: translateY(-4px);
@@ -1271,7 +1271,7 @@
     color: var(--color-slate-800);
     font-size: 11px;
     white-space: nowrap;
-    box-shadow: 0 6px 16px -6px rgb(15 23 42 / 0.5);
+    box-shadow: 0 6px 16px -6px rgb(9 9 11 / 0.5);
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.12s;
@@ -1347,7 +1347,7 @@
     font-size: 12px;
     font-weight: 500;
     white-space: nowrap;
-    box-shadow: 0 10px 24px -10px rgb(15 23 42 / 0.5);
+    box-shadow: 0 10px 24px -10px rgb(9 9 11 / 0.5);
     opacity: 0;
     visibility: hidden;
     transform: translateY(3px);
@@ -1500,7 +1500,7 @@
     line-height: 1.4;
     text-align: left;
     white-space: normal;
-    box-shadow: 0 14px 30px -12px rgb(15 23 42 / 0.5);
+    box-shadow: 0 14px 30px -12px rgb(9 9 11 / 0.5);
     opacity: 0;
     visibility: hidden;
     transform: translateY(-4px);

@@ -6,6 +6,7 @@
 - `rating_cell` takes `half`; `radio_input` is 20px (`size="sm"` 18px); `box` with `grid` pads the first and last column of a `table_plain`.
 - `modal` takes `backdrop_class`, merged into the backdrop (`bg-black/30` for a lighter one than the default).
 - `side_menu_group nested`: the sub-items sit 21px from the vertical line as in Metronic (they were glued to it), and a group inside a nested group indents its own line and drops the bullet column.
+- Dark tinted cards (`soft`, `muted`, `filled`, and a card inside a card) were still drawn with the bluish `rgb(105 122 155)` of the old LineOne palette over the zinc page; they are a veil of white now, and the light-mode veils use zinc black instead of the old slate (`rgb(15 23 42)`).
 - The keenicon box behaves as Metronic's in a line of text (`line-height: 1`, `inline-flex`, an offset for the baseline of its glyph).
 
 ## 0.9.0 (2026-11-03)

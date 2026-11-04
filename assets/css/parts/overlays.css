@@ -133,7 +133,7 @@
     @apply rounded-lg text-sm font-medium;
     background: var(--toast-bg);
     color: var(--toast-fg);
-    box-shadow: 0 10px 30px rgb(15 23 42 / 0.1), 0 0 0 1px var(--toast-edge);
+    box-shadow: 0 10px 30px rgb(9 9 11 / 0.1), 0 0 0 1px var(--toast-edge);
   }
 
   .toastify.toastify:not(.rich, .html):is(.primary, .secondary, .info, .success, .warning, .error) {
@@ -178,7 +178,7 @@
     --toast-bg: var(--color-navy-800);
     --toast-fg: #fff;
     --toast-edge: var(--color-navy-600);
-    box-shadow: 0 10px 30px rgb(15 23 42 / 0.25), 0 0 0 1px var(--toast-edge);
+    box-shadow: 0 10px 30px rgb(9 9 11 / 0.25), 0 0 0 1px var(--toast-edge);
   }
 
   .toastify.toastify:not(.rich, .html)[data-surface="dark"]:is(.primary, .secondary, .info, .success, .warning, .error) {
@@ -477,7 +477,7 @@
     @apply inline-flex items-center gap-1.5 rounded-2xl py-[7px] pr-2 pl-3.5 text-sm;
     background: var(--bb-bg);
     color: var(--bb-fg);
-    box-shadow: 0 0 0 1px var(--bb-ring), 0 14px 34px -8px rgb(15 23 42 / 0.35), 0 4px 10px -4px rgb(15 23 42 / 0.25);
+    box-shadow: 0 0 0 1px var(--bb-ring), 0 14px 34px -8px rgb(9 9 11 / 0.35), 0 4px 10px -4px rgb(9 9 11 / 0.25);
     --bb-soft: color-mix(in oklab, var(--bb-fg) 62%, transparent);
     --bb-hover: color-mix(in oklab, var(--bb-fg) 10%, transparent);
     --bb-film: color-mix(in oklab, var(--bb-fg) 9%, transparent);
@@ -620,7 +620,7 @@
     --toast-bg: #fff;
     --toast-ring: transparent;
     --toast-track: var(--color-blue-100);
-    --toast-shadow: 0 12px 30px rgb(15 23 42 / 0.1);
+    --toast-shadow: 0 12px 30px rgb(9 9 11 / 0.1);
     @apply flex items-center gap-3 rounded-xl px-4 py-3.5 font-normal text-slate-800;
     width: 26.25rem;
     max-width: calc(100vw - 30px);
