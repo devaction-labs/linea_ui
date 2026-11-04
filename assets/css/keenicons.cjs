@@ -41,8 +41,11 @@ module.exports = plugin.withOptions(
               "mask-repeat": "no-repeat",
               "mask-size": "100% 100%",
               "background-color": "currentColor",
-              "vertical-align": "middle",
-              display: "inline-block",
+              // as Metronic's `.ki-filled` (its font is a flex of a pseudo-element): the same box in a line of text
+              "line-height": "1",
+              position: "relative",
+              "vertical-align": "-0.055em",
+              display: "inline-flex",
               width: "1em",
               height: "1em",
             }
