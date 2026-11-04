@@ -91,6 +91,12 @@ defmodule LineaUI.Components.Modal do
     doc: "Where the `scale` animation grows from."
 
   attr :blur, :boolean, default: false, doc: "Blurs the page behind the backdrop."
+
+  attr :backdrop_class, :any,
+    default: nil,
+    doc:
+      "Merged into the backdrop (`bg-black/30` for a lighter one than the default `bg-slate-900/60`)."
+
   attr :prevent_close, :boolean, default: false, doc: "Esc and the backdrop do not close it."
 
   attr :close_button, :boolean,
@@ -161,7 +167,13 @@ defmodule LineaUI.Components.Modal do
       {@rest}
     >
       <div
-        class={["modal-overlay absolute inset-0 bg-slate-900/60", @blur && "backdrop-blur-sm"]}
+        class={
+          merge([
+            "modal-overlay absolute inset-0 bg-slate-900/60",
+            @blur && "backdrop-blur-sm",
+            @backdrop_class
+          ])
+        }
         data-backdrop
       >
       </div>

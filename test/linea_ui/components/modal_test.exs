@@ -44,6 +44,17 @@ defmodule LineaUI.Components.ModalTest do
     assert attr_of(html, "#m", "data-open") == ["true"]
   end
 
+  test "backdrop_class replaces the default backdrop color" do
+    html =
+      render(~H"""
+      <.modal id="m" backdrop_class="bg-black/30" open>x</.modal>
+      """)
+
+    backdrop = classes(html, "#m [data-backdrop]")
+    assert "bg-black/30" in backdrop
+    refute "bg-slate-900/60" in backdrop
+  end
+
   test "the bar header carries the title and the close button; the footer and body follow" do
     html =
       render(~H"""

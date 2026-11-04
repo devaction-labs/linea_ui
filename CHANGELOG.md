@@ -1,9 +1,10 @@
 # Changelog
 
-## Unreleased
+## 0.9.1 (2026-11-04)
 
 - `dropdown` takes `hover`: the menu opens when the pointer is over the trigger or the menu and closes shortly after it leaves.
 - `rating_cell` takes `half`; `radio_input` is 20px (`size="sm"` 18px); `box` with `grid` pads the first and last column of a `table_plain`.
+- `modal` takes `backdrop_class`, merged into the backdrop (`bg-black/30` for a lighter one than the default).
 - The keenicon box behaves as Metronic's in a line of text (`line-height: 1`, `inline-flex`, an offset for the baseline of its glyph).
 
 ## 0.9.0 (2026-11-03)
