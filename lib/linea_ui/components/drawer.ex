@@ -230,7 +230,7 @@ defmodule LineaUI.Components.Drawer do
     >
       <div
         :if={@overlay}
-        class="drawer-overlay fixed inset-0 hidden bg-slate-900/45"
+        class="drawer-overlay fixed inset-0 hidden bg-[rgb(23_23_26/.28)] backdrop-blur-[2px]"
         phx-mounted={JS.ignore_attributes(["class"])}
         data-backdrop
       >
