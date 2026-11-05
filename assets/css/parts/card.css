@@ -28,7 +28,7 @@
   }
 
   :is(.card, .card-header, .card-footer)[data-size="md"] {
-    --card-p: 1.5rem;
+    --card-p: 1.25rem;
     --card-i: 0.25rem;
     --card-r: 1rem;
     --card-h: 0.875rem;
@@ -57,7 +57,7 @@
 
   .card[data-size] {
     --card-pad: var(--card-p);
-    --card-gap: var(--card-p);
+    --card-gap: calc(var(--card-p) * 0.5);
     --card-pgap: 0px;
     --card-m: 0px;
     --card-hx: 0px;

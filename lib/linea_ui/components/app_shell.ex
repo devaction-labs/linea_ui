@@ -263,7 +263,7 @@ defmodule LineaUI.Components.AppShell do
       id={@id}
       class={
         merge([
-          "linea-frame flex h-dvh flex-col gap-2.5 bg-slate-150 max-md:pt-14 md:flex-row md:p-2.5 dark:bg-navy-900",
+          "linea-frame flex h-dvh flex-col gap-2.5 bg-slate-50 max-md:pt-14 md:flex-row md:p-2.5 dark:bg-navy-900",
           @class
         ])
       }
@@ -274,7 +274,7 @@ defmodule LineaUI.Components.AppShell do
       {render_slot(@aside)}
       <main class={
         merge([
-          "flex min-w-0 flex-1 flex-col gap-[18px] overflow-y-auto bg-white px-4 py-5 shadow-[0_3px_10px_rgb(48_46_56/.06)] md:rounded-xl md:px-7 md:py-[22px] dark:bg-navy-700 dark:shadow-none dark:md:ring-1 dark:md:ring-navy-600",
+          "flex min-w-0 flex-1 flex-col gap-[18px] overflow-y-auto bg-white px-4 py-5 shadow-[0_0_0_1px_var(--color-slate-150),0_1px_2px_rgb(23_23_26/.04),0_4px_16px_-6px_rgb(23_23_26/.08)] md:rounded-[22px] md:px-8 md:py-5 dark:bg-navy-900 dark:shadow-[0_0_0_1px_var(--color-navy-600)]",
           @main_class
         ])
       }>
@@ -1728,6 +1728,21 @@ defmodule LineaUI.Components.AppShell do
       <span :if={@badge} class="rail-badge">{@badge}</span>
       <span class="rail-tip" role="tooltip">{@label}</span>
     </.link>
+    """
+  end
+
+  @doc """
+  A small uppercase title over a group of `rail_link/1`s in the framed menu ("Operations"); hidden in the rail.
+
+      <.rail_heading>Operations</.rail_heading>
+  """
+  attr :class, :any, default: nil
+  attr :rest, :global
+  slot :inner_block, required: true
+
+  def rail_heading(assigns) do
+    ~H"""
+    <div class={merge(["rail-label rail-heading", @class])} {@rest}>{render_slot(@inner_block)}</div>
     """
   end
 
