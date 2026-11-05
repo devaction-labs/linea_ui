@@ -41,7 +41,7 @@ defmodule LineaUI.Components.Button do
       "error" =>
         "bg-error text-white hover:bg-error-focus focus:bg-error-focus active:bg-error-focus/90",
       "mono" =>
-        "bg-slate-950 text-white hover:bg-slate-950/90 focus:bg-slate-950/90 active:bg-slate-950/80 dark:bg-navy-200 dark:text-black dark:hover:bg-navy-200/90",
+        "bg-slate-950 text-white hover:bg-slate-950/90 focus:bg-slate-950/90 active:bg-slate-950/80 dark:bg-navy-50 dark:text-navy-900 dark:hover:bg-navy-50/90",
       "white" =>
         "bg-white text-slate-800 hover:bg-slate-100 focus:bg-slate-100 active:bg-slate-100/80"
     },

@@ -108,6 +108,13 @@ defmodule LineaUI.Components.KpiCard do
     doc: "A percentage (0 to 100): draws a progress bar toward the goal."
   )
 
+  attr(:layout, :string,
+    default: "stack",
+    values: ~w(stack inline),
+    doc:
+      "`stack` puts the figure over the sparkline; `inline` is the compact card: label and change on top, the figure at the left and the sparkline at the right of it."
+  )
+
   attr(:loading, :boolean, default: false, doc: "Placeholder blocks in place of the content.")
   attr(:class, :any, default: nil)
   attr(:rest, :global)
@@ -121,7 +128,10 @@ defmodule LineaUI.Components.KpiCard do
       aria-busy="true"
       aria-label="Carregando métrica"
       class={
-        merge(["flex flex-col gap-2.5 rounded-xl bg-white p-5 shadow-soft dark:bg-navy-600 dark:ring-1 dark:ring-navy-450", @class])
+        merge([
+          "flex flex-col gap-2.5 rounded-xl bg-white p-5 shadow-soft dark:bg-navy-600 dark:ring-1 dark:ring-navy-450",
+          @class
+        ])
       }
       {@rest}
     >
@@ -129,6 +139,63 @@ defmodule LineaUI.Components.KpiCard do
       <div class="h-7 w-3/5 animate-pulse rounded-md bg-slate-150 dark:bg-navy-500"></div>
       <div class="h-5 w-1/3 animate-pulse rounded-md bg-slate-150 dark:bg-navy-500"></div>
       <div class="mt-auto h-11 w-full animate-pulse rounded-md bg-slate-150 dark:bg-navy-500"></div>
+    </div>
+    """
+  end
+
+  def kpi_card(%{layout: "inline"} = assigns) do
+    assigns =
+      assign(assigns,
+        tone: Map.fetch!(@tones, assigns.delta_tone || default_tone(assigns.trend)),
+        spark_color: Map.fetch!(@colors, assigns.color),
+        line: line(assigns.spark)
+      )
+
+    ~H"""
+    <div
+      class={
+        merge([
+          "flex flex-col gap-3 rounded-2xl bg-white p-5 ring-1 ring-slate-150 dark:bg-navy-750 dark:ring-navy-600",
+          @class
+        ])
+      }
+      {@rest}
+    >
+      <div class="flex min-h-[1.375rem] items-center justify-between gap-2 text-[13px] text-slate-500 dark:text-navy-300">
+        <span>{@label}</span>
+        <span
+          :if={@delta}
+          class={[
+            "inline-flex h-[1.375rem] items-center gap-0.5 rounded-md px-1.5 font-mono text-xs font-medium",
+            @tone
+          ]}
+        >
+          <.glyph name={trend_glyph(@trend)} class="size-3" stroke_width="2.6" />{@delta}
+        </span>
+      </div>
+      <div class="flex items-end justify-between gap-3">
+        <div class="text-[30px] leading-9 font-medium tracking-tight whitespace-nowrap tabular-nums text-slate-900 dark:text-navy-50">
+          {@value}<small :if={@unit} class="ml-1 text-sm font-normal text-slate-400">{@unit}</small>
+        </div>
+        <svg
+          :if={@line}
+          viewBox="0 0 120 44"
+          preserveAspectRatio="none"
+          aria-hidden="true"
+          class={["h-9 w-24 min-w-0 shrink", @spark_color]}
+        >
+          <path d={@line.area} fill="currentColor" fill-opacity="0.12" />
+          <path
+            d={@line.stroke}
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            vector-effect="non-scaling-stroke"
+          />
+        </svg>
+      </div>
     </div>
     """
   end
