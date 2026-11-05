@@ -187,13 +187,13 @@ defmodule LineaUI.Components.Table do
 
   @th %{
     "basic" =>
-      "whitespace-nowrap px-3 py-3 font-normal text-slate-500 dark:text-navy-300 lg:px-5",
+      "whitespace-nowrap px-3 py-3 font-normal text-slate-500 dark:text-navy-300 lg:px-4",
     "bordered" =>
-      "whitespace-nowrap border border-t-0 border-slate-200 px-3 py-3 font-normal text-slate-500 first:border-l-0 last:border-r-0 dark:border-navy-500 dark:text-navy-300 lg:px-5",
+      "whitespace-nowrap border border-t-0 border-slate-200 px-3 py-3 font-normal text-slate-500 first:border-l-0 last:border-r-0 dark:border-navy-500 dark:text-navy-300 lg:px-4",
     "hoverable" =>
-      "whitespace-nowrap px-4 py-3 font-normal text-slate-500 dark:text-navy-300 lg:px-5",
+      "whitespace-nowrap px-4 py-3 font-normal text-slate-500 dark:text-navy-300 lg:px-4",
     "zebra" =>
-      "whitespace-nowrap px-4 py-3 font-normal text-slate-500 dark:text-navy-300 lg:px-5",
+      "whitespace-nowrap px-4 py-3 font-normal text-slate-500 dark:text-navy-300 lg:px-4",
     "grid" =>
       "whitespace-nowrap px-3 py-3 font-normal text-slate-500 dark:text-navy-300 lg:px-4",
     "data" => @data_th,
@@ -203,11 +203,11 @@ defmodule LineaUI.Components.Table do
   }
 
   @td %{
-    "basic" => "whitespace-nowrap px-4 py-2 sm:px-5",
+    "basic" => "whitespace-nowrap px-4 py-2 sm:px-4",
     "bordered" =>
-      "whitespace-nowrap border border-slate-200 px-3 py-3 first:border-l-0 last:border-r-0 dark:border-navy-500 lg:px-5",
-    "hoverable" => "whitespace-nowrap px-4 py-2 sm:px-5",
-    "zebra" => "whitespace-nowrap px-4 py-2 sm:px-5",
+      "whitespace-nowrap border border-slate-200 px-3 py-3 first:border-l-0 last:border-r-0 dark:border-navy-500 lg:px-4",
+    "hoverable" => "whitespace-nowrap px-4 py-2 sm:px-4",
+    "zebra" => "whitespace-nowrap px-4 py-2 sm:px-4",
     "grid" => "whitespace-nowrap px-4 py-3",
     "data" => "h-12 whitespace-nowrap px-3.5 py-0",
     "data-grid" =>
@@ -256,7 +256,7 @@ defmodule LineaUI.Components.Table do
 
   @sort_button "-mx-1.5 inline-flex h-7 max-w-full cursor-pointer items-center gap-1.5 rounded-md px-1.5 text-left font-normal outline-hidden transition-colors hover:bg-slate-300/40 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-primary/55 dark:hover:bg-navy-450/40"
 
-  @foot_td "whitespace-nowrap border-t border-slate-200 px-4 py-3 font-semibold text-slate-700 dark:border-navy-500 dark:text-navy-100 sm:px-5"
+  @foot_td "whitespace-nowrap border-t border-slate-200 px-4 py-3 font-semibold text-slate-700 dark:border-navy-500 dark:text-navy-100 sm:px-4"
 
   @compact "px-3 py-2 sm:px-3 lg:px-3"
 
@@ -678,7 +678,7 @@ defmodule LineaUI.Components.Table do
           </tr>
           <tr class="border-y border-transparent border-b-slate-200 dark:border-b-navy-500">
             <td colspan="100" class="p-0">
-              <div id={dom_id <> "-detail"} class="hidden px-4 pb-4 sm:px-5">
+              <div id={dom_id <> "-detail"} class="hidden px-4 pb-4 sm:px-4">
                 {render_slot(@expand, %{row: @row_item.(row), toggle: table_toggle_row(dom_id)})}
               </div>
             </td>
@@ -1351,7 +1351,7 @@ defmodule LineaUI.Components.Table do
       <td colspan="100" class="p-0">
         <div
           id={@row_id <> "-detail"}
-          class={merge([!@open && "hidden", "px-4 pb-4 sm:px-5", @class])}
+          class={merge([!@open && "hidden", "px-4 pb-4 sm:px-4", @class])}
         >
           {render_slot(@inner_block)}
         </div>
