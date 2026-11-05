@@ -79,7 +79,7 @@ defmodule LineaUI.Components.TableTest do
   test "hoverable and zebra fill the header and mark the table" do
     html = render_table(%{variant: "hoverable"})
     assert "is-hoverable" in classes(html, "table")
-    assert "bg-slate-200" in classes(html, "th")
+    assert "text-slate-500" in classes(html, "th")
     assert "first:rounded-l-lg" in classes(html, "th")
 
     html = render_table(%{variant: "zebra", rounded: "none"})
@@ -390,7 +390,7 @@ defmodule LineaUI.Components.TableTest do
       )
 
     assert "sticky" in classes(html, "th")
-    assert "bg-slate-200" in classes(html, "th")
+    assert "text-slate-500" in classes(html, "th")
   end
 
   test "a stream renders the empty row hidden until the body is empty" do

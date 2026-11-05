@@ -394,12 +394,12 @@ defmodule LineaUI.Components.AppShellTest do
         </.app_shell>
         """)
 
-      assert ["linea-frame", "bg-slate-150", "md:flex-row", "md:p-2.5"] --
+      assert ["linea-frame", "bg-slate-50", "md:flex-row", "md:p-2.5"] --
                classes(html, "#s") == []
 
       refute "is-sidebar-open" in classes(html, "#s")
       assert [_] = find(html, "#s > #menu") |> Enum.to_list()
-      assert ["md:rounded-xl", "bg-white"] -- classes(html, "#s > main") == []
+      assert ["md:rounded-[22px]", "bg-white"] -- classes(html, "#s > main") == []
       assert [_] = find(html, "#s > main > #page") |> Enum.to_list()
     end
 

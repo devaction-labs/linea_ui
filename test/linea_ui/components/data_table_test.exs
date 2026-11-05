@@ -42,7 +42,7 @@ defmodule LineaUI.Components.DataTableTest do
     assert "linea-dt" in classes(html, "#a-table")
     assert "is-dt-hover" in classes(html, "#a-table")
     assert "h-10" in classes(html, "#a-table th")
-    assert "text-[11.5px]" in classes(html, "#a-table th")
+    assert "text-[13px]" in classes(html, "#a-table th")
     assert "h-12" in classes(html, "#a-table td")
     assert "size-4" in classes(html, "#a-table td input")
     assert "rounded-xl" in classes(html, "#a .card")
