@@ -759,7 +759,7 @@ code.inline-code {
 
 /* button */
 .btn {
-  @apply inline-flex h-8.5 cursor-pointer items-center justify-center gap-1.5 rounded-md px-3 py-0 text-[13px]
+  @apply inline-flex h-9 cursor-pointer items-center justify-center gap-1.5 rounded-full px-4 py-0 text-[13px]
    text-center outline-hidden transition-all duration-200
    focus:outline-hidden disabled:pointer-events-none;
 }
@@ -768,7 +768,7 @@ code.inline-code {
 .badge {
     @apply inline-flex items-center justify-center px-2 py-1.5
      text-xs font-inter tracking-wide align-baseline transition-all duration-200
-     leading-none rounded-sm font-medium
+     leading-none rounded-lg font-medium
 }
 
 /* tag: a clickable chip (LineOne's refined look: 28px high, 8px radius, 12.5px type) */
