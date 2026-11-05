@@ -40,40 +40,40 @@ defmodule LineaUI.Components.Email do
 
   use Phoenix.Component
 
-  @sans "Inter,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif"
-  @inter "Inter,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif"
-  @mono "JetBrains Mono,SF Mono,Menlo,Consolas,Courier New,monospace"
+  @sans "Geist,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif"
+  @inter "Geist,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif"
+  @mono "Geist Mono,JetBrains Mono,SF Mono,Menlo,Consolas,Courier New,monospace"
 
   @light %{
-    canvas: "#f1f5f9",
+    canvas: "#f4f3f0",
     card: "#ffffff",
     card_clear: "rgba(255,255,255,0)",
-    hair: "#e4e4e7",
-    edge: "#d4d4d8",
-    ink: "#18181b",
-    body: "#52525c",
-    muted: "#71717b",
-    primary: "#2b7fff",
-    primary_text: "#1447e6",
-    soft: "#eff6ff",
-    panel: "#fafafa",
-    grid: "rgba(43,127,255,.07)"
+    hair: "#e8e6e1",
+    edge: "#d9d6cf",
+    ink: "#17171a",
+    body: "#2e2e33",
+    muted: "#6c6b70",
+    primary: "#0d8f91",
+    primary_text: "#08686b",
+    soft: "#e2f2f1",
+    panel: "#efeeea",
+    grid: "rgba(13,143,145,.07)"
   }
 
   @dark %{
-    canvas: "#09090b",
-    card: "#18181b",
-    card_clear: "rgba(24,24,27,0)",
-    hair: "#27272a",
-    edge: "#3f3f47",
-    ink: "#fafafa",
-    body: "#d4d4d8",
-    muted: "#a1a1aa",
-    primary: "#155dfc",
-    primary_text: "#8ec5ff",
-    soft: "#1c398e",
-    panel: "#131316",
-    grid: "rgba(142,197,255,.08)"
+    canvas: "#111113",
+    card: "#19191c",
+    card_clear: "rgba(25,25,28,0)",
+    hair: "#28282d",
+    edge: "#36363c",
+    ink: "#f3f3f4",
+    body: "#d9d9dd",
+    muted: "#a3a3ab",
+    primary: "#2bbfbd",
+    primary_text: "#5fd6d3",
+    soft: "#16403f",
+    panel: "#151517",
+    grid: "rgba(95,214,211,.08)"
   }
 
   @resets "body{margin:0;padding:0;width:100% !important;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%}" <>

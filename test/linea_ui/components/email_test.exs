@@ -138,7 +138,7 @@ defmodule LineaUI.Components.EmailTest do
   test "auto adds the dark block, a fixed theme does not and dark paints the dark palette" do
     assert html() =~ "prefers-color-scheme:dark"
     refute html(%{theme: :light}) =~ "prefers-color-scheme:dark"
-    assert html(%{theme: :dark}) =~ "background-color:#09090b"
+    assert html(%{theme: :dark}) =~ "background-color:#111113"
     assert html(%{theme: :dark}) =~ ~s(content="dark")
   end
 
