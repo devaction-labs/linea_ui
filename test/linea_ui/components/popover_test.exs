@@ -67,7 +67,7 @@ defmodule LineaUI.Components.PopoverTest do
     card = classes(html, "#p-panel .popper-box > div")
 
     assert ["rounded-[14px]"] -- card == []
-    assert Enum.any?(card, &String.starts_with?(&1, "shadow-[0_10px_30px"))
+    assert Enum.any?(card, &String.starts_with?(&1, "shadow-[0_0_0_1px"))
     assert "text-slate-300" in classes(html, "[data-popper-arrow] path:first-child")
   end
 
