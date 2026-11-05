@@ -1998,11 +1998,11 @@ defmodule LineaUI.Components.AppShell do
           <div :if={@badge != []} class="flex items-center gap-2.5">{render_slot(@badge)}</div>
           <h1
             :if={@title != ""}
-            class="mt-0.5 mb-2 text-[28px] leading-9 font-semibold tracking-[-0.02em] text-slate-800 dark:text-navy-50"
+            class="mt-1 mb-0 text-[34px] leading-10 font-semibold tracking-[-0.03em] text-slate-900 dark:text-navy-50"
           >
             {@title}
           </h1>
-          <p :if={@description} class="text-sm text-slate-500 dark:text-navy-200">{@description}</p>
+          <p :if={@description} class="text-[15px] leading-[22px] text-slate-500 dark:text-navy-200">{@description}</p>
         </div>
         <div :if={@actions != []} class="flex items-center gap-2.5">{render_slot(@actions)}</div>
       </div>

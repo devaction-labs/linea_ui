@@ -564,7 +564,7 @@ defmodule LineaUI.Components.AppShellTest do
         </.page_header>
         """)
 
-      assert "text-[28px]" in classes(html, "h1")
+      assert "text-[34px]" in classes(html, "h1")
       assert find(html, "h1") |> LazyHTML.text() =~ "Order PV-1283"
       assert find(html, "header > div p") |> LazyHTML.text() == "Clinica"
       assert attr_of(html, "nav a", "href") == ["/orders"]
