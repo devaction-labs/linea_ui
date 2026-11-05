@@ -3,6 +3,7 @@
 ## Unreleased
 
 - Removed what came from the Metronic template, now that its license is gone: the `demo1` layout of `app_shell/1`, `LineaUI.Components.SideMenu` (`shell_sidebar`, `side_menu_*`, `shell_header`), the `LineaUI.ShellSidebar` hook, the Keenicons plugin (`keenicons.cjs`, `scripts/keenicons.py`) and the mentions of Metronic in the docs. The framed shell (`layout="framed"`) is the app shell of the LineaUI identity.
+- Removed the components that only served the Metronic script and markup: `select_input`, `disclosure_*` (`disclosure_parts`), `tab_group`, `table_plain`, `box_*`, the bare `checkbox_input`/`radio_input`/`switch_input`, `rating_row`/`rating_cell`, `avatar_frame` and its parts, `progress_track`/`progress_fill`. `accordion`, `tabs`, `select`, `table`, `card`, `checkbox`, `radio`, `switch`, `rating`, `avatar` and `progress` cover them. `command_palette` takes `query`, the text it opens with.
 - Theme: the Signetum identity (Geist, teal, warm neutrals), pill buttons, 8px badges, `kpi_card layout="inline"`, `rail_heading/1`, `color="mono"` as the ink button, muted table headers and the e-mail palette.
 
 ## 0.9.1 (2026-11-04)
