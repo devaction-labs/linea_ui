@@ -245,7 +245,7 @@ defmodule LineaUI.Components.AppShell do
       {render_slot(@aside)}
       <main class={
         merge([
-          "flex min-w-0 flex-1 flex-col gap-[18px] overflow-y-auto bg-white px-4 py-5 shadow-[0_0_0_1px_var(--color-slate-150),0_1px_2px_rgb(23_23_26/.04),0_4px_16px_-6px_rgb(23_23_26/.08)] md:rounded-[22px] md:px-8 md:py-5 dark:bg-navy-900 dark:shadow-[0_0_0_1px_var(--color-navy-600)]",
+          "flex min-w-0 flex-1 flex-col gap-6 overflow-y-auto bg-white px-4 py-5 shadow-[0_0_0_1px_var(--color-slate-150),0_1px_2px_rgb(23_23_26/.04),0_4px_16px_-6px_rgb(23_23_26/.08)] md:rounded-[22px] md:px-8 md:py-5 dark:bg-navy-900 dark:shadow-[0_0_0_1px_var(--color-navy-600)]",
           @main_class
         ])
       }>
@@ -1952,7 +1952,7 @@ defmodule LineaUI.Components.AppShell do
         <nav
           :if={@crumb != []}
           aria-label="Breadcrumb"
-          class="flex min-w-0 flex-wrap items-center gap-2.5 text-sm text-slate-500 dark:text-navy-200"
+          class="flex min-h-8 min-w-0 flex-wrap items-center gap-2 rounded-full border border-slate-150 bg-white px-3.5 text-[13px] text-slate-500 dark:border-navy-600 dark:bg-navy-750 dark:text-navy-200"
         >
           <%= for {crumb, last} <- @crumbs do %>
             <.link
