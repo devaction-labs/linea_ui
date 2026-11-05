@@ -110,7 +110,9 @@ defmodule LineaUI.Components.Segmented do
         aria-labelledby={@label && "#{@id}-label"}
         phx-hook="LineaUI.Segmented"
         phx-target={@target}
-        class={merge([track(@full), @label && "mt-1.5", @class])}
+        class={
+          merge(["sg-seg", @size == "sm" && "sm", @full && "flex w-full", @label && "mt-1.5", @class])
+        }
         data-value={@value}
         data-on-change={@on_change_js}
         {@rest}
@@ -131,20 +133,14 @@ defmodule LineaUI.Components.Segmented do
           id={segment.id}
           aria-pressed={bool(segment.value == @value)}
           disabled={@disabled || segment.disabled}
-          class={
-            merge([
-              "group/segment inline-flex items-center justify-center whitespace-nowrap rounded-md font-medium text-slate-500 outline-hidden transition-colors duration-200 hover:text-slate-700 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-primary/50 disabled:pointer-events-none disabled:opacity-60 aria-pressed:bg-white aria-pressed:text-slate-800 aria-pressed:shadow-soft dark:text-navy-200 dark:hover:text-navy-50 dark:focus-visible:outline-accent/50 dark:aria-pressed:bg-navy-500 dark:aria-pressed:text-navy-50 dark:aria-pressed:shadow-soft-dark",
-              size_class(@size),
-              @full && "flex-1"
-            ])
-          }
+          class={merge([@full && "flex-1 justify-center"])}
           phx-mounted={JS.ignore_attributes(["aria-pressed", "tabindex"])}
           data-value={segment.value}
         >
           {segment.label}
           <span
             :if={segment.count != nil}
-            class="ml-1.5 font-inter text-tiny-plus font-medium text-slate-400 group-aria-pressed/segment:text-primary dark:text-navy-300 dark:group-aria-pressed/segment:text-accent-light"
+            class="ml-1.5 font-mono text-[11px] text-slate-400"
           >
             {segment.count}
           </span>

@@ -84,8 +84,6 @@ defmodule LineaUI.Components.Card do
 
   use LineaUI.Component
 
-
-
   @gradient_outlines %{
     "purple-indigo" => "rounded-lg bg-gradient-to-r from-purple-500 to-blue-600 p-1",
     "fuchsia-pink" => "rounded-lg bg-gradient-to-r from-fuchsia-600 to-pink-600 p-1",

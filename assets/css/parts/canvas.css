@@ -361,3 +361,7 @@
 .sg-tabs > .sg-tab:hover{color:var(--ink)}
 .sg-tabs > .sg-tab[aria-selected="true"]{color:var(--ink);font-weight:500}
 .sg-tabs > .sg-tab[aria-selected="true"]::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:2px;border-radius:2px;background:var(--ink)}
+
+/* The kit's segmented control marks the chosen segment with aria-pressed; the canvas calls it `on`. */
+.sg-seg button[aria-pressed="true"]{background:var(--panel);color:var(--ink);font-weight:500;box-shadow:0 0 0 1px var(--line),0 1px 3px rgb(23 23 26/.08)}
+:is(.dark, .dark .sg, .sg[data-theme="dark"]) .sg-seg button[aria-pressed="true"]{background:var(--raised)}

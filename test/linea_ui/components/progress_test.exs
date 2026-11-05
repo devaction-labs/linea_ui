@@ -1,96 +1,32 @@
 defmodule LineaUI.Components.ProgressTest do
   use LineaUI.ComponentCase, async: true
 
-  test "the bar width follows value and max" do
-    html =
-      render(~H"""
-      <.progress value={50} max={200} color="success" />
-      """)
-
-    assert [style] = html |> find("[role=progressbar] > div") |> LazyHTML.attribute("style")
-    assert style =~ "width: 25.0%"
-    assert "bg-success" in classes(html, "[role=progressbar] > div")
+  test "the canvas meter fills to value over max" do
+    html = render(~H|<.progress id="p" value={36} max={50} label="Notas" />|)
+    assert "sg-meter" in classes(html, "#p")
+    assert LazyHTML.attribute(find(html, "#p"), "role") == ["progressbar"]
+    assert LazyHTML.attribute(find(html, "#p"), "aria-valuenow") == ["36"]
+    assert LazyHTML.attribute(find(html, "#p i"), "style") == ["width: 72.0%"]
   end
 
-  test "soft tints the track with every color" do
-    html =
-      render(~H"""
-      <.progress id="primary" variant="soft" color="primary" />
-      <.progress id="secondary" variant="soft" color="secondary" />
-      <.progress id="info" variant="soft" color="info" />
-      <.progress id="success" variant="soft" color="success" />
-      <.progress id="warning" variant="soft" color="warning" />
-      <.progress id="error" variant="soft" color="error" />
-      <.progress id="solid" color="info" />
-      """)
-
-    for color <- ~w(primary secondary info success warning error) do
-      assert "bg-#{color}/15" in classes(html, "##{color}")
-    end
-
-    assert "dark:bg-accent/25" in classes(html, "#primary")
-    assert "dark:bg-secondary-light/25" in classes(html, "#secondary")
-    assert "bg-slate-150" in classes(html, "#solid")
+  test "the accent color paints the meter in teal" do
+    assert "acc" in classes(render(~H|<.progress id="p" value={5} color="primary" />|), "#p")
+    refute "acc" in classes(render(~H|<.progress id="p" value={5} />|), "#p")
   end
 
-  test "white is a white bar on a translucent track" do
-    html =
-      render(~H"""
-      <.progress id="w" color="white" value={40} />
-      """)
-
-    assert "bg-white/30" in classes(html, "#w")
-    assert "bg-white" in classes(html, "#w > div")
+  test "an indeterminate meter has no width or value" do
+    html = render(~H|<.progress id="p" indeterminate />|)
+    assert LazyHTML.attribute(find(html, "#p"), "aria-valuenow") == []
+    assert "is-indeterminate" in classes(html, "#p i")
   end
 
-  test "height wins over size, and the default is unchanged" do
-    html =
-      render(~H"""
-      <.progress id="a" height="1.5" />
-      <.progress id="b" size="lg" height="1" />
-      <.progress id="c" />
-      """)
+  test "the value stays between 0 and 100 percent" do
+    assert LazyHTML.attribute(
+             find(render(~H|<.progress id="p" value={250} max={100} />|), "#p i"),
+             "style"
+           ) == ["width: 100.0%"]
 
-    assert "h-1.5" in classes(html, "#a")
-    refute "h-2" in classes(html, "#a")
-    assert "h-1" in classes(html, "#b")
-    refute "h-3" in classes(html, "#b")
-    assert "h-2" in classes(html, "#c")
-  end
-
-  test "an indeterminate bar slides by default" do
-    html = render(~H|<.progress indeterminate color="info" />|)
-
-    assert "is-indeterminate" in classes(html, "[role=progressbar] > div")
-    assert "bg-info" in classes(html, "[role=progressbar] > div")
-    assert html |> find("[role=progressbar]") |> LazyHTML.attribute("aria-valuenow") == []
-    assert html |> find("[role=progressbar] > div") |> LazyHTML.attribute("style") == [""]
-  end
-
-  test "shine runs a light of the bar's color over the track" do
-    html =
-      render(~H"""
-      <.progress id="p" indeterminate shine color="primary" />
-      <.progress id="s" indeterminate shine color="success" />
-      """)
-
-    bar = classes(html, "#p > div")
-    assert "is-shine" in bar
-    assert "absolute" in bar
-    assert "w-[35%]" in bar
-    assert "via-primary" in bar
-    assert "dark:via-accent" in bar
-    assert "from-transparent" in bar
-    refute "is-indeterminate" in bar
-    refute "bg-primary" in bar
-    assert "via-success" in classes(html, "#s > div")
-    assert html |> find("#p") |> LazyHTML.attribute("aria-valuenow") == []
-  end
-
-  test "shine does nothing for a determinate bar" do
-    html = render(~H|<.progress value={40} shine color="primary" />|)
-
-    assert "bg-primary" in classes(html, "[role=progressbar] > div")
-    refute "is-shine" in classes(html, "[role=progressbar] > div")
+    assert LazyHTML.attribute(find(render(~H|<.progress id="p" value={-5} />|), "#p i"), "style") ==
+             ["width: 0.0%"]
   end
 end

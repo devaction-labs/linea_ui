@@ -46,35 +46,6 @@ defmodule LineaUI.Components.SimpleElementsTest do
     end
   end
 
-  describe "progress" do
-    test "the bar's width follows value and max" do
-      html =
-        render(~H"""
-        <.progress value={5} max={10} color="success" />
-        """)
-
-      assert [_] = find(html, "[role=progressbar][aria-valuenow='5']") |> Enum.to_list()
-      assert [bar] = find(html, "div.bg-success") |> Enum.to_list()
-      assert LazyHTML.attribute(bar, "style") == ["width: 50.0%"]
-      assert "h-2" in classes(html, "[role=progressbar]")
-    end
-
-    test "soft, sizes, active and indeterminate" do
-      html =
-        render(~H"""
-        <.progress id="s" variant="soft" color="info" size="xl" value={10} />
-        <.progress id="a" active value={10} />
-        <.progress id="i" indeterminate />
-        """)
-
-      assert "bg-info/15" in classes(html, "#s")
-      assert "h-4" in classes(html, "#s")
-      assert "is-active" in classes(html, "#a > div")
-      assert "is-indeterminate" in classes(html, "#i > div")
-      assert [] = find(html, "#i[aria-valuenow]") |> Enum.to_list()
-    end
-  end
-
   describe "skeleton" do
     test "wave by default, pulse or none, shapes" do
       html =
