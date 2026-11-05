@@ -1233,6 +1233,13 @@ table.is-zebra > tbody > tr:nth-child(even) > td {
     inset: 0.625rem 0.625rem 0.625rem calc(16rem + 1.25rem) !important;
     border-radius: 22px;
   }
+
+  /* The sheet floats inside the panel as the canvas draws it: 10px from the top, 20px from the right and the bottom. */
+  .linea-frame .drawer .drawer-content.top-3.right-3 {
+    top: 10px !important;
+    right: 20px !important;
+    height: calc(100% - 30px) !important;
+  }
 }
 
 .drawer .drawer-overlay.animate\:leave {
