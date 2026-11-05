@@ -1211,6 +1211,14 @@ table.is-zebra > tbody > tr:nth-child(even) > td {
   @apply animate-[cubic-bezier(var(--ease-out))_fade-in_200ms];
 }
 
+/* In the framed shell the scrim dims the main panel only, not the menu on the frame. */
+@media (min-width: 768px) {
+  .linea-frame .drawer .drawer-overlay {
+    inset: 0.625rem 0.625rem 0.625rem calc(16rem + 1.25rem) !important;
+    border-radius: 22px;
+  }
+}
+
 .drawer .drawer-overlay.animate\:leave {
   @apply animate-[cubic-bezier(var(--ease-in))_fade-out_200ms];
 }

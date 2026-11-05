@@ -74,7 +74,7 @@ defmodule LineaUI.Components.DrawerTest do
 
     assert [_] = find(html, "[data-drawer-body] > #body") |> Enum.to_list()
 
-    assert ["justify-end", "border-t", "bg-slate-50", "gap-3"] --
+    assert ["justify-end", "border-t", "bg-white", "gap-3"] --
              classes(html, "[data-drawer-footer]") == []
 
     assert [_] = find(html, "[data-drawer-footer] > #save") |> Enum.to_list()

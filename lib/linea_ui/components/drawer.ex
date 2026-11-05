@@ -363,7 +363,7 @@ defmodule LineaUI.Components.Drawer do
     <header
       class={
         merge([
-          "flex shrink-0 items-start gap-3 border-b border-slate-150 px-4 pt-5 pb-4 dark:border-navy-700 sm:px-5.5",
+          "flex shrink-0 items-start gap-3 px-4 pt-[22px] pb-3.5 sm:px-6",
           @class
         ])
       }
@@ -376,7 +376,7 @@ defmodule LineaUI.Components.Drawer do
         <h2
           :if={@content == [] and @title}
           id={@id}
-          class="text-lg/[26px] font-medium text-slate-800 dark:text-navy-50"
+          class="text-[19px]/6 font-semibold tracking-[-0.02em] text-slate-900 dark:text-navy-50"
         >
           {@title}
         </h2>
@@ -419,7 +419,7 @@ defmodule LineaUI.Components.Drawer do
     <div
       class={
         merge([
-          "scrollbar-sm flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto px-4 py-5 sm:px-5.5",
+          "scrollbar-sm flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto px-4 pt-1 pb-5 sm:px-6",
           @class
         ])
       }
@@ -449,7 +449,7 @@ defmodule LineaUI.Components.Drawer do
     <footer
       class={
         merge([
-          "flex shrink-0 items-center justify-end gap-2 border-t border-slate-150 bg-slate-50 px-4 py-3.5 dark:border-navy-700 dark:bg-navy-750 sm:px-5.5",
+          "flex shrink-0 items-center justify-end gap-2 border-t border-slate-150 bg-white px-4 py-3.5 dark:border-navy-700 dark:bg-navy-750 sm:px-6",
           @class
         ])
       }
