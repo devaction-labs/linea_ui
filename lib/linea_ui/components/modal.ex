@@ -181,7 +181,7 @@ defmodule LineaUI.Components.Modal do
         id={"#{@id}-panel"}
         class={
           merge([
-            "modal-content relative flex w-full flex-col rounded-lg bg-white outline-hidden dark:bg-navy-700",
+            "modal-content relative flex w-full flex-col rounded-[22px] bg-white shadow-[0_0_0_1px_var(--color-slate-150),0_40px_90px_-30px_rgb(23_23_26/.4)] outline-hidden dark:bg-navy-700 dark:shadow-[0_0_0_1px_var(--color-navy-600)]",
             panel_class(@layout),
             size_class(@size),
             origin_class(@origin),
