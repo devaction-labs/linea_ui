@@ -20,7 +20,7 @@ defmodule LineaUI.Components.Drawer do
         </:footer>
       </.drawer>
 
-  `size` sets the sheet's width (`sm` 400px, `md` 560px, `lg` 760px, `xl` 1080px), never wider
+  `size` sets the sheet's width (`sm` 400px, `md` 520px, `lg` 640px, `xl` 1080px), never wider
   than the screen, so it is full width on a phone. Buttons in the header go in `:actions`, a back
   arrow (a sheet opened from another) in `:back`.
 
@@ -68,16 +68,16 @@ defmodule LineaUI.Components.Drawer do
   @sizes %{
     nil => "w-72",
     "sm" => "w-full max-w-[400px]",
-    "md" => "w-full max-w-[560px]",
-    "lg" => "w-full max-w-[760px]",
+    "md" => "w-full max-w-[520px]",
+    "lg" => "w-full max-w-[640px]",
     "xl" => "w-full max-w-[1080px]"
   }
 
   @float_sizes %{
     nil => "w-72 max-w-[calc(100%-1.5rem)]",
     "sm" => "w-full max-w-[min(400px,calc(100%-1.5rem))]",
-    "md" => "w-full max-w-[min(560px,calc(100%-1.5rem))]",
-    "lg" => "w-full max-w-[min(760px,calc(100%-1.5rem))]",
+    "md" => "w-full max-w-[min(520px,calc(100%-1.5rem))]",
+    "lg" => "w-full max-w-[min(640px,calc(100%-1.5rem))]",
     "xl" => "w-full max-w-[min(1080px,calc(100%-1.5rem))]"
   }
 
@@ -124,7 +124,7 @@ defmodule LineaUI.Components.Drawer do
     default: nil,
     values: [nil, "sm", "md", "lg", "xl"],
     doc:
-      "The sheet's width: `sm` 400px, `md` 560px, `lg` 760px, `xl` 1080px, full width on a phone. `nil` is LineOne's `w-72` frame."
+      "The sheet's width: `sm` 400px, `md` 520px, `lg` 640px, `xl` 1080px, full width on a phone. `nil` is LineOne's `w-72` frame."
 
   attr :variant, :string,
     default: nil,

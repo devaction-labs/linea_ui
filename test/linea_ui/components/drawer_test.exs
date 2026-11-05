@@ -58,7 +58,7 @@ defmodule LineaUI.Components.DrawerTest do
 
     assert "drawer-right" in classes(html, "#s")
 
-    assert ["right-3", "w-full", "max-w-[min(560px,calc(100%-1.5rem))]"] --
+    assert ["right-3", "w-full", "max-w-[min(520px,calc(100%-1.5rem))]"] --
              classes(html, ".drawer-content") == []
 
     refute "w-72" in classes(html, ".drawer-content")
@@ -86,7 +86,7 @@ defmodule LineaUI.Components.DrawerTest do
     assert attr_of(html, "#s", "data-variant") == ["float"]
     assert "drawer-float" in classes(html, "#s")
 
-    assert ["top-3", "left-3", "h-[calc(100%-1.5rem)]", "max-w-[min(760px,calc(100%-1.5rem))]"] --
+    assert ["top-3", "left-3", "h-[calc(100%-1.5rem)]", "max-w-[min(640px,calc(100%-1.5rem))]"] --
              classes(html, ".drawer-content") == []
 
     assert ["rounded-2xl", "overflow-hidden"] -- classes(html, "#s-panel") == []
@@ -101,7 +101,7 @@ defmodule LineaUI.Components.DrawerTest do
     assert attr_of(html, "#s", "data-variant") == ["flush"]
     refute "drawer-float" in classes(html, "#s")
 
-    assert ["top-0", "right-0", "h-full", "max-w-[560px]"] -- classes(html, ".drawer-content") ==
+    assert ["top-0", "right-0", "h-full", "max-w-[520px]"] -- classes(html, ".drawer-content") ==
              []
 
     refute "rounded-2xl" in classes(html, "#s-panel")
@@ -162,8 +162,8 @@ defmodule LineaUI.Components.DrawerTest do
   test "each size sets the sheet's width" do
     for {size, width} <- [
           {"sm", "max-w-[400px]"},
-          {"md", "max-w-[560px]"},
-          {"lg", "max-w-[760px]"},
+          {"md", "max-w-[520px]"},
+          {"lg", "max-w-[640px]"},
           {"xl", "max-w-[1080px]"}
         ] do
       assigns = %{size: size}
