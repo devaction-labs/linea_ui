@@ -388,13 +388,13 @@ defmodule LineaUI.Components.Drawer do
           {@description}
         </p>
       </div>
-      <div :if={@actions != []} class="flex shrink-0 flex-wrap items-center gap-2">
+      <div :if={@actions != []} class="flex shrink-0 flex-wrap items-center gap-1.5">
         {render_slot(@actions)}
       </div>
       <button
         :if={@close_button}
         type="button"
-        class="btn -mr-1.5 size-8 shrink-0 rounded-full p-0 text-slate-500 hover:bg-slate-300/20 hover:text-slate-800 focus:bg-slate-300/20 active:bg-slate-300/25 dark:text-navy-200 dark:hover:bg-navy-300/20 dark:hover:text-navy-50 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25"
+        class="sg-ib sm shrink-0"
         aria-label={@close_label}
         phx-click={@close_js}
         data-drawer-close

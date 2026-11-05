@@ -1234,11 +1234,15 @@ table.is-zebra > tbody > tr:nth-child(even) > td {
     border-radius: 22px;
   }
 
-  /* The sheet floats inside the panel as the canvas draws it: 10px from the top, 20px from the right and the bottom. */
+  /* The sheet floats inside the panel as the canvas draws it: 20px from the top, the right and the bottom. */
   .linea-frame .drawer .drawer-content.top-3.right-3 {
-    top: 10px !important;
+    top: 20px !important;
     right: 20px !important;
-    height: calc(100% - 30px) !important;
+    height: calc(100% - 40px) !important;
+  }
+
+  .linea-frame .drawer .drawer-content [data-drawer-header] {
+    padding-top: 20px;
   }
 }
 
