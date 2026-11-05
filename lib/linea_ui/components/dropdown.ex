@@ -218,7 +218,7 @@ defmodule LineaUI.Components.Dropdown do
         <div
           class={
             merge([
-              "popper-box rounded-lg border border-slate-150 bg-white py-1 font-inter dark:border-navy-500 dark:bg-navy-700",
+              "popper-box min-w-[220px] rounded-[14px] bg-white p-1.5 font-inter shadow-[0_0_0_1px_var(--color-slate-150),0_24px_60px_-20px_rgb(23_23_26/.28)] dark:bg-navy-700 dark:shadow-[0_0_0_1px_var(--color-navy-600)]",
               @class
             ])
           }
@@ -249,11 +249,11 @@ defmodule LineaUI.Components.Dropdown do
   @item_styles %{
     "default" => %{
       "neutral" =>
-        "flex h-8.5 items-center px-3 pr-8 font-medium tracking-wide outline-hidden transition-all hover:bg-slate-100 hover:text-slate-800 focus:bg-slate-100 focus:text-slate-800 dark:hover:bg-navy-600 dark:hover:text-navy-100 dark:focus:bg-navy-600 dark:focus:text-navy-100",
+        "flex h-[34px] items-center gap-2.5 rounded-[9px] px-2.5 text-[13.5px] text-slate-700 outline-hidden transition-colors hover:bg-slate-100 hover:text-slate-900 focus:bg-slate-100 focus:text-slate-900 dark:text-navy-100 dark:hover:bg-navy-600 dark:hover:text-navy-50 dark:focus:bg-navy-600",
       "primary" =>
-        "flex h-8.5 items-center px-3 pr-8 font-medium tracking-wide text-primary outline-hidden transition-all hover:bg-slate-100 focus:bg-slate-100 dark:text-accent-light dark:hover:bg-navy-600 dark:focus:bg-navy-600",
+        "flex h-[34px] items-center gap-2.5 rounded-[9px] px-2.5 text-[13.5px] text-primary outline-hidden transition-colors hover:bg-slate-100 focus:bg-slate-100 dark:text-accent-light dark:hover:bg-navy-600",
       "error" =>
-        "flex h-8.5 items-center px-3 pr-8 font-medium tracking-wide text-error outline-hidden transition-all hover:bg-error/20 focus:bg-error/20"
+        "flex h-[34px] items-center gap-2.5 rounded-[9px] px-2.5 text-[13.5px] text-error outline-hidden transition-colors hover:bg-error/10 focus:bg-error/10"
     },
     "media" => %{
       "neutral" =>

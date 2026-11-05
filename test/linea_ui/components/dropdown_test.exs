@@ -104,7 +104,7 @@ defmodule LineaUI.Components.DropdownTest do
              html |> find("span.ml-auto") |> Enum.map(&(&1 |> LazyHTML.text() |> String.trim()))
 
     assert ["ml-auto", "font-mono"] -- classes(html, "button[phx-click=edit] span") == []
-    assert "h-8.5" in classes(html, "button[phx-click=edit]")
+    assert "h-[34px]" in classes(html, "button[phx-click=edit]")
   end
 
   test "toggle_icon draws the flat round dots button" do

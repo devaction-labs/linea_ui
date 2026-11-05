@@ -103,7 +103,7 @@ defmodule LineaUI.Components.Popover do
         <div class="popper-box">
           <div class={
             merge([
-              "w-68 max-w-[90vw] rounded-md border border-slate-300 bg-white p-4 shadow-[0_10px_30px_-8px_rgb(48_46_56/0.18)] dark:border-navy-500 dark:bg-navy-700 dark:shadow-[0_3px_10px_rgb(25_33_50/0.3)]",
+              "w-68 max-w-[90vw] rounded-[14px] bg-white p-4 shadow-[0_0_0_1px_var(--color-slate-150),0_24px_60px_-20px_rgb(23_23_26/.28)] dark:bg-navy-700 dark:shadow-[0_0_0_1px_var(--color-navy-600)]",
               @class
             ])
           }>
