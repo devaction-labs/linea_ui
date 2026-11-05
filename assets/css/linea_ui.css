@@ -15,6 +15,7 @@
 @import "./parts/card.css";
 @import "./parts/sortable.css";
 @import "./parts/icons.css";
+@import "./parts/canvas.css";
 
 @source "../../lib";
 @source "../js";
@@ -1209,6 +1210,21 @@ table.is-zebra > tbody > tr:nth-child(even) > td {
 
 .drawer .drawer-overlay {
   @apply animate-[cubic-bezier(var(--ease-out))_fade-in_200ms];
+}
+
+/* A drawer removed by the server slides out and fades the scrim before it leaves the page. */
+.drawer.drawer-leaving .drawer-overlay {
+  opacity: 0;
+  transition: opacity 200ms ease-in;
+}
+
+.drawer.drawer-leaving .drawer-content {
+  animation: none;
+  opacity: 0;
+  transform: var(--drawer-from, translateX(100%));
+  transition:
+    transform 200ms cubic-bezier(var(--ease-in)),
+    opacity 200ms ease-in;
 }
 
 /* In the framed shell the scrim dims the main panel only, not the menu on the frame. */

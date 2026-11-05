@@ -15,85 +15,6 @@ defmodule LineaUI.Components.Badge do
   use LineaUI.Component
   import LineaUI.Components.Icon, only: [glyph: 1]
 
-  @variants %{
-    "solid" => %{
-      "neutral" => "bg-slate-150 text-slate-800 dark:bg-navy-500 dark:text-navy-100",
-      "primary" => "bg-primary text-white dark:bg-accent",
-      "secondary" => "bg-secondary text-white",
-      "info" => "bg-info text-white",
-      "success" => "bg-success text-white",
-      "warning" => "bg-warning text-white",
-      "error" => "bg-error text-white",
-      "dark" => "bg-navy-700 text-white dark:bg-navy-900",
-      "light" => "bg-slate-150 text-slate-800",
-      "white" => "bg-white text-slate-800"
-    },
-    "glow" => %{
-      "neutral" =>
-        "bg-slate-150 text-slate-800 shadow-soft shadow-slate-200/50 dark:bg-navy-500 dark:text-navy-100 dark:shadow-navy-450/50",
-      "primary" =>
-        "bg-primary text-white shadow-soft shadow-primary/50 dark:bg-accent dark:shadow-accent/50",
-      "secondary" => "bg-secondary text-white shadow-soft shadow-secondary/50",
-      "info" => "bg-info text-white shadow-soft shadow-info/50",
-      "success" => "bg-success text-white shadow-soft shadow-success/50",
-      "warning" => "bg-warning text-white shadow-soft shadow-warning/50",
-      "error" => "bg-error text-white shadow-soft shadow-error/50",
-      "dark" =>
-        "bg-navy-700 text-white shadow-soft shadow-navy-700/50 dark:bg-navy-900 dark:shadow-navy-900/50",
-      "light" => "bg-slate-150 text-slate-800 shadow-soft shadow-slate-200/50",
-      "white" => "bg-white text-slate-800 shadow-soft shadow-white/50"
-    },
-    "soft" => %{
-      "neutral" => "bg-slate-150/60 text-slate-700 dark:bg-navy-500/40 dark:text-navy-100",
-      "primary" => "bg-primary/10 text-primary dark:bg-accent-light/15 dark:text-accent-light",
-      "secondary" =>
-        "bg-secondary/10 text-secondary dark:bg-secondary-light/15 dark:text-secondary-light",
-      "info" => "bg-info/10 text-info dark:bg-info/15",
-      "success" => "bg-success/10 text-success dark:bg-success/15",
-      "warning" => "bg-warning/10 text-warning dark:bg-warning/15",
-      "error" => "bg-error/10 text-error dark:bg-error/15",
-      "dark" => "bg-navy-700/10 text-navy-700 dark:bg-navy-900/40 dark:text-navy-100",
-      "light" => "bg-slate-150/60 text-slate-700",
-      "white" => "bg-white/20 text-white"
-    },
-    "outline" => %{
-      "neutral" =>
-        "border border-slate-300 text-slate-800 dark:border-navy-450 dark:text-navy-50",
-      "primary" =>
-        "border border-primary text-primary dark:border-accent-light dark:text-accent-light",
-      "secondary" =>
-        "border border-secondary text-secondary dark:border-secondary-light dark:text-secondary-light",
-      "info" => "border border-info text-info",
-      "success" => "border border-success text-success",
-      "warning" => "border border-warning text-warning",
-      "error" => "border border-error text-error",
-      "dark" => "border border-navy-700 text-navy-700 dark:border-navy-900 dark:text-navy-100",
-      "light" => "border border-slate-150 text-slate-800",
-      "white" => "border border-white text-white"
-    },
-    "flat" => %{
-      "neutral" => "text-slate-800 dark:text-navy-100",
-      "primary" => "text-primary dark:text-accent-light",
-      "secondary" => "text-secondary dark:text-secondary-light",
-      "info" => "text-info",
-      "success" => "text-success",
-      "warning" => "text-warning",
-      "error" => "text-error",
-      "dark" => "text-navy-700 dark:text-navy-100",
-      "light" => "text-slate-150",
-      "white" => "text-white"
-    }
-  }
-
-  @sizes %{
-    "xs" => "h-4.5 px-1.5 py-0 text-tiny-plus",
-    "sm" => "h-5 px-1.5 py-0",
-    "md" => "h-5.5 px-2 py-0 text-xs-plus",
-    "lg" => "h-6 px-2 py-0"
-  }
-
-  @shapes %{"rounded" => "", "pill" => "rounded-full", "square" => "rounded-none"}
-
   @doc """
   Renders a badge.
 
@@ -144,19 +65,10 @@ defmodule LineaUI.Components.Badge do
     ~H"""
     <span
       id={@id}
-      class={
-        merge([
-          "badge",
-          spacing(@dot),
-          size_class(@size),
-          variant_class(@variant, @color),
-          shape_class(@shape),
-          @class
-        ])
-      }
+      class={merge(["sg-badge", tone(@color), @class])}
       {@rest}
     >
-      <span :if={@dot} class="size-2 rounded-full bg-current"></span>
+      <span :if={@dot} class="dot"></span>
       {render_slot(@inner_block)}
       <button
         :if={@on_remove}
@@ -175,12 +87,12 @@ defmodule LineaUI.Components.Badge do
   defp remove_js(event, nil, id), do: JS.push(event, value: %{id: id})
   defp remove_js(event, target, id), do: JS.push(event, target: target, value: %{id: id})
 
-  defp spacing(true), do: "gap-2.5"
-  defp spacing(false), do: "gap-2"
-
-  defp size_class(nil), do: nil
-  defp size_class(size), do: @sizes[size]
-
-  defp variant_class(variant, color), do: @variants[variant][color]
-  defp shape_class(shape), do: @shapes[shape]
+  defp tone("success"), do: "pos"
+  defp tone("error"), do: "neg"
+  defp tone("warning"), do: "warn"
+  defp tone("info"), do: "info"
+  defp tone("primary"), do: "acc"
+  defp tone("secondary"), do: "acc"
+  defp tone("dark"), do: "solid"
+  defp tone(_color), do: nil
 end

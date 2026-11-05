@@ -10,7 +10,7 @@ defmodule LineaUI.Components.ClipboardTest do
     assert attr_of(html, "#c", "data-value") == ["secret"]
     assert attr_of(html, "#c", "data-toast") == ["Text Copied"]
     assert attr_of(html, "#c", "data-error-toast") == ["Error"]
-    assert "bg-primary" in classes(html, "#c")
+    assert "accent" in classes(html, "#c")
     assert String.trim(find(html, "#c") |> LazyHTML.text()) == "Copy"
   end
 
@@ -24,7 +24,7 @@ defmodule LineaUI.Components.ClipboardTest do
 
     assert attr_of(html, "#c", "data-from") == ["#text"]
     assert attr_of(html, "#c", "data-toast") == []
-    assert "h-6" in classes(html, "#c")
+    assert "sm" in classes(html, "#c")
     assert String.trim(find(html, "#c") |> LazyHTML.text()) == "Grab"
     assert attr_of(html, "#c", "data-on-copy") |> hd() =~ "copied"
   end

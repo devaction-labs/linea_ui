@@ -74,7 +74,7 @@ defmodule LineaUI.Components.FilterMenuTest do
     assert attr_of(html, "#f", "phx-hook") == ["LineaUI.Dropdown"]
     assert attr_of(html, "#f", "data-keep-submenus") == ["true"]
     assert attr_of(html, "#f", "data-close-on-select") == ["false"]
-    assert "border-slate-300" in classes(html, "#f [data-trigger] button")
+    assert "sg-btn" in classes(html, "#f [data-trigger] button")
 
     assert text_of(html, "#f [data-trigger] button > span:not([data-filter-applied])") ==
              "Filters"
@@ -104,8 +104,8 @@ defmodule LineaUI.Components.FilterMenuTest do
     assert [_] = find(html, "#f [data-trigger] button span.huge-filter") |> Enum.to_list()
     assert find(html, "#f [data-trigger] button svg") |> Enum.to_list() == []
     assert "border-dashed" in classes(html, "#f [data-trigger] button")
-    assert "bg-primary/10" in classes(html, "#f [data-trigger] button")
-    assert "h-7" in classes(html, "#f [data-trigger] button")
+    assert "soft" in classes(html, "#f [data-trigger] button")
+    assert "sm" in classes(html, "#f [data-trigger] button")
   end
 
   test "the locale names the trigger, Clear and Apply" do

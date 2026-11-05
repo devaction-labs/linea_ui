@@ -196,8 +196,7 @@ defmodule LineaUI.Components.OtpInput do
       assign(assigns,
         box_class: merge([@box, @sizes[assigns.size], filled(assigns.state), assigns.class]),
         labelledby: assigns.label && assigns.id <> "-label",
-        group_class:
-          merge(["flex w-full items-center gap-2.5", assigns.label && "mt-1.5"]),
+        group_class: merge(["flex w-full items-center gap-2.5", assigns.label && "mt-1.5"]),
         group_label: assigns.label || assigns.aria_label
       )
 

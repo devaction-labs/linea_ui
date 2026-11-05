@@ -457,8 +457,7 @@ defmodule LineaUI.Components.Icon do
   @doc "A Hugeicons icon by class name, or any other icon font class."
   attr :name, :string,
     required: true,
-    doc:
-      "`huge-search-01`, or any class such as `fa-solid fa-house`."
+    doc: "`huge-search-01`, or any class such as `fa-solid fa-house`."
 
   attr :class, :any, default: "size-5"
   attr :rest, :global

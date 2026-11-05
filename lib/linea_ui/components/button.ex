@@ -22,157 +22,6 @@ defmodule LineaUI.Components.Button do
   use LineaUI.Component
   import LineaUI.Components.Spinner, only: [spinner: 1]
 
-  @base "btn font-medium disabled:pointer-events-none disabled:select-none disabled:opacity-60 aria-disabled:pointer-events-none aria-disabled:select-none aria-disabled:opacity-60"
-
-  @variants %{
-    "solid" => %{
-      "neutral" =>
-        "bg-slate-150 text-slate-800 hover:bg-slate-200 focus:bg-slate-200 active:bg-slate-200/80 dark:bg-navy-500 dark:text-navy-50 dark:hover:bg-navy-450 dark:focus:bg-navy-450 dark:active:bg-navy-450/90",
-      "primary" =>
-        "bg-primary text-white hover:bg-primary-focus focus:bg-primary-focus active:bg-primary-focus/90 dark:bg-accent dark:hover:bg-accent-focus dark:focus:bg-accent-focus dark:active:bg-accent/90",
-      "secondary" =>
-        "bg-secondary text-white hover:bg-secondary-focus focus:bg-secondary-focus active:bg-secondary-focus/90",
-      "info" =>
-        "bg-info text-white hover:bg-info-focus focus:bg-info-focus active:bg-info-focus/90",
-      "success" =>
-        "bg-success text-white hover:bg-success-focus focus:bg-success-focus active:bg-success-focus/90",
-      "warning" =>
-        "bg-warning text-white hover:bg-warning-focus focus:bg-warning-focus active:bg-warning-focus/90",
-      "error" =>
-        "bg-error text-white hover:bg-error-focus focus:bg-error-focus active:bg-error-focus/90",
-      "mono" =>
-        "bg-slate-950 text-white hover:bg-slate-950/90 focus:bg-slate-950/90 active:bg-slate-950/80 dark:bg-navy-50 dark:text-navy-900 dark:hover:bg-navy-50/90",
-      "white" =>
-        "bg-white text-slate-800 hover:bg-slate-100 focus:bg-slate-100 active:bg-slate-100/80"
-    },
-    "glow" => %{
-      "neutral" =>
-        "bg-slate-150 text-slate-800 hover:bg-slate-200 hover:shadow-lg hover:shadow-slate-200/50 focus:bg-slate-200 focus:shadow-lg focus:shadow-slate-200/50 active:bg-slate-200/80 dark:bg-navy-500 dark:text-navy-50 dark:hover:bg-navy-450 dark:hover:shadow-navy-450/50 dark:focus:bg-navy-450 dark:focus:shadow-navy-450/50 dark:active:bg-navy-450/90",
-      "primary" =>
-        "bg-primary text-white hover:bg-primary-focus hover:shadow-lg hover:shadow-primary/50 focus:bg-primary-focus focus:shadow-lg focus:shadow-primary/50 active:bg-primary-focus/90 dark:bg-accent dark:hover:bg-accent-focus dark:hover:shadow-accent/50 dark:focus:bg-accent-focus dark:focus:shadow-accent/50 dark:active:bg-accent/90",
-      "secondary" =>
-        "bg-secondary text-white shadow-lg shadow-secondary/50 hover:bg-secondary-focus focus:bg-secondary-focus active:bg-secondary-focus/90",
-      "info" =>
-        "bg-info text-white hover:bg-info-focus hover:shadow-lg hover:shadow-info/50 focus:bg-info-focus focus:shadow-lg focus:shadow-info/50 active:bg-info-focus/90",
-      "success" =>
-        "bg-success text-white hover:bg-success-focus hover:shadow-lg hover:shadow-success/50 focus:bg-success-focus focus:shadow-lg focus:shadow-success/50 active:bg-success-focus/90",
-      "warning" =>
-        "bg-warning text-white shadow-lg shadow-warning/50 hover:bg-warning-focus focus:bg-warning-focus active:bg-warning-focus/90",
-      "error" =>
-        "bg-error text-white hover:bg-error-focus hover:shadow-lg hover:shadow-error/50 focus:bg-error-focus focus:shadow-lg focus:shadow-error/50 active:bg-error-focus/90",
-      "white" =>
-        "bg-white text-slate-800 hover:bg-slate-100 hover:shadow-lg hover:shadow-white/50 focus:bg-slate-100 focus:shadow-lg focus:shadow-white/50 active:bg-slate-100/80"
-    },
-    "outline" => %{
-      "neutral" =>
-        "border border-slate-300 text-slate-800 hover:bg-slate-150 focus:bg-slate-150 active:bg-slate-150/80 dark:border-navy-450 dark:text-navy-50 dark:hover:bg-navy-500 dark:focus:bg-navy-500 dark:active:bg-navy-500/90",
-      "primary" =>
-        "border border-primary text-primary hover:bg-primary hover:text-white focus:bg-primary focus:text-white active:bg-primary/90 dark:border-accent dark:text-accent-light dark:hover:bg-accent dark:hover:text-white dark:focus:bg-accent dark:focus:text-white dark:active:bg-accent/90",
-      "secondary" =>
-        "border border-secondary text-secondary hover:bg-secondary hover:text-white focus:bg-secondary focus:text-white active:bg-secondary/90 dark:text-secondary-light dark:hover:bg-secondary dark:hover:text-white dark:focus:bg-secondary dark:focus:text-white dark:active:bg-secondary/90",
-      "info" =>
-        "border border-info text-info hover:bg-info hover:text-white focus:bg-info focus:text-white active:bg-info/90",
-      "success" =>
-        "border border-success text-success hover:bg-success hover:text-white focus:bg-success focus:text-white active:bg-success/90",
-      "warning" =>
-        "border border-warning text-warning hover:bg-warning hover:text-white focus:bg-warning focus:text-white active:bg-warning/90",
-      "error" =>
-        "border border-error text-error hover:bg-error hover:text-white focus:bg-error focus:text-white active:bg-error/90",
-      "white" =>
-        "border border-white text-white hover:bg-white hover:text-slate-800 focus:bg-white focus:text-slate-800 active:bg-white/90",
-      "current" =>
-        "border border-current text-current hover:bg-current/10 focus:bg-current/10 active:bg-current/15"
-    },
-    "soft" => %{
-      "neutral" =>
-        "bg-slate-150/60 text-slate-700 hover:bg-slate-150 focus:bg-slate-150 active:bg-slate-150/80 dark:bg-navy-500/40 dark:text-navy-100 dark:hover:bg-navy-500 dark:focus:bg-navy-500 dark:active:bg-navy-500/90",
-      "primary" =>
-        "bg-primary/10 text-primary hover:bg-primary/20 focus:bg-primary/20 active:bg-primary/25 dark:bg-accent-light/10 dark:text-accent-light dark:hover:bg-accent-light/20 dark:focus:bg-accent-light/20 dark:active:bg-accent-light/25",
-      "secondary" =>
-        "bg-secondary/10 text-secondary hover:bg-secondary/20 focus:bg-secondary/20 active:bg-secondary/25 dark:bg-secondary-light/10 dark:text-secondary-light dark:hover:bg-secondary-light/20 dark:focus:bg-secondary-light/20 dark:active:bg-secondary-light/25",
-      "info" => "bg-info/10 text-info hover:bg-info/20 focus:bg-info/20 active:bg-info/25",
-      "success" =>
-        "bg-success/10 text-success hover:bg-success/20 focus:bg-success/20 active:bg-success/25",
-      "warning" =>
-        "bg-warning/10 text-warning hover:bg-warning/20 focus:bg-warning/20 active:bg-warning/25",
-      "error" => "bg-error/10 text-error hover:bg-error/20 focus:bg-error/20 active:bg-error/25",
-      "white" => "bg-white/10 text-white hover:bg-white/20 focus:bg-white/20 active:bg-white/25",
-      "current" =>
-        "bg-slate-150/60 text-current hover:bg-slate-150 focus:bg-slate-150 active:bg-slate-150/80 dark:bg-navy-500/40 dark:text-current dark:hover:bg-navy-500 dark:focus:bg-navy-500 dark:active:bg-navy-500/90"
-    },
-    "bordered" => %{
-      "neutral" =>
-        "border border-slate-300 bg-slate-150/60 text-slate-700 hover:bg-slate-150 focus:bg-slate-150 active:bg-slate-150/80 dark:border-navy-450 dark:bg-navy-500/40 dark:text-navy-100 dark:hover:bg-navy-500 dark:focus:bg-navy-500 dark:active:bg-navy-500/90",
-      "primary" =>
-        "border border-primary/30 bg-primary/10 text-primary hover:bg-primary/20 focus:bg-primary/20 active:bg-primary/25 dark:border-accent-light/30 dark:bg-accent-light/10 dark:text-accent-light dark:hover:bg-accent-light/20 dark:focus:bg-accent-light/20 dark:active:bg-accent-light/25",
-      "secondary" =>
-        "border border-secondary/30 bg-secondary/10 text-secondary hover:bg-secondary/20 focus:bg-secondary/20 active:bg-secondary/25 dark:border-secondary-light/30 dark:bg-secondary-light/10 dark:text-secondary-light dark:hover:bg-secondary-light/20 dark:focus:bg-secondary-light/20 dark:active:bg-secondary-light/25",
-      "info" =>
-        "border border-info/30 bg-info/10 text-info hover:bg-info/20 focus:bg-info/20 active:bg-info/25",
-      "success" =>
-        "border border-success/30 bg-success/10 text-success hover:bg-success/20 focus:bg-success/20 active:bg-success/25",
-      "warning" =>
-        "border border-warning/30 bg-warning/10 text-warning hover:bg-warning/20 focus:bg-warning/20 active:bg-warning/25",
-      "error" =>
-        "border border-error/30 bg-error/10 text-error hover:bg-error/20 focus:bg-error/20 active:bg-error/25",
-      "white" =>
-        "border border-white/30 bg-white/10 text-white hover:bg-white/20 focus:bg-white/20 active:bg-white/25",
-      "current" =>
-        "border border-current/30 bg-current/10 text-current hover:bg-current/20 focus:bg-current/20 active:bg-current/25"
-    },
-    "ghost" => %{
-      "neutral" =>
-        "text-slate-900 hover:bg-slate-100 focus:bg-slate-100 active:bg-slate-150 dark:text-navy-50 dark:hover:bg-navy-600 dark:focus:bg-navy-600",
-      "primary" => "text-primary hover:bg-primary/10 focus:bg-primary/10 active:bg-primary/15",
-      "error" => "text-error hover:bg-error/10 focus:bg-error/10 active:bg-error/15",
-      "mono" =>
-        "text-slate-950 hover:bg-slate-100 focus:bg-slate-100 dark:text-navy-50 dark:hover:bg-navy-600"
-    },
-    "dim" => %{
-      "neutral" =>
-        "text-slate-500 hover:text-slate-950 focus:text-slate-950 dark:text-navy-300 dark:hover:text-navy-50"
-    },
-    "flat" => %{
-      "neutral" =>
-        "text-slate-700 hover:bg-slate-300/20 focus:bg-slate-300/20 active:bg-slate-300/25 dark:text-navy-100 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25",
-      "primary" =>
-        "text-primary hover:bg-primary/20 focus:bg-primary/20 active:bg-primary/25 dark:text-accent-light dark:hover:bg-accent-light/20 dark:focus:bg-accent-light/20 dark:active:bg-accent-light/25",
-      "secondary" =>
-        "text-secondary hover:bg-secondary/20 focus:bg-secondary/20 active:bg-secondary/25 dark:text-secondary-light dark:hover:bg-secondary-light/20 dark:focus:bg-secondary-light/20 dark:active:bg-secondary-light/25",
-      "info" => "text-info hover:bg-info/20 focus:bg-info/20 active:bg-info/25",
-      "success" => "text-success hover:bg-success/20 focus:bg-success/20 active:bg-success/25",
-      "warning" => "text-warning hover:bg-warning/20 focus:bg-warning/20 active:bg-warning/25",
-      "error" => "text-error hover:bg-error/20 focus:bg-error/20 active:bg-error/25",
-      "white" => "text-white hover:bg-white/20 focus:bg-white/20 active:bg-white/25",
-      "current" =>
-        "text-current hover:bg-slate-300/20 focus:bg-slate-300/20 active:bg-slate-300/25 dark:text-current dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25"
-    }
-  }
-
-  @glass "border border-white/10 bg-white/20 text-white hover:bg-white/30 focus:bg-white/30 active:bg-white/40 dark:bg-white/20 dark:text-white dark:hover:bg-white/30 dark:focus:bg-white/30"
-
-  @sizes %{
-    "xs" => "h-6 rounded-sm px-2 text-xs",
-    "sm" => "h-7 gap-1.25 rounded-md px-2.5 text-xs",
-    "md" => "",
-    "lg" => "h-10 gap-1.5 px-4 text-sm",
-    "xl" => "h-12 px-5 text-base"
-  }
-
-  @icon_sizes %{
-    "xs" => "size-6 rounded-sm p-0 text-xs",
-    "sm" => "size-7 rounded-md p-0 text-xs",
-    "md" => "size-8.5 p-0",
-    "lg" => "size-10 p-0 text-sm",
-    "xl" => "size-12 p-0 text-base"
-  }
-
-  @shapes %{
-    "rounded" => "",
-    "pill" => "rounded-full",
-    "square" => "rounded-none"
-  }
-
   @doc """
   Renders a button, or a link when `href`, `navigate` or `patch` is given.
   """
@@ -191,7 +40,7 @@ defmodule LineaUI.Components.Button do
   )
 
   attr(:size, :string, default: "md", values: ~w(xs sm md lg xl))
-  attr(:shape, :string, default: "rounded", values: ~w(rounded pill square))
+  attr(:shape, :string, default: "pill", values: ~w(rounded pill square))
   attr(:icon, :boolean, default: false, doc: "A square button that holds only an icon.")
   attr(:type, :string, default: "button")
   attr(:disabled, :boolean, default: false)
@@ -221,22 +70,40 @@ defmodule LineaUI.Components.Button do
     |> render_button()
   end
 
+  # The canvas buttons: `sg-btn` (pill) and `sg-ib` (the round icon button), with their own variants.
   defp classes(assigns) do
     merge([
-      @base,
-      variant_class(assigns.variant, assigns.color),
-      size_class(assigns),
-      @shapes[assigns.shape],
-      assigns.loading && "disabled:opacity-85 aria-disabled:opacity-85",
+      (assigns.icon && icon_class(assigns)) || button_class(assigns),
+      assigns.loading && "opacity-85",
       assigns.class
     ])
   end
 
-  defp variant_class("glass", _color), do: @glass
-  defp variant_class(variant, color), do: @variants[variant][color]
+  defp icon_class(%{size: size, variant: variant}) do
+    [
+      "sg-ib",
+      size in ~w(xs sm) && "sm",
+      variant in ~w(flat ghost dim) && "plain"
+    ]
+  end
 
-  defp size_class(%{icon: true, size: size}), do: @icon_sizes[size]
-  defp size_class(%{size: size}), do: @sizes[size]
+  defp button_class(%{color: color, variant: variant, size: size, shape: shape}) do
+    [
+      "sg-btn",
+      tone(color, variant),
+      size in ~w(xs sm) && "sm",
+      size in ~w(lg xl) && "lg",
+      shape == "square" && "sq"
+    ]
+  end
+
+  defp tone("mono", _variant), do: "solid"
+  defp tone("error", _variant), do: "danger"
+  defp tone("primary", "solid"), do: "accent"
+  defp tone("primary", "glow"), do: "accent"
+  defp tone(_color, variant) when variant in ~w(soft bordered), do: "soft"
+  defp tone(_color, variant) when variant in ~w(flat ghost dim), do: "ghost"
+  defp tone(_color, _variant), do: nil
 
   defp render_button(%{rest: rest} = assigns)
        when is_map_key(rest, :href) or is_map_key(rest, :navigate) or is_map_key(rest, :patch) do

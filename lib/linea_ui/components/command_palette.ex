@@ -130,7 +130,10 @@ defmodule LineaUI.Components.CommandPalette do
     default: 200,
     doc: "Milliseconds between the last keystroke and the `on_search` push."
 
-  attr :query, :string, default: "", doc: "The text the input holds every time the palette opens, narrowing the items."
+  attr :query, :string,
+    default: "",
+    doc: "The text the input holds every time the palette opens, narrowing the items."
+
   attr :on_open, :any, default: nil
   attr :on_close, :any, default: nil
   attr :target, :any, default: nil, doc: "The `phx-target` of every event."

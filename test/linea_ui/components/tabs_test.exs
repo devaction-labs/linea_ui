@@ -47,7 +47,7 @@ defmodule LineaUI.Components.TabsTest do
   end
 
   test "variants change the tab look" do
-    assert "border-b-2" in classes(render_tabs(%{}), "#t-tab-home")
+    assert "sg-tab" in classes(render_tabs(%{}), "#t-tab-home")
     assert "aria-selected:bg-white" in classes(render_tabs(%{variant: "boxed"}), "#t-tab-home")
     assert "bg-slate-200" in classes(render_tabs(%{variant: "boxed"}), "#t > div")
     pill = classes(render_tabs(%{variant: "pill"}), "#t-tab-home")
@@ -100,7 +100,7 @@ defmodule LineaUI.Components.TabsTest do
     assert ["px-3", "py-1", "text-xs-plus"] -- sm == []
     refute "py-1.5" in sm
     assert ["px-2.5", "py-0.5", "text-xs"] -- xs == []
-    assert "px-0" in line and "pt-2" in line
+    assert "sg-tab" in line
   end
 
   test "text variant has no chrome" do

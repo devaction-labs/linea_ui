@@ -153,17 +153,17 @@ defmodule LineaUI.Components.Table do
   }
 
   @table %{
-    "basic" => "w-full text-left text-[13.5px]",
+    "basic" => "sg-table w-full text-left",
     "bordered" => "w-full text-left text-[13.5px]",
-    "hoverable" => "is-hoverable w-full text-left text-[13.5px]",
-    "zebra" => "is-zebra w-full text-left text-[13.5px]",
+    "hoverable" => "sg-table w-full text-left",
+    "zebra" => "sg-table w-full text-left",
     "grid" => "is-hoverable w-full text-left",
     "data" => @data_table,
     "data-grid" => @data_table
   }
 
   @head_row %{
-    "basic" => "border-y border-transparent border-b-slate-200 dark:border-b-navy-500",
+    "basic" => "",
     "bordered" => "",
     "hoverable" => "",
     "zebra" => "",
@@ -173,9 +173,9 @@ defmodule LineaUI.Components.Table do
   }
 
   @body_row %{
-    "basic" => "border-y border-transparent border-b-slate-200 dark:border-b-navy-500",
+    "basic" => "",
     "bordered" => "[&:last-child>td]:border-b-0",
-    "hoverable" => "border-y border-transparent border-b-slate-200 dark:border-b-navy-500",
+    "hoverable" => "",
     "zebra" => "",
     "grid" => "border border-transparent border-b-slate-200 dark:border-b-navy-500",
     "data" =>
@@ -186,16 +186,12 @@ defmodule LineaUI.Components.Table do
   @data_th "h-10 whitespace-nowrap px-3.5 py-0 font-inter text-[13px] font-normal text-slate-500 dark:text-navy-300"
 
   @th %{
-    "basic" =>
-      "h-[38px] whitespace-nowrap px-3 py-0 text-[12.5px] font-normal text-slate-500 dark:text-navy-300 lg:px-4",
+    "basic" => "",
     "bordered" =>
       "whitespace-nowrap border border-t-0 border-slate-200 px-3 py-3 font-normal text-slate-500 first:border-l-0 last:border-r-0 dark:border-navy-500 dark:text-navy-300 lg:px-4",
-    "hoverable" =>
-      "h-[38px] whitespace-nowrap px-4 py-0 text-[12.5px] font-normal text-slate-500 dark:text-navy-300 lg:px-4",
-    "zebra" =>
-      "h-[38px] whitespace-nowrap px-4 py-0 text-[12.5px] font-normal text-slate-500 dark:text-navy-300 lg:px-4",
-    "grid" =>
-      "whitespace-nowrap px-3 py-3 font-normal text-slate-500 dark:text-navy-300 lg:px-4",
+    "hoverable" => "",
+    "zebra" => "",
+    "grid" => "whitespace-nowrap px-3 py-3 font-normal text-slate-500 dark:text-navy-300 lg:px-4",
     "data" => @data_th,
     "data-grid" =>
       @data_th <>
@@ -203,11 +199,11 @@ defmodule LineaUI.Components.Table do
   }
 
   @td %{
-    "basic" => "h-14 whitespace-nowrap px-4 py-0 sm:px-4",
+    "basic" => "",
     "bordered" =>
       "whitespace-nowrap border border-slate-200 px-3 py-3 first:border-l-0 last:border-r-0 dark:border-navy-500 lg:px-4",
-    "hoverable" => "h-14 whitespace-nowrap px-4 py-0 sm:px-4",
-    "zebra" => "h-14 whitespace-nowrap px-4 py-0 sm:px-4",
+    "hoverable" => "",
+    "zebra" => "",
     "grid" => "whitespace-nowrap px-4 py-3",
     "data" => "h-12 whitespace-nowrap px-3.5 py-0",
     "data-grid" =>

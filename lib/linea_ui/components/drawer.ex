@@ -216,6 +216,7 @@ defmodule LineaUI.Components.Drawer do
       aria-labelledby={@headed && "#{@id}-title"}
       phx-hook="LineaUI.Dialog"
       phx-mounted={JS.ignore_attributes(["data-state", "aria-hidden", "style"])}
+      phx-remove={JS.add_class("drawer-leaving", to: "##{@id}") |> JS.hide(to: "##{@id}", time: 220)}
       data-state="closed"
       data-open={bool(@open)}
       data-kind="drawer"
