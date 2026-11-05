@@ -376,3 +376,35 @@
 /* The kit's segmented control marks the chosen segment with aria-pressed; the canvas calls it `on`. */
 .sg-seg button[aria-pressed="true"]{background:var(--panel);color:var(--ink);font-weight:500;box-shadow:0 0 0 1px var(--line),0 1px 3px rgb(23 23 26/.08)}
 :is(.dark, .dark .sg:not([data-theme="light"]), .sg[data-theme="dark"]) .sg-seg button[aria-pressed="true"]{background:var(--raised)}
+
+/* The calendar of the date pickers, drawn as the canvas `DatePicker`/`Calendar`: a 22px card, the month
+   on the left with its arrows on the right, 36px days with 10px corners, ink for the chosen day, the accent tint
+   for a range and a ring for today. */
+.flatpickr-calendar{width:auto;min-width:332px;padding:18px 20px 16px;border-radius:22px;background:var(--panel);box-shadow:0 0 0 1px var(--line),var(--shadow-lg);font-family:var(--sans);color:var(--fg)}
+.flatpickr-calendar.arrowTop:before,.flatpickr-calendar.arrowTop:after,.flatpickr-calendar.arrowBottom:before,.flatpickr-calendar.arrowBottom:after{display:none}
+.flatpickr-months{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
+.flatpickr-months .flatpickr-month{order:0;flex:1;height:auto;text-align:left;color:var(--ink);overflow:visible}
+.flatpickr-current-month{position:static;display:flex;align-items:center;gap:6px;width:auto;height:auto;padding:0;font-size:15px;font-weight:600;line-height:24px;letter-spacing:-.01em;text-align:left;color:var(--ink)}
+.flatpickr-current-month .flatpickr-monthDropdown-months,.flatpickr-current-month input.cur-year{appearance:none;background:none;border:0;padding:0;margin:0;font:inherit;color:var(--ink);box-shadow:none;width:auto;height:auto}
+.flatpickr-current-month input.cur-year{width:3.2em}
+.flatpickr-current-month .numInputWrapper:hover,.flatpickr-current-month .flatpickr-monthDropdown-months:hover{background:none}
+.flatpickr-current-month .arrowUp,.flatpickr-current-month .arrowDown{display:none}
+.flatpickr-prev-month,.flatpickr-next-month{position:static;order:1;width:28px;height:28px;padding:0;display:grid;place-items:center;border-radius:50%;color:var(--muted);fill:currentColor}
+.flatpickr-prev-month:hover,.flatpickr-next-month:hover{background:var(--hover);color:var(--ink)}
+.flatpickr-prev-month{order:1}.flatpickr-next-month{order:2}
+.flatpickr-innerContainer{display:block}
+.flatpickr-rContainer{width:100%}
+.flatpickr-weekdays{height:28px;margin-bottom:2px}
+.flatpickr-weekdaycontainer{display:flex}
+span.flatpickr-weekday{flex:1;background:none;font-size:11.5px;font-weight:450;color:var(--faint);line-height:28px}
+.flatpickr-days,.dayContainer{width:100%;min-width:0;max-width:none}
+.dayContainer{padding:0;display:flex;flex-wrap:wrap;justify-content:flex-start;gap:2px 0}
+.flatpickr-day{flex:0 0 calc(100% / 7);max-width:none;width:auto;height:36px;margin:0;border:0;border-radius:10px;line-height:36px;font-size:13px;font-weight:400;color:var(--fg);font-variant-numeric:tabular-nums;background:none}
+.flatpickr-day:hover{background:var(--hover);border:0}
+.flatpickr-day.today{box-shadow:inset 0 0 0 1px var(--line-strong);background:none;border:0;color:var(--fg)}
+.flatpickr-day.prevMonthDay,.flatpickr-day.nextMonthDay,.flatpickr-day.flatpickr-disabled{color:var(--faint)}
+.flatpickr-day.selected,.flatpickr-day.startRange,.flatpickr-day.endRange,.flatpickr-day.selected:hover{background:var(--solid);color:var(--on-solid);font-weight:600;border:0;box-shadow:none}
+.flatpickr-day.inRange{background:var(--accent-soft);color:var(--accent-ink);border-radius:0;border:0;box-shadow:none}
+.flatpickr-day.startRange{border-radius:10px 0 0 10px}.flatpickr-day.endRange{border-radius:0 10px 10px 0}
+.flatpickr-day.flatpickr-disabled,.flatpickr-day.flatpickr-disabled:hover{background:none;cursor:not-allowed}
+.flatpickr-time{border-top:1px solid var(--line);margin-top:8px}
