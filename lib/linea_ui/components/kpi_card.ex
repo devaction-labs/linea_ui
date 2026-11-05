@@ -27,7 +27,6 @@ defmodule LineaUI.Components.KpiCard do
   """
 
   use LineaUI.Component
-  import LineaUI.Components.Icon, only: [glyph: 1]
 
   @tones %{
     "success" => "bg-success/10 text-success dark:bg-success/15",
@@ -170,7 +169,7 @@ defmodule LineaUI.Components.KpiCard do
             @tone
           ]}
         >
-          <.glyph name={trend_glyph(@trend)} class="size-3" stroke_width="2.6" />{@delta}
+          <.trend_arrow trend={@trend} />{@delta}
         </span>
       </div>
       <div class="flex items-end justify-between gap-3">
@@ -282,7 +281,7 @@ defmodule LineaUI.Components.KpiCard do
             @tone
           ]}
         >
-          <.glyph name={trend_glyph(@trend)} class="size-3" stroke_width="2.6" />{@delta}
+          <.trend_arrow trend={@trend} />{@delta}
         </span>
         <span :if={@hint}>{@hint}</span>
       </div>
@@ -345,9 +344,26 @@ defmodule LineaUI.Components.KpiCard do
   defp default_tone("down"), do: "error"
   defp default_tone("flat"), do: "neutral"
 
-  defp trend_glyph("up"), do: :chevron_up
-  defp trend_glyph("down"), do: :chevron_down
-  defp trend_glyph("flat"), do: :minus
+  attr(:trend, :string, required: true)
+
+  defp trend_arrow(assigns) do
+    ~H"""
+    <svg
+      class="size-3 shrink-0"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-hidden="true"
+    >
+      <path :if={@trend == "up"} d="M7 17 17 7M9 7h8v8" />
+      <path :if={@trend == "down"} d="M7 7l10 10M17 9v8H9" />
+      <path :if={@trend == "flat"} d="M5 12h14" />
+    </svg>
+    """
+  end
 
   # The y of each point, `@pad` from the edges, the highest value at the top.
   defp ys(values) do
