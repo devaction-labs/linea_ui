@@ -100,7 +100,7 @@ defmodule LineaUI.Components.TabsTest do
     assert ["px-3", "py-1", "text-xs-plus"] -- sm == []
     refute "py-1.5" in sm
     assert ["px-2.5", "py-0.5", "text-xs"] -- xs == []
-    assert "px-3" in line and "py-2" in line
+    assert "px-0" in line and "pt-2" in line
   end
 
   test "text variant has no chrome" do

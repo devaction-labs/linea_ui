@@ -53,7 +53,7 @@ defmodule LineaUI.Components.Tabs do
 
   @tab_base %{
     {"line", "horizontal"} =>
-      "btn gap-2 rounded-none border-b-2 px-3 py-2 font-medium aria-selected:border-primary aria-selected:text-primary dark:aria-selected:border-accent dark:aria-selected:text-accent-light not-aria-selected:border-transparent not-aria-selected:hover:text-slate-800 not-aria-selected:focus:text-slate-800 dark:not-aria-selected:hover:text-navy-100 dark:not-aria-selected:focus:text-navy-100",
+      "btn gap-1.5 rounded-none border-b-2 px-0 pt-2 pb-2.5 text-[13.5px] font-normal aria-selected:border-slate-900 aria-selected:font-medium aria-selected:text-slate-900 dark:aria-selected:border-navy-50 dark:aria-selected:text-navy-50 not-aria-selected:border-transparent not-aria-selected:hover:text-slate-800 not-aria-selected:focus:text-slate-800 dark:not-aria-selected:hover:text-navy-100 dark:not-aria-selected:focus:text-navy-100",
     {"line", "vertical"} =>
       "btn justify-start gap-2 rounded-none border-r-2 px-3 py-2 text-left font-medium aria-selected:border-primary aria-selected:text-primary dark:aria-selected:border-accent dark:aria-selected:text-accent-light not-aria-selected:border-transparent not-aria-selected:hover:text-slate-800 not-aria-selected:focus:text-slate-800 dark:not-aria-selected:hover:text-navy-100 dark:not-aria-selected:focus:text-navy-100",
     {"boxed", "horizontal"} =>
@@ -114,7 +114,7 @@ defmodule LineaUI.Components.Tabs do
   }
 
   @list %{
-    {"line", "horizontal"} => "flex",
+    {"line", "horizontal"} => "flex gap-[18px]",
     {"line", "vertical"} => "flex flex-col",
     {"boxed", "horizontal"} => "flex px-1.5 py-1",
     {"boxed", "vertical"} => "flex flex-col px-1.5 py-1",
