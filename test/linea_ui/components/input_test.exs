@@ -12,8 +12,7 @@ defmodule LineaUI.Components.InputTest do
     assert find(html, "label") |> Enum.to_list() == []
     classes = classes(html, "input")
     assert "form-input" in classes
-    assert "border-slate-300" in classes
-    assert "dark:focus:border-accent" in classes
+    assert "border-0" in classes
   end
 
   test "variant, size and shape pick LineOne's classes and class overrides them" do

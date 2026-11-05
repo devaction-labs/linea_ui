@@ -77,7 +77,7 @@ defmodule LineaUI.Components.Input do
 
   @variants %{
     "outlined" =>
-      "form-input w-full rounded-[11px] border border-slate-300 bg-white dark:bg-navy-750 px-3 py-0 placeholder:text-slate-500 hover:border-slate-400 focus:border-primary disabled:pointer-events-none disabled:select-none disabled:border-none disabled:bg-zinc-100 dark:border-navy-450 dark:hover:border-navy-400 dark:focus:border-accent dark:disabled:bg-navy-600",
+      "form-input w-full rounded-[11px] border-0 bg-white px-3 py-0 text-[14px] shadow-[inset_0_0_0_1px_var(--color-slate-300),0_1px_2px_rgb(23_23_26/.05)] placeholder:text-slate-400 hover:shadow-[inset_0_0_0_1px_var(--color-slate-400),0_1px_2px_rgb(23_23_26/.05)] focus:shadow-[inset_0_0_0_1px_var(--color-primary),0_0_0_4px_color-mix(in_oklab,var(--color-primary)_14%,transparent)] focus:ring-0 disabled:pointer-events-none disabled:select-none disabled:bg-zinc-100 dark:bg-navy-750 dark:shadow-[inset_0_0_0_1px_var(--color-navy-450)] dark:hover:shadow-[inset_0_0_0_1px_var(--color-navy-400)] dark:focus:shadow-[inset_0_0_0_1px_var(--color-accent),0_0_0_4px_color-mix(in_oklab,var(--color-accent)_16%,transparent)] dark:disabled:bg-navy-600",
     "filled" =>
       "form-input w-full rounded-[11px] bg-slate-150 px-3 py-0 ring-primary/50 placeholder:text-slate-500 hover:bg-slate-200 focus:ring-3 disabled:pointer-events-none disabled:select-none disabled:opacity-60 dark:bg-navy-900/90 dark:ring-accent/50 dark:placeholder:text-navy-300 dark:hover:bg-navy-900 dark:focus:bg-navy-900",
     "plain" => "form-input w-full bg-transparent px-3 py-2 placeholder:text-slate-500"
