@@ -419,9 +419,9 @@ input.form-radio{appearance:none;-webkit-appearance:none;width:18px;height:18px;
 input.form-radio:checked{background-image:none;background-color:var(--solid);box-shadow:none}
 input.form-radio:checked::after{content:"";width:6px;height:6px;border-radius:50%;background:var(--on-solid)}
 input.form-switch{appearance:none;-webkit-appearance:none;width:36px;height:22px;border:0;border-radius:var(--pill);background:var(--line-strong);position:relative;flex:none;transition:background-color .2s}
-input.form-switch::before{content:"";position:absolute;top:3px;left:3px;width:16px;height:16px;margin:0;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgb(0 0 0/.2);transform:none;transition:left .2s}
+input.form-switch::before{translate:none !important;content:"";position:absolute;top:3px;left:3px;width:16px;height:16px;margin:0;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgb(0 0 0/.2);transform:none;transition:left .2s}
 input.form-switch:checked{background:var(--accent)}
-input.form-switch:checked::before{left:17px;transform:none;background:#fff}
+input.form-switch:checked::before{left:17px;transform:none;translate:none !important;background:#fff}
 
 /* The icons of the canvas shell and settings, in the canvas stroke (1.7), over the Hugeicons that name them. */
 .sg .huge-home-01{--huge-home-01:url("data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%221.7%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Cpath d=%22M3 11l9-7 9 7M5 10v10h14V10%22/%3E%3C/svg%3E")}
