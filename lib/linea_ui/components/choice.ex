@@ -115,7 +115,7 @@ defmodule LineaUI.Components.Choice do
 
   @chip_count "inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-white px-1.5 text-tiny-plus font-semibold text-slate-600 group-has-checked/choice:bg-white/20 group-has-checked/choice:text-white dark:bg-navy-700 dark:text-navy-100 dark:group-has-checked/choice:bg-white/20 dark:group-has-checked/choice:text-white"
 
-  @card "group/choice relative flex cursor-pointer flex-col items-start gap-3 rounded-xl border border-slate-200 p-4 transition-[border-color,box-shadow,background-color] duration-200 hover:border-slate-300 has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-primary/50 has-disabled:pointer-events-none has-disabled:opacity-60 dark:border-navy-450 dark:hover:border-navy-400 dark:has-focus-visible:outline-accent/50"
+  @card "group/choice relative flex cursor-pointer flex-row items-start gap-3 rounded-[14px] border border-slate-150 p-3.5 transition-[border-color,box-shadow,background-color] duration-200 hover:border-slate-300 has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-primary/50 has-disabled:pointer-events-none has-disabled:opacity-60 dark:border-navy-450 dark:hover:border-navy-400 dark:has-focus-visible:outline-accent/50"
 
   @card_tones %{
     "neutral" => "has-checked:border-slate-500 dark:has-checked:border-navy-300",
@@ -285,10 +285,10 @@ defmodule LineaUI.Components.Choice do
         <.icon name={@icon} class="size-5" />
       </span>
       <span class="flex min-w-0 flex-col">
-        <span class="text-[13px] leading-4 font-semibold text-slate-950 dark:text-navy-50">
+        <span class="text-sm leading-5 font-medium text-slate-900 dark:text-navy-50">
           {@label}{render_slot(@content)}
         </span>
-        <span :if={@description} class="mt-1 text-[13px] text-slate-600 dark:text-navy-200">
+        <span :if={@description} class="text-[12.5px] text-slate-400 dark:text-navy-300">
           {@description}
         </span>
       </span>

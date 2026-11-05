@@ -58,7 +58,7 @@ defmodule LineaUI.Components.ChoiceTest do
       assert "is-basic" in classes(html, "input")
       card = classes(html, "label")
       assert "has-checked:border-success" in card
-      assert "border-slate-200" in card
+      assert "border-slate-150" in card
       assert [_] = find(html, "label span.huge-store-01, label .huge-store-01") |> Enum.to_list()
       assert html |> find("label") |> Enum.at(0) |> LazyHTML.text() =~ "For one store"
       assert html |> find("label") |> Enum.at(0) |> LazyHTML.text() =~ "3"

@@ -37,11 +37,11 @@ defmodule LineaUI.Components.RadioTest do
     assert "size-5" in classes(render(~H|<.checkbox name="c" />|), "input")
   end
 
-  test "the card is a 12px rounded box with 16px of padding and a 1px border that turns to the color when chosen" do
+  test "the card is a 14px rounded row with 14px of padding and a 1px border that turns to the color when chosen" do
     html = render(~H|<.radio_group name="r" variant="card" value="a" options={~w(a b)} />|)
     card = classes(html, "label")
-    assert "p-4" in card
-    assert "rounded-xl" in card
+    assert "p-3.5" in card
+    assert "rounded-[14px]" in card
     assert "border" in card
     assert "has-checked:border-slate-500" in card
     refute "has-checked:ring-3" in card
