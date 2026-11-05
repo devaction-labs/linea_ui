@@ -183,19 +183,19 @@ defmodule LineaUI.Components.Table do
     "data-grid" => ""
   }
 
-  @data_th "h-10 whitespace-nowrap bg-slate-200 px-3.5 py-0 font-inter text-[11.5px] font-semibold tracking-[.05em] uppercase text-slate-800 dark:bg-navy-800 dark:text-navy-100"
+  @data_th "h-10 whitespace-nowrap px-3.5 py-0 font-inter text-[13px] font-normal text-slate-500 dark:text-navy-300"
 
   @th %{
     "basic" =>
-      "whitespace-nowrap px-3 py-3 font-semibold uppercase text-slate-800 dark:text-navy-100 lg:px-5",
+      "whitespace-nowrap px-3 py-3 font-normal text-slate-500 dark:text-navy-300 lg:px-5",
     "bordered" =>
-      "whitespace-nowrap border border-t-0 border-slate-200 px-3 py-3 font-semibold uppercase text-slate-800 first:border-l-0 last:border-r-0 dark:border-navy-500 dark:text-navy-100 lg:px-5",
+      "whitespace-nowrap border border-t-0 border-slate-200 px-3 py-3 font-normal text-slate-500 first:border-l-0 last:border-r-0 dark:border-navy-500 dark:text-navy-300 lg:px-5",
     "hoverable" =>
-      "whitespace-nowrap bg-slate-200 px-4 py-3 font-semibold uppercase text-slate-800 dark:bg-navy-800 dark:text-navy-100 lg:px-5",
+      "whitespace-nowrap px-4 py-3 font-normal text-slate-500 dark:text-navy-300 lg:px-5",
     "zebra" =>
-      "whitespace-nowrap bg-slate-200 px-4 py-3 font-semibold uppercase text-slate-800 dark:bg-navy-800 dark:text-navy-100 lg:px-5",
+      "whitespace-nowrap px-4 py-3 font-normal text-slate-500 dark:text-navy-300 lg:px-5",
     "grid" =>
-      "whitespace-nowrap bg-slate-200 px-3 py-3 font-semibold uppercase text-slate-800 dark:bg-navy-800 dark:text-navy-100 lg:px-4",
+      "whitespace-nowrap px-3 py-3 font-normal text-slate-500 dark:text-navy-300 lg:px-4",
     "data" => @data_th,
     "data-grid" =>
       @data_th <>
@@ -254,7 +254,7 @@ defmodule LineaUI.Components.Table do
     peek_label: "Hidden columns"
   }
 
-  @sort_button "-mx-1.5 inline-flex h-7 max-w-full cursor-pointer items-center gap-1.5 rounded-md px-1.5 text-left font-semibold uppercase outline-hidden transition-colors hover:bg-slate-300/40 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-primary/55 dark:hover:bg-navy-450/40"
+  @sort_button "-mx-1.5 inline-flex h-7 max-w-full cursor-pointer items-center gap-1.5 rounded-md px-1.5 text-left font-normal outline-hidden transition-colors hover:bg-slate-300/40 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-primary/55 dark:hover:bg-navy-450/40"
 
   @foot_td "whitespace-nowrap border-t border-slate-200 px-4 py-3 font-semibold text-slate-700 dark:border-navy-500 dark:text-navy-100 sm:px-5"
 
