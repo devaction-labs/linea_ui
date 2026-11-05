@@ -84,24 +84,7 @@ defmodule LineaUI.Components.Card do
 
   use LineaUI.Component
 
-  @solid %{
-    "primary" => "rounded-lg bg-primary text-white dark:bg-accent",
-    "secondary" => "rounded-lg bg-secondary text-white",
-    "info" => "rounded-lg bg-info text-white",
-    "success" => "rounded-lg bg-success text-white",
-    "warning" => "rounded-lg bg-warning text-white",
-    "error" => "rounded-lg bg-error text-white"
-  }
 
-  @glow %{
-    "primary" =>
-      "rounded-lg bg-primary text-white shadow-lg shadow-primary/50 dark:bg-accent dark:shadow-accent/50",
-    "secondary" => "rounded-lg bg-secondary text-white shadow-lg shadow-secondary/50",
-    "info" => "rounded-lg bg-info text-white shadow-lg shadow-info/50",
-    "success" => "rounded-lg bg-success text-white shadow-lg shadow-success/50",
-    "warning" => "rounded-lg bg-warning text-white shadow-lg shadow-warning/50",
-    "error" => "rounded-lg bg-error text-white shadow-lg shadow-error/50"
-  }
 
   @gradient_outlines %{
     "purple-indigo" => "rounded-lg bg-gradient-to-r from-purple-500 to-blue-600 p-1",
