@@ -83,7 +83,7 @@ defmodule LineaUI.Components.KpiCard do
         </span>
       </div>
       <div class="sg-kpi-row">
-        <span class="sg-kpi-v">{@value}<small :if={@unit}>{@unit}</small></span>
+        <span class="sg-kpi-v">{@value}<small>{@unit}</small></span>
         <svg
           :if={@paths}
           class="sg-spark"

@@ -234,7 +234,7 @@ defmodule LineaUI.Components.AppShell do
       id={@id}
       class={
         merge([
-          "linea-frame flex h-dvh flex-col gap-2.5 bg-slate-50 max-md:pt-14 md:flex-row md:p-2.5 dark:bg-navy-900",
+          "sg linea-frame flex h-dvh flex-col gap-2.5 bg-slate-50 max-md:pt-14 md:flex-row md:p-2.5 dark:bg-navy-900",
           @class
         ])
       }
