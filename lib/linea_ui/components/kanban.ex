@@ -97,7 +97,7 @@ defmodule LineaUI.Components.Kanban do
 
   @board "flex items-start gap-3.5 overflow-x-auto px-0.5 pb-3"
 
-  @column "flex w-[272px] flex-none flex-col gap-2.5 rounded-[14px] bg-slate-50 p-2.5 ring-1 ring-slate-150 ring-inset data-[over]:bg-primary/10 data-[disabled=true]:opacity-60 dark:bg-navy-900 dark:ring-navy-500 dark:data-[over]:bg-accent/[.18]"
+  @column "flex w-[272px] flex-none flex-col gap-2.5 rounded-[18px] bg-slate-50 p-3 ring-1 ring-slate-150 ring-inset data-[over]:bg-primary/10 data-[disabled=true]:opacity-60 dark:bg-navy-900 dark:ring-navy-500 dark:data-[over]:bg-accent/[.18]"
 
   @colors %{
     "neutral" => %{
@@ -126,7 +126,7 @@ defmodule LineaUI.Components.Kanban do
     }
   }
 
-  @card "group relative flex cursor-grab flex-col gap-[9px] rounded-xl bg-white p-3 shadow-[0_0_0_1px_var(--color-slate-200),0_1px_2px_rgb(0_0_0/0.05)] transition-shadow hover:shadow-[0_0_0_1px_var(--color-slate-300),0_8px_20px_-10px_rgb(16_24_64/0.3)] active:cursor-grabbing focus-within:outline-2 focus-within:outline-offset-1 focus-within:outline-primary/50 dark:focus-within:outline-accent/50 data-[dragging]:shadow-none dark:bg-navy-700 dark:shadow-[0_0_0_1px_var(--color-navy-500)] dark:hover:shadow-[0_0_0_1px_var(--color-navy-450)]"
+  @card "group relative flex cursor-grab flex-col gap-2.5 rounded-[14px] bg-white p-3.5 shadow-[0_0_0_1px_var(--color-slate-150),0_1px_2px_rgb(23_23_26/0.05)] transition-shadow hover:shadow-[0_0_0_1px_var(--color-slate-300),0_8px_20px_-10px_rgb(16_24_64/0.3)] active:cursor-grabbing focus-within:outline-2 focus-within:outline-offset-1 focus-within:outline-primary/50 dark:focus-within:outline-accent/50 data-[dragging]:shadow-none dark:bg-navy-700 dark:shadow-[0_0_0_1px_var(--color-navy-500)] dark:hover:shadow-[0_0_0_1px_var(--color-navy-450)]"
 
   @risk "!shadow-[0_0_0_1px_color-mix(in_oklab,var(--color-warning)_55%,var(--color-slate-200)),0_1px_2px_rgb(0_0_0/0.05)] dark:!shadow-[0_0_0_1px_color-mix(in_oklab,var(--color-warning)_55%,var(--color-navy-500))]"
 
@@ -292,14 +292,14 @@ defmodule LineaUI.Components.Kanban do
       class={@classes}
       {@rest}
     >
-      <div class="flex items-center gap-2 px-0.5 pt-0.5 pb-1">
+      <div class="flex items-center gap-2 px-1 pt-0.5 pb-1">
         <span
           :if={@icon != []}
           class={["flex size-[26px] items-center justify-center rounded-lg", @look.tile]}
         >
           {render_slot(@icon)}
         </span>
-        <span class="font-semibold text-slate-800 dark:text-navy-50">{@label}</span>
+        <span class="text-[13.5px] font-[550] text-slate-900 dark:text-navy-50">{@label}</span>
         <span
           :if={@count}
           class={

@@ -48,7 +48,7 @@ defmodule LineaUI.Components.KanbanTest do
     assert attr_of(html, "section#col-open", "data-disabled") == []
     assert attr_of(html, "section > article", "data-id") == ["1", "2"]
     assert "w-[272px]" in classes(html, "section")
-    assert "rounded-[14px]" in classes(html, "section")
+    assert "rounded-[18px]" in classes(html, "section")
     assert "dark:bg-navy-900" in classes(html, "section")
     assert LazyHTML.text(find(html, "section > div")) =~ "2"
   end
@@ -172,7 +172,7 @@ defmodule LineaUI.Components.KanbanTest do
 
     assert attr_of(html, "article#c1", "draggable") == []
     assert attr_of(html, "article#c1", "data-id") == ["2462"]
-    assert "rounded-xl" in classes(html, "article")
+    assert "rounded-[14px]" in classes(html, "article")
     assert "cursor-grab" in classes(html, "article")
     assert "data-[dragging]:shadow-none" in classes(html, "article")
     assert "extra" in classes(html, "article")
