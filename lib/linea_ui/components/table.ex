@@ -203,11 +203,11 @@ defmodule LineaUI.Components.Table do
   }
 
   @td %{
-    "basic" => "whitespace-nowrap px-4 py-3 sm:px-5",
+    "basic" => "whitespace-nowrap px-4 py-2 sm:px-5",
     "bordered" =>
       "whitespace-nowrap border border-slate-200 px-3 py-3 first:border-l-0 last:border-r-0 dark:border-navy-500 lg:px-5",
-    "hoverable" => "whitespace-nowrap px-4 py-3 sm:px-5",
-    "zebra" => "whitespace-nowrap px-4 py-3 sm:px-5",
+    "hoverable" => "whitespace-nowrap px-4 py-2 sm:px-5",
+    "zebra" => "whitespace-nowrap px-4 py-2 sm:px-5",
     "grid" => "whitespace-nowrap px-4 py-3",
     "data" => "h-12 whitespace-nowrap px-3.5 py-0",
     "data-grid" =>

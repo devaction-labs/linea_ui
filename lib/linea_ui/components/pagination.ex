@@ -58,7 +58,7 @@ defmodule LineaUI.Components.Pagination do
 
   @fill "bg-slate-150 dark:bg-navy-500"
 
-  @current "bg-primary text-white hover:bg-primary-focus focus:bg-primary-focus active:bg-primary-focus/90 dark:bg-accent dark:hover:bg-accent-focus dark:focus:bg-accent-focus dark:active:bg-accent/90"
+  @current "bg-slate-900 text-white hover:bg-slate-900 focus:bg-slate-900 active:bg-slate-900 dark:bg-navy-50 dark:text-navy-900 dark:hover:bg-navy-50 dark:focus:bg-navy-50 dark:active:bg-navy-50"
 
   @disabled "pointer-events-none opacity-60"
 
