@@ -11,7 +11,7 @@ defmodule LineaUI.Components.Choice do
   @tones %{
     {"basic", false} => %{
       "neutral" =>
-        "border-slate-400/70 checked:border-slate-500 checked:bg-slate-500 hover:border-slate-500 focus:border-slate-500 dark:border-navy-400 dark:checked:bg-navy-400",
+        "border-slate-400/70 checked:border-slate-900 checked:bg-slate-900 hover:border-slate-500 focus:border-slate-500 dark:border-navy-400 dark:checked:bg-navy-400",
       "primary" =>
         "border-slate-400/70 checked:border-primary checked:bg-primary hover:border-primary focus:border-primary dark:border-navy-400 dark:checked:border-accent dark:checked:bg-accent dark:hover:border-accent dark:focus:border-accent",
       "secondary" =>
@@ -27,7 +27,7 @@ defmodule LineaUI.Components.Choice do
     },
     {"basic", true} => %{
       "neutral" =>
-        "border-slate-400/70 bg-slate-100 checked:border-slate-500 checked:bg-slate-500 hover:border-slate-500 focus:border-slate-500 dark:border-navy-500 dark:bg-navy-900 dark:checked:border-navy-400 dark:checked:bg-navy-400",
+        "border-slate-400/70 bg-slate-100 checked:border-slate-900 checked:bg-slate-900 hover:border-slate-500 focus:border-slate-500 dark:border-navy-500 dark:bg-navy-900 dark:checked:border-navy-400 dark:checked:bg-navy-400",
       "primary" =>
         "border-slate-400/70 bg-slate-100 checked:border-primary checked:bg-primary hover:border-primary focus:border-primary dark:border-navy-500 dark:bg-navy-900 dark:checked:border-accent dark:checked:bg-accent dark:hover:border-accent dark:focus:border-accent",
       "secondary" =>
