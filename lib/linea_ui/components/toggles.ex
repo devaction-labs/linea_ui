@@ -1,6 +1,6 @@
 defmodule LineaUI.Components.Toggles do
   @moduledoc """
-  The bare inputs of Metronic's forms: a checkbox, a radio and a switch that are one `<input>` each, with no label or
+  The bare inputs of a form: a checkbox, a radio and a switch that are one `<input>` each, with no label or
   wrapper, for a form that lays the caption out itself.
 
       <label class="flex items-center gap-2">

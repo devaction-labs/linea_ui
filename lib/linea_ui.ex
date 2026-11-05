@@ -34,7 +34,6 @@ defmodule LineaUI do
     accordion: LineaUI.Components.Accordion,
     alert: LineaUI.Components.Alert,
     app_shell: LineaUI.Components.AppShell,
-    side_menu: LineaUI.Components.SideMenu,
     box: LineaUI.Components.Box,
     toggles: LineaUI.Components.Toggles,
     plain_table: LineaUI.Components.PlainTable,

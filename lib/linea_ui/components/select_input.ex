@@ -1,6 +1,6 @@
 defmodule LineaUI.Components.SelectInput do
   @moduledoc """
-  Metronic's bare select: a native `<select>` that keeps the `data-kt-select` attribute its script looks for, with the
+  A bare select: a native `<select>` that keeps the `data-kt-select` attribute its script looks for, with the
   options as the content.
 
       <.select_input name="period" class="w-36" data-kt-select-placeholder="Select period">

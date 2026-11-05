@@ -1,6 +1,6 @@
 defmodule LineaUI.Components.AvatarParts do
   @moduledoc """
-  Metronic's avatar as parts: a frame that sets the size, a round picture, an optional corner indicator with a status dot.
+  An avatar as parts: a frame that sets the size, a round picture, an optional corner indicator with a status dot.
 
       <.avatar_frame class="size-9">
         <.avatar_picture><img src="/me.png" alt="Me" /></.avatar_picture>

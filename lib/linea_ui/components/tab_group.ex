@@ -1,6 +1,6 @@
 defmodule LineaUI.Components.TabGroup do
   @moduledoc """
-  The container of Metronic's tabs: it carries `data-kt-tabs`, which the script of Metronic looks for, and holds the
+  The container of a group of tabs: it carries `data-kt-tabs`, which a page script can look for, and holds the
   buttons that have `data-kt-tab-toggle="#panel"` (use `button/1` with those attributes).
 
       <.tab_group class="flex gap-2">

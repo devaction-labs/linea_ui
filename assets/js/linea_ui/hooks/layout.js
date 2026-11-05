@@ -1,5 +1,5 @@
 /*
-  The hooks of the page furniture Metronic's layout script runs: the image field, the sticky block, the scroll spy
+  The hooks of the page furniture: the image field, the sticky block, the scroll spy
   and the context menu.
 */
 

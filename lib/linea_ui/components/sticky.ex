@@ -1,7 +1,6 @@
 defmodule LineaUI.Components.Sticky do
   @moduledoc """
-  A block that sticks to the top of the page and takes classes while the page is scrolled, as Metronic's
-  `data-kt-sticky`: a header that gets an edge, a bar that gets a shadow.
+  A block that sticks to the top of the page and takes classes while the page is scrolled: a header that gets an edge, a bar that gets a shadow.
 
       <.sticky id="page-bar" stuck_class="border-b border-slate-200 shadow-xs">
         …

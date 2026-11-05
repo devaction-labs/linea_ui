@@ -70,7 +70,7 @@ defmodule LineaUI.Components.Textarea do
   attr(:size, :string,
     default: "md",
     values: ~w(sm md lg),
-    doc: "Metronic's three paddings and text sizes: 10px and 12px, 12px and 13px, 16px and 14px."
+    doc: "Three paddings and text sizes: 10px and 12px, 12px and 13px, 16px and 14px."
   )
 
   attr(:resizable, :boolean, default: false)

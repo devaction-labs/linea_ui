@@ -1,6 +1,6 @@
 defmodule LineaUI.Components.RatingParts do
   @moduledoc """
-  Metronic's static star rating as parts: a row and its cells, each holding a solid and an outline star (the classes
+  A static star rating as parts: a row and its cells, each holding a solid and an outline star (the classes
   `rating-on` and `rating-off` on the icons). A cell shows the solid star when `on`.
 
       <.rating_row>

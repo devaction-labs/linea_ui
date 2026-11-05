@@ -531,50 +531,8 @@ const ShellClock = {
   },
 }
 
-/*
-  The sidebar of the `demo1` layout, the way Metronic's layout script runs it: while the width animates after the
-  toggle the sidebar is marked `data-animating` (it takes no pointer, so the hover that opens the rail does not reopen
-  it under the pointer that just collapsed it), and the page open now is scrolled into view on mount.
-*/
-const ShellSidebar = {
-  mounted() {
-    this.onToggle = (event) => event.target.closest("[data-shell-toggle]") && this.animate()
-    this.onEnd = (event) => event.target === this.el && event.propertyName === "width" && this.settle()
-    this.el.addEventListener("click", this.onToggle)
-    this.el.addEventListener("transitionend", this.onEnd)
-    this.reveal()
-  },
-
-  destroyed() {
-    this.el.removeEventListener("click", this.onToggle)
-    this.el.removeEventListener("transitionend", this.onEnd)
-    clearTimeout(this.timer)
-  },
-
-  animate() {
-    this.el.dataset.animating = "true"
-    clearTimeout(this.timer)
-    this.timer = setTimeout(() => this.settle(), 450)
-  },
-
-  settle() {
-    clearTimeout(this.timer)
-    delete this.el.dataset.animating
-  },
-
-  reveal() {
-    const scroller = this.el.querySelector("[data-shell-scroll]")
-    const current = scroller?.querySelector("[aria-current=page]")
-    const box = current && scroller.getBoundingClientRect()
-    const spot = current && current.getBoundingClientRect()
-    current && (spot.top < box.top || spot.bottom > box.bottom) &&
-      scroller.scrollTo({top: scroller.scrollTop + spot.top - box.top - 100, behavior: "instant"})
-  },
-}
-
 export default {
   "LineaUI.ShellRail": ShellRail,
-  "LineaUI.ShellSidebar": ShellSidebar,
   "LineaUI.ShellClock": ShellClock,
   "LineaUI.AppShell": AppShell,
   "LineaUI.SidebarGroup": SidebarGroup,

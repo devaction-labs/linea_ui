@@ -1,7 +1,7 @@
 defmodule LineaUI.Components.ImageInput do
   @moduledoc """
   An image field: the picture (an avatar, a logo) in a round or rounded frame with a camera strip at the bottom and a
-  small button to remove or revert it, as Metronic's `image-input`.
+  small button to remove or revert it.
 
       <.image_input name="avatar" value={@user.avatar_url} size="lg" />
 

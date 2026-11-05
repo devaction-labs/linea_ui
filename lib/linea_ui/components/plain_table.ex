@@ -1,6 +1,6 @@
 defmodule LineaUI.Components.PlainTable do
   @moduledoc """
-  Metronic's bare table: a `<table>` whose rows and cells are plain tags, styled by the table itself.
+  A bare table: a `<table>` whose rows and cells are plain tags, styled by the table itself.
 
       <.table_plain border>
         <thead><tr><th>Name</th><th>Role</th></tr></thead>

@@ -1,6 +1,6 @@
 defmodule LineaUI.Components.ProgressParts do
   @moduledoc """
-  Metronic's progress bar as two parts: a track and the fill inside it, whose width is set by the markup (`style="width: 80%"`).
+  A progress bar as two parts: a track and the fill inside it, whose width is set by the markup (`style="width: 80%"`).
 
       <.progress_track color="success" class="w-36">
         <.progress_fill style="width: 80%" />

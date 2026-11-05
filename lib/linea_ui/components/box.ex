@@ -1,7 +1,7 @@
 defmodule LineaUI.Components.Box do
   @moduledoc """
-  Metronic's card: a bordered white panel with a header, a body, a footer and a table that fills it. It is plainer than
-  `card/1`, the LineOne card, and it is what the pages of Metronic's demos are laid out with.
+  A card: a bordered white panel with a header, a body, a footer and a table that fills it. It is plainer than
+  `card/1`, the LineOne card.
 
       <.box>
         <.box_header>

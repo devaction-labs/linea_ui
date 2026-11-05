@@ -198,9 +198,9 @@ defmodule LineaUI.Components.AppShell do
 
   attr :layout, :string,
     default: "sidebar",
-    values: ~w(sidebar minimal sideblock horizontal framed demo1),
+    values: ~w(sidebar minimal sideblock horizontal framed),
     doc:
-      "`sidebar` is the main sidebar with its panel, `minimal` shows the minimized panel while the panel is closed, `sideblock` is one wide sidebar, `horizontal` puts the navigation in the header, `framed` is the grey frame with a `framed_sidebar/1` and a rounded main panel, `demo1` is the 280px `shell_sidebar/1` that collapses to a rail with a fixed `shell_header/1` (see `LineaUI.Components.SideMenu`)."
+      "`sidebar` is the main sidebar with its panel, `minimal` shows the minimized panel while the panel is closed, `sideblock` is one wide sidebar, `horizontal` puts the navigation in the header, `framed` is the grey frame with a `framed_sidebar/1` and a rounded main panel."
 
   attr :sidebar_open, :boolean,
     default: nil,
@@ -224,38 +224,9 @@ defmodule LineaUI.Components.AppShell do
   attr :class, :any, default: nil
   attr :rest, :global
   slot :sidebar, doc: "The main sidebar and its panel, or the sideblock."
-  slot :header, doc: "The `header/1`, or the `shell_header/1` of `demo1`."
+  slot :header, doc: "The `header/1`."
   slot :aside, doc: "Fixed parts: the right sidebar, drawers."
-  slot :footer, doc: "The footer of the `demo1` layout, under the page."
   slot :inner_block
-
-  def app_shell(%{layout: "demo1"} = assigns) do
-    ~H"""
-    <div
-      id={@id}
-      data-collapsed="false"
-      data-mobile="false"
-      class={
-        merge([
-          "group/shell flex min-h-dvh grow bg-white text-slate-950 antialiased dark:bg-navy-900 dark:text-navy-50",
-          @class
-        ])
-      }
-      phx-mounted={JS.ignore_attributes(["data-collapsed", "data-mobile"])}
-      {@rest}
-    >
-      {render_slot(@sidebar)}
-      <div class="flex min-w-0 grow flex-col pt-[60px] transition-[padding] duration-300 lg:ps-[280px] lg:pt-[70px] group-data-[collapsed=true]/shell:lg:ps-[80px]">
-        {render_slot(@header)}
-        {render_slot(@aside)}
-        <main class={merge(["flex grow flex-col px-4 pb-5 lg:px-7.5", @main_class])}>
-          {render_slot(@inner_block)}
-        </main>
-        {render_slot(@footer)}
-      </div>
-    </div>
-    """
-  end
 
   def app_shell(%{layout: "framed"} = assigns) do
     ~H"""

@@ -1,6 +1,6 @@
 defmodule LineaUI.Components.Scrollspy do
   @moduledoc """
-  A list of links to the sections of the page that marks the section in view, as Metronic's `data-kt-scrollspy`: the
+  A list of links to the sections of the page that marks the section in view: the
   settings pages with their menu of anchors.
 
       <.scrollspy id="settings-nav">

@@ -454,11 +454,11 @@ defmodule LineaUI.Components.Icon do
   @spec icon_set() :: :lineone | :hugeicons
   def icon_set, do: Application.get_env(:linea_ui, :icons, :lineone)
 
-  @doc "A Hugeicons or Keenicons icon by class name, or any other icon font class."
+  @doc "A Hugeicons icon by class name, or any other icon font class."
   attr :name, :string,
     required: true,
     doc:
-      "`huge-search-01`, `ki-filled-element-11` (Keenicons, see `assets/css/keenicons.cjs`), or any class such as `fa-solid fa-house`."
+      "`huge-search-01`, or any class such as `fa-solid fa-house`."
 
   attr :class, :any, default: "size-5"
   attr :rest, :global

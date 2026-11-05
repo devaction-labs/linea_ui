@@ -1,5 +1,5 @@
 /*
-  The bare inputs of Metronic's forms: a checkbox, a radio and a switch that are one <input> each (no label around
+  The bare inputs of a form: a checkbox, a radio and a switch that are one <input> each (no label around
   them), drawn by the browser's own state (`:checked`, `:indeterminate`, `:disabled`).
 */
 @layer components {

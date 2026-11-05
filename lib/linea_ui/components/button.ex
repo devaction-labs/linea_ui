@@ -187,7 +187,7 @@ defmodule LineaUI.Components.Button do
     default: "solid",
     values: ~w(solid glow outline soft bordered flat glass ghost dim),
     doc:
-      "`solid` is filled, `glow` adds the colored shadow, `ghost` is transparent until hovered and `dim` is muted text that darkens on hover (Metronic's `kt-btn-ghost` and `kt-btn-dim`; `mono` is its black button), `bordered` is soft with a tinted border, `flat` has no background until hovered, `glass` is translucent white with white text for gradient and colored cards (it ignores `color`)."
+      "`solid` is filled, `glow` adds the colored shadow, `ghost` is transparent until hovered and `dim` is muted text that darkens on hover (`kt-btn-ghost` and `kt-btn-dim`; `mono` is its black button), `bordered` is soft with a tinted border, `flat` has no background until hovered, `glass` is translucent white with white text for gradient and colored cards (it ignores `color`)."
   )
 
   attr(:size, :string, default: "md", values: ~w(xs sm md lg xl))

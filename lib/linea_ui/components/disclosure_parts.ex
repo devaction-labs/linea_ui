@@ -1,7 +1,7 @@
 defmodule LineaUI.Components.DisclosureParts do
   @moduledoc """
-  Metronic's accordion as parts (named disclosure so they do not clash with `accordion/1`): item, toggle, title, content and wrapper. They carry the `data-kt-accordion-*` attributes
-  Metronic's script looks for, so a page that loads it can open and close them.
+  An accordion as parts (named disclosure so they do not clash with `accordion/1`): item, toggle, title, content and wrapper. They carry the `data-kt-accordion-*` attributes
+  a page script can look for, so a page that loads it can open and close them.
 
       <div data-kt-accordion="true">
         <.disclosure_item>

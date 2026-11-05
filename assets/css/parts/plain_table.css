@@ -1,5 +1,5 @@
 /*
-  Metronic's `kt-table`: a table styled through its own tags (th, td, tr), so the markup stays bare.
+  A table: a table styled through its own tags (th, td, tr), so the markup stays bare.
 */
 @layer components {
   .table-plain {
@@ -49,7 +49,7 @@
   .dark .table-plain-border th { border-color: var(--color-navy-450); }
 }
 
-/* Metronic's static star rating: a row of cells, each showing the solid star when it is on and the outline when it is off. */
+/* A static star rating: a row of cells, each showing the solid star when it is on and the outline when it is off. */
 @layer components {
   .rating-row { align-items: stretch; display: inline-flex; }
   .rating-cell { align-items: center; display: inline-flex; }

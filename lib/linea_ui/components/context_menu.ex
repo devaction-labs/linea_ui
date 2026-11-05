@@ -1,6 +1,6 @@
 defmodule LineaUI.Components.ContextMenu do
   @moduledoc """
-  A menu that opens under the pointer on a right click, as Metronic's `data-kt-context`.
+  A menu that opens under the pointer on a right click.
 
       <.context_menu id="file-menu">
         <div class="rounded-lg border p-6">Right click here</div>

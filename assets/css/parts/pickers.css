@@ -3044,7 +3044,7 @@ span.flatpickr-day.selected {
 }
 .flatpickr-calendar[data-skin="linea"] :is(.flatpickr-innerContainer, .flatpickr-rContainer, .flatpickr-days, .dayContainer) { border: 0; box-shadow: none; }
 
-/* The suggestion list of Metronic's select: a 6px panel with a thin edge and a soft shadow, 4px of padding, rows of
+/* The suggestion list of the select: a 6px panel with a thin edge and a soft shadow, 4px of padding, rows of
    7px by 10px in 14px text and a neutral hovered row. */
 .ts-wrapper .ts-dropdown {
   background-color: #fff;
@@ -3070,7 +3070,7 @@ span.flatpickr-day.selected {
 .ts-wrapper.autocomplete .ts-control > input { color: var(--color-slate-950); }
 .dark .ts-wrapper.autocomplete .ts-control > input { color: var(--color-navy-50); }
 
-/* The chips of a multiple select and a tags input: Metronic's secondary badge, 24px high with a 6px radius. */
+/* The chips of a multiple select and a tags input: the secondary badge, 24px high with a 6px radius. */
 .ts-wrapper.multi .ts-control > div.item {
   align-items: center;
   background-color: var(--color-slate-100);
@@ -3088,7 +3088,7 @@ span.flatpickr-day.selected {
 .ts-wrapper.multi .ts-control { align-items: center; min-height: 2.125rem; padding: .1875rem .5rem; }
 .ts-wrapper.multi .ts-control > input { flex: 1 1 4rem; font-size: .8125rem; min-width: 4rem; padding: 0; }
 
-/* The calendar of Metronic's date picker: a 12px popover with a plain header (the month and the year as one bold
+/* The calendar of the date picker: a 12px popover with a plain header (the month and the year as one bold
    title, an arrow on each side), bold one-line weekdays, and days of 30px with an 8px radius. */
 .flatpickr-calendar {
   background-color: #fff;

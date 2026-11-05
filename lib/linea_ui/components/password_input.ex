@@ -1,6 +1,6 @@
 defmodule LineaUI.Components.PasswordInput do
   @moduledoc """
-  A password field with the button that shows what was typed, as Metronic's `toggle-password`.
+  A password field with the button that shows what was typed.
 
       <.password_input name="password" placeholder="Enter password" />
 

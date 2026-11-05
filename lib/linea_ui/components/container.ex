@@ -1,6 +1,6 @@
 defmodule LineaUI.Components.Container do
   @moduledoc """
-  The page containers of Metronic: `container_fixed/1` centers its content up to the `xl` breakpoint,
+  The page containers: `container_fixed/1` centers its content up to the `xl` breakpoint,
   `container_fluid/1` fills the width. Both keep a 24px gutter, 30px from `xl` on.
 
       <.container_fixed>

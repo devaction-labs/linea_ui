@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Removed what came from the Metronic template, now that its license is gone: the `demo1` layout of `app_shell/1`, `LineaUI.Components.SideMenu` (`shell_sidebar`, `side_menu_*`, `shell_header`), the `LineaUI.ShellSidebar` hook, the Keenicons plugin (`keenicons.cjs`, `scripts/keenicons.py`) and the mentions of Metronic in the docs. The framed shell (`layout="framed"`) is the app shell of the LineaUI identity.
+- Theme: the Signetum identity (Geist, teal, warm neutrals), pill buttons, 8px badges, `kpi_card layout="inline"`, `rail_heading/1`, `color="mono"` as the ink button, muted table headers and the e-mail palette.
+
 ## 0.9.1 (2026-11-04)
 
 - `dropdown` takes `hover`: the menu opens when the pointer is over the trigger or the menu and closes shortly after it leaves.
