@@ -283,6 +283,12 @@ defmodule LineaUI.Components.Avatar do
     doc: "`square` is LineOne's `rounded-lg`, `rounded` its `rounded-xl`; the others are masks."
   )
 
+  attr(:tint, :string,
+    default: nil,
+    doc:
+      "A CSS color for the initials' background (white text), for a person or company that keeps its own color; it wins over `color`."
+  )
+
   attr(:color, :string,
     default: "neutral",
     values: ["auto" | @colors],
@@ -445,16 +451,19 @@ defmodule LineaUI.Components.Avatar do
 
   defp face(assigns) do
     ~H"""
-    <div class={
-      merge([
-        "is-initial font-inter font-semibold uppercase",
-        shape(@shape),
-        text_size(@size),
-        initials(@variant, @color, @kind, @name),
-        ring(@ring, @ring_color),
-        @face_class
-      ])
-    }>
+    <div
+      style={@tint && "background: #{@tint}; color: #fff"}
+      class={
+        merge([
+          "is-initial font-inter font-semibold uppercase",
+          shape(@shape),
+          text_size(@size),
+          initials(@variant, @color, @kind, @name),
+          ring(@ring, @ring_color),
+          @face_class
+        ])
+      }
+    >
       {render_slot(@inner_block) || @initials}
     </div>
     """
