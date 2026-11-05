@@ -38,6 +38,7 @@ export default {
       this.el.addEventListener("mouseover", this.onMouseOver)
       document.addEventListener("keydown", this.onShortcut)
       this.watcher.observe(this.modal, {attributes: true, attributeFilter: ["data-state"]})
+      this.modal.dataset.state === "open" && this.reset()
       this.refresh()
     },
 
@@ -99,11 +100,12 @@ export default {
     },
 
     reset() {
-      const searched = this.query !== ""
-      this.query = ""
+      const initial = this.el.dataset.initialQuery || ""
+      const searched = this.query !== initial
+      this.query = initial
       this.scope = this.firstScope()
       this.active = 0
-      this.input().value = ""
+      this.input().value = initial
       this.refresh()
       searched && !this.local() && this.search()
     },
