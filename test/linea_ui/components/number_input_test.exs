@@ -110,7 +110,7 @@ defmodule LineaUI.Components.NumberInputTest do
   end
 
   test "the field is as tall as its steppers, so the group has one height" do
-    for {size, height} <- [{"sm", "h-7"}, {"md", "h-8.5"}, {"lg", "h-10"}] do
+    for {size, height} <- [{"sm", "h-7"}, {"md", "h-10"}, {"lg", "h-11"}] do
       html =
         Phoenix.LiveViewTest.render_component(
           &number_input/1,

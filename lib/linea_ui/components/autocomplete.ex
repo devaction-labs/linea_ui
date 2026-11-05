@@ -48,7 +48,7 @@ defmodule LineaUI.Components.Autocomplete do
     "sm" =>
       "[&_.ts-control]:h-7 [&_.ts-control]:py-0 [&_.ts-control]:text-xs [&_.ts-control_input]:text-xs",
     "md" =>
-      "[&_.ts-control]:h-8.5 [&_.ts-control]:py-0 [&_.ts-control]:text-[13px] [&_.ts-control_input]:text-[13px]",
+      "[&_.ts-control]:h-10 [&_.ts-control]:py-0 [&_.ts-control]:text-[13px] [&_.ts-control_input]:text-[13px]",
     "lg" =>
       "[&_.ts-control]:h-10 [&_.ts-control]:py-0 [&_.ts-control]:text-sm [&_.ts-control_input]:text-sm"
   }

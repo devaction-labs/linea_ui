@@ -77,9 +77,9 @@ defmodule LineaUI.Components.Input do
 
   @variants %{
     "outlined" =>
-      "form-input w-full rounded-md border border-slate-200 bg-transparent px-3 py-0 placeholder:text-slate-500 hover:border-slate-400 focus:border-primary disabled:pointer-events-none disabled:select-none disabled:border-none disabled:bg-zinc-100 dark:border-navy-450 dark:hover:border-navy-400 dark:focus:border-accent dark:disabled:bg-navy-600",
+      "form-input w-full rounded-[11px] border border-slate-300 bg-transparent px-3 py-0 placeholder:text-slate-500 hover:border-slate-400 focus:border-primary disabled:pointer-events-none disabled:select-none disabled:border-none disabled:bg-zinc-100 dark:border-navy-450 dark:hover:border-navy-400 dark:focus:border-accent dark:disabled:bg-navy-600",
     "filled" =>
-      "form-input w-full rounded-md bg-slate-150 px-3 py-0 ring-primary/50 placeholder:text-slate-500 hover:bg-slate-200 focus:ring-3 disabled:pointer-events-none disabled:select-none disabled:opacity-60 dark:bg-navy-900/90 dark:ring-accent/50 dark:placeholder:text-navy-300 dark:hover:bg-navy-900 dark:focus:bg-navy-900",
+      "form-input w-full rounded-[11px] bg-slate-150 px-3 py-0 ring-primary/50 placeholder:text-slate-500 hover:bg-slate-200 focus:ring-3 disabled:pointer-events-none disabled:select-none disabled:opacity-60 dark:bg-navy-900/90 dark:ring-accent/50 dark:placeholder:text-navy-300 dark:hover:bg-navy-900 dark:focus:bg-navy-900",
     "plain" => "form-input w-full bg-transparent px-3 py-2 placeholder:text-slate-500"
   }
 
@@ -94,7 +94,7 @@ defmodule LineaUI.Components.Input do
 
   @sizes %{
     "sm" => "h-7 px-2.5 text-xs",
-    "md" => "h-8.5 text-[13px]",
+    "md" => "h-10 text-sm",
     "lg" => "h-10 px-4 text-sm"
   }
 

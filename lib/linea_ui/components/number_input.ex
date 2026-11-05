@@ -50,9 +50,9 @@ defmodule LineaUI.Components.NumberInput do
 
   @stepper "flex shrink-0 items-center justify-center border border-slate-200 px-3 text-slate-600 outline-hidden transition-colors hover:bg-slate-100 hover:text-slate-800 focus-visible:bg-slate-100 active:bg-slate-150 disabled:pointer-events-none disabled:opacity-35 dark:border-navy-450 dark:text-navy-100 dark:hover:bg-navy-600 dark:hover:text-navy-50 dark:focus-visible:bg-navy-600 dark:active:bg-navy-500"
 
-  @stepper_sizes %{"sm" => "h-7", "md" => "h-8.5", "lg" => "h-10"}
+  @stepper_sizes %{"sm" => "h-7", "md" => "h-10", "lg" => "h-11"}
 
-  @addon_sizes %{"sm" => "h-7 text-xs", "md" => "h-8.5 text-[13px]", "lg" => "h-10 text-sm"}
+  @addon_sizes %{"sm" => "h-7 text-xs", "md" => "h-10 text-sm", "lg" => "h-11 text-sm"}
 
   @doc """
   Renders the number input.

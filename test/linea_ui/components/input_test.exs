@@ -12,7 +12,7 @@ defmodule LineaUI.Components.InputTest do
     assert find(html, "label") |> Enum.to_list() == []
     classes = classes(html, "input")
     assert "form-input" in classes
-    assert "border-slate-200" in classes
+    assert "border-slate-300" in classes
     assert "dark:focus:border-accent" in classes
   end
 

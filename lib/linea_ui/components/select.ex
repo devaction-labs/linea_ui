@@ -51,10 +51,10 @@ defmodule LineaUI.Components.Select do
 
   @native_sizes %{
     {"sm", true} => "mt-1 h-7 px-2.5 text-xs",
-    {"md", true} => "mt-1.5 h-8.5 px-3 py-0 text-[13px]",
+    {"md", true} => "mt-1.5 h-10 px-3 py-0 text-sm",
     {"lg", true} => "mt-1 h-10 px-4 text-sm",
     {"sm", false} => "h-7 px-2.5 text-xs",
-    {"md", false} => "h-8.5 px-3 py-0 text-[13px]",
+    {"md", false} => "h-10 px-3 py-0 text-sm",
     {"lg", false} => "h-10 px-4 text-sm"
   }
 

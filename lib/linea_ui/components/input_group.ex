@@ -55,9 +55,9 @@ defmodule LineaUI.Components.InputGroup do
 
   @addons %{
     "outline" =>
-      "flex h-8.5 min-w-8.5 shrink-0 items-center justify-center border border-slate-200 px-3 text-[13px] text-slate-500 shadow-xs dark:border-navy-450 dark:text-navy-200",
+      "flex h-10 min-w-10 shrink-0 items-center justify-center border border-slate-200 px-3 text-[13px] text-slate-500 shadow-xs dark:border-navy-450 dark:text-navy-200",
     "filled" =>
-      "flex h-8.5 min-w-8.5 shrink-0 items-center justify-center border border-slate-200 bg-slate-100 px-3 text-[13px] text-slate-900 shadow-xs dark:border-navy-450 dark:bg-navy-600 dark:text-navy-50"
+      "flex h-10 min-w-10 shrink-0 items-center justify-center border border-slate-200 bg-slate-100 px-3 text-[13px] text-slate-900 shadow-xs dark:border-navy-450 dark:bg-navy-600 dark:text-navy-50"
   }
 
   @addon_sizes %{
