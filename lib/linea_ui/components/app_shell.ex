@@ -1998,7 +1998,7 @@ defmodule LineaUI.Components.AppShell do
           <div :if={@badge != []} class="flex items-center gap-2.5">{render_slot(@badge)}</div>
           <h1
             :if={@title != ""}
-            class="mt-1.5 mb-1 text-[28px] leading-9 font-semibold tracking-[-0.02em] text-slate-800 dark:text-navy-50"
+            class="mt-0.5 mb-2 text-[28px] leading-9 font-semibold tracking-[-0.02em] text-slate-800 dark:text-navy-50"
           >
             {@title}
           </h1>

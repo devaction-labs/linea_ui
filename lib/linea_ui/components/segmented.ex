@@ -41,7 +41,7 @@ defmodule LineaUI.Components.Segmented do
 
   @sizes %{
     "sm" => "h-6 px-2.5 text-xs",
-    "md" => "h-7.5 px-3 text-xs-plus",
+    "md" => "h-[30px] px-3.5 text-[13.5px]",
     "lg" => "h-9.5 px-4.5 text-sm"
   }
 

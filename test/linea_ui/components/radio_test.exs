@@ -122,7 +122,7 @@ defmodule LineaUI.Components.RadioTest do
       assert "inline-flex" in track
 
       assert "has-checked:bg-white" in classes(html, "label")
-      assert "h-7.5" in classes(html, "label")
+      assert "h-[30px]" in classes(html, "label")
       assert LazyHTML.text(find(html, "label:nth-child(2)")) =~ "Week"
       assert LazyHTML.text(find(html, "label:nth-child(2)")) =~ "3"
     end
