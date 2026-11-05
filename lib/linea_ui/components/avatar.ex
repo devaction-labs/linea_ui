@@ -195,14 +195,14 @@ defmodule LineaUI.Components.Avatar do
   @size_aliases %{"24" => "3xs", "32" => "xs", "40" => "sm", "48" => "md", "64" => "lg"}
 
   @auto [
-    "bg-primary text-white dark:bg-accent",
-    "bg-info text-white",
-    "bg-success text-white",
-    "bg-warning text-white",
-    "bg-pink-600 text-white",
-    "bg-violet-600 text-white",
-    "bg-teal-600 text-white",
-    "bg-error text-white"
+    "bg-[#0d8f91] text-white",
+    "bg-[#1a7f4b] text-white",
+    "bg-[#2f5fd0] text-white",
+    "bg-[#475569] text-white",
+    "bg-[#8a5cd6] text-white",
+    "bg-[#a16207] text-white",
+    "bg-[#c2410c] text-white",
+    "bg-[#d97a1e] text-white"
   ]
 
   @kind_faces %{
