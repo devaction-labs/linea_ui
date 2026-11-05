@@ -1993,10 +1993,13 @@ defmodule LineaUI.Components.AppShell do
           </button>
         </div>
       </div>
-      <div class="flex flex-wrap items-end justify-between gap-5">
+      <div :if={@title != "" or @actions != []} class="flex flex-wrap items-end justify-between gap-5">
         <div class="min-w-0">
           <div :if={@badge != []} class="flex items-center gap-2.5">{render_slot(@badge)}</div>
-          <h1 class="mt-1.5 mb-1 text-[28px] leading-9 font-semibold tracking-[-0.02em] text-slate-800 dark:text-navy-50">
+          <h1
+            :if={@title != ""}
+            class="mt-1.5 mb-1 text-[28px] leading-9 font-semibold tracking-[-0.02em] text-slate-800 dark:text-navy-50"
+          >
             {@title}
           </h1>
           <p :if={@description} class="text-sm text-slate-500 dark:text-navy-200">{@description}</p>
