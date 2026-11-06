@@ -429,7 +429,7 @@ defmodule LineaUI.Components.DataTable do
     ~H"""
     <div id={@id} class={@class} {@rest}>
       <div class="flex items-center justify-between">
-        <h2 class="text-base font-medium tracking-wide text-slate-700 line-clamp-1 dark:text-navy-100">
+        <h2 class="line-clamp-1 text-base font-semibold tracking-[-0.01em] text-slate-900 dark:text-navy-50">
           {render_slot(@title)}
         </h2>
         <div class="flex">
@@ -470,7 +470,7 @@ defmodule LineaUI.Components.DataTable do
           {render_slot(@filters, data_table_toggle_filters(@id))}
         </div>
       </div>
-      <div class="card mt-3 overflow-hidden rounded-xl">
+      <div class="sg-card flush mt-3">
         <.data_table_body {assigns} table_variant="data" rounded="top" />
         <div
           :if={@paginated}

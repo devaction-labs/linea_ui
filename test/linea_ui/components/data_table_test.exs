@@ -45,7 +45,7 @@ defmodule LineaUI.Components.DataTableTest do
     assert "text-[13px]" in classes(html, "#a-table th")
     assert "h-12" in classes(html, "#a-table td")
     assert "size-4" in classes(html, "#a-table td input")
-    assert "rounded-xl" in classes(html, "#a .card")
+    assert "flush" in classes(html, "#a .sg-card")
 
     assert "linea-dt" in classes(html, "#g-table")
     assert "rounded-[10px]" in classes(html, "#g > div")
