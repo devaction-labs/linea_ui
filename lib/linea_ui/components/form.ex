@@ -131,7 +131,7 @@ defmodule LineaUI.Components.Form do
       <label class="block" for={@id}>
         <span
           :if={@label}
-          class={merge(["text-[13px] font-medium text-slate-950 dark:text-navy-50", @label_class])}
+          class={merge(["block text-[13px]/5 font-medium text-slate-950 dark:text-navy-50", @label_class])}
         >
           {@label}
         </span>
@@ -147,7 +147,7 @@ defmodule LineaUI.Components.Form do
     <div class={@class} {@rest}>
       <span
         :if={@label}
-        class={merge(["block text-[13px] font-medium text-slate-950 dark:text-navy-50", @label_class])}
+        class={merge(["block text-[13px]/5 font-medium text-slate-950 dark:text-navy-50", @label_class])}
         id={@id && "#{@id}-label"}
       >
         {@label}
