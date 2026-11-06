@@ -85,17 +85,17 @@ defmodule LineaUI.Components.Input do
 
   @states %{
     {"outlined", "success"} =>
-      "border-success hover:border-success focus:border-success dark:border-success dark:hover:border-success dark:focus:border-success",
+      "shadow-[inset_0_0_0_1px_var(--color-success),0_0_0_4px_color-mix(in_oklab,var(--color-success)_14%,transparent)] hover:shadow-[inset_0_0_0_1px_var(--color-success),0_0_0_4px_color-mix(in_oklab,var(--color-success)_14%,transparent)] focus:shadow-[inset_0_0_0_1px_var(--color-success),0_0_0_4px_color-mix(in_oklab,var(--color-success)_14%,transparent)] dark:shadow-[inset_0_0_0_1px_var(--color-success),0_0_0_4px_color-mix(in_oklab,var(--color-success)_16%,transparent)] dark:hover:shadow-[inset_0_0_0_1px_var(--color-success),0_0_0_4px_color-mix(in_oklab,var(--color-success)_16%,transparent)] dark:focus:shadow-[inset_0_0_0_1px_var(--color-success),0_0_0_4px_color-mix(in_oklab,var(--color-success)_16%,transparent)]",
     {"outlined", "error"} =>
-      "border-error hover:border-error focus:border-error dark:border-error dark:hover:border-error dark:focus:border-error",
+      "shadow-[inset_0_0_0_1px_var(--color-error),0_0_0_4px_color-mix(in_oklab,var(--color-error)_14%,transparent)] hover:shadow-[inset_0_0_0_1px_var(--color-error),0_0_0_4px_color-mix(in_oklab,var(--color-error)_14%,transparent)] focus:shadow-[inset_0_0_0_1px_var(--color-error),0_0_0_4px_color-mix(in_oklab,var(--color-error)_14%,transparent)] dark:shadow-[inset_0_0_0_1px_var(--color-error),0_0_0_4px_color-mix(in_oklab,var(--color-error)_16%,transparent)] dark:hover:shadow-[inset_0_0_0_1px_var(--color-error),0_0_0_4px_color-mix(in_oklab,var(--color-error)_16%,transparent)] dark:focus:shadow-[inset_0_0_0_1px_var(--color-error),0_0_0_4px_color-mix(in_oklab,var(--color-error)_16%,transparent)]",
     {"filled", "success"} => "ring-1 ring-success focus:ring-success/50 dark:ring-success",
     {"filled", "error"} => "ring-1 ring-error focus:ring-error/50 dark:ring-error"
   }
 
   @sizes %{
-    "sm" => "h-7 px-2.5 text-xs",
+    "sm" => "h-8 px-2.5 text-[13px]",
     "md" => "h-10 text-sm",
-    "lg" => "h-10 px-4 text-sm"
+    "lg" => "h-12 px-4 text-[15px]"
   }
 
   @shapes %{

@@ -24,7 +24,7 @@ defmodule LineaUI.Components.InputTest do
     classes = classes(html, "input")
     assert "bg-slate-150" in classes
     assert "focus:ring-3" in classes
-    assert "h-10" in classes
+    assert "h-12" in classes
     assert "rounded-full" in classes
     assert "px-6" in classes
     refute "px-4" in classes
@@ -44,7 +44,7 @@ defmodule LineaUI.Components.InputTest do
 
   test "state paints the border and the help line" do
     html = render(~H'<.input name="u" state="success" help="Username is valid" />')
-    assert "border-success" in classes(html, "input")
+    assert Enum.any?(classes(html, "input"), &(&1 =~ ~r/^shadow-.*--color-success/))
     refute "border-slate-200" in classes(html, "input")
     assert "text-success" in classes(html, "label + span")
   end
@@ -54,7 +54,7 @@ defmodule LineaUI.Components.InputTest do
     assigns = %{field: field}
     html = rendered_to_string(~H'<.input field={@field} type="email" />')
     assert [_] = find(html, "input#user_email[name='user[email]'][value='a@b']") |> Enum.to_list()
-    assert "border-error" in classes(html, "input")
+    assert Enum.any?(classes(html, "input"), &(&1 =~ ~r/^shadow-.*--color-error/))
     assert LazyHTML.text(find(html, "span.text-error")) =~ "is invalid"
     assert [_] = find(html, "input[aria-invalid=true]") |> Enum.to_list()
 

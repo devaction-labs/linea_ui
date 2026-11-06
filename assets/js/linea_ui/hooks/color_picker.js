@@ -76,6 +76,12 @@ const ColorPicker = {
     color && ((this.color = this.alpha ? color : {...color, a: 100}), (this.hex = toHex(parseHex(text), this.alpha)))
   },
 
+  // A swatch or a typed hex: takes the color, then change() compares against the previous hex, so it notifies.
+  pick(text) {
+    const color = colorOfHex(text)
+    color && ((this.color = this.alpha ? color : {...color, a: 100}), this.change(toHex(parseHex(text), this.alpha)))
+  },
+
   commit(color) {
     const hex = hexOfColor(color, this.alpha)
     this.color = color
@@ -107,7 +113,7 @@ const ColorPicker = {
 
   typed(text) {
     const parsed = colorOfHex(text)
-    parsed && (this.take(text), this.change(toHex(parseHex(text), this.alpha)))
+    parsed && this.pick(text)
   },
 
   settle() {
@@ -116,7 +122,7 @@ const ColorPicker = {
 
   click(event) {
     const preset = event.target.closest("[data-preset]")
-    preset && (this.take(preset.dataset.preset), this.change(toHex(parseHex(preset.dataset.preset), this.alpha)))
+    preset && this.pick(preset.dataset.preset)
   },
 
   pointerDown(event) {
