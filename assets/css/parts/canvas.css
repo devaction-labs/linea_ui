@@ -471,3 +471,4 @@ input.form-switch:checked::before{left:17px;transform:none;translate:none !impor
 /* The kit's column `align` lands as a text-* class: it wins over the canvas table's left alignment. */
 .sg-table :is(th,td).text-right{text-align:right}
 .sg-table :is(th,td).text-center{text-align:center}
+.sg .huge-copy-01{--huge-copy-01:url("data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%221.7%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Cpath d=%22M8 8h12v12H8zM4 16V4h12%22/%3E%3C/svg%3E")}
