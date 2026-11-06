@@ -146,6 +146,56 @@ defmodule LineaUI.Components.UploadTest do
            |> LazyHTML.text() =~ "File is too large"
   end
 
+  test "canvas variant: drop area, file cards, and a refused file in the red area" do
+    upload =
+      with_entries(
+        [{"a", "notas.zip", 18_000_000, 40, false}, {"c", "planilha.xls", 1000, 0, false}],
+        [{"c", :not_accepted}]
+      )
+
+    assigns = %{__changed__: nil, upload: upload}
+
+    html =
+      rendered_to_string(~H"""
+      <.upload
+        upload={@upload}
+        variant="canvas"
+        on_cancel="cancel"
+        drop_label="Arraste arquivos aqui"
+        hint="Até 10 MB"
+        error_texts={%{not_accepted: "%{name} não é aceita"}}
+      />
+      """)
+
+    assert [_] =
+             find(html, "label.sg-drop.is-error[role=alert][phx-value-ref=c]") |> Enum.to_list()
+
+    assert html |> find("label.sg-drop b") |> LazyHTML.text() =~ "planilha.xls não é aceita"
+    assert html |> find("label.sg-drop .lu-upload-hint") |> LazyHTML.text() =~ "Até 10 MB"
+    assert [_] = find(html, ".lu-upload-file") |> Enum.to_list()
+    assert html |> find(".lu-upload-file .lu-upload-size") |> LazyHTML.text() =~ "18 MB"
+
+    assert [_] =
+             find(html, ".lu-upload-file [role=progressbar][aria-valuenow='40']")
+             |> Enum.to_list()
+
+    assert [_] = find(html, ".lu-upload-file button[phx-value-ref=a]") |> Enum.to_list()
+    assert [_] = find(html, "input[type=file]") |> Enum.to_list()
+  end
+
+  test "canvas thumbs layout: a tile per file and the + tile" do
+    upload = with_entries([{"a", "a.pdf", 1000, 100, true}])
+    assigns = %{__changed__: nil, upload: upload}
+
+    html =
+      rendered_to_string(
+        ~H|<.upload upload={@upload} variant="canvas" layout="thumbs" drop_label="Adicionar" />|
+      )
+
+    assert [_] = find(html, ".lu-upload-thumbs .lu-upload-thumb") |> Enum.to_list()
+    assert [_] = find(html, "label.lu-upload-add[aria-label=Adicionar]") |> Enum.to_list()
+  end
+
   test "sizes drop a zero decimal" do
     upload =
       with_entries([

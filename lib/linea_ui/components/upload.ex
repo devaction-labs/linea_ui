@@ -16,6 +16,14 @@ defmodule LineaUI.Components.Upload do
 
   The component renders `live_file_input` itself, so it must be inside the form that has the
   `phx-change` LiveView uploads need.
+
+  `variant="canvas"` is the Signetum canvas look: a dashed drop area (icon, `drop_label`, `hint`),
+  each file as a card with its icon, name, size, a progress meter and a remove button, and a
+  red drop area with the error when a file is refused. `layout="thumbs"` shows 96px image
+  thumbnails followed by a small dashed "+" tile.
+
+      <.upload upload={@uploads.docs} variant="canvas" on_cancel="cancel-upload"
+        drop_label="Arraste arquivos aqui" hint="XML, PDF ou imagens · até 10 MB" />
   """
 
   use LineaUI.Component
@@ -48,11 +56,21 @@ defmodule LineaUI.Components.Upload do
     values: [1, 2, 3, 4],
     doc: "Files side by side, as LineOne's Two/Three/Four Grid."
 
+  attr :variant, :string,
+    default: "pond",
+    values: ~w(pond canvas),
+    doc:
+      "`pond` is LineOne's FilePond panel; `canvas` the Signetum canvas drop area and file cards."
+
   attr :layout, :string,
     default: "panel",
-    values: ~w(panel circle),
+    values: ~w(panel circle thumbs),
     doc:
-      "`circle` is the round single-file drop of LineOne's Circle Filepond; size it with `class`."
+      "`circle` is the round single-file drop of LineOne's Circle Filepond; size it with `class`. `thumbs` (canvas) shows image thumbnails and a \"+\" tile."
+
+  attr :hint, :string,
+    default: nil,
+    doc: "Canvas: the line under `drop_label` (formats, size), also shown under an error."
 
   attr :on_cancel, :any, default: nil, doc: "Event (or `%JS{}`) of the remove button."
   attr :target, :any, default: nil
@@ -77,6 +95,131 @@ defmodule LineaUI.Components.Upload do
     |> assign(:id, assigns.id || "#{assigns.upload.ref}-pond")
     |> assign(:upload_errors, Phoenix.Component.upload_errors(assigns.upload))
     |> render_upload()
+  end
+
+  defp render_upload(%{variant: "canvas", layout: "thumbs"} = assigns) do
+    ~H"""
+    <div
+      id={@id}
+      phx-drop-target={@upload.ref}
+      class={merge(["lu-upload-thumbs", @class])}
+      {@rest}
+    >
+      <div
+        :for={entry <- @upload.entries}
+        :if={entry_errors(@upload, entry) == []}
+        id={"#{@id}-#{entry.ref}"}
+        class="lu-upload-thumb"
+      >
+        <.live_img_preview :if={image?(entry)} entry={entry} />
+        <svg :if={!image?(entry)} class="i xl" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 5h16v14H4zM4 16l5-5 4 4 3-3 4 4M15 9h.01" />
+        </svg>
+        <span :if={!entry.done?} class="lu-upload-thumb-meter" aria-hidden="true">
+          <i style={"width: #{entry.progress}%"}></i>
+        </span>
+        <button
+          type="button"
+          class="sg-ib sm lu-upload-thumb-remove"
+          aria-label={"#{@remove_label} #{entry.client_name}"}
+          phx-click={@on_cancel}
+          phx-value-ref={entry.ref}
+          phx-target={@target}
+        >
+          <svg class="i sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg>
+        </button>
+      </div>
+      <label for={@upload.ref} class="sg-drop lu-upload-add" aria-label={@drop_label}>
+        <svg class="i lg" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>
+      </label>
+      <.live_file_input upload={@upload} class="sr-only" />
+      <p :for={error <- refused(@upload, @upload_errors)} class="lu-upload-thumb-error" role="alert">
+        {error_text(@error_texts, error.error, @upload.max_entries, error.name)}
+      </p>
+    </div>
+    """
+  end
+
+  defp render_upload(%{variant: "canvas"} = assigns) do
+    # A click on the red area drops the refused file (and opens the chooser again).
+    refused_ref =
+      Enum.find_value(assigns.upload.entries, &(entry_errors(assigns.upload, &1) != [] && &1.ref))
+
+    assigns =
+      assign(assigns,
+        refused: refused(assigns.upload, assigns.upload_errors),
+        refused_ref: refused_ref
+      )
+
+    ~H"""
+    <div
+      id={@id}
+      phx-drop-target={@upload.ref}
+      class={merge(["lu-upload-canvas flex flex-col gap-2", @class])}
+      {@rest}
+    >
+      <label
+        for={@upload.ref}
+        class={["sg-drop lu-upload-drop", @refused != [] && "is-error"]}
+        role={@refused != [] && "alert"}
+        phx-click={@refused_ref && @on_cancel}
+        phx-value-ref={@refused_ref}
+        phx-target={@refused_ref && @target}
+      >
+        <svg :if={@refused == []} class="i xl" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 15V4M8 8l4-4 4 4M5 14v6h14v-6" />
+        </svg>
+        <svg :if={@refused != []} class="i xl" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 3 2 20h20zM12 10v4M12 17h.01" />
+        </svg>
+        <b :if={@refused == []} class="ink">{render_slot(@label) || @drop_label}</b>
+        <b :for={error <- @refused}>
+          {error_text(@error_texts, error.error, @upload.max_entries, error.name)}
+        </b>
+        <span :if={@hint} class="lu-upload-hint">{@hint}</span>
+      </label>
+      <.live_file_input upload={@upload} class="sr-only" />
+      <div
+        :for={entry <- @upload.entries}
+        :if={entry_errors(@upload, entry) == []}
+        id={"#{@id}-#{entry.ref}"}
+        class="sg-card row lu-upload-file"
+        data-state={state(@upload, entry)}
+      >
+        <span class="sg-ic">
+          <svg class="i" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M7 3h7l5 5v13H7zM14 3v5h5M10 13h6M10 17h6" />
+          </svg>
+        </span>
+        <div class="col grow" style="gap:6px">
+          <div class="row" style="justify-content:space-between">
+            <b class="ink lu-upload-name" title={entry.client_name}>{entry.client_name}</b>
+            <span class="faint mono lu-upload-size">{size(entry.client_size)}</span>
+          </div>
+          <div
+            class="sg-meter acc"
+            role="progressbar"
+            aria-label={(entry.done? && @complete_label) || @uploading_label}
+            aria-valuenow={entry.progress}
+            aria-valuemin="0"
+            aria-valuemax="100"
+          >
+            <i style={"width: #{entry.progress}%"}></i>
+          </div>
+        </div>
+        <button
+          type="button"
+          class="sg-ib sm plain"
+          aria-label={"#{@remove_label} #{entry.client_name}"}
+          phx-click={@on_cancel}
+          phx-value-ref={entry.ref}
+          phx-target={@target}
+        >
+          <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg>
+        </button>
+      </div>
+    </div>
+    """
   end
 
   defp render_upload(assigns) do
@@ -208,8 +351,20 @@ defmodule LineaUI.Components.Upload do
     end
   end
 
-  defp error_text(texts, error, max),
-    do: texts |> Map.get(error, to_string(error)) |> String.replace("%{max}", to_string(max))
+  defp error_text(texts, error, max, name \\ ""),
+    do:
+      texts
+      |> Map.get(error, to_string(error))
+      |> String.replace("%{max}", to_string(max))
+      |> String.replace("%{name}", name)
+
+  # The refusals shown in the canvas drop area: the upload's own errors, then each refused file's.
+  defp refused(upload, upload_errors) do
+    Enum.map(upload_errors, &%{error: &1, name: ""}) ++
+      for entry <- upload.entries,
+          error <- entry_errors(upload, entry),
+          do: %{error: error, name: entry.client_name}
+  end
 
   defp image?(%{client_type: "image/" <> _}), do: true
   defp image?(_entry), do: false
