@@ -137,7 +137,7 @@
 .ts-wrapper.autocomplete.plugin-clear_button .ts-control:not(.rtl) { padding-right: 2.25rem !important; }
 
 /* A disabled control keeps the dark surface (tom-select's #fafafa fill glared on it). */
-.ts-wrapper.disabled .ts-control:where(.dark, .dark *) { background-color: var(--color-navy-600); }
+.ts-wrapper.disabled .ts-control:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *):not(:where([data-theme="light"], [data-theme="light"] *)) { background-color: var(--color-navy-600); }
 
 /* The list of the autocomplete and of a compact tags input: no check column (a chosen row is told by its colour). */
 .ts-wrapper:is(.autocomplete, .compact) .ts-dropdown .option { padding-left: .75rem; }
@@ -1775,7 +1775,7 @@ span.flatpickr-day.selected {
   font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
   padding: 8px;
 }
-.ql-toolbar.ql-snow:where(.dark, .dark *) {
+.ql-toolbar.ql-snow:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *):not(:where([data-theme="light"], [data-theme="light"] *)) {
   border-color: var(--color-navy-450);
 }
 .ql-snow.ql-toolbar::after {
@@ -1823,7 +1823,7 @@ span.flatpickr-day.selected {
 .ql-snow .ql-picker, .ql-snow .ql-fill, .ql-snow .ql-stroke.ql-fill, .ql-snow .ql-stroke {
   color: var(--color-slate-600);
 }
-:is(.ql-snow .ql-picker, .ql-snow .ql-fill, .ql-snow .ql-stroke.ql-fill, .ql-snow .ql-stroke):where(.dark, .dark *) {
+:is(.ql-snow .ql-picker, .ql-snow .ql-fill, .ql-snow .ql-stroke.ql-fill, .ql-snow .ql-stroke):where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *):not(:where([data-theme="light"], [data-theme="light"] *)) {
   color: var(--color-navy-200);
 }
 .ql-snow .ql-even { fill-rule: evenodd; }
@@ -1958,7 +1958,7 @@ span.flatpickr-day.selected {
   border-bottom-left-radius: .5rem;
   border-bottom-right-radius: .5rem;
 }
-.ql-container.ql-snow:where(.dark, .dark *) {
+.ql-container.ql-snow:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *):not(:where([data-theme="light"], [data-theme="light"] *)) {
   border-color: var(--color-navy-450);
 }
 .ql-toolbar.ql-snow + .ql-container.ql-snow {
@@ -1967,7 +1967,7 @@ span.flatpickr-day.selected {
 .ql-header-filled .ql-toolbar.ql-snow {
   background-color: color-mix(in oklab, var(--color-slate-150) 80%, transparent);
 }
-.ql-header-filled .ql-toolbar.ql-snow:where(.dark, .dark *) {
+.ql-header-filled .ql-toolbar.ql-snow:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *):not(:where([data-theme="light"], [data-theme="light"] *)) {
   background-color: color-mix(in oklab, var(--color-navy-500) 85%, transparent);
 }
 .ql-snow .ql-tooltip {
@@ -2030,14 +2030,14 @@ span.flatpickr-day.selected {
   position: absolute;
   transition: background-color .25s;
 }
-.filepond--panel-root:where(.dark, .dark *) {
+.filepond--panel-root:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *):not(:where([data-theme="light"], [data-theme="light"] *)) {
   background-color: var(--color-navy-500);
 }
 .filepond.fp-bordered .filepond--panel-root {
   background-color: transparent;
   border: 1px dashed var(--color-slate-400);
 }
-.filepond.fp-bordered .filepond--panel-root:where(.dark, .dark *) {
+.filepond.fp-bordered .filepond--panel-root:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *):not(:where([data-theme="light"], [data-theme="light"] *)) {
   background-color: transparent;
   border-color: var(--color-slate-600);
 }
@@ -2045,13 +2045,13 @@ span.flatpickr-day.selected {
 .filepond.fp-bg-filled .filepond--panel-root {
   background-color: color-mix(in oklab, var(--color-slate-150) 80%, transparent);
 }
-.filepond.fp-bg-filled .filepond--panel-root:where(.dark, .dark *) {
+.filepond.fp-bg-filled .filepond--panel-root:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *):not(:where([data-theme="light"], [data-theme="light"] *)) {
   background-color: color-mix(in oklab, var(--color-navy-500) 85%, transparent);
 }
 .filepond--root[data-dragging] .filepond--panel-root {
   background-color: color-mix(in oklab, var(--color-slate-300) 40%, transparent);
 }
-.filepond--root[data-dragging] .filepond--panel-root:where(.dark, .dark *) {
+.filepond--root[data-dragging] .filepond--panel-root:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *):not(:where([data-theme="light"], [data-theme="light"] *)) {
   background-color: color-mix(in oklab, var(--color-navy-450) 55%, transparent);
 }
 .filepond.fp-bordered[data-dragging] .filepond--panel-root {
@@ -2067,7 +2067,7 @@ span.flatpickr-day.selected {
   position: relative;
   user-select: none;
 }
-.filepond--drop-label:where(.dark, .dark *) {
+.filepond--drop-label:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *):not(:where([data-theme="light"], [data-theme="light"] *)) {
   color: var(--color-navy-50);
 }
 .filepond--drop-label:focus-visible {
@@ -2078,7 +2078,7 @@ span.flatpickr-day.selected {
 .filepond.label-icon .filepond--drop-label {
   color: var(--color-slate-400);
 }
-.filepond.label-icon .filepond--drop-label:where(.dark, .dark *) {
+.filepond.label-icon .filepond--drop-label:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *):not(:where([data-theme="light"], [data-theme="light"] *)) {
   color: var(--color-navy-300);
 }
 .filepond--drop-label label {
@@ -2295,7 +2295,7 @@ span.flatpickr-day.selected {
   background-color: #fef08a;
   color: inherit;
 }
-.ql-editor mark:where(.dark, .dark *) {
+.ql-editor mark:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *):not(:where([data-theme="light"], [data-theme="light"] *)) {
   background-color: color-mix(in oklab, #facc15 38%, transparent);
   color: var(--color-navy-50);
 }
@@ -2346,7 +2346,7 @@ span.flatpickr-day.selected {
   color: var(--color-primary);
   user-select: all;
 }
-.ql-editor .ql-token:where(.dark, .dark *) {
+.ql-editor .ql-token:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *):not(:where([data-theme="light"], [data-theme="light"] *)) {
   background-color: color-mix(in oklab, var(--color-accent-light) 15%, transparent);
   color: var(--color-accent-light);
 }
@@ -2365,7 +2365,7 @@ span.flatpickr-day.selected {
 .ql-menu[hidden] {
   display: none;
 }
-.ql-menu:where(.dark, .dark *) {
+.ql-menu:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *):not(:where([data-theme="light"], [data-theme="light"] *)) {
   background-color: var(--color-navy-700);
   box-shadow: 0 0 0 1px var(--color-navy-500), 0 10px 30px rgb(0 0 0 / .35);
 }
@@ -2390,10 +2390,10 @@ span.flatpickr-day.selected {
   background-color: var(--color-slate-100);
   color: var(--color-slate-800);
 }
-.ql-menu:where(.dark, .dark *) .ql-menu-item {
+.ql-menu:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *):not(:where([data-theme="light"], [data-theme="light"] *)) .ql-menu-item {
   color: var(--color-navy-100);
 }
-.ql-menu:where(.dark, .dark *) .ql-menu-item[aria-selected="true"] {
+.ql-menu:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *):not(:where([data-theme="light"], [data-theme="light"] *)) .ql-menu-item[aria-selected="true"] {
   background-color: var(--color-navy-600);
   color: #fff;
 }
@@ -2410,7 +2410,7 @@ span.flatpickr-day.selected {
   background-color: var(--color-slate-150);
   color: var(--color-slate-600);
 }
-.ql-menu:where(.dark, .dark *) .ql-menu-icon {
+.ql-menu:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *):not(:where([data-theme="light"], [data-theme="light"] *)) .ql-menu-icon {
   background-color: var(--color-navy-500);
   color: var(--color-navy-100);
 }
@@ -2456,7 +2456,7 @@ span.flatpickr-day.selected {
   font-size: .75rem;
   color: var(--color-slate-400);
 }
-.ql-footer:where(.dark, .dark *) {
+.ql-footer:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *):not(:where([data-theme="light"], [data-theme="light"] *)) {
   border-color: var(--color-navy-450);
 }
 .ql-container.ql-snow.ql-has-footer {
@@ -2472,11 +2472,11 @@ span.flatpickr-day.selected {
 .ql-comment:focus-within {
   box-shadow: inset 0 0 0 1px var(--color-primary);
 }
-.ql-comment:where(.dark, .dark *) {
+.ql-comment:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *):not(:where([data-theme="light"], [data-theme="light"] *)) {
   background-color: transparent;
   box-shadow: inset 0 0 0 1px var(--color-navy-450);
 }
-.ql-comment:where(.dark, .dark *):focus-within {
+.ql-comment:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *):not(:where([data-theme="light"], [data-theme="light"] *)):focus-within {
   box-shadow: inset 0 0 0 1px var(--color-accent-light);
 }
 .ql-comment .ql-container.ql-snow {
@@ -2494,7 +2494,7 @@ span.flatpickr-day.selected {
   padding: .375rem .5rem;
   border-top: 1px solid var(--color-slate-150);
 }
-.ql-comment-bar:where(.dark, .dark *) {
+.ql-comment-bar:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *):not(:where([data-theme="light"], [data-theme="light"] *)) {
   border-top-color: var(--color-navy-500);
 }
 .ql-comment-tool {
@@ -2512,7 +2512,7 @@ span.flatpickr-day.selected {
   background-color: var(--color-slate-150);
   color: var(--color-slate-800);
 }
-.ql-comment-tool:where(.dark, .dark *):hover {
+.ql-comment-tool:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *):not(:where([data-theme="light"], [data-theme="light"] *)):hover {
   background-color: var(--color-navy-500);
   color: #fff;
 }
@@ -2527,7 +2527,7 @@ span.flatpickr-day.selected {
   font-weight: 500;
   line-height: 1.25rem;
 }
-.ql-kbd:where(.dark, .dark *) {
+.ql-kbd:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *):not(:where([data-theme="light"], [data-theme="light"] *)) {
   background-color: var(--color-navy-500);
   color: var(--color-navy-100);
 }
@@ -2548,7 +2548,7 @@ span.flatpickr-day.selected {
 .ql-submit:hover {
   background-color: var(--color-primary-focus);
 }
-.ql-submit:where(.dark, .dark *) {
+.ql-submit:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *):not(:where([data-theme="light"], [data-theme="light"] *)) {
   background-color: var(--color-accent);
 }
 
@@ -2568,7 +2568,7 @@ span.flatpickr-day.selected {
   --ql-primary-soft: color-mix(in oklab, var(--color-primary) 10%, transparent);
   --ql-pop: 0 10px 30px -8px rgb(48 46 56 / .18);
 }
-.ql-box:where(.dark, .dark *), .ql-comment:where(.dark, .dark *) {
+.ql-box:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *):not(:where([data-theme="light"], [data-theme="light"] *)), .ql-comment:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *):not(:where([data-theme="light"], [data-theme="light"] *)) {
   --ql-surface: var(--color-navy-750);
   --ql-hover: var(--color-navy-600);
   --ql-fill: var(--color-navy-800);
@@ -2588,7 +2588,7 @@ span.flatpickr-day.selected {
   border-radius: .5rem;
   background-color: #fff;
 }
-.ql-box:where(.dark, .dark *) {
+.ql-box:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *):not(:where([data-theme="light"], [data-theme="light"] *)) {
   background-color: var(--color-navy-700);
 }
 .ql-box:focus-within {
@@ -2741,7 +2741,7 @@ span.flatpickr-day.selected {
   background-color: #fff;
   box-shadow: 0 0 0 1px var(--color-slate-150), var(--ql-pop);
 }
-.ql-menu:where(.dark, .dark *) {
+.ql-menu:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *):not(:where([data-theme="light"], [data-theme="light"] *)) {
   background-color: var(--color-navy-700);
   box-shadow: 0 0 0 1px var(--color-navy-500), var(--ql-pop);
 }
@@ -2757,11 +2757,11 @@ span.flatpickr-day.selected {
   line-height: 23px;
   color: var(--ql-soft);
 }
-.ql-menu-item[aria-selected="true"], .ql-menu:where(.dark, .dark *) .ql-menu-item[aria-selected="true"] {
+.ql-menu-item[aria-selected="true"], .ql-menu:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *):not(:where([data-theme="light"], [data-theme="light"] *)) .ql-menu-item[aria-selected="true"] {
   background-color: var(--ql-hover);
   color: var(--ql-ink);
 }
-.ql-menu:where(.dark, .dark *) .ql-menu-item {
+.ql-menu:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *):not(:where([data-theme="light"], [data-theme="light"] *)) .ql-menu-item {
   color: var(--ql-soft);
 }
 .ql-menu-icon {
@@ -2769,7 +2769,7 @@ span.flatpickr-day.selected {
   background-color: var(--ql-fill);
   color: var(--ql-soft);
 }
-.ql-menu:where(.dark, .dark *) .ql-menu-icon {
+.ql-menu:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *):not(:where([data-theme="light"], [data-theme="light"] *)) .ql-menu-icon {
   background-color: var(--ql-fill);
   color: var(--ql-soft);
 }
@@ -2790,11 +2790,11 @@ span.flatpickr-day.selected {
 .ql-comment-tool {
   color: var(--ql-softer);
 }
-.ql-comment-tool:hover, .ql-comment-tool:where(.dark, .dark *):hover {
+.ql-comment-tool:hover, .ql-comment-tool:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *):not(:where([data-theme="light"], [data-theme="light"] *)):hover {
   background-color: var(--ql-hover);
   color: var(--ql-ink);
 }
-.ql-kbd, .ql-kbd:where(.dark, .dark *) {
+.ql-kbd, .ql-kbd:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *):not(:where([data-theme="light"], [data-theme="light"] *)) {
   height: 1.25rem;
   background-color: var(--ql-fill);
   color: var(--ql-softer);

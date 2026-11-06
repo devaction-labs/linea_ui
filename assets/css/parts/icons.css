@@ -61,7 +61,7 @@
   right: 0;
   margin-top: -9px;
 }
-.dark .ql-snow.ql-toolbar [class*="huge-"] {
+.ql-snow.ql-toolbar:where(.dark *, [data-theme="dark"] *):not(:where([data-theme="light"] *)) [class*="huge-"] {
   color: var(--color-navy-200);
 }
 .ql-snow.ql-toolbar :is(button:hover, button:focus, button.ql-active, .ql-picker-label:hover, .ql-picker-label.ql-active, .ql-picker-item:hover, .ql-picker-item.ql-selected) [class*="huge-"] {

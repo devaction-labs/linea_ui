@@ -20,7 +20,7 @@
 @source "../../lib";
 @source "../js";
 
-@custom-variant dark (&:where(.dark, .dark *));
+@custom-variant dark (&:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *):not(:where([data-theme="light"], [data-theme="light"] *)));
 
 @theme {
   --font-sans: "Geist", ui-sans-serif, system-ui, sans-serif,
