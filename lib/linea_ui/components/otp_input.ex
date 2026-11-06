@@ -48,10 +48,10 @@ defmodule LineaUI.Components.OtpInput do
   @sizes %{
     "sm" => "size-8.5 rounded-md text-sm",
     "md" => "size-10 rounded-md text-base",
-    "lg" => "size-12 rounded-md text-lg"
+    "lg" => "h-[54px] w-[46px] rounded-xl font-mono text-[22px]"
   }
 
-  @box "shrink-0 px-0 text-center font-semibold text-slate-950 focus:border-primary/10 focus:ring-3 focus:ring-primary/10 dark:text-navy-50 dark:focus:border-accent/20 dark:focus:ring-accent/20"
+  @box "shrink-0 border-0 bg-white px-0 text-center font-semibold text-slate-950 shadow-[inset_0_0_0_1px_var(--color-slate-300)] focus:shadow-[inset_0_0_0_1.5px_var(--color-primary),0_0_0_4px_color-mix(in_oklab,var(--color-primary)_14%,transparent)] focus:ring-0 dark:bg-navy-750 dark:text-navy-50 dark:shadow-[inset_0_0_0_1px_var(--color-navy-450)] dark:focus:shadow-[inset_0_0_0_1.5px_var(--color-accent),0_0_0_4px_color-mix(in_oklab,var(--color-accent)_16%,transparent)]"
 
   @doc """
   Renders the boxes, with their caption, help and errors when given.

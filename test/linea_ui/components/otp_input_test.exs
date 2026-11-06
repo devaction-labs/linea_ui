@@ -80,8 +80,8 @@ defmodule LineaUI.Components.OtpInputTest do
       """)
 
     assert "size-8.5" in classes(html, "#a-1")
-    assert "size-12" in classes(html, "#b-1")
-    assert "text-lg" in classes(html, "#b-1")
+    assert "h-[54px]" in classes(html, "#b-1")
+    assert "text-[22px]" in classes(html, "#b-1")
   end
 
   test "length cuts the value and pads the boxes" do
