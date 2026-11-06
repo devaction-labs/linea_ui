@@ -48,6 +48,7 @@ defmodule LineaUI.Components.Avatar do
     "xs" => "size-8",
     "xs-plus" => "size-9",
     "sm" => "size-10",
+    "sm-plus" => "size-11",
     "md" => "size-12",
     "lg" => "size-16",
     "xl" => "size-20",
@@ -60,6 +61,7 @@ defmodule LineaUI.Components.Avatar do
     "xs" => "text-xs",
     "xs-plus" => "text-[13px]",
     "sm" => "text-sm",
+    "sm-plus" => "text-[15px]",
     "md" => "text-[17px]",
     "lg" => "text-[23px]",
     "xl" => "text-[29px]",
@@ -150,6 +152,7 @@ defmodule LineaUI.Components.Avatar do
       "xs-plus" => "size-2.5 border",
       "xs" => "size-2.5 border",
       "sm" => "size-3 border-2",
+      "sm-plus" => "size-3 border-2",
       "md" => "size-3.5 border-2",
       "lg" => "m-0.5 size-3.5 border-2",
       "xl" => "m-1 size-4 border-2",
@@ -161,6 +164,7 @@ defmodule LineaUI.Components.Avatar do
       "xs-plus" => "-m-px size-2.5 border",
       "xs" => "-m-px size-2.5 border",
       "sm" => "-m-0.5 size-3 border-2",
+      "sm-plus" => "-m-0.5 size-3 border-2",
       "md" => "-m-0.5 size-3.5 border-2",
       "lg" => "-m-px size-3.5 border-2",
       "xl" => "size-4 border-2",
@@ -192,7 +196,14 @@ defmodule LineaUI.Components.Avatar do
   @kinds ~w(company customer supplier assistant invite)
   @squared_kinds ~w(company customer supplier)
 
-  @size_aliases %{"24" => "3xs", "32" => "xs", "40" => "sm", "48" => "md", "64" => "lg"}
+  @size_aliases %{
+    "24" => "3xs",
+    "32" => "xs",
+    "40" => "sm",
+    "44" => "sm-plus",
+    "48" => "md",
+    "64" => "lg"
+  }
 
   @auto [
     "bg-[#0d8f91] text-white",
@@ -240,6 +251,7 @@ defmodule LineaUI.Components.Avatar do
     "xs" => "-space-x-[6px]",
     "xs-plus" => "-space-x-[7px]",
     "sm" => "-space-x-[8px]",
+    "sm-plus" => "-space-x-[9px]",
     "md" => "-space-x-[10px]",
     "lg" => "-space-x-[13px]",
     "xl" => "-space-x-[16px]",
@@ -247,6 +259,7 @@ defmodule LineaUI.Components.Avatar do
     "24" => "-space-x-[5px]",
     "32" => "-space-x-[6px]",
     "40" => "-space-x-[8px]",
+    "44" => "-space-x-[9px]",
     "48" => "-space-x-[10px]",
     "64" => "-space-x-[13px]"
   }
@@ -271,7 +284,7 @@ defmodule LineaUI.Components.Avatar do
 
   attr(:size, :string,
     default: "sm",
-    values: ~w(3xs 2xs xs xs-plus sm md lg xl 2xl 24 32 40 48 64),
+    values: ~w(3xs 2xs xs xs-plus sm sm-plus md lg xl 2xl 24 32 40 44 48 64),
     doc:
       "`3xs` is size-6, `2xs` size-7, `xs` size-8, `xs-plus` size-9, `sm` size-10 (default), `md` size-12, `lg` size-16, `xl` size-20, `2xl` size-24. The pixel sizes are aliases: `24` is `3xs`, `32` is `xs`, `40` is `sm`, `48` is `md`, `64` is `lg`."
   )
@@ -592,7 +605,7 @@ defmodule LineaUI.Components.Avatar do
 
   attr(:size, :string,
     default: "xs",
-    values: ~w(3xs 2xs xs xs-plus sm md lg xl 2xl 24 32 40 48 64),
+    values: ~w(3xs 2xs xs xs-plus sm sm-plus md lg xl 2xl 24 32 40 44 48 64),
     doc: "The size of the \"+N\" avatar; give it the same `size` as the avatars."
   )
 

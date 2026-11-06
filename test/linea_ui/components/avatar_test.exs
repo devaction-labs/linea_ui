@@ -219,9 +219,17 @@ defmodule LineaUI.Components.AvatarTest do
       <.avatar id="c" initials="a" size="40" />
       <.avatar id="d" initials="a" size="48" />
       <.avatar id="e" initials="a" size="64" />
+      <.avatar id="f" initials="a" size="44" />
       """)
 
-    for {id, size} <- [a: "size-6", b: "size-8", c: "size-10", d: "size-12", e: "size-16"] do
+    for {id, size} <- [
+          a: "size-6",
+          b: "size-8",
+          c: "size-10",
+          d: "size-12",
+          e: "size-16",
+          f: "size-11"
+        ] do
       assert size in classes(html, "##{id}")
     end
   end
