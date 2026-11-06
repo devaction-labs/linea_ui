@@ -141,6 +141,13 @@ defmodule LineaUI.Components.AiTest do
     assert [_] = find(empty, ".ai-conversations-empty") |> Enum.to_list()
   end
 
+  test "the chat has a footnote only when given" do
+    assert texts(render(~H|<.ai_chat id="c" />|), ".ai-chat-footnote") == []
+
+    assert texts(render(~H|<.ai_chat id="c" footnote="Aviso" />|), ".ai-chat-footnote") ==
+             ["Aviso"]
+  end
+
   test "the chat shows the greeting, then the messages with their proposal" do
     start = render(~H|<.ai_chat id="c" greeting="Bom dia, Marina" />|)
     assert texts(start, "h1") == ["Bom dia, Marina"]

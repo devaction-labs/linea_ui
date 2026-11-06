@@ -56,6 +56,11 @@ const thinned = (labels, spacing, widest, hide) => {
   return labels.filter((_, index) => index % every === 0)
 }
 
+// `xaxis.tickAmount` on a line or area chart of categories: that many gaps, so `tickAmount + 1` labels evenly spread
+// over the slots (13 months with 4 give 0, 3, 6, 9 and 12).
+const evenly = (labels, ticks) =>
+  [...new Set(Array.from({length: ticks + 1}, (_, index) => Math.round((index * (labels.length - 1)) / ticks)))].map((slot) => labels[slot])
+
 const timeText = (axis, kind, pattern, locale) => {
   const format = axis.labels?.format ?? pattern
   const options = (value) => ({dateFormatter: (date, text) => formatDate(Number(date), text, locale), timestamp: value})
@@ -111,7 +116,10 @@ const slotAxis = (config, axis, data, length, {measure, banded, horizontal}) => 
     width: spacing,
     center: (slot) => centers[slot],
     count,
-    labels: thinned(all, spacing, widest, axis.labels?.hideOverlappingLabels !== false),
+    labels:
+      !banded && Number.isInteger(axis.tickAmount) && axis.tickAmount >= 1 && all.length > 1
+        ? evenly(all, axis.tickAmount)
+        : thinned(all, spacing, widest, axis.labels?.hideOverlappingLabels !== false),
     edges: banded ? Array.from({length: count + 1}, (_, index) => index * grid.width) : centers,
   }
 }

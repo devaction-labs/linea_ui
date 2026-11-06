@@ -47,6 +47,7 @@ defmodule LineaUI.Components.Chart do
   | `brl` | `1284.9` -> `R$ 1.284,9` (pt-BR grouping) |
   | `brl_thousands` | `6000` -> `R$ 6 mil`, `31500` -> `R$ 31,5 mil`, values under 1000 as `brl` |
   | `brl_kilo` | `20000` -> `R$ 20k`, `0` -> `0` |
+  | `brl_kilo_zero` | as `brl_kilo`, but `0` -> `R$ 0` (every label of the axis carries the currency) |
   | `number_br` | `1248` -> `1.248` |
   | `total_br` | for gauges and the donut total: the sum of the series as `number_br` (takes ApexCharts' `w`) |
   | `total_brl_thousands` | the donut total as `R$ 248 mil` (takes ApexCharts' `w`) |
@@ -119,11 +120,11 @@ defmodule LineaUI.Components.Chart do
   `distributed`, `rangeBarOverlap` and `dataLabels.position` (`center` or `top`; `end` on rows writes the value just past the end of each bar, in room kept at the right of the plot). A stacked bar rounds
   the ends of the whole pile. `plotOptions.candlestick.colors` takes `upward` and `downward`.
 
-  **Axes**: `xaxis` (`type` `category`, `datetime` or `numeric`, `categories`, `min`, `max`, `tickAmount`,
+  **Axes**: `xaxis` (`type` `category`, `datetime` or `numeric`, `categories`, `min`, `max`, `tickAmount` (on a line or area chart of categories: that many gaps, so `tickAmount + 1` labels spread evenly),
   `position` `top`, `show`, `labels` with `show`, `formatter`, `format` for dates such as `"dd MMM"`,
   `hideOverlappingLabels`, `offsetX`, `offsetY`, `style.fontSize`, `axisBorder.show`, `axisTicks.show`,
   `crosshairs.show`, `tooltip.enabled`) and `yaxis` (`show`, `min`, `max`, `tickAmount`, `labels` with the
-  same keys, `axisBorder.show`, `axisTicks.show`, `tooltip.enabled`). For a horizontal bar the `yaxis`
+  same keys plus `align` (`"left"` on a vertical chart: the labels start at the left edge of the widest one, as a column of values; the default is right-aligned), `axisBorder.show`, `axisTicks.show`, `tooltip.enabled`). For a horizontal bar the `yaxis`
   options drive the category labels and the `xaxis` ones the value labels. Labels never rotate; the ones
   that would overlap are thinned out.
 

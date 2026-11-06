@@ -72,6 +72,19 @@ defmodule LineaUI.Components.Upload do
     default: nil,
     doc: "Canvas: the line under `drop_label` (formats, size), also shown under an error."
 
+  attr :browse, :string,
+    default: nil,
+    doc:
+      "Canvas: a small outlined button with the upload icon inside the drop area, under the hint (`Escolher arquivo`). Clicking it opens the chooser like the rest of the area."
+
+  attr :icon_path, :string,
+    default: nil,
+    doc: "Canvas: the `d` of the SVG path drawn over the drop label, instead of the upload arrow."
+
+  attr :drop_class, :any,
+    default: nil,
+    doc: "Canvas: classes of the drop area itself (its padding, for one)."
+
   attr :on_cancel, :any, default: nil, doc: "Event (or `%JS{}`) of the remove button."
   attr :target, :any, default: nil
   attr :previews, :boolean, default: true, doc: "A thumbnail for image files."
@@ -160,14 +173,14 @@ defmodule LineaUI.Components.Upload do
     >
       <label
         for={@upload.ref}
-        class={["sg-drop lu-upload-drop", @refused != [] && "is-error"]}
+        class={["sg-drop lu-upload-drop", @refused != [] && "is-error", @drop_class]}
         role={@refused != [] && "alert"}
         phx-click={@refused_ref && @on_cancel}
         phx-value-ref={@refused_ref}
         phx-target={@refused_ref && @target}
       >
         <svg :if={@refused == []} class="i xl" viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M12 15V4M8 8l4-4 4 4M5 14v6h14v-6" />
+          <path d={@icon_path || "M12 15V4M8 8l4-4 4 4M5 14v6h14v-6"} />
         </svg>
         <svg :if={@refused != []} class="i xl" viewBox="0 0 24 24" aria-hidden="true">
           <path d="M12 3 2 20h20zM12 10v4M12 17h.01" />
@@ -177,6 +190,12 @@ defmodule LineaUI.Components.Upload do
           {error_text(@error_texts, error.error, @upload.max_entries, error.name)}
         </b>
         <span :if={@hint} class="lu-upload-hint">{@hint}</span>
+        <span :if={@browse && @refused == []} class="sg-btn sm">
+          <svg class="i" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 15V4M8 8l4-4 4 4M5 14v6h14v-6" />
+          </svg>
+          {@browse}
+        </span>
       </label>
       <.live_file_input upload={@upload} class="sr-only" />
       <div

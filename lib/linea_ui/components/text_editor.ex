@@ -266,9 +266,9 @@ defmodule LineaUI.Components.TextEditor do
     doc:
       "A comment's bar (mention, `:actions`, submit). `false` leaves only the text box, as a reply field in a thread; Ctrl+Enter still submits."
 
-  attr :submit_key, :string,
+  attr :submit_key, :any,
     default: "Ctrl ↵",
-    doc: "The shortcut shown next to a comment's button; `nil` hides it."
+    doc: "The shortcut shown next to a comment's button (a string); `nil` hides it."
 
   attr :clear_on_submit, :boolean, default: true, doc: "Empties the editor after it submits."
 

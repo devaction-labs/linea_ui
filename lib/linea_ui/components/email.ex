@@ -118,9 +118,9 @@ defmodule LineaUI.Components.Email do
   attr :theme, :atom, default: :auto, values: [:auto, :light, :dark]
   attr :lang, :string, default: "en"
 
-  attr :alt_text, :string,
+  attr :alt_text, :any,
     default: "If the button does not work, copy and paste this address into your browser:",
-    doc: "The line before the spelled-out address; `nil` leaves both out."
+    doc: "The line before the spelled-out address (a string); `nil` leaves both out."
 
   attr :button, :string,
     default: "accent",

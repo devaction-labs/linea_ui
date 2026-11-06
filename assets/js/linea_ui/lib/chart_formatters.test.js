@@ -17,6 +17,8 @@ test("each formatter has its own meaning", () => {
   assert.equal(FORMATTERS.brl_thousands(800), "R$ 800")
   assert.equal(FORMATTERS.brl_kilo(20000), "R$ 20k")
   assert.equal(FORMATTERS.brl_kilo(0), "0")
+  assert.equal(FORMATTERS.brl_kilo_zero(100000), "R$ 100k")
+  assert.equal(FORMATTERS.brl_kilo_zero(0), "R$ 0")
   assert.equal(FORMATTERS.number_br(1248), "1.248")
   assert.equal(FORMATTERS.percent(12.5), "12.5%")
   assert.equal(FORMATTERS.percent_round(12.5), "13%")

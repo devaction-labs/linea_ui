@@ -752,7 +752,12 @@ defmodule LineaUI.Components.Ai do
 
   attr :draft, :string, default: nil, doc: "The text in the composer."
   attr :greeting, :string, default: nil, doc: "Replaces the greeting line."
-  attr :footnote, :string, default: "Toda ação que muda dados pede a sua aprovação."
+
+  attr :footnote, :string,
+    default: nil,
+    doc:
+      "A small line under the composer (a notice about approvals, for instance). None unless given."
+
   attr :placeholder, :string, default: "Pergunte sobre pedidos, estoque, fiscal ou financeiro"
   attr :on_send, :any, default: nil, doc: "The `phx-submit` event of the composer."
   attr :on_change, :any, default: nil, doc: "The `phx-change` event of the composer."

@@ -80,6 +80,9 @@ const labels = (p) => {
   const x = config.xaxis.labels ?? {}
   const y = config.yaxis.labels ?? {}
   const below = p.topLabels ? plot.y - 12 : bottom + LABEL_DROP
+  // `yaxis.labels.align: "left"` (columns of values): the labels start at the left edge of the widest one.
+  const left = !horizontal && y.align === "left" && p.measure
+  const widest = left ? Math.max(0, ...value.ticks.map((tick) => p.measure(tick.label, fontOf(config.yaxis)))) : 0
   return horizontal
     ? [
         labelled(config.yaxis) ? cat.labels.map((one) => label(one.text, p.sideEdge + (y.offsetX ?? 0), plot.y + one.pos + (y.offsetY ?? 0) - 2, "end", fontOf(config.yaxis), slotStyle(config.yaxis, one.slot))) : null,
@@ -87,7 +90,11 @@ const labels = (p) => {
       ]
     : [
         labelled(config.xaxis) ? cat.labels.map((one) => label(one.text, plot.x + one.pos + (x.offsetX ?? 0), below + (x.offsetY ?? 0), "middle", fontOf(config.xaxis), slotStyle(config.xaxis, one.slot))) : null,
-        labelled(config.yaxis) ? value.ticks.map((tick) => label(tick.label, p.sideEdge + (y.offsetX ?? 0), p.along(tick.value) + (y.offsetY ?? 0), "end", fontOf(config.yaxis), slotStyle({labels: {style: {fontFamily: y.style?.fontFamily}}}, 0))) : null,
+        labelled(config.yaxis)
+          ? value.ticks.map((tick) =>
+              label(tick.label, p.sideEdge + (y.offsetX ?? 0) - (left ? widest : 0), p.along(tick.value) + (y.offsetY ?? 0), left ? "start" : "end", fontOf(config.yaxis), slotStyle({labels: {style: {fontFamily: y.style?.fontFamily}}}, 0))
+            )
+          : null,
       ]
 }
 

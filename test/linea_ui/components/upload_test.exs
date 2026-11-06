@@ -183,6 +183,27 @@ defmodule LineaUI.Components.UploadTest do
     assert [_] = find(html, "input[type=file]") |> Enum.to_list()
   end
 
+  test "canvas variant: a browse button, a custom icon and drop area classes" do
+    upload = with_entries([])
+    assigns = %{__changed__: nil, upload: upload}
+
+    html =
+      rendered_to_string(~H"""
+      <.upload
+        upload={@upload}
+        variant="canvas"
+        drop_label="Arraste a foto"
+        browse="Escolher arquivo"
+        icon_path="M4 8h3"
+        drop_class="p-10"
+      />
+      """)
+
+    assert [_] = find(html, "label.sg-drop.p-10") |> Enum.to_list()
+    assert html |> find("label.sg-drop .sg-btn.sm") |> LazyHTML.text() =~ "Escolher arquivo"
+    assert [_] = find(html, "label.sg-drop svg path[d='M4 8h3']") |> Enum.to_list()
+  end
+
   test "canvas thumbs layout: a tile per file and the + tile" do
     upload = with_entries([{"a", "a.pdf", 1000, 100, true}])
     assigns = %{__changed__: nil, upload: upload}

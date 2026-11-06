@@ -1,0 +1,3 @@
+/* Canvas rules for the Signetum fiscal screens (canvas "Signetum — Landing page"). */
+/* A long value of a single select ends in an ellipsis before the chevron, as in the canvas. */
+.ts-wrapper[phx-hook="LineaUI.Select"].single .ts-control > .item{display:block;max-width:calc(100% - 22px);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}

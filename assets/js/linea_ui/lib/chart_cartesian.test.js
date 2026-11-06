@@ -42,6 +42,27 @@ test("the plot leaves ApexCharts' margins: 30 above, 15 below plus the labels, h
   assert.deepEqual([layout.value.min, layout.value.max], [0, 60])
 })
 
+test("tickAmount on the categories of a line chart prints that many gaps of labels, evenly", () => {
+  const options = {
+    chart: {type: "line", height: 200},
+    xaxis: {categories: Array.from({length: 13}, (_, index) => `m${index}`), tickAmount: 4},
+    series: [{name: "A", data: Array.from({length: 13}, (_, index) => index)}],
+  }
+  const {layout} = build(options, {width: 800})
+  assert.deepEqual(layout.cat.labels.map((label) => label.text), ["m0", "m3", "m6", "m9", "m12"])
+})
+
+test("yaxis.labels.align left starts every label at the same x", () => {
+  const options = {
+    chart: {type: "line", height: 200},
+    xaxis: {categories: ["a", "b", "c"]},
+    yaxis: {labels: {align: "left"}},
+    series: [{name: "A", data: [0, 100000, 20000]}],
+  }
+  const {svg} = build(options, {width: 800})
+  assert.equal(count(svg, /text-anchor="start"/g) >= 2, true)
+})
+
 test("grouped columns sit side by side inside the band, rounded at both ends", () => {
   const {drawn, layout} = build(columns, {width: 600})
   assert.equal(drawn.boxes.length, 12)

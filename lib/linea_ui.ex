@@ -53,6 +53,7 @@ defmodule LineaUI do
     breadcrumb: LineaUI.Components.Breadcrumb,
     card_table: LineaUI.Components.CardTable,
     kpi_card: LineaUI.Components.KpiCard,
+    sparkline: LineaUI.Components.Sparkline,
     stat: LineaUI.Components.Stat,
     bulk_bar: LineaUI.Components.BulkBar,
     button: LineaUI.Components.Button,

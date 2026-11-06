@@ -10,6 +10,7 @@ export const FORMATTERS = {
   brl: (value) => `R$ ${PT_NUMBER.format(value)}`,
   brl_thousands: (value) => (Math.abs(value) >= 1000 ? `R$ ${PT_NUMBER.format(Math.round(value / 100) / 10)} mil` : `R$ ${PT_NUMBER.format(value)}`),
   brl_kilo: (value) => (Math.abs(value) >= 1000 ? `R$ ${Math.round(value / 100) / 10}k`.replace(".", ",") : `${value}`),
+  brl_kilo_zero: (value) => (Math.abs(value) >= 1000 ? `R$ ${Math.round(value / 100) / 10}k`.replace(".", ",") : `R$ ${value}`),
   number_br: (value) => PT_NUMBER.format(value),
   percent: (value) => `${value}%`,
   percent_round: (value) => `${Math.round(value)}%`,
