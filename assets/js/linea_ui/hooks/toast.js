@@ -333,8 +333,23 @@ export default {
       spinner && spinner.setAttribute("role", "status")
       const pct = progress !== null && !failed && this.part("span", "pct", `${Math.round(progress)}%`)
       const close = closeFor(input, toast.duration) && this.closeButton("sg-ib sm plain", "size-4")
-      card.replaceChildren(...[tile, body, ...actions, spinner, pct, close].filter(Boolean))
+      this.settleChildren(card, [tile, body, ...actions], spinner, [pct, close])
       card.querySelectorAll("[data-toast-dismiss]").forEach((button) => button.addEventListener("click", () => this.remove(toast)))
+    },
+
+    /**
+     * Sets the children of a card as `head`, the spinner, `tail`. A spinner that is already in the card stays the same
+     * node (taking it out and putting it back, or drawing a new one, would restart its turn at every update of a
+     * progress toast); the rest is redrawn around it.
+     */
+    settleChildren(card, head, spinner, tail) {
+      const keep = spinner ? card.querySelector(":scope > .sg-spin") : null
+      const before = [...head].filter(Boolean)
+      const after = tail.filter(Boolean)
+      if (!keep) return card.replaceChildren(...before, ...[spinner].filter(Boolean), ...after)
+      ;[...card.children].filter((child) => child !== keep).forEach((child) => child.remove())
+      keep.before(...before)
+      keep.after(...after)
     },
 
     canvasAction(action, toast) {
