@@ -44,21 +44,21 @@ defmodule LineaUI.Components.Select do
 
   @native %{
     "outline" =>
-      "border border-slate-200 bg-white hover:border-slate-400 focus:border-primary dark:border-navy-450 dark:bg-navy-700 dark:hover:border-navy-400 dark:focus:border-accent",
+      "border-0 bg-white shadow-[inset_0_0_0_1px_var(--color-slate-300),0_1px_2px_rgb(23_23_26/.05)] hover:shadow-[inset_0_0_0_1px_var(--color-slate-400),0_1px_2px_rgb(23_23_26/.05)] focus:shadow-[inset_0_0_0_1px_var(--color-primary),0_0_0_4px_color-mix(in_oklab,var(--color-primary)_14%,transparent)] focus:ring-0 dark:bg-navy-700 dark:shadow-[inset_0_0_0_1px_var(--color-navy-450)] dark:hover:shadow-[inset_0_0_0_1px_var(--color-navy-400)] dark:focus:shadow-[inset_0_0_0_1px_var(--color-accent),0_0_0_4px_color-mix(in_oklab,var(--color-accent)_16%,transparent)]",
     "filled" =>
       "bg-slate-150 ring-primary/50 hover:bg-slate-200 focus:ring-3 dark:bg-navy-900/90 dark:ring-accent/50 dark:hover:bg-navy-900 dark:focus:bg-navy-900"
   }
 
   @native_sizes %{
     {"sm", true} => "mt-1 h-7 px-2.5 text-xs",
-    {"md", true} => "mt-1.5 h-10 px-3 py-0 text-sm",
+    {"md", true} => "mt-1.5 h-10 px-3 py-0 text-[14px]",
     {"lg", true} => "mt-1 h-10 px-4 text-sm",
     {"sm", false} => "h-7 px-2.5 text-xs",
     {"md", false} => "h-10 px-3 py-0 text-sm",
     {"lg", false} => "h-10 px-4 text-sm"
   }
 
-  @native_shapes %{"rounded" => "rounded-lg", "pill" => "rounded-full px-4"}
+  @native_shapes %{"rounded" => "rounded-[11px]", "pill" => "rounded-full px-4"}
 
   @native_disabled "disabled:pointer-events-none disabled:select-none disabled:border-none disabled:bg-zinc-100 dark:disabled:bg-navy-600"
 
