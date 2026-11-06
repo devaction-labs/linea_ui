@@ -58,7 +58,7 @@ defmodule LineaUI.Components.Skeleton do
     ~H"""
     <div
       aria-hidden="true"
-      class={merge([animation(@animation), "bg-slate-150 dark:bg-navy-500", shape(@shape), @class])}
+      class={merge([animation(@animation), "bg-slate-150 bg-[linear-gradient(90deg,var(--color-slate-150),var(--color-slate-100),var(--color-slate-150))] dark:bg-navy-500 dark:bg-none", shape(@shape), @class])}
       {@rest}
     >
     </div>
