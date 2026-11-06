@@ -130,15 +130,27 @@ export default {
       if (this.sameCanvas(previous, input) && toast.el.querySelector(".sg-toast")) return this.repaint(toast, input)
       const el = this.render(input, toast)
       el.style.cssText = toast.el.style.cssText
-      el.style.width = ""
-      el.style.height = ""
       el.classList.add("on")
       toast.el.replaceWith(el)
       toast.el = el
-      const box = el.getBoundingClientRect()
-      toast.size = {width: Math.ceil(box.width) + 1, height: Math.ceil(box.height)}
+      toast.size = this.measure(el)
       this.expanded.has(toast.position.key) ? this.pause(toast) : this.start(toast)
       this.layout()
+    },
+
+    /**
+     * The natural size of a toast (what it takes alone, in full). A toast that is already in a pile carries the pile's
+     * inline width, height and scale and, behind the newest, `data-behind`; none of those is its size, so they are left
+     * out while it is measured (`offsetWidth` and `offsetHeight` ignore the transform).
+     */
+    measure(el) {
+      const behind = el.hasAttribute("data-behind")
+      el.removeAttribute("data-behind")
+      el.style.width = ""
+      el.style.height = ""
+      const size = {width: el.offsetWidth + 1, height: el.offsetHeight}
+      el.toggleAttribute("data-behind", behind)
+      return size
     },
 
     /** Two canvas toasts with the same aura: the second can be painted over the first one's nodes. */
@@ -155,10 +167,7 @@ export default {
       const el = toast.el
       this.fillCard(el.querySelector(".sg-toast"), input, toast)
       el.setAttribute("role", colorFor(input) === "error" ? "alert" : "status")
-      el.style.width = ""
-      el.style.height = ""
-      const box = el.getBoundingClientRect()
-      toast.size = {width: Math.ceil(box.width) + 1, height: Math.ceil(box.height)}
+      toast.size = this.measure(el)
       this.expanded.has(toast.position.key) ? this.pause(toast) : this.start(toast)
       this.layout()
     },
@@ -175,8 +184,7 @@ export default {
       toast.left = toast.duration
       toast.el = this.render(input, toast)
       this.el.prepend(toast.el)
-      const box = toast.el.getBoundingClientRect()
-      toast.size = {width: Math.ceil(box.width) + 1, height: Math.ceil(box.height)}
+      toast.size = this.measure(toast.el)
       this.toasts.unshift(toast)
       this.start(toast)
       requestAnimationFrame(() => (toast.el.classList.add("on"), this.layout()))

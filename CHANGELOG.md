@@ -6,6 +6,7 @@
 - `aura` (`LineaUI.Components.Aura`): a spinning light ring around an element for async work (`mode` spin/dual/glow, `tone`, `width`, `radius`, `shadow`). It replaces the old `aura/1` of `toast.ex`.
 - `toast_card` takes `aura`, `busy`, `progress` and `progress_state` (the progress toast whose background fills up); the toasts pushed from the server draw the same card.
 - The canvas toasts stack again: the older ones behind the newest show as smaller slivers of the card (their card was hidden with the content).
+- A toast replaced in a pile (same id sent again) is measured without the pile's scale and sliver width, so the opened pile keeps every card at its size, aligned and without overlap.
 - `sparkline` (`LineaUI.Components.Sparkline`): a small inline trend line.
 - `chart`: the `brl_kilo` and `brl_kilo_zero` formatters, `tickAmount` on category x axes and left-aligned y-axis labels.
 - `upload variant="canvas"` takes `browse`, `icon_path` and `drop_class`.
