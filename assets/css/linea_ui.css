@@ -1019,7 +1019,7 @@ code.inline-code {
 
 /* timeline */
 .timeline {
-  @apply flex flex-col [--size:12px] [--line:2px];
+  @apply flex flex-col [--size:12px] [--tl-line:2px];
 }
 
 .timeline.line-space {
@@ -1035,7 +1035,7 @@ code.inline-code {
 }
 
 .timeline .timeline-item::before {
-  @apply absolute inset-0 order-[-1] w-[var(--line)] translate-x-[calc((var(--size)/2)-(var(--line)/2))] content-[''];
+  @apply absolute inset-0 order-[-1] w-[var(--tl-line)] translate-x-[calc((var(--size)/2)-(var(--tl-line)/2))] content-[''];
 }
 
 .timeline .timeline-item:not(:last-child) {
@@ -1297,7 +1297,7 @@ table.is-zebra > tbody > tr:nth-child(even) > td {
 /* timeline, compact: the canvas `sg-tl` (a 28px tile, a 1px line, 18px between items) */
 .timeline.is-compact {
   --size: 28px;
-  --line: 1px;
+  --tl-line: 1px;
   --space: 2px;
 }
 .timeline.is-compact .timeline-item {
@@ -1318,6 +1318,10 @@ table.is-zebra > tbody > tr:nth-child(even) > td {
   line-height: 20px;
   font-weight: 500;
   color: var(--color-slate-900);
+}
+.dark .timeline.is-compact .timeline-item-title:not([data-theme="light"] *),
+[data-theme="dark"] .timeline.is-compact .timeline-item-title {
+  color: var(--color-navy-50);
 }
 .timeline.is-compact .timeline-item-time {
   font-family: var(--font-mono);
