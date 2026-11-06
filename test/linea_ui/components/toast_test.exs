@@ -205,22 +205,6 @@ defmodule LineaUI.Components.ToastTest do
     assert_raise ArgumentError, ~r/step/, fn -> Toast.changes("b", step: 1.5) end
   end
 
-  test "aura wraps any content in the ring of light" do
-    html =
-      render(~H"""
-      <.aura variant="dual" size="lg" color="success" class="rounded-xl">
-        <p>Inside</p>
-      </.aura>
-      """)
-
-    assert "linea-aura" in classes(html, "div")
-    assert "rounded-xl" in classes(html, "div")
-    assert attr_of(html, "div", "data-aura") == ["dual"]
-    assert attr_of(html, "div", "data-aura-size") == ["lg"]
-    assert attr_of(html, "div", "data-aura-color") == ["success"]
-    assert [_] = find(html, "p") |> Enum.to_list()
-  end
-
   test "dismiss_toast and clear_toasts dispatch to the toaster in the browser" do
     %JS{ops: [["dispatch", one]]} = Toast.dismiss_toast("t")
     assert one.event == "linea:toast-dismiss"
@@ -265,6 +249,51 @@ defmodule LineaUI.Components.ToastTest do
       assert "dark" in classes(html, "#t")
       assert find(html, "#t .sg-toast-desc") |> Enum.empty?()
       assert find(html, "#t button") |> Enum.empty?()
+    end
+
+    test "an aura wraps the card in the canvas ring" do
+      html =
+        render(~H"""
+        <.toast_card id="t" aura="dual" aura_tone="ai" aura_width="lg" title="Pronto" dismissible={false} />
+        """)
+
+      aura = classes(html, "div.sg-aura")
+      for c <- ~w(sg-aura sg-aura-shadow ai dual lg), do: assert(c in aura)
+      assert [_] = find(html, ".sg-aura > #t.sg-toast") |> Enum.to_list()
+    end
+
+    test "no aura leaves the card alone, and busy puts a spinner" do
+      html = render(~H|<.toast_card id="t" busy title="Lendo" dismissible={false} />|)
+      assert find(html, ".sg-aura") |> Enum.empty?()
+      assert [_] = find(html, "#t > .sg-spin") |> Enum.to_list()
+    end
+
+    test "a progress toast fills up to the percentage, with spinner and label" do
+      html = render(~H|<.toast_card id="t" progress={42} title="Emitindo" dismissible={false} />|)
+      assert "prog" in classes(html, "#t")
+      assert find(html, "#t") |> LazyHTML.attribute("style") == ["--p:42%"]
+      assert find(html, "#t .pct") |> LazyHTML.text() == "42%"
+      assert [_] = find(html, "#t > .sg-spin") |> Enum.to_list()
+    end
+
+    test "a done progress toast is complete without spinner; a failed one shows neither percentage nor spinner" do
+      done =
+        render(
+          ~H|<.toast_card id="t" progress={100} progress_state="done" title="Ok" dismissible={false} />|
+        )
+
+      assert "done" in classes(done, "#t")
+      assert find(done, "#t .pct") |> LazyHTML.text() == "100%"
+      assert find(done, "#t > .sg-spin") |> Enum.empty?()
+
+      fail =
+        render(
+          ~H|<.toast_card id="t" progress={64} progress_state="fail" title="Falhou" dismissible={false} />|
+        )
+
+      assert "fail" in classes(fail, "#t")
+      assert find(fail, "#t .pct") |> Enum.empty?()
+      assert find(fail, "#t > .sg-spin") |> Enum.empty?()
     end
   end
 end

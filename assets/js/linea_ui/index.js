@@ -6,6 +6,7 @@
  *
  * Every hook is registered as `LineaUI.<Name>`, the value the components put in `phx-hook`.
  */
+import AiComposer from "./hooks/ai_composer.js"
 import Autocomplete from "./hooks/autocomplete.js"
 import BulkBar from "./hooks/bulk_bar.js"
 import Calendar from "./hooks/calendar.js"
@@ -47,6 +48,7 @@ import Treeview from "./hooks/treeview.js"
 import Upload from "./hooks/upload.js"
 
 export const Hooks = {
+  ...AiComposer,
   ...Autocomplete,
   ...BulkBar,
   ...Calendar,

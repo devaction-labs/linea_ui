@@ -27,6 +27,8 @@
 @import "./parts/canvas-dark-app1.css";
 @import "./parts/canvas-dark-app2.css";
 @import "./parts/canvas-dark-auth.css";
+@import "./parts/canvas-ai.css";
+@import "./parts/canvas-aura.css";
 
 @source "../../lib";
 @source "../js";

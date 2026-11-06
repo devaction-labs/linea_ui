@@ -32,6 +32,7 @@ defmodule LineaUI do
 
   @components %{
     accordion: LineaUI.Components.Accordion,
+    ai: LineaUI.Components.Ai,
     cover: LineaUI.Components.Cover,
     description_list: LineaUI.Components.DescriptionList,
     cash_timer: LineaUI.Components.CashTimer,
@@ -44,6 +45,7 @@ defmodule LineaUI do
     sticky: LineaUI.Components.Sticky,
     scrollspy: LineaUI.Components.Scrollspy,
     context_menu: LineaUI.Components.ContextMenu,
+    aura: LineaUI.Components.Aura,
     autocomplete: LineaUI.Components.Autocomplete,
     avatar: LineaUI.Components.Avatar,
     badge: LineaUI.Components.Badge,

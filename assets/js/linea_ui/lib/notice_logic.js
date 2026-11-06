@@ -219,3 +219,28 @@ export const actionPayload = (action, id) => ({...(action.value ?? {}), toast_id
 
 /** An action's `%JS{}` as the string `liveSocket.execJS` takes, or `null` without one. */
 export const encodedJS = (js) => (js === null || js === undefined ? null : typeof js === "string" ? js : JSON.stringify(js))
+
+/** Whether a toast is drawn as the canvas card (`sg-toast`): every rich toast except the ones in steps. */
+export const canvasOf = (input) => isRich(input) && stepsOf(input) === null
+
+const CANVAS_AURA_TONES = {assistant: "ai", primary: "", secondary: "violet", info: "info", success: "pos", warning: "warn", error: "neg"}
+
+/**
+ * The classes of the canvas aura (`sg-aura`) around a toast, or `null` without `aura`: the mode (`dual`, `glow`
+ * or none for the rotating one), the tone (`aura_color` mapped to the canvas's) and the width (`aura_size`, none
+ * for the canvas's 2px default when it is not given).
+ *
+ * @returns {{mode: string, tone: string, width: string} | null}
+ */
+export const canvasAuraOf = ({aura, aura_size: size, aura_color: color}) =>
+  aura
+    ? {
+        mode: aura === "dual" || aura === "glow" ? aura : "",
+        tone: CANVAS_AURA_TONES[color] ?? CANVAS_AURA_TONES.assistant,
+        width: AURA_SIZES.includes(size) ? size : "",
+      }
+    : null
+
+/** The tone of the icon tile of a canvas toast, from its kind (or `primary`/running progress for the accent). */
+export const canvasTileTone = (kind, color, running) =>
+  ({info: "info", success: "pos", warning: "warn", error: "neg"})[kind] ?? (running || color === "primary" ? "acc" : "")
