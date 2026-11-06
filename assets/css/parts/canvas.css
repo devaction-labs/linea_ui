@@ -467,3 +467,7 @@ input.form-switch:checked::before{left:17px;transform:none;translate:none !impor
 .sg .huge-grid-view{--huge-grid-view:url("data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%221.7%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Cpath d=%22M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z%22/%3E%3C/svg%3E")}
 .sg .huge-delete-02{--huge-delete-02:url("data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%221.7%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Cpath d=%22M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3%22/%3E%3C/svg%3E")}
 .sg .huge-source-code{--huge-source-code:url("data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%221.7%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Cpath d=%22M8 7l-5 5 5 5M16 7l5 5-5 5%22/%3E%3C/svg%3E")}
+
+/* The kit's column `align` lands as a text-* class: it wins over the canvas table's left alignment. */
+.sg-table :is(th,td).text-right{text-align:right}
+.sg-table :is(th,td).text-center{text-align:center}
