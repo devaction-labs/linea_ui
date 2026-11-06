@@ -5,6 +5,7 @@
 - The assistant components (`LineaUI.Components.Ai`): `ai_chat`, `ai_composer` (with the `AiComposer` hook), `ai_message`, `ai_proposal`, `ai_tool_trace`, `conversation_list`, `prompt_suggestions` and `ai_greeting`.
 - `aura` (`LineaUI.Components.Aura`): a spinning light ring around an element for async work (`mode` spin/dual/glow, `tone`, `width`, `radius`, `shadow`). It replaces the old `aura/1` of `toast.ex`.
 - `toast_card` takes `aura`, `busy`, `progress` and `progress_state` (the progress toast whose background fills up); the toasts pushed from the server draw the same card.
+- The canvas toasts stack again: the older ones behind the newest show as smaller slivers of the card (their card was hidden with the content).
 - `sparkline` (`LineaUI.Components.Sparkline`): a small inline trend line.
 - `chart`: the `brl_kilo` and `brl_kilo_zero` formatters, `tickAmount` on category x axes and left-aligned y-axis labels.
 - `upload variant="canvas"` takes `browse`, `icon_path` and `drop_class`.
