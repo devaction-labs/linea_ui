@@ -253,27 +253,30 @@ defmodule LineaUI.Components.Tabs do
     key = {assigns.variant, assigns.orientation}
 
     assigns
-    |> assign(:selected, value)
-    |> assign(:root_class, merge([@root[assigns.orientation], assigns.class]))
-    |> assign(:scroll_class, @scroll[key])
-    |> assign(
-      :track_class,
+    |> assign_derived(:selected, [:selected, :tab], fn -> value end)
+    |> assign_derived(:root_class, [:orientation, :class], fn ->
+      merge([@root[assigns.orientation], assigns.class])
+    end)
+    |> assign_derived(:scroll_class, [:variant, :orientation], fn -> @scroll[key] end)
+    |> assign_derived(:track_class, [:bordered, :variant, :orientation], fn ->
       @track[{assigns.bordered and assigns.variant == "line", assigns.orientation}]
-    )
-    |> assign(
-      :list_classes,
+    end)
+    |> assign_derived(:list_classes, [:variant, :orientation, :overlap, :list_class], fn ->
       merge([@list[key], @overlap[{assigns.overlap, assigns.orientation}], assigns.list_class])
-    )
-    |> assign(:tab_class, tab_class(assigns, key))
-    |> assign(:panels_classes, merge([@panels[assigns.orientation], assigns.panels_class]))
-    |> assign(:panel_class, @transitions[assigns.transition])
-    |> assign(:event, event_name(assigns.on_change))
-    |> assign(:on_change_js, on_change_js(assigns.on_change))
-    |> assign(:panel_names, MapSet.new(assigns.panel, & &1.name))
-    |> assign(
-      :keep,
+    end)
+    |> assign_derived(:tab_class, [:variant, :orientation, :size, :color, :grow], fn ->
+      tab_class(assigns, key)
+    end)
+    |> assign_derived(:panels_classes, [:orientation, :panels_class], fn ->
+      merge([@panels[assigns.orientation], assigns.panels_class])
+    end)
+    |> assign_derived(:panel_class, [:transition], fn -> @transitions[assigns.transition] end)
+    |> assign_derived(:event, [:on_change], fn -> event_name(assigns.on_change) end)
+    |> assign_derived(:on_change_js, [:on_change], fn -> on_change_js(assigns.on_change) end)
+    |> assign_derived(:panel_names, [:panel], fn -> MapSet.new(assigns.panel, & &1.name) end)
+    |> assign_derived(:keep, [], fn ->
       JS.ignore_attributes(["aria-selected", "aria-current", "tabindex", "hidden"])
-    )
+    end)
     |> render_tabs()
   end
 
@@ -295,6 +298,10 @@ defmodule LineaUI.Components.Tabs do
   defp variant_color(%{variant: "pill", color: color}), do: @pill_colors[color]
   defp variant_color(%{variant: "text", color: color}), do: @text_colors[color]
   defp variant_color(_assigns), do: nil
+
+  # Each tab (or panel) with whether it is the selected one, as comprehension variables: a new
+  # selection sends the two that changed.
+  defp by_name(entries, selected), do: Enum.map(entries, &{&1, &1.name == selected})
 
   defp grow_class(true), do: "flex-1"
   defp grow_class(false), do: "shrink-0"
@@ -322,11 +329,11 @@ defmodule LineaUI.Components.Tabs do
         <div class={@track_class}>
           <div role="tablist" aria-orientation={@orientation} class={@list_classes}>
             <.tab_control
-              :for={tab <- @tab}
+              :for={{tab, selected} <- by_name(@tab, @selected)}
               tab={tab}
               id={"#{@id}-tab-#{tab.name}"}
               controls={MapSet.member?(@panel_names, tab.name) && "#{@id}-panel-#{tab.name}"}
-              selected={tab.name == @selected}
+              selected={selected}
               keep={@keep}
               class={merge([@tab_class, tab[:class]])}
             />
@@ -335,13 +342,13 @@ defmodule LineaUI.Components.Tabs do
       </div>
       <div :if={@panel != []} class={@panels_classes}>
         <div
-          :for={panel <- @panel}
+          :for={{panel, selected} <- by_name(@panel, @selected)}
           role="tabpanel"
           id={"#{@id}-panel-#{panel.name}"}
           aria-labelledby={"#{@id}-tab-#{panel.name}"}
           tabindex="0"
           data-value={panel.name}
-          hidden={panel.name != @selected}
+          hidden={!selected}
           phx-mounted={@keep}
           class={merge([@panel_class, "outline-hidden", panel[:class]])}
         >

@@ -75,8 +75,12 @@ defmodule LineaUI.Components.Button do
 
   def button(assigns) do
     assigns
-    |> assign(:classes, classes(assigns))
-    |> assign(:inactive, assigns.disabled or assigns.loading)
+    |> assign_derived(:classes, [:icon, :size, :variant, :color, :shape, :class], fn ->
+      classes(assigns)
+    end)
+    |> assign_derived(:inactive, [:disabled, :loading], fn ->
+      assigns.disabled or assigns.loading
+    end)
     |> render_button()
   end
 

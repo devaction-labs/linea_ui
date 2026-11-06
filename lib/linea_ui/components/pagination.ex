@@ -169,6 +169,11 @@ defmodule LineaUI.Components.Pagination do
   attr(:class, :any, default: nil)
   attr(:rest, :global, default: %{"aria-label": "Pagination"})
 
+  # What an entry of the bar reads; the entries are comprehension variables, so a new page
+  # sends the entries that changed, not the bar.
+  @item_deps ~w(siblings boundaries arrows shape size divided prev_label next_label page_label
+                patch navigate href on_change target)a
+
   def pagination(assigns) do
     total = max(total_pages(assigns), 1)
     page = assigns.page |> max(1) |> min(total)
@@ -181,13 +186,39 @@ defmodule LineaUI.Components.Pagination do
       |> Enum.concat([{:next, page + 1, page == total}])
       |> Enum.filter(&shown?(&1, assigns.arrows))
 
+    last = length(items) - 1
+    page_deps = [:page, :total_pages, :total_entries, :page_size]
+
+    assigns =
+      assigns
+      |> assign_derived(:page, page_deps, fn -> page end)
+      |> assign_derived(:icon, [], fn -> @icon end)
+      |> assign_derived(:last, page_deps ++ [:siblings, :boundaries, :arrows], fn -> last end)
+      |> assign_derived(:footer, [:total_entries, :page_sizes], fn -> footer?(assigns) end)
+
     assigns
-    |> assign(:page, page)
-    |> assign(:icon, @icon)
-    |> assign(:items, Enum.with_index(items))
-    |> assign(:last, length(items) - 1)
-    |> assign(:footer, footer?(assigns))
+    |> assign_derived(:items, page_deps ++ @item_deps, fn ->
+      items |> Enum.with_index() |> Enum.map(&item(assigns, &1))
+    end)
     |> render_pagination()
+  end
+
+  # The comprehension key: the arrows and the pages keep theirs as the window moves.
+  defp item_key(:page, number, _index), do: number
+  defp item_key(:gap, _number, index), do: {:gap, index}
+  defp item_key(arrow, _number, _index), do: arrow
+
+  defp item(assigns, {{kind, number, disabled}, index}) do
+    %{
+      key: item_key(kind, number, index),
+      kind: kind,
+      number: number,
+      current: kind == :page and number == assigns.page,
+      li_class: li_class(assigns, index),
+      class: entry_class(assigns, kind, number, disabled),
+      label: entry_label(assigns, kind, number),
+      action: action(assigns, kind, number, disabled)
+    }
   end
 
   defp total_pages(%{total_pages: pages}) when is_integer(pages), do: pages
@@ -203,8 +234,7 @@ defmodule LineaUI.Components.Pagination do
 
   # `%{first}`, `%{last}` and `%{total}` of the summary are semibold and in the text color,
   # the words around them stay soft
-  defp summary(%{total_entries: total, page_size: size, page: page, summary: text})
-       when is_integer(size) do
+  defp summary(total, size, page, text) when is_integer(size) do
     summary_html(text, %{
       "%{first}" => first_entry(total, page, size),
       "%{last}" => min(page * size, total),
@@ -212,7 +242,7 @@ defmodule LineaUI.Components.Pagination do
     })
   end
 
-  defp summary(%{total_entries: total, summary: text}) do
+  defp summary(total, _size, _page, text) do
     summary_html(text, %{"%{first}" => min(total, 1), "%{last}" => total, "%{total}" => total})
   end
 
@@ -236,8 +266,8 @@ defmodule LineaUI.Components.Pagination do
 
   defp size_label(label, size), do: String.replace(label, "%{size}", to_string(size))
 
-  defp form_id(%{rest: %{id: id}}) when is_binary(id), do: id <> "-page-size"
-  defp form_id(_assigns), do: nil
+  defp form_id(%{id: id}) when is_binary(id), do: id <> "-page-size"
+  defp form_id(_rest), do: nil
 
   defp to_item(:gap), do: {:gap, nil, true}
   defp to_item(number), do: {:page, number, false}
@@ -268,7 +298,7 @@ defmodule LineaUI.Components.Pagination do
   defp gap(n, acc), do: [n | acc]
 
   defp render_pagination(%{footer: true} = assigns) do
-    assigns = assign(assigns, :select_class, @page_size_select)
+    assigns = assign_derived(assigns, :select_class, [], fn -> @page_size_select end)
 
     ~H"""
     <div class={merge(["flex flex-wrap items-center justify-between gap-3 text-[12.5px]", @class])}>
@@ -282,13 +312,13 @@ defmodule LineaUI.Components.Pagination do
             "[&_b]:font-semibold [&_b]:text-slate-700 dark:[&_b]:text-navy-50"
         ]}
       >
-        {summary(assigns)}
+        {summary(@total_entries, @page_size, @page, @summary)}
       </span>
       <span :if={!@total_entries}></span>
       <div class="flex flex-wrap items-center gap-3">
         <form
           :if={@page_sizes != []}
-          id={form_id(assigns)}
+          id={form_id(@rest)}
           phx-change={@on_page_size}
           phx-target={@target}
         >
@@ -298,7 +328,15 @@ defmodule LineaUI.Components.Pagination do
             </option>
           </select>
         </form>
-        <.pager_nav {assigns} class={nil} />
+        <.pager_nav
+          class={nil}
+          rest={@rest}
+          divided={@divided}
+          shape={@shape}
+          items={@items}
+          icon={@icon}
+          size={@size}
+        />
       </div>
     </div>
     """
@@ -314,15 +352,15 @@ defmodule LineaUI.Components.Pagination do
         @divided && "space-x-1.5",
         @shape == "canvas" && "!flex items-center gap-x-1"
       ]}>
-        <li :for={{{kind, number, disabled}, index} <- @items} class={li_class(assigns, index)}>
+        <li :for={item <- @items} :key={item.key} class={item.li_class}>
           <.entry
-            kind={kind}
-            number={number}
-            current={kind == :page and number == @page}
-            class={entry_class(assigns, kind, number, disabled)}
+            kind={item.kind}
+            number={item.number}
+            current={item.current}
+            class={item.class}
             icon_class={@icon[@size]}
-            label={entry_label(assigns, kind, number)}
-            action={action(assigns, kind, number, disabled)}
+            label={item.label}
+            action={item.action}
           />
         </li>
       </ol>
@@ -413,7 +451,7 @@ defmodule LineaUI.Components.Pagination do
   defp action(_assigns, _kind, _number, _disabled), do: :none
 
   defp entry(%{action: {:link, attrs}} = assigns) do
-    assigns = assign(assigns, :attrs, attrs)
+    assigns = assign_derived(assigns, :attrs, [:action], fn -> attrs end)
 
     ~H"""
     <.link
@@ -426,7 +464,7 @@ defmodule LineaUI.Components.Pagination do
   end
 
   defp entry(%{action: {:button, attrs}} = assigns) do
-    assigns = assign(assigns, :attrs, attrs)
+    assigns = assign_derived(assigns, :attrs, [:action], fn -> attrs end)
 
     ~H"""
     <button

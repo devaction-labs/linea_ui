@@ -101,12 +101,22 @@ defmodule LineaUI.Components.Segmented do
   def segmented(assigns) do
     assigns
     |> Control.assign_control()
-    |> then(&assign(&1, :id, &1.id || &1.name || gen_id("segmented")))
-    |> then(&assign(&1, :value, value(&1.value)))
-    |> then(&assign(&1, :segments, segments(&1)))
-    |> then(&assign(&1, :on_change_js, Overlay.callback(&1.on_change, &1.id, &1.target)))
+    |> assign_id()
+    |> then(&assign_derived(&1, :value, [:value], fn -> value(&1.value) end))
+    |> then(&assign_derived(&1, :segments, [:options, :id], fn -> segments(&1) end))
+    |> then(
+      &assign_derived(&1, :on_change_js, [:on_change, :id, :target], fn ->
+        Overlay.callback(&1.on_change, &1.id, &1.target)
+      end)
+    )
     |> render_segmented()
   end
+
+  # A generated id is new on every render, as it always was.
+  defp assign_id(%{id: nil, name: nil} = assigns), do: assign(assigns, :id, gen_id("segmented"))
+
+  defp assign_id(assigns),
+    do: assign_derived(assigns, :id, [:id, :name], fn -> assigns.id || assigns.name end)
 
   defp render_segmented(assigns) do
     ~H"""
@@ -135,10 +145,10 @@ defmodule LineaUI.Components.Segmented do
           data-value-input
         />
         <button
-          :for={segment <- @segments}
+          :for={{segment, pressed} <- pressed(@segments, @value)}
           type="button"
           id={segment.id}
-          aria-pressed={bool(segment.value == @value)}
+          aria-pressed={bool(pressed)}
           disabled={@disabled || segment.disabled}
           class={merge([@full && "flex-1 justify-center"])}
           phx-mounted={JS.ignore_attributes(["aria-pressed", "tabindex"])}
@@ -171,6 +181,10 @@ defmodule LineaUI.Components.Segmented do
       }
     end)
   end
+
+  # Each segment with whether it is the chosen one, as comprehension variables: a new value
+  # sends the two segments that changed.
+  defp pressed(segments, value), do: Enum.map(segments, &{&1, &1.value == value})
 
   defp count(%{count: count}), do: count
   defp count(_data), do: nil

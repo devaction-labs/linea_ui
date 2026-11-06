@@ -212,7 +212,11 @@ defmodule LineaUI.Components.CardTable do
           </tr>
         </thead>
         <tbody id={@id} phx-update={match?(%LiveStream{}, @rows) && "stream"} {@rest}>
-          <tr :for={row <- @rows} id={@row_id && @row_id.(row)} {row_attrs(assigns, row)}>
+          <tr
+            :for={row <- @rows}
+            id={@row_id && @row_id.(row)}
+            {row_attrs(@row_attrs, @row_item, row)}
+          >
             <td :for={col <- @col} class={merge([col[:align] == "end" && "r", col[:class]])}>
               {render_slot(col, @row_item.(row))}
             </td>
@@ -231,12 +235,18 @@ defmodule LineaUI.Components.CardTable do
     assigns =
       assigns
       |> assign_row_id()
-      |> assign(:selectable, assigns.on_select != nil)
-      |> assign(:hidable, Enum.any?(assigns.col, &(priority(&1) > 0)))
-      |> assign(:tracks, tracks(assigns))
-      |> assign(:checkbox, @checkbox)
+      |> assign_derived(:selectable, [:on_select], fn -> assigns.on_select != nil end)
+      |> assign_derived(:hidable, [:col], fn -> Enum.any?(assigns.col, &(priority(&1) > 0)) end)
+      |> assign_derived(:tracks, [:on_select, :action, :col], fn -> tracks(assigns) end)
+      |> assign_derived(:checkbox, [], fn -> @checkbox end)
 
-    assigns = assign(assigns, :all_checked, all_selected(assigns))
+    assigns =
+      assign_derived(
+        assigns,
+        :all_checked,
+        [:all_selected, :rows, :on_select, :selected, :row_key, :row_id, :row_item, :id],
+        fn -> all_selected(assigns) end
+      )
 
     ~H"""
     <div
@@ -307,77 +317,56 @@ defmodule LineaUI.Components.CardTable do
           <span :if={@action != []} class="linea-ctable-act"></span>
         </div>
         <ul id={@id} phx-update={match?(%LiveStream{}, @rows) && "stream"} {@rest}>
-          <li
-            :for={row <- @rows}
-            id={@row_id && @row_id.(row)}
-            class="linea-ctable-row"
-            tabindex="0"
-            aria-expanded={(@hidable or @detail != []) && "false"}
-            data-status={status_of(assigns, row)}
-            data-selected={@selectable && bool(key(assigns, row) in @selected)}
-            {row_attrs(assigns, row)}
-          >
-            <span :if={@selectable} class="linea-ctable-sel">
-              <input
-                type="checkbox"
-                class={@checkbox}
-                checked={key(assigns, row) in @selected}
-                aria-label={@select_label}
-                phx-click={@on_select}
-                phx-value-id={key(assigns, row)}
-                phx-value-selected={bool(key(assigns, row) not in @selected)}
-                phx-target={@target}
-              />
-            </span>
-            <div
-              :for={col <- @col}
-              class={cell_class(col, "linea-ctable-cell")}
-              data-p={priority(col)}
-              data-role={col[:role]}
-            >
-              <%= if col[:copy] do %>
-                <span class="linea-ctable-nn">{render_slot(col, @row_item.(row))}</span>
-                <.clipboard
-                  id={"#{@row_id.(row)}-copy"}
-                  value={col.copy.(@row_item.(row))}
-                  icon_only
-                  size="xs"
-                  variant="outline"
-                  toast={nil}
-                  class="linea-ctable-cp"
-                  aria-label={col[:copy_label] || "Copy"}
-                />
-                <span class="linea-ctable-ctip" role="tooltip">
-                  <b>{col.copy.(@row_item.(row))}</b>
-                  <i class="l1">{col[:copy_label] || "Copy"}</i>
-                  <i class="l2">{col[:copied_label] || "Copied"}</i>
-                </span>
-              <% else %>
-                {render_slot(col, @row_item.(row))}
-              <% end %>
-            </div>
-            <div :if={@action != []} class="linea-ctable-act">
-              {render_slot(@action, @row_item.(row))}
-            </div>
-            <div
-              :if={@hidable or @detail != []}
-              class="linea-ctable-pop"
-              data-detail={@detail != [] && ""}
-              role="group"
-              aria-label={@panel_label}
-            >
-              <div :for={col <- hidden(@col)} :if={@detail == []} data-p={priority(col)}>
-                <span class="linea-ctable-pk">{col.label}</span>
-                <span class="linea-ctable-pv">{render_slot(col, @row_item.(row))}</span>
-                <.pop_copy label={@copy_label} copied={@copied_label} />
-              </div>
-              <div :for={detail <- @detail} data-d>
-                <span class="linea-ctable-pk">{detail.label}</span>
-                <span class="linea-ctable-pv">{render_slot(detail, @row_item.(row))}</span>
-                <.pop_copy label={@copy_label} copied={@copied_label} />
-              </div>
-            </div>
-          </li>
+          <%= if stream?(@rows) do %>
+            <.card_row
+              :for={row <- @rows}
+              row={row}
+              key={@selectable && key(@row_key, @row_id, @row_item, row)}
+              selected={@selectable && key(@row_key, @row_id, @row_item, row) in @selected}
+              row_id={@row_id}
+              hidable={@hidable}
+              detail={@detail}
+              status={@status}
+              row_item={@row_item}
+              row_attrs={@row_attrs}
+              selectable={@selectable}
+              checkbox={@checkbox}
+              select_label={@select_label}
+              on_select={@on_select}
+              target={@target}
+              col={@col}
+              action={@action}
+              panel_label={@panel_label}
+              copy_label={@copy_label}
+              copied_label={@copied_label}
+            />
+          <% else %>
+            <.card_row
+              :for={
+                {row, key, selected} <-
+                  list_rows(@rows, @row_id, {@selectable, @selected, @row_key, @row_item})
+              }
+              row={row}
+              key={key}
+              selected={selected}
+              row_id={@row_id}
+              hidable={@hidable}
+              detail={@detail}
+              status={@status}
+              row_item={@row_item}
+              row_attrs={@row_attrs}
+              selectable={@selectable}
+              checkbox={@checkbox}
+              select_label={@select_label}
+              on_select={@on_select}
+              target={@target}
+              col={@col}
+              action={@action}
+              panel_label={@panel_label}
+              copy_label={@copy_label}
+              copied_label={@copied_label}
+            />
+          <% end %>
           <li
             :if={@empty != [] and (@rows == [] or stream?(@rows))}
             id={@id <> "-empty"}
@@ -388,6 +377,83 @@ defmodule LineaUI.Components.CardTable do
         </ul>
       </div>
     </div>
+    """
+  end
+
+  # One row of the card table; its selection and key come in as comprehension variables, so
+  # toggling a row re-renders that row only.
+  defp card_row(assigns) do
+    ~H"""
+    <li
+      id={@row_id && @row_id.(@row)}
+      class="linea-ctable-row"
+      tabindex="0"
+      aria-expanded={(@hidable or @detail != []) && "false"}
+      data-status={status_of(@status, @row_item, @row)}
+      data-selected={@selectable && bool(@selected)}
+      {row_attrs(@row_attrs, @row_item, @row)}
+    >
+      <span :if={@selectable} class="linea-ctable-sel">
+        <input
+          type="checkbox"
+          class={@checkbox}
+          checked={@selected}
+          aria-label={@select_label}
+          phx-click={@on_select}
+          phx-value-id={@key}
+          phx-value-selected={bool(not @selected)}
+          phx-target={@target}
+        />
+      </span>
+      <div
+        :for={col <- @col}
+        class={cell_class(col, "linea-ctable-cell")}
+        data-p={priority(col)}
+        data-role={col[:role]}
+      >
+        <%= if col[:copy] do %>
+          <span class="linea-ctable-nn">{render_slot(col, @row_item.(@row))}</span>
+          <.clipboard
+            id={"#{@row_id.(@row)}-copy"}
+            value={col.copy.(@row_item.(@row))}
+            icon_only
+            size="xs"
+            variant="outline"
+            toast={nil}
+            class="linea-ctable-cp"
+            aria-label={col[:copy_label] || "Copy"}
+          />
+          <span class="linea-ctable-ctip" role="tooltip">
+            <b>{col.copy.(@row_item.(@row))}</b>
+            <i class="l1">{col[:copy_label] || "Copy"}</i>
+            <i class="l2">{col[:copied_label] || "Copied"}</i>
+          </span>
+        <% else %>
+          {render_slot(col, @row_item.(@row))}
+        <% end %>
+      </div>
+      <div :if={@action != []} class="linea-ctable-act">
+        {render_slot(@action, @row_item.(@row))}
+      </div>
+      <div
+        :if={@hidable or @detail != []}
+        class="linea-ctable-pop"
+        data-detail={@detail != [] && ""}
+        role="group"
+        aria-label={@panel_label}
+      >
+        <div :for={col <- hidden(@col)} :if={@detail == []} data-p={priority(col)}>
+          <span class="linea-ctable-pk">{col.label}</span>
+          <span class="linea-ctable-pv">{render_slot(col, @row_item.(@row))}</span>
+          <.pop_copy label={@copy_label} copied={@copied_label} />
+        </div>
+        <div :for={detail <- @detail} data-d>
+          <span class="linea-ctable-pk">{detail.label}</span>
+          <span class="linea-ctable-pv">{render_slot(detail, @row_item.(@row))}</span>
+          <.pop_copy label={@copy_label} copied={@copied_label} />
+        </div>
+      </div>
+    </li>
     """
   end
 
@@ -466,12 +532,32 @@ defmodule LineaUI.Components.CardTable do
   end
 
   defp assign_row_id(%{rows: %LiveStream{}, row_id: nil} = assigns),
-    do: assign(assigns, :row_id, fn {id, _item} -> id end)
+    do: assign_derived(assigns, :row_id, [:row_id], fn -> &stream_dom_id/1 end)
 
   defp assign_row_id(%{row_id: nil, id: id} = assigns),
-    do: assign(assigns, :row_id, fn row -> id <> "-" <> to_string(:erlang.phash2(row)) end)
+    do:
+      assign_derived(assigns, :row_id, [:row_id, :id], fn ->
+        fn row -> id <> "-" <> to_string(:erlang.phash2(row)) end
+      end)
 
   defp assign_row_id(assigns), do: assigns
+
+  defp stream_dom_id({id, _item}), do: id
+
+  # `{row, key, selected}` of each row of a list.
+  defp list_rows(rows, row_id, selection) do
+    Enum.map(rows, fn row ->
+      {key, selected} = selection(selection, row_id, row)
+      {row, key, selected}
+    end)
+  end
+
+  defp selection({false, _selected, _row_key, _row_item}, _row_id, _row), do: {nil, false}
+
+  defp selection({true, selected, row_key, row_item}, row_id, row) do
+    key = key(row_key, row_id, row_item, row)
+    {key, key in selected}
+  end
 
   defp stream?(%LiveStream{}), do: true
   defp stream?(_rows), do: false
@@ -481,16 +567,16 @@ defmodule LineaUI.Components.CardTable do
   defp all_selected(%{on_select: nil}), do: false
 
   defp all_selected(%{rows: rows, selected: selected} = assigns) do
-    keys = Enum.map(rows, &key(assigns, &1))
+    keys = Enum.map(rows, &key(assigns.row_key, assigns.row_id, assigns.row_item, &1))
     keys != [] and Enum.all?(keys, &(&1 in selected))
   end
 
-  defp key(%{row_key: nil, row_id: row_id}, row), do: row_id.(row)
-  defp key(%{row_key: row_key, row_item: row_item}, row), do: row_key.(row_item.(row))
+  defp key(nil, row_id, _row_item, row), do: row_id.(row)
+  defp key(row_key, _row_id, row_item, row), do: row_key.(row_item.(row))
 
-  defp status_of(%{status: nil}, _row), do: nil
+  defp status_of(nil, _row_item, _row), do: nil
 
-  defp status_of(%{status: fun, row_item: row_item}, row) do
+  defp status_of(fun, row_item, row) do
     case fun.(row_item.(row)) do
       color when is_atom(color) and not is_nil(color) -> valid_color(Atom.to_string(color))
       color when is_binary(color) -> valid_color(color)
@@ -501,8 +587,8 @@ defmodule LineaUI.Components.CardTable do
   defp valid_color(color) when color in @colors, do: color
   defp valid_color(_color), do: nil
 
-  defp row_attrs(%{row_attrs: nil}, _row), do: %{}
-  defp row_attrs(%{row_attrs: fun, row_item: row_item}, row), do: fun.(row_item.(row))
+  defp row_attrs(nil, _row_item, _row), do: %{}
+  defp row_attrs(fun, row_item, row), do: fun.(row_item.(row))
 
   defp aria_sort(nil, _sort_by, _dir), do: nil
   defp aria_sort(key, key, "asc"), do: "ascending"

@@ -172,19 +172,29 @@ defmodule LineaUI.Components.Fab do
 
   def fab(%{variant: "canvas"} = assigns) do
     assigns
-    |> assign(:style, offset_style(assigns.position, assigns.offset || 24))
+    |> assign_derived(:style, [:position, :offset], fn ->
+      offset_style(assigns.position, assigns.offset || 24)
+    end)
     |> render_canvas_fab()
   end
 
   def fab(assigns) do
     assigns
-    |> assign(:classes, classes(assigns))
-    |> assign(:style, assigns.offset && offset_style(assigns.position, assigns.offset))
-    |> assign(:look, @colors[assigns.color])
-    |> assign(:dims, @sizes[assigns.size])
-    |> assign(:state, state(assigns.retract, assigns.expanded))
-    |> assign(:hook, hook(assigns.retract, assigns.expanded))
-    |> assign(:tooltip, tooltip(assigns.retract, assigns.label))
+    |> assign_derived(:classes, [:color, :position, :class], fn -> classes(assigns) end)
+    |> assign_derived(:style, [:position, :offset], fn ->
+      assigns.offset && offset_style(assigns.position, assigns.offset)
+    end)
+    |> assign_derived(:look, [:color], fn -> @colors[assigns.color] end)
+    |> assign_derived(:dims, [:size], fn -> @sizes[assigns.size] end)
+    |> assign_derived(:state, [:retract, :expanded], fn ->
+      state(assigns.retract, assigns.expanded)
+    end)
+    |> assign_derived(:hook, [:retract, :expanded], fn ->
+      hook(assigns.retract, assigns.expanded)
+    end)
+    |> assign_derived(:tooltip, [:retract, :label], fn ->
+      tooltip(assigns.retract, assigns.label)
+    end)
     |> render_fab()
   end
 
@@ -274,21 +284,22 @@ defmodule LineaUI.Components.Fab do
     canvas? = assigns.variant == "canvas"
 
     assigns
-    |> assign(:canvas?, canvas?)
-    |> assign(
-      :classes,
+    |> assign_derived(:canvas?, [:variant], fn -> canvas? end)
+    |> assign_derived(:classes, [:position, :variant, :class], fn ->
       merge([
         @dial_base,
         @dial_positions[assigns.position],
         canvas? && "sg-fab-dial gap-4",
         assigns.class
       ])
-    )
-    |> assign(:style, dial_style(assigns.position, assigns.offset, canvas?))
-    |> assign(:look, @colors[assigns.color])
-    |> assign(:dims, @sizes[assigns.size])
-    |> assign(:state, if(assigns.open, do: "open", else: "closed"))
-    |> assign(:item_class, @dial_item)
+    end)
+    |> assign_derived(:style, [:position, :offset, :variant], fn ->
+      dial_style(assigns.position, assigns.offset, canvas?)
+    end)
+    |> assign_derived(:look, [:color], fn -> @colors[assigns.color] end)
+    |> assign_derived(:dims, [:size], fn -> @sizes[assigns.size] end)
+    |> assign_derived(:state, [:open], fn -> if(assigns.open, do: "open", else: "closed") end)
+    |> assign_derived(:item_class, [], fn -> @dial_item end)
     |> render_dial()
   end
 
@@ -391,8 +402,10 @@ defmodule LineaUI.Components.Fab do
   defp dial_item(%{action: action} = assigns) do
     assigns =
       assigns
-      |> assign(:link?, Enum.any?([:href, :navigate, :patch], &Map.has_key?(action, &1)))
-      |> assign_new(:canvas, fn -> false end)
+      |> assign_derived(:link?, [:action], fn ->
+        Enum.any?([:href, :navigate, :patch], &Map.has_key?(action, &1))
+      end)
+      |> put_default(:canvas, false)
 
     ~H"""
     <.link

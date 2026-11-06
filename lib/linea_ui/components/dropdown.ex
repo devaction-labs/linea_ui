@@ -163,8 +163,12 @@ defmodule LineaUI.Components.Dropdown do
   def dropdown(assigns) do
     assigns =
       assigns
-      |> assign(:on_open_js, Overlay.callback(assigns.on_open, assigns.id, assigns.target))
-      |> assign(:on_close_js, Overlay.callback(assigns.on_close, assigns.id, assigns.target))
+      |> assign_derived(:on_open_js, [:on_open, :id, :target], fn ->
+        Overlay.callback(assigns.on_open, assigns.id, assigns.target)
+      end)
+      |> assign_derived(:on_close_js, [:on_close, :id, :target], fn ->
+        Overlay.callback(assigns.on_close, assigns.id, assigns.target)
+      end)
 
     ~H"""
     <div
@@ -299,9 +303,7 @@ defmodule LineaUI.Components.Dropdown do
 
   def dropdown_item(assigns) do
     assigns =
-      assign(
-        assigns,
-        :classes,
+      assign_derived(assigns, :classes, [:variant, :color, :icon, :disabled, :class], fn ->
         merge([
           @item_styles[assigns.variant][assigns.color],
           assigns.icon != [] && "gap-3",
@@ -309,7 +311,7 @@ defmodule LineaUI.Components.Dropdown do
           "w-full text-left",
           assigns.class
         ])
-      )
+      end)
 
     render_item(assigns)
   end
@@ -392,7 +394,7 @@ defmodule LineaUI.Components.Dropdown do
     assigns =
       assigns
       |> assign(:id, assigns.id || gen_id("submenu"))
-      |> assign(:item_class, @item_styles["default"]["neutral"])
+      |> assign_derived(:item_class, [], fn -> @item_styles["default"]["neutral"] end)
 
     ~H"""
     <div
@@ -565,8 +567,8 @@ defmodule LineaUI.Components.Dropdown do
 
   def dropdown_checkbox(assigns) do
     assigns
-    |> assign(:role, "menuitemcheckbox")
-    |> assign(:box, @check_box)
+    |> assign_derived(:role, [], fn -> "menuitemcheckbox" end)
+    |> assign_derived(:box, [], fn -> @check_box end)
     |> render_choice()
   end
 
@@ -592,23 +594,27 @@ defmodule LineaUI.Components.Dropdown do
 
   def dropdown_radio(assigns) do
     assigns
-    |> assign(:role, "menuitemradio")
-    |> assign(:box, @radio_box)
+    |> assign_derived(:role, [], fn -> "menuitemradio" end)
+    |> assign_derived(:box, [], fn -> @radio_box end)
     |> render_choice()
   end
 
   defp render_choice(assigns) do
     assigns =
-      assign(assigns,
-        input_id: assigns.id || "choice-#{:erlang.phash2({assigns.name, assigns.value})}",
-        input_type: (assigns.role == "menuitemradio" && "radio") || "checkbox",
-        item_class:
-          merge([
-            @choice_item,
-            assigns.disabled && "pointer-events-none opacity-55",
-            assigns.class
-          ])
-      )
+      assigns
+      |> assign_derived(:input_id, [:id, :name, :value], fn ->
+        assigns.id || "choice-#{:erlang.phash2({assigns.name, assigns.value})}"
+      end)
+      |> assign_derived(:input_type, [], fn ->
+        (assigns.role == "menuitemradio" && "radio") || "checkbox"
+      end)
+      |> assign_derived(:item_class, [:disabled, :class], fn ->
+        merge([
+          @choice_item,
+          assigns.disabled && "pointer-events-none opacity-55",
+          assigns.class
+        ])
+      end)
 
     ~H"""
     <div class="contents" role="none">
@@ -716,14 +722,25 @@ defmodule LineaUI.Components.Dropdown do
     text = Strings.table(assigns.locale)
 
     assigns =
-      assign(assigns,
-        clear: assigns.clear_label || text.filter_clear,
-        apply: assigns.apply_label || text.filter_apply,
-        clear_js: action_js(assigns.on_clear, assigns.target),
-        apply_js: action_js(assigns.on_apply, assigns.target),
-        apply_suffix: (assigns.apply_count && " (#{assigns.apply_count})") || "",
-        apply_type: (assigns.on_apply == nil && "submit") || "button"
-      )
+      assigns
+      |> assign_derived(:clear, [:clear_label, :locale], fn ->
+        assigns.clear_label || text.filter_clear
+      end)
+      |> assign_derived(:apply, [:apply_label, :locale], fn ->
+        assigns.apply_label || text.filter_apply
+      end)
+      |> assign_derived(:clear_js, [:on_clear, :target], fn ->
+        action_js(assigns.on_clear, assigns.target)
+      end)
+      |> assign_derived(:apply_js, [:on_apply, :target], fn ->
+        action_js(assigns.on_apply, assigns.target)
+      end)
+      |> assign_derived(:apply_suffix, [:apply_count], fn ->
+        (assigns.apply_count && " (#{assigns.apply_count})") || ""
+      end)
+      |> assign_derived(:apply_type, [:on_apply], fn ->
+        (assigns.on_apply == nil && "submit") || "button"
+      end)
 
     ~H"""
     <div

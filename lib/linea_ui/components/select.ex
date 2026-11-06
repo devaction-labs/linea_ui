@@ -212,41 +212,51 @@ defmodule LineaUI.Components.Select do
   def select(%{native: true} = assigns) do
     assigns
     |> assign_field()
-    |> assign_new(:id, fn -> nil end)
-    |> assign_new(:name, fn -> nil end)
-    |> assign_new(:value, fn -> nil end)
-    |> assign(:entries, Options.normalize(assigns.options))
-    |> then(&assign(&1, :selected, Options.values(&1.value)))
+    |> put_default(:id, nil)
+    |> put_default(:name, nil)
+    |> put_default(:value, nil)
+    |> assign_derived(:entries, [:options], fn -> Options.normalize(assigns.options) end)
+    |> then(&assign_derived(&1, :selected, [:value], fn -> Options.values(&1.value) end))
     |> render_native()
   end
 
   def select(assigns) do
     assigns
     |> assign_field()
-    |> assign_new(:name, fn -> nil end)
-    |> then(&assign_new(&1, :id, fn -> &1.name || gen_id("select") end))
-    |> then(&assign(&1, :name, &1.name || &1.id))
-    |> assign_new(:value, fn -> nil end)
+    |> put_default(:name, nil)
+    |> assign_select_id()
+    |> then(&assign_derived(&1, :name, [:name, :id], fn -> &1.name || &1.id end))
+    |> put_default(:value, nil)
     |> LineaUI.Components.Select.Listbox.prepare(:select)
     |> LineaUI.Components.Select.Listbox.listbox()
   end
 
+  # The id defaults to the name; a generated one is new on every render, as it always was.
+  defp assign_select_id(assigns) when is_map_key(assigns, :id), do: assigns
+  defp assign_select_id(%{name: nil} = assigns), do: assign(assigns, :id, gen_id("select"))
+
+  defp assign_select_id(assigns),
+    do: assign_derived(assigns, :id, [:name], fn -> assigns.name end)
+
   defp render_native(assigns) do
     assigns =
-      assign(
+      assign_derived(
         assigns,
         :classes,
-        merge([
-          native_base(assigns.multiple),
-          "w-full",
-          @native[assigns.variant],
-          @native_sizes[{assigns.size, assigns.label != nil}],
-          @native_shapes[assigns.shape],
-          inline_class(assigns.inline),
-          @native_disabled,
-          error_class(assigns.errors),
-          assigns.class
-        ])
+        [:multiple, :variant, :size, :label, :shape, :inline, :errors, :class],
+        fn ->
+          merge([
+            native_base(assigns.multiple),
+            "w-full",
+            @native[assigns.variant],
+            @native_sizes[{assigns.size, assigns.label != nil}],
+            @native_shapes[assigns.shape],
+            inline_class(assigns.inline),
+            @native_disabled,
+            error_class(assigns.errors),
+            assigns.class
+          ])
+        end
       )
 
     ~H"""
@@ -261,10 +271,26 @@ defmodule LineaUI.Components.Select do
         {@rest}
       >
         <option :if={@prompt} value="">{@prompt}</option>
-        <.native_entry :for={entry <- @entries} entry={entry} selected={@selected} />
+        <.native_entry
+          :for={{entry, selected} <- with_selected(@entries, @selected)}
+          entry={entry}
+          selected={selected}
+        />
       </select>
     </Pickers.field>
     """
+  end
+
+  # Each entry with the chosen values it holds, as comprehension variables: a new value sends
+  # the options that changed.
+  defp with_selected(entries, selected) do
+    Enum.map(entries, fn
+      %{type: :group, options: options} = group ->
+        {group, Enum.filter(selected, fn value -> Enum.any?(options, &(&1.value === value)) end)}
+
+      entry ->
+        {entry, Enum.filter(selected, &(&1 === entry.value))}
+    end)
   end
 
   defp inline_class(true), do: "w-auto pr-9"

@@ -212,14 +212,24 @@ defmodule LineaUI.Components.Input do
     attr(:class, :any, doc: "Merged into the box around the content.")
   end
 
+  # What `attrs/1` reads (`raw`, `list_id` and `state` are derived before it).
+  @attrs_deps ~w(type id name raw value variant size shape align prefix suffix state class disabled
+                 list_id clear_on_submit mask mask_options rest)a
+
   def input(assigns) do
     assigns
     |> Control.assign_control()
     |> assign_mask_id()
-    |> then(&assign(&1, :state, Control.state(&1.state, &1.errors)))
+    |> then(
+      &assign_derived(&1, :state, [:state, :errors], fn -> Control.state(&1.state, &1.errors) end)
+    )
     |> assign_list()
-    |> then(&assign(&1, :raw, raw_input(&1)))
-    |> then(&assign(&1, :attrs, attrs(&1)))
+    |> then(
+      &assign_derived(&1, :raw, [:mask, :mask_submit, :id, :name, :value, :rest], fn ->
+        raw_input(&1)
+      end)
+    )
+    |> then(&assign_derived(&1, :attrs, @attrs_deps, fn -> attrs(&1) end))
     |> render_input()
   end
 
@@ -227,12 +237,14 @@ defmodule LineaUI.Components.Input do
   defp assign_mask_id(%{id: nil} = assigns), do: assign(assigns, :id, gen_id("input"))
   defp assign_mask_id(assigns), do: assigns
 
-  defp assign_list(%{options: []} = assigns), do: assign(assigns, :list_id, nil)
+  defp assign_list(%{options: []} = assigns),
+    do: assign_derived(assigns, :list_id, [:options], fn -> nil end)
 
   defp assign_list(%{id: nil} = assigns),
     do: assign(assigns, id: gen_id("input")) |> assign_list()
 
-  defp assign_list(assigns), do: assign(assigns, :list_id, "#{assigns.id}-options")
+  defp assign_list(assigns),
+    do: assign_derived(assigns, :list_id, [:options, :id], fn -> "#{assigns.id}-options" end)
 
   defp raw_input(%{mask: mask, mask_submit: "raw"} = assigns) when is_binary(mask) do
     Map.merge(

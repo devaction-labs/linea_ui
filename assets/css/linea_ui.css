@@ -23,6 +23,7 @@
 @import "./parts/canvas-dados2.css";
 @import "./parts/canvas-overlays.css";
 @import "./parts/canvas-structure.css";
+@import "./parts/canvas-dark.css";
 
 @source "../../lib";
 @source "../js";

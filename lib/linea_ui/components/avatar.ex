@@ -395,12 +395,18 @@ defmodule LineaUI.Components.Avatar do
 
   defp prepare(assigns) do
     assigns
-    |> assign(:text_size, @px_text_sizes[assigns.size] || @text_sizes[assigns.size])
-    |> assign(:size, Map.get(@size_aliases, assigns.size, assigns.size))
-    |> assign(:initials, assigns.initials || initials_of(assigns.name))
-    |> assign(:alt, alt_of(assigns))
-    |> assign(:status_position, status_position(assigns))
-    |> assign(:shape, shape_of(assigns))
+    |> assign_derived(:text_size, [:size], fn ->
+      @px_text_sizes[assigns.size] || @text_sizes[assigns.size]
+    end)
+    |> assign_derived(:size, [:size], fn -> Map.get(@size_aliases, assigns.size, assigns.size) end)
+    |> assign_derived(:initials, [:initials, :name], fn ->
+      assigns.initials || initials_of(assigns.name)
+    end)
+    |> assign_derived(:alt, [:alt, :name], fn -> alt_of(assigns) end)
+    |> assign_derived(:status_position, [:status_position, :status], fn ->
+      status_position(assigns)
+    end)
+    |> assign_derived(:shape, [:kind, :shape], fn -> shape_of(assigns) end)
   end
 
   defp initials_of(nil), do: nil
@@ -432,8 +438,31 @@ defmodule LineaUI.Components.Avatar do
       {@rest}
     >
       <div class="avatar h-full w-full rounded-full bg-white p-[3px] dark:bg-navy-700">
-        <.face {assigns} />
-        <.status_dot :if={@status} {assigns} />
+        <.face
+          src={@src}
+          icon={@icon}
+          kind={@kind}
+          alt={@alt}
+          shape={@shape}
+          ring={@ring}
+          ring_color={@ring_color}
+          face_class={@face_class}
+          inner_block={@inner_block}
+          tint={@tint}
+          text_size={@text_size}
+          variant={@variant}
+          color={@color}
+          name={@name}
+          initials={@initials}
+        />
+        <.status_dot
+          :if={@status}
+          status={@status}
+          ping={@ping}
+          status_position={@status_position}
+          shape={@shape}
+          size={@size}
+        />
       </div>
     </div>
     """
@@ -442,8 +471,31 @@ defmodule LineaUI.Components.Avatar do
   defp render_avatar(assigns) do
     ~H"""
     <div class={merge(["avatar", size(@size), @ring && "hover:z-10", @class])} {@rest}>
-      <.face {assigns} />
-      <.status_dot :if={@status} {assigns} />
+      <.face
+        src={@src}
+        icon={@icon}
+        kind={@kind}
+        alt={@alt}
+        shape={@shape}
+        ring={@ring}
+        ring_color={@ring_color}
+        face_class={@face_class}
+        inner_block={@inner_block}
+        tint={@tint}
+        text_size={@text_size}
+        variant={@variant}
+        color={@color}
+        name={@name}
+        initials={@initials}
+      />
+      <.status_dot
+        :if={@status}
+        status={@status}
+        ping={@ping}
+        status_position={@status_position}
+        shape={@shape}
+        size={@size}
+      />
     </div>
     """
   end
@@ -555,7 +607,11 @@ defmodule LineaUI.Components.Avatar do
 
   defp status_dot(assigns) do
     ~H"""
-    <div class={["absolute rounded-full", dot_frame(assigns), dot(@status)]}>
+    <div class={[
+      "absolute rounded-full",
+      dot_frame(@status, @status_position, @shape, @size),
+      dot(@status)
+    ]}>
       <span
         :if={@ping}
         class={[
@@ -567,14 +623,14 @@ defmodule LineaUI.Components.Avatar do
     """
   end
 
-  defp dot_frame(%{status: status, status_position: "bottom-right"}) when status in @presences,
+  defp dot_frame(status, "bottom-right", _shape, _size) when status in @presences,
     do: @presence_dot
 
-  defp dot_frame(assigns),
+  defp dot_frame(_status, status_position, shape, size),
     do: [
       "border-white dark:border-navy-700",
-      position(assigns.status_position),
-      dot_size(assigns.shape, assigns.size)
+      position(status_position),
+      dot_size(shape, size)
     ]
 
   defp size(size), do: @sizes[size]
@@ -671,8 +727,10 @@ defmodule LineaUI.Components.Avatar do
   def avatar_group(assigns) do
     assigns =
       assigns
-      |> assign(:more, positive(assigns.more || (assigns.hidden && length(assigns.hidden))))
-      |> assign(:listed, assigns.hidden not in [nil, []])
+      |> assign_derived(:more, [:more, :hidden], fn ->
+        positive(assigns.more || (assigns.hidden && length(assigns.hidden)))
+      end)
+      |> assign_derived(:listed, [:hidden], fn -> assigns.hidden not in [nil, []] end)
 
     ~H"""
     <div

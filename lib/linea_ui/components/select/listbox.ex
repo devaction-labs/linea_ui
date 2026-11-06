@@ -19,34 +19,42 @@ defmodule LineaUI.Components.Select.Listbox do
     count = length(values)
 
     assigns
-    |> then(&assign(&1, :placeholder, Map.get(&1, :placeholder) || Map.get(&1, :prompt)))
-    |> assign_new(:overflow, fn -> "wrap" end)
-    |> assign_new(:size, fn -> "md" end)
-    |> assign_new(:footer, fn -> false end)
-    |> assign_new(:footer_count, fn -> "%{count} of %{total}" end)
-    |> assign_new(:footer_hint, fn -> "Esc to close" end)
-    |> assign_new(:more_label, fn -> "more" end)
-    |> assign_new(:create_hint, fn -> nil end)
-    |> assign_new(:limit_placeholder, fn -> nil end)
-    |> assign_new(:counter, fn -> true end)
-    |> assign_new(:create_position, fn -> "top" end)
-    |> assign_new(:compact, fn -> false end)
-    |> assign_new(:help, fn -> nil end)
-    |> assign_new(:search, fn -> "control" end)
-    |> assign_new(:search_placeholder, fn -> "Search…" end)
-    |> assign(
-      mode: mode,
-      multiple: multiple,
-      entries: entries,
-      options: options,
-      values: values,
-      chosen: Enum.map(values, &Options.find(known, &1)),
-      known: known,
-      name: field_name(assigns.name, multiple),
-      full: full?(multiple, count, assigns.max),
-      removable: assigns.removable and not assigns.disabled,
-      forwarded: Pickers.forwarded(assigns.rest)
+    |> then(
+      &assign_derived(&1, :placeholder, [:placeholder, :prompt], fn ->
+        Map.get(&1, :placeholder) || Map.get(&1, :prompt)
+      end)
     )
+    |> put_default(:overflow, "wrap")
+    |> put_default(:size, "md")
+    |> put_default(:footer, false)
+    |> put_default(:footer_count, "%{count} of %{total}")
+    |> put_default(:footer_hint, "Esc to close")
+    |> put_default(:more_label, "more")
+    |> put_default(:create_hint, nil)
+    |> put_default(:limit_placeholder, nil)
+    |> put_default(:counter, true)
+    |> put_default(:create_position, "top")
+    |> put_default(:compact, false)
+    |> put_default(:help, nil)
+    |> put_default(:search, "control")
+    |> put_default(:search_placeholder, "Search…")
+    |> assign_derived(:mode, [], fn -> mode end)
+    |> assign_derived(:multiple, [:multiple], fn -> multiple end)
+    |> assign_derived(:entries, [:options], fn -> entries end)
+    |> assign_derived(:options, [:options], fn -> options end)
+    |> assign_derived(:values, [:value], fn -> values end)
+    |> assign_derived(:chosen, [:value, :options, :selected_options], fn ->
+      Enum.map(values, &Options.find(known, &1))
+    end)
+    |> assign_derived(:known, [:options, :selected_options], fn -> known end)
+    |> assign_derived(:name, [:name, :multiple], fn -> field_name(assigns.name, multiple) end)
+    |> assign_derived(:full, [:value, :multiple, :max], fn ->
+      full?(multiple, count, assigns.max)
+    end)
+    |> assign_derived(:removable, [:removable, :disabled], fn ->
+      assigns.removable and not assigns.disabled
+    end)
+    |> assign_derived(:forwarded, [:rest], fn -> Pickers.forwarded(assigns.rest) end)
   end
 
   defp known(options, []), do: options

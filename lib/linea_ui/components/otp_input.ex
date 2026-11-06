@@ -124,28 +124,39 @@ defmodule LineaUI.Components.OtpInput do
   def otp_input(assigns) do
     assigns
     |> assign_field()
-    |> assign_new(:name, fn -> nil end)
-    |> then(&assign_new(&1, :id, fn -> &1.name || gen_id("otp") end))
-    |> assign_new(:value, fn -> nil end)
+    |> put_default(:name, nil)
+    |> assign_otp_id()
+    |> put_default(:value, nil)
     |> assign_code()
     |> render_otp()
   end
+
+  # The id defaults to the name; a generated one is new on every render, as it always was.
+  defp assign_otp_id(assigns) when is_map_key(assigns, :id), do: assigns
+  defp assign_otp_id(%{name: nil} = assigns), do: assign(assigns, :id, gen_id("otp"))
+  defp assign_otp_id(assigns), do: assign_derived(assigns, :id, [:name], fn -> assigns.name end)
 
   defp assign_code(assigns) do
     cells = cells(assigns.value, assigns.length, assigns.mode)
     separators = separators(assigns.separator, assigns.length)
 
-    assign(assigns,
-      code: Enum.join(cells),
-      boxes:
-        cells
-        |> Enum.with_index(1)
-        |> Enum.map(fn {cell, number} ->
-          %{number: number, cell: cell, separator: number in separators}
-        end),
-      state: Control.state(assigns.state, assigns.errors),
-      callback: Overlay.callback(assigns.on_complete, assigns.id, assigns.target)
-    )
+    deps = [:value, :length, :mode, :separator]
+
+    assigns
+    |> assign_derived(:code, deps, fn -> Enum.join(cells) end)
+    |> assign_derived(:boxes, deps, fn ->
+      cells
+      |> Enum.with_index(1)
+      |> Enum.map(fn {cell, number} ->
+        %{number: number, cell: cell, separator: number in separators}
+      end)
+    end)
+    |> assign_derived(:state, [:state, :errors], fn ->
+      Control.state(assigns.state, assigns.errors)
+    end)
+    |> assign_derived(:callback, [:on_complete, :id, :target], fn ->
+      Overlay.callback(assigns.on_complete, assigns.id, assigns.target)
+    end)
   end
 
   defp cells(value, length, mode) do
@@ -170,7 +181,27 @@ defmodule LineaUI.Components.OtpInput do
 
   defp render_otp(%{label: nil, help: nil, errors: []} = assigns) do
     ~H"""
-    <div class={@wrapper_class}><.control {assigns} /></div>
+    <div class={@wrapper_class}>
+      <.control
+        id={@id}
+        name={@name}
+        size={@size}
+        state={@state}
+        class={@class}
+        label={@label}
+        aria_label={@aria_label}
+        length={@length}
+        mode={@mode}
+        code={@code}
+        autofocus={@autofocus}
+        callback={@callback}
+        boxes={@boxes}
+        mask={@mask}
+        disabled={@disabled}
+        digit_label={@digit_label}
+        rest={@rest}
+      />
+    </div>
     """
   end
 
@@ -186,19 +217,44 @@ defmodule LineaUI.Components.OtpInput do
       state={@state}
       class={@wrapper_class}
     >
-      <.control {assigns} />
+      <.control
+        id={@id}
+        name={@name}
+        size={@size}
+        state={@state}
+        class={@class}
+        label={@label}
+        aria_label={@aria_label}
+        length={@length}
+        mode={@mode}
+        code={@code}
+        autofocus={@autofocus}
+        callback={@callback}
+        boxes={@boxes}
+        mask={@mask}
+        disabled={@disabled}
+        digit_label={@digit_label}
+        rest={@rest}
+      />
     </Form.field>
     """
   end
 
   defp control(assigns) do
     assigns =
-      assign(assigns,
-        box_class: merge([@box, @sizes[assigns.size], filled(assigns.state), assigns.class]),
-        labelledby: assigns.label && assigns.id <> "-label",
-        group_class: merge(["flex w-full items-center gap-2", assigns.label && "mt-1.5"]),
-        group_label: assigns.label || assigns.aria_label
-      )
+      assigns
+      |> assign_derived(:box_class, [:size, :state, :class], fn ->
+        merge([@box, @sizes[assigns.size], filled(assigns.state), assigns.class])
+      end)
+      |> assign_derived(:labelledby, [:label, :id], fn ->
+        assigns.label && assigns.id <> "-label"
+      end)
+      |> assign_derived(:group_class, [:label], fn ->
+        merge(["flex w-full items-center gap-2", assigns.label && "mt-1.5"])
+      end)
+      |> assign_derived(:group_label, [:label, :aria_label], fn ->
+        assigns.label || assigns.aria_label
+      end)
 
     ~H"""
     <div

@@ -21,11 +21,9 @@ defmodule LineaUI.Components.Pickers do
 
   def field(assigns) do
     assigns =
-      assign(
-        assigns,
-        :label_class,
+      assign_derived(assigns, :label_class, [], fn ->
         "mb-1.5 block text-[13px]/5 font-medium text-slate-950 dark:text-navy-50"
-      )
+      end)
 
     ~H"""
     <label class={merge(["block", @class])} for={@for}>

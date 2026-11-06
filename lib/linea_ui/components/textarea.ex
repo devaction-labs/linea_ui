@@ -138,16 +138,26 @@ defmodule LineaUI.Components.Textarea do
   slot(:header, doc: "Content above the text, laid out as a row.")
   slot(:footer, doc: "Content below the text, laid out as a row with space between.")
 
+  @classes_deps ~w(header footer variant size resizable autogrow state class)a
+
   def textarea(assigns) do
     assigns
     |> Control.assign_control()
-    |> then(&assign(&1, :state, Control.state(&1.state, &1.errors)))
-    |> then(&assign(&1, :id, &1.id || ((&1.counter or &1.autogrow) && gen_id("textarea")) || nil))
-    |> then(&assign(&1, :classes, classes(&1)))
-    |> then(&assign(&1, :length, length_of(&1)))
-    |> assign(:frame, @frame)
+    |> then(
+      &assign_derived(&1, :state, [:state, :errors], fn -> Control.state(&1.state, &1.errors) end)
+    )
+    |> assign_id()
+    |> then(&assign_derived(&1, :classes, @classes_deps, fn -> classes(&1) end))
+    |> then(&assign_derived(&1, :length, [:value], fn -> length_of(&1) end))
+    |> assign_derived(:frame, [], fn -> @frame end)
     |> render_textarea()
   end
+
+  # A generated id (for the counter and autogrow hooks) is new on every render, as it always was.
+  defp assign_id(%{id: nil} = assigns),
+    do: assign(assigns, :id, ((assigns.counter or assigns.autogrow) && gen_id("textarea")) || nil)
+
+  defp assign_id(assigns), do: assigns
 
   defp classes(%{header: [], footer: []} = assigns) do
     merge([
@@ -218,7 +228,24 @@ defmodule LineaUI.Components.Textarea do
 
   defp render_textarea(%{label: nil, help: nil, errors: [], header: [], footer: []} = assigns) do
     ~H"""
-    <.control {control_assigns(assigns, false)} />
+    <.control
+      id={@id}
+      name={@name}
+      value={@value}
+      rows={@rows}
+      classes={@classes}
+      disabled={@disabled}
+      state={@state}
+      rest={@rest}
+      counter={@counter}
+      min_length={@min_length}
+      autogrow={@autogrow}
+      max_rows={@max_rows}
+      length={@length}
+      counter_format={@counter_format}
+      counter_align={@counter_align}
+      aside={false}
+    />
     """
   end
 
@@ -233,9 +260,32 @@ defmodule LineaUI.Components.Textarea do
       state={help_state(@state, @errors)}
       class={@wrapper_class}
     >
-      <.control {control_assigns(assigns, @counter_align == "end")} />
+      <.control
+        id={@id}
+        name={@name}
+        value={@value}
+        rows={@rows}
+        classes={@classes}
+        disabled={@disabled}
+        state={@state}
+        rest={@rest}
+        counter={@counter}
+        min_length={@min_length}
+        autogrow={@autogrow}
+        max_rows={@max_rows}
+        length={@length}
+        counter_format={@counter_format}
+        counter_align={@counter_align}
+        aside={@counter_align == "end"}
+      />
       <:aside :if={@counter and @counter_align == "end"}>
-        <.counter {control_assigns(assigns, true)} />
+        <.counter
+          id={@id}
+          length={@length}
+          min_length={@min_length}
+          rest={@rest}
+          counter_format={@counter_format}
+        />
       </:aside>
     </Form.field>
     """
@@ -253,10 +303,35 @@ defmodule LineaUI.Components.Textarea do
       as="div"
       class={@wrapper_class}
     >
-      <:aside :if={@counter}><.counter {control_assigns(assigns, true)} /></:aside>
+      <:aside :if={@counter}>
+        <.counter
+          id={@id}
+          length={@length}
+          min_length={@min_length}
+          rest={@rest}
+          counter_format={@counter_format}
+        />
+      </:aside>
       <div class={merge([@frame, @label && "mt-1.5", @frame_class])}>
         <div :for={header <- @header} class="flex justify-between">{render_slot(header)}</div>
-        <label class="block"><.control {control_assigns(assigns, true)} /></label>
+        <label class="block"><.control
+          id={@id}
+          name={@name}
+          value={@value}
+          rows={@rows}
+          classes={@classes}
+          disabled={@disabled}
+          state={@state}
+          rest={@rest}
+          counter={@counter}
+          min_length={@min_length}
+          autogrow={@autogrow}
+          max_rows={@max_rows}
+          length={@length}
+          counter_format={@counter_format}
+          counter_align={@counter_align}
+          aside={true}
+        /></label>
         <div :for={footer <- @footer} class="flex justify-between px-2.5 py-2">
           {render_slot(footer)}
         </div>
@@ -265,39 +340,38 @@ defmodule LineaUI.Components.Textarea do
     """
   end
 
-  defp control_assigns(assigns, aside) do
-    assigns
-    |> Map.take([
-      :id,
-      :name,
-      :value,
-      :rows,
-      :classes,
-      :disabled,
-      :state,
-      :rest,
-      :counter,
-      :min_length,
-      :autogrow,
-      :max_rows,
-      :length,
-      :counter_format,
-      :counter_align
-    ])
-    |> Map.put(:aside, aside)
-  end
-
   # With a caption, help or errors the counter shares their row (`Form.field`'s `:aside`); alone it
   # sits right under the control.
   defp control(%{counter: true, aside: false} = assigns) do
     ~H"""
     <div class="w-full">
-      <.field_control {assigns} described_by={"#{@id}-counter"} />
+      <.field_control
+        id={@id}
+        name={@name}
+        value={@value}
+        rows={@rows}
+        classes={@classes}
+        disabled={@disabled}
+        state={@state}
+        rest={@rest}
+        counter={@counter}
+        min_length={@min_length}
+        autogrow={@autogrow}
+        max_rows={@max_rows}
+        counter_format={@counter_format}
+        described_by={"#{@id}-counter"}
+      />
       <div class={[
         "mt-1 flex px-0.5",
         (@counter_align == "start" && "justify-start") || "justify-end"
       ]}>
-        <.counter {assigns} />
+        <.counter
+          id={@id}
+          length={@length}
+          min_length={@min_length}
+          rest={@rest}
+          counter_format={@counter_format}
+        />
       </div>
     </div>
     """
@@ -305,17 +379,49 @@ defmodule LineaUI.Components.Textarea do
 
   defp control(%{counter: true} = assigns) do
     ~H"""
-    <.field_control {assigns} described_by={"#{@id}-counter"} />
+    <.field_control
+      id={@id}
+      name={@name}
+      value={@value}
+      rows={@rows}
+      classes={@classes}
+      disabled={@disabled}
+      state={@state}
+      rest={@rest}
+      counter={@counter}
+      min_length={@min_length}
+      autogrow={@autogrow}
+      max_rows={@max_rows}
+      counter_format={@counter_format}
+      described_by={"#{@id}-counter"}
+    />
     """
   end
 
   defp control(assigns) do
     ~H"""
-    <.field_control {assigns} described_by={nil} />
+    <.field_control
+      id={@id}
+      name={@name}
+      value={@value}
+      rows={@rows}
+      classes={@classes}
+      disabled={@disabled}
+      state={@state}
+      rest={@rest}
+      counter={@counter}
+      min_length={@min_length}
+      autogrow={@autogrow}
+      max_rows={@max_rows}
+      counter_format={@counter_format}
+      described_by={nil}
+    />
     """
   end
 
   defp counter(assigns) do
+    deps = [:length, :min_length, :rest, :counter_format]
+
     {text, tone} =
       counter_state(
         assigns.length,
@@ -324,7 +430,10 @@ defmodule LineaUI.Components.Textarea do
         assigns.counter_format
       )
 
-    assigns = assign(assigns, text: text, tone: tone)
+    assigns =
+      assigns
+      |> assign_derived(:text, deps, fn -> text end)
+      |> assign_derived(:tone, deps, fn -> tone end)
 
     ~H"""
     <span

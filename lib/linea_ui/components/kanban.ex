@@ -177,7 +177,7 @@ defmodule LineaUI.Components.Kanban do
 
   def kanban(assigns) do
     assigns
-    |> assign(:classes, merge([@board, assigns.class]))
+    |> assign_derived(:classes, [:class], fn -> merge([@board, assigns.class]) end)
     |> render_board()
   end
 
@@ -278,12 +278,14 @@ defmodule LineaUI.Components.Kanban do
 
   def kanban_column(assigns) do
     assigns
-    |> assign(:look, Map.fetch!(@colors, assigns.color))
-    |> assign(:width, bar_width(assigns.progress))
-    |> assign(:exceeded, exceeded?(assigns.count, assigns.limit))
-    |> assign(:classes, merge([@column, assigns.class]))
-    |> assign(:pill, @pill)
-    |> assign(:over_limit, @over_limit)
+    |> assign_derived(:look, [:color], fn -> Map.fetch!(@colors, assigns.color) end)
+    |> assign_derived(:width, [:progress], fn -> bar_width(assigns.progress) end)
+    |> assign_derived(:exceeded, [:count, :limit], fn ->
+      exceeded?(assigns.count, assigns.limit)
+    end)
+    |> assign_derived(:classes, [:class], fn -> merge([@column, assigns.class]) end)
+    |> assign_derived(:pill, [], fn -> @pill end)
+    |> assign_derived(:over_limit, [], fn -> @over_limit end)
     |> render_column()
   end
 
@@ -403,7 +405,9 @@ defmodule LineaUI.Components.Kanban do
 
   def kanban_card(assigns) do
     assigns
-    |> assign(:classes, merge([@card, assigns.risk && @risk, assigns.class]))
+    |> assign_derived(:classes, [:risk, :class], fn ->
+      merge([@card, assigns.risk && @risk, assigns.class])
+    end)
     |> render_card()
   end
 
@@ -456,8 +460,8 @@ defmodule LineaUI.Components.Kanban do
 
   def kanban_lost(assigns) do
     assigns
-    |> assign(:classes, merge([@lost, assigns.class]))
-    |> assign(:pill, @pill)
+    |> assign_derived(:classes, [:class], fn -> merge([@lost, assigns.class]) end)
+    |> assign_derived(:pill, [], fn -> @pill end)
     |> render_lost()
   end
 

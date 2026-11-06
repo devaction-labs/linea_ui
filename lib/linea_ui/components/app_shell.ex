@@ -264,7 +264,10 @@ defmodule LineaUI.Components.AppShell do
   end
 
   def app_shell(assigns) do
-    assigns = assign_new(assigns, :open, fn -> open?(assigns) end)
+    assigns =
+      if is_map_key(assigns, :open),
+        do: assigns,
+        else: assign_derived(assigns, :open, [:sidebar_open, :layout], fn -> open?(assigns) end)
 
     ~H"""
     <div
@@ -418,7 +421,10 @@ defmodule LineaUI.Components.AppShell do
   slot :inner_block, required: true, doc: "The icon."
 
   def main_sidebar_link(assigns) do
-    assigns = assign(assigns, :active, assigns.active or active?(assigns.rest, assigns.current))
+    assigns =
+      assign_derived(assigns, :active, [:active, :rest, :current], fn ->
+        assigns.active or active?(assigns.rest, assigns.current)
+      end)
 
     ~H"""
     <.link
@@ -514,10 +520,9 @@ defmodule LineaUI.Components.AppShell do
 
   def sidebar_profile(assigns) do
     assigns =
-      assign(assigns,
-        profile_colors: @profile_colors,
-        status_class: @status_colors[assigns.status]
-      )
+      assigns
+      |> assign_derived(:profile_colors, [], fn -> @profile_colors end)
+      |> assign_derived(:status_class, [:status], fn -> @status_colors[assigns.status] end)
 
     ~H"""
     <div
@@ -693,7 +698,10 @@ defmodule LineaUI.Components.AppShell do
   slot :inner_block, required: true
 
   def sidebar_nav_link(assigns) do
-    assigns = assign(assigns, :active, assigns.active or active?(assigns.rest, assigns.current))
+    assigns =
+      assign_derived(assigns, :active, [:active, :rest, :current], fn ->
+        assigns.active or active?(assigns.rest, assigns.current)
+      end)
 
     ~H"""
     <li>
@@ -754,7 +762,9 @@ defmodule LineaUI.Components.AppShell do
     assigns =
       assigns
       |> assign(:item, items)
-      |> assign(:id, assigns.id || "sidebar-group-" <> slug(assigns.label))
+      |> assign_derived(:id, [:id, :label], fn ->
+        assigns.id || "sidebar-group-" <> slug(assigns.label)
+      end)
       |> then(&assign(&1, :open, group_open?(&1.open, items)))
 
     ~H"""
@@ -905,7 +915,13 @@ defmodule LineaUI.Components.AppShell do
 
   def sidebar_min_link(assigns) do
     active = assigns.active or active?(assigns.rest, assigns.current)
-    assigns = assign(assigns, active: active, state: min_state(active, assigns.color))
+
+    assigns =
+      assigns
+      |> assign_derived(:active, [:active, :rest, :current], fn -> active end)
+      |> assign_derived(:state, [:active, :rest, :current, :color], fn ->
+        min_state(active, assigns.color)
+      end)
 
     ~H"""
     <li>
@@ -1040,7 +1056,10 @@ defmodule LineaUI.Components.AppShell do
   slot :nav, doc: "The navigation row of a horizontal header."
 
   def header(assigns) do
-    assigns = assign(assigns, horizontal: assigns.nav != [], icon_button: @icon_button)
+    assigns =
+      assigns
+      |> assign_derived(:horizontal, [:nav], fn -> assigns.nav != [] end)
+      |> assign_derived(:icon_button, [], fn -> @icon_button end)
 
     ~H"""
     <nav id={@id} class={merge(["header print:hidden", @class])} {@rest}>
@@ -1362,7 +1381,10 @@ defmodule LineaUI.Components.AppShell do
   slot :inner_block, required: true
 
   def horizontal_nav_link(assigns) do
-    assigns = assign(assigns, :active, assigns.active or active?(assigns.rest, assigns.current))
+    assigns =
+      assign_derived(assigns, :active, [:active, :rest, :current], fn ->
+        assigns.active or active?(assigns.rest, assigns.current)
+      end)
 
     ~H"""
     <.link
@@ -1507,7 +1529,7 @@ defmodule LineaUI.Components.AppShell do
   attr :rest, :global
 
   def right_sidebar_toggle(assigns) do
-    assigns = assign(assigns, :icon_button, @icon_button)
+    assigns = assign_derived(assigns, :icon_button, [], fn -> @icon_button end)
 
     ~H"""
     <button
@@ -1738,7 +1760,10 @@ defmodule LineaUI.Components.AppShell do
   slot :inner_block, required: true, doc: "The icon."
 
   def rail_link(assigns) do
-    assigns = assign(assigns, :active, assigns.active or active?(assigns.rest, assigns.current))
+    assigns =
+      assign_derived(assigns, :active, [:active, :rest, :current], fn ->
+        assigns.active or active?(assigns.rest, assigns.current)
+      end)
 
     ~H"""
     <.link
@@ -1877,7 +1902,10 @@ defmodule LineaUI.Components.AppShell do
   slot :inner_block, doc: "Replaces the initials, a picture for the workspace."
 
   def rail_workspace(assigns) do
-    assigns = assign(assigns, :initials, assigns.initials || workspace_initials(assigns.name))
+    assigns =
+      assign_derived(assigns, :initials, [:initials, :name], fn ->
+        assigns.initials || workspace_initials(assigns.name)
+      end)
 
     ~H"""
     <button type="button" class={merge(["rail-workspace", @class])} {@rest}>
@@ -2013,8 +2041,10 @@ defmodule LineaUI.Components.AppShell do
   def page_header(%{variant: "page"} = assigns) do
     assigns =
       assigns
-      |> assign(:crumbs, mark_last(assigns.crumb))
-      |> assign(:top, top_row?(assigns))
+      |> assign_derived(:crumbs, [:crumb], fn -> mark_last(assigns.crumb) end)
+      |> assign_derived(:top, [:leading, :crumb, :clock, :bell, :notifications], fn ->
+        top_row?(assigns)
+      end)
 
     ~H"""
     <header
@@ -2121,7 +2151,7 @@ defmodule LineaUI.Components.AppShell do
   end
 
   def page_header(assigns) do
-    assigns = assign(assigns, :crumbs, mark_last(assigns.crumb))
+    assigns = assign_derived(assigns, :crumbs, [:crumb], fn -> mark_last(assigns.crumb) end)
 
     ~H"""
     <div class={merge(["flex items-center space-x-4 py-5 lg:py-6", @class])} {@rest}>
@@ -2180,7 +2210,7 @@ defmodule LineaUI.Components.AppShell do
   attr :rest, :global
 
   def theme_toggle(assigns) do
-    assigns = assign(assigns, :icon_button, @icon_button)
+    assigns = assign_derived(assigns, :icon_button, [], fn -> @icon_button end)
 
     ~H"""
     <button
@@ -2237,7 +2267,7 @@ defmodule LineaUI.Components.AppShell do
   end
 
   def monochrome_toggle(assigns) do
-    assigns = assign(assigns, :icon_button, @icon_button)
+    assigns = assign_derived(assigns, :icon_button, [], fn -> @icon_button end)
 
     ~H"""
     <button
@@ -2325,8 +2355,10 @@ defmodule LineaUI.Components.AppShell do
   defp rail_search(assigns) do
     assigns =
       assigns
-      |> assign(:attrs, assigns_to_attributes(assigns.search, [:inner_block, :__slot__, :class]))
-      |> assign(:extra_class, assigns.search[:class])
+      |> assign_derived(:attrs, [:search], fn ->
+        assigns_to_attributes(assigns.search, [:inner_block, :__slot__, :class])
+      end)
+      |> assign_derived(:extra_class, [:search], fn -> assigns.search[:class] end)
 
     ~H"""
     <button

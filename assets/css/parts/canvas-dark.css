@@ -1,0 +1,30 @@
+/*
+  The dark look of the canvas components where the kit's own dark rules drift from the dark boards of the
+  design canvas (`.sg[data-theme="dark"]`). Every rule here is scoped like the kit's `dark:` variant (a `.dark`
+  page or a `[data-theme="dark"]` block, not inside a `[data-theme="light"]` one), so the light theme is
+  untouched.
+*/
+
+/* The chips of a multiple select / tags input: the canvas `sg-chip` (sunken fill, 1px line, `--fg` text).
+   LineOne's dark chip (`pickers.css`, navy-600 fill and navy-50 text) is more specific than the canvas
+   chip of `canvas-forms2.css`, so it won in dark. */
+:is(.dark, [data-theme="dark"]) .ts-wrapper[phx-hook="LineaUI.Select"].multi .ts-control > div.item:not(:where([data-theme="light"], [data-theme="light"] *)) {
+  background-color: var(--sunken);
+  color: var(--fg);
+}
+
+/* The ink toast card (`toast_card tone="dark"`) carries the `dark` class, which the token block of
+   `canvas.css` also matches (`:is(.dark, …)`, meant for `<html class="dark">`), so on a light page the
+   card took the dark tokens and its icon tile went dark. On the canvas the tile keeps the page's tokens:
+   the light ones on a light page, the dark ones in a dark scope. */
+.sg-toast.sg-toast.dark.dark:not(:where(.dark *, [data-theme="dark"] *)),
+:where([data-theme="light"]) .sg-toast.sg-toast.dark.dark {
+  --canvas: #f4f3f0; --panel: #ffffff; --raised: #ffffff; --sunken: #efeeea; --hover: #f1f0ec; --line: #e8e6e1; --line-strong: #d9d6cf;
+  --ink: #17171a; --fg: #2e2e33; --muted: #6c6b70; --faint: #9d9ba1;
+  --accent: #0d8f91; --accent-ink: #08686b; --accent-soft: #e2f2f1; --accent-2: #7fcfcb; --accent-3: #bfe6e3; --on-accent: #ffffff;
+  --solid: #17171a; --on-solid: #ffffff;
+  --pos: #1a7f4b; --pos-soft: #e5f3eb; --neg: #c2410c; --neg-soft: #fbeee6; --warn: #a16207; --warn-soft: #fbf3dc; --info: #2f5fd0; --info-soft: #e8eefc;
+  --c1: #0d8f91; --c2: #2f5fd0; --c3: #8a5cd6; --c4: #d97a1e; --c5: #a1a1a6;
+  --shadow-sm: 0 1px 2px rgb(23 23 26/.04); --shadow: 0 1px 2px rgb(23 23 26/.04), 0 4px 16px -6px rgb(23 23 26/.08); --shadow-lg: 0 24px 60px -20px rgb(23 23 26/.28), 0 2px 6px rgb(23 23 26/.06);
+  color-scheme: light;
+}

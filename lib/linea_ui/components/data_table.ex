@@ -324,12 +324,16 @@ defmodule LineaUI.Components.DataTable do
 
   def data_table(assigns) do
     assigns
-    |> assign(:total, total(assigns))
+    |> assign_derived(:total, [:total, :rows], fn -> total(assigns) end)
     |> assign_pages()
-    |> assign(:paginated, assigns.footer and (assigns.on_page != nil or assigns.page_path != nil))
-    |> assign(:icon_button, @icon_button)
-    |> assign(:numbers, @numbers)
-    |> assign(:title_bar, title_bar?(assigns))
+    |> assign_derived(:paginated, [:footer, :on_page, :page_path], fn ->
+      assigns.footer and (assigns.on_page != nil or assigns.page_path != nil)
+    end)
+    |> assign_derived(:icon_button, [], fn -> @icon_button end)
+    |> assign_derived(:numbers, [], fn -> @numbers end)
+    |> assign_derived(:title_bar, [:title, :on_search, :filters, :actions], fn ->
+      title_bar?(assigns)
+    end)
     |> render_data_table()
   end
 
@@ -345,13 +349,15 @@ defmodule LineaUI.Components.DataTable do
   defp assign_pages(%{total: total, page_size: size, page: page} = assigns) do
     pages = max(div(total + size - 1, size), 1)
     current = page |> max(1) |> min(pages)
+    deps = [:total, :rows, :page_size, :page]
 
-    assign(assigns,
-      page: current,
-      pages: pages,
-      window: window(current, pages),
-      range: %{first: first(total, current, size), last: min(current * size, total), total: total}
-    )
+    assigns
+    |> assign_derived(:page, deps, fn -> current end)
+    |> assign_derived(:pages, deps, fn -> pages end)
+    |> assign_derived(:window, deps, fn -> window(current, pages) end)
+    |> assign_derived(:range, deps, fn ->
+      %{first: first(total, current, size), last: min(current * size, total), total: total}
+    end)
   end
 
   defp first(0, _page, _size), do: 0
@@ -403,7 +409,7 @@ defmodule LineaUI.Components.DataTable do
           />
         </label>
       </form>
-      <.data_table_body {assigns} table_variant="data-grid" rounded="none" />
+      {data_table_body(assigns, "data-grid", "none")}
       <div
         :if={@paginated}
         class="flex flex-col justify-between gap-3.5 px-4 py-3.5 text-[12.5px] text-slate-500 sm:flex-row sm:items-center sm:px-0 dark:text-navy-200"
@@ -414,7 +420,10 @@ defmodule LineaUI.Components.DataTable do
         </div>
         <div class="flex flex-wrap gap-1 text-slate-600 dark:text-slate-300">
           <.pager_link
-            {pager_link_assigns(assigns)}
+            on_page={@on_page}
+            page_path={@page_path}
+            target={@target}
+            current={false}
             to={@page - 1}
             disabled={@page == 1}
             class={grid_button()}
@@ -422,7 +431,7 @@ defmodule LineaUI.Components.DataTable do
           >
             {@prev_label}
           </.pager_link>
-          <%= for n <- @window do %>
+          <%= for {n, current} <- pages(@window, @page) do %>
             <span
               :if={n == :gap}
               aria-hidden="true"
@@ -430,17 +439,23 @@ defmodule LineaUI.Components.DataTable do
             >...</span>
             <.pager_link
               :if={n != :gap}
-              {pager_link_assigns(assigns)}
+              on_page={@on_page}
+              page_path={@page_path}
+              target={@target}
+              disabled={false}
               to={n}
-              current={n == @page}
-              class={grid_page_class(n == @page)}
+              current={current}
+              class={grid_page_class(current)}
               label={page_label(@page_label, n)}
             >
               {n}
             </.pager_link>
           <% end %>
           <.pager_link
-            {pager_link_assigns(assigns)}
+            on_page={@on_page}
+            page_path={@page_path}
+            target={@target}
+            current={false}
             to={@page + 1}
             disabled={@page == @pages}
             class={grid_button()}
@@ -507,7 +522,9 @@ defmodule LineaUI.Components.DataTable do
       </div>
       <div class={["sg-card flush", @title_bar && "mt-3"]}>
         <.loading_body :if={@loading} {assigns} />
-        <.data_table_body :if={!@loading} {assigns} table_variant="data" rounded="top" />
+        <%= if !@loading do %>
+          {data_table_body(assigns, "data", "top")}
+        <% end %>
         <div :if={@paginated and @pager == "canvas"} class="sg-pager linea-dtable-pager">
           <Pagination.pagination
             page={@page}
@@ -557,7 +574,18 @@ defmodule LineaUI.Components.DataTable do
             summary={@summary}
             summary_label={@summary_label}
           />
-          <.advanced_pager {assigns} />
+          <.advanced_pager
+            pager={@pager}
+            page={@page}
+            pages={@pages}
+            window={@window}
+            on_page={@on_page}
+            page_path={@page_path}
+            target={@target}
+            prev_label={@prev_label}
+            next_label={@next_label}
+            page_label={@page_label}
+          />
           <.advanced_summary
             :if={@page_sizes != []}
             range={@range}
@@ -574,30 +602,41 @@ defmodule LineaUI.Components.DataTable do
                  selected all_selected expand_label target col action expand empty compact headless
                  borderless row_class row_attrs sticky_header foot scroll_label sort_label row_label select_all_label select_label peek peek_label)a
 
-  defp data_table_body(assigns) do
-    assigns =
-      assign(
-        assigns,
-        :table,
-        assigns
-        |> Map.take(@table_keys)
-        |> Map.merge(%{
-          id: assigns.id <> "-table",
-          rows: assigns.rows,
-          variant: assigns.table_variant,
-          rounded: assigns.rounded,
-          hoverable: hoverable(assigns.hoverable, assigns.expand),
-          rest: %{},
-          class: nil,
-          wrapper_class: assigns.wrapper_class,
-          __changed__: nil
-        })
-      )
+  # Which of the table's assigns follow which of ours, so the table keeps its change tracking.
+  @table_sources Map.merge(Map.new(@table_keys, &{&1, [&1]}), %{
+                   id: [:id],
+                   rows: [:rows],
+                   hoverable: [:hoverable, :expand],
+                   wrapper_class: [:wrapper_class]
+                 })
 
-    ~H"""
-    {Table.table(@table)}
-    """
+  # Called as a function (the slots go through as they are) with the change tracking of the
+  # data table's own assigns, so a change sends what it touches, not the whole table.
+  defp data_table_body(assigns, variant, rounded) do
+    assigns
+    |> Map.take(@table_keys)
+    |> Map.merge(%{
+      id: assigns.id <> "-table",
+      rows: assigns.rows,
+      variant: variant,
+      rounded: rounded,
+      hoverable: hoverable(assigns.hoverable, assigns.expand),
+      rest: %{},
+      class: nil,
+      wrapper_class: assigns.wrapper_class,
+      __changed__: table_changed(assigns)
+    })
+    |> Table.table()
   end
+
+  defp table_changed(%{__changed__: changed}) when is_map(changed) do
+    for {key, sources} <- @table_sources,
+        Enum.any?(sources, &is_map_key(changed, &1)),
+        into: %{},
+        do: {key, true}
+  end
+
+  defp table_changed(_assigns), do: nil
 
   # the first load: the headers over skeleton rows (the canvas `sg-skel` bars)
   defp loading_body(assigns) do
@@ -643,7 +682,7 @@ defmodule LineaUI.Components.DataTable do
   defp hoverable(value, _expand), do: value
 
   defp advanced_summary(assigns) do
-    assigns = assign(assigns, :numbers, @numbers)
+    assigns = assign_derived(assigns, :numbers, [], fn -> @numbers end)
 
     ~H"""
     <div
@@ -659,19 +698,21 @@ defmodule LineaUI.Components.DataTable do
 
   defp advanced_pager(assigns) do
     assigns =
-      assign(assigns,
-        list_class: @pager_list[assigns.pager],
-        li: @pager_li[assigns.pager],
-        arrow: @pager_arrow[assigns.pager],
-        page_class: @pager_page[assigns.pager],
-        current_class: @pager_current[assigns.pager]
-      )
+      assigns
+      |> assign_derived(:list_class, [:pager], fn -> @pager_list[assigns.pager] end)
+      |> assign_derived(:li, [:pager], fn -> @pager_li[assigns.pager] end)
+      |> assign_derived(:arrow, [:pager], fn -> @pager_arrow[assigns.pager] end)
+      |> assign_derived(:page_class, [:pager], fn -> @pager_page[assigns.pager] end)
+      |> assign_derived(:current_class, [:pager], fn -> @pager_current[assigns.pager] end)
 
     ~H"""
     <ol class={@list_class}>
       <li class={elem(@li, 0)}>
         <.pager_link
-          {pager_link_assigns(assigns)}
+          on_page={@on_page}
+          page_path={@page_path}
+          target={@target}
+          current={false}
           to={@page - 1}
           disabled={@page == 1}
           class={@arrow}
@@ -680,7 +721,7 @@ defmodule LineaUI.Components.DataTable do
           <.glyph name={:chevron_left} class="size-4" />
         </.pager_link>
       </li>
-      <li :for={n <- @window} class={elem(@li, 1)}>
+      <li :for={{n, current} <- pages(@window, @page)} class={elem(@li, 1)}>
         <span
           :if={n == :gap}
           aria-hidden="true"
@@ -688,10 +729,13 @@ defmodule LineaUI.Components.DataTable do
         >...</span>
         <.pager_link
           :if={n != :gap}
-          {pager_link_assigns(assigns)}
+          on_page={@on_page}
+          page_path={@page_path}
+          target={@target}
+          disabled={false}
           to={n}
-          current={n == @page}
-          class={page_class(n == @page, @page_class, @current_class)}
+          current={current}
+          class={page_class(current, @page_class, @current_class)}
           label={page_label(@page_label, n)}
         >
           {n}
@@ -699,7 +743,10 @@ defmodule LineaUI.Components.DataTable do
       </li>
       <li class={elem(@li, 2)}>
         <.pager_link
-          {pager_link_assigns(assigns)}
+          on_page={@on_page}
+          page_path={@page_path}
+          target={@target}
+          current={false}
           to={@page + 1}
           disabled={@page == @pages}
           class={@arrow}
@@ -712,11 +759,9 @@ defmodule LineaUI.Components.DataTable do
     """
   end
 
-  defp pager_link_assigns(assigns),
-    do:
-      assigns
-      |> Map.take([:on_page, :page_path, :target])
-      |> Map.merge(%{current: false, disabled: false})
+  # Each entry of the window with whether it is the current page, as comprehension variables:
+  # a page change then sends the links that changed, not the whole pager.
+  defp pages(window, page), do: Enum.map(window, &{&1, &1 == page})
 
   defp page_class(true, _page, current), do: current
   defp page_class(false, page, _current), do: page
@@ -795,8 +840,8 @@ defmodule LineaUI.Components.DataTable do
 
   def table_search(assigns) do
     assigns
-    |> assign(:icon_button, @icon_button)
-    |> assign(:label, assigns.placeholder || "Search here...")
+    |> assign_derived(:icon_button, [], fn -> @icon_button end)
+    |> assign_derived(:label, [:placeholder], fn -> assigns.placeholder || "Search here..." end)
     |> render_table_search()
   end
 

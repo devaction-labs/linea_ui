@@ -31,12 +31,11 @@ defmodule LineaUI.ClassMerge.Cache do
     end
   end
 
+  # A full table is emptied and starts over, so the lists in use come back in and the ones
+  # that are not (classes built from data, say) do not hold the space forever.
   defp insert_below_limit(classes, merged) do
-    case :ets.info(@table, :size) < @limit do
-      true -> :ets.insert(@table, {classes, merged})
-      false -> :ok
-    end
-
+    if :ets.info(@table, :size) >= @limit, do: :ets.delete_all_objects(@table)
+    :ets.insert(@table, {classes, merged})
     merged
   end
 
