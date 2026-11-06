@@ -222,6 +222,8 @@
     gap: 2px;
     overflow: auto;
     scrollbar-width: none;
+    /* the canvas rail sits one pixel up and left of where the flow puts it */
+    margin: -1px 0 0 -1px;
   }
 
   .rail-item {
