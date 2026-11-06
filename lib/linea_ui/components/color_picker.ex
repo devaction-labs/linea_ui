@@ -105,7 +105,7 @@ defmodule LineaUI.Components.ColorPicker do
     assigns
     |> assign_field()
     |> assign_new(:name, fn -> nil end)
-    |> then(&assign_new(&1, :id, fn -> &1.name || gen_id("color") end))
+    |> then(&assign_new(&1, :id, fn -> &1.name || stable_id("color", &1) end))
     |> assign_new(:value, fn -> nil end)
     |> prepare()
     |> render_picker()

@@ -90,7 +90,7 @@ defmodule LineaUI.Components.TimePicker do
     assigns =
       assigns
       |> assign_field()
-      |> assign_new(:id, fn -> gen_id("time") end)
+      |> then(&assign_new(&1, :id, fn -> stable_id("time", &1) end))
       |> then(&assign_new(&1, :name, fn -> &1.id end))
       |> assign_new(:value, fn -> nil end)
       |> then(&assign(&1, :chosen, hhmm(&1.value)))

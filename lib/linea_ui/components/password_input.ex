@@ -28,7 +28,8 @@ defmodule LineaUI.Components.PasswordInput do
       ~w(field name value label help errors placeholder disabled size variant state autocomplete required minlength maxlength form)
 
   def password_input(assigns) do
-    assigns = assign(assigns, :id, assigns.id || assigns.rest[:id] || gen_id("password"))
+    assigns =
+      assign(assigns, :id, assigns.id || assigns.rest[:id] || stable_id("password", assigns))
 
     ~H"""
     <div class={merge(["group/pw relative", @class])}>

@@ -131,9 +131,9 @@ defmodule LineaUI.Components.OtpInput do
     |> render_otp()
   end
 
-  # The id defaults to the name; a generated one is new on every render, as it always was.
+  # The id defaults to the name; without one it is derived from the label (stable across renders).
   defp assign_otp_id(assigns) when is_map_key(assigns, :id), do: assigns
-  defp assign_otp_id(%{name: nil} = assigns), do: assign(assigns, :id, gen_id("otp"))
+  defp assign_otp_id(%{name: nil} = assigns), do: assign(assigns, :id, stable_id("otp", assigns))
   defp assign_otp_id(assigns), do: assign_derived(assigns, :id, [:name], fn -> assigns.name end)
 
   defp assign_code(assigns) do

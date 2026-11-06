@@ -393,7 +393,7 @@ defmodule LineaUI.Components.Dropdown do
   def dropdown_submenu(assigns) do
     assigns =
       assigns
-      |> assign(:id, assigns.id || gen_id("submenu"))
+      |> assign(:id, assigns.id || stable_id("submenu", assigns, [:label]))
       |> assign_derived(:item_class, [], fn -> @item_styles["default"]["neutral"] end)
 
     ~H"""

@@ -112,8 +112,9 @@ defmodule LineaUI.Components.Segmented do
     |> render_segmented()
   end
 
-  # A generated id is new on every render, as it always was.
-  defp assign_id(%{id: nil, name: nil} = assigns), do: assign(assigns, :id, gen_id("segmented"))
+  # Without id and name, the id is derived from the label (stable across renders).
+  defp assign_id(%{id: nil, name: nil} = assigns),
+    do: assign(assigns, :id, stable_id("segmented", assigns))
 
   defp assign_id(assigns),
     do: assign_derived(assigns, :id, [:id, :name], fn -> assigns.id || assigns.name end)

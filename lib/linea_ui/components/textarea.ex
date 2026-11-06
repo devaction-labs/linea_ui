@@ -153,9 +153,15 @@ defmodule LineaUI.Components.Textarea do
     |> render_textarea()
   end
 
-  # A generated id (for the counter and autogrow hooks) is new on every render, as it always was.
+  # The counter and autogrow hooks need an id: derived from the name, else from label/placeholder
+  # (stable across renders; pass `id` to tell apart two nameless textareas with the same label).
   defp assign_id(%{id: nil} = assigns),
-    do: assign(assigns, :id, ((assigns.counter or assigns.autogrow) && gen_id("textarea")) || nil)
+    do:
+      assign(
+        assigns,
+        :id,
+        ((assigns.counter or assigns.autogrow) && stable_id("textarea", assigns)) || nil
+      )
 
   defp assign_id(assigns), do: assigns
 

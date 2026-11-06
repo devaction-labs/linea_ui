@@ -292,7 +292,7 @@ defmodule LineaUI.Components.TextEditor do
   def text_editor(assigns) do
     assigns
     |> assign_field()
-    |> assign_new(:id, fn -> gen_id("editor") end)
+    |> then(&assign_new(&1, :id, fn -> stable_id("editor", &1) end))
     |> then(&assign_new(&1, :name, fn -> &1.id end))
     |> assign_new(:value, fn -> nil end)
     |> then(&assign(&1, :value, &1.value || ""))

@@ -46,6 +46,7 @@ defmodule LineaUI.Components.Chart do
   | `dollars_thousands` | `5000` -> `$5k` |
   | `brl` | `1284.9` -> `R$ 1.284,9` (pt-BR grouping) |
   | `brl_thousands` | `6000` -> `R$ 6 mil`, `31500` -> `R$ 31,5 mil`, values under 1000 as `brl` |
+  | `brl_kilo` | `20000` -> `R$ 20k`, `0` -> `0` |
   | `number_br` | `1248` -> `1.248` |
   | `total_br` | for gauges and the donut total: the sum of the series as `number_br` (takes ApexCharts' `w`) |
   | `total_brl_thousands` | the donut total as `R$ 248 mil` (takes ApexCharts' `w`) |

@@ -231,9 +231,11 @@ defmodule LineaUI.Components.Select do
     |> LineaUI.Components.Select.Listbox.listbox()
   end
 
-  # The id defaults to the name; a generated one is new on every render, as it always was.
+  # The id defaults to the name; without one it is derived from the label (stable across renders).
   defp assign_select_id(assigns) when is_map_key(assigns, :id), do: assigns
-  defp assign_select_id(%{name: nil} = assigns), do: assign(assigns, :id, gen_id("select"))
+
+  defp assign_select_id(%{name: nil} = assigns),
+    do: assign(assigns, :id, stable_id("select", assigns))
 
   defp assign_select_id(assigns),
     do: assign_derived(assigns, :id, [:name], fn -> assigns.name end)

@@ -290,7 +290,7 @@ defmodule LineaUI.Components.DatetimePicker do
     assigns
     |> DatePicker.range_fields()
     |> assign_field()
-    |> assign_new(:id, fn -> gen_id("datetime") end)
+    |> then(&assign_new(&1, :id, fn -> stable_id("datetime", &1) end))
     |> then(&assign_new(&1, :name, fn -> &1.id end))
     |> assign_new(:value, fn -> nil end)
     |> legacy()

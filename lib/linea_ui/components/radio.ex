@@ -129,7 +129,7 @@ defmodule LineaUI.Components.Radio do
   def radio_group(assigns) do
     assigns
     |> Control.assign_control()
-    |> then(&assign(&1, :id, &1.id || gen_id("radio-group")))
+    |> then(&assign(&1, :id, &1.id || stable_id("radio-group", &1)))
     |> then(&assign(&1, :items, items(&1)))
     |> render_group()
   end

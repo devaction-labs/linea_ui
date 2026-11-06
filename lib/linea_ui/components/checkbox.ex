@@ -193,7 +193,7 @@ defmodule LineaUI.Components.Checkbox do
     assigns
     |> assign(:multiple, true)
     |> Control.assign_control()
-    |> then(&assign(&1, :id, &1.id || gen_id("checkbox-group")))
+    |> then(&assign(&1, :id, &1.id || stable_id("checkbox-group", &1)))
     |> then(&assign(&1, :items, items(&1)))
     |> render_group()
   end

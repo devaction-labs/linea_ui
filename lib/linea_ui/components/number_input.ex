@@ -149,9 +149,11 @@ defmodule LineaUI.Components.NumberInput do
     |> render_number()
   end
 
-  # The id defaults to the name; a generated one is new on every render, as it always was.
+  # The id defaults to the name; without one it is derived from the label (stable across renders).
   defp assign_number_id(assigns) when is_map_key(assigns, :id), do: assigns
-  defp assign_number_id(%{name: nil} = assigns), do: assign(assigns, :id, gen_id("number"))
+
+  defp assign_number_id(%{name: nil} = assigns),
+    do: assign(assigns, :id, stable_id("number", assigns))
 
   defp assign_number_id(assigns),
     do: assign_derived(assigns, :id, [:name], fn -> assigns.name end)

@@ -2133,7 +2133,7 @@ defmodule LineaUI.Components.AppShell do
           <p
             :if={@description}
             class={[
-              "text-[15px] leading-[22px] text-slate-500 dark:text-navy-200",
+              "text-[15px] leading-[22px] text-slate-500 dark:text-navy-300",
               !@top && "mt-1.5",
               @badge_position == "inline" && "basis-full"
             ]}

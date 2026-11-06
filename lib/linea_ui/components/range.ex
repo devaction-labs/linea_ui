@@ -219,7 +219,7 @@ defmodule LineaUI.Components.Range do
     |> assign(
       pair?: pair?,
       vertical?: assigns.orientation == "vertical" and not pair?,
-      id: assigns.id || assigns.name || assigns.start_name || gen_id("range"),
+      id: assigns.id || assigns.name || assigns.start_name || stable_id("range", assigns),
       low: low,
       high: high,
       bounds: bounds(assigns.min, assigns.max),

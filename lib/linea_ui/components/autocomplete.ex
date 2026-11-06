@@ -140,7 +140,7 @@ defmodule LineaUI.Components.Autocomplete do
     assigns
     |> assign_field()
     |> assign_new(:name, fn -> nil end)
-    |> then(&assign_new(&1, :id, fn -> &1.name || gen_id("autocomplete") end))
+    |> then(&assign_new(&1, :id, fn -> &1.name || stable_id("autocomplete", &1) end))
     |> assign_new(:value, fn -> nil end)
     |> prepare()
     |> render_autocomplete()

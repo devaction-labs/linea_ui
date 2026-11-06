@@ -68,7 +68,7 @@ defmodule LineaUI.Components.PillSelect do
   def pill_select(assigns) do
     assigns
     |> Control.assign_control()
-    |> then(&assign(&1, :id, &1.id || &1.name || gen_id("pills")))
+    |> then(&assign(&1, :id, &1.id || &1.name || stable_id("pills", &1)))
     |> then(&assign(&1, :chosen, chosen(&1.value)))
     |> then(&assign(&1, :input_name, input_name(&1.name, &1.multiple)))
     |> then(&assign(&1, :pills, pills(&1)))

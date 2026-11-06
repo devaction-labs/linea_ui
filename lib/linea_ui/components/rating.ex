@@ -120,7 +120,7 @@ defmodule LineaUI.Components.Rating do
   def rating(assigns) do
     assigns
     |> Control.assign_control()
-    |> then(&assign(&1, :id, &1.id || &1.name || gen_id("rating")))
+    |> then(&assign(&1, :id, &1.id || &1.name || stable_id("rating", &1)))
     |> then(&assign(&1, :value, number(&1.value)))
     |> then(&assign(&1, :interactive, interactive?(&1)))
     |> then(&assign(&1, :outline, &1.variant == "outline"))

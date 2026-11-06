@@ -15,7 +15,27 @@ defmodule LineaUI.Component.Helpers do
   @spec colors() :: [String.t()]
   def colors, do: @colors
 
-  @doc "A unique DOM id, for a component that needs one and was not given it."
+  @doc """
+  A DOM id that is the same on every render of the same component, for one that needs an id
+  (hooks, `for=`) and was not given it.
+
+  Derived from `name` in `assigns` when there is one (sanitized to a valid id), else from a hash of
+  the identifying `keys` (never `value`, which changes as the user types). Two instances on a page
+  with neither `id` nor `name` and equal `keys` get the same id: pass `id` to tell them apart.
+  """
+  @spec stable_id(String.t(), map(), [atom()]) :: String.t()
+  def stable_id(prefix, assigns, keys \\ [:label, :placeholder, :help]) do
+    case Map.get(assigns, :name) do
+      name when is_binary(name) and name != "" ->
+        "#{prefix}-#{String.replace(name, ~r/[^A-Za-z0-9_\-:.]/, "_")}"
+
+      _ ->
+        hash = :erlang.phash2(for(key <- keys, do: Map.get(assigns, key)))
+        "#{prefix}-#{hash}"
+    end
+  end
+
+  @doc "A unique DOM id; changes on every call, so use it only outside render (e.g. toast ids)."
   @spec gen_id(String.t()) :: String.t()
   def gen_id(prefix \\ "linea"),
     do: "#{prefix}-#{System.unique_integer([:positive, :monotonic])}"

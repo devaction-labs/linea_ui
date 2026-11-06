@@ -234,14 +234,14 @@ defmodule LineaUI.Components.Input do
   end
 
   defp assign_mask_id(%{mask: nil, clear_on_submit: false} = assigns), do: assigns
-  defp assign_mask_id(%{id: nil} = assigns), do: assign(assigns, :id, gen_id("input"))
+  defp assign_mask_id(%{id: nil} = assigns), do: assign(assigns, :id, stable_id("input", assigns))
   defp assign_mask_id(assigns), do: assigns
 
   defp assign_list(%{options: []} = assigns),
     do: assign_derived(assigns, :list_id, [:options], fn -> nil end)
 
   defp assign_list(%{id: nil} = assigns),
-    do: assign(assigns, id: gen_id("input")) |> assign_list()
+    do: assign(assigns, id: stable_id("input", assigns)) |> assign_list()
 
   defp assign_list(assigns),
     do: assign_derived(assigns, :list_id, [:options, :id], fn -> "#{assigns.id}-options" end)

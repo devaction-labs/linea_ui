@@ -136,7 +136,7 @@ defmodule LineaUI.Components.TagsInput do
     assigns
     |> assign(:multiple, true)
     |> assign_field()
-    |> assign_new(:id, fn -> gen_id("tags") end)
+    |> then(&assign_new(&1, :id, fn -> stable_id("tags", &1) end))
     |> then(&assign_new(&1, :name, fn -> &1.id end))
     |> assign_new(:value, fn -> nil end)
     |> assign(:options, assigns.options || assigns.suggestions)

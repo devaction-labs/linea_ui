@@ -24,6 +24,9 @@
 @import "./parts/canvas-overlays.css";
 @import "./parts/canvas-structure.css";
 @import "./parts/canvas-dark.css";
+@import "./parts/canvas-dark-app1.css";
+@import "./parts/canvas-dark-app2.css";
+@import "./parts/canvas-dark-auth.css";
 
 @source "../../lib";
 @source "../js";
