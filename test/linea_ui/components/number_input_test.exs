@@ -186,7 +186,7 @@ defmodule LineaUI.Components.NumberInputTest do
 
     assert html |> find("label") |> LazyHTML.text() =~ "Amount"
     assert html |> find(".text-error") |> LazyHTML.text() =~ "is invalid"
-    assert "border-error" in classes(html, "#a")
+    assert Enum.any?(classes(html, "#a"), &(&1 =~ ~r/^shadow-.*--color-error/))
     assert attr_of(html, "#a", "disabled") == [""]
     assert attr_of(html, "input[name=a]", "disabled") == [""]
     assert attr_of(html, "button[data-step-by=up]", "disabled") == [""]

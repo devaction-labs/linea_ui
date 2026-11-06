@@ -288,7 +288,7 @@ defmodule LineaUI.Components.PhoneInputTest do
         """)
 
       input = classes(html, "input[data-display]")
-      assert "h-10" in input
+      assert "h-12" in input
       assert "bg-slate-150" in input
       assert "rounded-full" in input
       assert "font-mono" in input
@@ -355,7 +355,7 @@ defmodule LineaUI.Components.PhoneInputTest do
       assert html |> find("label > span") |> LazyHTML.text() =~ "Phone number"
       assert html |> find(".text-error") |> LazyHTML.text() =~ "is invalid"
       assert html |> LazyHTML.from_fragment() |> LazyHTML.text() =~ "With area code"
-      assert "border-error" in classes(html, "input[data-display]")
+      assert Enum.any?(classes(html, "input[data-display]"), &(&1 =~ ~r/^shadow-.*--color-error/))
     end
 
     test "a generated id when there is neither a field nor a name" do

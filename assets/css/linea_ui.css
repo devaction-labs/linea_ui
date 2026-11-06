@@ -16,6 +16,13 @@
 @import "./parts/sortable.css";
 @import "./parts/icons.css";
 @import "./parts/canvas.css";
+@import "./parts/canvas-acoes.css";
+@import "./parts/canvas-forms1.css";
+@import "./parts/canvas-forms2.css";
+@import "./parts/canvas-dados1.css";
+@import "./parts/canvas-dados2.css";
+@import "./parts/canvas-overlays.css";
+@import "./parts/canvas-structure.css";
 
 @source "../../lib";
 @source "../js";

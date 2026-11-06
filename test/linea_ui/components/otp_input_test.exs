@@ -156,7 +156,7 @@ defmodule LineaUI.Components.OtpInputTest do
     assert html =~ "Sent by SMS"
     assert html =~ "is invalid"
     assert attr_of(html, "#code-1", "aria-invalid") == ["true"]
-    assert "border-error" in classes(html, "#code-1")
+    assert Enum.any?(classes(html, "#code-1"), &(&1 =~ ~r/^shadow-.*--color-error/))
     refute "data-filled:border-primary" in classes(html, "#code-1")
   end
 
@@ -169,7 +169,7 @@ defmodule LineaUI.Components.OtpInputTest do
     html =
       render(~H|<.otp_input name="code" value="123456" state="success" help="Code confirmed" />|)
 
-    assert "border-success" in classes(html, "#code-1")
+    assert Enum.any?(classes(html, "#code-1"), &(&1 =~ ~r/^shadow-.*--color-success/))
     refute "data-filled:border-primary" in classes(html, "#code-1")
     assert attr_of(html, "#code-1", "aria-invalid") == []
     assert [_] = find(html, "span.text-success > svg.size-3\\.5") |> Enum.to_list()

@@ -196,7 +196,7 @@ defmodule LineaUI.Components.OtpInput do
       assign(assigns,
         box_class: merge([@box, @sizes[assigns.size], filled(assigns.state), assigns.class]),
         labelledby: assigns.label && assigns.id <> "-label",
-        group_class: merge(["flex w-full items-center gap-2.5", assigns.label && "mt-1.5"]),
+        group_class: merge(["flex w-full items-center gap-2", assigns.label && "mt-1.5"]),
         group_label: assigns.label || assigns.aria_label
       )
 
@@ -252,6 +252,15 @@ defmodule LineaUI.Components.OtpInput do
     </div>
     """
   end
+
+  # The boxes draw their border as a shadow, so the state ring has to come after it to win.
+  defp filled("error"),
+    do:
+      "shadow-[inset_0_0_0_1px_var(--color-error),0_0_0_4px_color-mix(in_oklab,var(--color-error)_14%,transparent)] focus:shadow-[inset_0_0_0_1.5px_var(--color-error),0_0_0_4px_color-mix(in_oklab,var(--color-error)_14%,transparent)] dark:shadow-[inset_0_0_0_1px_var(--color-error),0_0_0_4px_color-mix(in_oklab,var(--color-error)_16%,transparent)] dark:focus:shadow-[inset_0_0_0_1.5px_var(--color-error),0_0_0_4px_color-mix(in_oklab,var(--color-error)_16%,transparent)]"
+
+  defp filled("success"),
+    do:
+      "shadow-[inset_0_0_0_1px_var(--color-success),0_0_0_4px_color-mix(in_oklab,var(--color-success)_14%,transparent)] focus:shadow-[inset_0_0_0_1.5px_var(--color-success),0_0_0_4px_color-mix(in_oklab,var(--color-success)_14%,transparent)] dark:shadow-[inset_0_0_0_1px_var(--color-success),0_0_0_4px_color-mix(in_oklab,var(--color-success)_16%,transparent)] dark:focus:shadow-[inset_0_0_0_1.5px_var(--color-success),0_0_0_4px_color-mix(in_oklab,var(--color-success)_16%,transparent)]"
 
   defp filled(_state), do: nil
 
