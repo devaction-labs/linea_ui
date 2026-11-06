@@ -360,7 +360,7 @@ defmodule LineaUI.Components.DataTable do
         phx-submit={@on_search}
         phx-target={@target}
       >
-        <label class="flex h-9 w-full max-w-55 items-center gap-2 rounded-lg border border-slate-300 bg-transparent px-3 text-slate-400 focus-within:border-primary dark:border-navy-450 dark:bg-navy-700 dark:focus-within:border-accent">
+        <label class="flex h-9 w-full max-w-[300px] items-center gap-2 rounded-full border-0 bg-white px-3 text-slate-400 shadow-[inset_0_0_0_1px_var(--color-slate-300),0_1px_2px_rgb(23_23_26/.05)] focus-within:shadow-[inset_0_0_0_1px_var(--color-primary),0_0_0_4px_color-mix(in_oklab,var(--color-primary)_14%,transparent)] dark:bg-navy-700 dark:shadow-[inset_0_0_0_1px_var(--color-navy-450)] dark:focus-within:shadow-[inset_0_0_0_1px_var(--color-accent)]">
           <.glyph name={:search} class="size-4 shrink-0" stroke_width="1.5" />
           <input
             type="search"
