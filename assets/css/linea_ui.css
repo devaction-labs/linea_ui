@@ -1242,7 +1242,7 @@ table.is-zebra > tbody > tr:nth-child(even) > td {
   }
 
   .linea-frame .drawer .drawer-content [data-drawer-header] {
-    padding-top: 20px;
+    padding-top: 20px !important;
   }
 }
 
