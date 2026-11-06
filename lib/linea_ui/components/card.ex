@@ -13,6 +13,13 @@ defmodule LineaUI.Components.Card do
       <.card variant="gradient" gradient="purple-indigo">…</.card>
       <.card variant="gradient_outline" gradient="sky-blue">…</.card>
 
+  `navigate`, `patch` or `href` make the whole card a link, laid out as a row that ends in an
+  arrow:
+
+      <.card navigate={~p"/banks/1"}>
+        <div class="grow">Banco do Brasil</div>
+      </.card>
+
   Without `:title` the content fills the card as is, padded evenly like a bordered `div`;
   `padded={false}` drops the default padding, for cards laid out by hand
   (`<.card padded={false} class="px-4 pb-4 sm:px-5">`).
@@ -166,8 +173,21 @@ defmodule LineaUI.Components.Card do
     doc: "`false` leaves the card without padding; its parts then pad themselves."
   )
 
+  attr(:navigate, :string,
+    default: nil,
+    doc: "Makes the whole card a link (`<.link navigate>`): a row with an arrow at the end."
+  )
+
+  attr(:patch, :string, default: nil, doc: "As `navigate`, with `<.link patch>`.")
+  attr(:href, :string, default: nil, doc: "As `navigate`, with `<.link href>`.")
+
+  attr(:arrow, :boolean,
+    default: true,
+    doc: "The chevron at the end of a linked card (`navigate`, `patch` or `href`)."
+  )
+
   attr(:class, :any, default: nil)
-  attr(:rest, :global)
+  attr(:rest, :global, include: ~w(target rel download replace method))
 
   slot(:title, doc: "The card's heading, followed by the content.") do
     attr(:class, :any)
@@ -198,7 +218,37 @@ defmodule LineaUI.Components.Card do
     """
   end
 
+  def card(%{navigate: nil, patch: nil, href: nil} = assigns), do: render_card(assigns)
+
   def card(assigns) do
+    ~H"""
+    <.link
+      navigate={@navigate}
+      patch={@patch}
+      href={@href}
+      class={
+        merge([
+          "sg-card sg-card-link flex items-center gap-3.5 no-underline",
+          @variant == "soft" && "soft",
+          @class
+        ])
+      }
+      {@rest}
+    >
+      {render_slot(@inner_block)}
+      <svg
+        :if={@arrow}
+        class="size-4 shrink-0 fill-none stroke-current stroke-[1.7] [stroke-linecap:round] [stroke-linejoin:round]"
+        viewBox="0 0 24 24"
+        aria-hidden="true"
+      >
+        <path d="M10 7l5 5-5 5" />
+      </svg>
+    </.link>
+    """
+  end
+
+  defp render_card(assigns) do
     ~H"""
     <div
       class={

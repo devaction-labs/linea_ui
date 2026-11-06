@@ -194,7 +194,7 @@ defmodule LineaUI.Components.Choice do
 
   def label(%{description: nil} = assigns) do
     ~H"""
-    <label class={merge(["inline-flex items-center gap-2", @class])}>
+    <label class={merge(["inline-flex items-center gap-2 has-[input:disabled]:opacity-50", @class])}>
       {render_slot(@inner_block)}
       <span :if={@label || @content != []} class={merge([@text_class, @label_class])}>
         {@label}{render_slot(@content)}
@@ -205,11 +205,11 @@ defmodule LineaUI.Components.Choice do
 
   def label(assigns) do
     ~H"""
-    <label class={merge(["inline-flex items-start gap-2", @class])}>
+    <label class={merge(["inline-flex items-start gap-2 has-[input:disabled]:opacity-50", @class])}>
       <span class="mt-0.5 flex">{render_slot(@inner_block)}</span>
       <span class="flex flex-col">
         <span class={merge([@text_class, @label_class])}>{@label}{render_slot(@content)}</span>
-        <span class="text-xs text-slate-400 dark:text-navy-300">{@description}</span>
+        <span class="text-xs/5 text-slate-400 dark:text-navy-300">{@description}</span>
       </span>
     </label>
     """

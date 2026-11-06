@@ -12,6 +12,18 @@ defmodule LineaUI.Components.Alert do
       </.alert>
       <.alert id="notice" color="info" variant="outline" dismissible>Closable</.alert>
 
+  The `canvas` variant is the design canvas's `sg-alert`: a soft block tinted by `color` (`primary`,
+  `warning`, `error`, `info`, `success`; `neutral` is the sunken gray one), the icon at the top left, the
+  content growing beside it (write it as `<b>` and `<p>`), the `:action` buttons in a row under the text
+  and a muted round close button:
+
+      <.alert variant="canvas" color="warning">
+        <:icon><.icon name="huge-alert-02" class="size-4" /></:icon>
+        <b>Certificate expires in 12 days</b>
+        <p>Renew it to keep issuing invoices.</p>
+        <:action><.button color="mono" size="sm">Renew now</.button></:action>
+      </.alert>
+
   `dismiss_alert/1` fades out and hides the alert around the element that runs it, for close
   buttons placed by hand:
 
@@ -131,7 +143,12 @@ defmodule LineaUI.Components.Alert do
     values: ~w(neutral primary secondary info success warning error dark)
   )
 
-  attr(:variant, :string, default: "solid", values: ~w(solid outline soft bordered))
+  attr(:variant, :string,
+    default: "solid",
+    values: ~w(solid outline soft bordered canvas),
+    doc: "`canvas` is the canvas's `sg-alert` (see the module doc)."
+  )
+
   attr(:shape, :string, default: "rounded", values: ~w(rounded pill))
 
   attr(:accent, :string,
@@ -152,6 +169,7 @@ defmodule LineaUI.Components.Alert do
   )
 
   attr(:target, :any, default: nil, doc: "The `phx-target` of `on_dismiss`.")
+  attr(:close_label, :string, default: "Close", doc: "The `aria-label` of the close button.")
 
   attr(:open, :boolean,
     default: true,
@@ -165,8 +183,39 @@ defmodule LineaUI.Components.Alert do
     attr(:boxed, :boolean, doc: "Draws the icon on a filled block at the edge of the alert.")
   end
 
-  slot(:action, doc: "Controls after the content, such as a menu or a button.")
+  slot(:action,
+    doc:
+      "Controls after the content, such as a menu or a button (under the text, in a row, in the `canvas` variant)."
+  )
+
   slot(:inner_block, required: true)
+
+  def alert(%{variant: "canvas"} = assigns) do
+    ~H"""
+    <div
+      id={@id}
+      role="alert"
+      hidden={!@open}
+      class={merge(["sg-alert", canvas_tone(@color), @class])}
+      {@rest}
+    >
+      {render_slot(@icon)}
+      <div class="sg-alert-body">
+        {render_slot(@inner_block)}
+        <div :if={@action != []} class="sg-alert-actions">{render_slot(@action)}</div>
+      </div>
+      <button
+        :if={@dismissible}
+        type="button"
+        class="sg-ib sm plain"
+        aria-label={@close_label}
+        phx-click={dismiss_alert(dismiss_js(@on_dismiss, @target, @id))}
+      >
+        <.glyph name={:close} class="size-4" />
+      </button>
+    </div>
+    """
+  end
 
   def alert(assigns) do
     assigns
@@ -179,6 +228,13 @@ defmodule LineaUI.Components.Alert do
     ])
     |> render_alert()
   end
+
+  defp canvas_tone("primary"), do: "acc"
+  defp canvas_tone("warning"), do: "warn"
+  defp canvas_tone("error"), do: "neg"
+  defp canvas_tone("info"), do: "info"
+  defp canvas_tone("success"), do: "pos"
+  defp canvas_tone(_color), do: nil
 
   defp boxed?([%{boxed: true} | _]), do: true
   defp boxed?(_icon), do: false
@@ -214,6 +270,7 @@ defmodule LineaUI.Components.Alert do
       <.close_button
         :if={@dismissible}
         color={close_color(@color, @variant)}
+        label={@close_label}
         on_dismiss={dismiss_js(@on_dismiss, @target, @id)}
       />
     </div>
@@ -248,6 +305,7 @@ defmodule LineaUI.Components.Alert do
       <div :if={@dismissible} class="px-2">
         <.close_button
           color={close_color(@color, @variant)}
+          label={@close_label}
           on_dismiss={dismiss_js(@on_dismiss, @target, @id)}
         />
       </div>
@@ -273,13 +331,14 @@ defmodule LineaUI.Components.Alert do
   defp close_color(color, _variant), do: color
 
   attr(:color, :string, required: true)
+  attr(:label, :string, required: true)
   attr(:on_dismiss, JS, required: true)
 
   defp close_button(assigns) do
     ~H"""
     <button
       type="button"
-      aria-label="Close"
+      aria-label={@label}
       phx-click={dismiss_alert(@on_dismiss)}
       class={["btn size-7 shrink-0 rounded-full p-0 font-medium", close_classes(@color)]}
     >

@@ -112,4 +112,30 @@ defmodule LineaUI.Components.ModalTest do
 
     refute "hover:bg-slate-300/20" in classes(html, "#b-panel > button")
   end
+
+  test "a title gives the modal a sheet's header, body and footer" do
+    html =
+      render(~H"""
+      <.modal id="m" title="Excluir cliente?" description="Casa das Tintas" close_label="Fechar">
+        <p>Body</p>
+        <:footer><button>Ok</button></:footer>
+      </.modal>
+      """)
+
+    assert html |> find("#m") |> LazyHTML.attribute("data-layout") == ["sheet"]
+    assert html |> find("#m") |> LazyHTML.attribute("aria-labelledby") == ["m-title"]
+
+    assert html |> find("#m [data-drawer-header] h2#m-title") |> LazyHTML.text() =~
+             "Excluir cliente?"
+
+    assert html |> find("#m [data-drawer-header] p") |> LazyHTML.text() =~ "Casa das Tintas"
+
+    assert html |> find("#m [data-drawer-close]") |> LazyHTML.attribute("aria-label") == [
+             "Fechar"
+           ]
+
+    assert html |> find("#m [data-drawer-body]") |> LazyHTML.text() =~ "Body"
+    assert html |> find("#m [data-drawer-footer] button") |> LazyHTML.text() =~ "Ok"
+    assert [] = html |> find("#m .btn.absolute") |> Enum.to_list()
+  end
 end

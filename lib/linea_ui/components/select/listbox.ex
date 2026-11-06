@@ -28,6 +28,7 @@ defmodule LineaUI.Components.Select.Listbox do
     |> assign_new(:more_label, fn -> "more" end)
     |> assign_new(:create_hint, fn -> nil end)
     |> assign_new(:limit_placeholder, fn -> nil end)
+    |> assign_new(:counter, fn -> true end)
     |> assign_new(:create_position, fn -> "top" end)
     |> assign_new(:compact, fn -> false end)
     |> assign_new(:help, fn -> nil end)
@@ -232,7 +233,7 @@ defmodule LineaUI.Components.Select.Listbox do
         </div>
         <div hidden data-no-results>{@no_results}</div>
         <div
-          :if={limited?(@mode, @max)}
+          :if={limited?(@mode, @max) and @counter}
           class={[
             "text-tiny-plus tabular-nums text-slate-400 dark:text-navy-300",
             if(@help, do: "absolute end-0 top-full mt-1", else: "mt-1.5 text-end")

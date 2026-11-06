@@ -22,6 +22,20 @@ defmodule LineaUI.Components.EmptyState do
 
   The `card` variant is a centered block for a whole area; the `inline` one is a compact notice for inside
   tables, lists and search results, in a neutral, success or error color.
+
+  The `canvas` variant is the design canvas's `sg-empty`: the icon on a 96×72 sunken tile, the title, the
+  reason and the actions, centered (`tone="positive"` paints the icon green, for an "all done" state).
+  The `plain` variant is the canvas's one-line notice inside a card: a small faint icon, the title and the
+  content (say, a link) on one line.
+
+      <.empty_state variant="canvas" icon="huge-search-01" title="Nothing for “cement”">
+        Check the spelling or search by SKU.
+        <:action><.button variant="outline">Clear search</.button></:action>
+      </.empty_state>
+
+      <.empty_state variant="plain" icon="huge-attachment-01" title="No attachment.">
+        <a href="#">Add</a>
+      </.empty_state>
   """
 
   use LineaUI.Component
@@ -55,9 +69,9 @@ defmodule LineaUI.Components.EmptyState do
   """
   attr :variant, :string,
     default: "card",
-    values: ~w(card inline table),
+    values: ~w(card inline table canvas plain),
     doc:
-      "`card` fills an area, `inline` is a compact notice for lists and search results, `table` is the centered notice (a 48px disc, a title, the reason and the next step) for the body of an empty table."
+      "`card` fills an area, `inline` is a compact notice for lists and search results, `table` is the centered notice (a 48px disc, a title, the reason and the next step) for the body of an empty table, `canvas` the canvas's `sg-empty` (icon on a 96×72 tile), `plain` the canvas's faint one-line notice."
 
   attr :title, :string, required: true, doc: "What is missing, as a short sentence."
 
@@ -71,9 +85,9 @@ defmodule LineaUI.Components.EmptyState do
 
   attr :tone, :string,
     default: "default",
-    values: ~w(default gradient),
+    values: ~w(default gradient positive),
     doc:
-      "The icon tile of the `card` variant: white with a glow, or the indigo to purple gradient."
+      "The icon tile of the `card` variant: white with a glow, or the indigo to purple gradient. In the `canvas` variant, `positive` paints the icon in the canvas's green."
 
   attr :color, :string,
     default: "neutral",
@@ -136,6 +150,34 @@ defmodule LineaUI.Components.EmptyState do
         {render_slot(@action)}
       </div>
     </section>
+    """
+  end
+
+  def empty_state(%{variant: "canvas"} = assigns) do
+    ~H"""
+    <div class={merge(["sg-empty", @class])} {@rest}>
+      <div class={["art", @tone == "positive" && "pos"]} aria-hidden="true">
+        <.icon :if={@icon && @illustration == []} name={@icon} class="size-5.5" />
+        {render_slot(@illustration)}
+      </div>
+      <.dynamic_tag tag_name={"h#{@level}"} class="sg-empty-title">{@title}</.dynamic_tag>
+      <p :if={@inner_block != []} class="sg-empty-text">{render_slot(@inner_block)}</p>
+      <div :if={@action != []} class="sg-empty-actions">{render_slot(@action)}</div>
+    </div>
+    """
+  end
+
+  def empty_state(%{variant: "plain"} = assigns) do
+    ~H"""
+    <div class={merge(["sg-empty-line", @class])} {@rest}>
+      <span :if={@icon || @illustration != []} class="sg-empty-line-icon" aria-hidden="true">
+        <.icon :if={@icon && @illustration == []} name={@icon} class="size-3.5" />
+        {render_slot(@illustration)}
+      </span>
+      <span>{@title}</span>
+      {render_slot(@inner_block)}
+      {render_slot(@action)}
+    </div>
     """
   end
 

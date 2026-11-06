@@ -1,1 +1,290 @@
 /* Canvas look for the overlays components (see the Vitrine canvas). */
+
+/* accordion, canvas variant, `:header` items: the header row fills the line (a count can sit at its
+   end with `ml-auto`), 10px between its parts and before the chevron, and the round chevron button
+   ends 8px from the edge so its chevron lines up with the titles' chevrons (16px) */
+[data-accordion][data-variant="canvas"] > .ac > summary.ac-header {
+  padding: 12px 8px 12px 16px;
+  gap: 2px;
+}
+[data-accordion][data-variant="canvas"] > .ac > summary.ac-header .ac-icon {
+  width: 16px;
+  height: 16px;
+}
+[data-accordion][data-variant="canvas"] .ac-header > div:first-child {
+  flex: 1;
+  min-width: 0;
+  gap: 10px;
+  letter-spacing: normal;
+}
+/* the canvas tokens give the titles, chevrons and bodies their dark colors too */
+[data-accordion][data-variant="canvas"] > .ac > summary:is(.ac-trigger, .ac-header),
+[data-accordion][data-variant="canvas"] > .ac > summary .ac-icon {
+  color: var(--ink);
+}
+[data-accordion][data-variant="canvas"] > .ac > .ac-panel > .ac-body {
+  color: var(--muted);
+}
+
+/* stepper, canvas variant (horizontal): the canvas `sg-steps` as a list; the steps' dots and labels
+   are items of the row (`display: contents`) so every 1px line between them (drawn before each step
+   after the first) gets the same share of the width, like the canvas `hr` */
+.stepper-canvas:not(.is-vertical) > li {
+  display: contents;
+}
+.stepper-canvas:not(.is-vertical) > li > span:first-of-type {
+  margin-left: -2px;
+}
+.stepper-canvas:not(.is-vertical) > li + li::before {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--line);
+}
+.stepper-canvas > li.sg-step.err {
+  color: var(--neg);
+}
+.stepper-canvas > li.sg-step.err i {
+  background: var(--neg-soft);
+  color: var(--neg);
+  box-shadow: none;
+}
+
+/* stepper, canvas variant (vertical): 26px round tiles joined by a 1.5px x 28px line, the label in
+   the ink (550, or 450 to do) over a faint 12.5px sub line */
+.stepper-canvas.is-vertical .stepper-canvas-dot {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  font: 600 11px var(--mono);
+}
+.stepper-canvas.is-vertical .stepper-canvas-line {
+  width: 1.5px;
+  height: 28px;
+  background: var(--line);
+}
+.stepper-canvas.is-vertical > li:last-child .stepper-canvas-line {
+  display: none;
+}
+.stepper-canvas.is-vertical .stepper-canvas-label {
+  font-weight: 550;
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--ink);
+}
+.stepper-canvas.is-vertical > li[data-state="todo"] .stepper-canvas-label {
+  font-weight: 450;
+}
+.stepper-canvas.is-vertical .stepper-canvas-sub {
+  font-size: 12.5px;
+  line-height: 18px;
+  color: var(--faint);
+}
+
+/* collapse, canvas variant: the canvas accordion's one section (`sg-acc`) */
+.linea-collapse[data-variant="canvas"] {
+  border-radius: 14px;
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.linea-collapse[data-variant="canvas"] > summary {
+  gap: 10px;
+  padding: 14px 16px;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 500;
+  color: var(--ink);
+}
+.linea-collapse[data-variant="canvas"] > summary > :last-child {
+  color: var(--ink);
+}
+.linea-collapse[data-variant="canvas"] > .ac-panel {
+  padding: 0 16px 16px;
+  font-size: 13.5px;
+  line-height: 21px;
+  color: var(--muted);
+}
+
+/* collapse_text: a muted 13.5px text clamped to `--lines` lines and the accent "show more" link */
+.collapse-text-body {
+  font-size: 13.5px;
+  color: var(--muted);
+}
+.collapse-text:not([data-open]) > .collapse-text-body {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: var(--lines);
+  line-clamp: var(--lines);
+  overflow: hidden;
+}
+.collapse-text-toggle {
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--accent-ink);
+}
+.collapse-text-toggle:hover {
+  text-decoration: underline;
+}
+.collapse-text-toggle:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+.collapse-text[data-open] .collapse-text-more,
+.collapse-text:not([data-open]) .collapse-text-less {
+  display: none;
+}
+
+/* command palette, canvas variant: the card is the canvas menu (`sg-menu`), on the raised color in dark */
+.palette-canvas {
+  background: var(--panel);
+  box-shadow: 0 0 0 1px var(--line), var(--shadow-lg);
+}
+:is(.dark, .dark .sg:not([data-theme="light"]), .sg[data-theme="dark"]) .palette-canvas:not(:where([data-theme="light"], [data-theme="light"] *)) {
+  background: var(--raised);
+}
+
+/* drawer sheets (`float`, `flush`), modals with a `title` (`sg-modal`) and the sheet footer: in dark the canvas panel (`sg-drawer`), a
+   step darker than the kit's raised navy-700, with the canvas line over the footer */
+:is(.drawer[data-variant] [data-panel], .modal[data-layout="sheet"] [data-panel], [data-drawer-footer]):where(.dark *, [data-theme="dark"] *):not(:where([data-theme="light"], [data-theme="light"] *)) {
+  background: var(--panel);
+}
+[data-drawer-footer]:where(.dark *, [data-theme="dark"] *):not(:where([data-theme="light"], [data-theme="light"] *)) {
+  border-color: var(--line);
+}
+
+/* notification center, canvas variant: the canvas menu card, rows of 10px 14px with the time at the
+   right, unread rows on the accent tint, small faint day headings */
+.nc-canvas {
+  border: 0;
+  border-radius: 14px;
+  background: var(--panel);
+  box-shadow: 0 0 0 1px var(--line), var(--shadow-lg);
+}
+.nc-canvas:where(.dark *, [data-theme="dark"] *):not(:where([data-theme="light"], [data-theme="light"] *)) {
+  background: var(--raised);
+}
+.nc-canvas-h {
+  padding: 8px 14px 4px;
+  font-size: 11px;
+  line-height: 20px;
+  font-weight: 400;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+.nc-canvas section:first-child > .nc-canvas-h {
+  padding-top: 12px;
+}
+.nc-canvas-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 10px 14px;
+  color: inherit;
+  text-decoration: none;
+  outline: none;
+}
+.nc-canvas-row:hover {
+  background: var(--hover);
+}
+.nc-canvas-row:focus-visible {
+  box-shadow: inset 0 0 0 2px var(--accent);
+}
+.nc-canvas-row[data-unread] {
+  background: var(--accent-soft);
+}
+.nc-canvas-title {
+  font-size: 13.5px;
+  line-height: 20px;
+  color: var(--ink);
+}
+.nc-canvas-body {
+  font-size: 12.5px;
+  line-height: 20px;
+  color: var(--faint);
+}
+.nc-canvas-at {
+  font: 11.5px/20px var(--mono);
+  color: var(--faint);
+}
+.nc-canvas-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 28px;
+  text-align: center;
+}
+.nc-canvas-empty > b {
+  display: block;
+  margin-top: 10px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.nc-canvas-empty > span:not(.sg-ic) {
+  font-size: 13px;
+  color: var(--faint);
+}
+
+/* tooltip, `color="dark"`: the canvas `sg-tooltip` (#17171a, white 12px text, 6px 9px, 8px corners),
+   the same on a dark page */
+.tippy-box[data-theme~="dark"] {
+  border-radius: 8px;
+  background: #17171a;
+  color: #fff;
+  font-size: 12px;
+  line-height: 20px;
+  font-weight: 400;
+}
+.tippy-box[data-theme~="dark"] > .tippy-content {
+  padding: 6px 9px;
+}
+.tippy-box[data-theme~="dark"] > .tippy-svg-arrow svg {
+  color: #17171a;
+}
+
+/* tabs, `segmented`: the canvas `sg-seg` with tab buttons (`aria-selected` instead of `.on`) */
+.sg-seg > .sg-seg-tab {
+  all: unset;
+  box-sizing: border-box;
+  height: 30px;
+  padding: 0 14px;
+  border-radius: var(--pill);
+  font-size: 13.5px;
+  color: var(--muted);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+.sg-seg > .sg-seg-tab:hover {
+  color: var(--ink);
+}
+.sg-seg > .sg-seg-tab:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+.sg-seg > .sg-seg-tab:disabled {
+  cursor: default;
+  opacity: .5;
+}
+.sg-seg > .sg-seg-tab[aria-selected="true"] {
+  background: var(--panel);
+  color: var(--ink);
+  font-weight: 500;
+  box-shadow: 0 0 0 1px var(--line), 0 1px 3px rgb(23 23 26 / .08);
+}
+.sg-seg > .sg-seg-tab[aria-selected="true"]:where(.dark *, [data-theme="dark"] *):not(:where([data-theme="light"], [data-theme="light"] *)) {
+  background: var(--raised);
+}
+/* the count badge of a line tab: 6px after the label (the tab's own gap), and as short as the canvas
+   badge, which is an inline box there (14px, no minimum width) */
+.sg-tabs > .sg-tab > .sg-nav-n {
+  margin-left: 0;
+  min-width: 0;
+  height: 14px;
+  line-height: 14px;
+}

@@ -151,13 +151,16 @@ const SignaturePad = {
     existing.src = this.existing ? svgUri(this.server) : ""
     const typed = this.q("[data-typed]")
     typed.textContent = this.mode === "type" && !this.existing ? this.text : ""
-    this.q("[data-hint]").hidden = ink || this.mode === "type"
+    const hint = this.q("[data-hint]")
+    if (hint) hint.hidden = ink || this.mode === "type"
     this.pad().dataset.mode = this.mode
     this.q("[data-type-field]").hidden = this.mode !== "type"
     const field = this.q("[data-type-input]")
     document.activeElement === field || (field.value = this.text)
-    this.q("[data-status-ready]").hidden = !ink
-    this.q("[data-status-empty]").hidden = ink
+    const ready = this.q("[data-status-ready]")
+    const empty = this.q("[data-status-empty]")
+    if (ready) ready.hidden = !ink
+    if (empty) empty.hidden = ink
     this.el.querySelectorAll("[data-mode-button]").forEach((button) => button.setAttribute("aria-pressed", String(button.dataset.modeButton === this.mode)))
     this.value().value = this.svg
   },

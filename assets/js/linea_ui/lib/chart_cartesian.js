@@ -4,7 +4,7 @@
  * plan into SVG nodes and the boxes the pointer can hit.
  */
 import {shadowNode} from "./chart_defs.js"
-import {axisNodes, gridNodes} from "./chart_grid.js"
+import {annotationNodes, axisNodes, gridNodes} from "./chart_grid.js"
 import {barMark, candleMark, dataLabels, lineMark, rangeMark} from "./chart_marks.js"
 
 export {plan} from "./chart_plan.js"
@@ -23,5 +23,5 @@ export const draw = (p, uid) => {
   const defs = [shadowNode(p.config, uid)]
   const boxes = []
   const series = p.visible.map((one, position) => mark(p, one, position, uid, defs, boxes))
-  return {defs, boxes, layers: {grid: gridNodes(p), axes: axisNodes(p), series, labels: dataLabels(p, boxes)}}
+  return {defs, boxes, layers: {grid: gridNodes(p), axes: axisNodes(p), series, labels: dataLabels(p, boxes), annotations: annotationNodes(p)}}
 }

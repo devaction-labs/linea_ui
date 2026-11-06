@@ -240,4 +240,55 @@ defmodule LineaUI.Components.TextEditorTest do
     assert %{"linea:editor-insert" => _} =
              Map.new(socket.private.live_temp.push_events, fn [e, p] -> {e, p} end)
   end
+
+  test "text_editor_content shows saved text read-only, escaping a plain string" do
+    assigns = %{}
+
+    html =
+      rendered_to_string(~H"""
+      <.text_editor_content value="<b>x</b>" />
+      <.text_editor_content value={Phoenix.HTML.raw("<p>Olá, <strong>Joel</strong></p>")} />
+      <.text_editor_content class="mt-2">
+        <ul>
+          <li>Item</li>
+        </ul>
+      </.text_editor_content>
+      """)
+
+    assert html =~ ~s(class="ql-editor ql-readonly")
+    assert html =~ "&lt;b&gt;x&lt;/b&gt;"
+    assert html =~ "<strong>Joel</strong>"
+    assert html =~ "<li>Item</li>"
+    refute html =~ "contenteditable"
+  end
+
+  test "a comment without its bar, and with attachments" do
+    html =
+      render(~H"""
+      <.text_editor id="cb" name="c" variant="comment" bar={false} on_submit="send" />
+      """)
+
+    assert find(html, "[data-comment-bar]") |> Enum.to_list() == []
+    assert "ql-comment-bare" in classes(html, "#cb")
+
+    html =
+      render(~H"""
+      <.text_editor
+        id="ca"
+        name="c"
+        variant="comment"
+        submit_key={nil}
+        on_submit="send"
+        mentions={[%{handle: "rafael", label: "Rafael"}]}
+        mention_button={false}
+      >
+        <:attachments><span id="file">comprovante.pdf</span></:attachments>
+      </.text_editor>
+      """)
+
+    assert [_] = find(html, "#ca .ql-attachments #file") |> Enum.to_list()
+    assert find(html, "#ca .ql-kbd") |> Enum.to_list() == []
+    assert find(html, "#ca [data-mention-button]") |> Enum.to_list() == []
+    assert [_] = find(html, "#ca [data-submit]") |> Enum.to_list()
+  end
 end

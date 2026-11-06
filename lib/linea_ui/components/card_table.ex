@@ -70,6 +70,20 @@ defmodule LineaUI.Components.CardTable do
   adds a checkbox column (the events and keys work as in `table/1`: `selected`, `row_key`, `on_select_all`).
   `row_attrs` gives extra attributes of a row (`phx-click`, `data-*`).
 
+  ## Flat
+
+  `variant="flat"` is the canvas card table: a plain table in a card (`sg-card flush` and `sg-table`), for
+  short lists on a dashboard ("Últimos pedidos", "Maiores clientes"). The `title` and `<:actions>` (a "Ver
+  todos" link, drawn quiet) head the card; `<:top>` takes the place of the heading (tabs that filter the
+  table). Columns keep `label`, `align` and `class`; the priorities, the panel, the selection and the cards
+  below 520px belong to the default variant.
+
+      <.card_table id="last" variant="flat" title="Últimos pedidos" rows={@orders}>
+        <:actions><.link navigate={~p"/orders"}>Ver todos</.link></:actions>
+        <:col :let={o} label="Pedido">{o.number}</:col>
+        <:col :let={o} label="Total" align="end">{o.total}</:col>
+      </.card_table>
+
   The filters above the table and the pager under it are not part of it: build them with `input`, `select`,
   `button` and `pagination`, inside the same `card`.
   """
@@ -136,10 +150,18 @@ defmodule LineaUI.Components.CardTable do
     doc: "A heading drawn above the table, with `description` and `<:actions>`."
 
   attr :description, :string, default: nil, doc: "A line under the `title`."
+
+  attr :variant, :string,
+    default: "rows",
+    values: ~w(rows flat),
+    doc:
+      "`rows` (default) draws a small card per row; `flat` a plain table in a card, as the canvas."
+
   attr :class, :any, default: nil
   attr :rest, :global
 
   slot :actions, doc: "Buttons at the right of the heading (`title`, `description`)."
+  slot :top, doc: "With `variant=\"flat\"`, what heads the card instead of the title (tabs)."
 
   slot :col, required: true, doc: "A column; receives the row (after `row_item`)." do
     attr :label, :string, required: true, doc: "Header text, and the label in the hidden panel."
@@ -169,6 +191,41 @@ defmodule LineaUI.Components.CardTable do
 
   slot :action, doc: "The last cell of every row (a menu button); receives the row."
   slot :empty, doc: "Shown when there are no rows."
+
+  def card_table(%{variant: "flat"} = assigns) do
+    assigns = assign_row_id(assigns)
+
+    ~H"""
+    <div class={merge(["sg-card flush linea-ctable-flat", @class])} id={@id <> "-box"}>
+      <div :if={@top != []} class="linea-ctable-flat-top">{render_slot(@top)}</div>
+      <div :if={@top == [] and (@title || @actions != [])} class="sg-card-h linea-ctable-flat-h">
+        <h3 :if={@title}>{@title}</h3>
+        <div :if={@actions != []} class="meta ml-auto flex items-center gap-2">
+          {render_slot(@actions)}
+        </div>
+      </div>
+      <table class="sg-table">
+        <thead>
+          <tr>
+            <th :for={col <- @col} class={col[:align] == "end" && "r"}>{col.label}</th>
+            <th :if={@action != []}><span class="sr-only">{@panel_label}</span></th>
+          </tr>
+        </thead>
+        <tbody id={@id} phx-update={match?(%LiveStream{}, @rows) && "stream"} {@rest}>
+          <tr :for={row <- @rows} id={@row_id && @row_id.(row)} {row_attrs(assigns, row)}>
+            <td :for={col <- @col} class={merge([col[:align] == "end" && "r", col[:class]])}>
+              {render_slot(col, @row_item.(row))}
+            </td>
+            <td :if={@action != []} class="r">{render_slot(@action, @row_item.(row))}</td>
+          </tr>
+          <tr :if={@empty != [] and @rows == []} id={@id <> "-empty"}>
+            <td colspan={length(@col) + if(@action != [], do: 1, else: 0)}>{render_slot(@empty)}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    """
+  end
 
   def card_table(assigns) do
     assigns =

@@ -1,1 +1,166 @@
 /* Canvas look for the forms1 components (see the Vitrine canvas). */
+
+/* ---------- Chip ---------- */
+.sg-chip.has-av{padding-left:3px}
+.sg-chip.static{padding-right:10px}
+.sg-chip .sg-chip-av{width:24px;height:24px;font-size:10px;font-weight:600}
+.sg-chip-x{display:inline-grid;place-items:center;width:14px;height:14px;padding:0;margin:0;border:0;background:none;color:inherit;cursor:pointer;border-radius:4px}
+.sg-chip-x svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.sg-chip-x:hover{color:var(--ink)}
+.sg-chip-x:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+
+/* ---------- Autocomplete: the canvas field and the canvas menu ---------- */
+.ts-wrapper.autocomplete .ts-control{display:flex;align-items:center;gap:8px;height:40px;min-height:40px;padding:0 12px;border:0;border-radius:11px;background:var(--panel);box-shadow:inset 0 0 0 1px var(--line-strong),var(--shadow-sm);color:var(--ink);font-size:14px}
+.ts-wrapper.autocomplete .ts-control > input{margin:0!important;padding:0!important;color:var(--ink);font:14px var(--sans)}
+.ts-wrapper.autocomplete .ts-control > input::placeholder{color:var(--faint)}
+.ts-wrapper.autocomplete.input-active .ts-control,.ts-wrapper.autocomplete.focus .ts-control{box-shadow:inset 0 0 0 1px var(--accent),0 0 0 4px var(--accent-soft)}
+.ts-wrapper.autocomplete.is-invalid .ts-control{box-shadow:inset 0 0 0 1px var(--neg),0 0 0 4px var(--neg-soft)}
+.ts-wrapper.autocomplete .ac-prefix{display:flex;flex:none;align-items:center;color:var(--faint)}
+.ts-wrapper.autocomplete .ac-prefix :is(svg,.hgi,[class^="huge-"]){width:16px;height:16px;font-size:16px}
+.ts-wrapper.autocomplete .ts-dropdown{margin-top:6px;padding:6px;border:0;border-radius:14px;background:var(--panel);box-shadow:0 0 0 1px var(--line),var(--shadow-lg);color:var(--fg)}
+.ts-wrapper.autocomplete .ts-dropdown-content{max-height:280px}
+.ts-wrapper.autocomplete .ts-dropdown .option{display:flex;align-items:center;justify-content:flex-start;gap:10px;min-height:34px;padding:0 10px;border-radius:9px;font-size:13.5px;color:var(--fg);background:none}
+.ts-wrapper.autocomplete .ts-dropdown .option:has(.col, .flex-col){padding-block:8px}
+.ts-wrapper.autocomplete .ts-dropdown .option > :is(svg,.hgi,[class^="huge-"]){flex:none;width:16px;height:16px;font-size:16px;color:var(--muted)}
+.ts-wrapper.autocomplete .ts-dropdown .option [data-hint]{margin-left:auto}
+.ts-wrapper.autocomplete .ts-dropdown .option.active,.ts-wrapper.autocomplete .ts-dropdown .option.selected{background:var(--hover);color:var(--ink)}
+.ts-wrapper.autocomplete .ts-dropdown .highlight{background:none;color:var(--ink);font-weight:700;border-radius:0}
+.ts-wrapper.autocomplete .ts-dropdown .optgroup-header{padding:8px 10px 4px;background:none;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint)}
+.ts-wrapper.autocomplete .ts-dropdown .no-results{padding:10px;font-size:13px;color:var(--faint);text-align:left}
+.ts-wrapper.autocomplete .ts-dropdown .no-results[data-kind="loading"]{justify-content:flex-start;gap:10px}
+.ts-wrapper.autocomplete .ts-dropdown .ac-spinner{width:16px;height:16px;border:2px solid var(--line);border-top-color:var(--accent);color:inherit}
+.ts-wrapper.autocomplete .ac-sep{border:0;height:1px;background:var(--line);margin:5px 4px}
+.ts-wrapper.autocomplete .ts-dropdown .option.create{color:var(--fg)}
+.ts-wrapper.autocomplete .ac-create-icon{width:16px;height:16px;flex:none;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+
+/* ---------- Calendar: the canvas mini month ---------- */
+.lc-mini-wrap{display:block}
+.lc-mini-wrap.multi{display:flex;flex-wrap:wrap;gap:12px}
+.lc-mini.sg-card{padding:14px}
+.lc-mini.two{width:270px;padding:12px}
+.lc-mini-h{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.lc-mini-h b{flex:1;min-width:0;font-weight:600;color:var(--ink)}
+.lc-mini-h .sg-ib svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.lc-mini-h .sg-ib:disabled{cursor:default}
+.lc-mini-name{display:block;margin-bottom:6px;font-size:13.5px;font-weight:600;color:var(--ink)}
+.lc-mini .sg-cal > button{all:unset;box-sizing:border-box;height:36px;display:grid;place-items:center;border-radius:10px;color:var(--fg);font-variant-numeric:tabular-nums;cursor:pointer}
+.lc-mini .sg-cal > button:hover:not(.on){background:var(--hover)}
+.lc-mini .sg-cal > button:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.lc-mini .sg-cal > button.t{box-shadow:inset 0 0 0 1px var(--line-strong)}
+.lc-mini .sg-cal > button.on{background:var(--solid);color:var(--on-solid);font-weight:600}
+.lc-mini .sg-cal > button.rg{background:var(--accent-soft);border-radius:0;color:var(--accent-ink)}
+.lc-mini .sg-cal > :is(span,button){position:relative;display:flex;align-items:center;justify-content:center}
+.lc-mini.two .sg-cal > :is(span,button){height:30px}
+.lc-mini .lc-mk{position:absolute;bottom:4px;left:50%;width:4px;height:4px;margin-left:-2px;border-radius:50%;background:var(--accent)}
+.lc-mini .lc-mk-success{background:var(--pos)}.lc-mini .lc-mk-error{background:var(--neg)}.lc-mini .lc-mk-warning{background:var(--warn)}.lc-mini .lc-mk-info{background:var(--info)}.lc-mini .lc-mk-neutral{background:var(--faint)}
+.lc-mini .on .lc-mk{background:var(--on-solid)}
+
+/* ---------- Color picker swatches: the canvas squares, the chosen one ringed in ink ---------- */
+.lc-swatch{flex:none;padding:0;border:0;cursor:pointer;box-shadow:inset 0 0 0 1px var(--line);outline:none;transition:box-shadow .15s}
+.lc-swatch.sm{width:26px;height:26px;border-radius:8px}
+.lc-swatch.md{width:30px;height:30px;border-radius:9px}
+.lc-swatch.lg{width:34px;height:34px;border-radius:10px}
+.lc-swatch[aria-pressed="true"]{box-shadow:0 0 0 2px var(--panel),0 0 0 4px var(--ink)}
+.lc-swatch:focus-visible{box-shadow:0 0 0 2px var(--panel),0 0 0 4px var(--accent)}
+.lc-swatch:disabled{opacity:.6;cursor:default}
+
+/* ---------- Comment editor: the canvas text area, bar on the right, dark pill button ---------- */
+.ql-comment{display:flex;flex-direction:column;gap:10px;min-height:92px;padding:10px 12px;border-radius:11px;background:var(--panel);box-shadow:inset 0 0 0 1px var(--line-strong),var(--shadow-sm)}
+.ql-comment:focus-within{box-shadow:inset 0 0 0 1px var(--accent),0 0 0 4px var(--accent-soft)}
+.ql-comment.ql-comment-bare{min-height:60px}
+.ql-comment .ql-container.ql-snow{flex:1;min-height:0;border:0;background:none}
+.ql-comment .ql-editor{padding:0;font-size:14px;line-height:20px;color:var(--ink)}
+.ql-comment .ql-editor.ql-blank::before{left:0;right:0;font-style:normal;color:var(--faint)}
+.ql-comment .ql-editor .ql-token-mention{background:none;padding:0;color:var(--accent-ink);font-weight:700}
+.ql-comment .ql-attachments{display:flex;flex-wrap:wrap;gap:6px}
+.ql-comment .ql-comment-bar{display:flex;align-items:center;justify-content:flex-end;gap:6px;padding:0;border:0}
+.ql-comment .ql-comment-tool{width:28px;height:28px;border-radius:50%;background:transparent;color:var(--muted);font-weight:600}
+.ql-comment .ql-comment-tool:hover{background:var(--hover);color:var(--ink)}
+.ql-comment .ql-comment-tool svg,.ql-comment .ql-comment-tool [class^="huge-"]{width:16px;height:16px}
+.ql-comment .ql-kbd{background:var(--sunken);color:var(--muted);box-shadow:inset 0 0 0 1px var(--line);font:500 11px/18px var(--mono);height:auto;padding:0 6px;border-radius:5px}
+.ql-comment .ql-submit{display:inline-flex;align-items:center;justify-content:center;height:30px;padding:0 11px;border:0;border-radius:999px;background:var(--solid);color:var(--on-solid);box-shadow:var(--shadow);font:500 12.5px/1 var(--sans);letter-spacing:-.005em;cursor:pointer;white-space:nowrap}
+.ql-comment .ql-submit:hover{background:var(--solid);opacity:.9}
+.ql-comment .ql-submit:disabled{opacity:.5;cursor:default}
+.ql-comment .ql-editor :is(p,ul,ol,pre,blockquote):last-child{margin-bottom:0}
+.ql-comment .ql-comment-bar > *{margin-left:0}
+.ql-comment .ql-comment-bar > :first-child{margin-left:auto}
+
+/* ---------- Date picker, linea skin: the canvas calendar (ink for the chosen day, struck disabled days) ---------- */
+.flatpickr-calendar.flatpickr-calendar[data-skin="linea"]{--lp-ink:var(--ink);--lp-soft:var(--fg);--lp-softer:var(--muted);--lp-softest:var(--faint);--lp-hover:var(--hover);--lp-line:var(--line);--lp-sep:var(--line);--lp-main:var(--accent);--lp-band:var(--accent-soft);background:var(--panel);border-radius:16px;box-shadow:0 0 0 1px var(--line),var(--shadow-lg);font-family:var(--sans);color:var(--fg);padding:14px}
+.flatpickr-calendar.flatpickr-calendar[data-skin="linea"].inline,.flatpickr-calendar.flatpickr-calendar[data-skin="linea"].static.open{box-shadow:0 0 0 1px var(--line),var(--shadow-sm)}
+.flatpickr-calendar.flatpickr-calendar[data-skin="linea"] :is(.flatpickr-innerContainer,.flatpickr-rContainer,.flatpickr-days,.dayContainer,.flatpickr-weekdaycontainer){width:100%;min-width:0;max-width:none}
+.flatpickr-calendar.flatpickr-calendar[data-skin="linea"] span.flatpickr-weekday{font-size:11.5px;font-weight:450;letter-spacing:0;text-transform:none;color:var(--faint)}
+.flatpickr-calendar.flatpickr-calendar[data-skin="linea"]:not(#lc) .flatpickr-day{border-radius:10px;color:var(--fg);font-size:13px}
+.flatpickr-calendar.flatpickr-calendar[data-skin="linea"]:not(#lc) .flatpickr-day:hover{background:var(--hover);color:var(--ink)}
+.flatpickr-calendar.flatpickr-calendar[data-skin="linea"]:not(#lc) .flatpickr-day:is(.prevMonthDay,.nextMonthDay){color:var(--faint);opacity:1}
+.flatpickr-calendar.flatpickr-calendar[data-skin="linea"]:not(#lc) .flatpickr-day.today{background:none;color:var(--fg);font-weight:400;box-shadow:inset 0 0 0 1px var(--line-strong)}
+.flatpickr-calendar.flatpickr-calendar[data-skin="linea"]:not(#lc) .flatpickr-day.today::after{content:none}
+.flatpickr-calendar.flatpickr-calendar[data-skin="linea"]:not(#lc) .flatpickr-day.flatpickr-disabled,
+.flatpickr-calendar.flatpickr-calendar[data-skin="linea"]:not(#lc) .flatpickr-day.flatpickr-disabled:hover{background:none;color:var(--faint);opacity:1;text-decoration:line-through;box-shadow:none}
+.flatpickr-calendar.flatpickr-calendar[data-skin="linea"]:not(#lc) .flatpickr-day:is(.selected,.startRange,.endRange),
+.flatpickr-calendar.flatpickr-calendar[data-skin="linea"]:not(#lc) .flatpickr-day:is(.selected,.startRange,.endRange):hover{background:var(--solid);background-image:linear-gradient(var(--solid),var(--solid));border-color:transparent;color:var(--on-solid);font-weight:600;box-shadow:none}
+.flatpickr-calendar.flatpickr-calendar[data-skin="linea"]:not(#lc) .flatpickr-day.inRange,
+.flatpickr-calendar.flatpickr-calendar[data-skin="linea"]:not(#lc) .flatpickr-day.inRange:hover{background:var(--accent-soft);color:var(--accent-ink);border-radius:0;box-shadow:none}
+.flatpickr-calendar.flatpickr-calendar[data-skin="linea"]:not(#lc) .flatpickr-day.startRange{border-radius:10px 0 0 10px}
+.flatpickr-calendar.flatpickr-calendar[data-skin="linea"]:not(#lc) .flatpickr-day.endRange{border-radius:0 10px 10px 0}
+.flatpickr-calendar.flatpickr-calendar[data-skin="linea"]:not(#lc) .flatpickr-day.startRange.endRange{border-radius:10px}
+.flatpickr-calendar.flatpickr-calendar[data-skin="linea"]:not(#lc) .flatpickr-day:focus-visible{box-shadow:inset 0 0 0 2px var(--accent)}
+.flatpickr-calendar.flatpickr-calendar[data-skin="linea"] .flatpickr-presets [data-preset]{font-family:var(--sans)}
+
+/* The date and date-time fields: the canvas input (40px, 11px corners, panel, strong line, accent focus ring). */
+:is([data-kind="date"],[data-kind="datetime"]) input.flatpickr-input[data-display]{height:40px;padding:0 12px;border:0;border-radius:11px;background:var(--panel);box-shadow:inset 0 0 0 1px var(--line-strong),var(--shadow-sm);color:var(--ink);font-size:14px;font-family:var(--sans)}
+:is([data-kind="date"],[data-kind="datetime"]) input.flatpickr-input[data-display].pl-9{padding-left:36px}
+:is([data-kind="date"],[data-kind="datetime"]) input.flatpickr-input[data-display]::placeholder{color:var(--faint)}
+:is([data-kind="date"],[data-kind="datetime"]) input.flatpickr-input[data-display]:is(:focus,[aria-expanded="true"]){box-shadow:inset 0 0 0 1px var(--accent),0 0 0 4px var(--accent-soft)}
+:is([data-kind="date"],[data-kind="datetime"]) input.flatpickr-input[data-display][aria-invalid="true"]{box-shadow:inset 0 0 0 1px var(--neg),0 0 0 4px var(--neg-soft)}
+:is([data-kind="date"],[data-kind="datetime"]) input.flatpickr-input[data-display]:disabled{background:var(--sunken);box-shadow:inset 0 0 0 1px var(--line);opacity:.7}
+:is([data-kind="date"],[data-kind="datetime"]) [data-display] + span{width:36px;padding-left:4px;color:var(--faint)}
+:is([data-kind="date"],[data-kind="datetime"]) [data-display] + span :is(svg,[class^="huge-"]){width:16px;height:16px}
+
+/* ---------- Input group: 11px joined corners, a button at an end joins too, the canvas addon ---------- */
+.lc-ig > .sg-btn{height:40px;border-radius:0}
+.lc-ig > .sg-btn:first-child{border-radius:11px 0 0 11px}
+.lc-ig > .sg-btn:last-child{border-radius:0 11px 11px 0}
+.lc-ig > .sg-btn:only-child{border-radius:11px}
+.lc-ig > .lc-ig-addon.is-outline{border:0;background:var(--panel);box-shadow:inset 0 0 0 1px var(--line-strong),var(--shadow-sm);color:var(--muted);font-size:13px}
+
+/* ---------- Number input steppers: the canvas field with plain icon buttons, and the round compact one ---------- */
+.lc-stepper{display:flex;align-items:center;width:100%}
+.lc-stepper.inset{height:40px;padding:0 4px;border-radius:11px;background:var(--panel);box-shadow:inset 0 0 0 1px var(--line-strong),var(--shadow-sm)}
+.lc-stepper.inset.sm{height:32px}.lc-stepper.inset.lg{height:48px}
+.lc-stepper.inset:focus-within{box-shadow:inset 0 0 0 1px var(--accent),0 0 0 4px var(--accent-soft)}
+.lc-stepper.inset.is-error{box-shadow:inset 0 0 0 1px var(--neg),0 0 0 4px var(--neg-soft)}
+.lc-stepper.inset.is-disabled{background:var(--sunken)}
+.lc-stepper.round{gap:6px}
+.lc-stepper .lc-step{all:unset;box-sizing:border-box;flex:none;width:28px;height:28px;border-radius:50%;display:inline-grid;place-items:center;color:var(--muted);cursor:pointer}
+.lc-stepper.inset.sm .lc-step{width:24px;height:24px}
+.lc-stepper .lc-step:hover{background:var(--hover);color:var(--ink)}
+.lc-stepper .lc-step:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.lc-stepper .lc-step:disabled{opacity:.35;cursor:default;background:none}
+.lc-stepper.round .lc-step,.lc-stepper.round .lc-step:disabled{background:var(--panel);box-shadow:inset 0 0 0 1px var(--line)}
+.lc-stepper .lc-step svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.lc-stepper .form-input,.lc-stepper .form-input:focus{height:100%;min-height:0;padding:0 4px;border:0;background:none;box-shadow:none;outline:none;font:14px var(--mono);font-feature-settings:"zero";color:var(--ink)}
+.lc-stepper.round .form-input{padding:0}
+.lc-stepper .lc-step-suffix{font:14px var(--mono);color:var(--ink)}
+
+/* ---------- Form section ---------- */
+.lc-fs{display:flex;flex-direction:column;gap:12px;min-width:0}
+.lc-fs.divider{padding-bottom:16px;border-bottom:1px solid var(--line)}
+.lc-fs-title{margin:0;display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:13px;font-weight:600;line-height:20px;color:var(--ink)}
+.lc-fs-desc{margin:0;font-size:13px;line-height:19px;color:var(--faint)}
+.lc-fs-grid{display:grid;gap:12px 14px;min-width:0}
+.lc-fs-grid.c2{grid-template-columns:repeat(2,minmax(0,1fr))}.lc-fs-grid.c3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.lc-fs.aside{display:grid;grid-template-columns:200px minmax(0,1fr);gap:24px}
+.lc-fs.aside .lc-fs-head{display:flex;flex-direction:column}
+.lc-fs.aside .lc-fs-name{font-weight:600;color:var(--ink)}
+@media (max-width:640px){.lc-fs.aside{grid-template-columns:minmax(0,1fr);gap:12px}.lc-fs-grid.c2,.lc-fs-grid.c3{grid-template-columns:minmax(0,1fr)}}
+.lc-mini-legend{display:flex;flex-wrap:wrap;gap:14px;margin-bottom:10px;font-size:12.5px;color:var(--fg)}
+.lc-mini-legend span{display:inline-flex;align-items:center;gap:6px}
+.lc-mini-legend i{width:8px;height:8px;border-radius:2px;background:var(--accent)}
+.lc-mini-legend .lc-key-warning{background:var(--warn)}.lc-mini-legend .lc-key-error{background:var(--neg)}.lc-mini-legend .lc-key-success{background:var(--pos)}.lc-mini-legend .lc-key-info{background:var(--info)}.lc-mini-legend .lc-key-neutral{background:var(--faint)}
+.lc-mini .sg-cal > .lc-tn{background:var(--accent-soft);color:var(--accent-ink)}
+.lc-mini .sg-cal > .lc-tn-warning{background:var(--warn-soft);color:var(--warn)}
+.lc-mini .sg-cal > .lc-tn-error{background:var(--neg-soft);color:var(--neg)}
+.lc-mini .sg-cal > .lc-tn-success{background:var(--pos-soft);color:var(--pos)}
+.lc-mini .sg-cal > .lc-tn-info{background:var(--info-soft);color:var(--info)}
+.lc-mini.sg-card:has(> .lc-mini-legend){padding:18px 20px}

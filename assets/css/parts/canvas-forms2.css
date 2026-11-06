@@ -1,1 +1,126 @@
 /* Canvas look for the forms2 components (see the Vitrine canvas). */
+
+/* ---------- pill_select: a row of sg-tag pills over native radios/checkboxes ---------- */
+.sg-pills{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.sg-pills > .sg-tag{position:relative;cursor:pointer;user-select:none;font-weight:400;transition:background-color .15s,color .15s}
+.sg-pills > .sg-tag > input{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:inherit;appearance:none}
+.sg-pills > .sg-tag:hover{color:var(--fg)}
+.sg-pills > .sg-tag:has(> input:checked){background:var(--accent-soft);color:var(--accent-ink);font-weight:500}
+.sg-pills > .sg-tag:has(> input:focus-visible){outline:2px solid var(--accent);outline-offset:2px}
+.sg-pills > .sg-tag:has(> input:disabled){opacity:.55;cursor:default}
+.sg-pills-count{margin-left:4px;font-family:var(--mono);font-feature-settings:"zero";opacity:.6}
+
+/* ---------- radio: the kit radio's dot is the canvas ::after; drop the kit's white ::before thumb ---------- */
+input.form-radio::before{content:none}
+
+/* ---------- radio_group variant="card": the canvas sg-choice ---------- */
+.lu-rcard{--lu-rcard-on:var(--ink);display:flex;gap:12px;align-items:flex-start;padding:14px;border-radius:14px;background:var(--panel);box-shadow:inset 0 0 0 1px var(--line);cursor:pointer;transition:box-shadow .15s;min-width:0}
+.lu-rcard:hover{box-shadow:inset 0 0 0 1px var(--line-strong)}
+.lu-rcard:has(input:checked){box-shadow:inset 0 0 0 1.5px var(--lu-rcard-on)}
+.lu-rcard:has(input:focus-visible){outline:2px solid var(--accent);outline-offset:2px}
+.lu-rcard:has(input:disabled){opacity:.6;pointer-events:none}
+.lu-rcard[data-color="primary"]{--lu-rcard-on:var(--accent)}
+.lu-rcard[data-color="info"]{--lu-rcard-on:var(--info)}
+.lu-rcard[data-color="success"]{--lu-rcard-on:var(--pos)}
+.lu-rcard[data-color="warning"]{--lu-rcard-on:var(--warn)}
+.lu-rcard[data-color="error"]{--lu-rcard-on:var(--neg)}
+.lu-rcard[data-color="secondary"]{--lu-rcard-on:var(--color-secondary)}
+.lu-rcard-control{display:flex;flex:none;padding-top:1px}
+.lu-rcard-text{display:flex;flex-direction:column;flex:1;min-width:0}
+.lu-rcard-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.lu-rcard-title{font-size:14px;line-height:20px;font-weight:500;color:var(--ink)}
+.lu-rcard-desc{font-size:12.5px;line-height:18px;color:var(--faint)}
+.lu-rcard-figure{white-space:nowrap;font-size:20px;line-height:24px;font-weight:550;letter-spacing:-.035em;color:var(--ink);font-variant-numeric:tabular-nums}
+.lu-rcard.is-stacked .lu-rcard-text{gap:8px}
+.lu-rcard.is-stacked .lu-rcard-title{font-weight:600}
+.lu-rcard.is-stacked .lu-rcard-control{padding-top:0}
+.lu-rcard-icon{color:var(--fg)}
+.lu-rcard:has(input:checked) .lu-rcard-icon{background:var(--accent-soft);box-shadow:none;color:var(--accent-ink)}
+
+/* ---------- range variant="canvas": the canvas sg-slider ---------- */
+.lu-range-canvas{gap:8px}
+.lu-range-canvas label{font-size:13px;line-height:20px;font-weight:500;color:var(--ink)}
+.lu-range-canvas output[data-output]{font:700 14px/20px var(--mono);font-feature-settings:"zero";color:var(--ink)}
+.lu-range-canvas input.form-range{--range-track-h:4px;--range-thumb-size:16px;--track-color:var(--sunken);color:var(--accent);height:20px}
+.lu-range-canvas input.form-range::-webkit-slider-runnable-track{box-shadow:inset 0 0 0 1px var(--line);border-radius:4px}
+.lu-range-canvas input.form-range.linea-range-filled::-webkit-slider-runnable-track{box-shadow:none;background:linear-gradient(to right,var(--accent) var(--p,0%),var(--track-color) var(--p,0%))}
+.lu-range-canvas input.form-range::-moz-range-track{box-shadow:inset 0 0 0 1px var(--line);border-radius:4px}
+.lu-range-canvas input.form-range::-webkit-slider-thumb{background:#fff;box-shadow:0 0 0 1px var(--line-strong),0 2px 4px rgb(0 0 0/.15)}
+.lu-range-canvas input.form-range::-moz-range-thumb{background:#fff;box-shadow:0 0 0 1px var(--line-strong),0 2px 4px rgb(0 0 0/.15)}
+.lu-range-canvas input.form-range:focus-visible::-webkit-slider-thumb{box-shadow:0 0 0 1px var(--accent),0 0 0 4px var(--accent-soft)}
+.lu-range-canvas input.form-range:focus-visible::-moz-range-thumb{box-shadow:0 0 0 1px var(--accent),0 0 0 4px var(--accent-soft)}
+.lu-range-canvas [data-mark]{padding:0;border-radius:0;font:400 11.5px/16px var(--mono);font-feature-settings:"zero";color:var(--faint);background:none}
+.lu-range-canvas [data-mark]:hover,.lu-range-canvas [data-mark]:focus-visible{color:var(--fg)}
+.lu-range-canvas [data-mark][aria-pressed="true"]{background:none;color:var(--faint)}
+.lu-range-canvas div:has(> [data-mark]){margin-top:0;height:16px}
+.lu-range-canvas input.form-range.linea-range-filled::-moz-range-track{box-shadow:none}
+
+/* ---------- text_editor: the canvas card corners (sg-card flush, 16px) ---------- */
+.ql-box{border-radius:var(--r-lg)}
+.ql-box .ql-toolbar.ql-snow{border-radius:calc(var(--r-lg) - 1px) calc(var(--r-lg) - 1px) 0 0}
+.ql-box .ql-container.ql-snow{border-radius:0 0 calc(var(--r-lg) - 1px) calc(var(--r-lg) - 1px)}
+.ql-box .ql-container.ql-snow.ql-has-footer{border-radius:0}
+.ql-box .ql-footer{border-radius:0 0 calc(var(--r-lg) - 1px) calc(var(--r-lg) - 1px)}
+
+/* ---------- text_editor_content: saved rich text, read-only, as the canvas card shows it ---------- */
+.ql-readonly{height:auto;overflow:visible;padding:0;font-size:14px;line-height:22px;color:var(--fg);white-space:normal}
+.ql-readonly > *{cursor:auto}
+.ql-readonly strong,.ql-readonly b{font-weight:600;color:var(--ink)}
+.ql-readonly ul,.ql-readonly ol{margin-top:6px;padding-left:18px}
+.ql-readonly ul{list-style:disc}
+.ql-readonly li,.ql-readonly p{line-height:22px;padding-left:0}
+.ql-readonly ol{list-style:decimal}
+.ql-readonly a{color:var(--accent-ink);text-decoration:underline}
+
+/* ---------- select (listbox): the canvas sg-input control and sg-menu list ---------- */
+.ts-wrapper[phx-hook="LineaUI.Select"] .ts-control{background-color:var(--panel);border-radius:11px;font-family:var(--sans);font-weight:400;font-size:14px;color:var(--ink)}
+.ts-wrapper[phx-hook="LineaUI.Select"].disabled .ts-control{background-color:var(--sunken)}
+.ts-wrapper[phx-hook="LineaUI.Select"] .ts-control > .item{font-weight:400;color:var(--ink)}
+:is(.dark .sg:not([data-theme="light"]), .sg[data-theme="dark"], .dark) .ts-wrapper[phx-hook="LineaUI.Select"] .ts-control{background-color:var(--sunken)}
+/* chips of a multiple select: the canvas sg-chip */
+.ts-wrapper[phx-hook="LineaUI.Select"].multi .ts-control > div.item{height:26px;margin:0 6px 0 0;padding:0 6px 0 10px;border:0;border-radius:var(--pill);background:var(--sunken);box-shadow:inset 0 0 0 1px var(--line);font-size:12.5px;line-height:26px;font-weight:400;color:var(--fg)}
+.ts-wrapper[phx-hook="LineaUI.Select"].multi.has-items .ts-control{padding:6px 8px;align-items:center;min-height:40px}
+.ts-wrapper[phx-hook="LineaUI.Select"].plugin-remove_button .ts-control .item .remove{margin-left:6px;margin-right:0;width:16px;height:16px;opacity:.7}
+.ts-wrapper[phx-hook="LineaUI.Select"].plugin-remove_button .ts-control .item .remove::before{width:12px;height:12px}
+/* the list */
+.ts-wrapper[phx-hook="LineaUI.Select"] .ts-dropdown{margin-top:6px;border:0;border-radius:14px;background:var(--panel);box-shadow:0 0 0 1px var(--line),var(--shadow-lg);color:var(--fg)}
+:is(.dark .sg:not([data-theme="light"]), .sg[data-theme="dark"], .dark) .ts-wrapper[phx-hook="LineaUI.Select"] .ts-dropdown{background:var(--raised)}
+.ts-wrapper[phx-hook="LineaUI.Select"] .ts-dropdown .ts-dropdown-content{padding:6px}
+.ts-wrapper[phx-hook="LineaUI.Select"] .ts-dropdown .option{justify-content:flex-start;gap:10px;min-height:34px;padding:0 10px;border-radius:9px;font-size:13.5px;font-weight:400;color:var(--fg);background:none}
+.ts-wrapper[phx-hook="LineaUI.Select"] .ts-dropdown .option.active,.ts-wrapper[phx-hook="LineaUI.Select"] .ts-dropdown .option:hover{background:var(--hover);color:var(--ink)}
+.ts-wrapper[phx-hook="LineaUI.Select"] .ts-dropdown .option.selected{background:var(--hover);color:var(--ink);font-weight:400}
+/* the check of the chosen option follows its label, in the flow, so a grouped or custom option never covers it */
+.ts-wrapper[phx-hook="LineaUI.Select"] .ts-dropdown .option.selected::before{content:"";position:static;order:99;flex:none;margin:0;width:16px;height:16px;color:var(--muted)}
+.ts-wrapper[phx-hook="LineaUI.Select"] .ts-dropdown .option [data-hint]{order:100;margin-left:auto}
+.ts-wrapper[phx-hook="LineaUI.Select"] .ts-dropdown .optgroup-header{padding:8px 10px 4px;font-size:11px;font-weight:400;letter-spacing:.06em;color:var(--faint)}
+.ts-wrapper[phx-hook="LineaUI.Select"] .ts-dropdown .no-results{padding:10px;font-size:13px;color:var(--faint)}
+/* the search of search="panel": a 36px pill field at the top of the list */
+.ts-wrapper[phx-hook="LineaUI.Select"] .ts-dropdown .ts-search{height:36px;margin:10px 10px 2px;padding:0 12px;gap:8px;border:0;border-radius:var(--pill);background:var(--panel);box-shadow:inset 0 0 0 1px var(--line-strong);color:var(--faint)}
+.ts-wrapper[phx-hook="LineaUI.Select"] .ts-dropdown .ts-search input{font-size:14px;color:var(--ink)}
+.ts-wrapper[phx-hook="LineaUI.Select"] .ts-dropdown .ts-search input::placeholder{color:var(--faint)}
+
+/* ---------- signature_pad variant="canvas": a card with the dashed line and the hint under it ---------- */
+.lu-sign{border-radius:var(--r-lg);background:var(--panel);box-shadow:0 0 0 1px var(--line),var(--shadow-sm)}
+.lu-sign-foot{position:absolute;left:20px;right:20px;bottom:18px;padding-top:6px;border-top:1px dashed var(--line-strong);font-size:12px;line-height:18px;color:var(--faint);pointer-events:none}
+
+/* ---------- switch: the small size is the canvas switch at .8 (29x18), and disabled dims the whole row ---------- */
+input.form-switch.is-sm{width:29px;height:18px}
+input.form-switch.is-sm::before{top:2.5px;left:2.5px;width:13px;height:13px}
+input.form-switch.is-sm:checked::before{left:13.5px}
+label:has(input.form-switch:disabled){opacity:.55;cursor:default}
+label:has(input.form-switch:disabled) input.form-switch:disabled{opacity:1}
+
+/* ---------- time_picker variant="list": fixed slots as the canvas sg-menu ---------- */
+.sg-time-list{display:flex;flex-direction:column;padding:6px;border-radius:14px;background:var(--panel);box-shadow:0 0 0 1px var(--line),var(--shadow-lg)}
+:is(.dark .sg:not([data-theme="light"]), .sg[data-theme="dark"], .dark) .sg-time-list{background:var(--raised)}
+.sg-time-list > label{position:relative;display:flex;align-items:center;height:34px;padding:0 10px;border-radius:9px;font-size:13.5px;color:var(--fg);font-variant-numeric:tabular-nums;cursor:pointer;flex:none}
+.sg-time-list > label:hover{background:var(--hover)}
+.sg-time-list > label > input{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:inherit;appearance:none}
+.sg-time-list > label:has(> input:checked){background:var(--hover);color:var(--ink)}
+.sg-time-list > label:has(> input:focus-visible){outline:2px solid var(--accent);outline-offset:-2px}
+.sg-time-list > label:has(> input:disabled){opacity:.55;cursor:default}
+
+/* ---------- time_picker input: the canvas sg-input (white, 11px corners, 16px clock) ---------- */
+[phx-hook="LineaUI.TimePicker"] input.flatpickr-input{height:40px;border-radius:11px;background-color:var(--panel);font-size:14px;color:var(--ink)}
+:is(.dark .sg:not([data-theme="light"]), .sg[data-theme="dark"], .dark) [phx-hook="LineaUI.TimePicker"] input.flatpickr-input{background-color:var(--sunken)}
+[phx-hook="LineaUI.TimePicker"] [data-display] + span svg,[phx-hook="LineaUI.TimePicker"] [data-display] + span [class*="huge-"]{width:16px;height:16px}

@@ -26,6 +26,21 @@ defmodule LineaUI.Components.Carousel do
   The previous arrow comes before the next one in the DOM (the tab order), and both point
   to the track with `aria-controls`.
 
+  ## Canvas look and thumbnails
+
+  `variant="canvas"` is the design canvas carousel: a 16px rounded track, round white arrows (the
+  canvas `sg-ib`), the fraction as a small mono `1/3` at the top right, and bullets under the track
+  (the active one a long ink pill). `:thumb` slots draw a row of 64px thumbnails under the track,
+  one per slide, that pick the slide and ring the active one:
+
+      <.carousel id="photos" variant="canvas" label="Fotos do produto" class="h-[200px]">
+        <.carousel_slide :for={src <- @photos}><img src={src} alt="" class="size-full object-cover" /></.carousel_slide>
+        <:thumb :for={src <- @photos}><img src={src} alt="" class="size-full object-cover" /></:thumb>
+      </.carousel>
+
+  The bullets and the thumbnails hang below the carousel's box (the box keeps the slide height) and
+  the carousel reserves their room with a bottom margin.
+
   ## State
 
   `index` is the server's slide. The person can move freely in the browser, and their slide
@@ -98,16 +113,34 @@ defmodule LineaUI.Components.Carousel do
   attr(:next_label, :string, default: "Next slide")
   attr(:bullet_label, :string, default: "Go to slide")
   attr(:label, :string, default: nil, doc: "The carousel's `aria-label`.")
+
+  attr(:variant, :string,
+    default: "default",
+    values: ~w(default canvas),
+    doc:
+      "`canvas` is the design canvas look: a rounded track, round white arrows, a mono `1/3` fraction at the top right and the bullets below the track."
+  )
+
+  attr(:thumb_label, :string,
+    default: "Show slide",
+    doc: "The thumbnails' label, before the number."
+  )
+
   attr(:class, :any, default: nil)
   attr(:rest, :global)
   slot(:inner_block, required: true)
   slot(:background, doc: "Behind the track, for the parallax background.")
 
+  slot(:thumb,
+    doc: "A thumbnail per slide, in order: a row under the track that picks the slide."
+  )
+
   def carousel(assigns) do
     ~H"""
     <div
       id={@id}
-      class={merge(["carousel", @class])}
+      class={merge(["carousel", @thumb != [] && "has-thumbs", @class])}
+      data-variant={@variant != "default" && @variant}
       role="region"
       aria-roledescription="carousel"
       aria-label={@label}
@@ -139,7 +172,7 @@ defmodule LineaUI.Components.Carousel do
         aria-controls={"#{@id}-track"}
         disabled={!@loop && @index == 0}
       >
-        <.glyph name={:carousel_arrow} class={nil} />
+        <.arrow variant={@variant} />
       </button>
       <button
         :if={@navigation not in [false, nil]}
@@ -149,15 +182,30 @@ defmodule LineaUI.Components.Carousel do
         aria-label={@next_label}
         aria-controls={"#{@id}-track"}
       >
-        <.glyph name={:carousel_arrow} class={nil} />
+        <.arrow variant={@variant} />
       </button>
       <div
         :if={@pagination in ~w(bullets fraction progress)}
         id={"#{@id}-pagination"}
         class="carousel-pagination"
         data-carousel-pagination={@pagination}
+        data-compact={@variant == "canvas" && ""}
         phx-update="ignore"
       >
+      </div>
+      <div :if={@thumb != []} class="carousel-thumbs" data-carousel-thumbs>
+        <button
+          :for={{thumb, index} <- Enum.with_index(@thumb)}
+          type="button"
+          class="carousel-thumb"
+          data-carousel-bullet={index}
+          data-active={bool(index == @index)}
+          aria-current={index == @index && "true"}
+          aria-label={"#{@thumb_label} #{index + 1}"}
+          aria-controls={"#{@id}-track"}
+        >
+          {render_slot(thumb)}
+        </button>
       </div>
       <div :if={@pagination == "scrollbar"} class="carousel-scrollbar" data-carousel-scrollbar>
         <div
@@ -169,6 +217,20 @@ defmodule LineaUI.Components.Carousel do
         </div>
       </div>
     </div>
+    """
+  end
+
+  defp arrow(%{variant: "canvas"} = assigns) do
+    ~H"""
+    <svg viewBox="0 0 24 24" aria-hidden="true" class="carousel-chevron">
+      <path d="M10 7l5 5-5 5" />
+    </svg>
+    """
+  end
+
+  defp arrow(assigns) do
+    ~H"""
+    <.glyph name={:carousel_arrow} class={nil} />
     """
   end
 

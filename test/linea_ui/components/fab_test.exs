@@ -227,4 +227,46 @@ defmodule LineaUI.Components.FabTest do
       assert attr_of(dial(), "#quick", "data-side") == ["up"]
     end
   end
+
+  describe "canvas variant" do
+    test "fab is the solid canvas button with the label shown, offset from the corner" do
+      html =
+        render(~H"""
+        <.fab id="new" label="Novo pedido" variant="canvas" offset={18}>
+          <:icon><i>+</i></:icon>
+        </.fab>
+        """)
+
+      classes = classes(html, "#new")
+      assert "sg-fab" in classes
+      assert "sg-btn" in classes
+      assert "solid" in classes
+      assert attr_of(html, "#new", "style") == ["bottom: 18px; right: 18px"]
+      assert find(html, "#new") |> LazyHTML.text() =~ "Novo pedido"
+    end
+
+    test "offset also moves the pill fab" do
+      html = render(~H|<.fab id="a" label="Ask" position="top-left" offset={40} />|)
+      assert attr_of(html, "#a", "style") == ["top: 40px; left: 40px"]
+
+      refute attr_of(render(~H|<.fab id="b" label="Ask" />|), "#b", "style") |> Enum.join() =~
+               "px"
+    end
+
+    test "fab_dial is the canvas square with an sg-menu of actions" do
+      html =
+        render(~H"""
+        <.fab_dial id="d" label="Criar" variant="canvas" offset={18}>
+          <:action label="Pedido" phx-click="x"><i>1</i></:action>
+          <:action label="Cliente" href="/c"><i>2</i></:action>
+        </.fab_dial>
+        """)
+
+      assert "sg-m-fab" in classes(html, "#d-trigger")
+      assert "sg-menu" in classes(html, "#d-menu")
+      assert attr_of(html, "#d-menu", "role") == ["menu"]
+      assert find(html, "#d-menu .sg-menu-item[role=menuitem]") |> Enum.count() == 2
+      assert attr_of(html, "#d", "style") == ["bottom: 18px; right: 18px"]
+    end
+  end
 end

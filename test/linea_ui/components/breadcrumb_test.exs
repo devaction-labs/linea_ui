@@ -75,4 +75,18 @@ defmodule LineaUI.Components.BreadcrumbTest do
     assert "text-primary" in classes(html, "button")
     assert [_] = find(html, "div#now[data-kind=current][aria-current=page]") |> Enum.to_list()
   end
+
+  test "the canvas variant is the sg-crumb pill with / separators and the current page in the ink" do
+    html =
+      render(~H"""
+      <.breadcrumb variant="canvas">
+        <:item href="/c">Clientes</:item>
+        <:item>Casa</:item>
+      </.breadcrumb>
+      """)
+
+    assert "sg-crumb" in classes(html, "ul")
+    assert html |> find("ul .sep") |> LazyHTML.text() == "/"
+    assert "font-medium" in classes(html, "[aria-current=page]")
+  end
 end

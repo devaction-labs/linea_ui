@@ -101,4 +101,39 @@ defmodule LineaUI.Components.AlertTest do
     assert %Phoenix.LiveView.JS{ops: [["hide", %{to: %{closest: "[role=alert]"}}]]} =
              dismiss_alert()
   end
+
+  test "the canvas variant renders sg-alert with its tone, actions and a muted close button" do
+    html =
+      render(~H"""
+      <.alert id="a" variant="canvas" color="warning" dismissible close_label="Fechar">
+        <b>Title</b>
+        <:action><button>Go</button></:action>
+      </.alert>
+      """)
+
+    assert "sg-alert" in classes(html, "#a")
+    assert "warn" in classes(html, "#a")
+    assert [_] = find(html, "#a .sg-alert-body .sg-alert-actions button") |> Enum.to_list()
+    assert find(html, "#a > button.sg-ib.plain") |> LazyHTML.attribute("aria-label") == ["Fechar"]
+
+    assert "acc" in classes(
+             render(~H|<.alert id="a" variant="canvas" color="primary">x</.alert>|),
+             "#a"
+           )
+
+    assert "neg" in classes(
+             render(~H|<.alert id="a" variant="canvas" color="error">x</.alert>|),
+             "#a"
+           )
+
+    assert "info" in classes(
+             render(~H|<.alert id="a" variant="canvas" color="info">x</.alert>|),
+             "#a"
+           )
+
+    assert "pos" in classes(
+             render(~H|<.alert id="a" variant="canvas" color="success">x</.alert>|),
+             "#a"
+           )
+  end
 end

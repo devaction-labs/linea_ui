@@ -138,10 +138,18 @@ defmodule LineaUI.Components.Toast do
   `stack={false}` on the toaster to keep them always open, one above the other.
 
   The toasts sit on the CSS layer `--linea-z-toast` (see the README).
+
+  ## A toast in the page
+
+  `toast_card/1` draws the design canvas's toast card (`sg-toast`, light or dark) where it is written, not in
+  the toaster: for a notice that stays in a panel, or to show what a toast looks like.
+
+      <.toast_card kind="error" icon="huge-cancel-circle" title="Could not issue"
+        description="SEFAZ is down. We will retry in 5 min." />
   """
 
   use LineaUI.Component
-  import LineaUI.Components.Icon, only: [icon_set: 0, glyph: 1]
+  import LineaUI.Components.Icon, only: [icon_set: 0, glyph: 1, icon: 1]
   import LineaUI.Components.Spinner, only: [spinner: 1]
 
   @flash_key "linea_toast"
@@ -252,6 +260,75 @@ defmodule LineaUI.Components.Toast do
     </div>
     """
   end
+
+  @doc """
+  The canvas's toast card (`sg-toast`), drawn in place: a 30px icon tile tinted by `kind`, the title and the
+  description, the `:action` buttons and a muted close button that hides the card (and runs `on_dismiss`).
+
+      <.toast_card tone="dark" icon="huge-delete-02" title="Order #2488 deleted">
+        <:action><.button variant="soft" size="sm" phx-click="undo">Undo</.button></:action>
+      </.toast_card>
+  """
+  attr :id, :string, default: nil
+
+  attr :tone, :string,
+    default: "light",
+    values: ~w(light dark),
+    doc: "`light` is the panel card; `dark` the ink card (the canvas's `sg-toast dark`)."
+
+  attr :kind, :string,
+    default: "neutral",
+    values: ~w(neutral primary success warning error info),
+    doc: "The tint of the icon tile: the sunken gray, the accent, or the canvas's tones."
+
+  attr :icon, :string, default: nil, doc: "A `LineaUI.Components.Icon.icon/1` name for the tile."
+  attr :title, :string, required: true
+  attr :description, :string, default: nil
+
+  attr :dismissible, :boolean, default: true, doc: "The close button."
+  attr :close_label, :string, default: "Close", doc: "The `aria-label` of the close button."
+
+  attr :on_dismiss, :any,
+    default: nil,
+    doc: "A `%JS{}` run (after hiding the card) when the close button is pressed."
+
+  attr :class, :any, default: nil
+  attr :rest, :global
+
+  slot :icon_tile, doc: "Replaces the `icon` inside the tile."
+  slot :action, doc: "Buttons between the text and the close button."
+
+  def toast_card(assigns) do
+    ~H"""
+    <div id={@id} class={merge(["sg-toast", @tone == "dark" && "dark", @class])} {@rest}>
+      <span class={["sg-ic sg-toast-ic", card_tone(@kind)]} aria-hidden="true">
+        <.icon :if={@icon && @icon_tile == []} name={@icon} class="size-3.5" />
+        {render_slot(@icon_tile)}
+      </span>
+      <div class="sg-toast-body">
+        <span class="t">{@title}</span>
+        <span :if={@description} class="sg-toast-desc">{@description}</span>
+      </div>
+      {render_slot(@action)}
+      <button
+        :if={@dismissible}
+        type="button"
+        class="sg-ib sm plain"
+        aria-label={@close_label}
+        phx-click={JS.hide(@on_dismiss || %JS{}, to: {:closest, ".sg-toast"})}
+      >
+        <.glyph name={:close} class="size-4" />
+      </button>
+    </div>
+    """
+  end
+
+  defp card_tone("primary"), do: "acc"
+  defp card_tone("success"), do: "pos"
+  defp card_tone("warning"), do: "warn"
+  defp card_tone("error"), do: "neg"
+  defp card_tone("info"), do: "info"
+  defp card_tone(_kind), do: nil
 
   @doc """
   The ring of light of a toast, around any element: a box that runs a light along its border. Give the

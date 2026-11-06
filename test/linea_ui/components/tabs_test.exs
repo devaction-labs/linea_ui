@@ -165,4 +165,19 @@ defmodule LineaUI.Components.TabsTest do
     assert count(html, "#mix-tab-a[aria-controls=mix-panel-a]") == 1
     assert count(html, "#mix-tab-b[aria-controls]") == 0
   end
+
+  test "the segmented variant is the canvas sg-seg and a tab's count is the canvas badge" do
+    html =
+      render(~H"""
+      <.tabs id="t" variant="segmented" selected="b">
+        <:tab name="a">A</:tab>
+        <:tab name="b" count={4}>B</:tab>
+      </.tabs>
+      """)
+
+    assert "sg-seg" in classes(html, "[role=tablist]")
+    assert "sg-seg-tab" in classes(html, "#t-tab-a")
+    assert html |> find("#t-tab-b .sg-nav-n") |> LazyHTML.text() == "4"
+    assert [] = html |> find("#t-tab-a .sg-nav-n") |> Enum.to_list()
+  end
 end

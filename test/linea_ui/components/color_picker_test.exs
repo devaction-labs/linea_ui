@@ -175,4 +175,36 @@ defmodule LineaUI.Components.ColorPickerTest do
       assert html =~ "is invalid"
     end
   end
+
+  test "the swatches variant draws only the presets, the chosen one pressed" do
+    html =
+      render(~H"""
+      <.color_picker id="sw" name="c" value="#8A5CD6" variant="swatches" presets={~w(#0D8F91 #8A5CD6)} />
+      """)
+
+    assert find(html, "[data-area]") |> Enum.to_list() == []
+    assert find(html, "[data-hue]") |> Enum.to_list() == []
+    assert find(html, "[data-hex]") |> Enum.to_list() == []
+    assert "lg" in classes(html, "[data-preset='#8A5CD6']")
+    assert LazyHTML.attribute(find(html, "[data-preset='#8A5CD6']"), "aria-pressed") == ["true"]
+  end
+
+  test "hex_field adds the captioned hex field under the swatches" do
+    html =
+      render(~H"""
+      <.color_picker
+        id="hx"
+        name="c"
+        value="#0D8F91"
+        variant="swatches"
+        hex_field
+        swatch_size="md"
+        presets={~w(#0D8F91)}
+      />
+      """)
+
+    assert LazyHTML.attribute(find(html, "input[data-hex]"), "value") == ["#0D8F91"]
+    assert html =~ "Hex"
+    assert "md" in classes(html, "[data-preset]")
+  end
 end

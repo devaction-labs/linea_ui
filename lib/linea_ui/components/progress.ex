@@ -12,6 +12,17 @@ defmodule LineaUI.Components.Progress do
       <.progress value={60} color="white" />
 
   `value` is read against `max` (100 by default) and updates with the assign.
+
+  It draws the canvas's `sg-meter`: `primary` is the accent bar, `success`, `warning`, `error` and `info`
+  the canvas's positive, warning, negative and info colors, `neutral` the ink one.
+
+  `progress_stack/1` is the canvas's stacked bar (`sg-stack`), the parts of a total side by side:
+
+      <.progress_stack label="Sales by channel">
+        <:segment value={46} label="Counter" />
+        <:segment value={33} label="Online" />
+        <:segment value={21} label="Reps" />
+      </.progress_stack>
   """
 
   use LineaUI.Component
@@ -74,12 +85,58 @@ defmodule LineaUI.Components.Progress do
       aria-valuemin="0"
       aria-valuemax={@max}
       aria-valuenow={!@indeterminate && @value}
-      class={merge(["sg-meter", @color == "primary" && "acc", @class])}
+      class={merge(["sg-meter", tone(@color), @class])}
       {@rest}
     >
       <i
         class={merge([@indeterminate && "is-indeterminate relative w-4/12", @bar_class])}
         style={!@indeterminate && "width: #{@percent}%"}
+      ></i>
+    </div>
+    """
+  end
+
+  defp tone("primary"), do: "acc"
+  defp tone("success"), do: "pos"
+  defp tone("warning"), do: "warn"
+  defp tone("error"), do: "neg"
+  defp tone("info"), do: "info"
+  defp tone(_color), do: nil
+
+  @doc """
+  Renders the canvas's stacked bar (`sg-stack`): one segment per part, its width the part's share of `max`
+  (100 by default), in the chart colors `--c1`, `--c2`... in order unless a segment sets `color`.
+
+      <.progress_stack label="Sales by channel: counter 46%, online 33%, reps 21%">
+        <:segment value={46} />
+        <:segment value={33} />
+        <:segment value={21} color="c4" />
+      </.progress_stack>
+
+  It is one image for screen readers (`role="img"`), named by `label`; a segment's `label` is its `title`.
+  """
+  attr(:max, :any, default: 100, doc: "The total the segments are read against.")
+  attr(:label, :string, default: nil, doc: "The `aria-label`: say the parts and their values.")
+  attr(:class, :any, default: nil)
+  attr(:rest, :global)
+
+  slot :segment, required: true, doc: "A part of the total." do
+    attr(:value, :any, required: true, doc: "The part's amount, against `max`.")
+
+    attr(:color, :string,
+      doc: "A chart color of the canvas, `c1` to `c5` (by default the segment's position)."
+    )
+
+    attr(:label, :string, doc: "The segment's `title`.")
+  end
+
+  def progress_stack(assigns) do
+    ~H"""
+    <div role="img" aria-label={@label} class={merge(["sg-stack", @class])} {@rest}>
+      <i
+        :for={{segment, index} <- Enum.with_index(@segment)}
+        title={segment[:label]}
+        style={"width: #{percent(segment.value, @max)}%; background: var(--#{segment[:color] || "c#{rem(index, 5) + 1}"})"}
       ></i>
     </div>
     """

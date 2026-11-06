@@ -38,7 +38,7 @@ defmodule LineaUI.Components.InputTest do
     assert [label] = find(html, "label.block") |> Enum.to_list()
     assert LazyHTML.text(label) =~ "Choose Username:"
     assert "mt-1.5" in classes(html, "label > span + span")
-    assert "text-tiny-plus" in classes(html, "label + span")
+    assert "leading-5" in classes(html, "label + span")
     assert LazyHTML.text(find(html, "label + span")) =~ "This is a help text"
   end
 
@@ -201,5 +201,11 @@ defmodule LineaUI.Components.InputTest do
     refute "w-10" in suffix
     assert [_] = find(html, "[data-suffix] button#send") |> Enum.to_list()
     assert "pr-9" in classes(html, "input") or "px-9" in classes(html, "input")
+  end
+
+  test "label_hint puts a dimmed note at the right of the caption" do
+    html = render(~H'<.input name="ie" label="Inscrição estadual" label_hint="opcional" />')
+    assert "justify-between" in classes(html, "label > span")
+    assert LazyHTML.text(find(html, "label > span > span")) =~ "opcional"
   end
 end

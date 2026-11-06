@@ -1319,7 +1319,7 @@ table.is-zebra > tbody > tr:nth-child(even) > td {
   padding-bottom: 0;
 }
 .timeline.is-compact .timeline-item:not(:last-child)::before {
-  background-color: var(--color-slate-150);
+  background-color: var(--line, var(--color-slate-150));
 }
 .timeline.is-compact .timeline-item-content {
   padding-top: 0;

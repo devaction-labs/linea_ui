@@ -53,6 +53,16 @@ defmodule LineaUI.Components.ButtonTest do
     assert LazyHTML.attribute(button, "disabled") == [""]
     assert LazyHTML.attribute(button, "aria-busy") == ["true"]
     assert [_ | _] = find(html, "button [role=status]") |> Enum.to_list()
+    assert "sg-spin" in classes(html, "button [role=status]")
+    assert "xs" in classes(html, "button [role=status]")
+  end
+
+  test "pip puts the accent dot on an icon button" do
+    html = render(~H|<.button icon pip aria-label="Notices">+</.button>|)
+    assert [_] = find(html, "button.sg-ib span.pip") |> Enum.to_list()
+
+    assert find(render(~H|<.button icon aria-label="Notices">+</.button>|), ".pip")
+           |> Enum.empty?()
   end
 
   test "an idle button has no spinner nor aria-busy" do

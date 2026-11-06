@@ -45,4 +45,14 @@ defmodule LineaUI.Components.CardTest do
     assert [_] = find(html, "#c .sg-card-h .end") |> Enum.to_list()
     assert [_] = find(html, "#c .sg-card-f") |> Enum.to_list()
   end
+
+  test "navigate, patch or href make the whole card a link with an arrow" do
+    html = render(~H|<.card id="c" href="/banks/1"><b>Banco</b></.card>|)
+    plain = render(~H|<.card id="d" navigate="/x" arrow={false}>Banco</.card>|)
+
+    assert [_] = find(html, "a#c.sg-card[href='/banks/1']") |> Enum.to_list()
+    assert [_] = find(html, "#c > svg") |> Enum.to_list()
+    assert [_] = find(plain, "a#d[data-phx-link=redirect]") |> Enum.to_list()
+    assert [] = find(plain, "#d > svg") |> Enum.to_list()
+  end
 end

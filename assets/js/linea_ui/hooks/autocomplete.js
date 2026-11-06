@@ -3,7 +3,9 @@
  * `[data-value-input]` (named like the field, `phx-update="ignore"`) holds the value; a bubbling `input` fires from it
  * only when the value changes, and the visible input's own `input` events are stopped so `phx-change` runs once.
  * Without `data-on-search` the list filters itself; with it the query is pushed to the server (debounced) and a
- * loading row shows until the reply. A new `data-value` from the server wins over the browser's.
+ * loading row shows until the reply. A new `data-value` from the server wins over the browser's. An optional
+ * `[data-create-row]` (under a line, after the results) offers to create the typed text: it runs its `data-create-js`
+ * or pushes `data-on-create` with `{id, query}`.
  */
 import {notify} from "../lib/dom.js"
 import {escapeHtml} from "../lib/date_picker_view.js"
@@ -90,7 +92,21 @@ const Autocomplete = {
   },
 
   rows() {
-    return this.options().filter((row) => row.dataset.selectable === "true" && !row.hidden)
+    const create = this.createShown() ? [this.q("[data-create-row]")] : []
+    return [...this.options().filter((row) => row.dataset.selectable === "true" && !row.hidden), ...create]
+  },
+
+  createShown() {
+    const wrap = this.q("[data-create-wrap]")
+    return Boolean(wrap) && !this.loading && this.term.trim() !== ""
+  },
+
+  create(row) {
+    const query = this.term.trim()
+    const target = this.el.getAttribute("phx-target")
+    row.dataset.createJs && this.liveSocket.execJS(row, row.dataset.createJs)
+    row.dataset.onCreate && this.pushEventTo(target || this.el, row.dataset.onCreate, {id: this.el.id, query})
+    this.close()
   },
 
   adopt(value, label) {
@@ -196,6 +212,7 @@ const Autocomplete = {
   },
 
   pick(row) {
+    if (row.matches("[data-create-row]")) return this.create(row)
     const next = picked({value: row.dataset.value, label: row.dataset.label}, this.freeText())
     this.label = row.dataset.label
     this.term = ""
@@ -244,6 +261,7 @@ const Autocomplete = {
     this.el.querySelectorAll("[data-dropdown] [data-group]").forEach((group) => {
       group.hidden = ![...group.querySelectorAll(".option")].some((row) => !row.hidden)
     })
+    this.paintCreate()
     const rows = this.rows()
     this.active = this.active >= 0 && this.active < rows.length ? this.active : -1
     this.paintStatus(rows)
@@ -257,10 +275,19 @@ const Autocomplete = {
       .join("")
   },
 
+  paintCreate() {
+    const wrap = this.q("[data-create-wrap]")
+    const row = wrap?.querySelector("[data-create-row]")
+    const shown = this.createShown()
+    wrap && (wrap.hidden = !shown)
+    shown && (row.querySelector("[data-create-text]").textContent = fillQuery(row.dataset.template, this.term))
+  },
+
   paintStatus(rows) {
     const status = this.q("[data-status]")
     const loading = this.loading && this.q("[data-loading]").textContent
-    const empty = !this.loading && rows.length === 0 && this.term.trim() !== "" && fillQuery(this.q("[data-no-results]").textContent, this.term)
+    const found = rows.filter((row) => !row.matches("[data-create-row]")).length
+    const empty = !this.loading && found === 0 && this.term.trim() !== "" && fillQuery(this.q("[data-no-results]").textContent, this.term)
     const message = loading || empty
     const kind = loading ? "loading" : "no-results"
     const html = statusHtml(kind, message, escapeHtml)

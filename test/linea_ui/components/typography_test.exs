@@ -70,4 +70,33 @@ defmodule LineaUI.Components.TypographyTest do
     assert "text-[11.5px]" in classes(html, "kbd")
     assert "rounded-[5px]" in classes(html, "kbd")
   end
+
+  test "the canvas text colours, sizes, mono and the page title" do
+    html =
+      render(~H"""
+      <.heading level={1} size="title">Financeiro</.heading>
+      <.text id="l" size="lead" color="subtle">Contas</.text>
+      <.text id="m" as="span" size="meta" color="faint">Meta</.text>
+      <.text id="n" as="span" mono color="ink">R$ 3.120,50</.text>
+      <.text id="f" as="span" color="fg">fg</.text>
+      """)
+
+    assert ["text-[34px]/[40px]", "tracking-[-.03em]", "text-[var(--ink)]", "font-semibold"] ==
+             classes(html, "h1")
+
+    assert ["text-[15px]/[22px]", "text-[var(--muted)]"] == classes(html, "#l")
+    assert ["text-[12.5px]/[18px]", "text-[var(--faint)]"] == classes(html, "#m")
+    assert ["font-mono", "text-[var(--ink)]"] == classes(html, "#n")
+    assert ["text-[var(--fg)]"] == classes(html, "#f")
+  end
+
+  test "a flat kbd is the canvas key" do
+    html = render(~H|<.kbd variant="flat">⌘ K</.kbd>|)
+    assert "sg-kbd" in classes(html, "kbd")
+
+    refute "shadow-[inset_0_0_0_1px_var(--color-slate-300),0_1px_0_var(--color-slate-300)]" in classes(
+             html,
+             "kbd"
+           )
+  end
 end

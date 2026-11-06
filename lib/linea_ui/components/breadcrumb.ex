@@ -29,6 +29,14 @@ defmodule LineaUI.Components.Breadcrumb do
         <:item href="/"><svg>…</svg></:item>
         <:item>Calendar</:item>
       </.breadcrumb>
+
+  `variant="canvas"` is the design canvas trail (`sg-crumb`): a 32px pill with an inset line, muted
+  13px links, faint `/` separators and the current page in the ink.
+
+      <.breadcrumb variant="canvas">
+        <:item navigate={~p"/customers"}>Customers</:item>
+        <:item>Casa das Tintas</:item>
+      </.breadcrumb>
   """
 
   use LineaUI.Component
@@ -40,7 +48,21 @@ defmodule LineaUI.Components.Breadcrumb do
     "plain" =>
       "flex items-center gap-1.5 rounded-md text-primary transition-colors hover:text-primary-focus hover:underline hover:underline-offset-3 dark:text-accent-light dark:hover:text-blue-300",
     "bordered" =>
-      "flex items-center gap-1.5 rounded-lg px-2 py-[5px] leading-none text-primary shadow-[inset_0_0_0_1px_var(--color-slate-200)] transition-colors hover:text-primary-focus hover:shadow-[inset_0_0_0_1px_color-mix(in_oklab,var(--color-primary)_40%,transparent)] dark:text-accent-light dark:shadow-[inset_0_0_0_1px_var(--color-navy-500)] dark:hover:text-blue-300 dark:hover:shadow-[inset_0_0_0_1px_color-mix(in_oklab,var(--color-accent)_40%,transparent)]"
+      "flex items-center gap-1.5 rounded-lg px-2 py-[5px] leading-none text-primary shadow-[inset_0_0_0_1px_var(--color-slate-200)] transition-colors hover:text-primary-focus hover:shadow-[inset_0_0_0_1px_color-mix(in_oklab,var(--color-primary)_40%,transparent)] dark:text-accent-light dark:shadow-[inset_0_0_0_1px_var(--color-navy-500)] dark:hover:text-blue-300 dark:hover:shadow-[inset_0_0_0_1px_color-mix(in_oklab,var(--color-accent)_40%,transparent)]",
+    "canvas" =>
+      "flex items-center gap-1.5 rounded-md text-[var(--muted)] transition-colors hover:text-[var(--ink)]"
+  }
+
+  @lists %{
+    "plain" => "flex flex-wrap items-center gap-2",
+    "bordered" => "flex flex-wrap items-center gap-2",
+    "canvas" => "sg-crumb"
+  }
+
+  @currents %{
+    "plain" => "text-slate-600 dark:text-navy-200",
+    "bordered" => "text-slate-600 dark:text-navy-200",
+    "canvas" => "font-medium text-[var(--ink)]"
   }
 
   @doc """
@@ -53,8 +75,9 @@ defmodule LineaUI.Components.Breadcrumb do
   """
   attr(:variant, :string,
     default: "plain",
-    values: ~w(plain bordered),
-    doc: "`bordered` draws a rounded border around each link."
+    values: ~w(plain bordered canvas),
+    doc:
+      "`bordered` draws a rounded border around each link; `canvas` is the design canvas pill trail with `/` separators."
   )
 
   attr(:label, :string, default: "Breadcrumb", doc: "The `aria-label` of the navigation.")
@@ -80,17 +103,26 @@ defmodule LineaUI.Components.Breadcrumb do
   slot(:separator, doc: "What goes between two steps, LineOne's chevron by default.")
 
   def breadcrumb(assigns) do
-    assigns = assign(assigns, :last, length(assigns.item) - 1)
+    assigns =
+      assigns
+      |> assign(:last, length(assigns.item) - 1)
+      |> assign(:lists, @lists)
+      |> assign(:current_class, @currents[assigns.variant])
 
     ~H"""
     <nav aria-label={@label} {@rest}>
-      <ul class={merge(["flex flex-wrap items-center gap-2", @class])}>
+      <ul class={merge([@lists[@variant], @class])}>
         <li
           :for={{item, index} <- Enum.with_index(@item)}
           class={if index < @last, do: "flex items-center gap-2", else: "min-w-0 max-w-full"}
         >
-          <.crumb item={item} link_class={link_class(@variant)} current={index == @last} />
-          <.separator :if={index < @last} separator={@separator} />
+          <.crumb
+            item={item}
+            link_class={link_class(@variant)}
+            current_class={@current_class}
+            current={index == @last}
+          />
+          <.separator :if={index < @last} separator={@separator} variant={@variant} />
         </li>
       </ul>
     </nav>
@@ -101,6 +133,7 @@ defmodule LineaUI.Components.Breadcrumb do
 
   attr(:item, :map, required: true)
   attr(:link_class, :any, required: true)
+  attr(:current_class, :any, default: nil)
   attr(:current, :boolean, required: true)
 
   defp crumb(%{item: item} = assigns) when is_map_key(item, :"phx-click") do
@@ -143,7 +176,8 @@ defmodule LineaUI.Components.Breadcrumb do
     <div
       class={
         merge([
-          "flex min-w-0 items-center gap-1.5 text-slate-600 dark:text-navy-200",
+          "flex min-w-0 items-center gap-1.5",
+          @current_class,
           @item[:class]
         ])
       }
@@ -159,6 +193,13 @@ defmodule LineaUI.Components.Breadcrumb do
     do: Map.drop(item, [:inner_block, :__slot__, :href, :navigate, :patch, :class])
 
   attr(:separator, :list, required: true)
+  attr(:variant, :string, default: "plain")
+
+  defp separator(%{separator: [], variant: "canvas"} = assigns) do
+    ~H"""
+    <span aria-hidden="true" class="sep">/</span>
+    """
+  end
 
   defp separator(%{separator: []} = assigns) do
     ~H"""

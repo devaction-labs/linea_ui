@@ -13,6 +13,14 @@ defmodule LineaUI.Components.Typography do
       <.text_link href="#" decoration_color="info" decoration_style="wavy">Tattooine</.text_link>
 
       Press <.kbd>Ctrl</.kbd> + <.kbd>K</.kbd>, or run <.inline_code>mix test</.inline_code>.
+
+  The canvas text roles are colours too: `ink` (titles and figures), `fg` (running text), `subtle` (secondary
+  text, the canvas `muted`) and `faint` (meta and help). `muted` keeps LineOne's light grey, which is the canvas
+  `faint` in the light theme. A page title is `size="title"`:
+
+      <.heading level={1} size="title">Financeiro</.heading>
+      <.text size="lead" color="subtle">Contas a pagar e a receber das filiais.</.text>
+      <.text as="span" mono color="ink">R$ 3.120,50</.text>
   """
 
   use LineaUI.Component
@@ -32,7 +40,8 @@ defmodule LineaUI.Components.Typography do
     "lg" => "text-lg",
     "xl" => "text-xl",
     "2xl" => "text-2xl",
-    "3xl" => "text-3xl"
+    "3xl" => "text-3xl",
+    "title" => "text-[34px]/[40px] tracking-[-.03em] text-[var(--ink)]"
   }
 
   @display_sizes %{
@@ -60,7 +69,11 @@ defmodule LineaUI.Components.Typography do
     "info" => "text-info",
     "success" => "text-success",
     "warning" => "text-warning",
-    "error" => "text-error"
+    "error" => "text-error",
+    "ink" => "text-[var(--ink)]",
+    "fg" => "text-[var(--fg)]",
+    "subtle" => "text-[var(--muted)]",
+    "faint" => "text-[var(--faint)]"
   }
 
   @text_sizes %{
@@ -70,7 +83,9 @@ defmodule LineaUI.Components.Typography do
     "sm" => "text-sm",
     "base" => "text-base",
     "lg" => "text-lg",
-    "xl" => "text-xl"
+    "xl" => "text-xl",
+    "meta" => "text-[12.5px]/[18px]",
+    "lead" => "text-[15px]/[22px]"
   }
 
   @gradients %{
@@ -120,7 +135,8 @@ defmodule LineaUI.Components.Typography do
       <.heading display={1}>Welcome</.heading>
 
   `size` sets the type size apart from the level, so a heading keeps its place in the outline and looks as
-  large as the design asks: `<.heading level={2} size="2xl">Overview</.heading>`.
+  large as the design asks: `<.heading level={2} size="2xl">Overview</.heading>`. `size="title"` is the canvas
+  page title: 34/40, tight tracking, semibold, in the ink colour.
   """
   attr(:level, :integer, default: nil, values: [nil, 1, 2, 3, 4, 5, 6])
   attr(:size, :string, default: nil, values: [nil | Map.keys(@named_sizes)])
@@ -129,7 +145,7 @@ defmodule LineaUI.Components.Typography do
   attr(:weight, :string,
     default: nil,
     values: [nil | ~w(normal light medium semibold bold)],
-    doc: "`normal` by default, `semibold` for a `display` heading."
+    doc: "`normal` by default, `semibold` for a `display` heading and for `size=\"title\"`."
   )
 
   attr(:color, :string, default: "default", values: @text_colors)
@@ -161,6 +177,7 @@ defmodule LineaUI.Components.Typography do
 
   defp heading_weight(%{weight: weight}) when is_binary(weight), do: weight
   defp heading_weight(%{display: display}) when is_integer(display), do: "semibold"
+  defp heading_weight(%{size: "title"}), do: "semibold"
   defp heading_weight(_assigns), do: "normal"
 
   defp heading_size(%{size: size}) when is_binary(size), do: @named_sizes[size]
@@ -173,9 +190,20 @@ defmodule LineaUI.Components.Typography do
       <.text size="lg" weight="semibold" gradient="amber-orange">Hello</.text>
   """
   attr(:as, :string, default: "p", values: ~w(p span div strong em small))
-  attr(:size, :string, default: "inherit", values: ~w(inherit xs xs-plus sm base lg xl))
+
+  attr(:size, :string,
+    default: "inherit",
+    values: ~w(inherit xs xs-plus sm base lg xl meta lead),
+    doc: "`meta` is the canvas 12.5px meta/help line, `lead` the 15/22 line under a page title."
+  )
+
   attr(:weight, :string, default: "normal", values: ~w(normal light medium semibold bold))
   attr(:color, :string, default: "default", values: @text_colors)
+
+  attr(:mono, :boolean,
+    default: false,
+    doc: "Sets the text in the mono face (figures, codes, keys)."
+  )
 
   attr(:gradient, :string,
     default: nil,
@@ -199,6 +227,7 @@ defmodule LineaUI.Components.Typography do
       class={
         merge([
           text_size(@size),
+          @mono && "font-mono",
           weight(@weight),
           color(@color),
           gradient(@gradient),
@@ -272,12 +301,23 @@ defmodule LineaUI.Components.Typography do
 
   @doc """
   Renders a keyboard key: mono 11.5px, with a 1px inset border and a 1px shadow under it.
+  `variant="flat"` is the canvas key (`sg-kbd`): 18px high, muted, on the sunken fill, with no shadow under it.
 
       <.kbd>Ctrl</.kbd> + <.kbd>K</.kbd>
+      <.kbd variant="flat">⌘ K</.kbd>
   """
+  attr(:variant, :string, default: "raised", values: ~w(raised flat))
   attr(:class, :any, default: nil)
   attr(:rest, :global)
   slot(:inner_block, required: true)
+
+  def kbd(%{variant: "flat"} = assigns) do
+    ~H"""
+    <kbd class={merge(["sg-kbd inline-block whitespace-nowrap", @class])} {@rest}>{render_slot(
+      @inner_block
+    )}</kbd>
+    """
+  end
 
   def kbd(assigns) do
     ~H"""

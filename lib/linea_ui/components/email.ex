@@ -53,6 +53,9 @@ defmodule LineaUI.Components.Email do
     ink: "#17171a",
     body: "#2e2e33",
     muted: "#6c6b70",
+    faint: "#9d9ba1",
+    solid: "#17171a",
+    on_solid: "#ffffff",
     primary: "#0d8f91",
     primary_text: "#08686b",
     soft: "#e2f2f1",
@@ -69,6 +72,9 @@ defmodule LineaUI.Components.Email do
     ink: "#f3f3f4",
     body: "#d9d9dd",
     muted: "#a3a3ab",
+    faint: "#74747c",
+    solid: "#f3f3f4",
+    on_solid: "#111113",
     primary: "#2bbfbd",
     primary_text: "#5fd6d3",
     soft: "#16403f",
@@ -92,7 +98,11 @@ defmodule LineaUI.Components.Email do
   The e-mail: a whole HTML document.
 
   `eyebrow` is the short tag above the title. The `:action` slot is the main button (`href` required) and the
-  address is spelled out under it, for the clients that block buttons. `alt_text` introduces that address.
+  address is spelled out under it, for the clients that block buttons. `alt_text` introduces that address;
+  `alt_text={nil}` leaves the address out.
+
+  The canvas look of a short notice: `button="ink"` (a black pill with no arrow), `footer_style="plain"`
+  (centered small print under the card), `title_size={18}` and `compact` (tighter padding).
   """
   attr :subject, :string, required: true, doc: "The `<title>`, and what the inbox shows."
   attr :preheader, :string, default: nil, doc: "The line next to the subject in the inbox."
@@ -109,7 +119,25 @@ defmodule LineaUI.Components.Email do
   attr :lang, :string, default: "en"
 
   attr :alt_text, :string,
-    default: "If the button does not work, copy and paste this address into your browser:"
+    default: "If the button does not work, copy and paste this address into your browser:",
+    doc: "The line before the spelled-out address; `nil` leaves both out."
+
+  attr :button, :string,
+    default: "accent",
+    values: ~w(accent ink),
+    doc:
+      "`accent` is the teal button with an arrow; `ink` the black pill of the canvas, no arrow."
+
+  attr :footer_style, :string,
+    default: "panel",
+    values: ~w(panel plain),
+    doc: "`panel` is a grey box under the card; `plain` centered faint small print."
+
+  attr :title_size, :integer, default: 22, doc: "The title's size in pixels."
+
+  attr :compact, :boolean,
+    default: false,
+    doc: "Tighter padding around and inside the card (20px and 22px)."
 
   slot :badge, doc: "The inside of the icon tile: an `<img>` of 24px."
   slot :body, required: true, doc: "The text and the helpers."
@@ -178,7 +206,11 @@ defmodule LineaUI.Components.Email do
           style={"background-color:#{@p.canvas};"}
         >
           <tr>
-            <td align="center" class="em-outer" style="padding:36px 16px 44px;">
+            <td
+              align="center"
+              class="em-outer"
+              style={(@compact && "padding:20px;") || "padding:36px 16px 44px;"}
+            >
               <table
                 role="presentation"
                 width="520"
@@ -251,7 +283,10 @@ defmodule LineaUI.Components.Email do
                         </td>
                       </tr>
                       <tr>
-                        <td class="em-pad" style="padding:20px 32px 32px;">
+                        <td
+                          class="em-pad"
+                          style={(@compact && "padding:22px;") || "padding:20px 32px 32px;"}
+                        >
                           <p :if={@eyebrow} style="margin:0 0 12px;">
                             <span
                               class="em-soft"
@@ -261,8 +296,8 @@ defmodule LineaUI.Components.Email do
                             </span>
                           </p>
                           <h2
-                            class="em-ink em-title"
-                            style={"margin:0 0 14px;color:#{@p.ink};font-family:#{@sans};font-size:22px;line-height:1.3;font-weight:600;letter-spacing:-.01em;"}
+                            class={["em-ink", @title_size > 21 && "em-title"]}
+                            style={"margin:0 0 14px;color:#{@p.ink};font-family:#{@sans};font-size:#{@title_size}px;line-height:1.3;font-weight:600;letter-spacing:-.01em;"}
                           >
                             {@title}
                           </h2>
@@ -274,6 +309,7 @@ defmodule LineaUI.Components.Email do
                             p={@p}
                             sans={@sans}
                             alt_text={@alt_text}
+                            button={@button}
                           />
                           <.note :for={note <- @note} note={note} p={@p} sans={@sans} />
                         </td>
@@ -281,10 +317,19 @@ defmodule LineaUI.Components.Email do
                     </table>
                   </td>
                 </tr>
-                <tr :if={@footer != []}>
+                <tr :if={@footer != [] and @footer_style == "plain"}>
+                  <td
+                    class="em-faint"
+                    align="center"
+                    style={"padding:12px 6px 0;color:#{@p.faint};font-family:#{@sans};font-size:11.5px;line-height:1.6;text-align:center;"}
+                  >
+                    {render_slot(@footer)}
+                  </td>
+                </tr>
+                <tr :if={@footer != [] and @footer_style == "panel"}>
                   <td style="height:16px;line-height:16px;font-size:1px;">&nbsp;</td>
                 </tr>
-                <tr :if={@footer != []}>
+                <tr :if={@footer != [] and @footer_style == "panel"}>
                   <td
                     class="em-panel"
                     bgcolor={@p.panel}
@@ -306,7 +351,8 @@ defmodule LineaUI.Components.Email do
   attr :secondary, :any, default: nil
   attr :p, :map, required: true
   attr :sans, :string, required: true
-  attr :alt_text, :string, required: true
+  attr :alt_text, :string, default: nil
+  attr :button, :string, default: "accent"
 
   defp button_row(assigns) do
     assigns =
@@ -319,6 +365,7 @@ defmodule LineaUI.Components.Email do
     <table role="presentation" border="0" cellpadding="0" cellspacing="0" style="margin:22px 0 4px;">
       <tr>
         <td
+          :if={@button == "accent"}
           class="em-primary"
           align="center"
           bgcolor={@p.primary}
@@ -330,6 +377,22 @@ defmodule LineaUI.Components.Email do
             style={"display:inline-block;padding:12px 22px;border-radius:9px;color:#ffffff;font-family:#{@sans};font-size:14.5px;line-height:22px;font-weight:500;letter-spacing:.01em;text-decoration:none;"}
           >
             {render_slot(@action)}&nbsp;&nbsp;&rarr;
+          </a>
+        </td>
+        <td
+          :if={@button == "ink"}
+          class="em-solid"
+          align="center"
+          bgcolor={@p.solid}
+          style={"border-radius:999px;background-color:#{@p.solid};"}
+        >
+          <a
+            href={@href}
+            target="_blank"
+            class="em-on-solid"
+            style={"display:inline-block;padding:7px 14px;border-radius:999px;color:#{@p.on_solid};font-family:#{@sans};font-size:13.5px;line-height:22px;font-weight:500;text-decoration:none;"}
+          >
+            {render_slot(@action)}
           </a>
         </td>
         <td :if={@secondary} width="8" style="width:8px;font-size:1px;line-height:1px;">&nbsp;</td>
@@ -351,6 +414,7 @@ defmodule LineaUI.Components.Email do
       </tr>
     </table>
     <p
+      :if={@alt_text}
       class="em-muted"
       style={"margin:16px 0 0;color:#{@p.muted};font-family:#{@sans};font-size:12px;line-height:1.6;"}
     >
@@ -410,6 +474,11 @@ defmodule LineaUI.Components.Email do
 
   @doc "A paragraph of the body, styled for the e-mail. Give the same `theme` as the layout when it is fixed."
   attr :theme, :atom, default: :auto, values: [:auto, :light, :dark]
+
+  attr :muted, :boolean,
+    default: false,
+    doc: "The canvas's quiet summary line: 13.5px in the muted color."
+
   attr :rest, :global
   slot :inner_block, required: true
 
@@ -418,8 +487,8 @@ defmodule LineaUI.Components.Email do
 
     ~H"""
     <p
-      class="em-body"
-      style={"margin:0 0 12px;color:#{@p.body};font-family:#{@sans};font-size:14.5px;line-height:1.65;"}
+      class={(@muted && "em-muted") || "em-body"}
+      style={"margin:0 0 12px;color:#{(@muted && @p.muted) || @p.body};font-family:#{@sans};font-size:#{(@muted && "13.5px") || "14.5px"};line-height:1.65;"}
       {@rest}
     >
       {render_slot(@inner_block)}
@@ -484,9 +553,75 @@ defmodule LineaUI.Components.Email do
   tracking number, or `{label, value, :total}` for the highlighted last line.
 
       <.email_facts rows={[{"Estimate", "Thu, Oct 29"}, {"Tracking", "BR482913077XY", :mono}, {"Total", "R$ 1.284,90", :total}]} />
+
+  `variant="table"` is the canvas table: no panel, a rule between rows, the label in the body color and the
+  value in ink, with an optional `header` row of column names in faint small print.
+
+      <.email_facts variant="table" header={{"Indicator", "Value"}} rows={[{"Sales", "R$ 41,2 mil", :mono}]} />
   """
   attr :rows, :list, required: true
   attr :theme, :atom, default: :auto, values: [:auto, :light, :dark]
+
+  attr :variant, :string,
+    default: "panel",
+    values: ~w(panel table),
+    doc: "`panel` is the grey box; `table` the open table of the canvas."
+
+  attr :header, :any,
+    default: nil,
+    doc: "A `{label, value}` pair of column names, a header row over the rows."
+
+  def email_facts(%{variant: "table"} = assigns) do
+    assigns =
+      assign(assigns,
+        p: palette(assigns.theme),
+        sans: @sans,
+        mono: @mono,
+        rows: Enum.map(assigns.rows, &fact/1)
+      )
+
+    ~H"""
+    <table
+      role="presentation"
+      width="100%"
+      border="0"
+      cellpadding="0"
+      cellspacing="0"
+      style="margin:14px 0 4px;border-collapse:separate;"
+    >
+      <tr :if={@header}>
+        <td
+          class="em-faint em-line"
+          style={"padding:10px 16px;border-bottom:1px solid #{@p.hair};color:#{@p.faint};font-family:#{@sans};font-size:12.5px;line-height:18px;"}
+        >
+          {elem(@header, 0)}
+        </td>
+        <td
+          class="em-faint em-line"
+          align="right"
+          style={"padding:10px 16px;border-bottom:1px solid #{@p.hair};color:#{@p.faint};font-family:#{@sans};font-size:12.5px;line-height:18px;text-align:right;"}
+        >
+          {elem(@header, 1)}
+        </td>
+      </tr>
+      <tr :for={{row, index} <- Enum.with_index(@rows)}>
+        <td
+          class="em-body em-line"
+          style={"padding:17px 16px;#{table_rule(index, @p)}color:#{@p.body};font-family:#{@sans};font-size:13.5px;line-height:22px;#{(row.kind == :total && "font-weight:600;") || ""}"}
+        >
+          {row.label}
+        </td>
+        <td
+          class="em-ink em-line"
+          align="right"
+          style={"padding:17px 16px;#{table_rule(index, @p)}color:#{@p.ink};font-family:#{(row.kind == :mono && @mono) || @sans};font-size:13.5px;line-height:22px;font-weight:#{(row.kind == :total && "600") || "400"};text-align:right;word-break:break-all;"}
+        >
+          {row.value}
+        </td>
+      </tr>
+    </table>
+    """
+  end
 
   def email_facts(assigns) do
     assigns =
@@ -531,6 +666,9 @@ defmodule LineaUI.Components.Email do
 
   defp fact({label, value}), do: %{label: label, value: value, kind: :plain}
   defp fact({label, value, kind}), do: %{label: label, value: value, kind: kind}
+
+  defp table_rule(0, _p), do: ""
+  defp table_rule(_index, p), do: "border-top:1px solid #{p.hair};"
 
   defp rule(0, _p), do: ""
   defp rule(_index, p), do: "border-top:1px solid #{p.hair};"
@@ -624,6 +762,9 @@ defmodule LineaUI.Components.Email do
       {".em-ink", "color:#{p.ink} !important"},
       {".em-body", "color:#{p.body} !important"},
       {".em-muted", "color:#{p.muted} !important"},
+      {".em-faint", "color:#{p.faint} !important"},
+      {".em-solid", "background-color:#{p.solid} !important"},
+      {".em-on-solid", "color:#{p.on_solid} !important"},
       {".em-accent", "color:#{p.primary_text} !important"},
       {".em-soft", "background-color:#{p.soft} !important;color:#{p.primary_text} !important"},
       {".em-panel", "background-color:#{p.panel} !important;border-color:#{p.hair} !important"},

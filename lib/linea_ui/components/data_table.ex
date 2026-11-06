@@ -41,6 +41,7 @@ defmodule LineaUI.Components.DataTable do
   use LineaUI.Component
   import LineaUI.Components.Icon, only: [glyph: 1]
 
+  alias LineaUI.Components.Pagination
   alias LineaUI.Components.Table
 
   @pager_list %{
@@ -131,7 +132,9 @@ defmodule LineaUI.Components.DataTable do
   * `on_select_all` — the header checkbox: `%{"selected" => "true" | "false"}`.
 
   The footer shows when `on_page` or `page_path` is given (unless `footer={false}`); the search
-  when `on_search` is.
+  when `on_search` is. The `advanced` title bar shows only when there is something in it (a
+  `:title`, the search, `:filters` or `:actions`). `pager="canvas"` is the design canvas footer and
+  `loading` draws skeleton rows for the first load.
   """
   attr(:id, :string, required: true)
   attr(:rows, :any, required: true, doc: "The rows of the current page, a list or a stream.")
@@ -207,9 +210,29 @@ defmodule LineaUI.Components.DataTable do
 
   attr(:pager, :string,
     default: "rounded",
-    values: ~w(rounded pill circle),
-    doc: "The pager look of the `advanced` variant."
+    values: ~w(rounded pill circle canvas),
+    doc:
+      "The pager look of the `advanced` variant; `canvas` is the design canvas footer (`sg-pager`): the summary at the left, `pagination/1` with `shape=\"canvas\"` at the right."
   )
+
+  attr(:pager_siblings, :integer,
+    default: 1,
+    doc:
+      "With `pager=\"canvas\"`, the pages kept on each side of the current one (`2` shows \"1 2 3 … 10\")."
+  )
+
+  attr(:pager_arrows, :boolean,
+    default: true,
+    doc: "With `pager=\"canvas\"`, the previous and next arrows after the pages."
+  )
+
+  attr(:loading, :boolean,
+    default: false,
+    doc:
+      "Draws `loading_rows` skeleton rows under the headers instead of the rows (the first load), and marks the table `aria-busy`."
+  )
+
+  attr(:loading_rows, :integer, default: 3, doc: "How many skeleton rows `loading` draws.")
 
   attr(:show_label, :string, default: "Show", doc: "Text before the page-size select.")
   attr(:entries_label, :string, default: "entries", doc: "Text after the page-size select.")
@@ -306,8 +329,14 @@ defmodule LineaUI.Components.DataTable do
     |> assign(:paginated, assigns.footer and (assigns.on_page != nil or assigns.page_path != nil))
     |> assign(:icon_button, @icon_button)
     |> assign(:numbers, @numbers)
+    |> assign(:title_bar, title_bar?(assigns))
     |> render_data_table()
   end
+
+  defp title_bar?(assigns),
+    do:
+      assigns.title != [] or assigns.on_search != nil or assigns.filters != [] or
+        assigns.actions != []
 
   defp total(%{total: nil, rows: rows}) when is_list(rows), do: length(rows)
   defp total(%{total: nil}), do: 0
@@ -427,8 +456,14 @@ defmodule LineaUI.Components.DataTable do
 
   defp render_data_table(assigns) do
     ~H"""
-    <div id={@id} class={@class} {@rest}>
-      <div class="flex items-center justify-between">
+    <div
+      id={@id}
+      class={merge(["linea-dtable", @class])}
+      data-compact={@compact && ""}
+      aria-busy={@loading && "true"}
+      {@rest}
+    >
+      <div :if={@title_bar} class="flex items-center justify-between">
         <h2 class="line-clamp-1 text-base font-semibold tracking-[-0.01em] text-slate-900 dark:text-navy-50">
           {render_slot(@title)}
         </h2>
@@ -470,10 +505,29 @@ defmodule LineaUI.Components.DataTable do
           {render_slot(@filters, data_table_toggle_filters(@id))}
         </div>
       </div>
-      <div class="sg-card flush mt-3">
-        <.data_table_body {assigns} table_variant="data" rounded="top" />
+      <div class={["sg-card flush", @title_bar && "mt-3"]}>
+        <.loading_body :if={@loading} {assigns} />
+        <.data_table_body :if={!@loading} {assigns} table_variant="data" rounded="top" />
+        <div :if={@paginated and @pager == "canvas"} class="sg-pager linea-dtable-pager">
+          <Pagination.pagination
+            page={@page}
+            total_pages={@pages}
+            total_entries={@total}
+            page_size={@page_size}
+            summary={canvas_summary(@summary_label)}
+            shape="canvas"
+            siblings={@pager_siblings}
+            arrows={@pager_arrows}
+            on_change={@on_page}
+            patch={@page_path}
+            target={@target}
+            prev_label={@prev_label}
+            next_label={@next_label}
+            page_label={@page_label}
+          />
+        </div>
         <div
-          :if={@paginated}
+          :if={@paginated and @pager != "canvas"}
           class="flex flex-col justify-between gap-3.5 px-[18px] py-3.5 text-[12.5px] text-slate-500 sm:flex-row sm:items-center dark:text-navy-200"
         >
           <form
@@ -544,6 +598,46 @@ defmodule LineaUI.Components.DataTable do
     {Table.table(@table)}
     """
   end
+
+  # the first load: the headers over skeleton rows (the canvas `sg-skel` bars)
+  defp loading_body(assigns) do
+    ~H"""
+    <table class="linea-dt w-full text-left text-[13.5px]">
+      <thead>
+        <tr>
+          <th
+            :for={col <- @col}
+            class={["h-10 px-3.5 font-normal", col[:align] == "right" && "text-right"]}
+          >
+            {col[:label]}
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr :for={_row <- 1..max(@loading_rows, 1)}>
+          <td :for={{col, index} <- Enum.with_index(@col)} class="h-12 px-3.5">
+            <div
+              class="sg-skel h-2.5"
+              style={skeleton_style(col, index)}
+              aria-hidden="true"
+            >
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    """
+  end
+
+  defp skeleton_style(%{align: "right"}, _index), do: "width: 70px; margin-left: auto"
+  defp skeleton_style(_col, 0), do: "width: 50px"
+  defp skeleton_style(_col, _index), do: "width: 160px"
+
+  # pagination/1 names the range %{first} and %{last}
+  defp canvas_summary(nil), do: "Showing %{first}–%{last} of %{total}"
+
+  defp canvas_summary(label),
+    do: label |> String.replace("%{from}", "%{first}") |> String.replace("%{to}", "%{last}")
 
   defp hoverable(nil, [_ | _]), do: false
   defp hoverable(value, _expand), do: value

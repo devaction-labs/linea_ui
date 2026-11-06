@@ -15,6 +15,18 @@ export default {
       this.onInput = () => this.refresh()
       this.el.addEventListener("input", this.onInput)
       this.refresh()
+      // The first measure can come before the web fonts or before the field has its width (a hidden tab,
+      // a stage still laying out), so grow again when the fonts load and when the width changes.
+      if (this.el.dataset.autogrow !== undefined) {
+        document.fonts?.ready?.then(() => this.el.isConnected && this.grow())
+        let width = this.el.clientWidth
+        this.observer = typeof ResizeObserver === "function" && new ResizeObserver(() => {
+          if (this.el.clientWidth === width) return
+          width = this.el.clientWidth
+          this.grow()
+        })
+        this.observer && this.observer.observe(this.el)
+      }
     },
 
     updated() {
@@ -23,6 +35,7 @@ export default {
 
     destroyed() {
       this.el.removeEventListener("input", this.onInput)
+      this.observer && this.observer.disconnect()
     },
 
     refresh() {
@@ -36,7 +49,12 @@ export default {
       if (!target) return
 
       const number = (value) => (value === undefined || value === "" ? null : Number(value))
-      const next = counterState({length: this.el.value.length, min: number(this.el.dataset.min), max: number(this.el.dataset.max)})
+      const next = counterState({
+        length: this.el.value.length,
+        min: number(this.el.dataset.min),
+        max: number(this.el.dataset.max),
+        format: this.el.dataset.format,
+      })
 
       target.textContent === next.text || (target.textContent = next.text)
       TONES.includes(next.tone) && target.dataset.tone !== next.tone && (target.dataset.tone = next.tone)

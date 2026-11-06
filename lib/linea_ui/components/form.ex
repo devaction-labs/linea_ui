@@ -22,9 +22,9 @@ defmodule LineaUI.Components.Form do
   alias LineaUI.Components.Control
 
   @help %{
-    nil => "text-tiny-plus text-slate-400 dark:text-navy-300",
-    "success" => "inline-flex items-center gap-1 text-tiny-plus text-success",
-    "error" => "text-tiny-plus text-error"
+    nil => "text-xs leading-5 text-slate-400 dark:text-navy-300",
+    "success" => "inline-flex items-center gap-1 text-xs leading-5 text-success",
+    "error" => "text-xs leading-5 text-error"
   }
 
   @doc """
@@ -55,7 +55,7 @@ defmodule LineaUI.Components.Form do
 
   def error(assigns) do
     ~H"""
-    <span role="alert" class={merge(["block text-tiny-plus text-error", @class])} {@rest}>
+    <span role="alert" class={merge(["block text-xs leading-5 text-error", @class])} {@rest}>
       {render_slot(@inner_block)}
     </span>
     """
@@ -101,6 +101,12 @@ defmodule LineaUI.Components.Form do
   attr(:id, :string, doc: "The id of the control, for the caption's `for`.")
   attr(:label, :string, default: nil, doc: "The caption.")
   attr(:label_class, :any, default: nil, doc: "Classes of the caption text.")
+
+  attr(:label_hint, :string,
+    default: nil,
+    doc: "A dimmed note at the right of the caption, as the canvas's \"opcional\"."
+  )
+
   attr(:help, :string, default: nil, doc: "The small line under the control.")
 
   attr(:errors, :list,
@@ -131,9 +137,15 @@ defmodule LineaUI.Components.Form do
       <label class="block" for={@id}>
         <span
           :if={@label}
-          class={merge(["block text-[13px]/5 font-medium text-slate-950 dark:text-navy-50", @label_class])}
+          class={
+            merge([
+              "block text-[13px]/5 font-medium text-slate-950 dark:text-navy-50",
+              @label_hint && "flex justify-between gap-2",
+              @label_class
+            ])
+          }
         >
-          {@label}
+          {@label}<span :if={@label_hint} class="font-normal text-slate-400 dark:text-navy-300">{@label_hint}</span>
         </span>
         <span class={control_class(@label)}>{render_slot(@inner_block)}</span>
       </label>
@@ -147,7 +159,9 @@ defmodule LineaUI.Components.Form do
     <div class={@class} {@rest}>
       <span
         :if={@label}
-        class={merge(["block text-[13px]/5 font-medium text-slate-950 dark:text-navy-50", @label_class])}
+        class={
+          merge(["block text-[13px]/5 font-medium text-slate-950 dark:text-navy-50", @label_class])
+        }
         id={@id && "#{@id}-label"}
       >
         {@label}
@@ -192,8 +206,10 @@ defmodule LineaUI.Components.Form do
 
   defp messages(assigns) do
     ~H"""
-    <.help_text :if={@help} state={help_state(@state, @errors)}>{@help}</.help_text>
-    <.error :for={message <- @errors}>{message}</.error>
+    <.help_text :if={@help} state={help_state(@state, @errors)} class="mt-1.5 block">
+      {@help}
+    </.help_text>
+    <.error :for={message <- @errors} class="mt-1.5">{message}</.error>
     """
   end
 

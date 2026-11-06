@@ -142,6 +142,32 @@ defmodule LineaUI.Components.CarouselTest do
     assert [_, _] = find(html, "#i .carousel-button") |> Enum.to_list()
     assert [] = find(html, "#n .carousel-button") |> Enum.to_list()
   end
+
+  test "the canvas variant and its thumbnails" do
+    html =
+      render(~H"""
+      <.carousel id="c" variant="canvas" pagination="fraction" navigation index={1} thumb_label="Foto">
+        <.carousel_slide>A</.carousel_slide>
+        <.carousel_slide>B</.carousel_slide>
+        <:thumb>a</:thumb>
+        <:thumb>b</:thumb>
+      </.carousel>
+      """)
+
+    assert LazyHTML.attribute(find(html, "#c"), "data-variant") == ["canvas"]
+    assert [_] = find(html, "#c > [data-carousel-pagination][data-compact]") |> Enum.to_list()
+    assert [_, _] = find(html, "#c > .carousel-button svg.carousel-chevron") |> Enum.to_list()
+
+    assert LazyHTML.attribute(
+             find(html, "#c [data-carousel-thumbs] button"),
+             "data-carousel-bullet"
+           ) ==
+             ["0", "1"]
+
+    assert LazyHTML.attribute(find(html, "#c .carousel-thumb[aria-current]"), "aria-label") == [
+             "Foto 2"
+           ]
+  end
 end
 
 defmodule LineaUI.Components.CarouselLiveTest do

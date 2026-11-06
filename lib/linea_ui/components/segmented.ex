@@ -17,8 +17,13 @@ defmodule LineaUI.Components.Segmented do
 
       <.segmented field={@form[:regime]} options={["Simples Nacional", "Regime normal"]} />
 
-  Options are strings, `{label, value}` tuples or maps with `:label`, `:value`, and optionally `:count` (a small
-  number after the label) and `:disabled`.
+  Options are strings, `{label, value}` tuples or maps with `:label`, `:value`, and optionally `:icon` (a `huge-*`
+  icon before the label), `:count` (a faint mono number after the label) and `:disabled`.
+
+      <.segmented id="view" value="board" options={[
+        %{label: "Quadro", value: "board", icon: "huge-kanban"},
+        %{label: "Lista", value: "list", icon: "huge-list-view"}
+      ]} />
 
   It is a `role="group"` of buttons with `aria-pressed`. The choice is made in the browser, without a round trip;
   a new `value` from the server wins, and a patch that does not change it leaves the person's choice alone. Arrow
@@ -33,6 +38,8 @@ defmodule LineaUI.Components.Segmented do
   """
 
   use LineaUI.Component
+
+  import LineaUI.Components.Icon, only: [icon: 1]
 
   alias LineaUI.Components.Control
   alias LineaUI.Components.Form
@@ -137,11 +144,9 @@ defmodule LineaUI.Components.Segmented do
           phx-mounted={JS.ignore_attributes(["aria-pressed", "tabindex"])}
           data-value={segment.value}
         >
+          <.icon :if={segment.icon} name={segment.icon} class="size-4 shrink-0" />
           {segment.label}
-          <span
-            :if={segment.count != nil}
-            class="ml-1.5 font-mono text-[11px] text-slate-400"
-          >
+          <span :if={segment.count != nil} class="font-mono font-normal text-(--faint)">
             {segment.count}
           </span>
         </button>
@@ -161,13 +166,17 @@ defmodule LineaUI.Components.Segmented do
         label: option.label,
         value: option.value,
         disabled: option.disabled,
-        count: count(option.data)
+        count: count(option.data),
+        icon: icon_name(option.data)
       }
     end)
   end
 
   defp count(%{count: count}), do: count
   defp count(_data), do: nil
+
+  defp icon_name(%{icon: icon}) when is_binary(icon), do: icon
+  defp icon_name(_data), do: nil
 
   defp value(nil), do: ""
   defp value(value), do: to_string(value)

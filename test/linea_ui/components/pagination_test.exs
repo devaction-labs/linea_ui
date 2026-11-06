@@ -78,7 +78,7 @@ defmodule LineaUI.Components.PaginationTest do
         ~H|<.pagination page={5} total_pages={10} on_change="go" divided shape="pill" size="lg" />|
       )
 
-    assert html =~ "..."
+    assert html =~ "…"
     assert "space-x-1.5" in classes(html, "ol")
     assert classes(html, "li") == []
     assert "rounded-full" in classes(html, "button[phx-value-page='10']")

@@ -88,7 +88,7 @@ defmodule LineaUI.Components.PhoneInput do
 
   @code "font-inter font-normal text-[13px] text-slate-950 dark:text-navy-50"
 
-  @picker "flex h-full w-full items-center gap-1.5 rounded-l-lg pl-3 pr-1 text-slate-600 outline-hidden transition-colors hover:text-slate-800 focus-visible:text-primary disabled:pointer-events-none dark:text-navy-100 dark:hover:text-navy-50 dark:focus-visible:text-accent"
+  @picker "flex h-full w-full items-center gap-1.5 rounded-l-lg pl-3 pr-1 text-slate-950 outline-hidden transition-colors hover:text-slate-600 focus-visible:text-primary disabled:pointer-events-none dark:text-navy-50 dark:hover:text-navy-100 dark:focus-visible:text-accent"
 
   @doc """
   Renders the phone input.
@@ -293,7 +293,7 @@ defmodule LineaUI.Components.PhoneInput do
         <:prefix interactive class="pointer-events-none w-full justify-start">
           <span
             aria-hidden="true"
-            class="absolute inset-y-0 left-0 w-[6.25rem] rounded-s-md border-e border-slate-200 bg-slate-100 dark:border-navy-450 dark:bg-navy-600"
+            class="absolute top-1/2 left-[6.25rem] h-5 w-px -translate-x-px -translate-y-1/2 bg-slate-200 dark:bg-navy-450"
           ></span>
           <div
             id={@id <> "-country"}
@@ -314,11 +314,11 @@ defmodule LineaUI.Components.PhoneInput do
               <span :if={@flags} class="text-base leading-none" aria-hidden="true" data-flag>
                 {Format.flag(@selected.iso)}
               </span>
-              <span :if={!@flags} class="font-inter font-medium" data-iso-code>{@selected.iso}</span>
+              <span :if={!@flags} class="font-inter" data-iso-code>{@selected.iso}</span>
               <span class={@code_class} data-code>+{@selected.code}</span>
               <.glyph
                 name={:chevron_down}
-                class="ml-auto size-3.5 shrink-0 text-slate-400 dark:text-navy-300"
+                class="size-3.5 shrink-0 text-slate-950 dark:text-navy-50"
               />
             </button>
             <div

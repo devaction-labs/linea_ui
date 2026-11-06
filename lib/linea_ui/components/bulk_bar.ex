@@ -26,7 +26,10 @@ defmodule LineaUI.Components.BulkBar do
   ## Looks
 
   `variant="inverse"` (default) is the opposite of the page: a dark bar on a light page, a light one on a dark
-  page. `soft` is the page's own surface with a ring, for when the inverted bar weighs too much. `floating`
+  page. `soft` is the page's own surface with a ring, for when the inverted bar weighs too much. `solid` is the
+  canvas bar: the `--solid` surface, the count written in bold ("3 selecionados") instead of a badge, no
+  separators, rounded `sm` buttons (`soft`, `ghost`, `danger`...), and a close button only when there is an
+  `on_clear`. `floating`
   (default) pins the bar to the bottom center of the viewport above the page; `floating={false}` lays it out
   where it is, for a bar inside a card or a toolbar.
 
@@ -40,6 +43,24 @@ defmodule LineaUI.Components.BulkBar do
   keeps the focus (it is `aria-disabled`, not a native `disabled`) and does nothing: its `phx-*` attributes
   are not rendered.
 
+  ## Progress
+
+  While a bulk action runs, `progress` (done) and `progress_max` (all) turn the bar into a progress bar: the
+  `label` in bold as it is given (no count before it), a meter and the "5/12" fraction.
+
+      <.bulk_bar id="emit" count={12} variant="solid" label="Emitindo 12 notas…" progress={5} progress_max={12} />
+
+  ## Confirm
+
+  An `:action` with `confirm` (a title) asks first: the button opens a small card under the bar (above it when
+  floating) with `confirm_text`, a cancel and a confirm button; only the confirm button runs the action's
+  `phx-click`.
+
+      <:action variant="danger" icon="huge-delete-02" phx-click="delete" confirm="Excluir 3 pedidos?"
+        confirm_text="Os rascunhos somem para todos." confirm_label="Excluir" cancel_label="Cancelar">
+        Excluir
+      </:action>
+
   ## Keyboard
 
   Esc clears the selection (it presses the close button), unless it was meant for an open list or another
@@ -50,7 +71,7 @@ defmodule LineaUI.Components.BulkBar do
 
   import LineaUI.Components.Icon, only: [glyph: 1, icon: 1]
 
-  @variants ~w(inverse soft)
+  @variants ~w(inverse soft solid)
 
   @doc "The variants of the bar."
   @spec bulk_bar_variants() :: [String.t()]
@@ -101,15 +122,29 @@ defmodule LineaUI.Components.BulkBar do
     default: true,
     doc: "Pin the bar to the bottom center of the viewport."
 
+  attr :progress, :integer,
+    default: nil,
+    doc:
+      "How many are done, for a running bulk action: shows a meter and `progress/progress_max`."
+
+  attr :progress_max, :integer, default: nil, doc: "How many there are to do, with `progress`."
+
   attr :class, :any, default: nil
   attr :rest, :global
 
   slot :field, doc: "A control, skinned as a quiet field."
 
   slot :action, doc: "A button." do
-    attr :variant, :string, values: ~w(default primary danger)
+    attr :variant, :string, values: ~w(default primary soft ghost danger)
     attr :disabled, :boolean
     attr :icon, :string
+
+    attr :confirm, :string,
+      doc: "A title: the button opens a card that asks before running the action."
+
+    attr :confirm_text, :string
+    attr :confirm_label, :string, doc: "The confirm button (default `Confirm`)."
+    attr :cancel_label, :string, doc: "The cancel button (default `Cancel`)."
     attr :id, :string
     attr :title, :string
     attr :"aria-label", :string
@@ -124,6 +159,9 @@ defmodule LineaUI.Components.BulkBar do
       assigns
       |> assign(:caption, caption(assigns))
       |> assign(:select_all?, select_all?(assigns))
+      |> assign(:progress?, is_integer(assigns.progress) and is_integer(assigns.progress_max))
+      |> assign(:canvas?, assigns.variant == "solid")
+      |> assign(:actions, Enum.with_index(assigns.action))
 
     ~H"""
     <div
@@ -137,17 +175,34 @@ defmodule LineaUI.Components.BulkBar do
       class={
         merge([
           "linea-bulk",
-          @floating &&
-            "fixed bottom-6 left-1/2 z-(--linea-z-fab) max-w-[calc(100vw-1.5rem)] -translate-x-1/2",
+          if(@floating,
+            do:
+              "fixed bottom-6 left-1/2 z-(--linea-z-fab) max-w-[calc(100vw-1.5rem)] -translate-x-1/2",
+            else: "relative"
+          ),
           @class
         ])
       }
       {@rest}
     >
-      <span class="linea-bulk-count" aria-live="polite">
+      <b :if={@progress?} class="linea-bulk-text" aria-live="polite">{@label}</b>
+      <b :if={!@progress? and @canvas?} class="linea-bulk-text" aria-live="polite">{@caption}</b>
+      <span :if={!@progress? and !@canvas?} class="linea-bulk-count" aria-live="polite">
         <span class="linea-bulk-badge">{@count}</span>
         <span>{label_for(@count, @label, @label_plural)}</span>
       </span>
+      <span
+        :if={@progress?}
+        class="linea-bulk-meter"
+        role="progressbar"
+        aria-valuemin="0"
+        aria-valuemax={@progress_max}
+        aria-valuenow={@progress}
+        aria-label={@label}
+      >
+        <i style={"width: #{percent(@progress, @progress_max)}%"}></i>
+      </span>
+      <span :if={@progress?} class="linea-bulk-fraction">{@progress}/{@progress_max}</span>
       <button
         :if={@select_all?}
         type="button"
@@ -157,20 +212,74 @@ defmodule LineaUI.Components.BulkBar do
       >
         {String.replace(@select_all_label, "%{total}", to_string(@total))}
       </button>
-      <span :if={@field != [] or @action != []} class="linea-bulk-sep" aria-hidden="true"></span>
+      <span
+        :if={!@canvas? and !@progress? and (@field != [] or @action != [])}
+        class="linea-bulk-sep"
+        aria-hidden="true"
+      ></span>
       <div :for={field <- @field} class="linea-bulk-field">{render_slot(field)}</div>
+      <%= for {action, index} <- @actions do %>
+        <button
+          :if={!action[:confirm]}
+          type="button"
+          aria-disabled={action[:disabled] && "true"}
+          class="linea-bulk-btn"
+          data-variant={action[:variant] || "default"}
+          {action_attrs(action)}
+        >
+          <.icon :if={action[:icon]} name={action[:icon]} class="size-4 shrink-0" />{render_slot(
+            action
+          )}
+        </button>
+        <button
+          :if={action[:confirm]}
+          type="button"
+          aria-disabled={action[:disabled] && "true"}
+          aria-haspopup="dialog"
+          aria-controls={"#{@id}-confirm-#{index}"}
+          class="linea-bulk-btn"
+          data-variant={action[:variant] || "default"}
+          phx-click={!action[:disabled] && JS.toggle(to: "##{@id}-confirm-#{index}")}
+          {confirm_trigger_attrs(action)}
+        >
+          <.icon :if={action[:icon]} name={action[:icon]} class="size-4 shrink-0" />{render_slot(
+            action
+          )}
+        </button>
+        <div
+          :if={action[:confirm]}
+          id={"#{@id}-confirm-#{index}"}
+          role="alertdialog"
+          aria-labelledby={"#{@id}-confirm-#{index}-title"}
+          class="linea-bulk-confirm"
+          style="display: none"
+        >
+          <b id={"#{@id}-confirm-#{index}-title"} class="linea-bulk-confirm-title">{action[:confirm]}</b>
+          <p :if={action[:confirm_text]} class="linea-bulk-confirm-text">{action[:confirm_text]}</p>
+          <div class="linea-bulk-confirm-actions">
+            <button
+              type="button"
+              class="linea-bulk-btn"
+              data-variant="ghost"
+              phx-click={JS.hide(to: "##{@id}-confirm-#{index}")}
+            >
+              {action[:cancel_label] || "Cancel"}
+            </button>
+            <button
+              type="button"
+              class="linea-bulk-btn"
+              data-variant={action[:variant] || "default"}
+              phx-click={confirm_click(action[:"phx-click"], "##{@id}-confirm-#{index}")}
+              {confirm_attrs(action)}
+            >
+              {action[:confirm_label] || "Confirm"}
+            </button>
+          </div>
+        </div>
+      <% end %>
+      <span :if={!@canvas? and !@progress?} class="linea-bulk-sep" aria-hidden="true"></span>
       <button
-        :for={action <- @action}
-        type="button"
-        aria-disabled={action[:disabled] && "true"}
-        class="linea-bulk-btn"
-        data-variant={action[:variant] || "default"}
-        {action_attrs(action)}
-      >
-        <.icon :if={action[:icon]} name={action[:icon]} class="size-4 shrink-0" />{render_slot(action)}
-      </button>
-      <span class="linea-bulk-sep" aria-hidden="true"></span>
-      <button
+        :if={!(@canvas? or @progress?) or @on_clear != nil}
         type="button"
         class="linea-bulk-clear"
         aria-label={@clear_label <> " (Esc)"}
@@ -196,9 +305,46 @@ defmodule LineaUI.Components.BulkBar do
     end
   end
 
+  @confirm_attrs [
+    :variant,
+    :disabled,
+    :icon,
+    :confirm,
+    :confirm_text,
+    :confirm_label,
+    :cancel_label
+  ]
+
+  # the trigger of a confirmed action keeps its id and labels, not its phx-* bindings
+  defp confirm_trigger_attrs(action) do
+    action
+    |> assigns_to_attributes(@confirm_attrs)
+    |> Enum.reject(fn {name, _} -> String.starts_with?(to_string(name), "phx-") end)
+  end
+
+  # the confirm button runs the action's phx-* bindings (phx-click is chained with closing the card)
+  defp confirm_attrs(action) do
+    action
+    |> assigns_to_attributes([:"phx-click", :id, :title, :"aria-label" | @confirm_attrs])
+    |> Enum.filter(fn {name, _} -> String.starts_with?(to_string(name), "phx-") end)
+  end
+
+  defp confirm_click(nil, card), do: JS.hide(to: card)
+  defp confirm_click(%JS{} = js, card), do: JS.hide(js, to: card)
+
+  defp confirm_click(event, card) when is_binary(event),
+    do: event |> JS.push() |> JS.hide(to: card)
+
+  defp percent(_done, max) when max <= 0, do: 0
+  defp percent(done, max), do: Float.round(min(done, max) / max * 100, 2)
+
   defp label_for(1, label, _plural), do: label
   defp label_for(_count, label, nil), do: label
   defp label_for(_count, _label, plural), do: plural
+
+  defp caption(%{progress: progress, progress_max: max, label: label})
+       when is_integer(progress) and is_integer(max),
+       do: label
 
   defp caption(assigns),
     do: "#{assigns.count} #{label_for(assigns.count, assigns.label, assigns.label_plural)}"

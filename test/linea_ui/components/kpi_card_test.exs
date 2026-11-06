@@ -1,6 +1,8 @@
 defmodule LineaUI.Components.KpiCardTest do
   use LineaUI.ComponentCase, async: true
 
+  defp attr_of(html, selector, name), do: html |> find(selector) |> LazyHTML.attribute(name)
+
   test "renders label, figure, change and sparkline as the canvas card" do
     html =
       render(~H"""
@@ -48,5 +50,34 @@ defmodule LineaUI.Components.KpiCardTest do
     html = render(~H|<.kpi_card id="k" loading />|)
     assert LazyHTML.attribute(find(html, "#k"), "aria-busy") == ["true"]
     assert [_ | _] = find(html, ".sg-skel") |> Enum.to_list()
+  end
+
+  test "progress swaps the sparkline for the goal meter and its caption" do
+    html =
+      render(~H"""
+      <.kpi_card
+        id="k"
+        label="Vendas do mês"
+        value="R$ 248,6"
+        unit="mil"
+        delta="12,4%"
+        progress={78}
+        caption="78% da meta de R$ 320 mil"
+        spark={[1, 2, 3]}
+      />
+      """)
+
+    assert ["sg-kpi-tight", "sg-kpi-goal"] -- classes(html, "#k") == []
+    assert attr_of(html, ".sg-meter.acc > i", "style") == ["width:78%"]
+    assert attr_of(html, ".sg-meter", "aria-valuenow") == ["78"]
+    assert LazyHTML.text(find(html, ".sg-kpi-c")) == "78% da meta de R$ 320 mil"
+    assert find(html, "svg.sg-spark") |> Enum.to_list() == []
+  end
+
+  test "gap false sets the figure right under the top line" do
+    html = render(~H|<.kpi_card id="k" label="a" value="1" gap={false} />|)
+    assert "sg-kpi-tight" in classes(html, "#k")
+    html = render(~H|<.kpi_card id="k" label="a" value="1" />|)
+    refute "sg-kpi-tight" in classes(html, "#k")
   end
 end

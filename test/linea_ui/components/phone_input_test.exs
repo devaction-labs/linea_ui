@@ -186,12 +186,13 @@ defmodule LineaUI.Components.PhoneInputTest do
       assert attr_of(html, "[phx-hook='LineaUI.PhoneInput']", "data-flags") == ["true"]
     end
 
-    test "the picker sits on a muted addon fill and the list is as wide as the field" do
+    test "a plain 1px divider separates the picker and the list is as wide as the field" do
       html = render(~H|<.phone_input name="phone" />|)
 
-      fill = classes(html, "[data-prefix] > span[aria-hidden]")
-      assert "bg-slate-100" in fill
-      assert "border-e" in fill
+      divider = classes(html, "[data-prefix] > span[aria-hidden]")
+      assert "w-px" in divider
+      assert "bg-slate-200" in divider
+      refute "bg-slate-100" in divider
       assert "w-full" in classes(html, "[data-dropdown]")
       assert "min-w-64" in classes(html, "[data-dropdown]")
       refute "w-72" in classes(html, "[data-dropdown]")

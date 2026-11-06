@@ -9,6 +9,13 @@ defmodule LineaUI.Components.KpiCard do
   `trend` draws the arrow and `delta_tone` colors the change: a rise is good by default (`success`, the canvas's
   `up`) and a fall is bad (`error`, `down`). `color="primary"` draws the sparkline in the accent; any other color in
   the ink.
+
+  `progress` (0 to 100) swaps the sparkline for the canvas goal meter, with `caption` under it:
+
+      <.kpi_card label="Vendas do mês" value="R$ 248,6" unit="mil" delta="12,4%" progress={78}
+        caption="78% da meta de R$ 320 mil" />
+
+  `gap={false}` drops the 14px space between the top line and the figure (the canvas's single cards).
   """
 
   use LineaUI.Component
@@ -49,6 +56,23 @@ defmodule LineaUI.Components.KpiCard do
     doc: "Kept for compatibility; the canvas card is one layout."
   )
 
+  attr(:progress, :integer,
+    default: nil,
+    doc:
+      "How much of a goal is done (0 to 100): an accent meter under the figure, in place of the sparkline."
+  )
+
+  attr(:caption, :string,
+    default: nil,
+    doc: "A faint line under the meter (`78% da meta de R$ 320 mil`)."
+  )
+
+  attr(:gap, :boolean,
+    default: true,
+    doc:
+      "The 14px space between the top line and the figure; `false` sets the figure right under it."
+  )
+
   attr(:loading, :boolean, default: false, doc: "Placeholder blocks in place of the content.")
   attr(:class, :any, default: nil)
   attr(:rest, :global)
@@ -70,7 +94,17 @@ defmodule LineaUI.Components.KpiCard do
       |> assign(:uid, "kpi-#{:erlang.phash2({assigns.label, assigns.spark})}")
 
     ~H"""
-    <div class={merge(["sg-card sg-kpi", @class])} {@rest}>
+    <div
+      class={
+        merge([
+          "sg-card sg-kpi",
+          (!@gap or @progress) && "sg-kpi-tight",
+          @progress && "sg-kpi-goal",
+          @class
+        ])
+      }
+      {@rest}
+    >
       <div class="row" style="justify-content:space-between">
         <span class="sg-kpi-l">{@label}</span>
         <span :if={@delta} class={["sg-delta", @tone]}>
@@ -82,7 +116,20 @@ defmodule LineaUI.Components.KpiCard do
           {@delta}
         </span>
       </div>
-      <div class="sg-kpi-row">
+      <div :if={@progress} class="sg-kpi-v">{@value}<small>{@unit}</small></div>
+      <div
+        :if={@progress}
+        class="sg-meter acc"
+        role="progressbar"
+        aria-valuenow={@progress}
+        aria-valuemin="0"
+        aria-valuemax="100"
+        aria-label={@label}
+      >
+        <i style={"width:#{min(max(@progress, 0), 100)}%"}></i>
+      </div>
+      <span :if={@progress && @caption} class="sg-kpi-c">{@caption}</span>
+      <div :if={!@progress} class="sg-kpi-row">
         <span class="sg-kpi-v">{@value}<small>{@unit}</small></span>
         <svg
           :if={@paths}

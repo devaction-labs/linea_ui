@@ -189,4 +189,33 @@ defmodule LineaUI.Components.CardTableTest do
       refute orders() =~ "linea-ctable-top"
     end
   end
+
+  test "flat is a plain table in a card, with the title, the actions or a top slot" do
+    html =
+      render(~H"""
+      <.card_table id="t" variant="flat" title="Últimos pedidos" rows={[%{n: "#1", t: "R$ 1"}]}>
+        <:actions><a href="#">Ver todos</a></:actions>
+        <:col :let={o} label="Pedido">{o.n}</:col>
+        <:col :let={o} label="Total" align="end">{o.t}</:col>
+      </.card_table>
+      """)
+
+    top =
+      render(~H"""
+      <.card_table id="u" variant="flat" rows={[]}>
+        <:top>
+          <nav id="tabs">Abas</nav>
+        </:top>
+        <:col :let={o} label="Pedido">{o}</:col>
+      </.card_table>
+      """)
+
+    assert [_] = find(html, "#t-box.sg-card.flush table.sg-table") |> Enum.to_list()
+    assert find(html, "#t-box .sg-card-h h3") |> LazyHTML.text() == "Últimos pedidos"
+    assert [_] = find(html, "#t-box .sg-card-h .meta a") |> Enum.to_list()
+    assert [_] = find(html, "#t-box th.r") |> Enum.to_list()
+    assert find(html, "#t tr td.r") |> LazyHTML.text() =~ "R$ 1"
+    assert [_] = find(top, "#u-box .linea-ctable-flat-top #tabs") |> Enum.to_list()
+    assert [] = find(top, "#u-box .sg-card-h") |> Enum.to_list()
+  end
 end

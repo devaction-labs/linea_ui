@@ -12,7 +12,8 @@ import {runJS} from "./dialog.js"
  * when the query has no match (or always, with `data-assistant-mode="always"`). Choosing a row closes the modal and
  * runs `data-on-select` with `%{id, value, new_tab}`; the assistant runs `data-on-assistant` with `%{id, query}`.
  * The modal's own hook handles Esc, the backdrop and focus; this one resets the palette each time the modal opens
- * and toggles it on the shortcut in `data-shortcut`.
+ * and toggles it on the shortcut in `data-shortcut`. With `data-highlight="typed"` no row is active until something
+ * is typed or an arrow or the mouse picks one.
  */
 export default {
   "LineaUI.CommandPalette": {
@@ -102,6 +103,7 @@ export default {
     reset() {
       const initial = this.el.dataset.initialQuery || ""
       const searched = this.query !== initial
+      this.picked = false
       this.query = initial
       this.scope = this.firstScope()
       this.active = 0
@@ -174,13 +176,19 @@ export default {
     },
 
     setActive(index) {
+      this.picked = true
       this.active = index
       this.paintActive()
     },
 
+    // with `data-highlight="typed"`, no row is active before a query or a pick
+    idle() {
+      return this.el.dataset.highlight === "typed" && !this.query && !this.picked
+    },
+
     paintActive() {
       const rows = this.rows()
-      this.active = settle(this.active, rows.length)
+      this.active = this.idle() ? -1 : settle(this.active, rows.length)
       this.el.querySelectorAll("[role='option']").forEach((row) => row.setAttribute("aria-selected", "false"))
       const current = rows[this.active]
       const input = this.input()

@@ -231,4 +231,48 @@ defmodule LineaUI.Components.StepsTest do
     assert "mt-4" in classes(html, "#s")
     assert html |> find("#s") |> LazyHTML.attribute("data-x") == ["1"]
   end
+
+  test "the canvas stepper: sg-steps with checks, a solid current and numbers to do" do
+    html =
+      render(~H"""
+      <.stepper variant="canvas" current={1}>
+        <:step label="A" />
+        <:step label="B" />
+        <:step label="C" />
+      </.stepper>
+      """)
+
+    assert "sg-steps" in classes(html, "ol")
+    assert states(html) == ["done", "current", "todo"]
+    assert "done" in classes(html, "li:nth-child(1)")
+    assert "cur" in classes(html, "li:nth-child(2)")
+    assert stepper_texts(html, "li i") == ["✓", "2", "3"]
+  end
+
+  test "the vertical canvas stepper shows a step's icon in its tile" do
+    html =
+      render(~H"""
+      <.stepper variant="canvas" orientation="vertical" current={1}>
+        <:step label="A" sub="Done" />
+        <:step label="B" icon="huge-file-02" />
+      </.stepper>
+      """)
+
+    assert "is-vertical" in classes(html, "ol")
+    assert "pos" in classes(html, "li:nth-child(1) .sg-ic")
+    assert "acc" in classes(html, "li:nth-child(2) .sg-ic")
+    assert [_] = find(html, "li:nth-child(2) .sg-ic .huge-file-02") |> Enum.to_list()
+    assert stepper_texts(html, ".stepper-canvas-sub") == ["Done"]
+  end
+
+  test "a step's icon replaces the number in the default stepper too" do
+    html =
+      render(~H"""
+      <.stepper current={0}>
+        <:step label="A" icon="huge-file-02" />
+      </.stepper>
+      """)
+
+    assert [_] = find(html, "li .rounded-full .huge-file-02") |> Enum.to_list()
+  end
 end

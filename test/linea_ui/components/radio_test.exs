@@ -1,6 +1,8 @@
 defmodule LineaUI.Components.RadioTest do
   use LineaUI.ComponentCase, async: true
 
+  defp attr_of(html, selector, name), do: html |> find(selector) |> LazyHTML.attribute(name)
+
   test "options render radios sharing a name, the value checked" do
     html =
       render(~H"""
@@ -37,14 +39,32 @@ defmodule LineaUI.Components.RadioTest do
     assert "size-5" in classes(render(~H|<.checkbox name="c" />|), "input")
   end
 
-  test "the card is a 14px rounded row with 14px of padding and a 1px border that turns to the color when chosen" do
+  test "the card is the canvas sg-choice: radio at the start by default, at the end with control=end" do
     html = render(~H|<.radio_group name="r" variant="card" value="a" options={~w(a b)} />|)
-    card = classes(html, "label")
-    assert "p-3.5" in card
-    assert "rounded-[14px]" in card
-    assert "border" in card
-    assert "has-checked:border-slate-500" in card
-    refute "has-checked:ring-3" in card
+    assert "lu-rcard" in classes(html, "label")
+    assert attr_of(html, "label", "data-color") == ["neutral", "neutral"]
+    assert ["lu-rcard-control" | _] = html |> find("label > span") |> LazyHTML.attribute("class")
+
+    html =
+      render(~H"""
+      <.radio_group name="r" variant="card" control="end" value="a">
+        <:radio value="a" icon="huge-flash" description="Na hora">Pix</:radio>
+        <:radio value="b" count="R$ 18" description="1 a 2 dias">Entrega</:radio>
+      </.radio_group>
+      """)
+
+    assert "sg-ic" in classes(html, "label .lu-rcard-icon")
+    assert html |> find("label:first-child > span:last-child input") |> Enum.count() == 1
+
+    assert "is-stacked" in (html
+                            |> find("label")
+                            |> Enum.at(1)
+                            |> LazyHTML.attribute("class")
+                            |> hd()
+                            |> String.split())
+
+    assert html |> find(".lu-rcard-head input[value=b]") |> Enum.count() == 1
+    assert html |> find(".lu-rcard-figure") |> LazyHTML.text() == "R$ 18"
   end
 
   test "slots override color and disabled; shape and variant apply to all" do

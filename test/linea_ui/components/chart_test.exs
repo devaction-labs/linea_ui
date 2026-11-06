@@ -105,6 +105,44 @@ defmodule LineaUI.Components.ChartTest do
 
     assert find(html, "#b") |> LazyHTML.attribute("data-on-cursor") == ["cursor"]
   end
+
+  test "bar_list writes the label and value above a track filled against the largest amount" do
+    html =
+      render(~H"""
+      <.bar_list id="b" label="Clientes">
+        <:item label="Casa" value="R$ 41,2 mil" amount={41_200} />
+        <:item label="Mercadinho" value="R$ 20,6 mil" amount={20_600} />
+      </.bar_list>
+      """)
+
+    assert LazyHTML.attribute(find(html, "#b"), "aria-label") == ["Clientes"]
+
+    assert find(html, "#b .linea-bar-list-value") |> Enum.map(&LazyHTML.text/1) == [
+             "R$ 41,2 mil",
+             "R$ 20,6 mil"
+           ]
+
+    assert LazyHTML.attribute(find(html, "#b .linea-bar-list-track > i"), "style") == [
+             "width: 100.0%",
+             "width: 50.0%"
+           ]
+  end
+
+  test "heatmap draws a cell per level, clamped, and the scale" do
+    html =
+      render(
+        ~H|<.heatmap id="h" label="Vendas" columns={3} levels={[0, 2, 9]} less="Menos" more="Mais" />|
+      )
+
+    assert LazyHTML.attribute(find(html, "#h .linea-heat-grid > i"), "data-level") == [
+             "0",
+             "2",
+             "4"
+           ]
+
+    assert LazyHTML.attribute(find(html, "#h .linea-heat-grid"), "aria-label") == ["Vendas"]
+    assert [_, _, _, _, _] = find(html, "#h .linea-heat-scale > i") |> Enum.to_list()
+  end
 end
 
 defmodule LineaUI.Components.ChartLiveTest do

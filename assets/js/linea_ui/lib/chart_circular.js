@@ -86,6 +86,9 @@ const figureNodes = (config, g, items, spec) => {
   )
 }
 
+// The value's own color and font family, inline so they win over the theme's center text.
+const centerStyle = (value) => [value?.color ? `fill:${value.color}` : null, value?.fontFamily ? `font-family:${value.fontFamily}` : null].filter(Boolean).join(";") || null
+
 const centerNodes = (config, g, items, spec) => {
   if (spec.layout === "figure") return figureNodes(config, g, items, spec)
   const x = g.cx
@@ -98,7 +101,9 @@ const centerNodes = (config, g, items, spec) => {
       : null
   const value = (text) =>
     spec.value?.show !== false
-      ? h("text", {class: "linea-chart-center-value", "data-center": "value", x, y: anchor + Number(spec.value?.offsetY ?? 16) + (spec.name?.show !== false ? 16 : 0), "text-anchor": "middle", "font-size": parseFloat(spec.value?.fontSize ?? 14), "font-weight": spec.value?.fontWeight ?? 400, fill: spec.value?.color}, text)
+      ? spec.name?.show === false
+        ? h("text", {class: "linea-chart-center-value", "data-center": "value", x, y: g.cy + Number(spec.value?.offsetY ?? 0), "text-anchor": "middle", "dominant-baseline": "central", "font-size": parseFloat(spec.value?.fontSize ?? 14), "font-weight": spec.value?.fontWeight ?? 400, style: centerStyle(spec.value)}, text)
+        : h("text", {class: "linea-chart-center-value", "data-center": "value", x, y: anchor + Number(spec.value?.offsetY ?? 16) + 16, "text-anchor": "middle", "font-size": parseFloat(spec.value?.fontSize ?? 14), "font-weight": spec.value?.fontWeight ?? 400, style: centerStyle(spec.value)}, text)
       : null
   return h("g", {class: "linea-chart-center", opacity: items.opacity}, name(items.name), value(items.value))
 }

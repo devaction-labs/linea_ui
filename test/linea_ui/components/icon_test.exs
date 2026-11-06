@@ -77,4 +77,18 @@ defmodule LineaUI.Components.IconTest do
     html = render(~H|<.glyph name={:editor_picker_background} class={nil} />|)
     assert find(html, "svg g.ql-fill rect") |> Enum.count() > 10
   end
+
+  test "boxed and tone draw the canvas icon box" do
+    html =
+      render(~H"""
+      <.icon id="plain" name="huge-file-01" boxed />
+      <.icon id="ok" name="huge-tick-02" tone="success" />
+      <.icon id="md" name="huge-flash" tone="accent" box_size="md" />
+      """)
+
+    assert ["sg-ic"] == classes(html, "#plain")
+    assert ["huge-file-01", "size-4"] == classes(html, "#plain > span")
+    assert ["sg-ic", "pos"] == classes(html, "#ok")
+    assert ["sg-ic", "acc", "sg-ic-md"] == classes(html, "#md")
+  end
 end

@@ -145,6 +145,12 @@ defmodule LineaUI.Components.Input do
 
   attr(:label, :string, default: nil, doc: "The caption.")
   attr(:label_class, :any, default: nil, doc: "Classes of the caption text.")
+
+  attr(:label_hint, :string,
+    default: nil,
+    doc: "A dimmed note at the right of the caption, as the canvas's \"opcional\"."
+  )
+
   attr(:help, :string, default: nil, doc: "The small line under the control.")
 
   attr(:errors, :list,
@@ -306,6 +312,7 @@ defmodule LineaUI.Components.Input do
       id={@id}
       label={@label}
       label_class={@label_class}
+      label_hint={@label_hint}
       help={@help}
       errors={@errors}
       state={@state}

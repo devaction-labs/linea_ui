@@ -40,6 +40,13 @@ defmodule LineaUI.Components.NotificationCenter do
   that are not `read`, and any other id the items with that `category`. The number beside a tab is how
   many unread items it holds. Without `tabs` the panel has no tab bar.
 
+  `variant="canvas"` is the compact panel of the design canvas: no title bar, tabs or footer, only the
+  list grouped by day, each row with its icon tile, the title, the body and the time at the right, the
+  unread ones on the accent tint; its empty state is an icon tile (`empty_icon`, `empty_tone`) over
+  the text.
+
+      <.notification_center id="notifications" variant="canvas" items={@notifications} on_read="read" />
+
   The panel is a `LineaUI.Components.Popover`: it closes on a click outside and on Esc, and opens from
   the server with `LineaUI.open(socket, "notifications")`. Marking as read is up to the server: change
   `read` and the dot, the count and the bell follow.
@@ -71,6 +78,15 @@ defmodule LineaUI.Components.NotificationCenter do
     "warning" => "huge-alert-02",
     "error" => "huge-cancel-circle",
     "primary" => "huge-megaphone-01"
+  }
+
+  @canvas_tones %{
+    "info" => "info",
+    "success" => "pos",
+    "warning" => "warn",
+    "error" => "neg",
+    "primary" => "acc",
+    "neutral" => nil
   }
 
   @doc """
@@ -111,6 +127,22 @@ defmodule LineaUI.Components.NotificationCenter do
 
   attr :empty_text, :string, default: "Quando houver novidades, elas aparecem aqui."
 
+  attr :variant, :string,
+    default: "default",
+    values: ~w(default canvas),
+    doc:
+      "`canvas`: the compact canvas panel (no title bar, tabs or footer; the time at the right; unread rows tinted)."
+
+  attr :empty_icon, :string,
+    default: nil,
+    doc:
+      "An icon for the empty state, in a tile, instead of the illustration. The `canvas` variant draws `huge-tick-02` when none is given."
+
+  attr :empty_tone, :string,
+    default: "success",
+    values: ~w(neutral primary info success warning error),
+    doc: "The tint of the `empty_icon` tile."
+
   attr :all_href, :string,
     default: nil,
     doc: "Where \"see all\" goes (a regular link). Without it the footer link is not drawn."
@@ -149,7 +181,61 @@ defmodule LineaUI.Components.NotificationCenter do
       |> assign(:unread_count, unread)
       |> assign(:read_all_js, Overlay.callback(assigns.on_read_all, assigns.id, assigns.target))
       |> assign(:categories, Map.new(assigns.tabs, &{&1.id, &1.label}))
+      |> assign(:empty_tile, empty_tile(assigns))
 
+    render_center(assigns)
+  end
+
+  defp render_center(%{variant: "canvas"} = assigns) do
+    ~H"""
+    <.popover
+      id={@id}
+      open={@open}
+      placement={@placement}
+      arrow={@arrow}
+      offset={8}
+      class={merge(["nc-canvas w-[380px] max-w-[calc(100vw-1.5rem)] overflow-hidden p-0", @class])}
+      {@rest}
+    >
+      <:trigger>
+        <.bell label={@bell_label} unread={@unread_count} unread_label={@unread_label} />
+      </:trigger>
+      <div :if={@items == []} class="nc-canvas-empty">
+        <span class={["sg-ic", canvas_tone(@empty_tone)]}><.icon name={@empty_tile} class="size-4" /></span>
+        <b>{@empty}</b>
+        <span>{@empty_text}</span>
+        <div :if={@empty_action != []} class="mt-2 flex flex-wrap justify-center gap-2">
+          {render_slot(@empty_action)}
+        </div>
+      </div>
+      <div :if={@items != []} class="max-h-[26rem] overflow-y-auto">
+        <section :for={{group, items} <- groups(@items)} aria-label={group}>
+          <h4 :if={group} class="nc-canvas-h">{group}</h4>
+          <.link
+            :for={item <- items}
+            {Map.take(item, [:navigate, :patch, :href])}
+            phx-click={item_js(@on_read, @id, item[:id], @target)}
+            class="nc-canvas-row"
+            data-unread={unread?(item) && "true"}
+          >
+            <span class={["sg-ic", canvas_tone(Map.get(item, :type, "primary"))]}>
+              <.icon name={icon_for(item)} class="size-4" />
+            </span>
+            <span class="flex min-w-0 flex-1 flex-col">
+              <span class="nc-canvas-title">
+                <span :if={unread?(item)} class="sr-only">Não lida: </span>{item.title}
+              </span>
+              <span :if={item[:body]} class="nc-canvas-body">{item[:body]}</span>
+            </span>
+            <span :if={item[:at]} class="nc-canvas-at">{item[:at]}</span>
+          </.link>
+        </section>
+      </div>
+    </.popover>
+    """
+  end
+
+  defp render_center(assigns) do
     ~H"""
     <.popover
       id={@id}
@@ -166,18 +252,7 @@ defmodule LineaUI.Components.NotificationCenter do
       {@rest}
     >
       <:trigger>
-        <button
-          type="button"
-          aria-label={bell_label(@bell_label, @unread_count, @unread_label)}
-          aria-haspopup="dialog"
-          class="relative flex size-9 items-center justify-center rounded-full bg-white text-slate-500 ring-1 ring-slate-200 transition-colors hover:bg-slate-100 hover:text-slate-800 aria-expanded:text-primary aria-expanded:ring-primary dark:bg-navy-700 dark:text-navy-200 dark:ring-navy-500 dark:hover:bg-navy-600 dark:hover:text-navy-50 dark:aria-expanded:text-accent-light dark:aria-expanded:ring-accent-light"
-        >
-          <.icon name="huge-notification-01" class="size-4.5" />
-          <span
-            :if={@unread_count > 0}
-            class="absolute right-1.5 top-1.5 size-2 rounded-full bg-error ring-2 ring-white dark:ring-navy-700"
-          ></span>
-        </button>
+        <.bell label={@bell_label} unread={@unread_count} unread_label={@unread_label} />
       </:trigger>
 
       <div class="flex items-center gap-2 bg-slate-50 py-3.5 pl-4.5 pr-3 dark:bg-navy-800">
@@ -246,6 +321,8 @@ defmodule LineaUI.Components.NotificationCenter do
             empty={tab[:empty] || @empty}
             empty_text={@empty_text}
             empty_action={@empty_action}
+            empty_icon={@empty_icon}
+            empty_tone={@empty_tone}
           />
         </:panel>
       </.tabs>
@@ -262,6 +339,8 @@ defmodule LineaUI.Components.NotificationCenter do
           empty={@empty}
           empty_text={@empty_text}
           empty_action={@empty_action}
+          empty_icon={@empty_icon}
+          empty_tone={@empty_tone}
         />
       </div>
 
@@ -288,6 +367,27 @@ defmodule LineaUI.Components.NotificationCenter do
     """
   end
 
+  attr :label, :string, required: true
+  attr :unread, :integer, required: true
+  attr :unread_label, :string, required: true
+
+  defp bell(assigns) do
+    ~H"""
+    <button
+      type="button"
+      aria-label={bell_label(@label, @unread, @unread_label)}
+      aria-haspopup="dialog"
+      class="relative flex size-9 items-center justify-center rounded-full bg-white text-slate-500 ring-1 ring-slate-200 transition-colors hover:bg-slate-100 hover:text-slate-800 aria-expanded:text-primary aria-expanded:ring-primary dark:bg-navy-700 dark:text-navy-200 dark:ring-navy-500 dark:hover:bg-navy-600 dark:hover:text-navy-50 dark:aria-expanded:text-accent-light dark:aria-expanded:ring-accent-light"
+    >
+      <.icon name="huge-notification-01" class="size-4.5" />
+      <span
+        :if={@unread > 0}
+        class="absolute right-1.5 top-1.5 size-2 rounded-full bg-error ring-2 ring-white dark:ring-navy-700"
+      ></span>
+    </button>
+    """
+  end
+
   attr :id, :string, required: true
   attr :items, :list, required: true
   attr :tab, :map, required: true
@@ -298,11 +398,16 @@ defmodule LineaUI.Components.NotificationCenter do
   attr :empty, :string, required: true
   attr :empty_text, :string, required: true
   attr :empty_action, :list, required: true
+  attr :empty_icon, :string, default: nil
+  attr :empty_tone, :string, default: "success"
 
   defp list(%{items: []} = assigns) do
     ~H"""
     <div class="flex flex-col items-center gap-1.5 px-7 pb-7 pt-6 text-center">
-      <.empty_box />
+      <.empty_box :if={!@empty_icon} />
+      <span :if={@empty_icon} class={["sg-ic", canvas_tone(@empty_tone)]}>
+        <.icon name={@empty_icon} class="size-4" />
+      </span>
       <h4 class="mt-3 text-[15px] font-semibold text-slate-800 dark:text-navy-50">{@empty}</h4>
       <p class="max-w-60 text-xs-plus leading-5 text-slate-500 dark:text-navy-200">{@empty_text}</p>
       <div :if={@empty_action != []} class="mt-2 flex flex-wrap justify-center gap-2">
@@ -400,6 +505,13 @@ defmodule LineaUI.Components.NotificationCenter do
   end
 
   defp unread?(item), do: !Map.get(item, :read, false)
+
+  defp canvas_tone(type), do: Map.get(@canvas_tones, type)
+
+  defp icon_for(item), do: item[:icon] || Map.fetch!(@icons, Map.get(item, :type, "primary"))
+
+  defp empty_tile(%{empty_icon: nil, variant: "canvas"}), do: "huge-tick-02"
+  defp empty_tile(%{empty_icon: icon}), do: icon
 
   defp bell_label(label, 0, _unread_label), do: label
   defp bell_label(label, n, unread_label), do: "#{label}, #{n} #{unread_label}"

@@ -233,4 +233,38 @@ defmodule LineaUI.Components.ToastTest do
     %JS{ops: [_, ["dispatch", _]]} = Toast.dismiss_toast(JS.push("x"), "t")
     %JS{ops: [_, ["dispatch", _]]} = Toast.clear_toasts(JS.push("x"))
   end
+
+  describe "toast_card/1" do
+    test "the canvas toast card with its tile, texts, actions and close button" do
+      html =
+        render(~H"""
+        <.toast_card
+          id="t"
+          kind="error"
+          icon="huge-cancel-circle"
+          title="Não foi possível emitir"
+          description="SEFAZ fora do ar."
+          close_label="Fechar"
+        >
+          <:action><button id="undo">Desfazer</button></:action>
+        </.toast_card>
+        """)
+
+      assert "sg-toast" in classes(html, "#t")
+      refute "dark" in classes(html, "#t")
+      assert "neg" in classes(html, "#t .sg-ic")
+      assert [_] = find(html, "#t .sg-ic span.huge-cancel-circle") |> Enum.to_list()
+      assert find(html, "#t .t") |> LazyHTML.text() == "Não foi possível emitir"
+      assert find(html, "#t .sg-toast-desc") |> LazyHTML.text() == "SEFAZ fora do ar."
+      assert [_] = find(html, "#t > #undo") |> Enum.to_list()
+      assert find(html, "#t > button.sg-ib") |> LazyHTML.attribute("aria-label") == ["Fechar"]
+    end
+
+    test "the dark tone, no description and no close button" do
+      html = render(~H|<.toast_card id="t" tone="dark" title="Excluído" dismissible={false} />|)
+      assert "dark" in classes(html, "#t")
+      assert find(html, "#t .sg-toast-desc") |> Enum.empty?()
+      assert find(html, "#t button") |> Enum.empty?()
+    end
+  end
 end

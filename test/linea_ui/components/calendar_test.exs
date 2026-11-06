@@ -394,4 +394,79 @@ defmodule LineaUI.Components.CalendarTest do
     assert Calendar.calendar_shift(~D[2026-10-24], "week", :next) == ~D[2026-10-31]
     assert Calendar.calendar_shift(~D[2026-03-31], "month", :prev) == ~D[2026-02-28]
   end
+
+  describe "mini variant" do
+    test "a canvas month card with dots, the selected day, a range and today" do
+      html =
+        render(~H"""
+        <.calendar
+          id="m"
+          variant="mini"
+          date={~D[2026-11-01]}
+          today={~D[2026-11-20]}
+          selected={~D[2026-11-05]}
+          range={{~D[2026-11-05], ~D[2026-11-11]}}
+          events={[%{title: "Vencimento", date: ~D[2026-11-10]}]}
+          locale="pt_BR"
+        />
+        """)
+
+      assert html |> find("#m .lc-mini-h b") |> LazyHTML.text() == "Novembro 2026"
+      assert html |> find("#m .sg-cal > b") |> Enum.count() == 7
+      assert html |> find("#m .sg-cal > span") |> Enum.count() == 30
+      assert html |> find("#m .sg-cal > span.on") |> LazyHTML.text() |> String.trim() == "5"
+      assert html |> find("#m .sg-cal > span.rg") |> Enum.count() == 6
+      assert html |> find("#m .sg-cal > span.t") |> LazyHTML.text() |> String.trim() == "20"
+      assert [_] = find(html, "#m .lc-mk") |> Enum.to_list()
+    end
+
+    test "months_shown draws side by side cards titled by month, with leading blanks" do
+      html =
+        render(~H"""
+        <.calendar id="r" variant="mini" months_shown={2} date={~D[2026-11-01]} locale="pt_BR" />
+        """)
+
+      assert html
+             |> find("#r .lc-mini-name")
+             |> Enum.map(&LazyHTML.text/1)
+             |> Enum.map(&String.trim/1) ==
+               ["Novembro", "Dezembro"]
+
+      assert html |> find("#r .lc-mini") |> Enum.count() == 2
+      assert html |> find("#r .lc-mini:nth-child(2) .lc-blank") |> Enum.count() == 2
+    end
+
+    test "on_select makes the days buttons" do
+      html =
+        render(~H"""
+        <.calendar id="s" variant="mini" header={false} date={~D[2026-11-01]} on_select="pick" />
+        """)
+
+      assert html |> find("#s .sg-cal > button") |> Enum.count() == 30
+      assert find(html, "#s .lc-mini-h") |> Enum.to_list() == []
+    end
+
+    test "marks=tint paints the days in their color under a legend" do
+      html =
+        render(~H"""
+        <.calendar
+          id="t"
+          variant="mini"
+          marks="tint"
+          header={false}
+          date={~D[2026-11-01]}
+          legend={[{"A receber", "primary"}, {"A pagar", "warning"}]}
+          events={[
+            %{title: "r", color: "primary", date: ~D[2026-11-05]},
+            %{title: "p", color: "warning", date: ~D[2026-11-03]}
+          ]}
+        />
+        """)
+
+      assert find(html, "#t .lc-mk") |> Enum.to_list() == []
+      assert html |> find("#t .lc-tn-warning") |> LazyHTML.text() |> String.trim() == "3"
+      assert html |> find("#t .lc-tn-primary") |> LazyHTML.text() |> String.trim() == "5"
+      assert html |> find("#t .lc-mini-legend span") |> Enum.count() == 2
+    end
+  end
 end

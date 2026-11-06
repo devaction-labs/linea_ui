@@ -85,7 +85,7 @@ defmodule LineaUI.Components.Pagination do
       def handle_event("paginate", %{"page" => page}, socket),
         do: {:noreply, assign(socket, page: String.to_integer(page))}
 
-  The arrow at either end and the ellipsis are inert `<span>`s.
+  The arrow at either end and the ellipsis (`…`) are inert `<span>`s.
 
   With `total_entries` or `page_sizes` the bar becomes a footer row: the summary
   (`role="status"`) on the left, the select and the pages on the right. The select sits in
@@ -153,7 +153,7 @@ defmodule LineaUI.Components.Pagination do
     default: "rounded",
     values: ~w(rounded pill canvas),
     doc:
-      "`canvas` is the design canvas pager: square-ish ink current page, mono numbers, the arrows as bordered circles after the pages."
+      "`canvas` is the design canvas pager: square-ish ink current page, mono numbers, the arrows as 28px bordered circles after the pages (not dimmed at either end)."
   )
 
   attr(:size, :string, default: "md", values: ~w(sm md lg))
@@ -356,11 +356,11 @@ defmodule LineaUI.Components.Pagination do
   defp entry_class(%{shape: "canvas"}, :gap, _number, _disabled),
     do: "grid h-[30px] min-w-[30px] place-items-center font-mono text-[12.5px] text-slate-500"
 
-  defp entry_class(%{shape: "canvas"}, _arrow, _number, disabled),
-    do: [
-      "grid size-[30px] place-items-center rounded-full text-slate-500 shadow-[0_0_0_1px_var(--color-slate-300)] hover:bg-slate-100 dark:text-navy-200 dark:shadow-[0_0_0_1px_var(--color-navy-450)]",
-      disabled && "opacity-60"
-    ]
+  # the canvas `sg-ib sm`: a 28px panel circle with an inset line; an arrow at either end stays
+  # inert (a `<span aria-disabled>`) but is not dimmed, as on the canvas
+  defp entry_class(%{shape: "canvas"}, _arrow, _number, _disabled),
+    do:
+      "grid size-7 place-items-center rounded-full bg-[var(--panel)] text-[var(--muted)] shadow-[inset_0_0_0_1px_var(--line)] hover:bg-[var(--hover)]"
 
   defp entry_class(assigns, :gap, _number, _disabled),
     do: [@item[assigns.size], @shapes[assigns.shape], divided_fill(assigns)]
@@ -463,7 +463,7 @@ defmodule LineaUI.Components.Pagination do
     """
   end
 
-  defp entry_content(%{kind: :gap} = assigns), do: ~H"..."
+  defp entry_content(%{kind: :gap} = assigns), do: ~H"…"
 
   defp entry_content(assigns), do: ~H"{@number}"
 end

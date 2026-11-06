@@ -1,6 +1,8 @@
 defmodule LineaUI.Components.TagTest do
   use LineaUI.ComponentCase, async: true
 
+  defp attr_of(html, selector, name), do: html |> find(selector) |> LazyHTML.attribute(name)
+
   test "a button by default, a link with href or navigate" do
     html =
       render(~H"""
@@ -81,5 +83,26 @@ defmodule LineaUI.Components.TagTest do
 
     assert [_] = find(html, "a#b .tag-count") |> Enum.to_list()
     assert [] = find(html, "#c .tag-count") |> Enum.to_list()
+  end
+
+  test "the flat variant is the canvas tag, the accent tint when active" do
+    html =
+      render(~H"""
+      <.tag id="f" variant="flat">Tintas</.tag>
+      <.tag id="a" variant="flat" active>Todos</.tag>
+      """)
+
+    assert "sg-tag" in classes(html, "#f")
+    refute "on" in classes(html, "#f")
+    assert ["sg-tag", "on"] -- classes(html, "#a") == []
+    refute "bg-primary" in classes(html, "#a")
+    assert attr_of(html, "#a", "aria-pressed") == ["true"]
+  end
+
+  test "tint paints the tag in a colour of its own" do
+    html = render(~H|<.tag id="t" variant="flat" tint="#8a5cd6">Novo cliente</.tag>|)
+    assert "tag-tint" in classes(html, "#t")
+    assert "sg-tag" in classes(html, "#t")
+    assert attr_of(html, "#t", "style") == ["--tag-tint:#8a5cd6"]
   end
 end

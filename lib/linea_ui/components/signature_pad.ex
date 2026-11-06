@@ -15,6 +15,11 @@ defmodule LineaUI.Components.SignaturePad do
 
       <img src={"data:image/svg+xml;base64," <> Base.encode64(@signature)} alt="Signature" />
 
+  `variant="canvas"` draws the design canvas's pad (a card with the dashed line and the hint under it, at the
+  left), and `footer={false}` drops the status and Clear line under the pad:
+
+      <.signature_pad name="sign" modes={["draw"]} variant="canvas" footer={false} height={150} />
+
   Drawing needs a pointer, so the `type` mode is the keyboard and screen reader way to sign; keep both
   modes unless the signature must be drawn. The pad is a white surface in the light theme and a navy one in
   the dark theme (the ink and the typed name are inverted to stay readable there); the SVG it exports always
@@ -70,6 +75,17 @@ defmodule LineaUI.Components.SignaturePad do
       "Single texts: `:signature_draw`, `:signature_type`, `:signature_clear`, `:signature_area`, `:signature_hint`, `:signature_name`, `:signature_ready` and `:signature_empty`."
 
   attr :disabled, :boolean, default: false
+
+  attr :variant, :string,
+    default: "default",
+    values: ~w(default canvas),
+    doc:
+      "`canvas` is the design canvas's pad: a 16px card with the dashed line near its foot and the hint under it, at the left (always shown, like a caption), without the × mark."
+
+  attr :footer, :boolean,
+    default: true,
+    doc: "The line under the pad with the status (\"No signature\") and the Clear button."
+
   attr :on_change, :string, default: nil
   attr :target, :any, default: nil
   attr :wrapper_class, :any, default: nil, doc: "Classes of the block around the pad."
@@ -155,14 +171,26 @@ defmodule LineaUI.Components.SignaturePad do
           style={"height: #{@height}px"}
           class={
             merge([
-              "relative w-full touch-none overflow-hidden rounded-lg border border-slate-300 bg-white select-none data-[mode=draw]:cursor-crosshair dark:border-navy-450 dark:bg-navy-700",
+              @variant == "default" &&
+                "relative w-full touch-none overflow-hidden rounded-lg border border-slate-300 bg-white select-none data-[mode=draw]:cursor-crosshair dark:border-navy-450 dark:bg-navy-700",
+              @variant == "canvas" &&
+                "lu-sign relative w-full touch-none overflow-hidden select-none data-[mode=draw]:cursor-crosshair",
               @disabled && "pointer-events-none opacity-60",
               @class
             ])
           }
         >
-          <span class="pointer-events-none absolute inset-x-6 bottom-10.5 border-t border-dashed border-slate-300 dark:border-navy-450"></span>
-          <span class="pointer-events-none absolute bottom-12 left-6 font-inter text-sm font-medium text-slate-400 dark:text-navy-300">×</span>
+          <span
+            :if={@variant == "default"}
+            class="pointer-events-none absolute inset-x-6 bottom-10.5 border-t border-dashed border-slate-300 dark:border-navy-450"
+          ></span>
+          <span
+            :if={@variant == "default"}
+            class="pointer-events-none absolute bottom-12 left-6 font-inter text-sm font-medium text-slate-400 dark:text-navy-300"
+          >
+            ×
+          </span>
+          <span :if={@variant == "canvas"} class="lu-sign-foot">{@text.signature_hint}</span>
           <svg aria-hidden="true" class="pointer-events-none absolute inset-0 size-full">
             <path
               data-path
@@ -185,6 +213,7 @@ defmodule LineaUI.Components.SignaturePad do
             class="pointer-events-none absolute bottom-11.5 left-11 text-4xl text-slate-800 italic dark:text-navy-50 [font-family:'Brush_Script_MT','Segoe_Script','Snell_Roundhand',cursive]"
           ></span>
           <span
+            :if={@variant == "default"}
             data-hint
             class="pointer-events-none absolute inset-0 flex items-center justify-center text-xs-plus text-slate-400"
           >
@@ -204,7 +233,7 @@ defmodule LineaUI.Components.SignaturePad do
             data-type-input
           />
         </div>
-        <div class="flex items-center justify-between gap-2">
+        <div :if={@footer} class="flex items-center justify-between gap-2">
           <span>
             <Badge.badge
               data-status-ready

@@ -1,7 +1,7 @@
 defmodule LineaUI.Components.Tooltip do
   @moduledoc """
   LineOne's tooltip (its tippy.js look and options): a hint around a trigger, in every theme
-  color, on twelve placements, after a delay, on hover, click or focus, following the cursor,
+  color (and `dark`, the design canvas tooltip), on twelve placements, after a delay, on hover, click or focus, following the cursor,
   or holding HTML.
 
       <.tooltip id="save-tip" text="Save the draft">
@@ -32,6 +32,7 @@ defmodule LineaUI.Components.Tooltip do
   @themes %{
     "neutral" => nil,
     "light" => "light",
+    "dark" => "dark",
     "primary" => "primary",
     "secondary" => "secondary",
     "info" => "info",
@@ -59,7 +60,9 @@ defmodule LineaUI.Components.Tooltip do
 
   attr(:color, :string,
     default: "neutral",
-    values: ~w(neutral light primary secondary info success warning error)
+    values: ~w(neutral light dark primary secondary info success warning error),
+    doc:
+      "The hint's color. `dark` is the design canvas tooltip: `#17171a` with white 12px text and 8px corners."
   )
 
   attr(:placement, :string, default: "top", values: @placements)

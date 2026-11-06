@@ -383,7 +383,7 @@ defmodule LineaUI.Components.Drawer do
         </h2>
         <p
           :if={@content == [] and @description}
-          class="mt-0.5 text-[13px]/[18px] text-slate-400 dark:text-navy-300"
+          class="mt-0.5 text-[13px]/[18px] text-slate-500 dark:text-navy-300"
         >
           {@description}
         </p>

@@ -58,4 +58,12 @@ defmodule LineaUI.Components.SwitchTest do
 
     refute "flex-row-reverse" in classes(html, "label:has(#b)")
   end
+
+  test "the small switch carries is-sm, the canvas .8 size" do
+    assigns = %{}
+    html = rendered_to_string(~H|<.switch name="a" size="sm" />|)
+    assert html =~ "is-sm"
+    html = rendered_to_string(~H|<.switch name="a" />|)
+    refute html =~ "is-sm"
+  end
 end

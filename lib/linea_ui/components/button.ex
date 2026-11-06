@@ -13,10 +13,15 @@ defmodule LineaUI.Components.Button do
   With `href`, `navigate` or `patch` it renders a link that looks the same.
 
   While work runs, `loading` disables the button (no double submit), marks it `aria-busy` and
-  puts a small spinner in the color of its text before the label; change the label to the
-  gerund yourself:
+  puts the canvas's 14px spinner (`sg-spin`) in the color of its text before the label; change
+  the label to the gerund yourself:
 
       <.button color="primary" loading={@saving}>{if @saving, do: "Saving…", else: "Save"}</.button>
+
+  A `disabled` button is faded (the canvas's 45% opacity). An icon button takes `pip`, the accent
+  dot on its corner that tells there is something new:
+
+      <.button icon variant="outline" pip aria-label="Notifications"><svg>…</svg></.button>
   """
 
   use LineaUI.Component
@@ -50,6 +55,11 @@ defmodule LineaUI.Components.Button do
     doc: "Disables the button, marks it `aria-busy` and shows a spinner before the label."
   )
 
+  attr(:pip, :boolean,
+    default: false,
+    doc: "With `icon`, the canvas's accent dot on the corner (an unread notice)."
+  )
+
   attr(:loading_label, :string,
     default: "Loading",
     doc: "Read by screen readers for the spinner."
@@ -74,7 +84,6 @@ defmodule LineaUI.Components.Button do
   defp classes(assigns) do
     merge([
       (assigns.icon && icon_class(assigns)) || button_class(assigns),
-      assigns.loading && "opacity-85",
       assigns.class
     ])
   end
@@ -115,8 +124,9 @@ defmodule LineaUI.Components.Button do
       tabindex={@inactive && "-1"}
       {@rest}
     >
-      <.spinner :if={@loading} color="current" size="xs" label={@loading_label} />
+      <.spinner :if={@loading} variant="canvas" color="current" size="xs" label={@loading_label} />
       {render_slot(@inner_block)}
+      <span :if={@pip} class="pip" aria-hidden="true"></span>
     </.link>
     """
   end
@@ -124,8 +134,9 @@ defmodule LineaUI.Components.Button do
   defp render_button(assigns) do
     ~H"""
     <button type={@type} class={@classes} disabled={@inactive} aria-busy={@loading && "true"} {@rest}>
-      <.spinner :if={@loading} color="current" size="xs" label={@loading_label} />
+      <.spinner :if={@loading} variant="canvas" color="current" size="xs" label={@loading_label} />
       {render_slot(@inner_block)}
+      <span :if={@pip} class="pip" aria-hidden="true"></span>
     </button>
     """
   end

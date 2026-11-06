@@ -29,4 +29,33 @@ defmodule LineaUI.Components.ProgressTest do
     assert LazyHTML.attribute(find(render(~H|<.progress id="p" value={-5} />|), "#p i"), "style") ==
              ["width: 0.0%"]
   end
+
+  test "success, warning, error and info map to the canvas tones" do
+    assert "pos" in classes(render(~H|<.progress id="p" value={5} color="success" />|), "#p")
+    assert "warn" in classes(render(~H|<.progress id="p" value={5} color="warning" />|), "#p")
+    assert "neg" in classes(render(~H|<.progress id="p" value={5} color="error" />|), "#p")
+    assert "info" in classes(render(~H|<.progress id="p" value={5} color="info" />|), "#p")
+  end
+
+  test "progress_stack draws one segment per part in the chart colors" do
+    html =
+      render(~H"""
+      <.progress_stack id="s" label="Canais">
+        <:segment value={46} label="Balcão" />
+        <:segment value={33} />
+        <:segment value={21} color="c4" />
+      </.progress_stack>
+      """)
+
+    assert "sg-stack" in classes(html, "#s")
+    assert LazyHTML.attribute(find(html, "#s"), "aria-label") == ["Canais"]
+
+    assert LazyHTML.attribute(find(html, "#s i"), "style") == [
+             "width: 46.0%; background: var(--c1)",
+             "width: 33.0%; background: var(--c2)",
+             "width: 21.0%; background: var(--c4)"
+           ]
+
+    assert LazyHTML.attribute(find(html, "#s i"), "title") == ["Balcão"]
+  end
 end

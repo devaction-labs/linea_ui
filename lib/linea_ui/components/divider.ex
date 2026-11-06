@@ -11,13 +11,19 @@ defmodule LineaUI.Components.Divider do
         <div>…</div>
       </div>
 
+  With text, `align="left"` puts it at the start as a small uppercase title, the line running to
+  the end: the heading of a group of fields.
+
+      <.divider align="left">Entrega</.divider>
+
   `horizontal` is a horizontal line between content stacked vertically (what LineOne's page calls
   "Divider Vertical"); `vertical` is a vertical line in a row.
   """
 
   use LineaUI.Component
 
-  @line "bg-slate-200 dark:bg-navy-500"
+  # the canvas `--line`, in light and dark
+  @line "bg-(--line)"
 
   @doc """
   Renders a divider, with the inner block as its text when given.
@@ -26,6 +32,14 @@ defmodule LineaUI.Components.Divider do
       <.divider orientation="vertical" />
   """
   attr(:orientation, :string, default: "horizontal", values: ~w(horizontal vertical))
+
+  attr(:align, :string,
+    default: "center",
+    values: ~w(center left),
+    doc:
+      "Where a horizontal divider's text sits: `center` between two lines, `left` as a small uppercase title before one."
+  )
+
   attr(:class, :any, default: nil)
   attr(:rest, :global)
   slot(:inner_block)
@@ -48,9 +62,24 @@ defmodule LineaUI.Components.Divider do
     """
   end
 
+  def divider(%{orientation: "horizontal", align: "left"} = assigns) do
+    ~H"""
+    <div role="separator" class={merge(["my-4 flex items-center gap-2.5", @class])} {@rest}>
+      <b class="text-[11.5px] font-bold tracking-[.06em] text-(--faint) uppercase">
+        {render_slot(@inner_block)}
+      </b>
+      <div class={["h-px flex-1", line()]}></div>
+    </div>
+    """
+  end
+
   def divider(%{orientation: "horizontal"} = assigns) do
     ~H"""
-    <div role="separator" class={merge(["my-4 flex items-center gap-3", @class])} {@rest}>
+    <div
+      role="separator"
+      class={merge(["my-4 flex items-center gap-3 text-xs/5 text-(--faint)", @class])}
+      {@rest}
+    >
       <div class={["h-px flex-1", line()]}></div>
       <p>{render_slot(@inner_block)}</p>
       <div class={["h-px flex-1", line()]}></div>

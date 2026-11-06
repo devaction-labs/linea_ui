@@ -142,6 +142,55 @@ defmodule LineaUI.Components.EmailTest do
     assert html(%{theme: :dark}) =~ ~s(content="dark")
   end
 
+  test "the canvas options: ink button, no fallback, plain footer, title size, table facts" do
+    assigns = %{}
+
+    out =
+      Phoenix.LiveViewTest.rendered_to_string(~H"""
+      <.email_layout
+        subject="S"
+        title="Pedido aprovado"
+        theme={:light}
+        alt_text={nil}
+        button="ink"
+        footer_style="plain"
+        title_size={16}
+        compact
+      >
+        <:body>
+          <.email_p theme={:light} muted>Olá</.email_p>
+          <.email_facts
+            theme={:light}
+            variant="table"
+            header={{"Indicador", "Valor"}}
+            rows={[{"Vendas", "1", :mono}]}
+          />
+        </:body>
+        <:action href="https://app.example.com/p/1">Ver pedido</:action>
+        <:footer>Signetum</:footer>
+      </.email_layout>
+      """)
+
+    assert out =~ "border-radius:999px;background-color:#17171a"
+    refute out =~ "&rarr;"
+    refute out =~ "copy and paste"
+    assert out =~ "font-size:16px"
+    refute out =~ ~s(class="em-ink em-title")
+    assert out =~ "padding:20px;"
+    assert out =~ "font-size:11.5px"
+    refute out =~ "padding:20px 24px;border-radius:12px"
+    assert out =~ "Indicador"
+    assert out =~ "color:#9d9ba1"
+    assert out =~ "font-size:13.5px"
+  end
+
+  test "the defaults keep the accent button with its arrow and the footer panel" do
+    out = html()
+    assert out =~ "&rarr;"
+    assert out =~ "copy and paste"
+    assert out =~ "padding:20px 24px;border-radius:12px"
+  end
+
   defp out_doc, do: html()
 
   defp text(doc, selector), do: doc |> find(selector) |> LazyHTML.text()

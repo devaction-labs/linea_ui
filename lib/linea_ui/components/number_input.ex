@@ -27,6 +27,13 @@ defmodule LineaUI.Components.NumberInput do
   value (the hook keeps its distance in `--nlen`, the number of characters shown). A stepper
   is `disabled` at `min` and `max`.
 
+  `stepper_style` picks how the steppers look: `inset` (the default, the canvas stepper) is one
+  field with plain `−` and `+` icon buttons inside its ends; `round` is the canvas's compact one
+  for cart rows, two round outlined buttons with the bare number between them; `joined` is
+  LineOne's, the buttons as boxes joined to the input.
+
+      <.number_input name="qty" value={3} steppers stepper_style="round" min={0} />
+
   The behavior lives in the `LineaUI.NumberInput` hook, so the field needs a stable `id` (it
   gets one from `field` or `name`).
   """
@@ -103,6 +110,13 @@ defmodule LineaUI.Components.NumberInput do
   attr :max, :any, default: nil, doc: "The highest value."
   attr :step, :any, default: 1, doc: "What the arrow keys and the steppers add or take away."
   attr :steppers, :boolean, default: false, doc: "`−` and `+` buttons on either side."
+
+  attr :stepper_style, :string,
+    default: "inset",
+    values: ~w(inset round joined),
+    doc:
+      "With `steppers`: `inset` plain icon buttons inside one field (canvas), `round` two round buttons around the bare number (canvas, compact), `joined` boxes joined to the input (LineOne)."
+
   attr :decrement_label, :string, default: "Decrease", doc: "The accessible name of `−`."
   attr :increment_label, :string, default: "Increase", doc: "The accessible name of `+`."
   attr :prefix, :string, default: nil, doc: "A box before the input, like `R$`."
@@ -200,6 +214,102 @@ defmodule LineaUI.Components.NumberInput do
     >
       <.control {assigns} />
     </Form.field>
+    """
+  end
+
+  defp control(%{steppers: true, stepper_style: style} = assigns) when style in ~w(inset round) do
+    assigns = assign(assigns, shown: String.length(assigns.display))
+
+    ~H"""
+    <div
+      id={@id <> "-number"}
+      class="w-full"
+      phx-hook="LineaUI.NumberInput"
+      data-value={@machine}
+      data-decimal={@decimal}
+      data-group={@group}
+      data-decimals={@decimals}
+      data-max-decimals={@max_decimals}
+      data-min={@min}
+      data-max={@max}
+      data-step={@step}
+      data-negative={bool(@negative)}
+    >
+      <div class={[
+        "lc-stepper",
+        @stepper_style,
+        @size,
+        @state == "error" && "is-error",
+        @disabled && "is-disabled"
+      ]}>
+        <button
+          type="button"
+          class="lc-step"
+          tabindex="-1"
+          aria-label={@decrement_label}
+          aria-controls={@id}
+          disabled={@disabled}
+          data-step-by="down"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14" /></svg>
+        </button>
+        <div
+          class="relative min-w-0 flex-1 [&_.form-input]:w-full"
+          style={if(@suffix && @align == "center", do: "--nlen: #{@shown}")}
+          data-field
+        >
+          <Input.input
+            type="text"
+            id={@id}
+            value={@display}
+            variant="plain"
+            align={align(@align)}
+            disabled={@disabled}
+            class={merge([@align == "center" && "text-center", @class])}
+            role="spinbutton"
+            inputmode={@inputmode}
+            autocomplete="off"
+            aria-valuenow={@machine}
+            aria-valuemin={@min}
+            aria-valuemax={@max}
+            aria-invalid={@state == "error" && "true"}
+            data-display
+            {@input_rest}
+          />
+          <span
+            :if={@suffix}
+            class={[
+              "lc-step-suffix pointer-events-none absolute inset-y-0 flex items-center",
+              (@align == "center" && "start-1/2 ms-[calc(var(--nlen,0)*0.5ch+0.35em)]") || "end-1"
+            ]}
+            data-suffix
+          >
+            {@suffix}
+          </span>
+        </div>
+        <button
+          type="button"
+          class="lc-step"
+          tabindex="-1"
+          aria-label={@increment_label}
+          aria-controls={@id}
+          disabled={@disabled}
+          data-step-by="up"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>
+        </button>
+      </div>
+      <input
+        type="hidden"
+        id={@id <> "-value"}
+        name={@name}
+        value={@machine}
+        disabled={@disabled}
+        phx-update="ignore"
+        data-value-input
+        {@forwarded}
+      />
+    </div>
     """
   end
 

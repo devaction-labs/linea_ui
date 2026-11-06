@@ -46,7 +46,7 @@ defmodule LineaUI.Components.FormControlsTest do
 
       assert [_] = find(html, "label.block[for=a_country] span.mt-1\\.5 select") |> Enum.to_list()
       assert LazyHTML.text(find(html, ".text-error")) =~ "is invalid"
-      assert LazyHTML.text(find(html, ".text-tiny-plus")) =~ "Where"
+      assert LazyHTML.text(find(html, ".mt-1\\.5.block")) =~ "Where"
     end
   end
 
@@ -58,7 +58,7 @@ defmodule LineaUI.Components.FormControlsTest do
       classes = classes(html, "textarea")
       assert "form-textarea" in classes
       assert "resize-none" in classes
-      assert "p-3" in classes
+      assert "rounded-[11px]" in classes
     end
 
     test "filled and resizable" do
@@ -133,7 +133,7 @@ defmodule LineaUI.Components.FormControlsTest do
       assert [_] =
                find(html, "textarea#u_bio[name='u[bio]'][aria-invalid=true]") |> Enum.to_list()
 
-      assert "border-error" in classes(html, "textarea")
+      assert Enum.any?(classes(html, "textarea"), &(&1 =~ ~r/^shadow-.*--color-error/))
     end
   end
 
@@ -232,7 +232,7 @@ defmodule LineaUI.Components.FormControlsTest do
 
       classes = classes(html, "div.flex")
       assert "-space-x-px" in classes
-      assert "[&>:first-child]:rounded-l-md" in classes
+      assert "[&>:first-child]:rounded-l-[11px]" in classes
       assert "mt-1.5" in classes
       assert "bg-slate-100" in classes(html, "div.flex > span")
       assert [_] = find(html, "div.flex > input[name=p]") |> Enum.to_list()

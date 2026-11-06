@@ -5,22 +5,23 @@ const count = (value) => Number.isFinite(value) && value > 0 ? value : null
 /**
  * What the counter of a textarea says and how loud it says it.
  *
- * With a `max` it reads "68 / 200"; warns from 90% of it and turns bad past it. With a `min` it reads
+ * With a `max` it reads "68 / 200" (or `format`, with `%{count}` and `%{max}`: "68 de 200"); warns from 90% of it and turns bad past it. With a `min` it reads
  * "2 / 20 mín." and is bad while the text is started but short of it (an empty field is not nagged). With
  * only a `min` and the minimum reached it is the bare count.
  *
  * @param {{length: number, min?: number | null, max?: number | null}} input
  * @returns {{text: string, tone: "ok" | "warn" | "bad"}}
  */
-export const counterState = ({length, min, max}) => {
+export const counterState = ({length, min, max, format}) => {
   const size = Math.max(0, Number(length) || 0)
   const low = count(min)
   const high = count(max)
+  const fill = (value) => (format || "%{count} / %{max}").replaceAll("%{count}", String(size)).replaceAll("%{max}", String(value))
 
   if (low !== null && size > 0 && size < low) return {text: `${size} / ${low} mín.`, tone: "bad"}
   if (high === null) return {text: String(size), tone: "ok"}
-  if (size > high) return {text: `${size} / ${high}`, tone: "bad"}
-  return {text: `${size} / ${high}`, tone: size >= high * WARN_AT ? "warn" : "ok"}
+  if (size > high) return {text: fill(high), tone: "bad"}
+  return {text: fill(high), tone: size >= high * WARN_AT ? "warn" : "ok"}
 }
 
 /**

@@ -1,1 +1,70 @@
 /* Canvas look for the dados2 components (see the Vitrine canvas). */
+
+/* ---------- Tag ---------- */
+/* `variant="flat"`: the canvas `sg-tag` over the kit's `.tag` base (no border, regular weight, 26px). */
+.tag.sg-tag{height:26px;border:0;padding:0 10px;font-weight:400;font-size:12.5px;color:var(--muted);background:var(--sunken)}
+.tag.sg-tag:hover{color:var(--ink)}
+.tag.sg-tag.on{color:var(--accent-ink);background:var(--accent-soft);font-weight:500}
+/* `tint`: a colour of the user's own, the text in it on a 14% tint. */
+.tag.tag-tint{color:var(--tag-tint);background:color-mix(in srgb,var(--tag-tint) 14%,transparent);border-color:transparent;box-shadow:none}
+
+/* ---------- Stat ---------- */
+.sg-stat-group{display:flex;padding:16px 20px}
+.sg-stat-group:not(.sg-card){padding:0}
+
+/* ---------- Mini card ---------- */
+.sg-mini{display:flex;flex-direction:column;gap:10px;padding:14px}
+.sg-mini.sg-mini-v{gap:4px}
+.sg-mini-t{font-size:13.5px;font-weight:700;color:var(--ink)}
+.sg-mini-l{font-size:12.5px;color:var(--faint)}
+.sg-mini-n{font-family:var(--mono);font-feature-settings:"zero";font-size:18px;font-weight:700;color:var(--ink)}
+
+/* ---------- KPI card ---------- */
+/* `gap={false}`: the figure right under the top line. `progress`: the figure 8px under it, the meter 12px under
+   the figure and the faint caption 6px under the meter. */
+.sg-kpi.sg-kpi-tight{gap:0}
+.sg-kpi-goal > .sg-kpi-v{margin-top:8px}
+.sg-kpi-goal > .sg-meter{margin-top:12px}
+.sg-kpi-c{display:block;margin-top:6px;font-size:12px;color:var(--faint)}
+
+/* ---------- Kanban ---------- */
+/* The compact empty hint of a column (an `empty` slot with no title): the canvas `sg-drop`, 18px, 12.5px text. */
+.sg-drop.sg-kb-empty{padding:18px;font-size:12.5px}
+
+/* ---------- Table ---------- */
+/* The canvas marks a selected row by its tint alone: no accent bar on its first cell. */
+.sg-table > tbody > tr[data-selected="true"] > td:first-child{box-shadow:none}
+
+/* ---------- Icon ---------- */
+/* The boxed icon (`sg-ic`) in its smaller sizes: a timeline point and a tree row. */
+.sg-ic.sg-ic-md{width:28px;height:28px;border-radius:9px}
+.sg-ic.sg-ic-sm{width:24px;height:24px}
+
+/* ---------- Treeview, variant="canvas" ---------- */
+/* 36px rows 2px apart, 8px corners, regular weight in the ink (the top level in 550), a 14px chevron. The depth
+   is a left padding inside the row, so the hover and the selected tint start at the row's start. */
+.tree-canvas{display:flex;flex-direction:column;gap:2px;font-family:var(--sans);font-weight:400;color:var(--ink)}
+.tree-canvas li{margin:0 !important}
+.tree-canvas .tree-group{display:flex;flex-direction:column;gap:2px;margin:2px 0 0;padding:0}
+.tree-canvas [role="treeitem"]{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:8px;font-size:14px;line-height:20px;font-weight:400;letter-spacing:0;color:var(--ink);background:none}
+.tree-canvas [role="treeitem"]:hover{background:var(--hover);color:var(--ink)}
+.tree-canvas [role="treeitem"]:focus{background:none;color:var(--ink)}
+.tree-canvas [role="treeitem"]:focus-visible{background:var(--hover)}
+.tree-canvas [role="treeitem"][aria-selected="true"]{background:var(--accent-soft);color:var(--ink)}
+.tree-canvas > li > details > summary .tree-label{font-weight:550}
+.tree-canvas .tree-toggle{width:14px;height:14px;min-width:14px;padding:0;margin:0;border-radius:0;background:none;color:inherit}
+.tree-canvas .tree-toggle .tree-chevron{width:14px;height:14px}
+.tree-canvas .tree-spacer{width:14px;height:14px;margin:0}
+.tree-canvas .tree-icon,.tree-canvas [role="treeitem"] > *{margin:0}
+.tree-canvas .tree-group [role="treeitem"]{padding-left:28px}
+.tree-canvas .tree-group .tree-group [role="treeitem"]{padding-left:48px}
+.tree-canvas .tree-group .tree-group .tree-group [role="treeitem"]{padding-left:68px}
+.tree-canvas .tree-group .tree-group .tree-group .tree-group [role="treeitem"]{padding-left:88px}
+/* chevrons={false}: no chevron and no space for it (a checklist of categories). */
+.tree-no-chevrons :is(.tree-toggle,.tree-spacer){display:none}
+.tree-check{cursor:pointer}
+/* The checklist (chevrons={false}): the canvas `sg-check` rows, 20px tall and 8px apart, the box 10px from the
+   label, the children 28px in, every label in regular weight. */
+.tree-canvas.tree-no-chevrons [role="treeitem"]{gap:10px;padding:3px 0;color:var(--fg)}
+.tree-canvas.tree-no-chevrons .tree-group [role="treeitem"]{padding-left:28px}
+.tree-canvas.tree-no-chevrons .tree-label{font-weight:400 !important}

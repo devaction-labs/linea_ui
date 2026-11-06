@@ -19,7 +19,13 @@ defmodule LineaUI.Components.Tag do
         <.tag color="primary">55</.tag>
       </.tag_group>
 
-  A selected chip (`active`) is a solid primary fill with white text, for every variant.
+  A selected chip (`active`) is a solid primary fill with white text, for every variant but `flat`.
+
+  `variant="flat"` is the canvas tag (`sg-tag`): 26px, regular weight, muted text on the sunken fill; its
+  active state is the accent tint. `tint` paints a tag in a colour of its own (a user's label colour):
+
+      <.tag variant="flat" active>Todos</.tag>
+      <.tag variant="flat" tint="#0d8f91">VIP</.tag>
   `count` puts a small pill with a number inside the tag.
 
   With `href`, `navigate` or `patch` a tag is a link; otherwise it is a button.
@@ -102,6 +108,8 @@ defmodule LineaUI.Components.Tag do
     }
   }
 
+  @flat "sg-tag"
+
   @active "border border-primary bg-primary text-white hover:bg-primary-focus focus:bg-primary-focus active:bg-primary-focus/90 dark:border-accent dark:bg-accent dark:hover:bg-accent-focus dark:focus:bg-accent-focus dark:active:bg-accent/90"
 
   @shapes %{"rounded" => "", "pill" => "rounded-full", "square" => "rounded-none"}
@@ -116,12 +124,23 @@ defmodule LineaUI.Components.Tag do
     values: ~w(neutral primary secondary info success warning error light)
   )
 
-  attr(:variant, :string, default: "solid", values: ~w(solid soft bordered outline))
+  attr(:variant, :string,
+    default: "solid",
+    values: ~w(solid soft bordered outline flat),
+    doc:
+      "`flat` is the canvas tag: muted text on the sunken fill, the accent tint when `active`; `color` does not apply to it."
+  )
+
+  attr(:tint, :string,
+    default: nil,
+    doc:
+      "A colour of its own (any CSS colour, e.g. `\"#8a5cd6\"`): the text in that colour on a 14% tint of it. Overrides `color`."
+  )
 
   attr(:active, :boolean,
     default: false,
     doc:
-      "The selected state of a filter chip: a solid `primary` fill with white text and a primary border (and `aria-pressed=\"true\"`) whatever its `color` and `variant`, so a list of chips only toggles this."
+      "The selected state of a filter chip (and `aria-pressed=\"true\"`): a solid `primary` fill with white text and a primary border whatever its `color`, or the accent tint for `variant=\"flat\"`, so a list of chips only toggles this."
   )
 
   attr(:count, :integer,
@@ -146,16 +165,21 @@ defmodule LineaUI.Components.Tag do
         assigns.class
       ])
     )
+    |> assign(:style, assigns.tint && "--tag-tint:#{assigns.tint}")
     |> render_tag()
   end
 
+  defp variant_classes(%{tint: tint, variant: variant}) when is_binary(tint),
+    do: [variant == "flat" && @flat, "tag-tint"]
+
+  defp variant_classes(%{variant: "flat", active: active}), do: [@flat, active && "on"]
   defp variant_classes(%{active: true}), do: @active
   defp variant_classes(%{variant: variant, color: color}), do: @variants[variant][color]
 
   defp render_tag(%{rest: rest} = assigns)
        when is_map_key(rest, :href) or is_map_key(rest, :navigate) or is_map_key(rest, :patch) do
     ~H"""
-    <.link class={@classes} aria-current={@active && "true"} {@rest}>
+    <.link class={@classes} style={@style} aria-current={@active && "true"} {@rest}>
       {render_slot(@inner_block)}<.tag_count :if={@count} count={@count} />
     </.link>
     """
@@ -163,7 +187,7 @@ defmodule LineaUI.Components.Tag do
 
   defp render_tag(assigns) do
     ~H"""
-    <button type={@type} class={@classes} aria-pressed={@active && "true"} {@rest}>
+    <button type={@type} class={@classes} style={@style} aria-pressed={@active && "true"} {@rest}>
       {render_slot(@inner_block)}<.tag_count :if={@count} count={@count} />
     </button>
     """

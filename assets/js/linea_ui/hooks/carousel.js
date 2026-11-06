@@ -296,6 +296,7 @@ const Carousel = {
     slides.forEach((slide, index) => this.place(slide, index, count))
     this.renderButtons(count)
     this.renderPagination(count)
+    this.renderThumbs()
     this.renderScrollbar(count)
     this.renderParallax(slides)
   },
@@ -326,10 +327,20 @@ const Carousel = {
     const box = this.el.querySelector(":scope > [data-carousel-pagination]")
     const renderers = {
       bullets: () => this.renderBullets(box, count),
-      fraction: () => (box.textContent = fraction(this.index, count)),
+      fraction: () => {
+        const text = fraction(this.index, count)
+        box.textContent = box.hasAttribute("data-compact") ? text.replaceAll(" ", "") : text
+      },
       progress: () => this.renderProgress(box, count),
     }
     box && renderers[box.dataset.carouselPagination]?.()
+  },
+
+  renderThumbs() {
+    this.el.querySelectorAll(":scope > [data-carousel-thumbs] > [data-carousel-bullet]").forEach((thumb, index) => {
+      thumb.dataset.active = String(index === this.index)
+      thumb.toggleAttribute("aria-current", index === this.index)
+    })
   },
 
   renderBullets(box, count) {

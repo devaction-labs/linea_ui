@@ -35,12 +35,26 @@ defmodule LineaUI.Components.CommandPalette do
   the server filters instead: the query is pushed (debounced) and the palette shows the `items` it renders, still
   narrowed by scope.
 
+  `variant="canvas"` is the design canvas look (the canvas menu: a 14px panel, 34px rows with muted icons, small
+  faint group headings, mono keys); `hints={false}` drops the keys footer and `highlight="typed"` leaves the rows
+  unmarked until something is typed (or an arrow or the mouse picks one), as the canvas shows its "recent" list.
+  An item's `avatar` (the attrs of `LineaUI.Components.Avatar.avatar/1`) takes the place of its icon:
+
+      <.command_palette
+        id="search"
+        variant="canvas"
+        hints={false}
+        highlight="typed"
+        items={[%{group: "Clientes", label: "Casa das Tintas", avatar: %{initials: "CD", tint: "#d97a1e"}}]}
+      />
+
   Choosing an item closes the palette and runs `on_select`. An item with `navigate`, `patch` or `href` is a real link
   (so Ctrl Enter opens its address in a new window) and the navigation happens as for any link.
   """
 
   use LineaUI.Component
 
+  import LineaUI.Components.Avatar, only: [avatar: 1]
   import LineaUI.Components.Icon, only: [glyph: 1, icon: 1]
   import LineaUI.Components.Modal, only: [modal: 1]
   import LineaUI.Components.Typography, only: [kbd: 1]
@@ -56,11 +70,41 @@ defmodule LineaUI.Components.CommandPalette do
 
   @assistant_icon "flex size-6 shrink-0 items-center justify-center rounded-md bg-gradient-to-br from-blue-600 to-purple-500 text-white"
 
+  # the canvas menu (`sg-menu`): the classes that differ from the default look
+  @looks %{
+    "default" => %{
+      card: "rounded-xl",
+      head: "h-[67px] gap-2.5 border-b border-slate-200 px-5 dark:border-navy-450",
+      search: "size-4 shrink-0 text-slate-950 dark:text-navy-50",
+      input:
+        "h-full text-sm text-slate-950 placeholder:text-slate-500 dark:text-navy-50 dark:placeholder:text-navy-300",
+      key: @key,
+      heading:
+        "px-2.5 pb-1 pt-2.5 text-xs font-medium uppercase text-slate-500 dark:text-navy-300",
+      row: @item_row,
+      icon: @item_icon,
+      label: "text-[13px] text-slate-950 dark:text-navy-50"
+    },
+    "canvas" => %{
+      card: "palette-canvas rounded-[14px]",
+      head: "gap-4 border-b border-[var(--line)] px-3.5 py-3",
+      search: "size-4 shrink-0 text-[var(--fg)]",
+      input: "h-6 text-sm text-[var(--ink)] placeholder:text-[var(--faint)]",
+      key: "sg-kbd",
+      heading: "px-2.5 pb-1 pt-2 text-[11px] tracking-[.06em] uppercase text-[var(--faint)]",
+      row:
+        "group/item flex min-h-[34px] w-full cursor-pointer items-center gap-2.5 rounded-[9px] px-2.5 py-[5px] text-left text-[13.5px] text-[var(--fg)] no-underline outline-hidden aria-selected:bg-[var(--hover)] aria-selected:text-[var(--ink)]",
+      icon: "flex size-4 shrink-0 items-center justify-center text-[var(--muted)]",
+      label: "text-[13.5px] text-inherit"
+    }
+  }
+
   @doc """
   Renders the palette, closed unless `open`.
 
   Each of `items` is a map with `label` (required) and optionally `value` (what `on_select` receives, the label by
-  default), `sub` (the line under the label), `icon` (a `LineaUI.Components.Icon.icon/1` name), `keys` (a list of key
+  default), `sub` (the line under the label), `icon` (a `LineaUI.Components.Icon.icon/1` name), `avatar` (a map of
+  `LineaUI.Components.Avatar.avatar/1` attrs, drawn 24px and square in place of the icon), `keys` (a list of key
   names shown on the right), `group` (the heading it is listed under; items without one are listed first, without a
   heading), `scope`, `keywords` (more text the query matches) and one of `navigate`, `patch` or `href`.
 
@@ -143,6 +187,20 @@ defmodule LineaUI.Components.CommandPalette do
     doc:
       "The key that toggles the palette from anywhere: `Mod` is Ctrl or ⌘. `nil` leaves it to `LineaUI.open/1`."
 
+  attr :variant, :string,
+    default: "default",
+    values: ~w(default canvas),
+    doc:
+      "`canvas`: the design canvas menu look (34px rows, muted icons, faint headings, mono keys)."
+
+  attr :hints, :boolean, default: true, doc: "Shows the footer with the keys hints."
+
+  attr :highlight, :string,
+    default: "always",
+    values: ~w(always typed),
+    doc:
+      "`always` marks the first row as active; `typed` only once something is typed or an arrow or the mouse picks a row."
+
   attr :hint_navigate, :string, default: "Navigate"
   attr :hint_open, :string, default: "Open"
   attr :hint_new_tab, :string, default: "Open in new tab"
@@ -159,6 +217,7 @@ defmodule LineaUI.Components.CommandPalette do
       |> assign(:groups, groups(items, assigns.id))
       |> assign(:chips, Options.normalize(assigns.scopes))
       |> assign(:assistant_row, assistant(assigns.assistant))
+      |> assign(:look, Map.fetch!(@looks, assigns.variant))
       |> assign(:on_select_js, Overlay.callback(assigns.on_select, assigns.id, assigns.target))
       |> assign(
         :on_assistant_js,
@@ -178,7 +237,7 @@ defmodule LineaUI.Components.CommandPalette do
       on_close={@on_close}
       target={@target}
       aria-label={@label}
-      class={merge(["mt-[10vh] max-w-130 rounded-xl", @class])}
+      class={merge(["mt-[10vh] max-w-130", @look.card, @class])}
       {@rest}
     >
       <div
@@ -192,9 +251,10 @@ defmodule LineaUI.Components.CommandPalette do
         data-on-select={@on_select_js}
         data-on-assistant={@on_assistant_js}
         data-assistant-mode={@assistant_mode}
+        data-highlight={@highlight}
       >
-        <div class="flex h-[67px] items-center gap-2.5 border-b border-slate-200 px-5 dark:border-navy-450">
-          <.glyph name={:search} class="size-4 shrink-0 text-slate-950 dark:text-navy-50" />
+        <div class={["flex items-center", @look.head]}>
+          <.glyph name={:search} class={@look.search} />
           <input
             type="text"
             role="combobox"
@@ -206,10 +266,10 @@ defmodule LineaUI.Components.CommandPalette do
             autofocus
             placeholder={@placeholder}
             phx-mounted={JS.ignore_attributes(["value"])}
-            class="h-full min-w-0 flex-1 bg-transparent text-sm text-slate-950 outline-hidden placeholder:text-slate-500 dark:text-navy-50 dark:placeholder:text-navy-300"
+            class={["min-w-0 flex-1 bg-transparent outline-hidden", @look.input]}
             data-query
           />
-          <.kbd class={key()}>Esc</.kbd>
+          <.kbd class={@look.key}>Esc</.kbd>
         </div>
         <div
           :if={@chips != []}
@@ -241,14 +301,10 @@ defmodule LineaUI.Components.CommandPalette do
             aria-labelledby={group.label && group.id}
             data-group
           >
-            <div
-              :if={group.label}
-              id={group.id}
-              class="px-2.5 pb-1 pt-2.5 text-xs font-medium uppercase text-slate-500 dark:text-navy-300"
-            >
+            <div :if={group.label} id={group.id} class={@look.heading}>
               {group.label}
             </div>
-            <.palette_item :for={item <- group.items} item={item} />
+            <.palette_item :for={item <- group.items} item={item} look={@look} />
           </div>
           <button
             :if={@assistant_row}
@@ -256,7 +312,7 @@ defmodule LineaUI.Components.CommandPalette do
             type="button"
             role="option"
             aria-selected="false"
-            class={item_row()}
+            class={@look.row}
             data-assistant
             data-template={@assistant_row.label}
             hidden
@@ -289,7 +345,7 @@ defmodule LineaUI.Components.CommandPalette do
                 {@assistant_row.sub}
               </span>
             </span>
-            <span class="ml-auto flex gap-1"><.kbd class={key()}>↵</.kbd></span>
+            <span class="ml-auto flex gap-1"><.kbd class={@look.key}>↵</.kbd></span>
           </button>
           <div
             data-empty
@@ -299,10 +355,19 @@ defmodule LineaUI.Components.CommandPalette do
             {@empty}
           </div>
         </div>
-        <div class="flex items-center gap-4 border-t border-slate-200 bg-slate-50 px-5 py-2.5 text-xs text-slate-500 dark:border-navy-450 dark:bg-navy-800 dark:text-navy-300">
-          <span class="inline-flex items-center gap-1.5"><.kbd class={key()}>↑↓</.kbd>{@hint_navigate}</span>
-          <span class="inline-flex items-center gap-1.5"><.kbd class={key()}>↵</.kbd>{@hint_open}</span>
-          <span class="inline-flex items-center gap-1.5"><.kbd class={key()}>Ctrl ↵</.kbd>{@hint_new_tab}</span>
+        <div
+          :if={@hints or @footer != []}
+          class="flex items-center gap-4 border-t border-slate-200 bg-slate-50 px-5 py-2.5 text-xs text-slate-500 dark:border-navy-450 dark:bg-navy-800 dark:text-navy-300"
+        >
+          <span :if={@hints} class="inline-flex items-center gap-1.5">
+            <.kbd class={@look.key}>↑↓</.kbd>{@hint_navigate}
+          </span>
+          <span :if={@hints} class="inline-flex items-center gap-1.5">
+            <.kbd class={@look.key}>↵</.kbd>{@hint_open}
+          </span>
+          <span :if={@hints} class="inline-flex items-center gap-1.5">
+            <.kbd class={@look.key}>Ctrl ↵</.kbd>{@hint_new_tab}
+          </span>
           <span
             :if={@footer != []}
             class="ml-auto text-primary dark:text-accent-light"
@@ -317,6 +382,7 @@ defmodule LineaUI.Components.CommandPalette do
   end
 
   attr :item, :map, required: true
+  attr :look, :map, required: true
 
   defp palette_item(%{item: %{link: nil}} = assigns) do
     ~H"""
@@ -325,13 +391,13 @@ defmodule LineaUI.Components.CommandPalette do
       type="button"
       role="option"
       aria-selected="false"
-      class={item_row()}
+      class={@look.row}
       data-item
       data-value={@item.value}
       data-scope={@item.scope}
       data-text={@item.text}
     >
-      <.palette_item_body item={@item} />
+      <.palette_item_body item={@item} look={@look} />
     </button>
     """
   end
@@ -344,38 +410,37 @@ defmodule LineaUI.Components.CommandPalette do
       id={@item.id}
       role="option"
       aria-selected="false"
-      class={item_row()}
+      class={@look.row}
       data-item
       data-value={@item.value}
       data-scope={@item.scope}
       data-text={@item.text}
       {@link}
     >
-      <.palette_item_body item={@item} />
+      <.palette_item_body item={@item} look={@look} />
     </.link>
     """
   end
 
   attr :item, :map, required: true
+  attr :look, :map, required: true
 
   defp palette_item_body(assigns) do
     ~H"""
-    <span class={item_icon()}>
+    <.avatar :if={@item.avatar} size="24" shape="square" {@item.avatar} />
+    <span :if={!@item.avatar} class={@look.icon}>
       <.icon :if={@item.icon} name={@item.icon} class="size-4" />
     </span>
     <span class="min-w-0">
-      <span class="block truncate text-[13px] text-slate-950 dark:text-navy-50">{@item.label}</span>
+      <span class={["block truncate", @look.label]}>{@item.label}</span>
       <span :if={@item.sub} class="block truncate text-xs text-slate-400 dark:text-navy-300">{@item.sub}</span>
     </span>
     <span :if={@item.keys != []} class="ml-auto flex gap-1">
-      <.kbd :for={name <- @item.keys} class={key()}>{name}</.kbd>
+      <.kbd :for={name <- @item.keys} class={@look.key}>{name}</.kbd>
     </span>
     """
   end
 
-  defp item_row, do: @item_row
-  defp item_icon, do: @item_icon
-  defp key, do: @key
   defp assistant_icon, do: @assistant_icon
 
   defp item({entry, index}, id) do
@@ -389,6 +454,7 @@ defmodule LineaUI.Components.CommandPalette do
       sub: sub,
       value: to_string(Map.get(entry, :value, label)),
       icon: Map.get(entry, :icon),
+      avatar: avatar_attrs(Map.get(entry, :avatar)),
       keys: Map.get(entry, :keys, []),
       group: Map.get(entry, :group),
       scope: to_string(Map.get(entry, :scope, "")),
@@ -396,6 +462,9 @@ defmodule LineaUI.Components.CommandPalette do
       link: link_attrs(entry)
     }
   end
+
+  defp avatar_attrs(nil), do: nil
+  defp avatar_attrs(attrs), do: Map.new(attrs)
 
   defp link_attrs(%{navigate: path}), do: %{navigate: path}
   defp link_attrs(%{patch: path}), do: %{patch: path}

@@ -213,4 +213,34 @@ defmodule LineaUI.Components.CommandPaletteTest do
     assert attr_of(html, "#palette", "data-open") == ["true"]
     assert "shadow-2xl" in classes(html, "#palette-panel")
   end
+
+  test "the canvas variant: menu card, mono keys, no hints, highlight once typed" do
+    html =
+      render(~H"""
+      <.command_palette
+        id="palette"
+        variant="canvas"
+        hints={false}
+        highlight="typed"
+        hint_navigate="Mover"
+        items={[
+          %{label: "Casa", avatar: %{initials: "CD", tint: "#d97a1e"}},
+          %{label: "Novo", keys: ["N"]}
+        ]}
+      />
+      """)
+
+    assert "palette-canvas" in classes(html, "#palette-panel")
+    assert attr_of(html, "#palette-palette", "data-highlight") == ["typed"]
+    refute html |> find("#palette-palette") |> LazyHTML.text() =~ "Mover"
+    assert html |> find("#palette-item-0") |> LazyHTML.text() =~ "CD"
+    assert "sg-kbd" in classes(html, "#palette-item-1 kbd")
+  end
+
+  test "the hints footer shows by default and the first row is highlighted always" do
+    html = render(~H|<.command_palette id="palette" items={[%{label: "A"}]} />|)
+
+    assert attr_of(html, "#palette-palette", "data-highlight") == ["always"]
+    assert html |> find("#palette-palette") |> LazyHTML.text() =~ "Navigate"
+  end
 end

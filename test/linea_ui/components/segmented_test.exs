@@ -31,6 +31,20 @@ defmodule LineaUI.Components.SegmentedTest do
     assert attr_of(html, "#status button", "id") == ["status-0", "status-1", "status-2"]
   end
 
+  test "an icon goes before the label" do
+    html =
+      render(~H"""
+      <.segmented
+        id="v"
+        value="q"
+        options={[%{label: "Quadro", value: "q", icon: "huge-kanban"}, {"Lista", "l"}]}
+      />
+      """)
+
+    assert html |> find("#v-0 [class*=huge-kanban]") |> Enum.count() == 1
+    assert html |> find("#v-1 [class*=huge-]") |> Enum.count() == 0
+  end
+
   test "counts follow the label and a disabled option is disabled" do
     html = render(~H|<.segmented id="status" value="all" options={options()} />|)
 

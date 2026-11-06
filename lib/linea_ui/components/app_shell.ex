@@ -226,6 +226,11 @@ defmodule LineaUI.Components.AppShell do
   slot :sidebar, doc: "The main sidebar and its panel, or the sideblock."
   slot :header, doc: "The `header/1`."
   slot :aside, doc: "Fixed parts: the right sidebar, drawers."
+
+  slot :tab_bar,
+    doc:
+      "A bottom bar of tabs for phones (`layout=\"framed\"`), under the panel and hidden from 768px: a `tab_bar/1`."
+
   slot :inner_block
 
   def app_shell(%{layout: "framed"} = assigns) do
@@ -251,6 +256,9 @@ defmodule LineaUI.Components.AppShell do
       }>
         {render_slot(@inner_block)}
       </main>
+      <div :if={@tab_bar != []} class="-mt-2.5 bg-white md:hidden dark:bg-navy-900">
+        {render_slot(@tab_bar)}
+      </div>
     </div>
     """
   end
@@ -1551,7 +1559,10 @@ defmodule LineaUI.Components.AppShell do
   attr :class, :any, default: nil
   attr :rest, :global
 
-  slot :brand, doc: "The mark in its rounded box (a logo image)."
+  slot :brand,
+    doc:
+      "The mark in its rounded box (a logo image). With no `:brand` and no `:wordmark` the brand row and its rule are left out on wide screens (phones keep the bar for the hamburger)."
+
   slot :wordmark, doc: "The name next to the mark; hidden in the rail."
   slot :workspace, doc: "The workspace switcher under the brand; hidden in the rail."
 
@@ -1585,7 +1596,7 @@ defmodule LineaUI.Components.AppShell do
       data-target={@target}
       {@rest}
     >
-      <div class="rail-bar">
+      <div class={["rail-bar", (@brand == [] and @wordmark == []) && "rail-bar-bare"]}>
         <div class="rail-brand">
           <span :if={@brand != []} class="rail-mark">{render_slot(@brand)}</span>
           <span :if={@wordmark != []} class="rail-label rail-wordmark">{render_slot(@wordmark)}</span>
@@ -1618,6 +1629,48 @@ defmodule LineaUI.Components.AppShell do
         {render_slot(@bottom)}
       </div>
     </aside>
+    """
+  end
+
+  @doc """
+  A phone's bottom bar of tabs: one icon per section, the current one in the accent color. Put it in the
+  `:tab_bar` slot of `<.app_shell layout="framed">`, or at the foot of any phone-sized frame.
+
+      <.tab_bar>
+        <:tab navigate={~p"/today"} label="Today" active><.icon name="huge-home-01" /></:tab>
+        <:tab navigate={~p"/orders"} label="Orders"><.icon name="huge-shopping-cart-01" /></:tab>
+      </.tab_bar>
+  """
+  attr :label, :string, default: "Sections", doc: "The accessible name of the bar."
+
+  attr :current, :string,
+    default: nil,
+    doc: "The current path; the tab whose link matches it is active."
+
+  attr :class, :any, default: nil
+  attr :rest, :global
+
+  slot :tab, required: true, doc: "The icon; `label` is its accessible name." do
+    attr :href, :string
+    attr :navigate, :string
+    attr :patch, :string
+    attr :label, :string, required: true
+    attr :active, :boolean
+  end
+
+  def tab_bar(assigns) do
+    ~H"""
+    <nav aria-label={@label} class={merge(["linea-tabbar", @class])} {@rest}>
+      <.link
+        :for={tab <- @tab}
+        class="linea-tabbar-tab"
+        aria-label={tab.label}
+        aria-current={active?(tab, @current) && "page"}
+        {link_attrs(tab)}
+      >
+        {render_slot(tab)}
+      </.link>
+    </nav>
     """
   end
 
@@ -1902,11 +1955,23 @@ defmodule LineaUI.Components.AppShell do
     default: "inline",
     values: ~w(inline page),
     doc:
-      "`inline` is LineOne's row, the title with its crumbs beside it. `page` is the framed shell's title block: the crumbs with the clock and the bell on top, then the badge, the 28px title with a context line and the actions, and the tabs."
+      "`inline` is LineOne's row, the title with its crumbs beside it. `page` is the framed shell's title block: the crumbs with the clock and the bell on top (left out when there is none of them), or a `back` link, then the badge, the 34px title with a context line and the actions, and the tabs."
 
   attr :description, :string,
     default: nil,
     doc: "The context line under the title (`variant=\"page\"`)."
+
+  attr :back, :string,
+    default: nil,
+    doc:
+      "A path to go back to: a \"‹ label\" link above the title, in place of the top row (`variant=\"page\"`)."
+
+  attr :back_label, :string, default: nil, doc: "The text of the `back` link."
+
+  attr :badge_position, :string,
+    default: "above",
+    values: ~w(above inline),
+    doc: "The `:badge` above the title, or `inline` beside it (`variant=\"page\"`)."
 
   attr :clock, :boolean,
     default: false,
@@ -1940,14 +2005,33 @@ defmodule LineaUI.Components.AppShell do
 
   slot :badge, doc: "The status badge above the title (`variant=\"page\"`)."
   slot :notifications, doc: "Replaces the bell with your own button or menu (`variant=\"page\"`)."
-  slot :tabs, doc: "The page's tabs under the title, over a rule (`variant=\"page\"`)."
+
+  slot :tabs,
+    doc:
+      "The page's tabs under the title, full width: a `tabs/1`, which draws its rule (`variant=\"page\"`)."
 
   def page_header(%{variant: "page"} = assigns) do
-    assigns = assign(assigns, :crumbs, mark_last(assigns.crumb))
+    assigns =
+      assigns
+      |> assign(:crumbs, mark_last(assigns.crumb))
+      |> assign(:top, top_row?(assigns))
 
     ~H"""
-    <header class={merge(["flex flex-col gap-[18px]", @class])} {@rest}>
-      <div class="flex items-center gap-2.5">
+    <header
+      class={merge(["flex flex-col", gap_class(@top, @back, @tabs), @class])}
+      {@rest}
+    >
+      <.link
+        :if={@back}
+        navigate={@back}
+        class="flex w-fit items-center gap-1.5 text-[13px] text-slate-500 no-underline transition-colors hover:text-slate-800 dark:text-navy-200 dark:hover:text-navy-50"
+      >
+        <.glyph name={:chevron_left} class="size-3.5" />{@back_label}
+      </.link>
+      <%= if !@top do %>
+        {render_slot(@inner_block)}
+      <% end %>
+      <div :if={@top} class="flex items-center gap-2.5">
         {render_slot(@leading)}
         <nav
           :if={@crumb != []}
@@ -1993,23 +2077,43 @@ defmodule LineaUI.Components.AppShell do
           </button>
         </div>
       </div>
-      <div :if={@title != "" or @actions != []} class="flex flex-wrap items-end justify-between gap-5">
-        <div class="min-w-0">
-          <div :if={@badge != []} class="flex items-center gap-2.5">{render_slot(@badge)}</div>
+      <div
+        :if={@title != "" or @actions != []}
+        class={[
+          "flex flex-wrap justify-between gap-5",
+          if(@top, do: "items-end", else: "items-center")
+        ]}
+      >
+        <div class={["min-w-0", @badge_position == "inline" && "flex flex-wrap items-center gap-2.5"]}>
+          <div :if={@badge != [] and @badge_position == "above"} class="flex items-center gap-2.5">
+            {render_slot(@badge)}
+          </div>
           <h1
             :if={@title != ""}
-            class="mt-1 mb-0 text-[34px] leading-10 font-semibold tracking-[-0.03em] text-slate-900 dark:text-navy-50"
+            class={[
+              "mb-0 text-[34px] leading-10 font-semibold tracking-[-0.03em] text-slate-900 dark:text-navy-50",
+              if(@top or (@badge_position == "above" and @badge != []), do: "mt-1", else: "mt-0")
+            ]}
           >
             {@title}
           </h1>
-          <p :if={@description} class="text-[15px] leading-[22px] text-slate-500 dark:text-navy-200">{@description}</p>
+          <div :if={@badge != [] and @badge_position == "inline"} class="flex items-center gap-2.5">
+            {render_slot(@badge)}
+          </div>
+          <p
+            :if={@description}
+            class={[
+              "text-[15px] leading-[22px] text-slate-500 dark:text-navy-200",
+              !@top && "mt-1.5",
+              @badge_position == "inline" && "basis-full"
+            ]}
+          >
+            {@description}
+          </p>
         </div>
         <div :if={@actions != []} class="flex items-center gap-2.5">{render_slot(@actions)}</div>
       </div>
-      <div
-        :if={@tabs != []}
-        class="-mb-px flex items-end gap-2.5 border-b border-slate-150 dark:border-navy-600"
-      >
+      <div :if={@tabs != []} class="-mb-px flex flex-col">
         {render_slot(@tabs)}
       </div>
     </header>
@@ -2045,6 +2149,17 @@ defmodule LineaUI.Components.AppShell do
     </div>
     """
   end
+
+  defp top_row?(assigns) do
+    # `inner_block` is left out: a call with named slots always carries one (the whitespace between them).
+    assigns.leading != [] or assigns.crumb != [] or assigns.clock or assigns.bell or
+      assigns.notifications != []
+  end
+
+  defp gap_class(true, _back, _tabs), do: "gap-[18px]"
+  defp gap_class(false, back, _tabs) when is_binary(back), do: "gap-1.5"
+  defp gap_class(false, _back, [_ | _]), do: "gap-3.5"
+  defp gap_class(false, _back, _tabs), do: "gap-[18px]"
 
   defp mark_last(entries) do
     count = length(entries)

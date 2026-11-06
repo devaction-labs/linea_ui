@@ -203,4 +203,43 @@ defmodule LineaUI.Components.DataTableTest do
 
     assert ["..."] = html |> find("#b span[aria-hidden=true]") |> Enum.map(&LazyHTML.text/1)
   end
+
+  test "the title bar shows only with something in it; loading draws skeleton rows; the canvas pager" do
+    bare =
+      render(~H"""
+      <.data_table id="t" rows={[%{n: 1}]}>
+        <:col :let={r} label="N">{r.n}</:col>
+      </.data_table>
+      """)
+
+    loading =
+      render(~H"""
+      <.data_table id="l" rows={[]} loading>
+        <:col label="Pedido"></:col>
+        <:col label="Total" align="right"></:col>
+      </.data_table>
+      """)
+
+    canvas =
+      render(~H"""
+      <.data_table
+        id="c"
+        rows={[%{n: 1}]}
+        total={30}
+        page_size={3}
+        on_page="page"
+        pager="canvas"
+        summary_label="%{from}–%{to} de %{total}"
+      >
+        <:col :let={r} label="N">{r.n}</:col>
+      </.data_table>
+      """)
+
+    assert [] = find(bare, "#t > div.flex.items-center.justify-between") |> Enum.to_list()
+    refute "mt-3" in classes(bare, "#t > .sg-card")
+    assert LazyHTML.attribute(find(loading, "#l"), "aria-busy") == ["true"]
+    assert [_, _, _, _, _, _] = find(loading, "#l tbody .sg-skel") |> Enum.to_list()
+    assert [_] = find(canvas, "#c .sg-pager") |> Enum.to_list()
+    assert find(canvas, "#c .sg-pager") |> LazyHTML.text() =~ "1–3 de 30"
+  end
 end

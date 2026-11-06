@@ -6,6 +6,11 @@ defmodule LineaUI.Components.Icon do
       <.icon name="huge-search-01" class="size-4" />
       <.glyph name={:chevron_down} class="size-4" />
 
+  `boxed` puts the icon in the canvas icon box (`sg-ic`, 36px with 11px corners), `tone` colours the box by state:
+
+      <.icon name="huge-tick-02" boxed tone="success" />
+      <.icon name="huge-file-01" boxed box_size="sm" />
+
   `icon/1` draws `huge-*` classes from Hugeicons (the free Stroke Rounded set, which the app vendors and
   `assets/css/hugeicons.cjs` turns into classes; see the README) and passes any other class name through, so
   `name="fa-solid fa-house"` works with Font Awesome. Write the name in full, never interpolated, or Tailwind
@@ -459,22 +464,74 @@ defmodule LineaUI.Components.Icon do
     required: true,
     doc: "`huge-search-01`, or any class such as `fa-solid fa-house`."
 
-  attr :class, :any, default: "size-5"
+  attr :class, :any,
+    default: nil,
+    doc: "Classes of the icon itself; `size-5` when none is given (`size-4` inside a box)."
+
+  attr :boxed, :boolean,
+    default: false,
+    doc:
+      "Draws the icon in the canvas icon box: 36px, 11px corners, the sunken fill with a 1px line."
+
+  attr :tone, :string,
+    default: nil,
+    values: [nil | ~w(neutral accent success warning error info)],
+    doc:
+      "Colours the box (and boxes the icon): the tint of that state with the icon in its colour."
+
+  attr :box_size, :string,
+    default: "lg",
+    values: ~w(sm md lg),
+    doc:
+      "The box: `lg` 36px (11px corners), `md` 28px (9px corners, a timeline point), `sm` 24px (a tree row)."
+
+  attr :box_class, :any, default: nil, doc: "More classes of the box."
   attr :rest, :global
 
-  def icon(%{name: "huge-" <> _} = assigns) do
+  @tones %{
+    "neutral" => nil,
+    "accent" => "acc",
+    "success" => "pos",
+    "warning" => "warn",
+    "error" => "neg",
+    "info" => "info"
+  }
+
+  def icon(%{boxed: false, tone: nil} = assigns) do
+    assigns |> assign(:class, assigns.class || "size-5") |> bare_icon()
+  end
+
+  def icon(assigns) do
+    assigns = assign(assigns, class: assigns.class || "size-4", tone_class: @tones[assigns.tone])
+
+    ~H"""
+    <span
+      class={merge(["sg-ic", @tone_class, box_size(@box_size), @box_class])}
+      aria-hidden="true"
+      {@rest}
+    >
+      <.bare_icon name={@name} class={@class} rest={%{}} />
+    </span>
+    """
+  end
+
+  defp box_size("sm"), do: "sg-ic-sm"
+  defp box_size("md"), do: "sg-ic-md"
+  defp box_size(_size), do: nil
+
+  defp bare_icon(%{name: "huge-" <> _} = assigns) do
     ~H"""
     <span class={[@name, @class]} aria-hidden="true" {@rest}></span>
     """
   end
 
-  def icon(%{name: "ki-" <> _} = assigns) do
+  defp bare_icon(%{name: "ki-" <> _} = assigns) do
     ~H"""
     <i class={[@name, @class]} aria-hidden="true" {@rest}></i>
     """
   end
 
-  def icon(assigns) do
+  defp bare_icon(assigns) do
     ~H"""
     <i class={[@name, @class]} aria-hidden="true" {@rest}></i>
     """

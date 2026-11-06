@@ -97,7 +97,7 @@ defmodule LineaUI.Components.Kanban do
 
   @board "flex items-start gap-3.5 overflow-x-auto px-0.5 pb-3"
 
-  @column "flex w-[272px] flex-none flex-col gap-2.5 rounded-[18px] bg-slate-50 p-3 ring-1 ring-slate-150 ring-inset data-[over]:bg-primary/10 data-[disabled=true]:opacity-60 dark:bg-navy-900 dark:ring-navy-500 dark:data-[over]:bg-accent/[.18]"
+  @column "flex w-[272px] flex-none flex-col gap-2.5 rounded-[18px] bg-[var(--sunken)] p-3 ring-1 ring-[var(--line)] ring-inset data-[over]:bg-primary/10 data-[disabled=true]:opacity-60 dark:data-[over]:bg-accent/[.18]"
 
   @colors %{
     "neutral" => %{
@@ -202,8 +202,8 @@ defmodule LineaUI.Components.Kanban do
   @doc """
   Renders a column: a tinted well, 272px wide, that is the drop list of its cards.
 
-  The header has the `icon` tile in the color of the stage, the `label`, the number of cards and the `actions`
-  (a menu button). Under it a line with `meta` on the left and `total` on the right, and a 4px bar filled to
+  The header has the `icon` tile in the color of the stage, the `label`, the number of cards (the canvas count,
+  pushed to the right end on the sunken fill) and the `actions` (a menu button). Under it a line with `meta` on the left and `total` on the right, and a 4px bar filled to
   `progress`. The cards are the inner block; `empty` shows when `count` is `0`, and `footer` closes the column.
 
       <.kanban_column id="col-approved" list="approved" label="Approved" color="primary" count={2}
@@ -214,6 +214,10 @@ defmodule LineaUI.Components.Kanban do
       </.kanban_column>
 
   The column is the `data-list` of the board's hook: a drop on it pushes `to` with `list`.
+
+  An `empty` with no `title` is the canvas's compact hint, a dashed well with its text:
+
+      <:empty>Arraste para cá</:empty>
   """
   attr :id, :string, required: true, doc: "The DOM id of the column."
 
@@ -261,7 +265,9 @@ defmodule LineaUI.Components.Kanban do
   slot :icon, doc: "The glyph in the 26px tile of the header (`size-3.5`)."
   slot :actions, doc: "The header's menu button, at its right end."
 
-  slot :empty, doc: "Shown instead of cards when `count` is `0`: `title` and the text." do
+  slot :empty,
+    doc:
+      "Shown instead of cards when `count` is `0`: an illustration, `title` and the text; without a `title`, the compact dashed hint with the text." do
     attr :title, :string
 
     attr :icon, :string,
@@ -300,12 +306,8 @@ defmodule LineaUI.Components.Kanban do
           {render_slot(@icon)}
         </span>
         <span class="text-[13.5px] font-[550] text-slate-900 dark:text-navy-50">{@label}</span>
-        <span
-          :if={@count}
-          class={
-            merge([@pill, if(@exceeded, do: @over_limit, else: "text-slate-500 dark:text-navy-200")])
-          }
-        >
+        <span :if={@count && !@exceeded} class="sg-nav-n">{@count}</span>
+        <span :if={@count && @exceeded} class={merge([@pill, "ml-auto", @over_limit])}>
           {@count}
         </span>
         <span :if={@actions != []} class="ml-auto flex">{render_slot(@actions)}</span>
@@ -330,7 +332,15 @@ defmodule LineaUI.Components.Kanban do
       {render_slot(@inner_block)}
       <div
         :for={empty <- @empty}
-        :if={@count == 0}
+        :if={@count == 0 && !empty[:title]}
+        data-empty
+        class="sg-drop sg-kb-empty"
+      >
+        {render_slot(empty)}
+      </div>
+      <div
+        :for={empty <- @empty}
+        :if={@count == 0 && empty[:title]}
         data-empty
         class="flex flex-col items-center gap-1 px-2 pt-5 pb-6 text-center"
       >

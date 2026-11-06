@@ -1,7 +1,8 @@
 defmodule LineaUI.Components.Tabs do
   @moduledoc """
-  LineOne's tabs: underlined (`line`), on a gray track (`boxed`), rounded (`pill`) and plain text (`text`), laid out
-  horizontally or vertically, with or without icons.
+  LineOne's tabs: underlined (`line`), on a gray track (`boxed`), rounded (`pill`), plain text (`text`) and the design
+  canvas segmented control (`segmented`), laid out horizontally or vertically, with or without icons. A tab's `count`
+  draws the canvas count badge after its label.
 
       <.tabs id="profile-tabs" selected="home">
         <:tab name="home">Home</:tab>
@@ -24,6 +25,8 @@ defmodule LineaUI.Components.Tabs do
       <.tabs id="server-tabs" selected={@tab} on_change="select_tab">…</.tabs>
       <.tabs id="period" variant="boxed" size="sm"><:tab name="month">Last month</:tab></.tabs>
       <.tabs id="range" variant="text"><:tab name="week">Last 7 days</:tab><:tab name="all">All time</:tab></.tabs>
+      <.tabs id="view" variant="segmented"><:tab name="summary">Summary</:tab><:tab name="items">Items</:tab></.tabs>
+      <.tabs id="status"><:tab name="all" count={128}>All</:tab><:tab name="late" count={4}>Late</:tab></.tabs>
 
       def handle_event("select_tab", %{"id" => "server-tabs", "value" => tab}, socket),
         do: {:noreply, assign(socket, tab: tab)}
@@ -62,7 +65,9 @@ defmodule LineaUI.Components.Tabs do
     {"pill", "horizontal"} =>
       "btn h-8 gap-2 rounded-full text-xs-plus font-medium not-aria-selected:hover:bg-slate-300/20 not-aria-selected:focus:bg-slate-300/20 not-aria-selected:active:bg-slate-300/25 not-aria-selected:hover:text-slate-800 not-aria-selected:focus:text-slate-800 dark:not-aria-selected:hover:bg-navy-300/20 dark:not-aria-selected:focus:bg-navy-300/20 dark:not-aria-selected:active:bg-navy-300/25 dark:not-aria-selected:hover:text-navy-100 dark:not-aria-selected:focus:text-navy-100",
     {"pill", "vertical"} =>
-      "btn h-8 justify-start gap-2 rounded-full text-left text-xs-plus font-medium not-aria-selected:hover:bg-slate-300/20 not-aria-selected:focus:bg-slate-300/20 not-aria-selected:active:bg-slate-300/25 not-aria-selected:hover:text-slate-800 not-aria-selected:focus:text-slate-800 dark:not-aria-selected:hover:bg-navy-300/20 dark:not-aria-selected:focus:bg-navy-300/20 dark:not-aria-selected:active:bg-navy-300/25 dark:not-aria-selected:hover:text-navy-100 dark:not-aria-selected:focus:text-navy-100"
+      "btn h-8 justify-start gap-2 rounded-full text-left text-xs-plus font-medium not-aria-selected:hover:bg-slate-300/20 not-aria-selected:focus:bg-slate-300/20 not-aria-selected:active:bg-slate-300/25 not-aria-selected:hover:text-slate-800 not-aria-selected:focus:text-slate-800 dark:not-aria-selected:hover:bg-navy-300/20 dark:not-aria-selected:focus:bg-navy-300/20 dark:not-aria-selected:active:bg-navy-300/25 dark:not-aria-selected:hover:text-navy-100 dark:not-aria-selected:focus:text-navy-100",
+    {"segmented", "horizontal"} => "sg-seg-tab",
+    {"segmented", "vertical"} => "sg-seg-tab"
   }
 
   @text_base "btn gap-2 rounded-none p-0 font-medium tracking-wide not-aria-selected:hover:text-slate-800 not-aria-selected:focus:text-slate-800 dark:not-aria-selected:hover:text-navy-100 dark:not-aria-selected:focus:text-navy-100"
@@ -102,7 +107,9 @@ defmodule LineaUI.Components.Tabs do
     {"pill", "horizontal"} => "is-scrollbar-hidden overflow-x-auto",
     {"pill", "vertical"} => "shrink-0",
     {"text", "horizontal"} => "is-scrollbar-hidden overflow-x-auto",
-    {"text", "vertical"} => "shrink-0"
+    {"text", "vertical"} => "shrink-0",
+    {"segmented", "horizontal"} => "is-scrollbar-hidden overflow-x-auto",
+    {"segmented", "vertical"} => "shrink-0 self-start"
   }
 
   @track %{
@@ -120,7 +127,9 @@ defmodule LineaUI.Components.Tabs do
     {"pill", "horizontal"} => "flex gap-2",
     {"pill", "vertical"} => "flex flex-col space-y-2",
     {"text", "horizontal"} => "flex gap-4",
-    {"text", "vertical"} => "flex flex-col space-y-2"
+    {"text", "vertical"} => "flex flex-col space-y-2",
+    {"segmented", "horizontal"} => "sg-seg",
+    {"segmented", "vertical"} => "sg-seg flex-col items-stretch rounded-[18px]"
   }
 
   @overlap %{
@@ -162,9 +171,9 @@ defmodule LineaUI.Components.Tabs do
 
   attr(:variant, :string,
     default: "line",
-    values: ~w(line boxed pill text),
+    values: ~w(line boxed pill text segmented),
     doc:
-      "`line` underlines the selected tab, `boxed` lifts it off a gray track, `pill` fills a rounded tab, `text` is plain text that only changes color (no border or background; spacing comes from `list_class`, `space-x-4` by default)."
+      "`line` underlines the selected tab, `boxed` lifts it off a gray track, `pill` fills a rounded tab, `text` is plain text that only changes color (no border or background; spacing comes from `list_class`, `space-x-4` by default), `segmented` is the design canvas segmented control (a sunken pill track, the selected tab raised on the panel color)."
   )
 
   attr(:size, :string,
@@ -222,6 +231,11 @@ defmodule LineaUI.Components.Tabs do
     )
 
     attr(:disabled, :boolean, doc: "Skipped by clicks and the arrow keys.")
+
+    attr(:count, :any,
+      doc: "A number drawn after the label in the canvas count badge (`sg-nav-n`)."
+    )
+
     attr(:patch, :string, doc: "Renders the tab as a `<.link patch>` (navigation tabs).")
     attr(:navigate, :string, doc: "Renders the tab as a `<.link navigate>` (navigation tabs).")
     attr(:href, :string, doc: "Renders the tab as a `<.link href>` (navigation tabs).")
@@ -366,7 +380,7 @@ defmodule LineaUI.Components.Tabs do
       phx-mounted={@keep}
       class={@class}
     >
-      {render_slot(@tab)}
+      {render_slot(@tab)}<.count tab={@tab} />
     </.link>
     """
   end
@@ -387,10 +401,20 @@ defmodule LineaUI.Components.Tabs do
       phx-mounted={@keep}
       class={@class}
     >
-      {render_slot(@tab)}
+      {render_slot(@tab)}<.count tab={@tab} />
     </button>
     """
   end
+
+  attr(:tab, :map, required: true)
+
+  defp count(%{tab: %{count: count}} = assigns) when not is_nil(count) do
+    ~H"""
+    <span class="sg-nav-n">{@tab.count}</span>
+    """
+  end
+
+  defp count(assigns), do: ~H""
 
   defp tabindex(true), do: "0"
   defp tabindex(false), do: "-1"

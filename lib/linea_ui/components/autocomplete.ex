@@ -41,6 +41,7 @@ defmodule LineaUI.Components.Autocomplete do
 
   use LineaUI.Component
 
+  alias LineaUI.Components.Form
   alias LineaUI.Components.Pickers
   alias LineaUI.Components.Select.Options
 
@@ -111,6 +112,17 @@ defmodule LineaUI.Components.Autocomplete do
     doc: "Shown when nothing matches; `%{query}` is replaced by what was typed."
 
   attr :loading_text, :string, default: "Searching…", doc: "Shown while the server searches."
+
+  attr :create, :string,
+    default: nil,
+    doc:
+      "A last row, under a line, offering to create what was typed (`\"Cadastrar “%{query}”\"`); `%{query}` is replaced by the text. Shows while there is a query, with or without results."
+
+  attr :on_create, :any,
+    default: nil,
+    doc:
+      "The event pushed (with `%{\"id\" => id, \"query\" => text}`) when the `create` row is chosen, or a `JS` command to run."
+
   attr :size, :string, default: "md", values: ~w(sm md lg)
   attr :class, :any, default: nil
 
@@ -122,7 +134,7 @@ defmodule LineaUI.Components.Autocomplete do
   slot :option,
     doc: "How a suggestion shows in the list; gets the option map (`label`, `value`, `data`)."
 
-  slot :prefix, doc: "An icon inside the control, before the text."
+  slot :prefix, doc: "A plain icon inside the control, before the text (the canvas search glass)."
 
   def autocomplete(assigns) do
     assigns
@@ -159,7 +171,10 @@ defmodule LineaUI.Components.Autocomplete do
 
   defp render_autocomplete(assigns) do
     ~H"""
-    <Pickers.field label={@label} help={@help} errors={@errors} for={@id <> "-input"}>
+    <label class="block" for={@id <> "-input"}>
+      <span :if={@label} class="block text-[13px]/5 font-medium text-slate-950 dark:text-navy-50">
+        {@label}
+      </span>
       <div
         id={@id}
         phx-hook="LineaUI.Autocomplete"
@@ -196,10 +211,7 @@ defmodule LineaUI.Components.Autocomplete do
           {@forwarded}
         />
         <div id={@id <> "-control"} class="ts-control items-center" phx-update="ignore">
-          <span
-            :for={prefix <- @prefix}
-            class="-my-px -ms-3 me-3 flex shrink-0 items-center self-stretch rounded-s-md border-e border-slate-300 bg-slate-100 px-3 text-slate-950 dark:border-navy-450 dark:bg-navy-600 dark:text-navy-50"
-          >
+          <span :for={prefix <- @prefix} class="ac-prefix">
             {render_slot(prefix)}
           </span>
           <input
@@ -256,12 +268,33 @@ defmodule LineaUI.Components.Autocomplete do
           >
             <.entry :for={entry <- @entries} entry={entry} id={@id} option_slot={@option} />
             <div id={@id <> "-status"} phx-update="ignore" data-status></div>
+            <div :if={@create} id={@id <> "-create"} phx-update="ignore" hidden data-create-wrap>
+              <hr class="ac-sep" />
+              <div
+                class="option create"
+                role="option"
+                id={@id <> "-create-row"}
+                aria-selected="false"
+                data-selectable="true"
+                data-create-row
+                data-on-create={is_binary(@on_create) && @on_create}
+                data-create-js={is_struct(@on_create, JS) && @on_create}
+                data-template={@create}
+              >
+                <svg viewBox="0 0 24 24" aria-hidden="true" class="ac-create-icon">
+                  <path d="M12 5v14M5 12h14" />
+                </svg>
+                <span data-create-text></span>
+              </div>
+            </div>
           </div>
         </div>
         <div hidden data-no-results>{@no_results}</div>
         <div hidden data-loading>{@loading_text}</div>
       </div>
-    </Pickers.field>
+      <Form.help_text :if={@help} class="mt-1 block">{@help}</Form.help_text>
+      <Form.error :for={message <- @errors} class="mt-1">{message}</Form.error>
+    </label>
     """
   end
 

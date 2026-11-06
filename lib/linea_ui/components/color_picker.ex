@@ -16,6 +16,14 @@ defmodule LineaUI.Components.ColorPicker do
   `#RGB`, `#RRGGBB` or `#RRGGBBAA` and applies it as soon as it is a color. `locale="pt_BR"` names the
   controls in Portuguese; `labels` overrides single texts.
 
+  `variant="swatches"` is the canvas's brand palette: only the row of `presets`, the chosen one
+  ringed in ink; `hex_field` adds the hex field under it (captioned `hex_label`):
+
+      <.color_picker name="brand" value="#8A5CD6" variant="swatches"
+                     presets={~w(#0D8F91 #2F5FD0 #8A5CD6)} />
+      <.color_picker name="stage" value="#0D8F91" variant="swatches" hex_field swatch_size="md"
+                     presets={~w(#0D8F91 #2F5FD0 #8A5CD6)} />
+
   The behavior lives in the `LineaUI.ColorPicker` hook, so the picker needs a stable `id`.
   """
 
@@ -69,6 +77,23 @@ defmodule LineaUI.Components.ColorPicker do
     doc:
       "Single texts: `:color_area`, `:color_area_text` (with `%{s}` and `%{v}`), `:color_hue`, `:color_alpha`, `:color_hex` and `:color_presets`."
 
+  attr :variant, :string,
+    default: "full",
+    values: ~w(full swatches),
+    doc: "`swatches` shows only the presets (and the hex field with `hex_field`)."
+
+  attr :hex_field, :boolean,
+    default: false,
+    doc: "With `variant=\"swatches\"`: the hex field under the swatches."
+
+  attr :hex_label, :string, default: "Hex", doc: "The caption of the hex field of `swatches`."
+
+  attr :swatch_size, :string,
+    default: nil,
+    values: [nil | ~w(sm md lg)],
+    doc:
+      "The swatches: `sm` 26px (the full picker's default), `md` 30px, `lg` 34px (the default of `swatches`)."
+
   attr :disabled, :boolean, default: false
   attr :on_change, :string, default: nil
   attr :target, :any, default: nil
@@ -103,12 +128,17 @@ defmodule LineaUI.Components.ColorPicker do
       presets: Enum.flat_map(assigns.presets, &List.wrap(Color.normalize(&1))),
       forwarded: Pickers.forwarded(assigns.rest),
       root_rest: Map.drop(assigns.rest, [:"phx-debounce", :"phx-throttle"]),
-      state: error_state(assigns.errors)
+      state: error_state(assigns.errors),
+      swatch: swatch_class(assigns.swatch_size, assigns.variant)
     )
   end
 
   defp if_alpha(true, opacity), do: opacity
   defp if_alpha(false, _opacity), do: 100
+
+  defp swatch_class(nil, "swatches"), do: "lc-swatch lg"
+  defp swatch_class(nil, _variant), do: "lc-swatch sm"
+  defp swatch_class(size, _variant), do: "lc-swatch " <> size
 
   defp error_state([]), do: nil
   defp error_state(_errors), do: "error"
@@ -128,7 +158,13 @@ defmodule LineaUI.Components.ColorPicker do
         id={@id <> "-picker"}
         phx-hook="LineaUI.ColorPicker"
         phx-target={@target}
-        class={merge(["flex w-full max-w-xs flex-col gap-3", @class])}
+        class={
+          merge([
+            "flex w-full flex-col",
+            (@variant == "full" && "max-w-xs gap-3") || "gap-2.5",
+            @class
+          ])
+        }
         data-value={@hex}
         data-alpha={bool(@alpha)}
         data-on-change={@on_change}
@@ -136,6 +172,7 @@ defmodule LineaUI.Components.ColorPicker do
         {@root_rest}
       >
         <div
+          :if={@variant == "full"}
           data-area
           role="slider"
           tabindex={(!@disabled && "0") || nil}
@@ -160,6 +197,7 @@ defmodule LineaUI.Components.ColorPicker do
           ></span>
         </div>
         <input
+          :if={@variant == "full"}
           type="range"
           data-hue
           min="0"
@@ -170,7 +208,7 @@ defmodule LineaUI.Components.ColorPicker do
           class="linea-hue"
         />
         <input
-          :if={@alpha}
+          :if={@alpha and @variant == "full"}
           type="range"
           data-alpha-input
           min="0"
@@ -182,6 +220,7 @@ defmodule LineaUI.Components.ColorPicker do
           style={"background: linear-gradient(90deg, transparent, #{@opaque}), #{checker()}"}
         />
         <Input.input
+          :if={@variant == "full"}
           type="text"
           id={@id}
           value={@hex}
@@ -216,10 +255,24 @@ defmodule LineaUI.Components.ColorPicker do
             aria-label={preset}
             aria-pressed={bool(preset == @hex)}
             disabled={@disabled}
-            class="size-6.5 rounded-md shadow-[inset_0_0_0_1px_rgb(0_0_0/0.08)] outline-hidden transition-shadow focus-visible:ring-2 focus-visible:ring-primary/60 aria-pressed:ring-2 aria-pressed:ring-primary aria-pressed:ring-offset-2 disabled:opacity-60 dark:ring-offset-navy-700 dark:focus-visible:ring-accent/60 dark:aria-pressed:ring-accent"
+            class={@swatch}
             style={"background-color: #{preset}"}
           ></button>
         </div>
+        <Input.input
+          :if={@variant == "swatches" and @hex_field}
+          type="text"
+          id={@id}
+          label={@hex_label}
+          value={@hex}
+          state={@state}
+          disabled={@disabled}
+          maxlength="9"
+          autocomplete="off"
+          spellcheck="false"
+          class="uppercase"
+          data-hex
+        />
         <input
           type="hidden"
           id={@id <> "-value"}

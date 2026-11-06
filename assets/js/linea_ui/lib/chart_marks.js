@@ -86,9 +86,18 @@ const stackEnds = (stacks, position, slot) => {
   return {first: present[0] === position, last: present.at(-1) === position}
 }
 
+// A bar is outlined when `stroke.width` is above zero (bars default to none); with `distributed` the
+// `stroke.colors` go by bar, as the fill colors do. The outline sits inside the bar, as an inset ring.
+const barStroke = (p, series, point) => {
+  const {config} = p
+  const width = Number(pick(config.stroke.width, series.index) ?? 0)
+  const color = pick(config.stroke.colors, config.plotOptions.bar.distributed ? point.slot : series.index)
+  return config.stroke.show !== false && width > 0 && color ? {stroke: color, "stroke-width": width} : {}
+}
+
 const barNode = (p, point, series, d, direction, uid, defs) => {
   const paint = paintFor(p.config, {index: series.index, color: barColor(p, series, point), key: `bar${series.index}-${point.slot}`, uid, defs})
-  return h("path", {class: "linea-chart-bar", d, fill: paint.fill, "fill-opacity": paint.opacity, "data-series": series.index, "data-i": point.slot, "data-dir": direction, style: `--linea-chart-i:${point.slot}`})
+  return h("path", {class: "linea-chart-bar", d, fill: paint.fill, "fill-opacity": paint.opacity, ...barStroke(p, series, point), "data-series": series.index, "data-i": point.slot, "data-dir": direction, style: `--linea-chart-i:${point.slot}`})
 }
 
 const box = (p, series, point, start, size, from, to) => ({
