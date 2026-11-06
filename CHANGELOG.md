@@ -1,7 +1,16 @@
 # Changelog
 
-## Unreleased
+## 0.10.0 (2026-11-06)
 
+- The assistant components (`LineaUI.Components.Ai`): `ai_chat`, `ai_composer` (with the `AiComposer` hook), `ai_message`, `ai_proposal`, `ai_tool_trace`, `conversation_list`, `prompt_suggestions` and `ai_greeting`.
+- `aura` (`LineaUI.Components.Aura`): a spinning light ring around an element for async work (`mode` spin/dual/glow, `tone`, `width`, `radius`, `shadow`). It replaces the old `aura/1` of `toast.ex`.
+- `toast_card` takes `aura`, `busy`, `progress` and `progress_state` (the progress toast whose background fills up); the toasts pushed from the server draw the same card.
+- `sparkline` (`LineaUI.Components.Sparkline`): a small inline trend line.
+- `chart`: the `brl_kilo` and `brl_kilo_zero` formatters, `tickAmount` on category x axes and left-aligned y-axis labels.
+- `upload variant="canvas"` takes `browse`, `icon_path` and `drop_class`.
+- Fallback ids are stable: built from `name` or from the label, placeholder and help text, never from the value, so a field keeps its id while the user types.
+- The dark look of the shell, the collapsed rail, the command palette and the Signetum screens, and canvas stylesheets per screen group.
+- `ai_chat` shows no footnote unless one is given; `email` `alt_text` and `editor` `submit_key` accept `nil`.
 - Removed what came from the Metronic template, now that its license is gone: the `demo1` layout of `app_shell/1`, `LineaUI.Components.SideMenu` (`shell_sidebar`, `side_menu_*`, `shell_header`), the `LineaUI.ShellSidebar` hook, the Keenicons plugin (`keenicons.cjs`, `scripts/keenicons.py`) and the mentions of Metronic in the docs. The framed shell (`layout="framed"`) is the app shell of the LineaUI identity.
 - Removed the components that only served the Metronic script and markup: `select_input`, `disclosure_*` (`disclosure_parts`), `tab_group`, `table_plain`, `box_*`, the bare `checkbox_input`/`radio_input`/`switch_input`, `rating_row`/`rating_cell`, `avatar_frame` and its parts, `progress_track`/`progress_fill`. `accordion`, `tabs`, `select`, `table`, `card`, `checkbox`, `radio`, `switch`, `rating`, `avatar` and `progress` cover them. `command_palette` takes `query`, the text it opens with.
 - Theme: the Signetum identity (Geist, teal, warm neutrals), pill buttons, 8px badges, `kpi_card layout="inline"`, `rail_heading/1`, `color="mono"` as the ink button, muted table headers and the e-mail palette.
