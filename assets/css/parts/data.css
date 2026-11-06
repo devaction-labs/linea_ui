@@ -165,7 +165,9 @@
     border-bottom-color: rgb(255 255 255 / 0.09);
   }
 
-  .dark .card table > :is(thead, tbody, tfoot) > tr > :is(th, td) {
+  .dark .card table > :is(thead, tbody, tfoot) > tr > :is(th, td):not([data-theme="light"] *),
+
+  [data-theme="dark"] .card table > :is(thead, tbody, tfoot) > tr > :is(th, td){
     border-color: rgb(255 255 255 / 0.09);
   }
 
@@ -982,7 +984,9 @@
     --ct-st: var(--color-slate-300);
   }
 
-  .dark .linea-ctable {
+  .dark .linea-ctable:not([data-theme="light"] *),
+
+  [data-theme="dark"] .linea-ctable{
     --ct-ink: var(--color-navy-50);
     --ct-soft: var(--color-navy-200);
     --ct-line: var(--color-navy-500);
@@ -1078,8 +1082,11 @@
     z-index: 4;
   }
 
-  .dark .linea-ctable-row:hover,
-  .dark .linea-ctable-row:focus-within {
+  .dark .linea-ctable-row:hover:not([data-theme="light"] *),
+
+  [data-theme="dark"] .linea-ctable-row:hover,
+  .dark .linea-ctable-row:focus-within:not([data-theme="light"] *),
+  [data-theme="dark"] .linea-ctable-row:focus-within{
     box-shadow: 0 0 0 1px var(--color-navy-400), 0 8px 20px -14px rgb(0 0 0 / 0.6);
   }
 
@@ -1201,7 +1208,9 @@
     pointer-events: none;
   }
 
-  .dark .linea-ctable-pop {
+  .dark .linea-ctable-pop:not([data-theme="light"] *),
+
+  [data-theme="dark"] .linea-ctable-pop{
     background: var(--color-navy-50);
     color: var(--color-slate-800);
   }
@@ -1278,7 +1287,9 @@
     pointer-events: none;
   }
 
-  .dark .linea-ctable-pcp::after {
+  .dark .linea-ctable-pcp::after:not([data-theme="light"] *),
+
+  [data-theme="dark"] .linea-ctable-pcp::after{
     background: var(--color-slate-800);
     color: var(--color-slate-100);
   }
@@ -1355,7 +1366,9 @@
     pointer-events: none;
   }
 
-  .dark .linea-ctable-ctip {
+  .dark .linea-ctable-ctip:not([data-theme="light"] *),
+
+  [data-theme="dark"] .linea-ctable-ctip{
     background: var(--color-navy-50);
     color: var(--color-slate-800);
   }
@@ -1507,7 +1520,9 @@
     pointer-events: none;
   }
 
-  .dark .linea-tpeek {
+  .dark .linea-tpeek:not([data-theme="light"] *),
+
+  [data-theme="dark"] .linea-tpeek{
     background: var(--color-navy-50);
     color: var(--color-slate-800);
   }

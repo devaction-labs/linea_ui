@@ -122,7 +122,8 @@ input.form-range:focus-visible::-moz-range-thumb {
   left: 0;
   background: var(--color-slate-150);
 }
-.dark .linea-range-pair > .linea-range-track {
+.dark .linea-range-pair > .linea-range-track:not([data-theme="light"] *),
+[data-theme="dark"] .linea-range-pair > .linea-range-track{
   background: var(--color-navy-500);
 }
 .linea-range-pair > .linea-range-fill {

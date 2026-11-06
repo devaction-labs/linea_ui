@@ -42,7 +42,8 @@
 .ts-wrapper[data-overflow="count"].plugin-clear_button.multi.has-items .ts-control { padding-right: 3.5rem; }
 .ts-wrapper[data-overflow="count"].has-items .ts-control > input::placeholder { color: transparent; }
 .ts-wrapper[data-overflow="count"].dropdown-active::after { transform: rotate(180deg); }
-.dark .ts-wrapper[data-overflow="count"]::after { background-color: var(--color-navy-300); }
+.dark .ts-wrapper[data-overflow="count"]::after:not([data-theme="light"] *),
+[data-theme="dark"] .ts-wrapper[data-overflow="count"]::after{ background-color: var(--color-navy-300); }
 .ts-wrapper[data-overflow="count"] .ts-control > .ts-more {
   font-variant-numeric: tabular-nums;
   cursor: pointer;
@@ -107,7 +108,8 @@
   transition: opacity .15s, background-color .15s, color .15s;
 }
 .ts-wrapper.plugin-clear_button.single .clear-button { right: 2.25rem; }
-.dark .ts-wrapper.plugin-clear_button .clear-button { color: var(--color-navy-300); }
+.dark .ts-wrapper.plugin-clear_button .clear-button:not([data-theme="light"] *),
+[data-theme="dark"] .ts-wrapper.plugin-clear_button .clear-button{ color: var(--color-navy-300); }
 .ts-wrapper.plugin-clear_button .clear-button::before {
   background-color: currentColor;
   content: "";
@@ -116,7 +118,8 @@
   width: .625rem;
 }
 .ts-wrapper.plugin-clear_button .clear-button:hover { background-color: color-mix(in oklab, currentColor 16%, transparent); color: var(--color-slate-700); }
-.dark .ts-wrapper.plugin-clear_button .clear-button:hover { color: var(--color-navy-50); }
+.dark .ts-wrapper.plugin-clear_button .clear-button:hover:not([data-theme="light"] *),
+[data-theme="dark"] .ts-wrapper.plugin-clear_button .clear-button:hover{ color: var(--color-navy-50); }
 
 /* The autocomplete holds one input (and maybe an icon before it): they stay on one line, the input takes what is left. */
 .ts-wrapper.autocomplete .ts-control { flex-wrap: nowrap; }
@@ -130,7 +133,8 @@
   outline: 2px solid color-mix(in oklab, var(--color-primary) 50%, transparent);
   outline-offset: 1px;
 }
-.dark .ts-wrapper.autocomplete.plugin-clear_button .clear-button:focus-visible { outline-color: color-mix(in oklab, var(--color-accent) 50%, transparent); }
+.dark .ts-wrapper.autocomplete.plugin-clear_button .clear-button:focus-visible:not([data-theme="light"] *),
+[data-theme="dark"] .ts-wrapper.autocomplete.plugin-clear_button .clear-button:focus-visible{ outline-color: color-mix(in oklab, var(--color-accent) 50%, transparent); }
 .ts-wrapper.autocomplete:not(.has-items) .clear-button { display: none; }
 /* With a value the clear button is always there, 10px from the edge (no caret to clear), and the text stops before it. */
 .ts-wrapper.autocomplete.plugin-clear_button.has-items:not(.disabled) .clear-button { opacity: 1; right: .625rem; }
@@ -144,7 +148,8 @@
 .ts-wrapper:is(.autocomplete, .compact) .ts-dropdown .option.selected::before { content: none; }
 /* The note on the right of a row (`hint:` of an option), and the label that gives way to it. */
 .ts-wrapper .ts-dropdown .option [data-hint] { color: var(--color-slate-400); flex: none; font-size: .75rem; font-weight: 400; white-space: nowrap; }
-.dark .ts-wrapper .ts-dropdown .option [data-hint] { color: var(--color-navy-300); }
+.dark .ts-wrapper .ts-dropdown .option [data-hint]:not([data-theme="light"] *),
+[data-theme="dark"] .ts-wrapper .ts-dropdown .option [data-hint]{ color: var(--color-navy-300); }
 .ts-wrapper .ts-dropdown .option:has([data-hint]) [data-text] { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 /* A field with errors keeps its red border on hover and focus. */
@@ -154,16 +159,19 @@
 
 /* The focus ring of the autocomplete and the compact tags input: the border plus a 3px halo. */
 .ts-wrapper:is(.autocomplete, .compact).input-active .ts-control { box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-primary) 18%, transparent); }
-.dark .ts-wrapper:is(.autocomplete, .compact).input-active .ts-control { box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-accent) 22%, transparent); }
+.dark .ts-wrapper:is(.autocomplete, .compact).input-active .ts-control:not([data-theme="light"] *),
+[data-theme="dark"] .ts-wrapper:is(.autocomplete, .compact).input-active .ts-control{ box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-accent) 22%, transparent); }
 .ts-wrapper:is(.autocomplete, .compact).is-invalid.input-active .ts-control { box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-error) 18%, transparent); }
 
 /* A disabled field keeps its tags' fill (the control itself is dimmed), in both themes. */
 .ts-wrapper.multi.disabled .ts-control > div { background-color: var(--color-slate-150); border-color: transparent; color: var(--color-slate-800); }
-.dark .ts-wrapper.multi.disabled .ts-control > div { background-color: var(--color-navy-500); color: var(--color-navy-50); }
+.dark .ts-wrapper.multi.disabled .ts-control > div:not([data-theme="light"] *),
+[data-theme="dark"] .ts-wrapper.multi.disabled .ts-control > div{ background-color: var(--color-navy-500); color: var(--color-navy-50); }
 
 /* The compact tags input: the create row is plain text, and the clear button stays while there are tags. */
 .ts-wrapper.compact .ts-dropdown .create { color: var(--color-slate-600); }
-.dark .ts-wrapper.compact .ts-dropdown .create { color: var(--color-navy-100); }
+.dark .ts-wrapper.compact .ts-dropdown .create:not([data-theme="light"] *),
+[data-theme="dark"] .ts-wrapper.compact .ts-dropdown .create{ color: var(--color-navy-100); }
 .ts-wrapper.compact .ts-dropdown .create strong { font-weight: 400; }
 .ts-wrapper.compact.plugin-clear_button.has-items:not(.disabled) .clear-button { opacity: 1; right: .625rem; }
 .ts-wrapper.compact.plugin-clear_button .ts-control:not(.rtl) { padding-right: 2.25rem !important; }
@@ -197,7 +205,8 @@
   border-top: 1px solid var(--color-slate-150);
   color: var(--color-slate-400);
 }
-.dark .ts-dropdown .ts-footer { border-color: var(--color-navy-500); color: var(--color-navy-300); }
+.dark .ts-dropdown .ts-footer:not([data-theme="light"] *),
+[data-theme="dark"] .ts-dropdown .ts-footer{ border-color: var(--color-navy-500); color: var(--color-navy-300); }
 .ts-control {
   border:1px solid #d0d0d0;
   border-radius:3px;
@@ -679,7 +688,8 @@
   overflow:hidden;
   z-index:30
 }
-.dark .ts-wrapper .ts-dropdown {
+.dark .ts-wrapper .ts-dropdown:not([data-theme="light"] *),
+[data-theme="dark"] .ts-wrapper .ts-dropdown{
   background-color:var(--color-navy-700);
   border-color:var(--color-navy-500);
   box-shadow:var(--shadow-soft-dark)
@@ -703,7 +713,8 @@
   color:var(--color-slate-400);
   text-align:center
 }
-.dark .ts-wrapper .ts-dropdown .no-results {
+.dark .ts-wrapper .ts-dropdown .no-results:not([data-theme="light"] *),
+[data-theme="dark"] .ts-wrapper .ts-dropdown .no-results{
   color:var(--color-navy-300)
 }
 .ts-wrapper .ts-dropdown .optgroup-header {
@@ -715,14 +726,16 @@
   padding:.5rem .75rem .25rem;
   text-transform:uppercase
 }
-.dark .ts-wrapper .ts-dropdown .optgroup-header {
+.dark .ts-wrapper .ts-dropdown .optgroup-header:not([data-theme="light"] *),
+[data-theme="dark"] .ts-wrapper .ts-dropdown .optgroup-header{
   color:var(--color-navy-300)
 }
 .ts-wrapper .ts-dropdown .active,.ts-wrapper .ts-dropdown .create:hover,.ts-wrapper .ts-dropdown .option:hover {
   background-color:var(--color-slate-100);
   color:var(--color-slate-800)
 }
-.dark .ts-wrapper .ts-dropdown .active,.dark .ts-wrapper .ts-dropdown .create:hover,.dark .ts-wrapper .ts-dropdown .option:hover {
+.dark .ts-wrapper .ts-dropdown .active:not([data-theme="light"] *),
+[data-theme="dark"] .ts-wrapper .ts-dropdown .active,.dark .ts-wrapper .ts-dropdown .create:hover:not([data-theme="light"] *),[data-theme="dark"] .ts-wrapper .ts-dropdown .create:hover,.dark .ts-wrapper .ts-dropdown .option:hover:not([data-theme="light"] *),[data-theme="dark"] .ts-wrapper .ts-dropdown .option:hover{
   background-color:var(--color-navy-600);
   color:var(--color-navy-50)
 }
@@ -730,7 +743,8 @@
   color:var(--color-primary);
   font-weight:500
 }
-.dark .ts-wrapper .ts-dropdown .option.selected {
+.dark .ts-wrapper .ts-dropdown .option.selected:not([data-theme="light"] *),
+[data-theme="dark"] .ts-wrapper .ts-dropdown .option.selected{
   color:var(--color-accent-light)
 }
 /* The check of a chosen option sits in a 16px slot before the label, out of the flow so a custom option keeps its own layout. */
@@ -752,7 +766,8 @@
 .ts-wrapper .ts-dropdown .create {
   color:var(--color-primary)
 }
-.dark .ts-wrapper .ts-dropdown .create {
+.dark .ts-wrapper .ts-dropdown .create:not([data-theme="light"] *),
+[data-theme="dark"] .ts-wrapper .ts-dropdown .create{
   color:var(--color-accent-light)
 }
 .ts-wrapper .ts-dropdown .create {
@@ -768,7 +783,8 @@
   font:500 .6875rem/1.25 var(--font-mono, ui-monospace, monospace);
   padding:.0625rem .3125rem
 }
-.dark .ts-wrapper .ts-dropdown .create-hint {
+.dark .ts-wrapper .ts-dropdown .create-hint:not([data-theme="light"] *),
+[data-theme="dark"] .ts-wrapper .ts-dropdown .create-hint{
   background-color:var(--color-navy-500);
   color:var(--color-navy-200)
 }
@@ -777,7 +793,8 @@
   color: var(--color-primary);
   font-weight: 600
 }
-.dark .ts-wrapper .ts-dropdown [data-selectable] .highlight {
+.dark .ts-wrapper .ts-dropdown [data-selectable] .highlight:not([data-theme="light"] *),
+[data-theme="dark"] .ts-wrapper .ts-dropdown [data-selectable] .highlight{
   color: var(--color-accent-light)
 }
 .ts-dropdown .ts-search {
@@ -788,7 +805,8 @@
   gap:.5rem;
   padding:.5rem .875rem
 }
-.dark .ts-dropdown .ts-search {
+.dark .ts-dropdown .ts-search:not([data-theme="light"] *),
+[data-theme="dark"] .ts-dropdown .ts-search{
   border-bottom-color:var(--color-navy-500);
   color:var(--color-navy-300)
 }
@@ -803,13 +821,15 @@
   outline:0;
   padding:0
 }
-.dark .ts-dropdown .ts-search input {
+.dark .ts-dropdown .ts-search input:not([data-theme="light"] *),
+[data-theme="dark"] .ts-dropdown .ts-search input{
   color:var(--color-navy-50)
 }
 .ts-dropdown .ts-search input::placeholder {
   color:var(--color-slate-400)
 }
-.dark .ts-dropdown .ts-search input::placeholder {
+.dark .ts-dropdown .ts-search input::placeholder:not([data-theme="light"] *),
+[data-theme="dark"] .ts-dropdown .ts-search input::placeholder{
   color:var(--color-navy-300)
 }
 /* A search field drawn as a box of its own inside the list, as the country list of the phone field has it. */
@@ -819,7 +839,8 @@
   margin:.375rem .375rem .125rem;
   padding:.375rem .625rem
 }
-.dark .ts-dropdown.has-boxed-search .ts-search {
+.dark .ts-dropdown.has-boxed-search .ts-search:not([data-theme="light"] *),
+[data-theme="dark"] .ts-dropdown.has-boxed-search .ts-search{
   border-color:var(--color-navy-450)
 }
 .ts-wrapper:is([data-search-mode="panel"],[data-search-mode="none"]) .ts-control,.ts-wrapper:is([data-search-mode="panel"],[data-search-mode="none"]) .ts-control input {
@@ -1513,13 +1534,15 @@ span.flatpickr-day.selected {
 .flatpickr-day.inRange {
   box-shadow:-5px 0 0 var(--color-slate-150),5px 0 0 var(--color-slate-150)
 }
-.dark .flatpickr-day.inRange {
+.dark .flatpickr-day.inRange:not([data-theme="light"] *),
+[data-theme="dark"] .flatpickr-day.inRange{
   box-shadow:none
 }
 .flatpickr-day.endRange.startRange+.endRange:not(:nth-child(7n+1)),.flatpickr-day.selected.startRange+.endRange:not(:nth-child(7n+1)),.flatpickr-day.startRange.startRange+.endRange:not(:nth-child(7n+1)) {
   box-shadow:none
 }
-.dark .flatpickr-day.endRange.startRange+.endRange:not(:nth-child(7n+1)),.dark .flatpickr-day.selected.startRange+.endRange:not(:nth-child(7n+1)),.dark .flatpickr-day.startRange.startRange+.endRange:not(:nth-child(7n+1)) {
+.dark .flatpickr-day.endRange.startRange+.endRange:not(:nth-child(7n+1)):not([data-theme="light"] *),
+[data-theme="dark"] .flatpickr-day.endRange.startRange+.endRange:not(:nth-child(7n+1)),.dark .flatpickr-day.selected.startRange+.endRange:not(:nth-child(7n+1)):not([data-theme="light"] *),[data-theme="dark"] .flatpickr-day.selected.startRange+.endRange:not(:nth-child(7n+1)),.dark .flatpickr-day.startRange.startRange+.endRange:not(:nth-child(7n+1)):not([data-theme="light"] *),[data-theme="dark"] .flatpickr-day.startRange.startRange+.endRange:not(:nth-child(7n+1)){
   box-shadow:var(--color-accent) -10px 0 0
 }
 .flatpickr-calendar.arrowTop:after,.flatpickr-calendar.arrowTop:before {
@@ -1548,7 +1571,8 @@ span.flatpickr-day.selected {
   outline: 2px solid color-mix(in oklab, var(--color-primary) 55%, transparent);
   outline-offset: -2px;
 }
-.dark :is(.flatpickr-months :is(.flatpickr-prev-month, .flatpickr-next-month), .flatpickr-day, .flatpickr-time .flatpickr-am-pm, .numInputWrapper :is(span, button)):focus-visible {
+.dark :is(.flatpickr-months :is(.flatpickr-prev-month, .flatpickr-next-month), .flatpickr-day, .flatpickr-time .flatpickr-am-pm, .numInputWrapper :is(span, button)):focus-visible:not([data-theme="light"] *),
+[data-theme="dark"] :is(.flatpickr-months :is(.flatpickr-prev-month, .flatpickr-next-month), .flatpickr-day, .flatpickr-time .flatpickr-am-pm, .numInputWrapper :is(span, button)):focus-visible{
   outline-color: color-mix(in oklab, var(--color-accent) 55%, transparent);
 }
 .numInputWrapper:focus-within :is(span, button) { opacity: 1; }
@@ -1571,7 +1595,8 @@ span.flatpickr-day.selected {
   padding: 12px 16px;
   width: max-content;
 }
-.dark .flatpickr-calendar.noCalendar {
+.dark .flatpickr-calendar.noCalendar:not([data-theme="light"] *),
+[data-theme="dark"] .flatpickr-calendar.noCalendar{
   --tp-ink: var(--color-navy-50);
   --tp-soft: var(--color-navy-300);
   --tp-line: var(--color-navy-450);
@@ -1669,7 +1694,8 @@ span.flatpickr-day.selected {
   margin-left: 6px;
   width: 52px;
 }
-.dark .flatpickr-calendar.noCalendar .flatpickr-time.stacked button.flatpickr-am-pm { color: var(--color-accent-light, var(--color-accent)); }
+.dark .flatpickr-calendar.noCalendar .flatpickr-time.stacked button.flatpickr-am-pm:not([data-theme="light"] *),
+[data-theme="dark"] .flatpickr-calendar.noCalendar .flatpickr-time.stacked button.flatpickr-am-pm{ color: var(--color-accent-light, var(--color-accent)); }
 .flatpickr-calendar.noCalendar .flatpickr-time.stacked button.flatpickr-am-pm:hover {
   background: color-mix(in oklab, var(--tp-ring) 20%, transparent);
 }
@@ -2833,7 +2859,8 @@ span.flatpickr-day.selected {
   padding: 12px;
   width: 300px;
 }
-.dark .flatpickr-calendar[data-skin="linea"] {
+.dark .flatpickr-calendar[data-skin="linea"]:not([data-theme="light"] *),
+[data-theme="dark"] .flatpickr-calendar[data-skin="linea"]{
   --lp-ink: var(--color-navy-50);
   --lp-soft: var(--color-navy-100);
   --lp-softer: var(--color-navy-200);
@@ -2911,7 +2938,8 @@ span.flatpickr-day.selected {
 }
 .flatpickr-calendar[data-skin="linea"] .flatpickr-monthDropdown-months:hover { background-color: var(--lp-hover); }
 .flatpickr-calendar[data-skin="linea"] .flatpickr-monthDropdown-months option { background: #fff; color: #334155; }
-.dark .flatpickr-calendar[data-skin="linea"] .flatpickr-monthDropdown-months option { background: var(--color-navy-700); color: var(--color-navy-100); }
+.dark .flatpickr-calendar[data-skin="linea"] .flatpickr-monthDropdown-months option:not([data-theme="light"] *),
+[data-theme="dark"] .flatpickr-calendar[data-skin="linea"] .flatpickr-monthDropdown-months option{ background: var(--color-navy-700); color: var(--color-navy-100); }
 .flatpickr-calendar[data-skin="linea"] .numInputWrapper { width: auto; }
 .flatpickr-calendar[data-skin="linea"] .numInputWrapper :is(.arrowUp, .arrowDown) { display: none; }
 .flatpickr-calendar[data-skin="linea"] input.cur-year {
@@ -2993,7 +3021,8 @@ span.flatpickr-day.selected {
   box-shadow: none;
   color: var(--lp-main);
 }
-.dark .flatpickr-calendar[data-skin="linea"] .flatpickr-day.inRange { color: var(--color-accent-light); }
+.dark .flatpickr-calendar[data-skin="linea"] .flatpickr-day.inRange:not([data-theme="light"] *),
+[data-theme="dark"] .flatpickr-calendar[data-skin="linea"] .flatpickr-day.inRange{ color: var(--color-accent-light); }
 .flatpickr-calendar[data-skin="linea"] .flatpickr-day:is(.selected, .startRange, .endRange),
 .flatpickr-calendar[data-skin="linea"] .flatpickr-day:is(.selected, .startRange, .endRange):hover {
   background: var(--lp-main);
@@ -3034,7 +3063,8 @@ span.flatpickr-day.selected {
   border-color: var(--color-primary);
   box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-primary) 20%, transparent);
 }
-.dark [data-skin="linea"] .flatpickr-input:is(:focus, [aria-expanded="true"]) {
+.dark [data-skin="linea"] .flatpickr-input:is(:focus, [aria-expanded="true"]):not([data-theme="light"] *),
+[data-theme="dark"] [data-skin="linea"] .flatpickr-input:is(:focus, [aria-expanded="true"]){
   border-color: var(--color-accent);
   box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-accent) 25%, transparent);
 }
@@ -3054,7 +3084,8 @@ span.flatpickr-day.selected {
   margin-top: .25rem;
   padding: .25rem;
 }
-.dark .ts-wrapper .ts-dropdown { background-color: var(--color-navy-900); border-color: var(--color-navy-450); }
+.dark .ts-wrapper .ts-dropdown:not([data-theme="light"] *),
+[data-theme="dark"] .ts-wrapper .ts-dropdown{ background-color: var(--color-navy-900); border-color: var(--color-navy-450); }
 .ts-wrapper .ts-dropdown .ts-dropdown-content { padding: 0; }
 .ts-wrapper .ts-dropdown .option {
   border-radius: .375rem;
@@ -3063,12 +3094,15 @@ span.flatpickr-day.selected {
   line-height: 1.25rem;
   padding: .4375rem .625rem;
 }
-.dark .ts-wrapper .ts-dropdown .option { color: var(--color-navy-50); }
+.dark .ts-wrapper .ts-dropdown .option:not([data-theme="light"] *),
+[data-theme="dark"] .ts-wrapper .ts-dropdown .option{ color: var(--color-navy-50); }
 .ts-wrapper .ts-dropdown .option.active { background-color: var(--color-slate-100); color: var(--color-slate-950); }
-.dark .ts-wrapper .ts-dropdown .option.active { background-color: var(--color-navy-600); color: var(--color-navy-50); }
+.dark .ts-wrapper .ts-dropdown .option.active:not([data-theme="light"] *),
+[data-theme="dark"] .ts-wrapper .ts-dropdown .option.active{ background-color: var(--color-navy-600); color: var(--color-navy-50); }
 .ts-wrapper .ts-dropdown .option .highlight { background: none; color: inherit; font-weight: 600; }
 .ts-wrapper.autocomplete .ts-control > input { color: var(--color-slate-950); }
-.dark .ts-wrapper.autocomplete .ts-control > input { color: var(--color-navy-50); }
+.dark .ts-wrapper.autocomplete .ts-control > input:not([data-theme="light"] *),
+[data-theme="dark"] .ts-wrapper.autocomplete .ts-control > input{ color: var(--color-navy-50); }
 
 /* The chips of a multiple select and a tags input: the secondary badge, 24px high with a 6px radius. */
 .ts-wrapper.multi .ts-control > div.item {
@@ -3084,7 +3118,8 @@ span.flatpickr-day.selected {
   margin: 0 .25rem 0 0;
   padding: 0 .45rem;
 }
-.dark .ts-wrapper.multi .ts-control > div.item { background-color: var(--color-navy-600); color: var(--color-navy-50); }
+.dark .ts-wrapper.multi .ts-control > div.item:not([data-theme="light"] *),
+[data-theme="dark"] .ts-wrapper.multi .ts-control > div.item{ background-color: var(--color-navy-600); color: var(--color-navy-50); }
 .ts-wrapper.multi .ts-control { align-items: center; min-height: 2.125rem; padding: .1875rem .5rem; }
 .ts-wrapper.multi .ts-control > input { flex: 1 1 4rem; font-size: .8125rem; min-width: 4rem; padding: 0; }
 
@@ -3099,11 +3134,13 @@ span.flatpickr-day.selected {
   padding: .25rem 1rem 1rem;
   width: 17rem;
 }
-.dark .flatpickr-calendar { background-color: var(--color-navy-900); border-color: var(--color-navy-450); }
+.dark .flatpickr-calendar:not([data-theme="light"] *),
+[data-theme="dark"] .flatpickr-calendar{ background-color: var(--color-navy-900); border-color: var(--color-navy-450); }
 .flatpickr-calendar:before, .flatpickr-calendar:after { display: none; }
 .flatpickr-calendar .flatpickr-months { background: transparent; border-radius: 0; padding-top: .75rem; }
 .flatpickr-calendar .flatpickr-months .flatpickr-month { background: transparent; color: var(--color-slate-950); }
-.dark .flatpickr-calendar .flatpickr-months .flatpickr-month { color: var(--color-navy-50); }
+.dark .flatpickr-calendar .flatpickr-months .flatpickr-month:not([data-theme="light"] *),
+[data-theme="dark"] .flatpickr-calendar .flatpickr-months .flatpickr-month{ color: var(--color-navy-50); }
 .flatpickr-calendar .flatpickr-current-month { font-size: 1rem; font-weight: 700; }
 .flatpickr-calendar .flatpickr-current-month .flatpickr-monthDropdown-months,
 .flatpickr-calendar .flatpickr-current-month input.cur-year {
@@ -3130,11 +3167,14 @@ span.flatpickr-day.selected {
   line-height: 1.875rem;
   margin: .125rem 0;
 }
-.dark .flatpickr-calendar .flatpickr-day { color: var(--color-navy-50); }
+.dark .flatpickr-calendar .flatpickr-day:not([data-theme="light"] *),
+[data-theme="dark"] .flatpickr-calendar .flatpickr-day{ color: var(--color-navy-50); }
 .flatpickr-calendar .flatpickr-day:hover { background: var(--color-slate-100); }
-.dark .flatpickr-calendar .flatpickr-day:hover { background: var(--color-navy-600); }
+.dark .flatpickr-calendar .flatpickr-day:hover:not([data-theme="light"] *),
+[data-theme="dark"] .flatpickr-calendar .flatpickr-day:hover{ background: var(--color-navy-600); }
 .flatpickr-calendar .flatpickr-day.today { background: var(--color-slate-100); color: var(--color-primary); font-weight: 700; }
-.dark .flatpickr-calendar .flatpickr-day.today { background: var(--color-navy-600); color: var(--color-accent-light); }
+.dark .flatpickr-calendar .flatpickr-day.today:not([data-theme="light"] *),
+[data-theme="dark"] .flatpickr-calendar .flatpickr-day.today{ background: var(--color-navy-600); color: var(--color-accent-light); }
 .flatpickr-calendar .flatpickr-day.selected,
 .flatpickr-calendar .flatpickr-day.startRange,
 .flatpickr-calendar .flatpickr-day.endRange { background: var(--color-primary); color: #fff; font-weight: 600; }
@@ -3152,4 +3192,5 @@ span.flatpickr-day.selected {
 }
 .flatpickr-calendar .flatpickr-day { flex-basis: 14.2857%; max-width: none; }
 .flatpickr-calendar .flatpickr-weekdaycontainer { width: 15rem; }
-.dark .flatpickr-calendar :is(.flatpickr-days, .flatpickr-weekdays, .flatpickr-innerContainer, .flatpickr-rContainer, .dayContainer, .flatpickr-weekdaycontainer, span.flatpickr-weekday) { background: transparent; }
+.dark .flatpickr-calendar :is(.flatpickr-days, .flatpickr-weekdays, .flatpickr-innerContainer, .flatpickr-rContainer, .dayContainer, .flatpickr-weekdaycontainer, span.flatpickr-weekday):not([data-theme="light"] *),
+[data-theme="dark"] .flatpickr-calendar :is(.flatpickr-days, .flatpickr-weekdays, .flatpickr-innerContainer, .flatpickr-rContainer, .dayContainer, .flatpickr-weekdaycontainer, span.flatpickr-weekday){ background: transparent; }
