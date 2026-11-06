@@ -50,7 +50,7 @@ defmodule LineaUI.Components.Pagination do
 
   @icon %{"sm" => "size-4", "md" => "size-4", "lg" => "size-4.5"}
 
-  @shapes %{"rounded" => "rounded-lg", "pill" => "rounded-full"}
+  @shapes %{"rounded" => "rounded-lg", "pill" => "rounded-full", "canvas" => "rounded-[9px]"}
 
   @focus "focus-visible:relative focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-primary/55 dark:focus-visible:outline-accent/55"
 
@@ -148,7 +148,14 @@ defmodule LineaUI.Components.Pagination do
 
   attr(:target, :any, default: nil, doc: "The `phx-target` of `on_change`.")
   attr(:divided, :boolean, default: false, doc: "Separate buttons instead of one joined bar.")
-  attr(:shape, :string, default: "rounded", values: ~w(rounded pill))
+
+  attr(:shape, :string,
+    default: "rounded",
+    values: ~w(rounded pill canvas),
+    doc:
+      "`canvas` is the design canvas pager: square-ish ink current page, mono numbers, the arrows as bordered circles after the pages."
+  )
+
   attr(:size, :string, default: "md", values: ~w(sm md lg))
   attr(:arrows, :boolean, default: true, doc: "Show the previous and next arrows.")
   attr(:prev_label, :string, default: "Previous page")
@@ -269,7 +276,11 @@ defmodule LineaUI.Components.Pagination do
         :if={@total_entries}
         role="status"
         aria-live="polite"
-        class="text-slate-500 dark:text-navy-200 [&_b]:font-semibold [&_b]:text-slate-700 dark:[&_b]:text-navy-50"
+        class={[
+          "text-slate-500 dark:text-navy-200",
+          (@shape == "canvas" && "[&_b]:font-normal") ||
+            "[&_b]:font-semibold [&_b]:text-slate-700 dark:[&_b]:text-navy-50"
+        ]}
       >
         {summary(assigns)}
       </span>
@@ -298,7 +309,11 @@ defmodule LineaUI.Components.Pagination do
   defp pager_nav(assigns) do
     ~H"""
     <nav class={@class} {@rest}>
-      <ol class={["pagination", @divided && "space-x-1.5"]}>
+      <ol class={[
+        "pagination",
+        @divided && "space-x-1.5",
+        @shape == "canvas" && "!flex items-center gap-x-1"
+      ]}>
         <li :for={{{kind, number, disabled}, index} <- @items} class={li_class(assigns, index)}>
           <.entry
             kind={kind}
@@ -315,6 +330,12 @@ defmodule LineaUI.Components.Pagination do
     """
   end
 
+  defp li_class(%{shape: "canvas", last: last, arrows: true}, index) when index == 0,
+    do: ["order-1 ml-1.5", last && nil]
+
+  defp li_class(%{shape: "canvas", last: last, arrows: true}, last), do: "order-2 ml-1.5"
+  defp li_class(%{shape: "canvas"}, _index), do: nil
+
   defp li_class(%{divided: true}, _index), do: nil
 
   defp li_class(%{shape: shape, last: last}, index),
@@ -323,6 +344,23 @@ defmodule LineaUI.Components.Pagination do
   defp position(0, _last), do: :first
   defp position(last, last), do: :last
   defp position(_index, _last), do: :middle
+
+  defp entry_class(%{shape: "canvas", page: page}, :page, page, _disabled),
+    do:
+      "grid h-[30px] min-w-[30px] place-items-center rounded-[9px] bg-slate-900 px-2 font-mono text-[12.5px] font-medium text-white dark:bg-navy-50 dark:text-navy-900"
+
+  defp entry_class(%{shape: "canvas"}, :page, _number, _disabled),
+    do:
+      "grid h-[30px] min-w-[30px] place-items-center rounded-[9px] px-2 font-mono text-[12.5px] font-medium text-slate-500 hover:bg-slate-100 dark:text-navy-200 dark:hover:bg-navy-600"
+
+  defp entry_class(%{shape: "canvas"}, :gap, _number, _disabled),
+    do: "grid h-[30px] min-w-[30px] place-items-center font-mono text-[12.5px] text-slate-500"
+
+  defp entry_class(%{shape: "canvas"}, _arrow, _number, disabled),
+    do: [
+      "grid size-[30px] place-items-center rounded-full text-slate-500 shadow-[0_0_0_1px_var(--color-slate-300)] hover:bg-slate-100 dark:text-navy-200 dark:shadow-[0_0_0_1px_var(--color-navy-450)]",
+      disabled && "opacity-60"
+    ]
 
   defp entry_class(assigns, :gap, _number, _disabled),
     do: [@item[assigns.size], @shapes[assigns.shape], divided_fill(assigns)]
