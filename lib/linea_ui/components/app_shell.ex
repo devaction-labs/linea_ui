@@ -1952,7 +1952,7 @@ defmodule LineaUI.Components.AppShell do
         <nav
           :if={@crumb != []}
           aria-label="Breadcrumb"
-          class="flex min-h-8 min-w-0 flex-wrap items-center gap-2 rounded-full border border-slate-150 bg-white px-3.5 text-[13px] text-slate-500 dark:border-navy-600 dark:bg-navy-750 dark:text-navy-200"
+          class="flex min-h-8 min-w-0 flex-wrap items-center gap-2 rounded-full border border-slate-150 bg-white pr-3.5 pl-[13px] text-[13px] text-slate-500 dark:border-navy-600 dark:bg-navy-750 dark:text-navy-200"
         >
           <%= for {crumb, last} <- @crumbs do %>
             <.link
