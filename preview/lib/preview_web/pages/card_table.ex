@@ -30,7 +30,7 @@ defmodule PreviewWeb.Pages.CardTable do
     assigns = assign(assigns, rows: @rows)
 
     ~H"""
-    <.example title="Columns leave by priority" text="The table answers to its own width: below 1180, 960 and 720px the columns of priority 1, 2 and 3 leave. Click a row to open the panel with its details (the detail slots), where each line can be copied; the copy button of the order number has a tooltip. Below 520px each row is a card." class="mt-5">
+    <.example title="Columns leave by priority" text="The table answers to its own width: below 1180, 960 and 720px the columns of priority 1, 2 and 3 leave. Hover a row (or tab to it) to open the panel with its details (the detail slots); the copy button of the order number has a tooltip. Below 520px each row is a card." class="mt-5">
       <div class="flex flex-col gap-8">
         <div :for={{width, id} <- [{"w-full", "ct-full"}, {"max-w-[1000px]", "ct-1000"}, {"max-w-[800px]", "ct-800"}, {"max-w-[600px]", "ct-600"}, {"max-w-[400px]", "ct-400"}]} class={width}>
           <.card_table
@@ -69,6 +69,49 @@ defmodule PreviewWeb.Pages.CardTable do
           </.card_table>
         </div>
       </div>
+    </.example>
+    <.example title="Options: breakpoints, copy tip, meta and foot" text="breakpoints [1180, 980, 760, 640, 560] gives four priority levels (cards under 560px); copy_tip value_label shows the value and the label; meta and a quiet action head the card; the foot slot holds the pager. The last table has no selection column." class="mt-5">
+      <div class="flex flex-col gap-8">
+        <div :for={{width, id, select} <- [{"w-full", "ct-opt", true}, {"max-w-[400px]", "ct-opt-card", false}]} class={width}>
+          <.card_table
+            id={id}
+            rows={@rows}
+            breakpoints={[1180, 980, 760, 640, 560]}
+            title="Pedidos"
+            meta="128 no período"
+            on_select={if select, do: "select"}
+            on_select_all={if select, do: "select_all"}
+            selected={@selected}
+            row_key={& &1.id}
+            row_id={&"#{id}-#{&1.id}"}
+            status={& &1.state}
+          >
+            <:actions><.link href="#">Ver todos</.link></:actions>
+            <:col :let={o} label="Pedido" role="head" copy={& &1.number} copy_show="inline" copy_tip="value_label" copy_label="Copiar número" copied_label="Número copiado"><span class="font-mono text-[12.5px] font-semibold">{o.number}</span></:col>
+            <:col :let={o} label="Cliente" role="title" width="minmax(120px,1.3fr)">{o.client}<.ctable_sub priority={2}>Emissor {o.issuer}</.ctable_sub></:col>
+            <:col :let={o} label="Emissor" priority={4}><.badge variant="soft" color="primary" size="sm">{o.issuer}</.badge></:col>
+            <:col :let={o} label="Atendente" priority={3}>{o.agent}</:col>
+            <:col :let={o} label="Inserido em" priority={2}>{o.at}</:col>
+            <:col :let={o} label="Saldo" priority={1}>{o.balance}</:col>
+            <:col :let={o} label="Valor" role="value" align="end"><span class="tabular-nums">{o.total}</span><.ctable_sub priority={1}>saldo {o.balance}</.ctable_sub></:col>
+            <:col :let={o} label="Status" role="status"><.badge variant="soft" color={to_string(o.state)} size="sm" dot>{o.label}</.badge></:col>
+            <:detail :let={o} label="Prazo">{o.due}</:detail>
+            <:detail :let={o} label="Recebido em">{o.at}</:detail>
+            <:foot>
+              <span>Mostrando 1–4 de 128 · 25 / página</span>
+              <span class="inline-flex gap-1.5"><.button variant="outline" size="sm">Anterior</.button><.button variant="outline" size="sm">Próxima</.button></span>
+            </:foot>
+          </.card_table>
+        </div>
+      </div>
+    </.example>
+    <.example title="Flat with description and foot" text="variant flat takes a description under the title and a foot slot (a total)." class="mt-5">
+      <.card_table id="ct-flat-opt" variant="flat" title="Últimos pedidos" description="Os quatro mais recentes." rows={@rows}>
+        <:actions><.link href="#">Ver todos</.link></:actions>
+        <:col :let={o} label="Pedido">{o.number}</:col>
+        <:col :let={o} label="Total" align="end">{o.total}</:col>
+        <:foot><span>Total</span><b class="text-[var(--ink)]">R$ 35.863,60</b></:foot>
+      </.card_table>
     </.example>
     <.example title="Heading, actions and empty list" text="title, description and the actions slot draw a heading above the table. With no rows the column titles are hidden and the empty slot sits in a dashed box." class="mt-5">
       <div class="flex max-w-[1000px] flex-col gap-8">

@@ -969,41 +969,38 @@
   }
 }
 
-/* card_table: a compact table of row cards. The box answers to its own width (a container query): the columns
-   leave by priority at 1180, 960 and 720px, and below 520px each row is a card of three lines. The tracks of every
-   width come from the component as --ct-c0..--ct-c3. */
+/* card_table: a compact table, one row per record, in a card (the canvas `sg-ct`: header row on --sunken, rows
+   with a hairline between them, a thin status bar at the left and a floating panel of the columns that left). The
+   box answers to its own width (a container query): the columns leave by priority at 1180, 960 and 720px, and
+   below 520px each row is a card of three lines. The tracks of every width come from the component as
+   --ct-c0..--ct-c3. The colors are the canvas tokens (--panel, --line, --ink...), which follow the dark theme. */
 @layer components {
   .linea-ctable {
     container-type: inline-size;
-    container-name: ctable;
+    /* `ctable` is the name an app can use in its own container variants (`@max-[700px]/ctable:hidden`); `ctable-d`
+       is the one the default queries below ask for, and a table with custom `breakpoints` replaces it by `ct-<id>`. */
+    container-name: ctable ctable-d;
+    position: relative;
     width: 100%;
-    --ct-ink: var(--color-slate-700);
-    --ct-soft: var(--color-slate-500);
-    --ct-line: var(--color-slate-200);
-    --ct-card: #fff;
-    --ct-st: var(--color-slate-300);
-  }
-
-  .dark .linea-ctable:not([data-theme="light"] *),
-
-  [data-theme="dark"] .linea-ctable{
-    --ct-ink: var(--color-navy-50);
-    --ct-soft: var(--color-navy-200);
-    --ct-line: var(--color-navy-500);
-    --ct-card: var(--color-navy-700);
-    --ct-st: var(--color-navy-400);
+    min-width: 0;
+    max-width: 100%;
+    border-radius: var(--r-lg);
+    background: var(--panel);
+    box-shadow: 0 0 0 1px var(--line), var(--shadow-sm);
+    --ct-st: var(--line-strong);
   }
 
   .linea-ctable-all {
-    @apply hidden items-center gap-2.5 pr-1 pb-2.5 pl-5 text-xs font-medium;
-    color: var(--ct-soft);
+    @apply hidden items-center gap-2.5 text-xs font-medium;
+    padding: 10px 14px 10px 16px;
+    border-bottom: 1px solid var(--line);
+    color: var(--muted);
   }
 
   .linea-ctable-grid {
     display: grid;
     grid-template-columns: var(--ct-c0);
     column-gap: 14px;
-    row-gap: 6px;
   }
 
   .linea-ctable-grid > ul {
@@ -1019,19 +1016,28 @@
     grid-column: 1 / -1;
     grid-template-columns: subgrid;
     align-items: center;
+    padding: 0 14px 0 16px;
+    border-bottom: 1px solid var(--line);
   }
 
   .linea-ctable-head {
-    padding: 0 16px 2px 20px;
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.02em;
+    min-height: 40px;
+    border-radius: var(--r-lg) var(--r-lg) 0 0;
+    background: var(--sunken);
+    font-size: 12px;
+    font-weight: 500;
     white-space: nowrap;
-    color: color-mix(in oklab, var(--ct-soft) 85%, transparent);
+    color: var(--muted);
+  }
+
+  /* A heading above the table sits directly on the header row. */
+  .linea-ctable:has(.linea-ctable-top) .linea-ctable-head {
+    border-radius: 0;
   }
 
   .linea-ctable-sort {
-    @apply inline-flex cursor-pointer items-center gap-1 font-semibold outline-hidden;
+    @apply inline-flex cursor-pointer items-center gap-1 outline-hidden;
+    font-weight: inherit;
   }
 
   .linea-ctable-sort .table-sort-icon {
@@ -1041,15 +1047,15 @@
 
   .linea-ctable-row {
     position: relative;
-    min-height: 46px;
-    padding: 7px 16px 7px 20px;
-    border-radius: 10px;
-    background: var(--ct-card);
-    box-shadow: 0 0 0 1px var(--ct-line);
-    font-size: 13px;
-    color: var(--ct-ink);
+    min-height: 52px;
+    font-size: 13.5px;
+    color: var(--fg);
     outline: none;
-    transition: box-shadow 0.15s, background 0.15s;
+  }
+
+  .linea-ctable-row:nth-last-child(1 of .linea-ctable-row) {
+    border-bottom: 0;
+    border-radius: 0 0 var(--r-lg) var(--r-lg);
   }
 
   .linea-ctable-row::before {
@@ -1063,40 +1069,26 @@
     background: var(--ct-st);
   }
 
-  .linea-ctable-row[data-status="primary"] { --ct-st: var(--color-primary); }
-  .linea-ctable-row[data-status="secondary"] { --ct-st: var(--color-secondary); }
-  .linea-ctable-row[data-status="accent"] { --ct-st: var(--color-accent); }
-  .linea-ctable-row[data-status="info"] { --ct-st: var(--color-info); }
-  .linea-ctable-row[data-status="success"] { --ct-st: var(--color-success); }
-  .linea-ctable-row[data-status="warning"] { --ct-st: var(--color-warning); }
-  .linea-ctable-row[data-status="error"] { --ct-st: var(--color-error); }
+  .linea-ctable-row[data-status="primary"],
+  .linea-ctable-row[data-status="secondary"],
+  .linea-ctable-row[data-status="accent"] { --ct-st: var(--accent); }
+  .linea-ctable-row[data-status="info"] { --ct-st: var(--info); }
+  .linea-ctable-row[data-status="success"] { --ct-st: var(--pos); }
+  .linea-ctable-row[data-status="warning"] { --ct-st: var(--warn); }
+  .linea-ctable-row[data-status="error"] { --ct-st: var(--neg); }
 
   .linea-ctable-row:hover,
   .linea-ctable-row:focus-within {
-    z-index: 3;
-    box-shadow: 0 0 0 1px var(--color-slate-300), 0 8px 20px -14px rgb(9 9 11 / 0.4);
-  }
-
-  /* The row that holds the open panel stays above the row the mouse moves over. */
-  .linea-ctable-row[data-open] {
-    z-index: 4;
-  }
-
-  .dark .linea-ctable-row:hover:not([data-theme="light"] *),
-
-  [data-theme="dark"] .linea-ctable-row:hover,
-  .dark .linea-ctable-row:focus-within:not([data-theme="light"] *),
-  [data-theme="dark"] .linea-ctable-row:focus-within{
-    box-shadow: 0 0 0 1px var(--color-navy-400), 0 8px 20px -14px rgb(0 0 0 / 0.6);
+    background: var(--hover);
   }
 
   .linea-ctable-row:focus-visible {
-    box-shadow: 0 0 0 2px var(--color-primary);
+    box-shadow: inset 0 0 0 2px var(--accent);
   }
 
   .linea-ctable-row[data-selected="true"] {
-    background: color-mix(in oklab, var(--color-primary) 6%, var(--ct-card));
-    box-shadow: 0 0 0 1px color-mix(in oklab, var(--color-primary) 50%, transparent);
+    background: var(--accent-soft);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 40%, transparent);
   }
 
   .linea-ctable-head > *,
@@ -1129,10 +1121,10 @@
   .linea-ctable-top {
     display: flex;
     flex-wrap: wrap;
-    align-items: flex-start;
+    align-items: center;
     justify-content: space-between;
-    gap: 0.5rem 1rem;
-    padding-bottom: 0.875rem;
+    gap: 10px 16px;
+    padding: 14px 16px;
   }
 
   .linea-ctable-top-text {
@@ -1142,34 +1134,79 @@
 
   .linea-ctable-title {
     margin: 0;
-    font-size: 0.9375rem;
-    line-height: 1.375rem;
-    font-weight: 500;
-    color: var(--ct-ink);
+    font-size: 15px;
+    line-height: 22px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  /* `meta`: small muted text on the title's line */
+  .linea-ctable-title-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0 10px;
+  }
+
+  .linea-ctable-meta {
+    font-size: 13px;
+    line-height: 22px;
+    color: var(--faint);
   }
 
   .linea-ctable-desc {
-    margin: 0.125rem 0 0;
-    font-size: 0.8125rem;
-    line-height: 1.125rem;
-    color: var(--ct-soft);
+    margin: 2px 0 0;
+    font-size: 13px;
+    line-height: 18px;
+    color: var(--muted);
   }
 
   .linea-ctable-top-act {
     display: flex;
-    flex: none;
+    flex: 0 1 auto;
+    flex-wrap: wrap;
     align-items: center;
-    gap: 0.5rem;
+    justify-content: flex-end;
+    min-width: 0;
+    gap: 8px;
+  }
+
+  /* a plain link in the actions is quiet, as the "Ver todos" of the canvas */
+  .linea-ctable-top-act > a:not([class]),
+  .linea-ctable-top-act > a.meta {
+    font-size: 13px;
+    color: var(--faint);
+    text-decoration: none;
+  }
+
+  .linea-ctable-top-act > a:not([class]):hover,
+  .linea-ctable-top-act > a.meta:hover {
+    color: var(--ink);
+  }
+
+  /* `<:foot>`: under the rows, inside the card (both variants) */
+  .linea-ctable-foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px 16px;
+    padding: 12px 16px;
+    border-top: 1px solid var(--line);
+    font-size: 12.5px;
+    color: var(--muted);
+  }
+
+  .linea-ctable:has(.linea-ctable-foot) .linea-ctable-row:nth-last-child(1 of .linea-ctable-row) {
+    border-radius: 0;
   }
 
   .linea-ctable-empty {
     grid-column: 1 / -1;
-    padding: 2.5rem 1rem;
-    border: 1px dashed color-mix(in srgb, var(--ct-soft) 40%, transparent);
-    border-radius: 0.75rem;
+    padding: 40px 16px;
     text-align: center;
-    font-size: 0.875rem;
-    color: var(--ct-soft);
+    font-size: 14px;
+    color: var(--muted);
   }
 
   /* With nothing to list, the column titles would hang over an empty box: the box alone says it. */
@@ -1182,270 +1219,237 @@
     grid-template-columns: minmax(0, 1fr);
   }
 
-  /* The panel of the columns that left: label over value, under the row, opened by the hook and kept until it is closed. */
+  /* The panel of the columns that left (or of the `detail` slots): a list of label and value under the row, shown
+     by the row's hover (after a short delay) or keyboard focus. It is not interactive. */
   .linea-ctable-pop {
     position: absolute;
-    z-index: 8;
-    top: calc(100% + 6px);
-    right: 56px;
+    z-index: 10;
+    top: calc(100% - 6px);
+    left: 96px;
     display: none;
+    flex-direction: column;
+    gap: 2px;
     width: max-content;
-    max-width: min(520px, 92%);
+    min-width: 220px;
+    max-width: min(320px, calc(100% - 112px));
     margin: 0;
-    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-    gap: 10px 22px;
-    padding: 12px 14px;
+    padding: 8px 12px;
     border-radius: 10px;
-    background: var(--color-slate-800);
-    color: var(--color-slate-100);
+    background: var(--panel);
+    box-shadow: 0 0 0 1px var(--line), var(--shadow-lg);
     font-size: 12px;
-    font-weight: 500;
-    box-shadow: 0 14px 30px -12px rgb(9 9 11 / 0.5);
-    opacity: 0;
+    font-weight: 400;
+    line-height: 18px;
     visibility: hidden;
+    opacity: 0;
     transform: translateY(-4px);
-    transition: opacity 0.15s, transform 0.15s, visibility 0.15s;
+    transition: opacity 0.12s, transform 0.12s, visibility 0s 0.12s;
     pointer-events: none;
   }
 
-  .dark .linea-ctable-pop:not([data-theme="light"] *),
-
-  [data-theme="dark"] .linea-ctable-pop{
-    background: var(--color-navy-50);
-    color: var(--color-slate-800);
-  }
+  .linea-ctable-pop > div + div { box-shadow: inset 0 1px 0 var(--line); }
 
   .linea-ctable-pop > div {
     display: none;
-    flex-direction: column;
-    gap: 1px;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 3px 0;
+  }
+
+  .linea-ctable-pop dt {
+    color: var(--faint);
+    font-size: 11.5px;
+    white-space: nowrap;
+  }
+
+  .linea-ctable-pop dd {
     min-width: 0;
-  }
-
-  .linea-ctable-pk {
-    font-size: 11px;
-    opacity: 0.6;
-  }
-
-  .linea-ctable-pv {
+    margin: 0;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-  }
-
-  .linea-ctable-pop > div {
-    position: relative;
-    padding-right: 24px;
-  }
-
-  /* The copy button of a line: shown on the line's hover or focus, with its own tooltip. */
-  .linea-ctable-pcp {
-    position: absolute;
-    top: 0;
-    right: 0;
-    display: flex;
-    width: 22px;
-    height: 22px;
-    align-items: center;
-    justify-content: center;
-    border-radius: 6px;
-    background: transparent;
-    color: inherit;
-    opacity: 0;
-    cursor: pointer;
-    transition: opacity 0.12s, background 0.12s;
-  }
-
-  .linea-ctable-pop > div:hover .linea-ctable-pcp,
-  .linea-ctable-pcp:focus-visible,
-  .linea-ctable-pcp[data-copied] {
-    opacity: 1;
-  }
-
-  .linea-ctable-pcp:hover { background: rgb(128 128 128 / 0.22); }
-  .linea-ctable-pcp svg { width: 13px; height: 13px; }
-  .linea-ctable-pcp .ok { display: none; }
-  .linea-ctable-pcp[data-copied] { color: var(--color-success); }
-  .linea-ctable-pcp[data-copied] .cp { display: none; }
-  .linea-ctable-pcp[data-copied] .ok { display: block; }
-
-  .linea-ctable-pcp::after {
-    content: attr(data-tip);
-    position: absolute;
-    bottom: calc(100% + 6px);
-    right: 0;
-    padding: 4px 8px;
-    border-radius: 6px;
-    background: var(--color-slate-100);
-    color: var(--color-slate-800);
-    font-size: 11px;
-    white-space: nowrap;
-    box-shadow: 0 6px 16px -6px rgb(9 9 11 / 0.5);
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.12s;
-    pointer-events: none;
-  }
-
-  .dark .linea-ctable-pcp::after:not([data-theme="light"] *),
-
-  [data-theme="dark"] .linea-ctable-pcp::after{
-    background: var(--color-slate-800);
-    color: var(--color-slate-100);
-  }
-
-  .linea-ctable-pcp:hover::after,
-  .linea-ctable-pcp:focus-visible::after {
-    opacity: 1;
-    visibility: visible;
+    color: var(--ink);
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
   }
 
   .linea-ctable-row:nth-last-child(-n + 2) .linea-ctable-pop {
     top: auto;
-    bottom: calc(100% + 6px);
+    bottom: calc(100% - 6px);
+    transform: translateY(4px);
   }
 
-  /* Open by the hook (click on the row, Enter or Space) and kept until it is closed: it can be read and used. */
-  .linea-ctable-row[data-open] .linea-ctable-pop {
-    opacity: 1;
+  .linea-ctable-row:hover .linea-ctable-pop,
+  .linea-ctable-row:focus-visible .linea-ctable-pop,
+  .linea-ctable-row:has(:focus-visible) .linea-ctable-pop {
     visibility: visible;
+    opacity: 1;
     transform: none;
-    pointer-events: auto;
-    user-select: text;
-    cursor: auto;
+    transition: opacity 0.14s 0.45s, transform 0.14s 0.45s, visibility 0s 0.45s;
   }
 
-  .linea-ctable-row[aria-expanded] { cursor: pointer; }
+  /* On the copy button its own tooltip speaks: the panel waits (and never covers the tooltip). */
+  .linea-ctable-row:has(.linea-ctable-cp:hover, .linea-ctable-cp:focus-visible) .linea-ctable-pop {
+    visibility: hidden;
+    opacity: 0;
+    transition: none;
+  }
 
   /* With `detail` slots the panel lists them at every width above 520px, not only the columns that left. */
-  .linea-ctable-pop[data-detail] { display: grid; }
-  .linea-ctable-pop[data-detail] > div { display: flex; }
+  .linea-ctable-pop[data-detail] { display: flex; }
+  .linea-ctable-pop[data-detail] > div[data-d] { display: flex; }
 
-  /* A column with `copy`: the cell is a copy button and a tooltip; its own content shows only in the card. */
-  .linea-ctable-cell:has(> .linea-ctable-cp) {
-    position: relative;
+  /* A column with `copy`: the cell is a copy button (the canvas `sg-ct-copy`, styled in canvas-dados1.css) with a
+     one-line tooltip. Its own content shows only in the card. */
+  .linea-ctable-cell:has(.linea-ctable-cpw) {
     overflow: visible;
     display: flex;
     align-items: center;
     gap: 6px;
   }
 
-  .linea-ctable-nn {
-    display: none;
-    font-family: var(--font-mono, ui-monospace, monospace);
-    font-size: 12.5px;
-    font-weight: 600;
-    white-space: nowrap;
+  .linea-ctable-cpw {
+    position: relative;
+    display: inline-flex;
   }
 
-  .linea-ctable-cp[data-copied] {
-    color: var(--color-success);
-    box-shadow: inset 0 0 0 1px var(--color-success);
+  /* `copy_show="inline"`: the content stays before the button at every width. */
+  .linea-ctable-cell:has(.linea-ctable-nn[data-show="inline"]) { gap: 8px; }
+  .linea-ctable-nn[data-show="inline"] { display: inline; }
+
+  /* `ctable_sub`: a second line inside a cell (a balance, an issuer) that leaves with its priority. */
+  .linea-ctable-sub {
+    display: block;
+    font-size: 12px;
+    line-height: 1.35;
+    font-weight: 400;
+    color: var(--faint);
+  }
+
+  .linea-ctable-nn {
+    display: none;
+    font-family: var(--mono);
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--ink);
+    white-space: nowrap;
   }
 
   .linea-ctable-ctip {
     position: absolute;
-    z-index: 9;
+    z-index: 11;
+    left: 50%;
     bottom: calc(100% + 6px);
-    left: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 1px;
-    padding: 7px 11px;
+    height: 26px;
+    padding: 0 9px;
     border-radius: 8px;
-    background: var(--color-slate-800);
-    color: var(--color-slate-100);
-    font-size: 12px;
-    font-weight: 500;
+    background: var(--solid);
+    color: var(--on-solid);
+    font: 500 12px/26px var(--mono);
     white-space: nowrap;
-    box-shadow: 0 10px 24px -10px rgb(9 9 11 / 0.5);
-    opacity: 0;
+    transform: translateX(-50%);
     visibility: hidden;
-    transform: translateY(3px);
-    transition: opacity 0.12s, transform 0.12s, visibility 0.12s;
     pointer-events: none;
-  }
-
-  .dark .linea-ctable-ctip:not([data-theme="light"] *),
-
-  [data-theme="dark"] .linea-ctable-ctip{
-    background: var(--color-navy-50);
-    color: var(--color-slate-800);
-  }
-
-  .linea-ctable-ctip b {
-    font-family: var(--font-mono, ui-monospace, monospace);
-    font-size: 12.5px;
-    font-weight: 600;
-  }
-
-  .linea-ctable-ctip i {
-    font-size: 11px;
-    font-style: normal;
-    opacity: 0.65;
   }
 
   .linea-ctable-ctip .l2 { display: none; }
 
+  /* copy_tip="value_label": the value in bold mono, the label in the text font */
+  .linea-ctable-ctip[data-tip="value_label"] {
+    font: 500 12px/26px var(--sans);
+  }
+
+  .linea-ctable-ctip[data-tip="value_label"] b {
+    font: 600 12px/26px var(--mono);
+  }
+
   .linea-ctable-cp:hover + .linea-ctable-ctip,
   .linea-ctable-cp:focus-visible + .linea-ctable-ctip {
-    opacity: 1;
     visibility: visible;
-    transform: none;
   }
 
   .linea-ctable-cp[data-copied] + .linea-ctable-ctip .l1 { display: none; }
   .linea-ctable-cp[data-copied] + .linea-ctable-ctip .l2 { display: inline; }
 
   /* 1: without the columns of priority 1 */
-  @container ctable (max-width: 1179.98px) {
+  @container ctable-d (max-width: 1179.98px) {
     .linea-ctable-grid { grid-template-columns: var(--ct-c1); }
     .linea-ctable [data-p="1"].linea-ctable-cell,
-    .linea-ctable [data-p="1"].linea-ctable-h { display: none; }
-    .linea-ctable-pop:has(> [data-p="1"]) { display: grid; }
+    .linea-ctable [data-p="1"].linea-ctable-h,
+    .linea-ctable [data-p="1"].linea-ctable-act,
+    .linea-ctable-cell [data-p="1"].linea-ctable-sub { display: none; }
+    .linea-ctable-pop:has(> [data-p="1"]) { display: flex; }
     .linea-ctable-pop > [data-p="1"] { display: flex; }
   }
 
   /* 2: and without those of priority 2 */
-  @container ctable (max-width: 959.98px) {
+  @container ctable-d (max-width: 959.98px) {
     .linea-ctable-grid { grid-template-columns: var(--ct-c2); }
     .linea-ctable [data-p="2"].linea-ctable-cell,
-    .linea-ctable [data-p="2"].linea-ctable-h { display: none; }
-    .linea-ctable-pop:has(> [data-p="2"]) { display: grid; }
+    .linea-ctable [data-p="2"].linea-ctable-h,
+    .linea-ctable [data-p="2"].linea-ctable-act,
+    .linea-ctable-cell [data-p="2"].linea-ctable-sub { display: none; }
+    .linea-ctable-pop:has(> [data-p="2"]) { display: flex; }
     .linea-ctable-pop > [data-p="2"] { display: flex; }
   }
 
   /* 3: and without those of priority 3 */
-  @container ctable (max-width: 719.98px) {
+  @container ctable-d (max-width: 719.98px) {
     .linea-ctable-grid { grid-template-columns: var(--ct-c3); }
     .linea-ctable [data-p="3"].linea-ctable-cell,
-    .linea-ctable [data-p="3"].linea-ctable-h { display: none; }
-    .linea-ctable-pop:has(> [data-p="3"]) { display: grid; }
+    .linea-ctable [data-p="3"].linea-ctable-h,
+    .linea-ctable [data-p="3"].linea-ctable-act,
+    .linea-ctable-cell [data-p="3"].linea-ctable-sub { display: none; }
+    .linea-ctable-pop:has(> [data-p="3"]) { display: flex; }
     .linea-ctable-pop > [data-p="3"] { display: flex; }
+    .linea-ctable-pop { left: 72px; max-width: calc(100% - 88px); }
   }
 
-  /* 4: a card of three lines per row; the `role` of a column says where it goes */
-  @container ctable (max-width: 519.98px) {
-    .linea-ctable-all { display: flex; }
+  /* 4: one card, a compact two-line grid per row (the canvas board): c = checkbox, n = head, s = status, w = title,
+     v = value. `meta` and the action column are not drawn. Select all stays for assistive technology only (it
+     shows on focus). Keep in sync with breakpoints_css/2 in card_table.ex. */
+  @container ctable-d (max-width: 519.98px) {
+    .linea-ctable-all {
+      position: absolute;
+      display: flex;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      border: 0;
+      overflow: hidden;
+      clip-path: inset(50%);
+    }
+    .linea-ctable-all:focus-within {
+      position: static;
+      width: auto;
+      height: auto;
+      padding: 10px 14px 10px 16px;
+      border-bottom: 1px solid var(--line);
+      clip-path: none;
+    }
     .linea-ctable-head { display: none; }
+    .linea-ctable-top { border-bottom: 1px solid var(--line); }
+    .linea-ctable-top-text { flex-basis: 100%; }
+    .linea-ctable-top-act { flex: 1 1 100%; justify-content: stretch; }
+    .linea-ctable-top-act > :not(.sg-btn):not(a) { flex: 1 1 100%; width: auto !important; max-width: 100%; }
+    .linea-ctable-top-act > .sg-btn { flex: 1 1 auto !important; }
     .linea-ctable-grid {
-      grid-template-columns: var(--ct-sel, 0px) minmax(0, 1fr) auto var(--ct-act, 0px);
+      grid-template-columns: auto minmax(0, 1fr) max-content;
       column-gap: 0;
-      row-gap: 8px;
     }
     .linea-ctable-row {
-      grid-template-areas: "sel head status act" "title title title title" "meta meta value value";
-      row-gap: 8px;
+      grid-template-areas: "sel head status" "sel title value";
+      row-gap: 4px;
       min-height: 0;
-      padding: 12px 12px 12px 18px;
+      padding: 12px 14px 12px 16px;
     }
     .linea-ctable-row > .linea-ctable-cell { display: none; }
-    .linea-ctable-row > .linea-ctable-sel { grid-area: sel; }
-    .linea-ctable-row > .linea-ctable-act { grid-area: act; }
-    .linea-ctable .linea-ctable-row > .linea-ctable-cell[data-role="head"] { display: block; grid-area: head; }
-    .linea-ctable .linea-ctable-row > .linea-ctable-cell[data-role="status"] { display: block; grid-area: status; justify-self: end; padding: 0 0.5rem; }
-    .linea-ctable .linea-ctable-row > .linea-ctable-cell[data-role="meta"] { display: block; grid-area: meta; }
-    .linea-ctable .linea-ctable-row > .linea-ctable-cell[data-role="value"] { display: block; grid-area: value; justify-self: end; padding-left: 0.5rem; }
+    .linea-ctable-row > .linea-ctable-act { display: none; }
+    .linea-ctable-row > .linea-ctable-sel { grid-area: sel; align-self: start; margin: 2px 10px 0 0; }
+    .linea-ctable .linea-ctable-row > .linea-ctable-cell[data-role="head"] { display: block; grid-area: head; font: 500 12.5px var(--mono); color: var(--ink); }
+    .linea-ctable .linea-ctable-row > .linea-ctable-cell[data-role="status"] { display: block; grid-area: status; justify-self: end; padding-left: 10px; }
+    .linea-ctable .linea-ctable-row > .linea-ctable-cell[data-role="value"] { display: block; grid-area: value; justify-self: end; align-self: end; padding-left: 10px; }
     .linea-ctable .linea-ctable-row > .linea-ctable-cell[data-role="title"] {
       display: -webkit-box;
       grid-area: title;
@@ -1455,7 +1459,7 @@
     }
     .linea-ctable-pop { display: none !important; }
     .linea-ctable-nn { display: inline; }
-    .linea-ctable-ctip { display: none; }
+    .linea-ctable-cpw { display: none; }
   }
 }
 
