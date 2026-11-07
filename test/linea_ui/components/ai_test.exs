@@ -168,4 +168,11 @@ defmodule LineaUI.Components.AiTest do
     assert find(html, "h1") |> Enum.to_list() == []
     assert "Propõe, você aprova" in texts(html, ".sg-badge")
   end
+
+  test "the chat leaves the composer out with composer={false}" do
+    assert [_] = find(render(~H|<.ai_chat id="c" />|), ".ai-composer") |> Enum.to_list()
+
+    assert find(render(~H|<.ai_chat id="c" composer={false} />|), ".ai-composer")
+           |> Enum.to_list() == []
+  end
 end

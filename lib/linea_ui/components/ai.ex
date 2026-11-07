@@ -184,7 +184,7 @@ defmodule LineaUI.Components.Ai do
       data-status={@status}
       {@rest}
     >
-      <.icon name="huge-ai-magic" class="i sm" boxed tone="accent" box_class="ai-spark" />
+      <.icon name="huge-sparkles" class="i sm" boxed tone="accent" box_class="ai-spark" />
       <div class="ai-body">
         {render_slot(@trace)}
         {render_slot(@inner_block)}
@@ -248,7 +248,7 @@ defmodule LineaUI.Components.Ai do
     ~H"""
     <div id={@id} class={merge(["sg-card flush ai-proposal", @class])} data-status={@state} {@rest}>
       <div class="ai-proposal-head">
-        <span class="ai-proposal-spark"><.icon name="huge-ai-magic" class="i sm" /></span>
+        <span class="ai-proposal-spark"><.icon name="huge-sparkles" class="i sm" /></span>
         <b class="ink">{@title}</b>
         <span class="ai-proposal-state">
           <.badge :if={@state == "pending"} color="warning" dot>Aguardando você</.badge>
@@ -487,7 +487,7 @@ defmodule LineaUI.Components.Ai do
         class="sg-tag ai-pill"
         phx-click={pick(@on_pick, item.title, item.text, @target)}
       >
-        <.icon name="huge-ai-magic" class="i sm" />{item.text}
+        <.icon name="huge-sparkles" class="i sm" />{item.text}
       </button>
     </div>
     """
@@ -638,7 +638,7 @@ defmodule LineaUI.Components.Ai do
         </div>
       <% else %>
         <div class="ai-conversations-head">
-          <.icon name="huge-ai-magic" class="i sm" boxed tone="accent" box_class="ai-spark" />
+          <.icon name="huge-sparkles" class="i sm" boxed tone="accent" box_class="ai-spark" />
           <b class="ink">{@title}</b>
         </div>
         <.button class="block" phx-click={click(@on_new, nil, @target)}>
@@ -758,6 +758,11 @@ defmodule LineaUI.Components.Ai do
     doc:
       "A small line under the composer (a notice about approvals, for instance). None unless given."
 
+  attr :composer, :boolean,
+    default: true,
+    doc:
+      "`false` leaves the composer out: a conversation shown as a record (an approved proposal)."
+
   attr :placeholder, :string, default: "Pergunte sobre pedidos, estoque, fiscal ou financeiro"
   attr :on_send, :any, default: nil, doc: "The `phx-submit` event of the composer."
   attr :on_change, :any, default: nil, doc: "The `phx-change` event of the composer."
@@ -843,7 +848,7 @@ defmodule LineaUI.Components.Ai do
           />
         </div>
       </div>
-      <div class="ai-chat-foot">
+      <div :if={@composer} class="ai-chat-foot">
         <.ai_composer
           id={"#{@id}-composer"}
           value={@draft}
