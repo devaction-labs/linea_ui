@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.11.1 (2026-11-07)
+
+- `card_table`: the row panel opens on a click (or tap) on the row, at the pointer (its left edge 16px left of the click, kept 8px inside the row), and no longer on hover; it does not follow the mouse. `Enter` or `Space` on a focused row toggles it at the fixed anchor from the keyboard. It closes on a second click, `Esc`, a click outside the table or a click on a control of the row; its text can be selected. Rows carry `aria-expanded` and `data-open`, and `cursor: pointer` when they have a panel. The `LineaUI.CardTable` hook is back (on the rows' list; register it with the other hooks) and the panel needs it.
+
 ## 0.11.0 (2026-11-07)
 
 - `card_table` follows the CardTable board: one card with a header row, rows divided by a thin line, a thin status bar at the left, the selected row tinted; a panel with the hidden columns opens on hover (the `CardTable` hook is gone); below the card width the row becomes a compact card, and the bar above wraps instead of scrolling.
