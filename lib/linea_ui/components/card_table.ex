@@ -76,12 +76,18 @@ defmodule LineaUI.Components.CardTable do
 
   ## The details panel
 
-  Hovering a row (or tabbing to it) opens, after a short delay, a panel under it with more than the row shows:
-  a list of label and value, one line each. It is for reading only (it ignores the pointer, so it never covers the
-  next row), and it goes away when the pointer or the focus leaves the row. The last two rows open it upwards.
+  Clicking a row (or tapping it) opens a panel under it with more than the row shows: a list of label and value, one
+  line each. Hovering never opens it. The panel's left edge sits at the click (16px to its left), kept 8px inside
+  both sides of the row, and it does not follow the pointer afterwards. The text of the panel can be selected and
+  copied, and a click inside it keeps it open. It closes on a second click on the row, on `Esc` (the focus goes back to the
+  row), on a click outside the table, and on a click on any control of the row (link, button, check box, copy button,
+  action menu), which does its own thing. A click on another row moves the panel there. From the keyboard, `Enter` or
+  `Space` on a focused row toggles it, at a fixed anchor (96px from the left of the row, 72px under 720px) since there is no pointer.
+  The row carries `aria-expanded` and `data-open` (which the CSS uses). The last two rows open it upwards. The
+  `CardTable` hook (`LineaUI.CardTable`, on the rows' list) does this; without it the panel never opens.
   Give `detail` slots (`<:detail :let={o} label="Due date">{o.due}</:detail>`) and the panel lists them first, in
   the order given, at every width above 520px, then the columns that left at the current width (each shows only
-  once its priority has left). With no `detail`, the panel only has the columns that left. Below 520px there is no panel: the card shows what the roles place.
+  once its priority has left; a column with the same label as a `detail` is not listed again). With no `detail`, the panel only has the columns that left. Below 520px there is no panel: the card shows what the roles place.
 
   A column may have an empty `label` (a number or copy column with no header text), and `<:action priority={3}>`
   makes the action column leave like a column of that priority.
@@ -274,7 +280,7 @@ defmodule LineaUI.Components.CardTable do
 
   slot :detail,
     doc:
-      "A line of the panel that opens when a row is hovered or focused; receives the row. When given, the panel lists these and not the hidden columns." do
+      "A line of the panel that opens when a row is clicked; receives the row. When given, the panel lists these and not the hidden columns." do
     attr :label, :string, required: true
   end
 
@@ -430,7 +436,12 @@ defmodule LineaUI.Components.CardTable do
             data-p={action_priority(@action)}
           ></span>
         </div>
-        <ul id={@id} phx-update={match?(%LiveStream{}, @rows) && "stream"} {@rest}>
+        <ul
+          id={@id}
+          phx-hook="LineaUI.CardTable"
+          phx-update={match?(%LiveStream{}, @rows) && "stream"}
+          {@rest}
+        >
           <%= if stream?(@rows) do %>
             <.card_row
               :for={row <- @rows}
@@ -516,6 +527,10 @@ defmodule LineaUI.Components.CardTable do
       id={@row_id && @row_id.(@row)}
       class="linea-ctable-row"
       tabindex="0"
+      aria-expanded={(@hidable or @detail != []) && "false"}
+      phx-mounted={
+        (@hidable or @detail != []) && JS.ignore_attributes(["style", "data-open", "aria-expanded"])
+      }
       data-status={status_of(@status, @row_item, @row)}
       data-selected={@selectable && bool(@selected)}
       {row_attrs(@row_attrs, @row_item, @row)}
@@ -589,7 +604,7 @@ defmodule LineaUI.Components.CardTable do
           <dt>{detail.label}</dt>
           <dd>{render_slot(detail, @row_item.(@row))}</dd>
         </div>
-        <div :for={col <- hidden(@col)} data-p={priority(col)}>
+        <div :for={col <- hidden(@col, @detail)} data-p={priority(col)}>
           <dt>{col[:label]}</dt>
           <dd>{render_slot(col, @row_item.(@row))}</dd>
         </div>
@@ -602,7 +617,11 @@ defmodule LineaUI.Components.CardTable do
 
   defp action_priority([action | _]), do: priority(action)
 
-  defp hidden(cols), do: Enum.filter(cols, &(priority(&1) > 0))
+  # A hidden column whose label a `detail` slot already uses is not listed twice.
+  defp hidden(cols, details) do
+    labels = MapSet.new(details, & &1.label)
+    Enum.filter(cols, &(priority(&1) > 0 and not MapSet.member?(labels, &1[:label])))
+  end
 
   defp cell_class(col, base) do
     merge([
@@ -667,7 +686,8 @@ defmodule LineaUI.Components.CardTable do
       |> Enum.map_join("\n", fn {width, k} ->
         pop_left =
           if k == min(levels, 3),
-            do: "& .linea-ctable-pop { left: 72px; max-width: calc(100% - 88px); }\n",
+            do:
+              "& .linea-ctable-pop { left: var(--ct-pop-x, 72px); max-width: calc(100% - 88px); }\n",
             else: ""
 
         """
@@ -676,6 +696,7 @@ defmodule LineaUI.Components.CardTable do
         & [data-p="#{k}"].linea-ctable-cell, & [data-p="#{k}"].linea-ctable-h, & [data-p="#{k}"].linea-ctable-act, & .linea-ctable-cell [data-p="#{k}"].linea-ctable-sub { display: none; }
         & .linea-ctable-pop:has(> [data-p="#{k}"]) { display: flex; }
         & .linea-ctable-pop > [data-p="#{k}"] { display: flex; }
+        & .linea-ctable-row:has(> .linea-ctable-pop > [data-p="#{k}"]) { cursor: pointer; }
         #{pop_left}}
         """
       end)
@@ -700,6 +721,7 @@ defmodule LineaUI.Components.CardTable do
     & .linea-ctable-row > .linea-ctable-cell[data-role="value"] { display: block; grid-area: value; justify-self: end; align-self: end; padding-left: 10px; }
     & .linea-ctable-row > .linea-ctable-cell[data-role="title"] { display: -webkit-box; grid-area: title; white-space: normal; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
     & .linea-ctable-pop { display: none !important; }
+    & .linea-ctable-row { cursor: auto !important; }
     & .linea-ctable-nn { display: inline; }
     & .linea-ctable-cpw { display: none; }
     }

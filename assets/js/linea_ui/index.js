@@ -10,6 +10,7 @@ import AiComposer from "./hooks/ai_composer.js"
 import Autocomplete from "./hooks/autocomplete.js"
 import BulkBar from "./hooks/bulk_bar.js"
 import Calendar from "./hooks/calendar.js"
+import CardTable from "./hooks/card_table.js"
 import Carousel from "./hooks/carousel.js"
 import Chart from "./hooks/chart.js"
 import Clipboard from "./hooks/clipboard.js"
@@ -52,6 +53,7 @@ export const Hooks = {
   ...Autocomplete,
   ...BulkBar,
   ...Calendar,
+  ...CardTable,
   ...Carousel,
   ...Chart,
   ...Clipboard,
