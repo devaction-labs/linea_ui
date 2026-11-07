@@ -175,4 +175,24 @@ defmodule LineaUI.Components.AiTest do
     assert find(render(~H|<.ai_chat id="c" composer={false} />|), ".ai-composer")
            |> Enum.to_list() == []
   end
+
+  test "the greeting has the sizes and the warm tone" do
+    default = render(~H|<.ai_greeting name="Marina" greeting="Bom dia, Marina" />|)
+    assert [_] = find(default, ".ai-greeting") |> Enum.to_list()
+
+    assert find(default, ".ai-greeting.sm, .ai-greeting.md, .ai-greeting.warm") |> Enum.to_list() ==
+             []
+
+    assert texts(default, ".ai-greeting h1") == ["Bom dia, Marina"]
+
+    md =
+      render(
+        ~H|<.ai_greeting greeting="Boa tarde, Alex" size="md" tone="warm" tagline="Vamos resolver o quê?" />|
+      )
+
+    assert [_] = find(md, ".ai-greeting.md.warm") |> Enum.to_list()
+    assert texts(md, ".ai-greeting h2") == ["Vamos resolver o quê?"]
+
+    assert [_] = find(render(~H|<.ai_greeting size="sm" />|), ".ai-greeting.sm") |> Enum.to_list()
+  end
 end

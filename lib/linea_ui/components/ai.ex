@@ -546,9 +546,12 @@ defmodule LineaUI.Components.Ai do
   end
 
   @doc """
-  The greeting of the assistant: the name in the accent gradient and the question under it.
+  The greeting of the assistant: the first line (the whole line) in a living gradient, whose colors drift
+  across the text (6s, back and forth; 12s under `prefers-reduced-motion`), and the question under it.
+  `tone="warm"` swaps the brand colors for pink, rose and orange.
 
       <.ai_greeting name="Marina" />
+      <.ai_greeting name="Alex" tone="warm" greeting="Boa tarde, Alex" tagline="Vamos resolver o quê?" size="md" />
   """
   attr :name, :string,
     default: nil,
@@ -556,13 +559,22 @@ defmodule LineaUI.Components.Ai do
 
   attr :greeting, :string, default: nil, doc: "Replaces the whole first line."
   attr :tagline, :string, default: "Em que posso ajudar hoje?"
-  attr :size, :string, default: "lg", values: ~w(sm lg), doc: "30px or 40px."
+  attr :size, :string, default: "lg", values: ~w(sm md lg), doc: "30px, 36px or 40px."
+
+  attr :tone, :string,
+    default: "brand",
+    values: ~w(brand warm),
+    doc: "`brand` (accent, blue, violet, pink) or `warm` (pink, rose, orange, fuchsia)."
+
   attr :class, :any, default: nil
   attr :rest, :global
 
   def ai_greeting(assigns) do
     ~H"""
-    <div class={merge(["ai-greeting", @size == "sm" && "sm", @class])} {@rest}>
+    <div
+      class={merge(["ai-greeting", @size in ~w(sm md) && @size, @tone == "warm" && "warm", @class])}
+      {@rest}
+    >
       <h1>{@greeting || hello(@name)}</h1>
       <h2>{@tagline}</h2>
     </div>
