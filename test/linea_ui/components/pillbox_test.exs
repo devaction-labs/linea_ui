@@ -161,6 +161,21 @@ defmodule LineaUI.Components.PillboxTest do
     %{form[:cats] | errors: [{"Choose at least 2 categories.", []}]}
   end
 
+  test "on_load_more, has_more and loading_label are forwarded to the listbox" do
+    html =
+      render(~H"""
+      <.pillbox name="a" options={options()} on_load_more="more" has_more loading_label="Carregando…" />
+      """)
+
+    assert attr_of(html, "#a", "data-on-load-more") == ["more"]
+    assert attr_of(html, "#a", "data-has-more") == ["true"]
+    assert texts(html, "#a [data-loading-row]") == ["Carregando…"]
+
+    done = render(~H|<.pillbox name="a" options={options()} on_load_more="more" />|)
+    assert attr_of(done, "#a", "data-has-more") == []
+    assert attr_of(done, "#a [data-loading-row]", "class") == []
+  end
+
   defp people do
     [
       %{label: "Marina Costa", value: "1", color: "#8a5cd6"},

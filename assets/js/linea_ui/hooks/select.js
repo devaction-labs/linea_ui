@@ -3,7 +3,7 @@
  * control, a dropdown of options under it, a hidden `<select>` that the form submits. The server renders the
  * options and the chips it knows; the hook keeps the choice, filters, creates and tells the form.
  */
-import {canCreate} from "../lib/listbox_logic.js"
+import {canCreate, nearEnd} from "../lib/listbox_logic.js"
 import {fillQuery} from "../lib/autocomplete_logic.js"
 import {notify} from "../lib/dom.js"
 import {choose, createRow, createsOnTab, fitCount, highlight, isFull, limitState, moveIndex, removeLast, removeValue, sameValues, shows, splitTags, toggleValue} from "../lib/select_box.js"
@@ -40,6 +40,7 @@ export const Listbox = {
       const row = event.target.closest("[data-selectable], .create")
       row && this.setActive(this.rows().indexOf(row))
     }
+    this.onScroll = (event) => event.target.matches?.(".ts-dropdown-content") && this.loadMore()
     this.onCommand = (event) => this[event.type.replace("linea:", "")]()
     this.onPushed = (event) => event.detail?.id && this.el.matches(event.detail.id) && this[event.type.replace("phx:linea:", "")]()
 
@@ -50,6 +51,7 @@ export const Listbox = {
     this.el.addEventListener("input", this.onInput)
     this.el.addEventListener("keydown", this.onKeyDown)
     this.el.addEventListener("mouseover", this.onMouseOver)
+    this.el.addEventListener("scroll", this.onScroll, true)
     COMMANDS.forEach((name) => {
       this.el.addEventListener(`linea:${name}`, this.onCommand)
       window.addEventListener(`phx:linea:${name}`, this.onPushed)
@@ -58,13 +60,22 @@ export const Listbox = {
     this.watchFit()
   },
 
+  beforeUpdate() {
+    this.scrolled = this.q(".ts-dropdown-content")?.scrollTop ?? 0
+  },
+
   updated() {
+    this.loading = false
     const incoming = this.el.dataset.value
     const next = readValues(this.el)
     const changed = incoming !== this.server && !sameValues(next, this.values)
     this.server = incoming
     changed && ((this.values = next), this.renderChips(), this.writeInput())
     this.refresh()
+    const list = this.q(".ts-dropdown-content")
+    list && this.scrolled !== undefined && (list.scrollTop = this.fresh ? 0 : this.scrolled)
+    this.fresh = false
+    this.loadMore()
   },
 
   destroyed() {
@@ -114,6 +125,21 @@ export const Listbox = {
     return !this.el.dataset.onSearch
   },
 
+  /** The server has more pages and an event to ask for them. */
+  paged() {
+    return Boolean(this.el.dataset.onLoadMore) && this.el.dataset.hasMore === "true"
+  },
+
+  /** Asks the server for the next page once, when the open list is scrolled near its end or is too short to scroll. */
+  loadMore() {
+    const list = this.q(".ts-dropdown-content")
+    if (!this.paged() || this.loading || !this.isOpen || !list || this.q("[data-dropdown]").hidden) return
+    if (!nearEnd({scrollTop: list.scrollTop, clientHeight: list.clientHeight, scrollHeight: list.scrollHeight})) return
+    this.loading = true
+    const offset = this.options().filter((row) => !row.hasAttribute("data-created")).length
+    this.pushEventTo(this.el.getAttribute("phx-target") || this.el, this.el.dataset.onLoadMore, {id: this.el.id, query: this.term, offset})
+  },
+
   options() {
     return [...this.el.querySelectorAll("[data-dropdown] .option[data-value]")]
   },
@@ -141,7 +167,7 @@ export const Listbox = {
 
   open() {
     const disabled = this.el.classList.contains("disabled") || this.readonly() || isFull(this.values.length, this.multiple(), this.max()) && this.multiple()
-    !disabled && ((this.isOpen = true), this.refresh(), this.input().focus())
+    !disabled && ((this.isOpen = true), this.refresh(), this.input().focus(), this.loadMore())
   },
 
   close() {
@@ -213,6 +239,7 @@ export const Listbox = {
     this.isOpen = true
     this.active = -1
     this.el.classList.toggle("input-hidden", this.hidesControl(rest))
+    this.loading = false
     this.local() ? this.refresh() : this.search(rest)
   },
 
@@ -220,6 +247,7 @@ export const Listbox = {
     clearTimeout(this.searchTimer)
     this.searchTimer = setTimeout(() => {
       const target = this.el.getAttribute("phx-target")
+      this.fresh = true
       this.pushEventTo(target || this.el, this.el.dataset.onSearch, {id: this.el.id, query})
     }, Number(this.el.dataset.debounce || 0))
     this.refresh()

@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- `select` (listbox) and `pillbox`: scroll pagination. `on_load_more` (event name), `has_more` (the server has more pages) and `loading_label` (default `"Loading…"`, the last row of the list while `has_more` and `on_load_more` are set; it is not an option, so the keyboard skips it). Scrolling within 48px of the end, or opening a list too short to scroll, pushes `on_load_more` once with `%{"id" => id, "query" => term, "offset" => options in the list}` to `target` or the LiveView, and waits for the re-render before asking again; the list keeps its scroll position when the page is appended, and goes back to the top on a new search. A load-more answer that arrives after the term changed is not dropped on the client (compare `"query"` on the server).
+
 ## 0.11.1 (2026-11-07)
 
 - `card_table`: the row panel opens on a click (or tap) on the row, at the pointer (its left edge 16px left of the click, kept 8px inside the row), and no longer on hover; it does not follow the mouse. `Enter` or `Space` on a focused row toggles it at the fixed anchor from the keyboard. It closes on a second click, `Esc`, a click outside the table or a click on a control of the row; its text can be selected. Rows carry `aria-expanded` and `data-open`, and `cursor: pointer` when they have a panel. The `LineaUI.CardTable` hook is back (on the rows' list; register it with the other hooks) and the panel needs it.
