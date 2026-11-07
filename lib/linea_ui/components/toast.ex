@@ -119,6 +119,24 @@ defmodule LineaUI.Components.Toast do
       update_toast(socket, "nfe-42", value: 64, description: "Sending to SEFAZ…")
       update_toast(socket, "nfe-42", value: 100, title: "NF-e authorized", description: "Protocol 1292…")
 
+  ## Status
+
+  A long process (a deploy, a batch of invoices, an import, a backup) gets the compact, inverse toast: dark in both
+  themes, with a circle at the left, the message and the buttons at the right. `status` is `:run` (the circle fills
+  while it works, or shows the real percentage when there is a `value`), `:queue` (dashed circle), `:ok` (green dot)
+  or `:err` (red dot). `**name**` in the message highlights the name. A status toast stays until it changes or is
+  closed (a finished one without buttons leaves like any other), has no close button unless `close: true`, and
+  `variant: :ghost` makes an action a plain text button. `position: "center-bottom"` or `"center-top"` puts it
+  in the middle of the page as a process bar; its width follows the text, up to 440px.
+
+      send_toast(socket, "Deploy **f798c00** is building on **mavorax · master**",
+        id: "deploy", status: :run, position: "center-bottom", actions: [[label: "Cancel", event: "cancel"]])
+      update_toast(socket, "deploy", status: :ok, message: "Deploy **f798c00** published in **38s**",
+        actions: [[label: "Logs", variant: :ghost, href: "/logs"], [label: "Open", href: "/app"]])
+      send_toast(socket, "Importing **BB statement**, **412 of 980** lines", id: "imp", status: :run, value: 42)
+
+  `status_toast/1` draws the same card in the page.
+
   ## Steps
 
   A batch that goes in stages is a toast with `steps` (how many) and `step` (how many are done): a title with
@@ -169,7 +187,8 @@ defmodule LineaUI.Components.Toast do
   @aura_variants ~w(default dual glow)
   @aura_sizes ~w(xs sm lg)
   @aura_colors ~w(assistant primary secondary info success warning error)
-  @action_variants ~w(outline solid soft)
+  @statuses ~w(run queue ok err)
+  @action_variants ~w(outline solid soft ghost)
   @action_colors ~w(primary error)
   @kind_icons %{
     "info" => :info_circle,
@@ -274,7 +293,7 @@ defmodule LineaUI.Components.Toast do
   `aura` draws the card inside an `LineaUI.Components.Aura.aura/1` (`aura_tone`, `aura_width`, `aura_shadow`),
   and `busy` puts a spinner at the right: the assistant, or a process outside the page, is working.
 
-      <.toast_card aura="spin" aura_tone="ai" busy dismissible={false} kind="primary" icon="huge-ai-magic"
+      <.toast_card aura="spin" aura_tone="ai" busy dismissible={false} kind="primary" icon="huge-sparkles"
         title="Assistant reading the invoice" description="NF-e 48.211 · 44 items" />
 
   `progress` (0 to 100) makes it a progress toast: the background fills up to that percentage, with a
@@ -460,6 +479,59 @@ defmodule LineaUI.Components.Toast do
   defp card_tone(_kind), do: nil
 
   @doc """
+  The compact, inverse status card (`sg-toast st`) drawn in place: a circle for the `state`, the message (put
+  the names in `<b>`) and the buttons at the right. Dark in both themes.
+
+      <.status_toast state="run">
+        Deploy <b>f798c00</b> is building on <b>mavorax · master</b>
+        <:action>Cancel</:action>
+      </.status_toast>
+
+      <.status_toast state="ok">
+        Deploy <b>f798c00</b> published in <b>38s</b>
+        <:action ghost>Logs</:action>
+        <:action>Open</:action>
+      </.status_toast>
+
+  `state` is `run` (the circle fills while it works), `queue` (dashed), `ok` (green dot) or `err` (red dot);
+  `percent` (0 to 100) makes a running circle show that real percentage. An action takes `ghost` (plain text) and
+  `on_click` (a `%JS{}` or an event name); put `href` or other attributes on it as needed.
+  """
+  attr :state, :string, default: "run", values: @statuses
+  attr :percent, :integer, default: nil, doc: "0 to 100: the circle of a running toast shows it."
+  attr :class, :any, default: nil
+  attr :rest, :global
+  slot :inner_block, required: true, doc: "The message; `<b>` highlights a name."
+
+  slot :action, doc: "A button at the right." do
+    attr :ghost, :boolean
+    attr :on_click, :any
+  end
+
+  def status_toast(assigns) do
+    ~H"""
+    <div class={merge(["sg-toast st", @class])} role="status" {@rest}>
+      <span
+        class={["sg-st", @state != "run" && @state]}
+        style={@percent && "--stp:#{@percent}%"}
+        aria-hidden="true"
+      >
+        <i></i>
+      </span>
+      <span class="msg">{render_slot(@inner_block)}</span>
+      <button
+        :for={action <- @action}
+        type="button"
+        class={["act", action[:ghost] && "ghost"]}
+        phx-click={action[:on_click]}
+      >
+        {render_slot(action)}
+      </button>
+    </div>
+    """
+  end
+
+  @doc """
   Leaves a toast in the flash of a `Plug.Conn` (after `fetch_flash`) or a LiveView socket. The
   toaster shows it on the next page, so it survives `redirect/2`, `push_navigate/2` and
   `push_patch/2`. Several calls pile up.
@@ -579,7 +651,8 @@ defmodule LineaUI.Components.Toast do
       "value" => opts |> Keyword.get(:value) |> value!(),
       "bar" => Keyword.get(opts, :bar, false),
       "steps" => opts |> Keyword.get(:steps) |> steps!(),
-      "step" => opts |> Keyword.get(:step) |> step!()
+      "step" => opts |> Keyword.get(:step) |> step!(),
+      "status" => opts |> Keyword.get(:status) |> status!()
     }
   end
 
@@ -609,12 +682,16 @@ defmodule LineaUI.Components.Toast do
   defp change({:bar, value}), do: {"bar", value}
   defp change({:steps, value}), do: {"steps", steps!(value)}
   defp change({:step, value}), do: {"step", step!(value)}
+  defp change({:status, value}), do: {"status", status!(value)}
 
   defp change({key, _value}),
     do: raise(ArgumentError, "update_toast/3 does not change #{inspect(key)}")
 
   defp kind!(nil), do: nil
   defp kind!(kind), do: check!(to_string(kind), @kinds, :kind)
+
+  defp status!(nil), do: nil
+  defp status!(status), do: check!(to_string(status), @statuses, :status)
 
   defp aura!(nil), do: nil
   defp aura!(false), do: nil

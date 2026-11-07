@@ -1,17 +1,17 @@
 /* Canvas look: the aura (a ring of light for async work) and the progress toast. Same values as `sg.css` of the design canvas. */
 
-.sg-aura{align-self:flex-start;max-width:100%;--a:var(--accent);--a2:#8a5cd6;--w:2px;--r:16px;position:relative;isolation:isolate;overflow:hidden;display:inline-flex;flex-direction:column;padding:var(--w);border-radius:calc(var(--r) + var(--w));background:color-mix(in srgb,var(--a) 20%,var(--line))}
+.sg-aura{align-self:flex-start;max-width:100%;--a:var(--accent);--a2:#8a5cd6;--w:1.25px;--r:16px;position:relative;isolation:isolate;overflow:hidden;display:inline-flex;flex-direction:column;padding:var(--w);border-radius:calc(var(--r) + var(--w));background:color-mix(in srgb,var(--a) 12%,var(--line))}
 .sg-aura::before{content:"";position:absolute;left:50%;top:50%;width:max(220%,560px);aspect-ratio:1;transform:translate(-50%,-50%);background:conic-gradient(from 0deg,transparent 0 58%,var(--a) 76%,color-mix(in srgb,var(--a) 35%,#fff) 81%,transparent 92%);animation:sg-aura-spin 2.6s linear infinite;z-index:-1}
 .sg-aura.dual::before{background:conic-gradient(from 0deg,transparent 0 8%,var(--a) 22%,transparent 36% 58%,var(--a2) 72%,transparent 86%)}
 .sg-aura.dual{background:color-mix(in srgb,var(--a2) 14%,color-mix(in srgb,var(--a) 14%,var(--line)))}
 .sg-aura.glow{overflow:visible;background:var(--a);animation:sg-aura-glow 1.8s ease-in-out infinite}
 .sg-aura.glow::before{display:none}
 .sg-aura>*{position:relative;border-radius:var(--r)!important;box-shadow:none!important}
-.sg-aura.xs{--w:1px}.sg-aura.sm{--w:1.5px}.sg-aura.lg{--w:3px}
+.sg-aura.xs{--w:.75px}.sg-aura.sm{--w:1px}.sg-aura.lg{--w:2px}
 .sg-aura.pill{--r:999px}.sg-aura.r12{--r:12px}
 .sg-aura.ai{--a:#0d8f91;--a2:#8a5cd6}.sg-aura.info{--a:var(--info)}.sg-aura.pos{--a:var(--pos)}.sg-aura.warn{--a:var(--warn)}.sg-aura.neg{--a:var(--neg)}.sg-aura.violet{--a:#8a5cd6}
 :is(.dark, [data-theme="dark"]) .sg-aura.ai:not(:where([data-theme="light"], [data-theme="light"] *)){--a:#2bbfbd;--a2:#a98bf0}
-.sg-aura-shadow{filter:drop-shadow(0 18px 30px rgb(15 15 20/.12))}
+.sg-aura-shadow{filter:drop-shadow(0 10px 22px rgb(15 15 20/.10)) drop-shadow(0 1px 2px rgb(15 15 20/.06))}
 @keyframes sg-aura-spin{to{transform:translate(-50%,-50%) rotate(360deg)}}
 @keyframes sg-aura-glow{0%,100%{box-shadow:0 0 0 0 color-mix(in srgb,var(--a) 0%,transparent),0 0 10px -2px var(--a)}50%{box-shadow:0 0 0 4px color-mix(in srgb,var(--a) 18%,transparent),0 0 28px 2px var(--a)}}
 
@@ -47,3 +47,28 @@
 .toastify.rich.canvas[data-behind] .sg-toast>*{visibility:hidden}
 .toastify.rich.canvas[data-behind] .sg-toast.prog{background:var(--panel)}
 .toastify.rich.canvas[data-behind] .sg-toast.dark{background:#17171a}
+
+/* Status toast (`status_toast/1`, and `status:` in the toaster): compact and inverse in both themes, for long processes */
+.sg-toast.st{width:auto;max-width:440px;align-items:center;gap:12px;padding:10px 10px 10px 14px;border-radius:12px;background:#111113;color:#9d9da3;font-size:14px;line-height:20px;box-shadow:0 0 0 1px rgb(255 255 255/.06),0 12px 28px -6px rgb(0 0 0/.35),0 2px 6px rgb(0 0 0/.18)}
+:is(.dark, [data-theme="dark"]) .sg-toast.st:not(:where([data-theme="light"] *)){background:#1b1b1f;box-shadow:0 0 0 1px #2f2f35,inset 0 1px 0 rgb(255 255 255/.04),0 16px 36px -6px rgb(0 0 0/.7)}
+.sg-toast.st b{font-weight:550;color:#f4f4f5}
+.sg-toast.st .msg{flex:1;min-width:0}
+.sg-toast.st .act{all:unset;box-sizing:border-box;flex:none;height:32px;padding:0 14px;border-radius:8px;display:inline-flex;align-items:center;font-size:14px;font-weight:500;color:#f4f4f5;background:#26262b;box-shadow:inset 0 0 0 1px #34343a;cursor:pointer}
+.sg-toast.st .act:hover{background:#2e2e34}
+.sg-toast.st .act:focus-visible{outline:2px solid var(--accent-2);outline-offset:2px}
+.sg-toast.st .act.ghost{background:none;box-shadow:none;color:#c9c9ce;padding:0 8px}
+@property --stp{syntax:"<percentage>";inherits:true;initial-value:0%}
+.sg-st{--stc:#8b8b92;--stw:#a6a6ad;flex:none;position:relative;width:18px;height:18px;border-radius:50%;box-shadow:inset 0 0 0 1.5px var(--stc);box-sizing:border-box;animation:sg-st-fill 3.2s ease-in-out infinite}
+.sg-st>i{position:absolute;inset:3px;border-radius:50%;overflow:hidden;background:rgb(255 255 255/.04)}
+.sg-st>i::before,.sg-st>i::after{content:"";position:absolute;left:50%;width:240%;aspect-ratio:1;margin-left:-120%;top:calc(100% - var(--stp));border-radius:42%;background:var(--stw);animation:sg-st-wave 1.6s linear infinite}
+.sg-st>i::after{border-radius:38%;background:color-mix(in srgb,var(--stw) 55%,transparent);margin-top:-1.5px;animation-duration:2.3s;animation-direction:reverse}
+.sg-st[style*="--stp"]{animation:none;transition:--stp .5s ease}
+.sg-st.ok{animation:none;background:#22c55e;box-shadow:0 0 0 3px rgb(34 197 94/.18);padding:0;width:10px;height:10px;margin:4px}
+.sg-st.err{animation:none;background:#ef4444;box-shadow:0 0 0 3px rgb(239 68 68/.2);padding:0;width:10px;height:10px;margin:4px}
+.sg-st.queue{animation:none;background:none;box-shadow:none;border:1.5px dashed #77777e}
+@keyframes sg-st-fill{0%{--stp:-8%}80%{--stp:108%;opacity:1}100%{--stp:108%;opacity:.3}}
+@keyframes sg-st-wave{to{rotate:360deg}}
+@media (prefers-reduced-motion:reduce){.sg-st{animation-duration:6s}.sg-st>i::before,.sg-st>i::after{animation-duration:4s}}
+.sg-st.ok>i,.sg-st.err>i,.sg-st.queue>i{display:none}
+/* At the center the box would stretch from edge to edge: it takes the width of its card instead (a status toast follows its text, up to 440px) */
+.toastify.toastify-center.rich.canvas{width:fit-content}

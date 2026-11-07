@@ -296,4 +296,43 @@ defmodule LineaUI.Components.ToastTest do
       assert find(fail, "#t > .sg-spin") |> Enum.empty?()
     end
   end
+
+  describe "status_toast/1" do
+    test "the compact inverse card with its circle, message and buttons" do
+      html =
+        render(~H"""
+        <.status_toast id="s" state="ok">
+          Deploy <b>f798c00</b>
+          published
+          <:action ghost>Logs</:action>
+          <:action>Open</:action>
+        </.status_toast>
+        """)
+
+      assert "sg-toast" in classes(html, "#s")
+      assert "st" in classes(html, "#s")
+      assert "ok" in classes(html, "#s > .sg-st")
+      assert find(html, "#s .msg b") |> LazyHTML.text() == "f798c00"
+      assert [_, _] = find(html, "#s > button.act") |> Enum.to_list()
+      assert [_] = find(html, "#s > button.act.ghost") |> Enum.to_list()
+    end
+
+    test "a running circle takes the percentage; the default state has no extra class" do
+      html = render(~H|<.status_toast id="s" percent={42}>Importando</.status_toast>|)
+      assert classes(html, "#s > .sg-st") == ["sg-st"]
+      assert find(html, "#s > .sg-st") |> LazyHTML.attribute("style") == ["--stp:42%"]
+    end
+  end
+
+  test "payload and update carry the status and reject an unknown one" do
+    assert Toast.payload("x", status: :run, value: 42)["status"] == "run"
+    assert Toast.payload("x", [])["status"] == nil
+    assert Toast.changes("a", status: :ok)["status"] == "ok"
+
+    assert Toast.payload("x", actions: [[label: "Logs", variant: :ghost]])["actions"]
+           |> hd()
+           |> Map.get("variant") == "ghost"
+
+    assert_raise ArgumentError, fn -> Toast.payload("x", status: :weird) end
+  end
 end

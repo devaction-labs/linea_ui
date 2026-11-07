@@ -1,6 +1,6 @@
 import test from "node:test"
 import assert from "node:assert/strict"
-import {PROGRESS_DONE_MS, canvasAuraOf, canvasOf, canvasTileTone, actionPayload, auraOf, closeFor, colorFor, colorOf, durationFor, dotFor, durationOf, encodedJS, failedOf, invertFor, isRich, kindOf, mergeToast, needsAction, offsets, positionOf, progressKind, progressOf, resumeAfter, stack, stepsOf, surfaceFor, timeLeft, timerFor, unseen, withKindColor} from "./notice_logic.js"
+import {PROGRESS_DONE_MS, canvasAuraOf, canvasOf, canvasTileTone, actionPayload, auraOf, closeFor, colorFor, colorOf, durationFor, dotFor, durationOf, encodedJS, failedOf, invertFor, isRich, kindOf, mergeToast, messageParts, statusOf, needsAction, offsets, positionOf, progressKind, progressOf, resumeAfter, stack, stepsOf, surfaceFor, timeLeft, timerFor, unseen, withKindColor} from "./notice_logic.js"
 
 test("an unknown color is neutral", () => {
   assert.equal(colorOf("success"), "success")
@@ -240,4 +240,38 @@ test("the tile of a canvas toast takes the tone of its kind", () => {
   assert.equal(canvasTileTone("loading", null, true), "acc")
   assert.equal(canvasTileTone("neutral", "primary", false), "acc")
   assert.equal(canvasTileTone(null, null, false), "")
+})
+
+test("a status toast is rich, never a progress toast, and keeps the real percentage of a running one", () => {
+  assert.equal(statusOf({}), null)
+  assert.equal(statusOf({status: "nope"}), null)
+  assert.deepEqual(statusOf({status: "run"}), {state: "run", percent: null})
+  assert.deepEqual(statusOf({status: "run", value: 142}), {state: "run", percent: 100})
+  assert.deepEqual(statusOf({status: "ok", value: 50}), {state: "ok", percent: null})
+  assert.equal(isRich({message: "x", status: "queue"}), true)
+  assert.equal(progressOf({status: "run", value: 42}), null)
+  assert.equal(colorFor({status: "run", color: "dark"}), "neutral")
+})
+
+test("a status toast stays until it changes, a finished one without buttons leaves, and it has no close or timer", () => {
+  assert.equal(durationFor({status: "run"}), Infinity)
+  assert.equal(durationFor({status: "queue"}), Infinity)
+  assert.equal(durationFor({status: "err"}), Infinity)
+  assert.equal(durationFor({status: "ok"}, 5000), 5000)
+  assert.equal(durationFor({status: "ok", actions: [{label: "Abrir"}]}), Infinity)
+  assert.equal(durationFor({status: "run", duration: 3000}), 3000)
+  assert.equal(closeFor({status: "run"}, Infinity), false)
+  assert.equal(closeFor({status: "run", close: true}, Infinity), true)
+  assert.equal(timerFor({status: "ok"}, 5000), false)
+})
+
+test("the names between ** in a status message are highlighted, as text", () => {
+  assert.deepEqual(messageParts("Deploy **f798c00** em **a · b**"), [
+    {text: "Deploy ", bold: false},
+    {text: "f798c00", bold: true},
+    {text: " em ", bold: false},
+    {text: "a · b", bold: true},
+  ])
+  assert.deepEqual(messageParts("<b>x</b>"), [{text: "<b>x</b>", bold: false}])
+  assert.deepEqual(messageParts(null), [])
 })

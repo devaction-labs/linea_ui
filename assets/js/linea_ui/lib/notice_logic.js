@@ -102,9 +102,33 @@ export const kindOf = (kind) => (KINDS.includes(kind) ? kind : null)
 /** How long a finished progress toast stays before it leaves. */
 export const PROGRESS_DONE_MS = 1600
 
+/** The states of a status toast (`sg-toast st`): running, queued, done and failed. */
+export const STATUSES = ["run", "queue", "ok", "err"]
+
+/**
+ * The status of a compact, inverse toast, or `null` for any other toast. `percent` is the real percentage of a running
+ * one (its `value`, 0 to 100), or `null` for the circle that fills by itself.
+ *
+ * @returns {{state: string, percent: number | null} | null}
+ */
+export const statusOf = ({status, value}) =>
+  STATUSES.includes(status)
+    ? {
+        state: status,
+        percent: status === "run" && value !== null && value !== undefined && value !== "" && Number.isFinite(Number(value)) ? Math.min(Math.max(Number(value), 0), 100) : null,
+      }
+    : null
+
+/** The pieces of a status message: `**name**` is highlighted. Returns `[{text, bold}]`, never HTML. */
+export const messageParts = (message) =>
+  String(message ?? "")
+    .split(/\*\*(.+?)\*\*/g)
+    .map((text, index) => ({text, bold: index % 2 === 1}))
+    .filter((part) => part.text !== "")
+
 /** The fill of a progress toast, 0 to 100, or `null` for a toast without `value` (an error never shows progress). */
-export const progressOf = ({kind, value}) =>
-  kind === "error" || value === null || value === undefined || value === "" || !Number.isFinite(Number(value))
+export const progressOf = ({kind, value, status}) =>
+  kind === "error" || STATUSES.includes(status) || value === null || value === undefined || value === "" || !Number.isFinite(Number(value))
     ? null
     : Math.min(Math.max(Number(value), 0), 100)
 
@@ -134,7 +158,9 @@ export const progressKind = (input) => {
 
 /** The color a toast is drawn in: its own `color`, else its kind's, else `neutral`; a progress toast is a neutral card, or a dark one. */
 export const colorFor = (input) =>
-  progressOf(input) === null && stepsOf(input) === null
+  statusOf(input) !== null
+    ? "neutral"
+    : progressOf(input) === null && stepsOf(input) === null
     ? colorOf(input.color ?? KIND_COLORS[input.kind] ?? "neutral")
     : input.color === "dark"
       ? "dark"
@@ -142,7 +168,7 @@ export const colorFor = (input) =>
 
 /** Whether a toast takes the layout with icon, title, description and actions instead of LineOne's one line. */
 export const isRich = (input) =>
-  Boolean(kindOf(input.kind) || input.description || input.actions?.length || input.aura || progressOf(input) !== null || stepsOf(input) !== null)
+  Boolean(statusOf(input) || kindOf(input.kind) || input.description || input.actions?.length || input.aura || progressOf(input) !== null || stepsOf(input) !== null)
 
 /** Whether a rich toast draws a dot where the icon would be: a dark card with no kind (and no progress to show). */
 export const dotFor = (input) => isRich(input) && !kindOf(progressKind(input)) && colorFor(input) === "dark"
@@ -156,14 +182,18 @@ const unset = (value) => value === null || value === undefined
  * How long a toast stays: a `loading` one until it changes, a progress one until it reaches 100 and then
  * `PROGRESS_DONE_MS`, one that waits for the person (actions, a template, a `glow` aura) until it is closed, an error
  * without a duration until it is closed when the toaster persists errors, the others their own duration or the
- * toaster's. A `duration` given always wins over what the toast would do by itself.
+ * toaster's. A status toast stays until it changes or is closed, except a finished one without buttons, which leaves
+ * like any other. A `duration` given always wins over what the toast would do by itself.
  */
 export const durationFor = (input, fallback = DURATION_MS, persistErrors = false) => {
   const {kind, duration} = input
   const progress = progressOf(input)
   const steps = stepsOf(input)
   const stays = kind === "loading" || (unset(duration) && (needsAction(input) || (kind === "error" && persistErrors)))
-  return steps !== null
+  const status = statusOf(input)
+  return status !== null
+    ? status.state === "ok" && !needsAction(input) ? durationOf(duration, fallback) : unset(duration) ? Infinity : durationOf(duration, fallback)
+    : steps !== null
     ? steps.done
       ? durationOf(duration, PROGRESS_DONE_MS)
       : Infinity
@@ -172,7 +202,7 @@ export const durationFor = (input, fallback = DURATION_MS, persistErrors = false
 
 /** Whether a toast gets a close button: asked for, or one that stays (except while loading or progressing). */
 export const closeFor = (input, duration) =>
-  progressOf(input) !== null || stepsOf(input) !== null ? Boolean(input.close) : input.kind !== "loading" && Boolean(input.close || !Number.isFinite(duration))
+  statusOf(input) !== null ? Boolean(input.close) : progressOf(input) !== null || stepsOf(input) !== null ? Boolean(input.close) : input.kind !== "loading" && Boolean(input.close || !Number.isFinite(duration))
 
 /** Whether a toast is drawn inverted (a dark card on a light page, a light one on a dark page): its own `invert`, else the toaster's. */
 export const invertFor = (input, fallback = false) => (unset(input.invert) ? fallback : Boolean(input.invert))
@@ -182,7 +212,7 @@ export const surfaceFor = (inverted, dark) => (inverted ? (dark ? "light" : "dar
 
 /** Whether a toast draws its countdown line: it leaves by itself, is not a progress toast, and did not turn it off. */
 export const timerFor = (input, duration, fallback = true) =>
-  Number.isFinite(duration) && progressOf(input) === null && stepsOf(input) === null && (unset(input.timer) ? fallback : Boolean(input.timer))
+  Number.isFinite(duration) && statusOf(input) === null && progressOf(input) === null && stepsOf(input) === null && (unset(input.timer) ? fallback : Boolean(input.timer))
 
 export const AURA_VARIANTS = ["default", "dual", "glow"]
 export const AURA_SIZES = ["xs", "sm", "lg"]
