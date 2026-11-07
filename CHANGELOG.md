@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.12.0 (2026-11-07)
 
 - `select` (listbox) and `pillbox`: scroll pagination. `on_load_more` (event name), `has_more` (the server has more pages) and `loading_label` (default `"Loading…"`, the last row of the list while `has_more` and `on_load_more` are set; it is not an option, so the keyboard skips it). Scrolling within 48px of the end, or opening a list too short to scroll, pushes `on_load_more` once with `%{"id" => id, "query" => term, "offset" => options in the list}` to `target` or the LiveView, and waits for the re-render before asking again; the list keeps its scroll position when the page is appended, and goes back to the top on a new search. A load-more answer that arrives after the term changed is not dropped on the client (compare `"query"` on the server).
 
