@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.11.0 (2026-11-07)
+
+- `card_table` follows the CardTable board: one card with a header row, rows divided by a thin line, a thin status bar at the left, the selected row tinted; a panel with the hidden columns opens on hover (the `CardTable` hook is gone); below the card width the row becomes a compact card, and the bar above wraps instead of scrolling.
+- `card_table` options, the default unchanged: `breakpoints` (one cut per priority, now 1 to 4, and the card width last; the box keeps the `ctable` container name too), `copy_show="inline"` and `copy_tip="value_label"` on a copy column (the value next to the button; the tooltip shows the value with `copy_label`, then `copied_label` and a check), `ctable_sub/1` (a sub-line of a cell that leaves with a priority), `meta` next to the `title`, a `<:foot>` slot inside the card (the pager), `description` and `<:foot>` on `variant="flat"`, `priority` on `<:action>`, `label` optional. The compact card has its own left padding with or without `on_select`.
+- `action_menu` (`LineaUI.Components.ActionMenu`): the actions of a row or card behind a "⋯" button, with a look of its own (raised, outlined, shadowed), a title, items with icon and key hint, and the row tinted while it is open. The dropdown and menu items take the same separator and key hint look.
+- `pillbox` (`LineaUI.Components.Pillbox`): a multiple choice whose chosen options are pills inside the field, with a searchable list of check boxes; `select` takes `look="pillbox"`, `readonly` and `hidden_label`.
+- `mix linea_ui.icons` (`get`, `sync`, `search`, `update`; `--dir`, `--ref`, `--prune`) vendors the Hugeicons the app uses into `assets/vendor/hugeicons`, with no git dependency; the installer and `hugeicons.cjs` read that folder by default.
+
 ## 0.10.0 (2026-11-06)
 
 - The assistant components (`LineaUI.Components.Ai`): `ai_chat`, `ai_composer` (with the `AiComposer` hook), `ai_message`, `ai_proposal`, `ai_tool_trace`, `conversation_list`, `prompt_suggestions` and `ai_greeting`.
