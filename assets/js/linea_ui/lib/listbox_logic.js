@@ -65,3 +65,11 @@ export const placePanel = ({anchor, panel, chrome, screen, wanted, align}) => {
     list: Math.max(LEAST, room[side] - GAP - EDGE - chrome),
   }
 }
+
+/**
+ * Whether a scrolling list is within `threshold` px of its end (or does not scroll at all), where the next page
+ * should be asked for.
+ *
+ * @param {{scrollTop: number, clientHeight: number, scrollHeight: number}} box
+ */
+export const nearEnd = ({scrollTop, clientHeight, scrollHeight}, threshold = 48) => scrollHeight - scrollTop - clientHeight <= threshold

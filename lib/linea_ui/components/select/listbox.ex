@@ -41,6 +41,9 @@ defmodule LineaUI.Components.Select.Listbox do
     |> put_default(:look, nil)
     |> put_default(:readonly, false)
     |> put_default(:hidden_label, nil)
+    |> put_default(:on_load_more, nil)
+    |> put_default(:has_more, false)
+    |> put_default(:loading_label, "Loading…")
     |> assign_derived(:mode, [], fn -> mode end)
     |> assign_derived(:multiple, [:multiple], fn -> multiple end)
     |> assign_derived(:entries, [:options], fn -> entries end)
@@ -131,6 +134,8 @@ defmodule LineaUI.Components.Select.Listbox do
         data-value={Pickers.json(@values)}
         data-on-search={@on_search}
         data-debounce={@debounce}
+        data-on-load-more={@on_load_more}
+        data-has-more={@on_load_more && @has_more && "true"}
         data-create-label={@create_label}
         data-create-hint={@create_hint}
         data-create-position={@create_position == "bottom" && "bottom"}
@@ -230,6 +235,14 @@ defmodule LineaUI.Components.Select.Listbox do
               option_slot={@option}
               box={@look == "pillbox"}
             />
+            <div
+              :if={@on_load_more && @has_more}
+              class="no-results"
+              data-kind="loading"
+              data-loading-row
+            >
+              {@loading_label}
+            </div>
             <div id={@id <> "-extra"} phx-update="ignore" data-extra></div>
             <div
               :if={@create_position == "bottom"}

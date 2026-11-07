@@ -184,7 +184,7 @@ defmodule LineaUI.Components.Ai do
       data-status={@status}
       {@rest}
     >
-      <.icon name="huge-ai-magic" class="i sm" boxed tone="accent" box_class="ai-spark" />
+      <.icon name="huge-sparkles" class="i sm" boxed tone="accent" box_class="ai-spark" />
       <div class="ai-body">
         {render_slot(@trace)}
         {render_slot(@inner_block)}
@@ -248,7 +248,7 @@ defmodule LineaUI.Components.Ai do
     ~H"""
     <div id={@id} class={merge(["sg-card flush ai-proposal", @class])} data-status={@state} {@rest}>
       <div class="ai-proposal-head">
-        <span class="ai-proposal-spark"><.icon name="huge-ai-magic" class="i sm" /></span>
+        <span class="ai-proposal-spark"><.icon name="huge-sparkles" class="i sm" /></span>
         <b class="ink">{@title}</b>
         <span class="ai-proposal-state">
           <.badge :if={@state == "pending"} color="warning" dot>Aguardando você</.badge>
@@ -487,7 +487,7 @@ defmodule LineaUI.Components.Ai do
         class="sg-tag ai-pill"
         phx-click={pick(@on_pick, item.title, item.text, @target)}
       >
-        <.icon name="huge-ai-magic" class="i sm" />{item.text}
+        <.icon name="huge-sparkles" class="i sm" />{item.text}
       </button>
     </div>
     """
@@ -546,9 +546,12 @@ defmodule LineaUI.Components.Ai do
   end
 
   @doc """
-  The greeting of the assistant: the name in the accent gradient and the question under it.
+  The greeting of the assistant: the first line (the whole line) in a living gradient, whose colors drift
+  across the text (6s, back and forth; 12s under `prefers-reduced-motion`), and the question under it.
+  `tone="warm"` swaps the brand colors for pink, rose and orange.
 
       <.ai_greeting name="Marina" />
+      <.ai_greeting name="Alex" tone="warm" greeting="Boa tarde, Alex" tagline="Vamos resolver o quê?" size="md" />
   """
   attr :name, :string,
     default: nil,
@@ -556,13 +559,22 @@ defmodule LineaUI.Components.Ai do
 
   attr :greeting, :string, default: nil, doc: "Replaces the whole first line."
   attr :tagline, :string, default: "Em que posso ajudar hoje?"
-  attr :size, :string, default: "lg", values: ~w(sm lg), doc: "30px or 40px."
+  attr :size, :string, default: "lg", values: ~w(sm md lg), doc: "30px, 36px or 40px."
+
+  attr :tone, :string,
+    default: "brand",
+    values: ~w(brand warm),
+    doc: "`brand` (accent, blue, violet, pink) or `warm` (pink, rose, orange, fuchsia)."
+
   attr :class, :any, default: nil
   attr :rest, :global
 
   def ai_greeting(assigns) do
     ~H"""
-    <div class={merge(["ai-greeting", @size == "sm" && "sm", @class])} {@rest}>
+    <div
+      class={merge(["ai-greeting", @size in ~w(sm md) && @size, @tone == "warm" && "warm", @class])}
+      {@rest}
+    >
       <h1>{@greeting || hello(@name)}</h1>
       <h2>{@tagline}</h2>
     </div>
@@ -638,7 +650,7 @@ defmodule LineaUI.Components.Ai do
         </div>
       <% else %>
         <div class="ai-conversations-head">
-          <.icon name="huge-ai-magic" class="i sm" boxed tone="accent" box_class="ai-spark" />
+          <.icon name="huge-sparkles" class="i sm" boxed tone="accent" box_class="ai-spark" />
           <b class="ink">{@title}</b>
         </div>
         <.button class="block" phx-click={click(@on_new, nil, @target)}>
@@ -758,6 +770,11 @@ defmodule LineaUI.Components.Ai do
     doc:
       "A small line under the composer (a notice about approvals, for instance). None unless given."
 
+  attr :composer, :boolean,
+    default: true,
+    doc:
+      "`false` leaves the composer out: a conversation shown as a record (an approved proposal)."
+
   attr :placeholder, :string, default: "Pergunte sobre pedidos, estoque, fiscal ou financeiro"
   attr :on_send, :any, default: nil, doc: "The `phx-submit` event of the composer."
   attr :on_change, :any, default: nil, doc: "The `phx-change` event of the composer."
@@ -843,7 +860,7 @@ defmodule LineaUI.Components.Ai do
           />
         </div>
       </div>
-      <div class="ai-chat-foot">
+      <div :if={@composer} class="ai-chat-foot">
         <.ai_composer
           id={"#{@id}-composer"}
           value={@draft}

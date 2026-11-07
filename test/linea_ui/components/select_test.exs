@@ -319,4 +319,36 @@ defmodule LineaUI.Components.SelectTest do
     assert none |> find(".ts-control [data-search]") |> LazyHTML.attribute("readonly") == [""]
     assert find(none, "[data-panel-search]") |> Enum.count() == 0
   end
+
+  test "on_load_more and has_more are data attrs, and the loading row needs both" do
+    html =
+      render(~H"""
+      <.select
+        id="s"
+        name="e"
+        options={~w(A B)}
+        on_load_more="more"
+        has_more
+        loading_label="Carregando…"
+      />
+      """)
+
+    assert html |> find("#s") |> LazyHTML.attribute("data-on-load-more") == ["more"]
+    assert html |> find("#s") |> LazyHTML.attribute("data-has-more") == ["true"]
+
+    assert html |> find("#s [data-loading-row]") |> LazyHTML.text() |> String.trim() ==
+             "Carregando…"
+
+    assert html |> find("#s [data-loading-row]") |> LazyHTML.attribute("class") == ["no-results"]
+    assert html |> find("#s .option[data-selectable]") |> Enum.count() == 2
+
+    done = render(~H|<.select id="s" name="e" options={~w(A B)} on_load_more="more" />|)
+    assert done |> find("#s") |> LazyHTML.attribute("data-has-more") == []
+    assert find(done, "[data-loading-row]") |> Enum.count() == 0
+
+    silent = render(~H|<.select id="s" name="e" options={~w(A B)} has_more />|)
+    assert silent |> find("#s") |> LazyHTML.attribute("data-on-load-more") == []
+    assert silent |> find("#s") |> LazyHTML.attribute("data-has-more") == []
+    assert find(silent, "[data-loading-row]") |> Enum.count() == 0
+  end
 end

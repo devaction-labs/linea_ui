@@ -103,6 +103,23 @@ defmodule LineaUI.Components.Select do
   `on_search` with `%{"id" => id, "query" => text}` as the person types (after `debounce`
   ms), to `target` or to the LiveView/LiveComponent the select is in; the server answers by
   re-rendering `options`.
+
+  Load more: with `on_load_more` and `has_more`, scrolling the list to within 48px of its end (or opening a
+  list too short to scroll) pushes `on_load_more` once, with `%{"id" => id, "query" => text, "offset" => n}`
+  (`n` is how many options are in the list), to `target` or the LiveView. The server appends the next page to
+  `options` and sets `has_more`; the list keeps its scroll position. While `has_more` is true a last
+  "Loading…" row (`loading_label`) shows; it is not an option. Nothing is pushed while `has_more` is false or
+  a request is waiting for its answer (it ends when the list is rendered again).
+
+      def handle_event("load_more", %{"offset" => offset, "query" => query}, socket) do
+        limit = 30
+        page = Customers.search(query, limit: limit, offset: offset)
+        {:noreply, assign(socket, options: socket.assigns.options ++ page, has_more: length(page) == limit)}
+      end
+
+  A new search makes the server answer with page 1 (and `has_more`) again. A `load_more` answer that arrives
+  after the term changed is not dropped by the client: compare the `"query"` of the event with your current
+  term on the server and ignore it if they differ.
   """
   attr :id, :string, doc: "Defaults to the field id, then `name`, then a generated one."
   attr :name, :string, doc: "Defaults to the field name (with `[]` when several values)."
@@ -201,6 +218,19 @@ defmodule LineaUI.Components.Select do
   attr :on_search, :string, default: nil
   attr :debounce, :integer, default: 300
   attr :target, :any, default: nil
+
+  attr :on_load_more, :string,
+    default: nil,
+    doc: "Listbox only: the event pushed when the list is scrolled near its end (see the Events)."
+
+  attr :has_more, :boolean,
+    default: false,
+    doc: "Listbox only: the server has more options after the ones in `options`."
+
+  attr :loading_label, :string,
+    default: "Loading…",
+    doc: "Listbox only: the last row of the list while `has_more` and `on_load_more` are set."
+
   attr :class, :any, default: nil
   attr :rest, :global, include: ~w(form autocomplete required)
 

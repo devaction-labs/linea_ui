@@ -1220,12 +1220,13 @@
   }
 
   /* The panel of the columns that left (or of the `detail` slots): a list of label and value under the row, shown
-     by the row's hover (after a short delay) or keyboard focus. It is not interactive. */
+     by a click on the row (`data-open`, set by the CardTable hook), at the click's x (`--ct-pop-x`, clamped by the
+     hook) or, from the keyboard, at the fixed anchor below. */
   .linea-ctable-pop {
     position: absolute;
     z-index: 10;
     top: calc(100% - 6px);
-    left: 96px;
+    left: var(--ct-pop-x, 96px);
     display: none;
     flex-direction: column;
     gap: 2px;
@@ -1245,6 +1246,8 @@
     transform: translateY(-4px);
     transition: opacity 0.12s, transform 0.12s, visibility 0s 0.12s;
     pointer-events: none;
+    cursor: auto;
+    user-select: none;
   }
 
   .linea-ctable-pop > div + div { box-shadow: inset 0 1px 0 var(--line); }
@@ -1280,21 +1283,17 @@
     transform: translateY(4px);
   }
 
-  .linea-ctable-row:hover .linea-ctable-pop,
-  .linea-ctable-row:focus-visible .linea-ctable-pop,
-  .linea-ctable-row:has(:focus-visible) .linea-ctable-pop {
+  .linea-ctable-row[data-open] .linea-ctable-pop {
     visibility: visible;
     opacity: 1;
     transform: none;
-    transition: opacity 0.14s 0.45s, transform 0.14s 0.45s, visibility 0s 0.45s;
+    transition: opacity 0.14s, transform 0.14s, visibility 0s;
+    pointer-events: auto;
+    user-select: text;
   }
 
-  /* On the copy button its own tooltip speaks: the panel waits (and never covers the tooltip). */
-  .linea-ctable-row:has(.linea-ctable-cp:hover, .linea-ctable-cp:focus-visible) .linea-ctable-pop {
-    visibility: hidden;
-    opacity: 0;
-    transition: none;
-  }
+  /* A row with a panel is clicked: the pointer says so. (The default container queries below add it per priority.) */
+  .linea-ctable-row:has(> .linea-ctable-pop[data-detail]) { cursor: pointer; }
 
   /* With `detail` slots the panel lists them at every width above 520px, not only the columns that left. */
   .linea-ctable-pop[data-detail] { display: flex; }
@@ -1381,6 +1380,7 @@
     .linea-ctable-cell [data-p="1"].linea-ctable-sub { display: none; }
     .linea-ctable-pop:has(> [data-p="1"]) { display: flex; }
     .linea-ctable-pop > [data-p="1"] { display: flex; }
+    .linea-ctable-row:has(> .linea-ctable-pop > [data-p="1"]) { cursor: pointer; }
   }
 
   /* 2: and without those of priority 2 */
@@ -1392,6 +1392,7 @@
     .linea-ctable-cell [data-p="2"].linea-ctable-sub { display: none; }
     .linea-ctable-pop:has(> [data-p="2"]) { display: flex; }
     .linea-ctable-pop > [data-p="2"] { display: flex; }
+    .linea-ctable-row:has(> .linea-ctable-pop > [data-p="2"]) { cursor: pointer; }
   }
 
   /* 3: and without those of priority 3 */
@@ -1403,7 +1404,8 @@
     .linea-ctable-cell [data-p="3"].linea-ctable-sub { display: none; }
     .linea-ctable-pop:has(> [data-p="3"]) { display: flex; }
     .linea-ctable-pop > [data-p="3"] { display: flex; }
-    .linea-ctable-pop { left: 72px; max-width: calc(100% - 88px); }
+    .linea-ctable-row:has(> .linea-ctable-pop > [data-p="3"]) { cursor: pointer; }
+    .linea-ctable-pop { left: var(--ct-pop-x, 72px); max-width: calc(100% - 88px); }
   }
 
   /* 4: one card, a compact two-line grid per row (the canvas board): c = checkbox, n = head, s = status, w = title,
@@ -1458,6 +1460,7 @@
       -webkit-box-orient: vertical;
     }
     .linea-ctable-pop { display: none !important; }
+    .linea-ctable-row { cursor: auto !important; }
     .linea-ctable-nn { display: inline; }
     .linea-ctable-cpw { display: none; }
   }

@@ -71,16 +71,68 @@ defmodule LineaUI.Components.CardTableTest do
     refute LazyHTML.text(pop) =~ "Secretaria"
   end
 
-  test "the panel is a plain list, not interactive, with no hook and no per-line copy" do
+  test "the panel is a plain list with no per-line copy; the rows' list carries the hook" do
     html = orders()
 
     assert [_] = find(html, "#order-1 dl.linea-ctable-pop") |> Enum.to_list()
     assert find(html, "#order-1 .linea-ctable-pop > div > dt") |> Enum.count() == 2
     assert find(html, "#order-1 .linea-ctable-pop > div > dd") |> Enum.count() == 2
     assert find(html, "#order-1 .linea-ctable-pop button") |> Enum.count() == 0
-    refute html =~ "LineaUI.CardTable"
-    refute html =~ "aria-expanded"
     refute html =~ "data-copy-line"
+    assert html_attr(html, "ul#orders", "phx-hook") == "LineaUI.CardTable"
+    assert html_attr(html, "#order-1", "aria-expanded") == "false"
+    refute html =~ " data-open"
+  end
+
+  test "the panel opens on click only: the CSS uses data-open and the pointer var with the fixed anchor as fallback" do
+    css = File.read!("assets/css/parts/data.css")
+
+    assert css =~ ".linea-ctable-row[data-open] .linea-ctable-pop"
+    assert css =~ "left: var(--ct-pop-x, 96px)"
+    assert css =~ "left: var(--ct-pop-x, 72px)"
+    refute css =~ ".linea-ctable-row:hover .linea-ctable-pop"
+    refute css =~ "focus-visible .linea-ctable-pop"
+  end
+
+  test "a table with its own breakpoints keeps the pointer var and the fixed anchor fallback" do
+    html =
+      render(~H"""
+      <.card_table id="t" rows={[%{a: 1, b: 2}]} breakpoints={[1000, 800, 600, 500]}>
+        <:col :let={r} label="A">{r.a}</:col>
+        <:col :let={r} label="B" priority={3}>{r.b}</:col>
+      </.card_table>
+      """)
+
+    assert html =~ "left: var(--ct-pop-x, 72px)"
+  end
+
+  test "no panel, no aria-expanded" do
+    html =
+      render(~H"""
+      <.card_table id="t" rows={[%{a: 1}]}>
+        <:col :let={r} label="A">{r.a}</:col>
+      </.card_table>
+      """)
+
+    refute html =~ "aria-expanded"
+  end
+
+  test "a hidden column with the label of a detail is not listed twice in the panel" do
+    html =
+      render(~H"""
+      <.card_table id="t" rows={[%{a: 1, b: 2}]}>
+        <:col :let={r} label="A">{r.a}</:col>
+        <:col :let={r} label="B" priority={2}>{r.b}</:col>
+        <:detail :let={r} label="B">{r.b}</:detail>
+      </.card_table>
+      """)
+
+    assert find(html, ".linea-ctable-pop > div > dt")
+           |> LazyHTML.text()
+           |> String.split("B")
+           |> length() == 2
+
+    assert find(html, ".linea-ctable-pop > div") |> Enum.count() == 1
   end
 
   test "no panel when every column stays" do

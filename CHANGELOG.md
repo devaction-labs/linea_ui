@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.13.0 (2026-11-07)
+
+- AI components at canvas parity (AiChat, AiMessage, AiComposer; light and dark): the spark is the Hugeicons `sparkles` glyph (was `ai-magic`), and the AI components draw `invoice-01`, `package`, `user-multiple`, `wallet-01`, `bank`, `shield-01` and `tick-02` as the Hugeicons themselves, not the canvas shell glyphs. New `ai_chat` attr `composer` (default `true`; `false` leaves the composer out, as in the canvas "Proposta aprovada" board).
+- `ai_greeting` at canvas parity: the whole first line is a living gradient (`sg-glow-text`: 100deg, accent/blue/violet/pink stops, 6s alternate, 12s under `prefers-reduced-motion`; keyframes `linea-glow`), new attr `tone` (`brand` default, `warm`) and a `md` size (36px) beside `sm` (30px) and `lg` (40px). `conversation_list` draws `message-01`, `add-01` and `search-01` as the Hugeicons themselves, as in the canvas board.
+- Toast at canvas parity (light and dark): new status toast (compact, inverse, dark in both themes), as `status_toast/1` in the page and as `status: :run | :queue | :ok | :err` in the toaster (`value` is the real percentage of a running circle, `**name**` in the message highlights it, action `variant: :ghost`, `center-bottom`/`center-top` take the width of the text, up to 440px); the aura rings take the canvas thickness (`xs` 0.75px, `sm` 1px, default 1.25px, `lg` 2px) and its softer base and shadow.
+- `pixel_card` (`LineaUI.Components.PixelCard`, canvas PixelCard, light and dark): a choice card (`title`, `description`, `icon`, `color` palette name or `--px`, `arrow`) that is a link with `href`/`navigate`/`patch` and a button otherwise; on hover or keyboard focus a pixel matrix lights up in its top right corner and blinks every 0.3s (pure CSS, frozen under `prefers-reduced-motion`), with `sg-px-grid` and `sg-px-sec` for the grid and its section heading.
+
+## 0.12.0 (2026-11-07)
+
+- `select` (listbox) and `pillbox`: scroll pagination. `on_load_more` (event name), `has_more` (the server has more pages) and `loading_label` (default `"Loading…"`, the last row of the list while `has_more` and `on_load_more` are set; it is not an option, so the keyboard skips it). Scrolling within 48px of the end, or opening a list too short to scroll, pushes `on_load_more` once with `%{"id" => id, "query" => term, "offset" => options in the list}` to `target` or the LiveView, and waits for the re-render before asking again; the list keeps its scroll position when the page is appended, and goes back to the top on a new search. A load-more answer that arrives after the term changed is not dropped on the client (compare `"query"` on the server).
+
+## 0.11.1 (2026-11-07)
+
+- `card_table`: the row panel opens on a click (or tap) on the row, at the pointer (its left edge 16px left of the click, kept 8px inside the row), and no longer on hover; it does not follow the mouse. `Enter` or `Space` on a focused row toggles it at the fixed anchor from the keyboard. It closes on a second click, `Esc`, a click outside the table or a click on a control of the row; its text can be selected. Rows carry `aria-expanded` and `data-open`, and `cursor: pointer` when they have a panel. The `LineaUI.CardTable` hook is back (on the rows' list; register it with the other hooks) and the panel needs it.
+
 ## 0.11.0 (2026-11-07)
 
 - `card_table` follows the CardTable board: one card with a header row, rows divided by a thin line, a thin status bar at the left, the selected row tinted; a panel with the hidden columns opens on hover (the `CardTable` hook is gone); below the card width the row becomes a compact card, and the bar above wraps instead of scrolling.

@@ -5,7 +5,7 @@ defmodule LineaUI.Components.Aura do
   draws the ring around it, over the box's border, and rounds the child to `radius`.
 
       <.aura tone="ai">
-        <.toast_card icon="huge-ai-magic" title="Assistant reading the invoice" dismissible={false} />
+        <.toast_card icon="huge-sparkles" title="Assistant reading the invoice" dismissible={false} />
       </.aura>
 
       <.aura tone="ai" radius="pill" width="sm"><.button>Summarize</.button></.aura>
@@ -41,7 +41,7 @@ defmodule LineaUI.Components.Aura do
   attr :width, :string,
     default: "default",
     values: @widths,
-    doc: "The thickness of the ring: 1px, 1.5px, 2px or 3px."
+    doc: "The thickness of the ring: 0.75px, 1px, 1.25px (default) or 2px."
 
   attr :radius, :string,
     default: "default",

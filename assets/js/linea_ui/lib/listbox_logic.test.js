@@ -1,6 +1,6 @@
 import assert from "node:assert/strict"
 import test from "node:test"
-import {buttonText, canCreate, fill, keeps, pick, placePanel} from "./listbox_logic.js"
+import {buttonText, canCreate, fill, keeps, nearEnd, pick, placePanel} from "./listbox_logic.js"
 
 test("fill replaces every marker and leaves nothing as nothing", () => {
   assert.equal(fill("Create “%{term}”", {term: "Design"}), "Create “Design”")
@@ -72,4 +72,17 @@ test("the panel lines up with the end of the button and stays inside the screen"
   assert.equal(pushed.left, 8)
   const over = placePanel({anchor: anchorAt(100, 900, 80), panel: {width: 300, height: 200}, chrome: 44, screen, wanted: "bottom", align: "start"})
   assert.equal(over.left, 692)
+})
+
+test("nearEnd is true within the threshold of the end and false above it", () => {
+  assert.equal(nearEnd({scrollTop: 0, clientHeight: 200, scrollHeight: 1000}), false)
+  assert.equal(nearEnd({scrollTop: 751, clientHeight: 200, scrollHeight: 1000}), false)
+  assert.equal(nearEnd({scrollTop: 752, clientHeight: 200, scrollHeight: 1000}), true)
+  assert.equal(nearEnd({scrollTop: 800, clientHeight: 200, scrollHeight: 1000}), true)
+})
+
+test("nearEnd is true for a list that does not scroll, and takes another threshold", () => {
+  assert.equal(nearEnd({scrollTop: 0, clientHeight: 300, scrollHeight: 120}), true)
+  assert.equal(nearEnd({scrollTop: 0, clientHeight: 200, scrollHeight: 300}, 100), true)
+  assert.equal(nearEnd({scrollTop: 0, clientHeight: 200, scrollHeight: 300}, 99), false)
 })

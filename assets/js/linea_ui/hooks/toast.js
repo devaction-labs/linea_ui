@@ -20,7 +20,9 @@ import {
   progressKind,
   progressOf,
   resumeAfter,
+  messageParts,
   stack,
+  statusOf,
   stepsOf,
   surfaceFor,
   timeLeft,
@@ -54,7 +56,8 @@ const NOTE_ICONS = {primary: "info", secondary: "info", info: "info", success: "
  * A rich toast is a surface card with a tile for the icon (tinted by the color or kind) and its actions on the right.
  * `aura` (with `aura_size`, `aura_color`) runs a ring of light around the card. A numeric `value` makes a progress
  * toast: a fill grows behind it (a 3px bar at the bottom with `bar`), a spinner turns until 100, then it becomes a
- * success and leaves by itself; `linea:toast-update` with a new `value` moves it, and a `kind` of `error` on a toast that
+ * success and leaves by itself. A `status` (`run queue ok err`) draws the compact inverse card (`sg-toast st`) with `**name**`
+ * highlighted in the message; `value` is then the real percentage of the circle. `linea:toast-update` with a new `value` moves it, and a `kind` of `error` on a toast that
  * had a `value` turns it into a failure.
  */
 const COLLAPSE_MS = 150
@@ -308,6 +311,7 @@ export default {
 
     /** The canvas card (`sg-toast`): icon tile, title and description, buttons, spinner and percentage, close. */
     fillCard(card, input, toast) {
+      if (statusOf(input)) return this.fillStatus(card, input, toast)
       const progress = progressOf(input)
       const failed = failedOf(input)
       const fill = failed ? Math.min(Math.max(Number(input.value), 0), 100) : progress
@@ -335,6 +339,32 @@ export default {
       const close = closeFor(input, toast.duration) && this.closeButton("sg-ib sm plain", "size-4")
       this.settleChildren(card, [tile, body, ...actions], spinner, [pct, close])
       card.querySelectorAll("[data-toast-dismiss]").forEach((button) => button.addEventListener("click", () => this.remove(toast)))
+    },
+
+    /**
+     * The status card (`sg-toast st`): the circle, the message (`**name**` highlighted) and the buttons at the right. The
+     * circle stays the same node while the toast is updated, so its fill moves on instead of restarting.
+     */
+    fillStatus(card, input, toast) {
+      const {state, percent} = statusOf(input)
+      card.className = "sg-toast st"
+      card.style.removeProperty("--p")
+      card.removeAttribute("aria-busy")
+      const circle = card.querySelector(":scope > .sg-st") ?? this.part("span", "sg-st", document.createElement("i"))
+      circle.className = state === "run" ? "sg-st" : `sg-st ${state}`
+      percent === null ? circle.style.removeProperty("--stp") : circle.style.setProperty("--stp", `${percent}%`)
+      circle.setAttribute("aria-hidden", "true")
+      const msg = this.part("span", "msg", ...messageParts(input.message).map(({text, bold}) => (bold ? this.part("b", "", text) : document.createTextNode(text))))
+      const actions = (input.actions ?? []).map((action) => this.statusAction(action, toast))
+      const close = closeFor(input, toast.duration) && this.closeButton("act ghost", "size-4")
+      card.replaceChildren(circle, msg, ...actions, ...[close].filter(Boolean))
+      card.querySelectorAll("[data-toast-dismiss]").forEach((button) => button.addEventListener("click", () => this.remove(toast)))
+    },
+
+    statusAction(action, toast) {
+      const node = this.action(action, toast)
+      node.className = action.variant === "ghost" ? "act ghost" : "act"
+      return node
     },
 
     /**
