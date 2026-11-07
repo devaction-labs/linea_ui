@@ -10,7 +10,7 @@
    chip of `canvas-forms2.css`, so it won in dark. */
 :is(.dark, [data-theme="dark"]) .ts-wrapper[phx-hook="LineaUI.Select"].multi .ts-control > div.item:not(:where([data-theme="light"], [data-theme="light"] *)) {
   background-color: var(--sunken);
-  color: var(--fg);
+  color: var(--ink);
 }
 
 /* The ink toast card (`toast_card tone="dark"`) carries the `dark` class, which the token block of

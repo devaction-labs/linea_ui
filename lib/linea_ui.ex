@@ -32,6 +32,7 @@ defmodule LineaUI do
 
   @components %{
     accordion: LineaUI.Components.Accordion,
+    action_menu: LineaUI.Components.ActionMenu,
     ai: LineaUI.Components.Ai,
     cover: LineaUI.Components.Cover,
     description_list: LineaUI.Components.DescriptionList,
@@ -42,6 +43,7 @@ defmodule LineaUI do
     image_input: LineaUI.Components.ImageInput,
     password_input: LineaUI.Components.PasswordInput,
     pill_select: LineaUI.Components.PillSelect,
+    pillbox: LineaUI.Components.Pillbox,
     sticky: LineaUI.Components.Sticky,
     scrollspy: LineaUI.Components.Scrollspy,
     context_menu: LineaUI.Components.ContextMenu,

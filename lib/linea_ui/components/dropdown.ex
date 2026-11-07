@@ -253,7 +253,7 @@ defmodule LineaUI.Components.Dropdown do
   @item_styles %{
     "default" => %{
       "neutral" =>
-        "flex h-[34px] items-center gap-2.5 rounded-[9px] px-2.5 text-[13.5px] text-slate-700 outline-hidden transition-colors hover:bg-slate-100 hover:text-slate-900 focus:bg-slate-100 focus:text-slate-900 dark:text-navy-100 dark:hover:bg-navy-600 dark:hover:text-navy-50 dark:focus:bg-navy-600",
+        "flex h-[34px] items-center gap-2.5 rounded-[9px] px-2.5 text-[13.5px] text-slate-700 outline-hidden transition-colors hover:bg-slate-100 hover:text-slate-900 focus:bg-slate-100 focus:text-slate-900 aria-[current=true]:bg-slate-100 aria-[current=true]:text-slate-900 dark:text-navy-100 dark:hover:bg-navy-600 dark:hover:text-navy-50 dark:focus:bg-navy-600 dark:aria-[current=true]:bg-navy-600 dark:aria-[current=true]:text-navy-50",
       "primary" =>
         "flex h-[34px] items-center gap-2.5 rounded-[9px] px-2.5 text-[13.5px] text-primary outline-hidden transition-colors hover:bg-slate-100 focus:bg-slate-100 dark:text-accent-light dark:hover:bg-navy-600",
       "error" =>
@@ -351,7 +351,7 @@ defmodule LineaUI.Components.Dropdown do
 
   defp shortcut_hint(assigns) do
     ~H"""
-    <span class="ml-auto pl-4 font-mono text-[11px] font-normal text-slate-400 dark:text-navy-300">
+    <span class="ml-auto rounded-[5px] bg-(--sunken) px-1.5 font-mono text-[11px] leading-[18px] font-medium text-(--muted) shadow-[inset_0_0_0_1px_var(--line)]">
       {@text}
     </span>
     """
@@ -488,7 +488,7 @@ defmodule LineaUI.Components.Dropdown do
   def dropdown_separator(assigns) do
     ~H"""
     <div
-      class={merge(["my-1 h-px bg-slate-150 dark:bg-navy-500", @class])}
+      class={merge(["mx-1 my-[5px] h-px bg-(--line)", @class])}
       role="separator"
       {@rest}
     >
@@ -672,7 +672,7 @@ defmodule LineaUI.Components.Dropdown do
       role="presentation"
       class={
         merge([
-          "px-3 pt-2 pb-1 font-inter text-tiny-plus font-semibold tracking-widest text-slate-400 uppercase dark:text-navy-300",
+          "px-2.5 pt-2 pb-1 font-inter text-[11px] font-normal tracking-[.06em] text-(--faint) uppercase",
           @class
         ])
       }

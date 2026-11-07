@@ -348,4 +348,20 @@ defmodule LineaUI.Components.DropdownTest do
       assert find(html, "div") |> LazyHTML.text() |> String.trim() == "Sort by"
     end
   end
+
+  test "a shortcut is a kbd-looking chip and a current item is highlighted by aria-current" do
+    html =
+      render(~H"""
+      <.dropdown id="dd" label="Menu">
+        <.dropdown_item phx-click="a" shortcut="E">Edit</.dropdown_item>
+        <.dropdown_item phx-click="b" aria-current="true">Recent</.dropdown_item>
+      </.dropdown>
+      """)
+
+    assert find(html, "button[role=menuitem] span.font-mono") |> LazyHTML.text() |> String.trim() ==
+             "E"
+
+    assert attr_of(html, "button[aria-current=true]", "class") |> hd() =~
+             "aria-[current=true]:bg-slate-100"
+  end
 end
