@@ -269,11 +269,12 @@ defmodule LineaUI.Installer.InstallTest do
   end
 
   describe "--hugeicons" do
-    test "adds the dependency, the config and the Tailwind plugin" do
+    test "sets the config and the Tailwind plugin, and points to mix linea_ui.icons sync" do
       igniter = install(project(), ["--hugeicons"])
 
-      assert content(igniter, "mix.exs") =~ ":hugeicons"
-      assert content(igniter, "mix.exs") =~ ~s|sparse: "icons"|
+      refute content(igniter, "mix.exs") =~ ":hugeicons"
+      assert_has_notice(igniter, &(&1 =~ "mix linea_ui.icons sync"))
+      assert content(igniter, "assets/css/app.css") =~ "assets/vendor/hugeicons"
       assert content(igniter, "config/config.exs") =~ "config :linea_ui, icons: :hugeicons"
       assert content(igniter, "assets/css/app.css") =~ "hugeicons.cjs"
     end

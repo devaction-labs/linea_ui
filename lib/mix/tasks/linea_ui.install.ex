@@ -22,8 +22,9 @@ if Code.ensure_loaded?(Igniter) do
 
     ## Options
 
-    * `--hugeicons` - draws the components' glyphs with Hugeicons: adds the `hugeicons` dependency,
-      `config :linea_ui, :icons, :hugeicons` and the Tailwind plugin to `app.css`
+    * `--hugeicons` - draws the components' glyphs with Hugeicons: sets
+      `config :linea_ui, :icons, :hugeicons`, adds the Tailwind plugin to `app.css` (reading
+      `assets/vendor/hugeicons`) and tells you to run `mix linea_ui.icons sync`, which downloads the SVGs
     * `--replace-daisyui` - removes the daisyUI and heroicons plugins from `app.css`, which LineaUI's
       styles can conflict with. Without it they stay and a warning says so
     * `--no-skill` - does not write the Claude Code skill
@@ -155,15 +156,14 @@ else
 
       Optional: Hugeicons instead of LineOne's glyphs (the README, section "Icons"):
 
-        mix.exs, in deps:
-          {:hugeicons, github: "hugeicons/hugeicons", ref: "3365154e0ae2461fbfb6249b89649127207a4f9e",
-           sparse: "icons", app: false, compile: false, depth: 1}
-
         config/config.exs:
           config :linea_ui, :icons, :hugeicons
 
         assets/css/app.css, after the linea_ui.css import:
-          @plugin "../../deps/linea_ui/assets/css/hugeicons.cjs" { dir: "deps/hugeicons/icons"; }
+          @plugin "../../deps/linea_ui/assets/css/hugeicons.cjs" { dir: "assets/vendor/hugeicons"; }
+
+        then download the icons your sources use:
+          mix linea_ui.icons sync
       """
     end
   end

@@ -11,7 +11,8 @@ defmodule LineaUI.Components.Icon do
       <.icon name="huge-tick-02" boxed tone="success" />
       <.icon name="huge-file-01" boxed box_size="sm" />
 
-  `icon/1` draws `huge-*` classes from Hugeicons (the free Stroke Rounded set, which the app vendors and
+  `icon/1` draws `huge-*` classes from Hugeicons (the free Stroke Rounded set, which the app vendors with
+  `mix linea_ui.icons sync` (or `get NAME`, `search TERM`, `update`; `--dir`, `--ref`) and
   `assets/css/hugeicons.cjs` turns into classes; see the README) and passes any other class name through, so
   `name="fa-solid fa-house"` works with Font Awesome. Write the name in full, never interpolated, or Tailwind
   cannot see the class.

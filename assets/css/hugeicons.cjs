@@ -6,19 +6,19 @@ const path = require("path")
  * Tailwind plugin for Hugeicons Stroke Rounded (free set): every `huge-<name>` class draws the icon with a
  * CSS mask in the current text color. In the app's css, after the LineaUI import:
  *
- *   @plugin "../../deps/linea_ui/assets/css/hugeicons.cjs" { dir: "deps/hugeicons/icons"; }
+ *   @plugin "../../deps/linea_ui/assets/css/hugeicons.cjs" { dir: "assets/vendor/hugeicons"; }
  *
- * `dir` is the folder of the SVGs, relative to where Tailwind runs (the app's root); the app vendors them with
- *
- *   {:hugeicons, github: "hugeicons/hugeicons", ref: "3365154e0ae2461fbfb6249b89649127207a4f9e",
- *    sparse: "icons", app: false, compile: false, depth: 1}
+ * `dir` is the folder of the SVGs, relative to where Tailwind runs (the app's root); default
+ * `assets/vendor/hugeicons`. Only the `.svg` files count (the folder also holds a manifest and the LICENSE).
+ * The app fills it with `mix linea_ui.icons sync` (or `get NAME...`); a folder from the whole-repo git dep
+ * (`dir: "deps/hugeicons/icons"`) works too.
  */
 module.exports = plugin.withOptions(
   (options = {}) =>
     ({matchComponents, theme}) => {
-      const dir = path.resolve(process.cwd(), String(options.dir || "deps/hugeicons/icons").replace(/^["']|["']$/g, ""))
+      const dir = path.resolve(process.cwd(), String(options.dir || "assets/vendor/hugeicons").replace(/^["']|["']$/g, ""))
       const values = Object.fromEntries(
-        fs.readdirSync(dir).map((file) => {
+        fs.readdirSync(dir).filter((file) => file.endsWith(".svg")).map((file) => {
           const name = path.basename(file, ".svg")
           return [name, {name, fullPath: path.join(dir, file)}]
         }),

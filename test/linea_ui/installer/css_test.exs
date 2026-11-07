@@ -63,7 +63,7 @@ defmodule LineaUI.Installer.CssTest do
     once = @phoenix |> Css.import_styles() |> Css.add_hugeicons()
 
     assert once =~
-             ~s|#{@styles}\n@plugin "../../deps/linea_ui/assets/css/hugeicons.cjs" {\n  dir: "deps/hugeicons/icons";\n}|
+             ~s|#{@styles}\n@plugin "../../deps/linea_ui/assets/css/hugeicons.cjs" {\n  dir: "assets/vendor/hugeicons";\n}|
 
     assert Css.add_hugeicons(once) == once
   end
