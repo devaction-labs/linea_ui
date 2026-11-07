@@ -38,6 +38,9 @@ defmodule LineaUI.Components.Select.Listbox do
     |> put_default(:help, nil)
     |> put_default(:search, "control")
     |> put_default(:search_placeholder, "Search…")
+    |> put_default(:look, nil)
+    |> put_default(:readonly, false)
+    |> put_default(:hidden_label, nil)
     |> assign_derived(:mode, [], fn -> mode end)
     |> assign_derived(:multiple, [:multiple], fn -> multiple end)
     |> assign_derived(:entries, [:options], fn -> entries end)
@@ -100,6 +103,8 @@ defmodule LineaUI.Components.Select.Listbox do
             mode_class(@multiple),
             @removable && "plugin-remove_button",
             @compact && "compact",
+            @look == "pillbox" && "pillbox",
+            @readonly && "readonly",
             @clearable && "plugin-clear_button",
             @values != [] && "has-items",
             @full && "full",
@@ -119,6 +124,9 @@ defmodule LineaUI.Components.Select.Listbox do
         data-overflow={@multiple && @overflow == "count" && "count"}
         data-size={@size != "md" && @size}
         data-more-label={@more_label}
+        data-look={@look}
+        data-readonly={@readonly && "true"}
+        data-hidden-label={@hidden_label}
         data-name={@name}
         data-value={Pickers.json(@values)}
         data-on-search={@on_search}
@@ -154,6 +162,7 @@ defmodule LineaUI.Components.Select.Listbox do
             item={@item}
             removable={@removable}
             remove_label={@remove_label}
+            avatar={@look == "pillbox"}
           />
           <input
             type="text"
@@ -214,7 +223,13 @@ defmodule LineaUI.Components.Select.Listbox do
               data-create-row
             >
             </div>
-            <.entry :for={entry <- @entries} entry={entry} id={@id} option_slot={@option} />
+            <.entry
+              :for={entry <- @entries}
+              entry={entry}
+              id={@id}
+              option_slot={@option}
+              box={@look == "pillbox"}
+            />
             <div id={@id <> "-extra"} phx-update="ignore" data-extra></div>
             <div
               :if={@create_position == "bottom"}
@@ -236,7 +251,13 @@ defmodule LineaUI.Components.Select.Listbox do
         </div>
         <div hidden data-templates>
           <template :for={option <- @known} data-value={option.value}>
-            <.chip option={option} item={@item} removable={@removable} remove_label={@remove_label} />
+            <.chip
+              option={option}
+              item={@item}
+              removable={@removable}
+              remove_label={@remove_label}
+              avatar={@look == "pillbox"}
+            />
           </template>
         </div>
         <div hidden data-no-results>{@no_results}</div>
@@ -267,11 +288,19 @@ defmodule LineaUI.Components.Select.Listbox do
   attr :item, :list, required: true
   attr :removable, :boolean, required: true
   attr :remove_label, :string, required: true
+  attr :avatar, :boolean, default: false
 
   defp chip(%{item: []} = assigns) do
+    assigns = assign(assigns, :face, if(assigns.avatar, do: face(assigns.option)))
+
     ~H"""
     <div class="item" data-value={@option.value} data-ts-item>
-      <span class="item-text">{@option.label}</span><button
+      <span
+        :if={@face}
+        class="sg-av"
+        style={@face.color && "background:#{@face.color}"}
+        title={@option.label}
+      >{@face.initials}</span><span class="item-text">{@option.label}</span><button
         :if={@removable}
         type="button"
         class="remove"
@@ -295,12 +324,19 @@ defmodule LineaUI.Components.Select.Listbox do
   attr :entry, :map, required: true
   attr :id, :string, required: true
   attr :option_slot, :list, required: true
+  attr :box, :boolean, default: false
 
   defp entry(%{entry: %{type: :group}} = assigns) do
     ~H"""
     <div class="optgroup" role="group" data-group>
       <div class="optgroup-header">{@entry.label}</div>
-      <.entry :for={option <- @entry.options} entry={option} id={@id} option_slot={@option_slot} />
+      <.entry
+        :for={option <- @entry.options}
+        entry={option}
+        id={@id}
+        option_slot={@option_slot}
+        box={@box}
+      />
     </div>
     """
   end
@@ -319,6 +355,7 @@ defmodule LineaUI.Components.Select.Listbox do
       aria-disabled={@entry.disabled && "true"}
       aria-selected="false"
     >
+      <span :if={@box} class="sg-box" aria-hidden="true"></span>
       <span data-text>{@entry.label}</span>
       <small :if={Options.hint(@entry)} data-hint>{Options.hint(@entry)}</small>
     </div>
@@ -342,6 +379,26 @@ defmodule LineaUI.Components.Select.Listbox do
       {render_slot(@option_slot, @entry)}
     </div>
     """
+  end
+
+  # The avatar of a pillbox chip: an option map with `:color` and/or `:initials` (initials default to the
+  # first letters of the first and last word of the label).
+  defp face(%{data: %{} = data, label: label}) do
+    case {Map.get(data, :color), Map.get(data, :initials)} do
+      {nil, nil} -> nil
+      {color, initials} -> %{color: color, initials: initials || initials_of(label)}
+    end
+  end
+
+  defp face(_option), do: nil
+
+  defp initials_of(label) do
+    words = String.split(label)
+
+    [List.first(words), List.last(words)]
+    |> Enum.uniq()
+    |> Enum.map_join(&String.first(&1 || ""))
+    |> String.upcase()
   end
 
   defp option_id(id, value), do: "#{id}-opt-#{Base.url_encode64(value, padding: false)}"

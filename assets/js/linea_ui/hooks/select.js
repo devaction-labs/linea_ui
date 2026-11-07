@@ -6,7 +6,7 @@
 import {canCreate} from "../lib/listbox_logic.js"
 import {fillQuery} from "../lib/autocomplete_logic.js"
 import {notify} from "../lib/dom.js"
-import {choose, createRow, createsOnTab, fitCount, highlight, isFull, limitState, moveIndex, removeLast, removeValue, sameValues, shows, splitTags} from "../lib/select_box.js"
+import {choose, createRow, createsOnTab, fitCount, highlight, isFull, limitState, moveIndex, removeLast, removeValue, sameValues, shows, splitTags, toggleValue} from "../lib/select_box.js"
 import {escapeHtml} from "../lib/date_picker_view.js"
 
 const COMMANDS = ["open", "close", "toggle"]
@@ -97,6 +97,15 @@ export const Listbox = {
     return this.el.dataset.multiple === "true"
   },
 
+  /** The pillbox look: choosing an option again takes it back, and the list stays open and shows what is chosen. */
+  toggles() {
+    return this.el.dataset.look === "pillbox"
+  },
+
+  readonly() {
+    return this.el.dataset.readonly === "true"
+  },
+
   max() {
     return this.el.dataset.max ? Number(this.el.dataset.max) : null
   },
@@ -131,7 +140,7 @@ export const Listbox = {
   },
 
   open() {
-    const disabled = this.el.classList.contains("disabled") || isFull(this.values.length, this.multiple(), this.max()) && this.multiple()
+    const disabled = this.el.classList.contains("disabled") || this.readonly() || isFull(this.values.length, this.multiple(), this.max()) && this.multiple()
     !disabled && ((this.isOpen = true), this.refresh(), this.input().focus())
   },
 
@@ -192,7 +201,7 @@ export const Listbox = {
   },
 
   erases() {
-    return this.typesInControl() && this.input().value === "" && this.values.length > 0
+    return (this.typesInControl() || this.toggles()) && !this.readonly() && this.input().value === "" && this.values.length > 0
   },
 
   typed(text) {
@@ -241,7 +250,8 @@ export const Listbox = {
   pick(value) {
     this.remember(value)
     this.setTerm("")
-    this.change(choose(this.values, value, {multiple: this.multiple(), max: this.max()}))
+    const options = {multiple: this.multiple(), max: this.max()}
+    this.change(this.toggles() ? toggleValue(this.values, value, options) : choose(this.values, value, options))
     !this.multiple() && this.close()
     isFull(this.values.length, this.multiple(), this.max()) && this.multiple() && this.close()
   },
@@ -263,7 +273,7 @@ export const Listbox = {
   createdOption(term) {
     this.serial += 1
     const text = escapeHtml(term)
-    return `<div class="option" role="option" id="${this.el.id}-new-${this.serial}" data-value="${text}" data-label="${text}" data-selectable="true" data-created aria-selected="false"><span data-text>${text}</span></div>`
+    return `<div class="option" role="option" id="${this.el.id}-new-${this.serial}" data-value="${text}" data-label="${text}" data-selectable="true" data-created aria-selected="false">${this.toggles() ? '<span class="sg-box" aria-hidden="true"></span>' : ""}<span data-text>${text}</span></div>`
   },
 
   dropCreated(value) {
@@ -314,25 +324,29 @@ export const Listbox = {
     chips.forEach((chip) => (chip.hidden = false))
     badge.hidden = true
     const style = getComputedStyle(control)
+    const pillbox = this.toggles()
     const clear = control.querySelector(".clear-button")
+    const gap = parseFloat(style.columnGap) || 0
     const room =
-      control.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight) -
-      (parseFloat(style.getPropertyValue("--ts-pr-caret")) || 0) - (clear?.offsetWidth ?? 0) - MIN_INPUT_PX
-    const widths = chips.map((chip) => chip.offsetWidth + (parseFloat(getComputedStyle(chip).marginRight) || 0))
+      control.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight) + gap -
+      (pillbox ? 0 : (parseFloat(style.getPropertyValue("--ts-pr-caret")) || 0) + (clear?.offsetWidth ?? 0) + MIN_INPUT_PX)
+    const widths = chips.map((chip) => chip.offsetWidth + (parseFloat(getComputedStyle(chip).marginRight) || 0) + gap)
     const total = widths.reduce((sum, width) => sum + width, 0)
     if (total <= room) return
     const badgeWidth = (hidden) => {
       badge.textContent = `+${hidden}`
       badge.hidden = false
-      return badge.offsetWidth + (parseFloat(getComputedStyle(badge).marginRight) || 0)
+      return badge.offsetWidth + (parseFloat(getComputedStyle(badge).marginRight) || 0) + gap
     }
     const keep = fitCount(widths, room, badgeWidth)
     chips.forEach((chip, index) => (chip.hidden = index >= keep))
     badge.textContent = `+${chips.length - keep}`
     badge.hidden = keep === chips.length
     const names = chips.slice(keep).map((chip) => this.labelOf(chip.dataset.value)).join(", ")
+    const hidden = chips.length - keep
+    const hiddenLabel = this.el.dataset.hiddenLabel
     badge.title = names
-    badge.setAttribute("aria-label", `${chips.length - keep} ${this.el.dataset.moreLabel || "more"}: ${names}`)
+    badge.setAttribute("aria-label", hiddenLabel ? hiddenLabel.replace("%{count}", String(hidden)) : `${hidden} ${this.el.dataset.moreLabel || "more"}: ${names}`)
   },
 
   badge(control, input) {
@@ -388,6 +402,7 @@ export const Listbox = {
   refresh() {
     const state = {values: this.values, multiple: this.multiple(), term: this.term, local: this.local()}
     const options = this.options()
+    state.multiple = state.multiple && !this.toggles()
     options.forEach((row) => {
       const visible = shows({value: row.dataset.value, label: row.dataset.label, keywords: row.dataset.keywords}, state)
       const text = row.querySelector("[data-text]")
@@ -456,10 +471,10 @@ export const Listbox = {
 
   paintNoResults() {
     const extra = this.q("[data-extra]")
-    const shown = this.rows().length > 0
+    const shown = this.rows().filter((row) => !(this.toggles() && row.classList.contains("create"))).length > 0
     const message = fillQuery(this.q("[data-no-results]").textContent, this.term)
     const row = extra.querySelector(".no-results")
-    const wanted = !shown && this.term.trim() !== "" && this.el.dataset.create !== "true"
+    const wanted = !shown && this.term.trim() !== "" && (this.el.dataset.create !== "true" || this.toggles())
     row && (!wanted || row.textContent !== message) && row.remove()
     ;(!row || row.textContent !== message) && wanted && extra.insertAdjacentHTML("beforeend", `<div class="no-results">${escapeHtml(message)}</div>`)
   },

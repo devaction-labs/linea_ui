@@ -503,7 +503,7 @@
   top:0
 }
 .ts-wrapper.plugin-remove_button:not(.rtl) .item {
-  padding-right:0!important
+  padding-right:0
 }
 .ts-wrapper.plugin-remove_button:not(.rtl) .item .remove {
   border-left:1px solid #d0d0d0;
