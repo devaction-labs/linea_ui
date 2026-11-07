@@ -52,6 +52,7 @@ defmodule LineaUI do
     avatar: LineaUI.Components.Avatar,
     badge: LineaUI.Components.Badge,
     mini_card: LineaUI.Components.MiniCard,
+    pixel_card: LineaUI.Components.PixelCard,
     breadcrumb: LineaUI.Components.Breadcrumb,
     card_table: LineaUI.Components.CardTable,
     kpi_card: LineaUI.Components.KpiCard,
