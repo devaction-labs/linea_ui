@@ -153,17 +153,17 @@ defmodule LineaUI.Components.Table do
   }
 
   @table %{
-    "basic" => "w-full text-left",
-    "bordered" => "w-full text-left",
-    "hoverable" => "is-hoverable w-full text-left",
-    "zebra" => "is-zebra w-full text-left",
+    "basic" => "sg-table w-full text-left",
+    "bordered" => "w-full text-left text-[13.5px]",
+    "hoverable" => "sg-table w-full text-left",
+    "zebra" => "sg-table w-full text-left",
     "grid" => "is-hoverable w-full text-left",
     "data" => @data_table,
     "data-grid" => @data_table
   }
 
   @head_row %{
-    "basic" => "border-y border-transparent border-b-slate-200 dark:border-b-navy-500",
+    "basic" => "",
     "bordered" => "",
     "hoverable" => "",
     "zebra" => "",
@@ -173,9 +173,9 @@ defmodule LineaUI.Components.Table do
   }
 
   @body_row %{
-    "basic" => "border-y border-transparent border-b-slate-200 dark:border-b-navy-500",
+    "basic" => "",
     "bordered" => "[&:last-child>td]:border-b-0",
-    "hoverable" => "border-y border-transparent border-b-slate-200 dark:border-b-navy-500",
+    "hoverable" => "",
     "zebra" => "",
     "grid" => "border border-transparent border-b-slate-200 dark:border-b-navy-500",
     "data" =>
@@ -183,19 +183,15 @@ defmodule LineaUI.Components.Table do
     "data-grid" => ""
   }
 
-  @data_th "h-10 whitespace-nowrap bg-slate-200 px-3.5 py-0 font-inter text-[11.5px] font-semibold tracking-[.05em] uppercase text-slate-800 dark:bg-navy-800 dark:text-navy-100"
+  @data_th "h-10 whitespace-nowrap px-3.5 py-0 font-inter text-[13px] font-normal text-slate-500 dark:text-navy-300"
 
   @th %{
-    "basic" =>
-      "whitespace-nowrap px-3 py-3 font-semibold uppercase text-slate-800 dark:text-navy-100 lg:px-5",
+    "basic" => "",
     "bordered" =>
-      "whitespace-nowrap border border-t-0 border-slate-200 px-3 py-3 font-semibold uppercase text-slate-800 first:border-l-0 last:border-r-0 dark:border-navy-500 dark:text-navy-100 lg:px-5",
-    "hoverable" =>
-      "whitespace-nowrap bg-slate-200 px-4 py-3 font-semibold uppercase text-slate-800 dark:bg-navy-800 dark:text-navy-100 lg:px-5",
-    "zebra" =>
-      "whitespace-nowrap bg-slate-200 px-4 py-3 font-semibold uppercase text-slate-800 dark:bg-navy-800 dark:text-navy-100 lg:px-5",
-    "grid" =>
-      "whitespace-nowrap bg-slate-200 px-3 py-3 font-semibold uppercase text-slate-800 dark:bg-navy-800 dark:text-navy-100 lg:px-4",
+      "whitespace-nowrap border border-t-0 border-slate-200 px-3 py-3 font-normal text-slate-500 first:border-l-0 last:border-r-0 dark:border-navy-500 dark:text-navy-300 lg:px-4",
+    "hoverable" => "",
+    "zebra" => "",
+    "grid" => "whitespace-nowrap px-3 py-3 font-normal text-slate-500 dark:text-navy-300 lg:px-4",
     "data" => @data_th,
     "data-grid" =>
       @data_th <>
@@ -203,11 +199,11 @@ defmodule LineaUI.Components.Table do
   }
 
   @td %{
-    "basic" => "whitespace-nowrap px-4 py-3 sm:px-5",
+    "basic" => "",
     "bordered" =>
-      "whitespace-nowrap border border-slate-200 px-3 py-3 first:border-l-0 last:border-r-0 dark:border-navy-500 lg:px-5",
-    "hoverable" => "whitespace-nowrap px-4 py-3 sm:px-5",
-    "zebra" => "whitespace-nowrap px-4 py-3 sm:px-5",
+      "whitespace-nowrap border border-slate-200 px-3 py-3 first:border-l-0 last:border-r-0 dark:border-navy-500 lg:px-4",
+    "hoverable" => "",
+    "zebra" => "",
     "grid" => "whitespace-nowrap px-4 py-3",
     "data" => "h-12 whitespace-nowrap px-3.5 py-0",
     "data-grid" =>
@@ -254,9 +250,9 @@ defmodule LineaUI.Components.Table do
     peek_label: "Hidden columns"
   }
 
-  @sort_button "-mx-1.5 inline-flex h-7 max-w-full cursor-pointer items-center gap-1.5 rounded-md px-1.5 text-left font-semibold uppercase outline-hidden transition-colors hover:bg-slate-300/40 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-primary/55 dark:hover:bg-navy-450/40"
+  @sort_button "-mx-1.5 inline-flex h-7 max-w-full cursor-pointer items-center gap-1.5 rounded-md px-1.5 text-left font-normal outline-hidden transition-colors hover:bg-slate-300/40 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-primary/55 dark:hover:bg-navy-450/40"
 
-  @foot_td "whitespace-nowrap border-t border-slate-200 px-4 py-3 font-semibold text-slate-700 dark:border-navy-500 dark:text-navy-100 sm:px-5"
+  @foot_td "whitespace-nowrap border-t border-slate-200 px-4 py-3 font-semibold text-slate-700 dark:border-navy-500 dark:text-navy-100 sm:px-4"
 
   @compact "px-3 py-2 sm:px-3 lg:px-3"
 
@@ -484,67 +480,85 @@ defmodule LineaUI.Components.Table do
 
   def table(%{rows: nil} = assigns) do
     assigns
-    |> assign(
-      :wrapper,
+    |> assign_derived(:wrapper, [:variant, :col, :container, :bleed, :wrapper_class], fn ->
       merge([@wrapper[assigns.variant], box(assigns), bleed(assigns), assigns.wrapper_class])
-    )
-    |> assign(:table_class, merge(["linea-table", table_class(assigns), assigns.class]))
+    end)
+    |> assign_derived(:table_class, [:variant, :hoverable, :class], fn ->
+      merge(["linea-table", table_class(assigns), assigns.class])
+    end)
     |> render_composable()
   end
 
+  # The derived values are marked changed only when what they come from changed, and the
+  # rows reach the template as comprehension variables (each one's key and selection), so
+  # toggling a row sends that row and the header checkbox, not the table.
   def table(assigns) do
+    assigns =
+      assigns
+      |> Map.merge(Map.drop(@slot_defaults, Map.keys(assigns)))
+      |> assign_row_id()
+      |> assign_selection()
+
     assigns
-    |> Map.merge(Map.drop(@slot_defaults, Map.keys(assigns)))
-    |> assign_row_id()
-    |> assign_selection()
-    |> assign(
+    |> assign_derived(
       :th_class,
-      merge([
-        @th[assigns.variant],
-        th_rounded(assigns),
-        compact(assigns, :th),
-        no_border(assigns),
-        sticky(assigns)
-      ])
+      [:variant, :rounded, :compact, :borderless, :sticky_header],
+      fn ->
+        merge([
+          @th[assigns.variant],
+          th_rounded(assigns),
+          compact(assigns, :th),
+          no_border(assigns),
+          sticky(assigns)
+        ])
+      end
     )
-    |> assign(
-      :td_class,
+    |> assign_derived(:td_class, [:variant, :rounded, :compact, :borderless], fn ->
       merge([
         @td[assigns.variant],
         td_rounded(assigns),
         compact(assigns, :td),
         no_border(assigns)
       ])
-    )
-    |> assign(:head_row_class, merge([@head_row[assigns.variant], no_border(assigns)]))
-    |> assign(:body_row_class, merge([@body_row[assigns.variant], no_border(assigns)]))
-    |> assign(
+    end)
+    |> assign_derived(:head_row_class, [:variant, :borderless], fn ->
+      merge([@head_row[assigns.variant], no_border(assigns)])
+    end)
+    |> assign_derived(:body_row_class, [:variant, :borderless], fn ->
+      merge([@body_row[assigns.variant], no_border(assigns)])
+    end)
+    |> assign_derived(
       :wrapper,
-      merge([
-        @wrapper[assigns.variant],
-        no_border(assigns),
-        box(assigns),
-        bleed(assigns),
-        assigns.wrapper_class
-      ])
+      [:variant, :borderless, :col, :container, :bleed, :wrapper_class],
+      fn ->
+        merge([
+          @wrapper[assigns.variant],
+          no_border(assigns),
+          box(assigns),
+          bleed(assigns),
+          assigns.wrapper_class
+        ])
+      end
     )
-    |> assign(:table_class, merge([table_class(assigns), assigns.class]))
-    |> assign(
-      :checkbox,
+    |> assign_derived(:table_class, [:variant, :hoverable, :class], fn ->
+      merge([table_class(assigns), assigns.class])
+    end)
+    |> assign_derived(:checkbox, [:variant], fn ->
       if(assigns.variant in @data_variants, do: @checkbox_data, else: @checkbox)
-    )
-    |> assign(:expand_button, @expand_button)
+    end)
+    |> assign_derived(:expand_button, [], fn -> @expand_button end)
+    |> assign_derived(:peek_at, [:peek, :col], fn -> peek_at(assigns) end)
     |> render_table()
   end
 
   defp sticky(%{sticky_header: true, variant: variant}), do: @sticky[variant]
   defp sticky(_assigns), do: nil
 
-  defp row_class(%{row_class: nil}, _row), do: nil
-  defp row_class(%{row_class: fun, row_item: row_item}, row), do: fun.(row_item.(row))
+  defp row_class(nil, _row_item, _row), do: nil
+  defp row_class(fun, row_item, row), do: fun.(row_item.(row))
 
-  defp row_attrs(%{row_attrs: nil}, _row), do: %{}
-  defp row_attrs(%{row_attrs: fun, row_item: row_item}, row), do: fun.(row_item.(row))
+  defp row_attrs(nil, _row_item, _row), do: %{}
+  defp row_attrs(fun, row_item, row), do: fun.(row_item.(row))
 
   defp stream?(%LiveStream{}), do: true
   defp stream?(_rows), do: false
@@ -571,8 +585,6 @@ defmodule LineaUI.Components.Table do
   end
 
   defp peek_at(_assigns), do: nil
-
-  defp peek_row(assigns), do: if(peek_at(assigns), do: "")
 
   defp peek_cols(cols), do: Enum.filter(cols, &(priority(&1) > 0))
 
@@ -606,40 +618,64 @@ defmodule LineaUI.Components.Table do
   defp td_rounded(_assigns), do: ""
 
   defp assign_row_id(%{rows: %LiveStream{}, row_id: nil} = assigns),
-    do: assign(assigns, :row_id, fn {id, _item} -> id end)
+    do: assign_derived(assigns, :row_id, [:row_id], fn -> &stream_dom_id/1 end)
 
   defp assign_row_id(assigns), do: assigns
 
-  defp expand_rows(%{row_id: nil, id: id, rows: rows}) do
+  defp stream_dom_id({id, _item}), do: id
+
+  # `{dom_id, row, key, selected}` of each row of the expandable table.
+  defp expand_rows(rows, id, row_id, selection) do
     rows
     |> Enum.with_index()
-    |> Enum.map(fn {row, index} -> {id <> "-row-" <> Integer.to_string(index), row} end)
+    |> Enum.map(fn {row, index} ->
+      dom_id = if row_id, do: row_id.(row), else: id <> "-row-" <> Integer.to_string(index)
+      {key, selected} = selection(selection, row_id, row)
+      {dom_id, row, key, selected}
+    end)
   end
 
-  defp expand_rows(%{row_id: row_id, rows: rows}), do: Enum.map(rows, &{row_id.(&1), &1})
+  # `{row, key, selected}` of each row of a list.
+  defp list_rows(rows, row_id, selection) do
+    Enum.map(rows, fn row ->
+      {key, selected} = selection(selection, row_id, row)
+      {row, key, selected}
+    end)
+  end
 
-  defp assign_selection(%{on_select: nil} = assigns), do: assign(assigns, :selectable, false)
+  defp selection({false, _selected, _row_key, _row_item}, _row_id, _row), do: {nil, false}
+
+  defp selection({true, selected, row_key, row_item}, row_id, row) do
+    key = key(row_key, row_id, row_item, row)
+    {key, key in selected}
+  end
 
   defp assign_selection(assigns) do
     assigns
-    |> assign(:selectable, true)
-    |> assign(:all_selected, all_selected(assigns))
-    |> assign(:some_selected, assigns.selected != [])
+    |> assign_derived(:selectable, [:on_select], fn -> assigns.on_select != nil end)
+    |> assign_derived(:some_selected, [:on_select, :selected], fn ->
+      assigns.on_select != nil and assigns.selected != []
+    end)
+    |> assign_derived(
+      :all_selected,
+      [:on_select, :all_selected, :rows, :selected, :row_key, :row_id, :row_item],
+      fn -> if assigns.on_select, do: all_selected(assigns), else: assigns.all_selected end
+    )
   end
 
   defp all_selected(%{all_selected: value}) when is_boolean(value), do: value
   defp all_selected(%{rows: %LiveStream{}}), do: false
 
   defp all_selected(%{rows: rows, selected: selected} = assigns) do
-    keys = Enum.map(rows, &key(assigns, &1))
+    keys = Enum.map(rows, &key(assigns.row_key, assigns.row_id, assigns.row_item, &1))
     keys != [] and Enum.all?(keys, &(&1 in selected))
   end
 
-  defp row_label(%{row_label: nil, select_label: label}, _row), do: label
-  defp row_label(%{row_label: row_label, row_item: row_item}, row), do: row_label.(row_item.(row))
+  defp row_label(nil, label, _row_item, _row), do: label
+  defp row_label(row_label, _label, row_item, row), do: row_label.(row_item.(row))
 
-  defp key(%{row_key: nil, row_id: row_id}, row), do: row_id.(row)
-  defp key(%{row_key: row_key, row_item: row_item}, row), do: row_key.(row_item.(row))
+  defp key(nil, row_id, _row_item, row), do: row_id.(row)
+  defp key(row_key, _row_id, row_item, row), do: row_key.(row_item.(row))
 
   defp render_table(%{expand: [_ | _]} = assigns) do
     ~H"""
@@ -650,15 +686,59 @@ defmodule LineaUI.Components.Table do
       aria-label={@scroll_label}
     >
       <table id={@id} class={@table_class} {@rest}>
-        <.slot_head :if={!@headless} {assigns} />
-        <tbody :for={{dom_id, row} <- expand_rows(assigns)} id={dom_id} data-expandable>
+        <.slot_head
+          :if={!@headless}
+          id={@id}
+          head_row_class={@head_row_class}
+          th_class={@th_class}
+          selectable={@selectable}
+          checkbox={@checkbox}
+          all_selected={@all_selected}
+          some_selected={@some_selected}
+          select_all_label={@select_all_label}
+          on_select_all={@on_select_all}
+          target={@target}
+          col={@col}
+          sort_by={@sort_by}
+          sort_dir={@sort_dir}
+          on_sort={@on_sort}
+          sort_label={@sort_label}
+          action={@action}
+          expand={@expand}
+          expand_label={@expand_label}
+        />
+        <tbody
+          :for={
+            {dom_id, row, key, selected} <-
+              expand_rows(@rows, @id, @row_id, {@selectable, @selected, @row_key, @row_item})
+          }
+          id={dom_id}
+          data-expandable
+        >
           <tr
-            class={merge(["border-y border-transparent", row_class(assigns, row)])}
-            data-peek={peek_row(assigns)}
-            tabindex={peek_row(assigns) && "0"}
-            {row_attrs(assigns, row)}
+            class={merge(["border-y border-transparent", row_class(@row_class, @row_item, row)])}
+            data-peek={@peek_at && ""}
+            tabindex={@peek_at && "0"}
+            {row_attrs(@row_attrs, @row_item, row)}
           >
-            <.slot_cells {assigns} row={row} />
+            <.slot_cells
+              row={row}
+              key={key}
+              selected={selected}
+              selectable={@selectable}
+              td_class={@td_class}
+              checkbox={@checkbox}
+              row_label={@row_label}
+              select_label={@select_label}
+              on_select={@on_select}
+              target={@target}
+              col={@col}
+              row_click={@row_click}
+              row_item={@row_item}
+              peek_at={@peek_at}
+              peek_label={@peek_label}
+              action={@action}
+            />
             <td class={@td_class}>
               <button
                 type="button"
@@ -678,7 +758,7 @@ defmodule LineaUI.Components.Table do
           </tr>
           <tr class="border-y border-transparent border-b-slate-200 dark:border-b-navy-500">
             <td colspan="100" class="p-0">
-              <div id={dom_id <> "-detail"} class="hidden px-4 pb-4 sm:px-5">
+              <div id={dom_id <> "-detail"} class="hidden px-4 pb-4 sm:px-4">
                 {render_slot(@expand, %{row: @row_item.(row), toggle: table_toggle_row(dom_id)})}
               </div>
             </td>
@@ -699,22 +779,83 @@ defmodule LineaUI.Components.Table do
       aria-label={@scroll_label}
     >
       <table id={@id} class={@table_class} {@rest}>
-        <.slot_head :if={!@headless} {assigns} />
+        <.slot_head
+          :if={!@headless}
+          id={@id}
+          head_row_class={@head_row_class}
+          th_class={@th_class}
+          selectable={@selectable}
+          checkbox={@checkbox}
+          all_selected={@all_selected}
+          some_selected={@some_selected}
+          select_all_label={@select_all_label}
+          on_select_all={@on_select_all}
+          target={@target}
+          col={@col}
+          sort_by={@sort_by}
+          sort_dir={@sort_dir}
+          on_sort={@on_sort}
+          sort_label={@sort_label}
+          action={@action}
+          expand={@expand}
+          expand_label={@expand_label}
+        />
         <tbody
           id={@id <> "-body"}
           phx-update={match?(%LiveStream{}, @rows) && "stream"}
         >
-          <tr
-            :for={row <- @rows}
-            id={@row_id && @row_id.(row)}
-            class={merge([@body_row_class, row_class(assigns, row)])}
-            data-selected={@selectable && bool(key(assigns, row) in @selected)}
-            data-peek={peek_row(assigns)}
-            tabindex={peek_row(assigns) && "0"}
-            {row_attrs(assigns, row)}
-          >
-            <.slot_cells {assigns} row={row} />
-          </tr>
+          <%= if stream?(@rows) do %>
+            <.body_row
+              :for={row <- @rows}
+              row={row}
+              key={@selectable && key(@row_key, @row_id, @row_item, row)}
+              selected={@selectable && key(@row_key, @row_id, @row_item, row) in @selected}
+              row_id={@row_id}
+              body_row_class={@body_row_class}
+              row_class={@row_class}
+              row_attrs={@row_attrs}
+              selectable={@selectable}
+              td_class={@td_class}
+              checkbox={@checkbox}
+              row_label={@row_label}
+              select_label={@select_label}
+              on_select={@on_select}
+              target={@target}
+              col={@col}
+              row_click={@row_click}
+              row_item={@row_item}
+              peek_at={@peek_at}
+              peek_label={@peek_label}
+              action={@action}
+            />
+          <% else %>
+            <.body_row
+              :for={
+                {row, key, selected} <-
+                  list_rows(@rows, @row_id, {@selectable, @selected, @row_key, @row_item})
+              }
+              row={row}
+              key={key}
+              selected={selected}
+              row_id={@row_id}
+              body_row_class={@body_row_class}
+              row_class={@row_class}
+              row_attrs={@row_attrs}
+              selectable={@selectable}
+              td_class={@td_class}
+              checkbox={@checkbox}
+              row_label={@row_label}
+              select_label={@select_label}
+              on_select={@on_select}
+              target={@target}
+              col={@col}
+              row_click={@row_click}
+              row_item={@row_item}
+              peek_at={@peek_at}
+              peek_label={@peek_label}
+              action={@action}
+            />
+          <% end %>
           <tr
             :if={(@rows == [] or stream?(@rows)) and @empty != []}
             id={@id <> "-empty"}
@@ -726,6 +867,38 @@ defmodule LineaUI.Components.Table do
         <.slot_foot foot={@foot} td_class={@td_class} />
       </table>
     </div>
+    """
+  end
+
+  defp body_row(assigns) do
+    ~H"""
+    <tr
+      id={@row_id && @row_id.(@row)}
+      class={merge([@body_row_class, row_class(@row_class, @row_item, @row)])}
+      data-selected={@selectable && bool(@selected)}
+      data-peek={@peek_at && ""}
+      tabindex={@peek_at && "0"}
+      {row_attrs(@row_attrs, @row_item, @row)}
+    >
+      <.slot_cells
+        row={@row}
+        key={@key}
+        selected={@selected}
+        selectable={@selectable}
+        td_class={@td_class}
+        checkbox={@checkbox}
+        row_label={@row_label}
+        select_label={@select_label}
+        on_select={@on_select}
+        target={@target}
+        col={@col}
+        row_click={@row_click}
+        row_item={@row_item}
+        peek_at={@peek_at}
+        peek_label={@peek_label}
+        action={@action}
+      />
+    </tr>
     """
   end
 
@@ -803,7 +976,7 @@ defmodule LineaUI.Components.Table do
   defp slot_foot(%{foot: []} = assigns), do: ~H""
 
   defp slot_foot(assigns) do
-    assigns = assign(assigns, :foot_td, @foot_td)
+    assigns = assign_derived(assigns, :foot_td, [], fn -> @foot_td end)
 
     ~H"""
     <tfoot>
@@ -828,11 +1001,11 @@ defmodule LineaUI.Components.Table do
         <input
           type="checkbox"
           class={@checkbox}
-          checked={key(assigns, @row) in @selected}
-          aria-label={row_label(assigns, @row)}
+          checked={@selected}
+          aria-label={row_label(@row_label, @select_label, @row_item, @row)}
           phx-click={@on_select}
-          phx-value-id={key(assigns, @row)}
-          phx-value-selected={bool(key(assigns, @row) not in @selected)}
+          phx-value-id={@key}
+          phx-value-selected={bool(not @selected)}
           phx-target={@target}
         />
       </label>
@@ -844,7 +1017,7 @@ defmodule LineaUI.Components.Table do
       phx-click={@row_click && @row_click.(@row)}
     >
       {render_slot(col, @row_item.(@row))}
-      <div :if={index == peek_at(assigns)} class="linea-tpeek" role="group" aria-label={@peek_label}>
+      <div :if={index == @peek_at} class="linea-tpeek" role="group" aria-label={@peek_label}>
         <div :for={hidden <- peek_cols(@col)} data-peek-p={priority(hidden)}>
           <span>{hidden[:label]}</span>
           <span>{render_slot(hidden, @row_item.(@row))}</span>
@@ -959,8 +1132,7 @@ defmodule LineaUI.Components.Table do
   def table_head(assigns) do
     assigns =
       assigns
-      |> assign(:select_all_id, assigns.select_all_id || gen_id("table-select-all"))
-      |> assign(:head_col_keys, @head_col_keys)
+      |> assign_select_all_id()
 
     ~H"""
     <thead {@rest}>
@@ -982,7 +1154,7 @@ defmodule LineaUI.Components.Table do
           data-p={data_p(col)}
           class={merge([align(col[:align]), col[:class]])}
           aria-sort={aria_sort(col[:sort_key], @sort_by, @sort_dir)}
-          {slot_rest(col, @head_col_keys)}
+          {head_col_rest(col)}
         >
           <button
             :if={col[:sort_key] && @on_sort}
@@ -1011,7 +1183,14 @@ defmodule LineaUI.Components.Table do
     """
   end
 
-  defp slot_rest(entry, consumed), do: Map.drop(entry, consumed)
+  # A generated id is new on every render, as it always was; a given one changes with it.
+  defp assign_select_all_id(%{select_all_id: nil} = assigns),
+    do: assign(assigns, :select_all_id, gen_id("table-select-all"))
+
+  defp assign_select_all_id(assigns), do: assigns
+
+  defp head_col_rest(entry), do: Map.drop(entry, @head_col_keys)
+  defp cell_rest(entry), do: Map.drop(entry, @cell_keys)
 
   defp col_label(%{col: %{inner_block: nil}} = assigns), do: ~H"{@col[:label]}"
   defp col_label(assigns), do: ~H"{render_slot(@col)}"
@@ -1092,8 +1271,6 @@ defmodule LineaUI.Components.Table do
   slot(:inner_block, doc: "Free cells after the `:cell` ones.")
 
   def table_row(assigns) do
-    assigns = assign(assigns, :cell_keys, @cell_keys)
-
     ~H"""
     <tr
       class={merge([@on_click && "cursor-pointer", @class])}
@@ -1118,7 +1295,7 @@ defmodule LineaUI.Components.Table do
         rowspan={cell[:rowspan]}
         data-p={data_p(cell)}
         class={merge([align(cell[:align]), cell[:class]])}
-        {slot_rest(cell, @cell_keys)}
+        {cell_rest(cell)}
       >
         {render_slot(cell)}
       </td>
@@ -1195,8 +1372,6 @@ defmodule LineaUI.Components.Table do
   slot(:inner_block, doc: "Free `<tr>` rows after the `:cell` row.")
 
   def table_foot(assigns) do
-    assigns = assign(assigns, :cell_keys, @cell_keys)
-
     ~H"""
     <tfoot {@rest}>
       <tr :if={@cell != []} class={@class}>
@@ -1205,7 +1380,7 @@ defmodule LineaUI.Components.Table do
           colspan={cell[:colspan]}
           data-p={data_p(cell)}
           class={merge([align(cell[:align]), cell[:class]])}
-          {slot_rest(cell, @cell_keys)}
+          {cell_rest(cell)}
         >
           {render_slot(cell)}
         </td>
@@ -1269,8 +1444,10 @@ defmodule LineaUI.Components.Table do
   def table_checkbox(assigns) do
     assigns =
       assigns
-      |> assign(:value_attrs, Map.new(assigns.values, fn {k, v} -> {"phx-value-#{k}", v} end))
-      |> assign(:checkbox, @checkbox)
+      |> assign_derived(:value_attrs, [:values], fn ->
+        Map.new(assigns.values, fn {k, v} -> {"phx-value-#{k}", v} end)
+      end)
+      |> assign_derived(:checkbox, [], fn -> @checkbox end)
 
     ~H"""
     <label class="flex">
@@ -1311,7 +1488,7 @@ defmodule LineaUI.Components.Table do
   attr(:rest, :global)
 
   def table_expand_toggle(assigns) do
-    assigns = assign(assigns, :expand_button, @expand_button)
+    assigns = assign_derived(assigns, :expand_button, [], fn -> @expand_button end)
 
     ~H"""
     <button
@@ -1351,7 +1528,7 @@ defmodule LineaUI.Components.Table do
       <td colspan="100" class="p-0">
         <div
           id={@row_id <> "-detail"}
-          class={merge([!@open && "hidden", "px-4 pb-4 sm:px-5", @class])}
+          class={merge([!@open && "hidden", "px-4 pb-4 sm:px-4", @class])}
         >
           {render_slot(@inner_block)}
         </div>

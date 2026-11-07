@@ -12,60 +12,20 @@ defmodule LineaUI.Components.Progress do
       <.progress value={60} color="white" />
 
   `value` is read against `max` (100 by default) and updates with the assign.
+
+  It draws the canvas's `sg-meter`: `primary` is the accent bar, `success`, `warning`, `error` and `info`
+  the canvas's positive, warning, negative and info colors, `neutral` the ink one.
+
+  `progress_stack/1` is the canvas's stacked bar (`sg-stack`), the parts of a total side by side:
+
+      <.progress_stack label="Sales by channel">
+        <:segment value={46} label="Counter" />
+        <:segment value={33} label="Online" />
+        <:segment value={21} label="Reps" />
+      </.progress_stack>
   """
 
   use LineaUI.Component
-
-  @tracks %{
-    "solid" => %{
-      "neutral" => "bg-slate-150 dark:bg-navy-800",
-      "primary" => "bg-slate-150 dark:bg-navy-800",
-      "secondary" => "bg-slate-150 dark:bg-navy-800",
-      "info" => "bg-slate-150 dark:bg-navy-800",
-      "success" => "bg-slate-150 dark:bg-navy-800",
-      "warning" => "bg-slate-150 dark:bg-navy-800",
-      "error" => "bg-slate-150 dark:bg-navy-800",
-      "white" => "bg-white/30"
-    },
-    "soft" => %{
-      "neutral" => "bg-slate-500/15 dark:bg-navy-400/25",
-      "primary" => "bg-primary/15 dark:bg-accent/25",
-      "secondary" => "bg-secondary/15 dark:bg-secondary-light/25",
-      "info" => "bg-info/15 dark:bg-info/25",
-      "success" => "bg-success/15 dark:bg-success/25",
-      "warning" => "bg-warning/15 dark:bg-warning/25",
-      "error" => "bg-error/15 dark:bg-error/25",
-      "white" => "bg-white/30"
-    }
-  }
-
-  @bars %{
-    "neutral" => "bg-slate-500 dark:bg-navy-400",
-    "primary" => "bg-primary dark:bg-accent",
-    "secondary" => "bg-secondary",
-    "info" => "bg-info",
-    "success" => "bg-success",
-    "warning" => "bg-[#e68200] dark:bg-warning",
-    "error" => "bg-error",
-    "white" => "bg-white"
-  }
-
-  @shines %{
-    "neutral" =>
-      "bg-gradient-to-r from-transparent via-slate-500 to-transparent dark:via-navy-400",
-    "primary" => "bg-gradient-to-r from-transparent via-primary to-transparent dark:via-accent",
-    "secondary" => "bg-gradient-to-r from-transparent via-secondary to-transparent",
-    "info" => "bg-gradient-to-r from-transparent via-info to-transparent",
-    "success" => "bg-gradient-to-r from-transparent via-success to-transparent",
-    "warning" =>
-      "bg-gradient-to-r from-transparent via-[#e68200] to-transparent dark:via-warning",
-    "error" => "bg-gradient-to-r from-transparent via-error to-transparent",
-    "white" => "bg-gradient-to-r from-transparent via-white to-transparent"
-  }
-
-  @sizes %{"sm" => "h-1", "md" => "h-2", "lg" => "h-3", "xl" => "h-4"}
-
-  @heights %{"1" => "h-1", "1.5" => "h-1.5", "2" => "h-2", "3" => "h-3", "4" => "h-4"}
 
   @doc """
   Renders a progress bar.
@@ -125,23 +85,59 @@ defmodule LineaUI.Components.Progress do
       aria-valuemin="0"
       aria-valuemax={@max}
       aria-valuenow={!@indeterminate && @value}
-      class={merge(["progress", track(@variant, @color), size(@size), height(@height), @class])}
+      class={merge(["sg-meter", tone(@color), @class])}
       {@rest}
     >
-      <div
-        class={
-          merge([
-            "rounded-full",
-            bar(@color, @indeterminate and @shine),
-            @active && "is-active relative overflow-hidden",
-            @indeterminate && !@shine && "is-indeterminate relative w-4/12",
-            @indeterminate && @shine && "is-shine absolute inset-y-0 w-[35%]",
-            @bar_class
-          ])
-        }
+      <i
+        class={merge([@indeterminate && "is-indeterminate relative w-4/12", @bar_class])}
         style={!@indeterminate && "width: #{@percent}%"}
-      >
-      </div>
+      ></i>
+    </div>
+    """
+  end
+
+  defp tone("primary"), do: "acc"
+  defp tone("success"), do: "pos"
+  defp tone("warning"), do: "warn"
+  defp tone("error"), do: "neg"
+  defp tone("info"), do: "info"
+  defp tone(_color), do: nil
+
+  @doc """
+  Renders the canvas's stacked bar (`sg-stack`): one segment per part, its width the part's share of `max`
+  (100 by default), in the chart colors `--c1`, `--c2`... in order unless a segment sets `color`.
+
+      <.progress_stack label="Sales by channel: counter 46%, online 33%, reps 21%">
+        <:segment value={46} />
+        <:segment value={33} />
+        <:segment value={21} color="c4" />
+      </.progress_stack>
+
+  It is one image for screen readers (`role="img"`), named by `label`; a segment's `label` is its `title`.
+  """
+  attr(:max, :any, default: 100, doc: "The total the segments are read against.")
+  attr(:label, :string, default: nil, doc: "The `aria-label`: say the parts and their values.")
+  attr(:class, :any, default: nil)
+  attr(:rest, :global)
+
+  slot :segment, required: true, doc: "A part of the total." do
+    attr(:value, :any, required: true, doc: "The part's amount, against `max`.")
+
+    attr(:color, :string,
+      doc: "A chart color of the canvas, `c1` to `c5` (by default the segment's position)."
+    )
+
+    attr(:label, :string, doc: "The segment's `title`.")
+  end
+
+  def progress_stack(assigns) do
+    ~H"""
+    <div role="img" aria-label={@label} class={merge(["sg-stack", @class])} {@rest}>
+      <i
+        :for={{segment, index} <- Enum.with_index(@segment)}
+        title={segment[:label]}
+        style={"width: #{percent(segment.value, @max)}%; background: var(--#{segment[:color] || "c#{rem(index, 5) + 1}"})"}
+      ></i>
     </div>
     """
   end
@@ -150,11 +146,4 @@ defmodule LineaUI.Components.Progress do
     do: (value / limit * 100) |> min(100.0) |> max(0.0) |> Float.round(4)
 
   defp percent(_value, _max), do: 0
-
-  defp track(variant, color), do: @tracks[variant][color]
-  defp bar(color, true), do: @shines[color]
-  defp bar(color, false), do: @bars[color]
-  defp size(size), do: @sizes[size]
-  defp height(nil), do: nil
-  defp height(height), do: @heights[height]
 end

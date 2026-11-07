@@ -24,6 +24,16 @@ defmodule LineaUI.Components.Collapse do
         …
       </.collapse>
 
+  `canvas` is the design canvas section (the look of the canvas accordion): a 14px frame with an inset
+  line, the title in the ink at 14px 16px, a muted 13.5/21 body.
+
+  `collapse_text/1` is the other collapse of the canvas: a text clamped to a few lines with a
+  "show more" / "show less" link under it.
+
+      <.collapse_text id="desc" lines={2} more="Mostrar mais" less="Mostrar menos">
+        Tinta acrílica fosca para paredes internas e externas…
+      </.collapse_text>
+
   It is a native `<details>`: the trigger works with the mouse and the keyboard and the browser
   owns `open`, which survives patches. When the server changes `open`, the server wins.
   `LineaUI.open/close/toggle("details")` (and their socket forms) open and close it too, and
@@ -60,9 +70,9 @@ defmodule LineaUI.Components.Collapse do
 
   attr :variant, :string,
     default: nil,
-    values: [nil, "framed", "flat", "section"],
+    values: [nil, "framed", "flat", "section", "canvas"],
     doc:
-      "A ready-made look: `framed` (card with an inset border), `flat` (a rule under it), `section` (an uppercase label). `nil` leaves the trigger to its `class`."
+      "A ready-made look: `framed` (card with an inset border), `flat` (a rule under it), `section` (an uppercase label), `canvas` (the design canvas section). `nil` leaves the trigger to its `class`."
 
   attr :panel_class, :any,
     default: nil,
@@ -112,6 +122,51 @@ defmodule LineaUI.Components.Collapse do
       </summary>
       <div class={merge(["ac-panel", @panel_class])}>{render_slot(@inner_block)}</div>
     </details>
+    """
+  end
+
+  @doc """
+  A text clamped to `lines` lines, with a link under it that shows the rest ("show more") and
+  hides it again ("show less"). It works in the browser (no event to the server); the link has
+  `aria-expanded` and `aria-controls`.
+
+      <.collapse_text id="desc" lines={3} more="Mostrar mais" less="Mostrar menos">
+        {@product.description}
+      </.collapse_text>
+  """
+  attr :id, :string, required: true
+  attr :lines, :integer, default: 2, doc: "How many lines show while it is closed."
+  attr :open, :boolean, default: false, doc: "Starts with the whole text shown."
+  attr :more, :string, default: "Show more", doc: "The link while the text is clamped."
+  attr :less, :string, default: "Show less", doc: "The link while the whole text shows."
+  attr :class, :any, default: nil, doc: "Merged into the wrapper."
+  attr :text_class, :any, default: nil, doc: "Merged into the text."
+  attr :rest, :global
+  slot :inner_block, required: true
+
+  def collapse_text(assigns) do
+    ~H"""
+    <div id={@id} class={merge(["collapse-text", @class])} data-open={@open && "true"} {@rest}>
+      <p
+        id={"#{@id}-text"}
+        class={merge(["collapse-text-body m-0", @text_class])}
+        style={"--lines: #{@lines}"}
+      >
+        {render_slot(@inner_block)}
+      </p>
+      <button
+        type="button"
+        class="collapse-text-toggle"
+        aria-controls={"#{@id}-text"}
+        aria-expanded={to_string(@open)}
+        phx-click={
+          JS.toggle_attribute({"data-open", "true"}, to: "##{@id}")
+          |> JS.toggle_attribute({"aria-expanded", "true", "false"})
+        }
+      >
+        <span class="collapse-text-more">{@more}</span><span class="collapse-text-less">{@less}</span>
+      </button>
+    </div>
     """
   end
 

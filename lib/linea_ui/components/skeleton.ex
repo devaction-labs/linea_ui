@@ -17,6 +17,12 @@ defmodule LineaUI.Components.Skeleton do
         <.skeleton class="h-3 w-8/12" />
       </.skeleton_group>
 
+  `variant="canvas"` draws the design canvas's `sg-skel` (the warm gray gradient of the Signetum
+  screens, 8px corners); `shape` still rounds it (`circle` for an avatar):
+
+      <.skeleton variant="canvas" shape="circle" class="size-8" />
+      <.skeleton variant="canvas" class="h-2.5 w-1/2" />
+
   For the pulse, put `animation="none"` blocks inside an element with `animate-pulse` (as
   LineOne does), or give a single block `animation="pulse"`.
   """
@@ -45,6 +51,12 @@ defmodule LineaUI.Components.Skeleton do
   """
   attr(:animation, :string, default: "wave", values: ~w(wave pulse none))
 
+  attr(:variant, :string,
+    default: "lineone",
+    values: ~w(lineone canvas),
+    doc: "`lineone` is LineOne's slate block; `canvas` the canvas's `sg-skel`."
+  )
+
   attr(:shape, :string,
     default: "rounded",
     values: ~w(rounded pill circle square lg),
@@ -54,11 +66,29 @@ defmodule LineaUI.Components.Skeleton do
   attr(:class, :any, default: nil)
   attr(:rest, :global)
 
+  def skeleton(%{variant: "canvas"} = assigns) do
+    ~H"""
+    <div
+      aria-hidden="true"
+      class={merge(["sg-skel", animation(@animation), @shape, @class])}
+      {@rest}
+    >
+    </div>
+    """
+  end
+
   def skeleton(assigns) do
     ~H"""
     <div
       aria-hidden="true"
-      class={merge([animation(@animation), "bg-slate-150 dark:bg-navy-500", shape(@shape), @class])}
+      class={
+        merge([
+          animation(@animation),
+          "bg-slate-150 bg-[linear-gradient(90deg,var(--color-slate-150),var(--color-slate-100),var(--color-slate-150))] dark:bg-navy-500 dark:bg-none",
+          shape(@shape),
+          @class
+        ])
+      }
       {@rest}
     >
     </div>

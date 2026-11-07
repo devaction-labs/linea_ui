@@ -9,7 +9,7 @@ defmodule LineaUI.Installer.Css do
   @fonts ~s|@import "../../deps/linea_ui/assets/css/fonts.css";|
   @styles ~s|@import "../../deps/linea_ui/assets/css/linea_ui.css";|
   @source ~s|@source "../../deps/linea_ui/lib";|
-  @hugeicons ~s|@plugin "../../deps/linea_ui/assets/css/hugeicons.cjs" {\n  dir: "deps/hugeicons/icons";\n}|
+  @hugeicons ~s|@plugin "../../deps/linea_ui/assets/css/hugeicons.cjs" {\n  dir: "assets/vendor/hugeicons";\n}|
 
   @tailwind_import ~r/^@import\s+["']tailwindcss["'][^;\n]*;/m
   @styles_import ~r/^@import\s+["'][^"']*linea_ui\/assets\/css\/linea_ui\.css["'];/m

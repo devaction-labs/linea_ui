@@ -15,53 +15,87 @@
 @import "./parts/card.css";
 @import "./parts/sortable.css";
 @import "./parts/icons.css";
+@import "./parts/canvas.css";
+@import "./parts/canvas-acoes.css";
+@import "./parts/canvas-forms1.css";
+@import "./parts/canvas-forms2.css";
+@import "./parts/canvas-pills.css";
+@import "./parts/canvas-menus.css";
+@import "./parts/canvas-dados1.css";
+@import "./parts/canvas-dados2.css";
+@import "./parts/canvas-overlays.css";
+@import "./parts/canvas-structure.css";
+@import "./parts/canvas-dark.css";
+@import "./parts/canvas-dark-app1.css";
+@import "./parts/canvas-dark-app2.css";
+@import "./parts/canvas-dark-auth.css";
+@import "./parts/canvas-ai.css";
+@import "./parts/canvas-aura.css";
+@import "./parts/canvas-brand.css";
+@import "./parts/canvas-admin.css";
+@import "./parts/canvas-fiscal.css";
+@import "./parts/canvas-fin1.css";
+@import "./parts/canvas-fin2.css";
 
 @source "../../lib";
 @source "../js";
 
-@custom-variant dark (&:where(.dark, .dark *));
+@custom-variant dark (&:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *):not(:where([data-theme="light"], [data-theme="light"] *)));
 
 @theme {
-  --font-sans: "Poppins", ui-sans-serif, system-ui, sans-serif,
+  --font-sans: "Geist", ui-sans-serif, system-ui, sans-serif,
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  --font-inter: "Inter", sans-serif;
-  --color-navy-50: #e7e9ef;
-  --color-navy-100: #c2c9d6;
-  --color-navy-200: #a3adc2;
-  --color-navy-300: #697a9b;
-  --color-navy-400: #5c6b8a;
-  --color-navy-450: #465675;
-  --color-navy-500: #384766;
-  --color-navy-600: #313e59;
-  --color-navy-700: #26334d;
-  --color-navy-750: #222e45;
-  --color-navy-800: #202b40;
-  --color-navy-900: #192132;
+  --font-inter: "Geist", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
 
-  --color-slate-150: #e9eef5;
+  --color-slate-50: #f4f3f0; /* canvas */
+  --color-slate-100: #efeeea; /* sunken */
+  --color-slate-150: #e8e6e1; /* line */
+  --color-slate-200: #e2e0da;
+  --color-slate-300: #d9d6cf; /* line-strong */
+  --color-slate-400: #9d9ba1; /* faint */
+  --color-slate-500: #6c6b70; /* muted */
+  --color-slate-600: #4a4a50;
+  --color-slate-700: #2e2e33; /* fg */
+  --color-slate-800: #232327;
+  --color-slate-900: #17171a; /* ink */
+  --color-slate-950: #0f0f11;
 
-  --color-primary: #4f46e5; /* colors.indigo[600] */
-  --color-primary-focus: #4338ca; /* colors.indigo[700] */
+  --color-navy-50: #f3f3f4; /* ink */
+  --color-navy-100: #e6e6e8;
+  --color-navy-200: #d9d9dd; /* fg */
+  --color-navy-300: #a3a3ab; /* muted */
+  --color-navy-400: #74747c; /* faint */
+  --color-navy-450: #36363c; /* line-strong */
+  --color-navy-500: #2b2b30;
+  --color-navy-600: #232327; /* hover */
+  --color-navy-700: #1f1f23; /* raised */
+  --color-navy-750: #19191c; /* panel */
+  --color-navy-800: #151517; /* sunken */
+  --color-navy-900: #111113; /* canvas */
 
-  --color-secondary-light: #ff57d8;
-  --color-secondary: #f000b9;
-  --color-secondary-focus: #bd0090;
+  --color-primary: #0d8f91; /* accent */
+  --color-primary-focus: #08686b; /* accent-ink */
 
-  --color-accent-light: #818cf8; /* colors.indigo[400] */
-  --color-accent: #5f5af6;
-  --color-accent-focus: #4d47f5;
+  --color-secondary-light: #f0a256;
+  --color-secondary: #d97a1e; /* c4 */
+  --color-secondary-focus: #b8620f;
 
-  --color-info: #0ea5e9; /* colors.sky[500] */
-  --color-info-focus: #0284c7; /* colors.sky[600] */
+  --color-accent-light: #2bbfbd; /* accent on dark */
+  --color-accent: #0d8f91;
+  --color-accent-focus: #08686b;
 
-  --color-success: #10b981; /* colors.emerald[500] */
-  --color-success-focus: #059669; /* colors.emerald[600] */
+  --color-info: #2f5fd0;
+  --color-info-focus: #2450b4;
 
-  --color-warning: #ff9800;
-  --color-warning-focus: #e68200;
+  --color-success: #1a7f4b; /* pos */
+  --color-success-focus: #14663c;
 
-  --color-error: #ff5724;
-  --color-error-focus: #f03000;
+  --color-warning: #a16207; /* warn */
+  --color-warning-focus: #854f05;
+
+  --color-error: #c2410c; /* neg */
+  --color-error-focus: #9c330a;
 
   --shadow-soft: 0 3px 10px 0 rgb(48 46 56 / 6%);
   --shadow-soft-dark: 0 3px 10px 0 rgb(25 33 50 / 30%);
@@ -641,7 +675,7 @@ code.inline-code {
 .form-textarea,
 .form-select,
 .form-multiselect {
-  @apply appearance-none tracking-wide outline-hidden placeholder:font-light focus:outline-hidden;
+  @apply appearance-none text-slate-950 outline-hidden focus:outline-hidden dark:text-navy-50;
   contain: paint;
 }
 
@@ -744,8 +778,8 @@ code.inline-code {
 
 /* button */
 .btn {
-  @apply inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg px-5 py-2
-   text-center tracking-wide outline-hidden transition-all duration-200
+  @apply inline-flex h-9 cursor-pointer items-center justify-center gap-1.5 rounded-full px-4 py-0 text-[13px]
+   text-center outline-hidden transition-all duration-200
    focus:outline-hidden disabled:pointer-events-none;
 }
 
@@ -753,7 +787,7 @@ code.inline-code {
 .badge {
     @apply inline-flex items-center justify-center px-2 py-1.5
      text-xs font-inter tracking-wide align-baseline transition-all duration-200
-     leading-none rounded-sm font-medium
+     leading-none rounded-lg font-medium
 }
 
 /* tag: a clickable chip (LineOne's refined look: 28px high, 8px radius, 12.5px type) */
@@ -1005,7 +1039,7 @@ code.inline-code {
 
 /* timeline */
 .timeline {
-  @apply flex flex-col [--size:12px] [--line:2px];
+  @apply flex flex-col [--size:12px] [--tl-line:2px];
 }
 
 .timeline.line-space {
@@ -1021,7 +1055,7 @@ code.inline-code {
 }
 
 .timeline .timeline-item::before {
-  @apply absolute inset-0 order-[-1] w-[var(--line)] translate-x-[calc((var(--size)/2)-(var(--line)/2))] content-[''];
+  @apply absolute inset-0 order-[-1] w-[var(--tl-line)] translate-x-[calc((var(--size)/2)-(var(--tl-line)/2))] content-[''];
 }
 
 .timeline .timeline-item:not(:last-child) {
@@ -1198,6 +1232,40 @@ table.is-zebra > tbody > tr:nth-child(even) > td {
   @apply animate-[cubic-bezier(var(--ease-out))_fade-in_200ms];
 }
 
+/* A drawer removed by the server slides out and fades the scrim before it leaves the page. */
+.drawer.drawer-leaving .drawer-overlay {
+  opacity: 0;
+  transition: opacity 200ms ease-in;
+}
+
+.drawer.drawer-leaving .drawer-content {
+  animation: none;
+  opacity: 0;
+  transform: var(--drawer-from, translateX(100%));
+  transition:
+    transform 200ms cubic-bezier(var(--ease-in)),
+    opacity 200ms ease-in;
+}
+
+/* In the framed shell the scrim dims the main panel only, not the menu on the frame. */
+@media (min-width: 768px) {
+  .linea-frame .drawer .drawer-overlay {
+    inset: 0.625rem 0.625rem 0.625rem calc(16rem + 1.25rem) !important;
+    border-radius: 22px;
+  }
+
+  /* The sheet floats inside the panel as the canvas draws it: 20px from the top, the right and the bottom. */
+  .linea-frame .drawer .drawer-content.top-3.right-3 {
+    top: 20px !important;
+    right: 20px !important;
+    height: calc(100% - 40px) !important;
+  }
+
+  .linea-frame .drawer .drawer-content [data-drawer-header] {
+    padding-top: 20px !important;
+  }
+}
+
 .drawer .drawer-overlay.animate\:leave {
   @apply animate-[cubic-bezier(var(--ease-in))_fade-out_200ms];
 }
@@ -1228,4 +1296,68 @@ table.is-zebra > tbody > tr:nth-child(even) > td {
   }
 }
 
+}
+
+/* accordion, canvas variant: 14px frame, 14px 16px titles in the ink, a muted 13.5/21 body */
+/* the title row (or the `:header` row); not the header's round chevron button, which keeps its 32px */
+[data-accordion][data-variant="canvas"] :is(summary.ac-trigger, .ac-header) {
+  padding: 14px 16px;
+  font-size: 14px;
+  color: var(--color-slate-900);
+}
+[data-accordion][data-variant="canvas"] .ac-header {
+  background: transparent;
+  padding-block: 8px;
+}
+[data-accordion][data-variant="canvas"] .ac-icon {
+  color: var(--color-slate-900);
+}
+[data-accordion][data-variant="canvas"] .ac-body {
+  padding: 0 16px 16px;
+  font-size: 13.5px;
+  line-height: 21px;
+  color: var(--color-slate-500);
+}
+
+/* timeline, compact: the canvas `sg-tl` (a 28px tile, a 1px line, 18px between items) */
+.timeline.is-compact {
+  --size: 28px;
+  --tl-line: 1px;
+  --space: 2px;
+}
+.timeline.is-compact .timeline-item {
+  padding-bottom: 18px;
+}
+.timeline.is-compact .timeline-item:last-child {
+  padding-bottom: 0;
+}
+.timeline.is-compact .timeline-item:not(:last-child)::before {
+  background-color: var(--line, var(--color-slate-150));
+}
+.timeline.is-compact .timeline-item-content {
+  padding-top: 0;
+  padding-left: 14px;
+}
+.timeline.is-compact .timeline-item-title {
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 500;
+  color: var(--color-slate-900);
+}
+.dark .timeline.is-compact .timeline-item-title:not([data-theme="light"] *),
+[data-theme="dark"] .timeline.is-compact .timeline-item-title {
+  color: var(--color-navy-50);
+}
+.timeline.is-compact .timeline-item-time {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  line-height: 20px;
+  color: var(--color-slate-400);
+}
+.timeline.is-compact .timeline-item-description {
+  margin-top: 0;
+  padding: 0;
+  font-size: 12.5px;
+  line-height: 20px;
+  color: var(--color-slate-400);
 }

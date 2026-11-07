@@ -1,0 +1,140 @@
+/* ---------- Assistente (IA): ai_chat, ai_composer, ai_message, ai_proposal, ai_tool_trace, conversation_list,
+   prompt_suggestions. The canvas rules (inline in the canvas markup) as classes; the dark theme comes from the
+   canvas variables, so only what the variables do not cover is set below. ---------- */
+
+/* chip: a query, a context, an attachment */
+.ai-chip{display:flex;align-items:center;gap:5px;height:24px;padding:0 9px;border-radius:999px;background:var(--sunken);box-shadow:inset 0 0 0 1px var(--line);font-size:12px;color:var(--fg)}
+.ai-chip.neg{box-shadow:inset 0 0 0 1px var(--neg);color:var(--neg)}
+
+/* tool trace */
+.ai-trace{display:flex;flex-direction:column;gap:10px}
+.ai-trace-line{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:12px;color:var(--faint)}
+.ai-trace-running{display:flex;align-items:center;gap:6px}
+.ai-trace-fail{color:var(--neg)}
+.sg-card.ai-trace-detail{display:flex;flex-direction:column;gap:8px;padding:12px 14px;font-size:12.5px}
+.ai-trace-row{display:flex;align-items:center;gap:10px}
+.ai-trace-row b{font-weight:500}
+.ai-trace-detail-text{margin-left:auto}
+
+/* message */
+.ai-msg{display:flex;align-items:flex-start;gap:10px}
+.ai-msg.me{align-items:center;justify-content:flex-end}
+.ai-msg.me .sg-bubble{max-width:420px;border-bottom-right-radius:6px;box-shadow:inset 0 0 0 1px var(--line)}
+.ai-spark.sg-ic{width:30px;height:30px;border-radius:10px}
+.ai-body{display:flex;flex-direction:column;gap:10px;max-width:560px;min-width:0;padding:16px 18px;border-radius:18px;background:var(--panel);box-shadow:0 0 0 1px var(--line),var(--shadow-sm)}
+.ai-body p{margin:0;font-size:14px;line-height:22px;color:var(--fg)}
+.ai-msg[data-streaming] .ai-body>p:last-of-type::after{content:"";display:inline-block;width:8px;height:16px;margin-left:2px;vertical-align:-3px;background:var(--accent);border-radius:2px}
+.ai-pending{display:flex;flex-direction:column;gap:8px}
+
+/* proposal */
+.sg-card.ai-proposal{width:100%;box-shadow:0 0 0 1px var(--line)}
+.ai-body .ai-proposal{margin-top:4px}
+.ai-proposal-head{display:flex;align-items:center;gap:8px;padding:12px 16px;border-bottom:1px solid var(--line)}
+.ai-proposal-head b{font-size:13.5px}
+.ai-proposal-spark{color:var(--accent-ink);display:inline-flex}
+.ai-proposal-state{margin-left:auto}
+.ai-proposal-rows{display:grid;grid-template-columns:96px 1fr;gap:8px 14px;padding:14px 16px;font-size:13px}
+.ai-proposal-value{display:flex;flex-wrap:wrap;align-items:center;gap:6px;color:var(--ink);min-width:0}
+.ai-proposal-value .ai-from{font-size:12px}
+.ai-proposal-value .ai-to{font-size:12px;padding:2px 6px;border-radius:6px;background:var(--pos-soft);color:var(--pos)}
+.ai-proposal-value .ai-preview{max-width:100%;font-size:13px}
+.ai-proposal-foot{display:flex;align-items:center;gap:8px;padding:10px 16px;border-top:1px solid var(--line);font-size:12.5px;color:var(--faint)}
+.ai-proposal-foot.actions{justify-content:flex-end;padding:12px 16px;background:var(--sunken)}
+.ai-proposal-foot.line.neg{color:var(--neg)}
+.ai-proposal-foot .spinner{width:14px;height:14px}
+.ai-proposal-link{margin-left:auto;cursor:pointer;background:none;border:0;padding:0;font:inherit}
+
+/* composer */
+.ai-composer{display:flex;flex-direction:column;gap:8px;width:100%;padding:8px 8px 8px 10px;border-radius:20px;background:var(--panel);box-shadow:0 0 0 1px var(--line),var(--shadow-lg)}
+.ai-composer-files{display:flex;flex-direction:column;gap:8px}
+.ai-composer-row{display:flex;align-items:center;gap:10px}
+.ai-input{flex:1;min-width:0;max-height:160px;margin:0;padding:0;border:0;outline:0;resize:none;background:transparent;box-shadow:none;font:14px/21px var(--sans);color:var(--ink);field-sizing:content}
+.ai-input:focus{box-shadow:none;outline:0}
+.ai-input::placeholder{color:var(--faint)}
+.ai-send{display:grid;place-items:center;flex:none;width:38px;height:38px;padding:0;border:0;border-radius:50%;background:var(--accent);color:var(--on-accent,#fff);cursor:pointer}
+.ai-send.stop{background:var(--solid);color:var(--on-solid)}
+.ai-send.stop i{width:11px;height:11px;border-radius:2px;background:currentColor}
+.ai-send:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.ai-composer:has(.ai-input:placeholder-shown) .ai-send:not(.stop){opacity:.45;pointer-events:none}
+
+/* prompt suggestions */
+.ai-suggestions{display:flex;flex-wrap:wrap;align-items:center;gap:16px;padding:8px 4px}
+.ai-suggestions.pills{gap:8px;padding:0}
+.sg-card.ai-suggestion{display:flex;flex-direction:column;align-items:stretch;gap:8px;width:170px;min-height:var(--ai-sug-h,128px);padding:14px;text-align:left;cursor:pointer;font:inherit;border:0;box-shadow:0 0 0 1px var(--line),0 10px 24px -14px rgb(20 20 25/.35);transition:box-shadow .15s}
+.ai-suggestions.flat .ai-suggestion{width:180px}
+.sg-card.ai-suggestion:hover{box-shadow:0 0 0 1px var(--line-strong),0 10px 24px -14px rgb(20 20 25/.35)}
+.sg-card.ai-suggestion:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.ai-suggestion-title{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent-ink)}
+.ai-suggestion-text{font-size:13px;line-height:19px;color:var(--fg)}
+.ai-suggestion-go{margin-top:auto;align-self:flex-end;display:inline-grid}
+.sg-tag.ai-pill{height:32px;padding:0 14px;border:0;cursor:pointer;font:inherit;font-size:12.5px;color:var(--muted);background:var(--sunken)}
+.sg-tag.ai-pill:hover{color:var(--ink)}
+.sg-tag.ai-pill:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* greeting */
+.ai-greeting{display:flex;flex-direction:column;gap:2px}
+.ai-greeting h1,.ai-greeting h2{margin:0;font-size:40px;line-height:1.15;font-weight:600;letter-spacing:-.035em}
+.ai-greeting h1{background:linear-gradient(90deg,var(--accent),#8a5cd6);-webkit-background-clip:text;background-clip:text;color:transparent;width:max-content}
+.ai-greeting h2{color:var(--line-strong)}
+.ai-greeting.sm h1,.ai-greeting.sm h2{font-size:30px}
+
+/* conversation list */
+.ai-conversations{display:flex;flex-direction:column;flex:none;gap:4px;width:270px;padding:16px 12px;border-radius:16px;box-shadow:inset 0 0 0 1px var(--line);overflow:hidden;background:color-mix(in srgb,var(--accent) 5%,var(--sunken))}
+.ai-conversations.rail{border-radius:0;box-shadow:none;border-right:1px solid var(--line);background:var(--canvas)}
+.ai-conversations:has(.ai-conversations-empty){gap:8px;background:var(--canvas)}
+.ai-conversations-head{display:flex;align-items:center;gap:10px;padding:2px 6px 12px}
+.ai-conversations-head b{font-size:15px}
+.ai-conversations .sg-btn.block{justify-content:center}
+.ai-conversations .sg-kbd{margin-left:6px}
+.ai-conversations-search{margin:8px 0 0}
+.ai-conversations-search .sg-input{height:36px}
+.ai-conversations-search .sg-input input{color:var(--ink)}
+.ai-conversations-list{display:flex;flex-direction:column;gap:4px;min-height:0;overflow-y:auto}
+.ai-conversations-day{font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:14px 10px 4px}
+.ai-conv{display:flex;align-items:flex-start;gap:10px;padding:9px 10px;border-radius:12px;text-decoration:none;cursor:pointer}
+.ai-conv:hover:not(.on){background:var(--hover)}
+.ai-conv.on{background:var(--panel);box-shadow:0 0 0 1px var(--line),var(--shadow-sm)}
+.ai-conv:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.ai-conv-icon{display:inline-flex;margin-top:1px;color:var(--faint)}
+.ai-conv.on .ai-conv-icon{color:var(--accent-ink)}
+.ai-conv-text{display:flex;flex-direction:column;gap:1px;min-width:0}
+.ai-conv-title{display:flex;align-items:center;gap:6px;font-size:13.5px;font-weight:500;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ai-conv.on .ai-conv-title{font-weight:550}
+.ai-conv-status{font-size:12px}
+.ai-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);flex:none}
+.ai-conversations-empty{display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px;padding:40px 12px}
+.ai-conversations-empty b{font-size:14px}
+.ai-conversations-empty .faint{font-size:12.5px}
+
+/* chat */
+.ai-chat{display:flex;flex-direction:column;min-width:0}
+.ai-chat-messages{display:flex;flex-direction:column;gap:inherit}
+.ai-chat-messages:empty{display:none}
+.ai-chat-intro{display:flex;flex-direction:column;gap:22px}
+.ai-chat-body{display:flex;flex-direction:column;gap:14px}
+.ai-chat.bare{gap:14px}
+.ai-chat.bare.start{gap:22px;padding:8px}
+.ai-chat-foot{width:100%}
+.ai-chat-footnote{margin:8px 0 0;text-align:center;font-size:11.5px;color:var(--faint)}
+.ai-chat.card{max-width:760px;border-radius:20px;background:var(--panel);box-shadow:0 0 0 1px var(--line);overflow:hidden}
+.ai-chat-head{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--line)}
+.ai-chat-title{display:flex;flex-direction:column;font-size:11.5px;color:var(--faint)}
+.ai-chat-title b{font-size:13.5px}
+.ai-chat.card .ai-chat-body{gap:16px;padding:20px}
+.ai-chat.card .ai-chat-foot{padding:0 16px 14px}
+.ai-chat.page{flex:1;min-height:0}
+.ai-chat.page .ai-chat-body{flex:1;min-height:0;gap:22px;padding:28px 40px 20px;overflow-y:auto}
+.ai-chat.page .ai-chat-messages{gap:22px}
+.ai-chat.page .ai-chat-foot{padding:0 40px 14px}
+.ai-chat.page .ai-chat-footnote{margin-top:10px;font-size:12px}
+.ai-chat.page .ai-greeting{padding:6px 0 10px}
+.ai-chat.page .ai-suggestions{flex-wrap:nowrap}
+.ai-chat.page .ai-suggestion{--ai-sug-h:132px}
+
+@media (prefers-reduced-motion:no-preference){
+  .ai-suggestion{transition:box-shadow .15s,transform .15s}
+}
+
+/* the screen (`page`): the send button is never dimmed and the rows of a proposal have the board's 90px label */
+.ai-chat.page .ai-composer:has(.ai-input:placeholder-shown) .ai-send:not(.stop){opacity:1;pointer-events:auto}
+.ai-chat.page .ai-proposal-rows{grid-template-columns:90px 1fr}

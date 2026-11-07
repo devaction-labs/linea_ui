@@ -394,12 +394,12 @@ defmodule LineaUI.Components.AppShellTest do
         </.app_shell>
         """)
 
-      assert ["linea-frame", "bg-slate-150", "md:flex-row", "md:p-2.5"] --
+      assert ["linea-frame", "bg-slate-50", "md:flex-row", "md:p-2.5"] --
                classes(html, "#s") == []
 
       refute "is-sidebar-open" in classes(html, "#s")
       assert [_] = find(html, "#s > #menu") |> Enum.to_list()
-      assert ["md:rounded-xl", "bg-white"] -- classes(html, "#s > main") == []
+      assert ["md:rounded-[22px]", "bg-white"] -- classes(html, "#s > main") == []
       assert [_] = find(html, "#s > main > #page") |> Enum.to_list()
     end
 
@@ -564,9 +564,9 @@ defmodule LineaUI.Components.AppShellTest do
         </.page_header>
         """)
 
-      assert "text-[28px]" in classes(html, "h1")
+      assert "text-[34px]" in classes(html, "h1")
       assert find(html, "h1") |> LazyHTML.text() =~ "Order PV-1283"
-      assert find(html, "header > div p") |> LazyHTML.text() == "Clinica"
+      assert find(html, "header > div p") |> LazyHTML.text() |> String.trim() == "Clinica"
       assert attr_of(html, "nav a", "href") == ["/orders"]
       assert attr_of(html, "nav [aria-current=page]", "aria-current") == ["page"]
       assert attr_of(html, "#ph-clock", "phx-hook") == ["LineaUI.ShellClock"]
@@ -574,7 +574,7 @@ defmodule LineaUI.Components.AppShellTest do
       assert [_] = find(html, "button[aria-label=Notifications] svg") |> Enum.to_list()
       assert [_] = find(html, "#b") |> Enum.to_list()
       assert [_] = find(html, "#go") |> Enum.to_list()
-      assert [_] = find(html, "header > div.border-b > #t") |> Enum.to_list()
+      assert [_] = find(html, "header > div.flex-col > #t") |> Enum.to_list()
 
       own = render(~H|<.page_header variant="page" title="T" bell>
   <:notifications><i id="own" /></:notifications>
@@ -589,6 +589,80 @@ defmodule LineaUI.Components.AppShellTest do
 
       inline = render(~H|<.page_header title="T" />|)
       assert find(inline, "h2") |> Enum.count() == 1
+    end
+  end
+
+  describe "page_header canvas options" do
+    test "a back link, an inline badge and no empty top row" do
+      html =
+        render(~H"""
+        <.page_header
+          variant="page"
+          title="Pedido"
+          back="/pedidos"
+          back_label="Pedidos"
+          badge_position="inline"
+        >
+          <:badge><span id="b">Aprovação</span></:badge>
+          <:actions><button id="go">Aprovar</button></:actions>
+        </.page_header>
+        """)
+
+      assert attr_of(html, "header > a", "href") == ["/pedidos"]
+      assert find(html, "header > a") |> LazyHTML.text() =~ "Pedidos"
+      assert "gap-1.5" in classes(html, "header")
+      assert [_] = find(html, "h1 + div > #b") |> Enum.to_list()
+      assert find(html, ".ml-auto") |> Enum.to_list() == []
+    end
+
+    test "the top row stays when it has crumbs or a bell" do
+      html = render(~H|<.page_header variant="page" title="T" bell />|)
+      assert [_] = find(html, ".ml-auto button") |> Enum.to_list()
+      assert "gap-[18px]" in classes(html, "header")
+
+      plain = render(~H|<.page_header variant="page" title="T" description="342 ativos" />|)
+      assert find(plain, ".ml-auto") |> Enum.to_list() == []
+      assert "mt-1.5" in classes(plain, "p")
+    end
+  end
+
+  describe "tab_bar and the bare rail" do
+    test "a tab bar marks the active tab and names every icon" do
+      html =
+        render(~H"""
+        <.tab_bar label="Seções" current="/vendas">
+          <:tab navigate="/" label="Início"><i /></:tab>
+          <:tab navigate="/vendas" label="Vendas"><i /></:tab>
+        </.tab_bar>
+        """)
+
+      assert attr_of(html, "nav", "aria-label") == ["Seções"]
+      assert attr_of(html, "a[aria-current=page]", "aria-label") == ["Vendas"]
+      assert find(html, "a.linea-tabbar-tab") |> Enum.count() == 2
+    end
+
+    test "the framed shell puts the tab bar under the panel, for phones" do
+      html =
+        render(~H"""
+        <.app_shell layout="framed">
+          <:tab_bar>
+            <.tab_bar>
+              <:tab href="#" label="A" active><i /></:tab>
+            </.tab_bar>
+          </:tab_bar>
+          x
+        </.app_shell>
+        """)
+
+      assert [_] = find(html, "main + div.md\\:hidden > nav.linea-tabbar") |> Enum.to_list()
+    end
+
+    test "a rail with no brand marks its bar bare" do
+      bare = render(~H|<.framed_sidebar id="m">x</.framed_sidebar>|)
+      assert "rail-bar-bare" in classes(bare, ".rail-bar")
+
+      branded = render(~H|<.framed_sidebar id="m"><:wordmark>S</:wordmark>x</.framed_sidebar>|)
+      refute "rail-bar-bare" in classes(branded, ".rail-bar")
     end
   end
 

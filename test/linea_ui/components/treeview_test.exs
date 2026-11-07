@@ -1,6 +1,8 @@
 defmodule LineaUI.Components.TreeviewTest do
   use LineaUI.ComponentCase, async: true
 
+  defp attr_of(html, selector, name), do: html |> find(selector) |> LazyHTML.attribute(name)
+
   test "a branch is a details element, a leaf a focusable row" do
     html =
       render(~H"""
@@ -78,6 +80,30 @@ defmodule LineaUI.Components.TreeviewTest do
     assert LazyHTML.attribute(root, "data-on-select") == ["picked"]
     assert LazyHTML.attribute(root, "phx-target") == ["#c"]
     assert [_] = find(html, "li#row-1 > div[role=none] [data-tree-leaf=file-1]") |> Enum.to_list()
+  end
+
+  describe "the canvas variant" do
+    test "marks the tree, draws a childless branch and the checkboxes" do
+      html =
+        render(~H"""
+        <.treeview id="t" variant="canvas" chevrons={false} on_check="check">
+          <.tree_item id="tintas" label="Tintas" checked="mixed" expanded>
+            <.tree_item id="acrilica" label="Acrílica" checked />
+            <.tree_item id="esmalte" label="Esmalte" checked={false} />
+          </.tree_item>
+          <.tree_item id="out" label="Outubro" branch />
+        </.treeview>
+        """)
+
+      assert ["tree-canvas", "tree-no-chevrons"] -- classes(html, "ul#t") == []
+      assert attr_of(html, "ul#t", "data-on-check") == ["check"]
+      assert [_] = find(html, "details#out") |> Enum.to_list()
+      assert attr_of(html, "#tintas > summary", "aria-checked") == ["mixed"]
+      assert "mixed" in classes(html, "[data-tree-check=tintas]")
+      assert "on" in classes(html, "[data-tree-check=acrilica]")
+      assert attr_of(html, "[data-tree-check=esmalte]", "data-checked") == ["false"]
+      assert attr_of(html, "[data-tree-leaf=esmalte]", "aria-checked") == ["false"]
+    end
   end
 end
 

@@ -44,6 +44,7 @@ const axisBuild = (config, env, uid) => {
     h("g", {class: "linea-chart-axes", "aria-hidden": "true"}, drawn.layers.axes),
     h("g", {class: "linea-chart-plot"}, drawn.layers.series),
     h("g", {class: "linea-chart-datalabels", "aria-hidden": "true"}, drawn.layers.labels),
+    h("g", {class: "linea-chart-annotations", "aria-hidden": "true"}, drawn.layers.annotations),
     overlay,
   ]
   return {data, legend, layers, defs: drawn.defs, desc: seriesSummary(data), probe: (x, y) => hover(layout, drawn.boxes, x, y), keys: {slots: slotsOf(layout), at: (slot) => slotPoint(layout, slot)}, layout, drawn}

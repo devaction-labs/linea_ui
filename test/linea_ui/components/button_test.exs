@@ -1,104 +1,77 @@
 defmodule LineaUI.Components.ButtonTest do
   use LineaUI.ComponentCase, async: true
 
-  test "a neutral solid button by default, typed as a plain button" do
+  test "a plain canvas button by default, typed as a plain button" do
     html = render(~H"<.button>Go</.button>")
     assert [button] = find(html, "button[type=button]") |> Enum.to_list()
     assert String.trim(LazyHTML.text(button)) == "Go"
-    assert "bg-slate-150" in classes(html, "button")
+    assert "sg-btn" in classes(html, "button")
+    refute "solid" in classes(html, "button")
   end
 
-  test "color, variant, size and shape pick LineOne's classes, and class overrides them" do
-    html =
-      render(~H"""
-      <.button color="primary" variant="outline" size="sm" shape="pill" class="px-8">Go</.button>
-      """)
+  test "color and variant pick the canvas tone, size picks its height, and class is kept" do
+    assert "solid" in classes(render(~H|<.button color="mono">Go</.button>|), "button")
+    assert "accent" in classes(render(~H|<.button color="primary">Go</.button>|), "button")
 
-    classes = classes(html, "button")
-    assert "border-primary" in classes
-    assert "dark:text-accent-light" in classes
-    assert "h-8" in classes
-    assert "rounded-full" in classes
-    assert "px-8" in classes
-    refute "px-4" in classes
-    refute "rounded-md" in classes
+    assert "soft" in classes(
+             render(~H|<.button color="primary" variant="soft">Go</.button>|),
+             "button"
+           )
+
+    assert "danger" in classes(
+             render(~H|<.button color="error" variant="soft">Go</.button>|),
+             "button"
+           )
+
+    assert "ghost" in classes(render(~H|<.button variant="flat">Go</.button>|), "button")
+
+    html = render(~H|<.button size="sm" class="px-8">Go</.button>|)
+    assert "sm" in classes(html, "button")
+    assert "px-8" in classes(html, "button")
+
+    assert "lg" in classes(render(~H|<.button size="lg">Go</.button>|), "button")
+    assert "sq" in classes(render(~H|<.button shape="square">Go</.button>|), "button")
   end
 
-  test "icon makes a square button" do
-    assert "size-9" in classes(render(~H(<.button icon aria-label="x">x</.button>)), "button")
+  test "icon makes the round canvas icon button" do
+    html = render(~H|<.button icon aria-label="More">+</.button>|)
+    assert "sg-ib" in classes(html, "button")
+    assert "plain" in classes(render(~H|<.button icon variant="flat">+</.button>|), "button")
+    assert "sm" in classes(render(~H|<.button icon size="sm">+</.button>|), "button")
   end
 
   test "navigate renders a link, and disabled marks it" do
-    html = render(~H(<.button navigate="/orders" disabled>Orders</.button>))
-    assert [_] = find(html, "a[href='/orders'][aria-disabled=true]") |> Enum.to_list()
+    html = render(~H|<.button navigate="/x" disabled>Go</.button>|)
+    assert [link] = find(html, "a") |> Enum.to_list()
+    assert LazyHTML.attribute(link, "aria-disabled") == ["true"]
+    assert LazyHTML.attribute(link, "tabindex") == ["-1"]
   end
 
-  test "loading disables the button, marks it busy and shows a spinner of the text color" do
-    html = render(~H(<.button loading loading_label="Saving">Saving…</.button>))
-
-    assert [_] = find(html, "button[disabled][aria-busy=true]") |> Enum.to_list()
-    assert [_] = find(html, "button [role=status][aria-label=Saving]") |> Enum.to_list()
-    assert "border-current" in classes(html, "[role=status]")
-    assert "size-5" in classes(html, "[role=status]")
-    # a busy button stays more readable than a disabled one
-    assert "disabled:opacity-85" in classes(html, "button")
-    refute "disabled:opacity-60" in classes(html, "button")
+  test "loading disables the button, marks it busy and shows a spinner" do
+    html = render(~H|<.button loading>Save</.button>|)
+    assert [button] = find(html, "button") |> Enum.to_list()
+    assert LazyHTML.attribute(button, "disabled") == [""]
+    assert LazyHTML.attribute(button, "aria-busy") == ["true"]
+    assert [_ | _] = find(html, "button [role=status]") |> Enum.to_list()
+    assert "sg-spin" in classes(html, "button [role=status]")
+    assert "xs" in classes(html, "button [role=status]")
   end
 
-  test "loading on a link marks it disabled and busy" do
-    html = render(~H(<.button navigate="/orders" loading>Orders</.button>))
+  test "pip puts the accent dot on an icon button" do
+    html = render(~H|<.button icon pip aria-label="Notices">+</.button>|)
+    assert [_] = find(html, "button.sg-ib span.pip") |> Enum.to_list()
 
-    assert [_] =
-             find(html, "a[aria-disabled=true][aria-busy=true] [role=status]") |> Enum.to_list()
+    assert find(render(~H|<.button icon aria-label="Notices">+</.button>|), ".pip")
+           |> Enum.empty?()
   end
 
   test "an idle button has no spinner nor aria-busy" do
-    html = render(~H(<.button>Save</.button>))
-    assert find(html, "[role=status]") |> Enum.to_list() == []
-    assert find(html, "[aria-busy]") |> Enum.to_list() == []
+    html = render(~H|<.button>Save</.button>|)
+    assert attr_of(html, "button", "aria-busy") == []
+    assert find(html, "button [role=status]") |> Enum.to_list() == []
   end
 
-  test "current color inherits the parent's text" do
-    html =
-      render(~H"""
-      <.button id="a" variant="flat" color="current">A</.button>
-      <.button id="b" variant="soft" color="current">B</.button>
-      <.button id="c" variant="outline" color="current">C</.button>
-      """)
-
-    assert "text-current" in classes(html, "#a")
-    assert "dark:text-current" in classes(html, "#a")
-    assert "hover:bg-slate-300/20" in classes(html, "#a")
-    assert "text-current" in classes(html, "#b")
-    assert "border-current" in classes(html, "#c")
-  end
-
-  test "white color for colored surfaces" do
-    html =
-      render(~H"""
-      <.button id="a" variant="flat" color="white">A</.button>
-      <.button id="b" color="white">B</.button>
-      <.button id="c" variant="outline" color="white">C</.button>
-      """)
-
-    assert ["text-white", "hover:bg-white/20"] -- classes(html, "#a") == []
-    assert ["bg-white", "text-slate-800"] -- classes(html, "#b") == []
-    assert ["border-white", "text-white"] -- classes(html, "#c") == []
-  end
-
-  test "glass is translucent white whatever the color" do
-    html =
-      render(~H"""
-      <.button id="a" variant="glass">A</.button>
-      <.button id="b" variant="glass" color="primary" size="sm">B</.button>
-      """)
-
-    for id <- ["#a", "#b"] do
-      assert ["bg-white/20", "border-white/10", "text-white", "hover:bg-white/30"] --
-               classes(html, id) == []
-    end
-
-    refute "bg-primary" in classes(html, "#b")
-    assert "h-8" in classes(html, "#b")
+  defp attr_of(html, selector, name) do
+    html |> find(selector) |> LazyHTML.attribute(name)
   end
 end

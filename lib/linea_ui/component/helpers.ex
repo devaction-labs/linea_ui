@@ -15,7 +15,27 @@ defmodule LineaUI.Component.Helpers do
   @spec colors() :: [String.t()]
   def colors, do: @colors
 
-  @doc "A unique DOM id, for a component that needs one and was not given it."
+  @doc """
+  A DOM id that is the same on every render of the same component, for one that needs an id
+  (hooks, `for=`) and was not given it.
+
+  Derived from `name` in `assigns` when there is one (sanitized to a valid id), else from a hash of
+  the identifying `keys` (never `value`, which changes as the user types). Two instances on a page
+  with neither `id` nor `name` and equal `keys` get the same id: pass `id` to tell them apart.
+  """
+  @spec stable_id(String.t(), map(), [atom()]) :: String.t()
+  def stable_id(prefix, assigns, keys \\ [:label, :placeholder, :help]) do
+    case Map.get(assigns, :name) do
+      name when is_binary(name) and name != "" ->
+        "#{prefix}-#{String.replace(name, ~r/[^A-Za-z0-9_\-:.]/, "_")}"
+
+      _ ->
+        hash = :erlang.phash2(for(key <- keys, do: Map.get(assigns, key)))
+        "#{prefix}-#{hash}"
+    end
+  end
+
+  @doc "A unique DOM id; changes on every call, so use it only outside render (e.g. toast ids)."
   @spec gen_id(String.t()) :: String.t()
   def gen_id(prefix \\ "linea"),
     do: "#{prefix}-#{System.unique_integer([:positive, :monotonic])}"
@@ -38,7 +58,7 @@ defmodule LineaUI.Component.Helpers do
     |> assign(:errors, Enum.map(errors, &translate_error/1) ++ Map.get(assigns, :errors, []))
   end
 
-  def assign_field(assigns), do: assign_new(assigns, :errors, fn -> [] end)
+  def assign_field(assigns), do: put_default(assigns, :errors, [])
 
   defp fill(assigns, key, value) do
     case Map.get(assigns, key) do
@@ -77,6 +97,32 @@ defmodule LineaUI.Component.Helpers do
       String.replace(acc, "%{#{key}}", fn _ -> to_string(value) end)
     end)
   end
+
+  @doc """
+  Assigns `key` to the value `fun` computes from other assigns, marking it as changed only
+  when one of `deps` changed.
+
+  A value put with `assign/3` in a function component is new on every render (the component
+  gets fresh assigns), so every expression reading it is sent again. With `assign_derived/4`
+  the value is still computed (the template may need it next to something else that changed),
+  but LiveView skips what reads only it while its inputs stay the same.
+  """
+  @spec assign_derived(map(), atom(), [atom()], (-> term())) :: map()
+  def assign_derived(%{__changed__: changed} = assigns, key, deps, fun) when is_map(changed) do
+    if Enum.any?(deps, &is_map_key(changed, &1)),
+      do: assign(assigns, key, fun.()),
+      else: Map.put(assigns, key, fun.())
+  end
+
+  def assign_derived(assigns, key, _deps, fun), do: assign(assigns, key, fun.())
+
+  @doc """
+  Puts `value` under `key` when the assigns have no such key, like `assign_new/3`, but as a
+  constant: it is not marked as changed on every render.
+  """
+  @spec put_default(map(), atom(), term()) :: map()
+  def put_default(assigns, key, _value) when is_map_key(assigns, key), do: assigns
+  def put_default(assigns, key, value), do: assign_derived(assigns, key, [], fn -> value end)
 
   @doc "`\"true\"` or `\"false\"`, for `data-*` and `aria-*` attributes."
   @spec bool(boolean()) :: String.t()

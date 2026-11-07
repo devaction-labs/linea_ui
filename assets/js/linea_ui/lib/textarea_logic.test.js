@@ -29,3 +29,8 @@ test("growHeight follows the content between the rows and maxRows", () => {
   assert.deepEqual(growHeight({...base, scrollHeight: 400, maxRows: 6}), {height: 142, scroll: true})
   assert.deepEqual(growHeight({...base, scrollHeight: 100, maxRows: 6}), {height: 102, scroll: false})
 })
+
+test("counterState with a format", () => {
+  assert.deepEqual(counterState({length: 58, max: 300, format: "%{count} de %{max}"}), {text: "58 de 300", tone: "ok"})
+  assert.deepEqual(counterState({length: 301, max: 300, format: "%{count} de %{max}"}), {text: "301 de 300", tone: "bad"})
+})

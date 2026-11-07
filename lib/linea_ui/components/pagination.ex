@@ -50,7 +50,7 @@ defmodule LineaUI.Components.Pagination do
 
   @icon %{"sm" => "size-4", "md" => "size-4", "lg" => "size-4.5"}
 
-  @shapes %{"rounded" => "rounded-lg", "pill" => "rounded-full"}
+  @shapes %{"rounded" => "rounded-lg", "pill" => "rounded-full", "canvas" => "rounded-[9px]"}
 
   @focus "focus-visible:relative focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-primary/55 dark:focus-visible:outline-accent/55"
 
@@ -58,7 +58,7 @@ defmodule LineaUI.Components.Pagination do
 
   @fill "bg-slate-150 dark:bg-navy-500"
 
-  @current "bg-primary text-white hover:bg-primary-focus focus:bg-primary-focus active:bg-primary-focus/90 dark:bg-accent dark:hover:bg-accent-focus dark:focus:bg-accent-focus dark:active:bg-accent/90"
+  @current "bg-slate-900 text-white hover:bg-slate-900 focus:bg-slate-900 active:bg-slate-900 dark:bg-navy-50 dark:text-navy-900 dark:hover:bg-navy-50 dark:focus:bg-navy-50 dark:active:bg-navy-50"
 
   @disabled "pointer-events-none opacity-60"
 
@@ -85,7 +85,7 @@ defmodule LineaUI.Components.Pagination do
       def handle_event("paginate", %{"page" => page}, socket),
         do: {:noreply, assign(socket, page: String.to_integer(page))}
 
-  The arrow at either end and the ellipsis are inert `<span>`s.
+  The arrow at either end and the ellipsis (`…`) are inert `<span>`s.
 
   With `total_entries` or `page_sizes` the bar becomes a footer row: the summary
   (`role="status"`) on the left, the select and the pages on the right. The select sits in
@@ -148,7 +148,14 @@ defmodule LineaUI.Components.Pagination do
 
   attr(:target, :any, default: nil, doc: "The `phx-target` of `on_change`.")
   attr(:divided, :boolean, default: false, doc: "Separate buttons instead of one joined bar.")
-  attr(:shape, :string, default: "rounded", values: ~w(rounded pill))
+
+  attr(:shape, :string,
+    default: "rounded",
+    values: ~w(rounded pill canvas),
+    doc:
+      "`canvas` is the design canvas pager: square-ish ink current page, mono numbers, the arrows as 28px bordered circles after the pages (not dimmed at either end)."
+  )
+
   attr(:size, :string, default: "md", values: ~w(sm md lg))
   attr(:arrows, :boolean, default: true, doc: "Show the previous and next arrows.")
   attr(:prev_label, :string, default: "Previous page")
@@ -162,6 +169,11 @@ defmodule LineaUI.Components.Pagination do
   attr(:class, :any, default: nil)
   attr(:rest, :global, default: %{"aria-label": "Pagination"})
 
+  # What an entry of the bar reads; the entries are comprehension variables, so a new page
+  # sends the entries that changed, not the bar.
+  @item_deps ~w(siblings boundaries arrows shape size divided prev_label next_label page_label
+                patch navigate href on_change target)a
+
   def pagination(assigns) do
     total = max(total_pages(assigns), 1)
     page = assigns.page |> max(1) |> min(total)
@@ -174,13 +186,39 @@ defmodule LineaUI.Components.Pagination do
       |> Enum.concat([{:next, page + 1, page == total}])
       |> Enum.filter(&shown?(&1, assigns.arrows))
 
+    last = length(items) - 1
+    page_deps = [:page, :total_pages, :total_entries, :page_size]
+
+    assigns =
+      assigns
+      |> assign_derived(:page, page_deps, fn -> page end)
+      |> assign_derived(:icon, [], fn -> @icon end)
+      |> assign_derived(:last, page_deps ++ [:siblings, :boundaries, :arrows], fn -> last end)
+      |> assign_derived(:footer, [:total_entries, :page_sizes], fn -> footer?(assigns) end)
+
     assigns
-    |> assign(:page, page)
-    |> assign(:icon, @icon)
-    |> assign(:items, Enum.with_index(items))
-    |> assign(:last, length(items) - 1)
-    |> assign(:footer, footer?(assigns))
+    |> assign_derived(:items, page_deps ++ @item_deps, fn ->
+      items |> Enum.with_index() |> Enum.map(&item(assigns, &1))
+    end)
     |> render_pagination()
+  end
+
+  # The comprehension key: the arrows and the pages keep theirs as the window moves.
+  defp item_key(:page, number, _index), do: number
+  defp item_key(:gap, _number, index), do: {:gap, index}
+  defp item_key(arrow, _number, _index), do: arrow
+
+  defp item(assigns, {{kind, number, disabled}, index}) do
+    %{
+      key: item_key(kind, number, index),
+      kind: kind,
+      number: number,
+      current: kind == :page and number == assigns.page,
+      li_class: li_class(assigns, index),
+      class: entry_class(assigns, kind, number, disabled),
+      label: entry_label(assigns, kind, number),
+      action: action(assigns, kind, number, disabled)
+    }
   end
 
   defp total_pages(%{total_pages: pages}) when is_integer(pages), do: pages
@@ -196,8 +234,7 @@ defmodule LineaUI.Components.Pagination do
 
   # `%{first}`, `%{last}` and `%{total}` of the summary are semibold and in the text color,
   # the words around them stay soft
-  defp summary(%{total_entries: total, page_size: size, page: page, summary: text})
-       when is_integer(size) do
+  defp summary(total, size, page, text) when is_integer(size) do
     summary_html(text, %{
       "%{first}" => first_entry(total, page, size),
       "%{last}" => min(page * size, total),
@@ -205,7 +242,7 @@ defmodule LineaUI.Components.Pagination do
     })
   end
 
-  defp summary(%{total_entries: total, summary: text}) do
+  defp summary(total, _size, _page, text) do
     summary_html(text, %{"%{first}" => min(total, 1), "%{last}" => total, "%{total}" => total})
   end
 
@@ -229,8 +266,8 @@ defmodule LineaUI.Components.Pagination do
 
   defp size_label(label, size), do: String.replace(label, "%{size}", to_string(size))
 
-  defp form_id(%{rest: %{id: id}}) when is_binary(id), do: id <> "-page-size"
-  defp form_id(_assigns), do: nil
+  defp form_id(%{id: id}) when is_binary(id), do: id <> "-page-size"
+  defp form_id(_rest), do: nil
 
   defp to_item(:gap), do: {:gap, nil, true}
   defp to_item(number), do: {:page, number, false}
@@ -261,7 +298,7 @@ defmodule LineaUI.Components.Pagination do
   defp gap(n, acc), do: [n | acc]
 
   defp render_pagination(%{footer: true} = assigns) do
-    assigns = assign(assigns, :select_class, @page_size_select)
+    assigns = assign_derived(assigns, :select_class, [], fn -> @page_size_select end)
 
     ~H"""
     <div class={merge(["flex flex-wrap items-center justify-between gap-3 text-[12.5px]", @class])}>
@@ -269,15 +306,19 @@ defmodule LineaUI.Components.Pagination do
         :if={@total_entries}
         role="status"
         aria-live="polite"
-        class="text-slate-500 dark:text-navy-200 [&_b]:font-semibold [&_b]:text-slate-700 dark:[&_b]:text-navy-50"
+        class={[
+          "text-slate-500 dark:text-navy-200",
+          (@shape == "canvas" && "[&_b]:font-normal") ||
+            "[&_b]:font-semibold [&_b]:text-slate-700 dark:[&_b]:text-navy-50"
+        ]}
       >
-        {summary(assigns)}
+        {summary(@total_entries, @page_size, @page, @summary)}
       </span>
       <span :if={!@total_entries}></span>
       <div class="flex flex-wrap items-center gap-3">
         <form
           :if={@page_sizes != []}
-          id={form_id(assigns)}
+          id={form_id(@rest)}
           phx-change={@on_page_size}
           phx-target={@target}
         >
@@ -287,7 +328,15 @@ defmodule LineaUI.Components.Pagination do
             </option>
           </select>
         </form>
-        <.pager_nav {assigns} class={nil} />
+        <.pager_nav
+          class={nil}
+          rest={@rest}
+          divided={@divided}
+          shape={@shape}
+          items={@items}
+          icon={@icon}
+          size={@size}
+        />
       </div>
     </div>
     """
@@ -298,22 +347,32 @@ defmodule LineaUI.Components.Pagination do
   defp pager_nav(assigns) do
     ~H"""
     <nav class={@class} {@rest}>
-      <ol class={["pagination", @divided && "space-x-1.5"]}>
-        <li :for={{{kind, number, disabled}, index} <- @items} class={li_class(assigns, index)}>
+      <ol class={[
+        "pagination",
+        @divided && "space-x-1.5",
+        @shape == "canvas" && "!flex items-center gap-x-1"
+      ]}>
+        <li :for={item <- @items} :key={item.key} class={item.li_class}>
           <.entry
-            kind={kind}
-            number={number}
-            current={kind == :page and number == @page}
-            class={entry_class(assigns, kind, number, disabled)}
+            kind={item.kind}
+            number={item.number}
+            current={item.current}
+            class={item.class}
             icon_class={@icon[@size]}
-            label={entry_label(assigns, kind, number)}
-            action={action(assigns, kind, number, disabled)}
+            label={item.label}
+            action={item.action}
           />
         </li>
       </ol>
     </nav>
     """
   end
+
+  defp li_class(%{shape: "canvas", last: last, arrows: true}, index) when index == 0,
+    do: ["order-1 ml-1.5", last && nil]
+
+  defp li_class(%{shape: "canvas", last: last, arrows: true}, last), do: "order-2 ml-1.5"
+  defp li_class(%{shape: "canvas"}, _index), do: nil
 
   defp li_class(%{divided: true}, _index), do: nil
 
@@ -323,6 +382,23 @@ defmodule LineaUI.Components.Pagination do
   defp position(0, _last), do: :first
   defp position(last, last), do: :last
   defp position(_index, _last), do: :middle
+
+  defp entry_class(%{shape: "canvas", page: page}, :page, page, _disabled),
+    do:
+      "grid h-[30px] min-w-[30px] place-items-center rounded-[9px] bg-slate-900 px-2 font-mono text-[12.5px] font-medium text-white dark:bg-navy-50 dark:text-navy-900"
+
+  defp entry_class(%{shape: "canvas"}, :page, _number, _disabled),
+    do:
+      "grid h-[30px] min-w-[30px] place-items-center rounded-[9px] px-2 font-mono text-[12.5px] font-medium text-slate-500 hover:bg-slate-100 dark:text-navy-200 dark:hover:bg-navy-600"
+
+  defp entry_class(%{shape: "canvas"}, :gap, _number, _disabled),
+    do: "grid h-[30px] min-w-[30px] place-items-center font-mono text-[12.5px] text-slate-500"
+
+  # the canvas `sg-ib sm`: a 28px panel circle with an inset line; an arrow at either end stays
+  # inert (a `<span aria-disabled>`) but is not dimmed, as on the canvas
+  defp entry_class(%{shape: "canvas"}, _arrow, _number, _disabled),
+    do:
+      "grid size-7 place-items-center rounded-full bg-[var(--panel)] text-[var(--muted)] shadow-[inset_0_0_0_1px_var(--line)] hover:bg-[var(--hover)]"
 
   defp entry_class(assigns, :gap, _number, _disabled),
     do: [@item[assigns.size], @shapes[assigns.shape], divided_fill(assigns)]
@@ -375,7 +451,7 @@ defmodule LineaUI.Components.Pagination do
   defp action(_assigns, _kind, _number, _disabled), do: :none
 
   defp entry(%{action: {:link, attrs}} = assigns) do
-    assigns = assign(assigns, :attrs, attrs)
+    assigns = assign_derived(assigns, :attrs, [:action], fn -> attrs end)
 
     ~H"""
     <.link
@@ -388,7 +464,7 @@ defmodule LineaUI.Components.Pagination do
   end
 
   defp entry(%{action: {:button, attrs}} = assigns) do
-    assigns = assign(assigns, :attrs, attrs)
+    assigns = assign_derived(assigns, :attrs, [:action], fn -> attrs end)
 
     ~H"""
     <button
@@ -425,7 +501,7 @@ defmodule LineaUI.Components.Pagination do
     """
   end
 
-  defp entry_content(%{kind: :gap} = assigns), do: ~H"..."
+  defp entry_content(%{kind: :gap} = assigns), do: ~H"…"
 
   defp entry_content(assigns), do: ~H"{@number}"
 end

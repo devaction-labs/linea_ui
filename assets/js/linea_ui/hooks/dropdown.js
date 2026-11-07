@@ -54,6 +54,16 @@ export default {
       this.panel().addEventListener("keydown", this.onMenuKey)
       this.panel().addEventListener("click", this.onPick)
       this.panel().addEventListener("mouseover", this.onHover)
+      if (this.el.dataset.hover === "true") {
+        // `hover`: the menu opens when the pointer is over the trigger or the menu and closes shortly after it leaves
+        this.hoverEnter = () => (clearTimeout(this.leaveTimer), !this.isOpen() && this.open())
+        this.hoverLeave = () => {
+          clearTimeout(this.leaveTimer)
+          this.leaveTimer = setTimeout(() => this.isOpen() && this.close(false), 150)
+        }
+        this.el.addEventListener("mouseenter", this.hoverEnter)
+        this.el.addEventListener("mouseleave", this.hoverLeave)
+      }
     },
 
     updated() {
@@ -64,6 +74,7 @@ export default {
 
     destroyed() {
       clearTimeout(this.hoverTimer)
+      clearTimeout(this.leaveTimer)
       this.destroyedFloating()
     },
 

@@ -26,7 +26,8 @@ defmodule LineaUI.Components.InputGroup do
       </.input_group>
 
   `size` (`sm` 32px, `md` 38px, `lg` 44px) sizes the addons, selects, inputs and buttons
-  together. `errors` turns the shared border red and shows the messages under the row.
+  together. The joined ends have the canvas's 11px corners (a button at the end too), and the
+  `outline` addon is the canvas's: the field's own panel and line, the text muted. `errors` turns the shared border red and shows the messages under the row.
   """
 
   use LineaUI.Component
@@ -34,30 +35,30 @@ defmodule LineaUI.Components.InputGroup do
   alias LineaUI.Components.Control
   alias LineaUI.Components.Form
 
-  @base "flex -space-x-px [&>*]:rounded-none [&>*_.form-input]:rounded-none [&>*:hover]:z-10 [&>*:focus]:z-10 [&>*:focus-within]:z-10"
+  @base "lc-ig flex -space-x-px [&>*]:rounded-none [&>*_.form-input]:rounded-none [&>*:hover]:z-10 [&>*:focus]:z-10 [&>*:focus-within]:z-10"
 
   @shapes %{
     "rounded" =>
-      "[&>:first-child]:rounded-l-lg [&>:first-child_.form-input]:rounded-l-lg [&>:last-child]:rounded-r-lg [&>:last-child_.form-input]:rounded-r-lg",
+      "[&>:first-child]:rounded-l-[11px] [&>:first-child_.form-input]:rounded-l-[11px] [&>:last-child]:rounded-r-[11px] [&>:last-child_.form-input]:rounded-r-[11px]",
     "pill" =>
       "[&>:first-child]:rounded-l-full [&>:first-child_.form-input]:rounded-l-full [&>:last-child]:rounded-r-full [&>:last-child_.form-input]:rounded-r-full"
   }
 
   @sizes %{
     "sm" =>
-      "[&>*]:!h-8 [&>*]:!text-[13px] [&_.form-input]:!h-8 [&_.form-input]:!text-[13px] [&_.form-select]:!h-8 [&_.form-select]:!text-[13px]",
+      "[&>*]:!h-7 [&>*]:!text-xs [&_.form-input]:!h-7 [&_.form-input]:!text-xs [&_.form-select]:!h-7 [&_.form-select]:!text-xs",
     "md" => nil,
     "lg" =>
-      "[&>*]:!h-11 [&>*]:!text-base [&_.form-input]:!h-11 [&_.form-input]:!text-base [&_.form-select]:!h-11 [&_.form-select]:!text-base"
+      "[&>*]:!h-10 [&>*]:!text-sm [&_.form-input]:!h-10 [&_.form-input]:!text-sm [&_.form-select]:!h-10 [&_.form-select]:!text-sm"
   }
 
   @invalid "[&>*]:!border-error [&>*_.form-input]:!border-error [&>*_.form-select]:!border-error"
 
   @addons %{
     "outline" =>
-      "flex shrink-0 items-center justify-center border border-slate-300 px-3.5 font-inter text-slate-500 dark:border-navy-450 dark:text-navy-200",
+      "flex h-10 min-w-10 shrink-0 items-center justify-center border border-slate-200 px-3 text-[13px] text-slate-500 shadow-xs dark:border-navy-450 dark:text-navy-200",
     "filled" =>
-      "flex shrink-0 items-center justify-center border border-slate-300 bg-slate-150 px-3.5 font-inter text-slate-800 dark:border-navy-450 dark:bg-navy-500 dark:text-navy-100"
+      "flex h-10 min-w-10 shrink-0 items-center justify-center border border-slate-200 bg-slate-100 px-3 text-[13px] text-slate-900 shadow-xs dark:border-navy-450 dark:bg-navy-600 dark:text-navy-50"
   }
 
   @addon_sizes %{
@@ -119,7 +120,18 @@ defmodule LineaUI.Components.InputGroup do
     else
       ~H"""
       <div class={@wrapper_class}>
-        <span :if={@label} id={"#{@base_id}-label"} class={@label_class}>{@label}</span>
+        <span
+          :if={@label}
+          id={"#{@base_id}-label"}
+          class={
+            merge([
+              "block text-[13px]/5 font-medium text-slate-950 dark:text-navy-50",
+              @label_class
+            ])
+          }
+        >
+          {@label}
+        </span>
         {render_group(assign(assigns, :class, merge([@label && "mt-1.5", @class])))}
         <div :if={@help || @errors != []} id={"#{@base_id}-messages"}>
           <Form.help_text :if={@help} state={if @state == "success", do: "success"}>
@@ -179,7 +191,12 @@ defmodule LineaUI.Components.InputGroup do
     assigns = assign(assigns, :addon_sizes, @addon_sizes)
 
     ~H"""
-    <span class={merge([addon_class(@variant), @addon_sizes[@size], @class])} {@rest}>
+    <span
+      class={
+        merge(["lc-ig-addon", "is-#{@variant}", addon_class(@variant), @addon_sizes[@size], @class])
+      }
+      {@rest}
+    >
       <span>{render_slot(@inner_block)}</span>
     </span>
     """

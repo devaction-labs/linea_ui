@@ -39,6 +39,19 @@ defmodule LineaUI.Components.Fab do
 
   A button with several actions is a speed-dial, `fab_dial/1`.
 
+  ## The canvas look
+
+  `variant="canvas"` is the design canvas's FAB: the solid ink button (`sg-btn solid lg`) with 18px corners,
+  the icon and the label always shown (`retract`, `color`, `size` and `badge` do not apply). `offset` moves
+  it from the corner, in pixels, in either variant:
+
+      <.fab id="new" label="New order" variant="canvas" offset={18} phx-click="new_order">
+        <:icon><.icon name="huge-add-01" class="size-4" /></:icon>
+      </.fab>
+
+  On `fab_dial/1`, `variant="canvas"` is the 56px solid square (`sg-m-fab`) and its actions are a canvas
+  menu (`sg-menu`), a list of icon and label rows.
+
   The button sits under modals and drawers and above the page (`--linea-z-fab`, 90 by default; an app raises it in
   its own CSS like the other `--linea-z-*` layers).
   """
@@ -112,6 +125,18 @@ defmodule LineaUI.Components.Fab do
 
   attr(:size, :string, default: "md", values: ~w(md lg))
 
+  attr(:variant, :string,
+    default: "pill",
+    values: ~w(pill canvas),
+    doc:
+      "`pill` is the retracting navy pill; `canvas` the canvas's solid ink button with the label always shown."
+  )
+
+  attr(:offset, :integer,
+    default: nil,
+    doc: "The distance from the corner, in pixels (24 by default)."
+  )
+
   attr(:retract, :string,
     default: "hover",
     values: ~w(hover auto never always),
@@ -145,14 +170,31 @@ defmodule LineaUI.Components.Fab do
   slot(:icon, doc: "The glyph in the tile; the sparkle of the assistant by default.")
   slot(:inner_block, doc: "Replaces the visible label text (`label` stays the `aria-label`).")
 
+  def fab(%{variant: "canvas"} = assigns) do
+    assigns
+    |> assign_derived(:style, [:position, :offset], fn ->
+      offset_style(assigns.position, assigns.offset || 24)
+    end)
+    |> render_canvas_fab()
+  end
+
   def fab(assigns) do
     assigns
-    |> assign(:classes, classes(assigns))
-    |> assign(:look, @colors[assigns.color])
-    |> assign(:dims, @sizes[assigns.size])
-    |> assign(:state, state(assigns.retract, assigns.expanded))
-    |> assign(:hook, hook(assigns.retract, assigns.expanded))
-    |> assign(:tooltip, tooltip(assigns.retract, assigns.label))
+    |> assign_derived(:classes, [:color, :position, :class], fn -> classes(assigns) end)
+    |> assign_derived(:style, [:position, :offset], fn ->
+      assigns.offset && offset_style(assigns.position, assigns.offset)
+    end)
+    |> assign_derived(:look, [:color], fn -> @colors[assigns.color] end)
+    |> assign_derived(:dims, [:size], fn -> @sizes[assigns.size] end)
+    |> assign_derived(:state, [:retract, :expanded], fn ->
+      state(assigns.retract, assigns.expanded)
+    end)
+    |> assign_derived(:hook, [:retract, :expanded], fn ->
+      hook(assigns.retract, assigns.expanded)
+    end)
+    |> assign_derived(:tooltip, [:retract, :label], fn ->
+      tooltip(assigns.retract, assigns.label)
+    end)
     |> render_fab()
   end
 
@@ -206,6 +248,19 @@ defmodule LineaUI.Components.Fab do
 
   attr(:color, :string, default: "primary", values: ~w(assistant primary dark light))
   attr(:size, :string, default: "md", values: ~w(md lg))
+
+  attr(:variant, :string,
+    default: "pill",
+    values: ~w(pill canvas),
+    doc:
+      "`pill` is the round button with labelled mini actions; `canvas` the canvas's 56px solid square with the actions in a menu (`sg-menu`)."
+  )
+
+  attr(:offset, :integer,
+    default: nil,
+    doc: "The distance from the corner, in pixels (24 by default)."
+  )
+
   attr(:open, :boolean, default: false, doc: "The initial state; after mount the hook owns it.")
   attr(:class, :any, default: nil)
   attr(:rest, :global)
@@ -226,12 +281,25 @@ defmodule LineaUI.Components.Fab do
   end
 
   def fab_dial(assigns) do
+    canvas? = assigns.variant == "canvas"
+
     assigns
-    |> assign(:classes, merge([@dial_base, @dial_positions[assigns.position], assigns.class]))
-    |> assign(:look, @colors[assigns.color])
-    |> assign(:dims, @sizes[assigns.size])
-    |> assign(:state, if(assigns.open, do: "open", else: "closed"))
-    |> assign(:item_class, @dial_item)
+    |> assign_derived(:canvas?, [:variant], fn -> canvas? end)
+    |> assign_derived(:classes, [:position, :variant, :class], fn ->
+      merge([
+        @dial_base,
+        @dial_positions[assigns.position],
+        canvas? && "sg-fab-dial gap-4",
+        assigns.class
+      ])
+    end)
+    |> assign_derived(:style, [:position, :offset, :variant], fn ->
+      dial_style(assigns.position, assigns.offset, canvas?)
+    end)
+    |> assign_derived(:look, [:color], fn -> @colors[assigns.color] end)
+    |> assign_derived(:dims, [:size], fn -> @sizes[assigns.size] end)
+    |> assign_derived(:state, [:open], fn -> if(assigns.open, do: "open", else: "closed") end)
+    |> assign_derived(:item_class, [], fn -> @dial_item end)
     |> render_dial()
   end
 
@@ -240,6 +308,7 @@ defmodule LineaUI.Components.Fab do
     <div
       id={@id}
       class={@classes}
+      style={@style}
       data-state={@state}
       data-side={if String.starts_with?(@position, "top"), do: "down", else: "up"}
       phx-hook="LineaUI.FabDial"
@@ -247,6 +316,7 @@ defmodule LineaUI.Components.Fab do
       {@rest}
     >
       <div
+        :if={!@canvas?}
         id={"#{@id}-menu"}
         role="menu"
         aria-label={@label}
@@ -264,7 +334,40 @@ defmodule LineaUI.Components.Fab do
           left={String.ends_with?(@position, "left")}
         />
       </div>
+      <div
+        :if={@canvas?}
+        id={"#{@id}-menu"}
+        role="menu"
+        aria-label={@label}
+        class="linea-fab-dial-menu sg-menu"
+      >
+        <.dial_item
+          :for={action <- @action}
+          action={action}
+          id={@id}
+          class="sg-menu-item"
+          left={false}
+          canvas
+        />
+      </div>
       <button
+        :if={@canvas?}
+        id={"#{@id}-trigger"}
+        type="button"
+        data-fab-dial-trigger
+        aria-label={@label}
+        aria-haspopup="menu"
+        aria-expanded={to_string(@open)}
+        aria-controls={"#{@id}-menu"}
+        phx-mounted={JS.ignore_attributes(["aria-expanded"])}
+        class="sg-m-fab"
+      >
+        <span class="linea-fab-dial-icon flex" aria-hidden="true">
+          {render_slot(@icon) || plus(%{dims: %{icon: "size-5.5"}})}
+        </span>
+      </button>
+      <button
+        :if={!@canvas?}
         id={"#{@id}-trigger"}
         type="button"
         data-fab-dial-trigger
@@ -298,7 +401,11 @@ defmodule LineaUI.Components.Fab do
 
   defp dial_item(%{action: action} = assigns) do
     assigns =
-      assign(assigns, :link?, Enum.any?([:href, :navigate, :patch], &Map.has_key?(action, &1)))
+      assigns
+      |> assign_derived(:link?, [:action], fn ->
+        Enum.any?([:href, :navigate, :patch], &Map.has_key?(action, &1))
+      end)
+      |> put_default(:canvas, false)
 
     ~H"""
     <.link
@@ -313,7 +420,7 @@ defmodule LineaUI.Components.Fab do
       phx-click={@action[:"phx-click"]}
       phx-target={@action[:"phx-target"]}
     >
-      <.dial_item_body action={@action} />
+      <.dial_item_body action={@action} canvas={@canvas} />
     </.link>
     <button
       :if={!@link?}
@@ -324,8 +431,15 @@ defmodule LineaUI.Components.Fab do
       phx-click={@action[:"phx-click"]}
       phx-target={@action[:"phx-target"]}
     >
-      <.dial_item_body action={@action} />
+      <.dial_item_body action={@action} canvas={@canvas} />
     </button>
+    """
+  end
+
+  defp dial_item_body(%{canvas: true} = assigns) do
+    ~H"""
+    <span class="sg-menu-ic" aria-hidden="true">{render_slot(@action)}</span>
+    {@action.label}
     """
   end
 
@@ -360,6 +474,47 @@ defmodule LineaUI.Components.Fab do
     """
   end
 
+  defp offset_style(position, offset) do
+    [vertical, horizontal] = String.split(position, "-")
+    "#{vertical}: #{offset}px; #{horizontal}: #{offset}px"
+  end
+
+  defp dial_style(_position, nil, false), do: nil
+  defp dial_style(position, offset, _canvas?), do: offset_style(position, offset || 24)
+
+  defp render_canvas_fab(%{rest: rest} = assigns)
+       when is_map_key(rest, :href) or is_map_key(rest, :navigate) or is_map_key(rest, :patch) do
+    ~H"""
+    <.link
+      id={@id}
+      class={merge(["sg-fab sg-btn solid lg", @class])}
+      style={@style}
+      aria-disabled={@disabled && "true"}
+      tabindex={@disabled && "-1"}
+      {@rest}
+    >
+      {render_slot(@icon)}
+      <span>{label_or(render_slot(@inner_block), @label)}</span>
+    </.link>
+    """
+  end
+
+  defp render_canvas_fab(assigns) do
+    ~H"""
+    <button
+      id={@id}
+      type={@type}
+      class={merge(["sg-fab sg-btn solid lg", @class])}
+      style={@style}
+      disabled={@disabled}
+      {@rest}
+    >
+      {render_slot(@icon)}
+      <span>{label_or(render_slot(@inner_block), @label)}</span>
+    </button>
+    """
+  end
+
   defp classes(assigns) do
     merge([@base, @colors[assigns.color].root, @positions[assigns.position], assigns.class])
   end
@@ -383,6 +538,7 @@ defmodule LineaUI.Components.Fab do
       class={@classes}
       aria-label={@label}
       title={@tooltip}
+      style={@style}
       aria-disabled={@disabled && "true"}
       tabindex={@disabled && "-1"}
       data-retract={@retract}
@@ -412,6 +568,7 @@ defmodule LineaUI.Components.Fab do
       class={@classes}
       aria-label={@label}
       title={@tooltip}
+      style={@style}
       disabled={@disabled}
       data-retract={@retract}
       data-state={@state}

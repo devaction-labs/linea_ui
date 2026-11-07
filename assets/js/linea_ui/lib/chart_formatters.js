@@ -9,6 +9,8 @@ export const FORMATTERS = {
   dollars_thousands: (value) => `$${value / 1000}k`,
   brl: (value) => `R$ ${PT_NUMBER.format(value)}`,
   brl_thousands: (value) => (Math.abs(value) >= 1000 ? `R$ ${PT_NUMBER.format(Math.round(value / 100) / 10)} mil` : `R$ ${PT_NUMBER.format(value)}`),
+  brl_kilo: (value) => (Math.abs(value) >= 1000 ? `R$ ${Math.round(value / 100) / 10}k`.replace(".", ",") : `${value}`),
+  brl_kilo_zero: (value) => (Math.abs(value) >= 1000 ? `R$ ${Math.round(value / 100) / 10}k`.replace(".", ",") : `R$ ${value}`),
   number_br: (value) => PT_NUMBER.format(value),
   percent: (value) => `${value}%`,
   percent_round: (value) => `${Math.round(value)}%`,
@@ -18,6 +20,10 @@ export const FORMATTERS = {
   none: () => "",
   total: (w) => w.config.series.reduce((sum, value) => sum + value, 0),
   total_br: (w) => PT_NUMBER.format(w.config.series.reduce((sum, value) => sum + value, 0)),
+  total_brl_thousands: (w) => {
+    const sum = w.config.series.reduce((total, value) => total + value, 0)
+    return Math.abs(sum) >= 1000 ? `R$ ${PT_NUMBER.format(Math.round(sum / 1000))} mil` : `R$ ${PT_NUMBER.format(sum)}`
+  },
 }
 
 const lookup = (name, table) => (typeof name === "string" && Object.hasOwn(table, name) ? table[name] : undefined)

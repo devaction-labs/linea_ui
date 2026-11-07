@@ -21,7 +21,10 @@ defmodule LineaUI.Components.PopoverTest do
     assert attr_of(html, "#p-panel", "role") == ["dialog"]
     assert attr_of(html, "#p-panel", "popover") == ["manual"]
     assert "fixed" in classes(html, "#p-panel")
-    assert ["rounded-md", "p-4", "max-w-xs"] -- classes(html, "#p-panel .popper-box > div") == []
+
+    assert ["rounded-[14px]", "p-4", "max-w-xs"] -- classes(html, "#p-panel .popper-box > div") ==
+             []
+
     assert find(html, "#p-panel h3") |> LazyHTML.text() =~ "UI/UX Design"
     assert [_] = find(html, "[data-popper-arrow] svg") |> Enum.to_list()
   end
@@ -66,8 +69,8 @@ defmodule LineaUI.Components.PopoverTest do
 
     card = classes(html, "#p-panel .popper-box > div")
 
-    assert ["border-slate-300", "dark:border-navy-500"] -- card == []
-    assert Enum.any?(card, &String.starts_with?(&1, "shadow-[0_10px_30px"))
+    assert ["rounded-[14px]"] -- card == []
+    assert Enum.any?(card, &String.starts_with?(&1, "shadow-[0_0_0_1px"))
     assert "text-slate-300" in classes(html, "[data-popper-arrow] path:first-child")
   end
 

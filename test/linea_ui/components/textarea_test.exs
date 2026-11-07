@@ -1,7 +1,7 @@
 defmodule LineaUI.Components.TextareaTest do
   use LineaUI.ComponentCase, async: true
 
-  test "a bare outlined textarea has the primary focus ring and a disabled look that keeps the border" do
+  test "a bare outlined textarea is the canvas field: white, 11px corners, 14px text, primary focus ring" do
     html = render(~H'<.textarea name="bio" placeholder="Enter Text" />')
 
     assert [_] =
@@ -11,11 +11,13 @@ defmodule LineaUI.Components.TextareaTest do
     assert find(html, "label") |> Enum.to_list() == []
 
     classes = classes(html, "textarea")
-    assert "focus:border-primary" in classes
-    assert "focus:ring-3" in classes
-    assert "disabled:opacity-60" in classes
-    assert "disabled:bg-slate-150" in classes
-    refute "disabled:border-none" in classes
+    assert "bg-white" in classes
+    assert "rounded-[11px]" in classes
+    assert "text-[14px]" in classes
+
+    assert "focus:shadow-[inset_0_0_0_1px_var(--color-primary),0_0_0_4px_color-mix(in_oklab,var(--color-primary)_14%,transparent)]" in classes
+
+    assert "disabled:bg-zinc-100" in classes
     assert "resize-none" in classes
   end
 
@@ -32,15 +34,14 @@ defmodule LineaUI.Components.TextareaTest do
            )
   end
 
-  test "error and success paint the border and ring; error sets aria-invalid" do
+  test "error and success paint the line and ring; error sets aria-invalid" do
     html = render(~H'<.textarea name="b" errors={["too short"]} />')
-    assert "border-error" in classes(html, "textarea")
-    assert "ring-error/25" in classes(html, "textarea")
+    assert Enum.any?(classes(html, "textarea"), &(&1 =~ "var(--color-error)"))
     assert [_] = find(html, "textarea[aria-invalid=true]") |> Enum.to_list()
     assert LazyHTML.text(find(html, "span.text-error")) =~ "too short"
 
     html = render(~H'<.textarea name="b" state="success" help="Valid" />')
-    assert "border-success" in classes(html, "textarea")
+    assert Enum.any?(classes(html, "textarea"), &(&1 =~ "var(--color-success)"))
     assert find(html, "textarea[aria-invalid]") |> Enum.to_list() == []
     assert "text-success" in classes(html, "label + span")
   end
@@ -60,7 +61,7 @@ defmodule LineaUI.Components.TextareaTest do
       </.textarea>
       """)
 
-    frame = classes(html, "div.rounded-lg")
+    frame = classes(html, "div.rounded-md")
     assert "focus-within:!border-primary" in frame
     assert "focus-within:ring-3" in frame
     assert "mt-1.5" in frame
@@ -89,5 +90,30 @@ defmodule LineaUI.Components.TextareaTest do
     assert [_] =
              find(alone, "div.w-full > div.justify-end > span[aria-live=polite]")
              |> Enum.to_list()
+  end
+
+  test "the help line stays muted under state=error" do
+    html = render(~H'<.textarea name="b" state="error" help="Conte o que aconteceu" />')
+    refute "text-error" in classes(html, "label + span")
+  end
+
+  test "counter_format and counter_align=start" do
+    html =
+      render(~H"""
+      <.textarea
+        id="d"
+        name="d"
+        label="Descrição"
+        value="abc"
+        maxlength="300"
+        counter
+        counter_format="%{count} de %{max}"
+        counter_align="start"
+      />
+      """)
+
+    assert LazyHTML.text(find(html, "#d-counter")) == "3 de 300"
+    assert html |> find("textarea") |> LazyHTML.attribute("data-format") == ["%{count} de %{max}"]
+    assert "justify-start" in classes(html, "div:has(> #d-counter)")
   end
 end

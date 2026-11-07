@@ -23,8 +23,7 @@ defmodule LineaUI.Components.TableTest do
 
     assert 2 = html |> find("tbody tr") |> Enum.count()
     assert "w-full" in classes(html, "table")
-    assert "border-b-slate-200" in classes(html, "thead tr")
-    assert "px-3" in classes(html, "th")
+    assert "sg-table" in classes(html, "table")
   end
 
   test "bleed runs the table edge to edge of the card and gives the padding back to the edge cells" do
@@ -78,12 +77,11 @@ defmodule LineaUI.Components.TableTest do
 
   test "hoverable and zebra fill the header and mark the table" do
     html = render_table(%{variant: "hoverable"})
-    assert "is-hoverable" in classes(html, "table")
-    assert "bg-slate-200" in classes(html, "th")
+    assert "sg-table" in classes(html, "table")
     assert "first:rounded-l-lg" in classes(html, "th")
 
     html = render_table(%{variant: "zebra", rounded: "none"})
-    assert "is-zebra" in classes(html, "table")
+    assert "sg-table" in classes(html, "table")
     refute "first:rounded-l-lg" in classes(html, "th")
 
     html = render_table(%{variant: "hoverable", rounded: "top"})
@@ -390,7 +388,7 @@ defmodule LineaUI.Components.TableTest do
       )
 
     assert "sticky" in classes(html, "th")
-    assert "bg-slate-200" in classes(html, "th")
+    assert "sg-table" in classes(html, "table")
   end
 
   test "a stream renders the empty row hidden until the body is empty" do

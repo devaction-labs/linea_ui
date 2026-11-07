@@ -1,6 +1,6 @@
 import {test} from "node:test"
 import assert from "node:assert/strict"
-import {choose, createRow, createsOnTab, fitCount, highlight, isFull, limitState, moveIndex, removeLast, removeValue, sameValues, shows, splitTags} from "./select_box.js"
+import {choose, createRow, createsOnTab, fitCount, highlight, isFull, limitState, moveIndex, removeLast, removeValue, sameValues, shows, splitTags, toggleValue} from "./select_box.js"
 
 test("highlight cuts the label around the term", () => {
   assert.deepEqual(highlight("Alabama", "lab"), [
@@ -103,4 +103,10 @@ test("fitCount keeps every chip that fits, making room for the +N badge", () => 
   assert.equal(fitCount([50, 50, 50], 40, badge), 0)
   assert.equal(fitCount([], 0, badge), 0)
   assert.equal(fitCount(Array(12).fill(10), 100, badge), 7)
+})
+
+test("a pillbox toggles: a chosen value goes, a new one is added", () => {
+  assert.deepEqual(toggleValue(["a", "b"], "a", {multiple: true, max: null}), ["b"])
+  assert.deepEqual(toggleValue(["a"], "b", {multiple: true, max: null}), ["a", "b"])
+  assert.deepEqual(toggleValue(["a"], "b", {multiple: true, max: 1}), ["a"])
 })

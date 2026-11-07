@@ -9,9 +9,11 @@
   animation: linear darkmode-btn 200ms forwards;
 }
 .darkmode-toggle [class*="huge-"].darkmode-moon { display: none; }
-.dark .darkmode-toggle [class*="huge-"].darkmode-moon { display: block; }
+.dark .darkmode-toggle [class*="huge-"].darkmode-moon:not([data-theme="light"] *),
+[data-theme="dark"] .darkmode-toggle [class*="huge-"].darkmode-moon{ display: block; }
 .darkmode-toggle [class*="huge-"].darkmode-sun { display: block; }
-.dark .darkmode-toggle [class*="huge-"].darkmode-sun { display: none; }
+.dark .darkmode-toggle [class*="huge-"].darkmode-sun:not([data-theme="light"] *),
+[data-theme="dark"] .darkmode-toggle [class*="huge-"].darkmode-sun{ display: none; }
 
 .toastify .toast-close [class*="huge-"] {
   width: 1rem;
@@ -61,7 +63,7 @@
   right: 0;
   margin-top: -9px;
 }
-.dark .ql-snow.ql-toolbar [class*="huge-"] {
+.ql-snow.ql-toolbar:where(.dark *, [data-theme="dark"] *):not(:where([data-theme="light"] *)) [class*="huge-"] {
   color: var(--color-navy-200);
 }
 .ql-snow.ql-toolbar :is(button:hover, button:focus, button.ql-active, .ql-picker-label:hover, .ql-picker-label.ql-active, .ql-picker-item:hover, .ql-picker-item.ql-selected) [class*="huge-"] {

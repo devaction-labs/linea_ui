@@ -11,7 +11,7 @@ defmodule LineaUI.Components.Choice do
   @tones %{
     {"basic", false} => %{
       "neutral" =>
-        "border-slate-400/70 checked:border-slate-500 checked:bg-slate-500 hover:border-slate-500 focus:border-slate-500 dark:border-navy-400 dark:checked:bg-navy-400",
+        "border-slate-400/70 checked:border-slate-900 checked:bg-slate-900 hover:border-slate-500 focus:border-slate-500 dark:border-navy-400 dark:checked:bg-navy-400",
       "primary" =>
         "border-slate-400/70 checked:border-primary checked:bg-primary hover:border-primary focus:border-primary dark:border-navy-400 dark:checked:border-accent dark:checked:bg-accent dark:hover:border-accent dark:focus:border-accent",
       "secondary" =>
@@ -27,7 +27,7 @@ defmodule LineaUI.Components.Choice do
     },
     {"basic", true} => %{
       "neutral" =>
-        "border-slate-400/70 bg-slate-100 checked:border-slate-500 checked:bg-slate-500 hover:border-slate-500 focus:border-slate-500 dark:border-navy-500 dark:bg-navy-900 dark:checked:border-navy-400 dark:checked:bg-navy-400",
+        "border-slate-400/70 bg-slate-100 checked:border-slate-900 checked:bg-slate-900 hover:border-slate-500 focus:border-slate-500 dark:border-navy-500 dark:bg-navy-900 dark:checked:border-navy-400 dark:checked:bg-navy-400",
       "primary" =>
         "border-slate-400/70 bg-slate-100 checked:border-primary checked:bg-primary hover:border-primary focus:border-primary dark:border-navy-500 dark:bg-navy-900 dark:checked:border-accent dark:checked:bg-accent dark:hover:border-accent dark:focus:border-accent",
       "secondary" =>
@@ -94,40 +94,37 @@ defmodule LineaUI.Components.Choice do
     [base, @variants[variant], @sizes[size], @tones[{variant, filled}][color], @disabled]
   end
 
-  @chip "group/choice inline-flex h-[30px] cursor-pointer select-none items-center gap-1.5 rounded-full bg-slate-150 px-3 text-xs-plus font-medium tracking-wide text-slate-600 transition-colors duration-200 hover:not-has-checked:text-slate-800 has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-primary/50 has-disabled:pointer-events-none has-disabled:opacity-60 dark:bg-navy-500 dark:text-navy-200 dark:hover:not-has-checked:text-navy-50 dark:has-focus-visible:outline-accent/50"
+  @chip "group/choice inline-flex h-7 cursor-pointer select-none items-center gap-1.5 rounded-full border border-slate-200 bg-white px-2.5 text-xs font-medium text-slate-950 shadow-xs transition-colors duration-200 hover:not-has-checked:bg-slate-100 has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-primary/50 has-disabled:pointer-events-none has-disabled:opacity-60 dark:border-navy-450 dark:bg-navy-900 dark:text-navy-50 dark:hover:not-has-checked:bg-navy-600 dark:has-focus-visible:outline-accent/50"
 
   @chip_tones %{
     "neutral" =>
-      "has-checked:bg-slate-700 has-checked:text-white dark:has-checked:bg-navy-450 dark:has-checked:text-white",
+      "has-checked:border-slate-700 has-checked:bg-slate-700 has-checked:text-white dark:has-checked:border-navy-450 dark:has-checked:bg-navy-450 dark:has-checked:text-white",
     "primary" =>
-      "has-checked:bg-primary has-checked:text-white dark:has-checked:bg-accent dark:has-checked:text-white",
+      "has-checked:border-primary has-checked:bg-primary has-checked:text-white dark:has-checked:border-accent dark:has-checked:bg-accent dark:has-checked:text-white",
     "secondary" =>
-      "has-checked:bg-secondary has-checked:text-white dark:has-checked:bg-secondary-light dark:has-checked:text-white",
-    "info" => "has-checked:bg-info has-checked:text-white dark:has-checked:text-white",
-    "success" => "has-checked:bg-success has-checked:text-white dark:has-checked:text-white",
-    "warning" => "has-checked:bg-warning has-checked:text-white dark:has-checked:text-white",
-    "error" => "has-checked:bg-error has-checked:text-white dark:has-checked:text-white"
+      "has-checked:border-secondary has-checked:bg-secondary has-checked:text-white dark:has-checked:border-secondary-light dark:has-checked:bg-secondary-light dark:has-checked:text-white",
+    "info" =>
+      "has-checked:border-info has-checked:bg-info has-checked:text-white dark:has-checked:text-white",
+    "success" =>
+      "has-checked:border-success has-checked:bg-success has-checked:text-white dark:has-checked:text-white",
+    "warning" =>
+      "has-checked:border-warning has-checked:bg-warning has-checked:text-white dark:has-checked:text-white",
+    "error" =>
+      "has-checked:border-error has-checked:bg-error has-checked:text-white dark:has-checked:text-white"
   }
 
   @chip_count "inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-white px-1.5 text-tiny-plus font-semibold text-slate-600 group-has-checked/choice:bg-white/20 group-has-checked/choice:text-white dark:bg-navy-700 dark:text-navy-100 dark:group-has-checked/choice:bg-white/20 dark:group-has-checked/choice:text-white"
 
-  @card "group/choice relative flex cursor-pointer items-start gap-3 rounded-lg border border-slate-300 px-3.5 py-3 transition-[border-color,box-shadow,background-color] duration-200 hover:border-slate-400 has-checked:ring-3 has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-primary/50 has-disabled:pointer-events-none has-disabled:opacity-60 dark:border-navy-450 dark:hover:border-navy-400 dark:has-focus-visible:outline-accent/50"
+  @card "group/choice relative flex cursor-pointer flex-row items-start gap-3 rounded-[14px] border border-slate-150 p-3.5 transition-[border-color,box-shadow,background-color] duration-200 hover:border-slate-300 has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-primary/50 has-disabled:pointer-events-none has-disabled:opacity-60 dark:border-navy-450 dark:hover:border-navy-400 dark:has-focus-visible:outline-accent/50"
 
   @card_tones %{
-    "neutral" =>
-      "has-checked:border-slate-500 has-checked:bg-slate-500/5 has-checked:ring-slate-500/15 dark:has-checked:border-navy-300 dark:has-checked:bg-navy-300/5 dark:has-checked:ring-navy-300/15",
-    "primary" =>
-      "has-checked:border-primary has-checked:bg-primary/5 has-checked:ring-primary/15 dark:has-checked:border-accent dark:has-checked:bg-accent/10 dark:has-checked:ring-accent/20",
-    "secondary" =>
-      "has-checked:border-secondary has-checked:bg-secondary/5 has-checked:ring-secondary/15 dark:has-checked:border-secondary-light dark:has-checked:bg-secondary-light/10 dark:has-checked:ring-secondary-light/20",
-    "info" =>
-      "has-checked:border-info has-checked:bg-info/5 has-checked:ring-info/15 dark:has-checked:border-info dark:has-checked:bg-info/10",
-    "success" =>
-      "has-checked:border-success has-checked:bg-success/5 has-checked:ring-success/15 dark:has-checked:border-success dark:has-checked:bg-success/10",
-    "warning" =>
-      "has-checked:border-warning has-checked:bg-warning/5 has-checked:ring-warning/15 dark:has-checked:border-warning dark:has-checked:bg-warning/10",
-    "error" =>
-      "has-checked:border-error has-checked:bg-error/5 has-checked:ring-error/15 dark:has-checked:border-error dark:has-checked:bg-error/10"
+    "neutral" => "has-checked:border-slate-500 dark:has-checked:border-navy-300",
+    "primary" => "has-checked:border-primary dark:has-checked:border-accent",
+    "secondary" => "has-checked:border-secondary dark:has-checked:border-secondary-light",
+    "info" => "has-checked:border-info dark:has-checked:border-info",
+    "success" => "has-checked:border-success dark:has-checked:border-success",
+    "warning" => "has-checked:border-warning dark:has-checked:border-warning",
+    "error" => "has-checked:border-error dark:has-checked:border-error"
   }
 
   @card_icons %{
@@ -197,7 +194,7 @@ defmodule LineaUI.Components.Choice do
 
   def label(%{description: nil} = assigns) do
     ~H"""
-    <label class={merge(["inline-flex items-center gap-2", @class])}>
+    <label class={merge(["inline-flex items-center gap-2 has-[input:disabled]:opacity-50", @class])}>
       {render_slot(@inner_block)}
       <span :if={@label || @content != []} class={merge([@text_class, @label_class])}>
         {@label}{render_slot(@content)}
@@ -208,11 +205,11 @@ defmodule LineaUI.Components.Choice do
 
   def label(assigns) do
     ~H"""
-    <label class={merge(["inline-flex items-start gap-2", @class])}>
+    <label class={merge(["inline-flex items-start gap-2 has-[input:disabled]:opacity-50", @class])}>
       <span class="mt-0.5 flex">{render_slot(@inner_block)}</span>
       <span class="flex flex-col">
         <span class={merge([@text_class, @label_class])}>{@label}{render_slot(@content)}</span>
-        <span class="text-xs text-slate-400 dark:text-navy-300">{@description}</span>
+        <span class="text-xs/5 text-slate-400 dark:text-navy-300">{@description}</span>
       </span>
     </label>
     """
@@ -277,7 +274,7 @@ defmodule LineaUI.Components.Choice do
 
     ~H"""
     <label class={merge([@card, @tone, @class])}>
-      <span class="mt-0.5 flex shrink-0">{render_slot(@inner_block)}</span>
+      <span class="flex shrink-0">{render_slot(@inner_block)}</span>
       <span
         :if={@icon}
         class={[
@@ -288,10 +285,10 @@ defmodule LineaUI.Components.Choice do
         <.icon name={@icon} class="size-5" />
       </span>
       <span class="flex min-w-0 flex-col">
-        <span class="font-medium text-slate-700 dark:text-navy-100">
+        <span class="text-sm leading-5 font-medium text-slate-900 dark:text-navy-50">
           {@label}{render_slot(@content)}
         </span>
-        <span :if={@description} class="mt-0.5 text-xs-plus text-slate-400 dark:text-navy-300">
+        <span :if={@description} class="text-[12.5px] text-slate-400 dark:text-navy-300">
           {@description}
         </span>
       </span>

@@ -3,6 +3,9 @@ import {
   LEAVE_MS,
   actionPayload,
   auraOf,
+  canvasAuraOf,
+  canvasOf,
+  canvasTileTone,
   closeFor,
   colorFor,
   dotFor,
@@ -120,18 +123,51 @@ export default {
     },
 
     replace(toast, input) {
+      const previous = toast.input
       toast.input = input
       toast.duration = this.durationOf(input)
       toast.left = toast.duration
+      if (this.sameCanvas(previous, input) && toast.el.querySelector(".sg-toast")) return this.repaint(toast, input)
       const el = this.render(input, toast)
       el.style.cssText = toast.el.style.cssText
-      el.style.width = ""
-      el.style.height = ""
       el.classList.add("on")
       toast.el.replaceWith(el)
       toast.el = el
-      const box = el.getBoundingClientRect()
-      toast.size = {width: Math.ceil(box.width) + 1, height: Math.ceil(box.height)}
+      toast.size = this.measure(el)
+      this.expanded.has(toast.position.key) ? this.pause(toast) : this.start(toast)
+      this.layout()
+    },
+
+    /**
+     * The natural size of a toast (what it takes alone, in full). A toast that is already in a pile carries the pile's
+     * inline width, height and scale and, behind the newest, `data-behind`; none of those is its size, so they are left
+     * out while it is measured (`offsetWidth` and `offsetHeight` ignore the transform).
+     */
+    measure(el) {
+      const behind = el.hasAttribute("data-behind")
+      el.removeAttribute("data-behind")
+      el.style.width = ""
+      el.style.height = ""
+      const size = {width: el.offsetWidth + 1, height: el.offsetHeight}
+      el.toggleAttribute("data-behind", behind)
+      return size
+    },
+
+    /** Two canvas toasts with the same aura: the second can be painted over the first one's nodes. */
+    sameCanvas(previous, input) {
+      return canvasOf(previous) && canvasOf(input) && !this.templateOf(previous) && !this.templateOf(input) && JSON.stringify(canvasAuraOf(previous)) === JSON.stringify(canvasAuraOf(input))
+    },
+
+    templateOf(input) {
+      return Boolean(input.template && document.getElementById(input.template))
+    },
+
+    /** Paints a canvas toast again on its own card, so the fill of a progress toast (`--p`) moves with a transition. */
+    repaint(toast, input) {
+      const el = toast.el
+      this.fillCard(el.querySelector(".sg-toast"), input, toast)
+      el.setAttribute("role", colorFor(input) === "error" ? "alert" : "status")
+      toast.size = this.measure(el)
       this.expanded.has(toast.position.key) ? this.pause(toast) : this.start(toast)
       this.layout()
     },
@@ -148,8 +184,7 @@ export default {
       toast.left = toast.duration
       toast.el = this.render(input, toast)
       this.el.prepend(toast.el)
-      const box = toast.el.getBoundingClientRect()
-      toast.size = {width: Math.ceil(box.width) + 1, height: Math.ceil(box.height)}
+      toast.size = this.measure(toast.el)
       this.toasts.unshift(toast)
       this.start(toast)
       requestAnimationFrame(() => (toast.el.classList.add("on"), this.layout()))
@@ -164,11 +199,12 @@ export default {
       el.dataset.toastId = toast.id
       rich ? (el.dataset.tone = color) : color === "neutral" || el.classList.add(color)
       el.setAttribute("role", color === "error" ? "alert" : "status")
-      const fill = template ? () => this.fillTemplate(el, template) : rich ? () => this.fillRich(el, input, toast) : () => this.fillText(el, input, toast)
-      fill()
-      this.decorate(el, input, toast)
+      const canvas = !template && canvasOf(input)
+      const fill = template ? () => this.fillTemplate(el, template) : canvas ? () => this.fillCanvas(el, input, toast) : rich ? () => this.fillRich(el, input, toast) : () => this.fillText(el, input, toast)
       template || this.invert(el, input)
-      this.fillTimer(el, input, toast)
+      fill()
+      canvas || this.decorate(el, input, toast)
+      canvas || this.fillTimer(el, input, toast)
       el.querySelectorAll("[data-toast-dismiss]").forEach((button) => button.addEventListener("click", () => this.remove(toast)))
       el.addEventListener("mouseenter", () => this.hover(toast.position.key, true))
       el.addEventListener("mouseleave", () => this.hover(toast.position.key, false))
@@ -261,6 +297,67 @@ export default {
       closeFor(input, toast.duration) && el.append(this.closeButton())
     },
 
+    fillCanvas(el, input, toast) {
+      const aura = canvasAuraOf(input)
+      const card = document.createElement("div")
+      el.classList.add("rich", "canvas")
+      this.fillCard(card, input, toast)
+      const ring = aura && this.part("div", ["sg-aura", "sg-aura-shadow", aura.tone, aura.mode, aura.width].filter(Boolean).join(" "), card)
+      el.append(ring ?? card)
+    },
+
+    /** The canvas card (`sg-toast`): icon tile, title and description, buttons, spinner and percentage, close. */
+    fillCard(card, input, toast) {
+      const progress = progressOf(input)
+      const failed = failedOf(input)
+      const fill = failed ? Math.min(Math.max(Number(input.value), 0), 100) : progress
+      const running = progress !== null && progress < 100
+      const kind = kindOf(progressKind(input))
+      const dark = colorFor(input) === "dark"
+      const surface = surfaceFor(invertFor(input, this.el.dataset.invert === "true"), this.el.closest(".dark") !== null)
+      const state = failed ? "fail" : progress !== null && progress >= 100 ? "done" : ""
+      card.className = ["sg-toast", (dark || surface === "dark") && "dark", fill !== null && "prog", state].filter(Boolean).join(" ")
+      fill === null ? card.style.removeProperty("--p") : card.style.setProperty("--p", `${fill}%`)
+      card.setAttribute("aria-busy", String(kind === "loading" || running))
+      const icon = this.el.querySelector(`template[data-toast-icon="${kind === "loading" || running ? "info" : kind}"]`)
+      const tone = canvasTileTone(kind, input.color, running)
+      const glyph = icon && icon.content.firstElementChild.cloneNode(true)
+      glyph && glyph.classList.replace("size-4.5", "size-3.5")
+      const tile = glyph && this.part("span", `sg-ic sg-toast-ic ${tone}`.trim(), glyph)
+      tile && tile.setAttribute("aria-hidden", "true")
+      const body = this.part("div", "sg-toast-body")
+      input.message && body.append(this.part("span", "t", input.message))
+      input.description && body.append(this.part("span", "sg-toast-desc", input.description))
+      const actions = (input.actions ?? []).map((action) => this.canvasAction(action, toast))
+      const spinner = (kind === "loading" || running) && this.part("span", "spinner sg-spin animate-spin xs")
+      spinner && spinner.setAttribute("role", "status")
+      const pct = progress !== null && !failed && this.part("span", "pct", `${Math.round(progress)}%`)
+      const close = closeFor(input, toast.duration) && this.closeButton("sg-ib sm plain", "size-4")
+      this.settleChildren(card, [tile, body, ...actions], spinner, [pct, close])
+      card.querySelectorAll("[data-toast-dismiss]").forEach((button) => button.addEventListener("click", () => this.remove(toast)))
+    },
+
+    /**
+     * Sets the children of a card as `head`, the spinner, `tail`. A spinner that is already in the card stays the same
+     * node (taking it out and putting it back, or drawing a new one, would restart its turn at every update of a
+     * progress toast); the rest is redrawn around it.
+     */
+    settleChildren(card, head, spinner, tail) {
+      const keep = spinner ? card.querySelector(":scope > .sg-spin") : null
+      const before = [...head].filter(Boolean)
+      const after = tail.filter(Boolean)
+      if (!keep) return card.replaceChildren(...before, ...[spinner].filter(Boolean), ...after)
+      ;[...card.children].filter((child) => child !== keep).forEach((child) => child.remove())
+      keep.before(...before)
+      keep.after(...after)
+    },
+
+    canvasAction(action, toast) {
+      const node = this.action(action, toast)
+      node.className = ["sg-btn", "sm", action.variant === "solid" ? "solid" : action.variant === "soft" ? "soft" : ""].join(" ").trim()
+      return node
+    },
+
     stepsBody(el, input, steps) {
       el.classList.add("has-steps")
       el.dataset.state = steps.done ? "done" : "running"
@@ -319,18 +416,18 @@ export default {
       el.append(template.content.firstElementChild.cloneNode(true))
     },
 
-    closeButton() {
+    closeButton(className = "toast-close", glyph = "") {
       const button = document.createElement("button")
       button.type = "button"
-      button.className = "toast-close"
+      button.className = className
       button.dataset.toastDismiss = ""
       button.setAttribute("aria-label", this.el.dataset.closeLabel ?? "Close")
-      button.append(this.cross())
+      button.append(this.cross(glyph))
       return button
     },
 
-    cross() {
-      return glyphElement("close", iconSet(this.el), {})
+    cross(className = "") {
+      return glyphElement("close", iconSet(this.el), {className})
     },
 
     start(toast) {

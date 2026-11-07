@@ -554,6 +554,17 @@ export const DatetimePicker = {
     startName && endName ? this.writeSplit(startName, endName) : this.writeList()
     const display = this.q("[data-display]")
     display && (display.value = this.displayText())
+    this.writeParts()
+  },
+
+  // The split fields (`split`): the date and the time each in their own input.
+  writeParts() {
+    const data = this.el.dataset
+    const spec = (format) => ({mode: "single", format, names: this.cfg.names, separator: data.separator})
+    this.el.querySelectorAll("[data-display-part]").forEach((input) => {
+      const format = input.dataset.displayPart === "date" ? data.dateFormat : data.timeFormat
+      input.value = formatValue(this.value, spec(format))
+    })
   },
 
   inputsHtml(entries) {

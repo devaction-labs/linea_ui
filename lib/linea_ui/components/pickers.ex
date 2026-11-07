@@ -20,9 +20,14 @@ defmodule LineaUI.Components.Pickers do
   end
 
   def field(assigns) do
+    assigns =
+      assign_derived(assigns, :label_class, [], fn ->
+        "mb-1.5 block text-[13px]/5 font-medium text-slate-950 dark:text-navy-50"
+      end)
+
     ~H"""
     <label class={merge(["block", @class])} for={@for}>
-      <span :if={@label}>{@label}</span>
+      <span :if={@label} class={@label_class}>{@label}</span>
       {render_slot(@inner_block)}
       <Form.help_text :if={@help} class="mt-1 block">{@help}</Form.help_text>
       <Form.error :for={message <- @errors} class="mt-1">{message}</Form.error>

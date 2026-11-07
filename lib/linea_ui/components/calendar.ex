@@ -32,6 +32,21 @@ defmodule LineaUI.Components.Calendar do
       %{id: 1, title: "Coelba", date: ~D[2026-10-15], color: "error"}
       %{id: 2, title: "Visit", subtitle: "Santa Mônica", date: ~D[2026-10-19], start: "10:00", end: "11:00"}
 
+  ## Mini month
+
+  `variant="mini"` is the canvas's compact month in a card: one-letter weekdays, the days in round
+  cells, a dot under the days that have events, the `selected` day in solid ink, a `range` painted
+  in the accent tint and today ringed. `months_shown={2}` puts two months side by side (for long
+  periods), each in its own card titled with the month's name. `on_select` makes the days buttons;
+  `on_navigate` (single month with `header`) gives the title its arrows. `marks="tint"` paints
+  the days with events in their color instead of a dot (a due calendar: to receive and to pay),
+  and `legend` is then drawn over the grid with square keys.
+
+      <.calendar id="due" variant="mini" header={false} date={~D[2026-11-01]} locale="pt_BR"
+                 events={for d <- [5, 10], do: %{title: "Vencimento", date: Date.new!(2026, 11, d)}} />
+      <.calendar id="range" variant="mini" months_shown={2} header={false} locale="pt_BR"
+                 date={~D[2026-11-01]} range={{~D[2026-11-20], ~D[2026-12-06]}} />
+
   The grid is `role="grid"`: Tab lands on one day, the arrows move between days (past the first or the
   last day they go to the previous or the next period), Home and End go to the ends of the week, Page Up
   and Page Down change period, and Enter or Space selects the day. `locale="pt_BR"` names months and
@@ -92,6 +107,27 @@ defmodule LineaUI.Components.Calendar do
   attr :id, :string, required: true
   attr :view, :string, default: "month", values: ~w(month week)
 
+  attr :variant, :string,
+    default: "full",
+    values: ~w(full mini),
+    doc:
+      "`mini` is the canvas's compact month in a card (see \"Mini month\" above); `view` and the week attrs do not apply to it."
+
+  attr :range, :any,
+    default: nil,
+    doc:
+      "Mini only: a `{from, to}` pair of days (`Date` or ISO text) painted as a period; `selected` still wins on its day."
+
+  attr :marks, :string,
+    default: "dot",
+    values: ~w(dot tint),
+    doc:
+      "Mini only: how a day with events shows, a dot under the number or (`tint`, the due calendar) the whole day in the soft tone of its first event's `:color` (`primary` accent, `warning` amber, `error`, `success`, `info`)."
+
+  attr :months_shown, :integer,
+    default: 1,
+    doc: "Mini only: how many months, from `date`'s, side by side."
+
   attr :date, :any,
     default: nil,
     doc:
@@ -148,6 +184,12 @@ defmodule LineaUI.Components.Calendar do
   slot :event,
     doc:
       "Replaces the content of an event chip or block; receives the event map (`:let={event}`)."
+
+  def calendar(%{variant: "mini"} = assigns) do
+    assigns
+    |> prepare_mini()
+    |> render_mini()
+  end
 
   def calendar(assigns) do
     assigns
@@ -337,6 +379,164 @@ defmodule LineaUI.Components.Calendar do
   defp month_abbr(assigns, date) do
     abbr = assigns.months |> Enum.at(date.month - 1) |> String.slice(0, 3)
     (assigns.locale == "pt_BR" && String.downcase(abbr)) || abbr
+  end
+
+  defp prepare_mini(assigns) do
+    today = Grid.to_date(assigns.today) || Date.utc_today()
+    date = Grid.to_date(assigns.date) || today
+    names = Shell.names(assigns.locale)
+    months = assigns.months || names.months
+    weekdays = assigns.weekdays || names.weekdays
+    by_date = Grid.events(assigns.events)
+    text = Strings.table(assigns.locale, assigns.labels)
+
+    {from, to} =
+      case assigns.range do
+        {a, b} -> {Grid.to_date(a), Grid.to_date(b)}
+        _none -> {nil, nil}
+      end
+
+    ctx = %{
+      today: today,
+      selected: Grid.to_date(assigns.selected),
+      from: from,
+      to: to,
+      by_date: by_date,
+      week_start: assigns.week_start
+    }
+
+    first = Date.beginning_of_month(date)
+    count = max(assigns.months_shown, 1)
+
+    pages =
+      for offset <- 0..(count - 1) do
+        month = Date.shift(first, month: offset)
+
+        %{
+          id: "#{assigns.id}-m#{offset}",
+          name: Enum.at(months, month.month - 1),
+          title: (count == 1 && "#{Enum.at(months, month.month - 1)} #{month.year}") || nil,
+          blanks: rem(rem(Date.day_of_week(month), 7) - assigns.week_start + 7, 7),
+          days: Enum.map(0..(Date.days_in_month(month) - 1), &mini_day(Date.add(month, &1), ctx))
+        }
+      end
+
+    assign(assigns,
+      date: first,
+      pages: pages,
+      count: count,
+      letters: weekdays |> Enum.map(&String.first/1) |> rotate(assigns.week_start),
+      text: text
+    )
+  end
+
+  defp mini_day(day, ctx) do
+    events = Map.get(ctx.by_date, day, [])
+
+    %{
+      date: day,
+      iso: Date.to_iso8601(day),
+      day: day.day,
+      today?: day == ctx.today,
+      selected?: day == ctx.selected,
+      range?:
+        ctx.from != nil and ctx.to != nil and Date.compare(day, ctx.from) != :lt and
+          Date.compare(day, ctx.to) != :gt,
+      mark: events != [] && (List.first(events)[:color] || "primary")
+    }
+  end
+
+  defp render_mini(assigns) do
+    ~H"""
+    <div id={@id} class={merge(["lc-mini-wrap", @count > 1 && "multi", @class])} {@rest}>
+      <div :for={page <- @pages} class={["sg-card lc-mini", @count > 1 && "two"]}>
+        <div :if={@legend != []} class="lc-mini-legend">
+          <span :for={{label, color} <- @legend}><i class={"lc-key-#{color}"}></i>{label}</span>
+        </div>
+        <div :if={@header && page.title} class="lc-mini-h">
+          <b id={page.id <> "-title"}>{page.title}</b>
+          <button
+            type="button"
+            class="sg-ib sm plain"
+            aria-label={@text.calendar_previous}
+            disabled={@on_navigate == nil}
+            phx-click={
+              push_js(@on_navigate, @id, @target, %{
+                date: iso(Date.shift(@date, month: -1)),
+                view: "month"
+              })
+            }
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 7l-5 5 5 5" /></svg>
+          </button>
+          <button
+            type="button"
+            class="sg-ib sm plain"
+            aria-label={@text.calendar_next}
+            disabled={@on_navigate == nil}
+            phx-click={
+              push_js(@on_navigate, @id, @target, %{
+                date: iso(Date.shift(@date, month: 1)),
+                view: "month"
+              })
+            }
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 7l5 5-5 5" /></svg>
+          </button>
+        </div>
+        <b :if={@header && !page.title} id={page.id <> "-title"} class="lc-mini-name">
+          {page.name}
+        </b>
+        <div class="sg-cal" role="group" aria-label={page.title || page.name}>
+          <b :for={letter <- @letters} aria-hidden="true">{letter}</b>
+          <i :for={_ <- List.duplicate(nil, page.blanks)} class="lc-blank" aria-hidden="true"></i>
+          <.mini_cell
+            :for={day <- page.days}
+            day={day}
+            tint={@marks == "tint"}
+            js={push_js(@on_select, @id, @target, %{date: day.iso})}
+          />
+        </div>
+      </div>
+    </div>
+    """
+  end
+
+  attr :day, :map, required: true
+  attr :js, :any, default: nil
+  attr :tint, :boolean, default: false
+
+  defp mini_cell(%{js: nil} = assigns) do
+    ~H"""
+    <span
+      class={[mini_class(@day), @tint && @day.mark && "lc-tn lc-tn-#{@day.mark}"]}
+      aria-current={@day.today? && "date"}
+    >
+      {@day.day}<i :if={@day.mark && !@tint} class={["lc-mk", "lc-mk-#{@day.mark}"]}></i>
+    </span>
+    """
+  end
+
+  defp mini_cell(assigns) do
+    ~H"""
+    <button
+      type="button"
+      class={[mini_class(@day), @tint && @day.mark && "lc-tn lc-tn-#{@day.mark}"]}
+      aria-pressed={to_string(@day.selected?)}
+      aria-current={@day.today? && "date"}
+      phx-click={@js}
+    >
+      {@day.day}<i :if={@day.mark && !@tint} class={["lc-mk", "lc-mk-#{@day.mark}"]}></i>
+    </button>
+    """
+  end
+
+  defp mini_class(day) do
+    [
+      day.selected? && "on",
+      !day.selected? && day.range? && "rg",
+      day.today? && !day.selected? && !day.range? && "t"
+    ]
   end
 
   defp push_js(nil, _id, _target, _values), do: nil

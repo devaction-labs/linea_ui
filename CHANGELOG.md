@@ -1,5 +1,66 @@
 # Changelog
 
+## 0.11.0 (2026-11-07)
+
+- `card_table` follows the CardTable board: one card with a header row, rows divided by a thin line, a thin status bar at the left, the selected row tinted; a panel with the hidden columns opens on hover (the `CardTable` hook is gone); below the card width the row becomes a compact card, and the bar above wraps instead of scrolling.
+- `card_table` options, the default unchanged: `breakpoints` (one cut per priority, now 1 to 4, and the card width last; the box keeps the `ctable` container name too), `copy_show="inline"` and `copy_tip="value_label"` on a copy column (the value next to the button; the tooltip shows the value with `copy_label`, then `copied_label` and a check), `ctable_sub/1` (a sub-line of a cell that leaves with a priority), `meta` next to the `title`, a `<:foot>` slot inside the card (the pager), `description` and `<:foot>` on `variant="flat"`, `priority` on `<:action>`, `label` optional. The compact card has its own left padding with or without `on_select`.
+- `action_menu` (`LineaUI.Components.ActionMenu`): the actions of a row or card behind a "⋯" button, with a look of its own (raised, outlined, shadowed), a title, items with icon and key hint, and the row tinted while it is open. The dropdown and menu items take the same separator and key hint look.
+- `pillbox` (`LineaUI.Components.Pillbox`): a multiple choice whose chosen options are pills inside the field, with a searchable list of check boxes; `select` takes `look="pillbox"`, `readonly` and `hidden_label`.
+- `mix linea_ui.icons` (`get`, `sync`, `search`, `update`; `--dir`, `--ref`, `--prune`) vendors the Hugeicons the app uses into `assets/vendor/hugeicons`, with no git dependency; the installer and `hugeicons.cjs` read that folder by default.
+
+## 0.10.0 (2026-11-06)
+
+- The assistant components (`LineaUI.Components.Ai`): `ai_chat`, `ai_composer` (with the `AiComposer` hook), `ai_message`, `ai_proposal`, `ai_tool_trace`, `conversation_list`, `prompt_suggestions` and `ai_greeting`.
+- `aura` (`LineaUI.Components.Aura`): a spinning light ring around an element for async work (`mode` spin/dual/glow, `tone`, `width`, `radius`, `shadow`). It replaces the old `aura/1` of `toast.ex`.
+- `toast_card` takes `aura`, `busy`, `progress` and `progress_state` (the progress toast whose background fills up); the toasts pushed from the server draw the same card.
+- The canvas toasts stack again: the older ones behind the newest show as smaller slivers of the card (their card was hidden with the content).
+- A toast replaced in a pile (same id sent again) is measured without the pile's scale and sliver width, so the opened pile keeps every card at its size, aligned and without overlap.
+- The spinner of a progress toast keeps turning across updates (it was drawn again, and restarted, at every new percentage).
+- `sparkline` (`LineaUI.Components.Sparkline`): a small inline trend line.
+- `chart`: the `brl_kilo` and `brl_kilo_zero` formatters, `tickAmount` on category x axes and left-aligned y-axis labels.
+- `upload variant="canvas"` takes `browse`, `icon_path` and `drop_class`.
+- Fallback ids are stable: built from `name` or from the label, placeholder and help text, never from the value, so a field keeps its id while the user types.
+- The dark look of the shell, the collapsed rail, the command palette and the Signetum screens, and canvas stylesheets per screen group.
+- `ai_chat` shows no footnote unless one is given; `email` `alt_text` and `editor` `submit_key` accept `nil`.
+- Removed what came from the Metronic template, now that its license is gone: the `demo1` layout of `app_shell/1`, `LineaUI.Components.SideMenu` (`shell_sidebar`, `side_menu_*`, `shell_header`), the `LineaUI.ShellSidebar` hook, the Keenicons plugin (`keenicons.cjs`, `scripts/keenicons.py`) and the mentions of Metronic in the docs. The framed shell (`layout="framed"`) is the app shell of the LineaUI identity.
+- Removed the components that only served the Metronic script and markup: `select_input`, `disclosure_*` (`disclosure_parts`), `tab_group`, `table_plain`, `box_*`, the bare `checkbox_input`/`radio_input`/`switch_input`, `rating_row`/`rating_cell`, `avatar_frame` and its parts, `progress_track`/`progress_fill`. `accordion`, `tabs`, `select`, `table`, `card`, `checkbox`, `radio`, `switch`, `rating`, `avatar` and `progress` cover them. `command_palette` takes `query`, the text it opens with.
+- Theme: the Signetum identity (Geist, teal, warm neutrals), pill buttons, 8px badges, `kpi_card layout="inline"`, `rail_heading/1`, `color="mono"` as the ink button, muted table headers and the e-mail palette.
+
+## 0.9.1 (2026-11-04)
+
+- `dropdown` takes `hover`: the menu opens when the pointer is over the trigger or the menu and closes shortly after it leaves.
+- `rating_cell` takes `half`; `radio_input` is 20px (`size="sm"` 18px); `box` with `grid` pads the first and last column of a `table_plain`.
+- `modal` takes `backdrop_class`, merged into the backdrop (`bg-black/30` for a lighter one than the default).
+- `side_menu_group nested`: the sub-items sit 21px from the vertical line as in Metronic (they were glued to it), and a group inside a nested group indents its own line and drops the bullet column.
+- Dark tinted cards (`soft`, `muted`, `filled`, and a card inside a card) were still drawn with the bluish `rgb(105 122 155)` of the old LineOne palette over the zinc page; they are a veil of white now, and the light-mode veils use zinc black instead of the old slate (`rgb(15 23 42)`).
+- The keenicon box behaves as Metronic's in a line of text (`line-height: 1`, `inline-flex`, an offset for the baseline of its glyph).
+
+## 0.9.0 (2026-11-03)
+
+The theme is Metronic's now (Inter, zinc neutrals, a blue primary, the `demo1` shell layout), with the components below.
+
+- `container_fixed` and `container_fluid` (`LineaUI.Components.Container`): the page containers of Metronic.
+- `select_input` (`LineaUI.Components.SelectInput`): Metronic's bare select, a native `<select>` that keeps the `data-kt-select` attribute its script reads.
+- `tab_group` (`LineaUI.Components.TabGroup`): the container of Metronic's tabs, which carries the `data-kt-tabs` attribute its script reads.
+- `rating_row` and `rating_cell` (`LineaUI.Components.RatingParts`): Metronic's static star rating as parts.
+- `avatar_frame`, `avatar_picture`, `avatar_fallback`, `avatar_indicator`, `avatar_status` (`LineaUI.Components.AvatarParts`) and `progress_track`, `progress_fill` (`ProgressParts`): Metronic's avatar and progress bar as parts.
+- `table_plain` (`LineaUI.Components.PlainTable`): Metronic's bare table, styled through its own `th`, `td` and `tr`; `border` and `highlight` options.
+- `checkbox_input`, `radio_input` and `switch_input` (`LineaUI.Components.Toggles`): the bare inputs of Metronic's forms, one `<input>` each and no wrapper, drawn by the state of the browser. The switch is 26x18, 30x20 or 34x22 by `size`. `box` and its parts are Metronic's card; `button` has the `ghost` and `dim` variants and the `mono` color.
+- New components for what Metronic's layout script does: `image_input` (an avatar or logo field with a camera strip and a remove or revert button), `password_input` (the eye that shows the password, with `JS` only), `sticky` (a block that takes classes while the page is scrolled; `shell_header` uses it for its edge), `scrollspy` (anchors that follow the scroll) and `context_menu` (a menu under the pointer on a right click). Their hooks are in `assets/js/linea_ui/hooks/layout.js`.
+- Field captions are 13px in the text color and the text of every field is `slate-950` (Metronic's foreground) without the letter spacing of LineOne. `radio_group variant="chip"` (the pill select) is a 28px pill with a thin edge on white, the chosen one in the color; `rating` lights its stars in `yellow-400`.
+- `date_picker` calendar: Metronic's 12px popover with a plain header (the month and the year as one bold title), bold weekdays and days of 30px with an 8px radius; today is a muted tile with the primary color and the chosen day a primary tile. The gray header and the round days of LineOne are gone.
+- `upload`: the dropzone of Metronic: a 1px dashed edge in `slate-400` that turns to the primary color on hover, a 6px radius and 13px text. The multiple select and `tags_input` chips are Metronic's 24px secondary badge on one line with the field, and the field is 34px high.
+- `radio_group variant="card"` (and the checkbox cards): a 12px box with 16px of padding, the radio above the title and a border that turns to the color when chosen, without the tint and the ring. `phone_input`: the country button sits on a muted addon fill with the dial code in the text color.
+- `shell_sidebar`: the collapse works the way Metronic's layout script does. The hook `LineaUI.ShellSidebar` marks the sidebar `data-animating` while the width animates (it takes no pointer, so the hover that opens the rail does not reopen it under the pointer that just collapsed it), the arrow of the button turns 180 degrees when collapsed, and the page open now is scrolled into view on mount.
+- `input_group`, `number_input` and `otp_input` follow Metronic: the addon is 34px high with a muted fill, a thin shadow and a 6px radius; the border of every field is `slate-200` (`--input`); the OTP boxes are 40px squares with a 10px gap, the same border when filled and a soft primary ring on focus (the primary border of a filled box is gone).
+- `switch` has Metronic's sizes: 26x18, 30x20 and 34x22 with a 10, 12 and 14px thumb. `textarea` gets `size` (`sm`, `md`, `lg`: 10, 12 and 16px of padding), a 6px radius and 13px text, and the placeholder of every field is the muted `slate-500` as in Metronic.
+- Sizes of the controls follow Metronic: `button`, `input`, `select` and `autocomplete` are 28px (`sm`), 34px (`md`) and 40px (`lg`) high with a 6px radius, `md` text is 13px (they were 32, 40 and 48px with an 8px radius). `xl` buttons stay 48px. The icon button is `size-7`, `size-8.5` and `size-10`.
+- `autocomplete`: the suggestion list of the Metronic board: a rounded panel with a soft shadow and rows of 7px by 10px in 14px text with a neutral active row, a 6px panel as in Metronic's select (it also reaches `select`, `phone_input` and the other Tom Select lists), the matched text in bold without the color, and the `prefix` slot as an addon box beside the field.
+- Keenicons, the icon set of Metronic: `assets/css/keenicons.cjs` turns a folder of SVGs into `ki-<style>-<name>` mask classes (`ki-filled-element-11`), and `icon/1` draws them as a `<span>`. `scripts/keenicons.py` writes the SVGs from a Metronic checkout; they are covered by Metronic's license, so `assets/keenicons` is ignored by git and not part of the package.
+- `command_palette`: the look of the Metronic search modal: 520px wide, a 67px search row with the `Esc` key, compact 13px rows with the icon beside the label and a neutral selected row (the icon tile and the primary tint are gone).
+- `app_shell layout="demo1"`: the Metronic layout. `shell_sidebar/1` is 280px, collapses to an 80px rail (and opens while the pointer is over it) and its button flips `data-collapsed` on the shell with `JS`; the menu is `side_menu_heading/1`, `side_menu_link/1` (with an optional tag such as "Soon"), `side_menu_group/1` (a `<details>` with + and −) and `side_menu_sublink/1`; `shell_header/1` is the fixed top bar with `shell_header_link/1` and the actions; the new `:footer` slot sits under the page. They live in `LineaUI.Components.SideMenu`.
+- Theme: the LineOne palette gives way to the Metronic one. Inter replaces Poppins as the app font, `slate-*` and `navy-*` are now the zinc scale (dark page `#09090b`, card `#18181b`, edge `#27272a`), `primary` is blue-500 (blue-600 as `accent` in dark), `secondary` orange, `info` violet, `success` green, `warning` yellow and `error` red. Class names do not change; the e-mail palette follows. `indigo-*` classes became `blue-*`.
+
 ## 0.8.14
 
 - `card_table`: `title`, `description` and `<:actions>` draw a heading above the table (title, line under it, buttons at the right), so a list no longer needs a card around it just to say what it is.

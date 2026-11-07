@@ -103,7 +103,8 @@ defmodule LineaUI.Components.Toast do
 
       send_toast(socket, "Manifestation is due today", kind: :warning, aura: :glow, aura_size: :lg)
 
-  The same ring goes around any element with `aura/1`.
+  The same ring goes around any element with `LineaUI.Components.Aura.aura/1` (the canvas look, used by
+  `toast_card/1` below).
 
   ## Progress
 
@@ -138,11 +139,20 @@ defmodule LineaUI.Components.Toast do
   `stack={false}` on the toaster to keep them always open, one above the other.
 
   The toasts sit on the CSS layer `--linea-z-toast` (see the README).
+
+  ## A toast in the page
+
+  `toast_card/1` draws the design canvas's toast card (`sg-toast`, light or dark) where it is written, not in
+  the toaster: for a notice that stays in a panel, or to show what a toast looks like.
+
+      <.toast_card kind="error" icon="huge-cancel-circle" title="Could not issue"
+        description="SEFAZ is down. We will retry in 5 min." />
   """
 
   use LineaUI.Component
-  import LineaUI.Components.Icon, only: [icon_set: 0, glyph: 1]
+  import LineaUI.Components.Icon, only: [icon_set: 0, glyph: 1, icon: 1]
   import LineaUI.Components.Spinner, only: [spinner: 1]
+  alias LineaUI.Components.Aura
 
   @flash_key "linea_toast"
   @colors ~w(neutral primary secondary info success warning error light dark)
@@ -254,47 +264,200 @@ defmodule LineaUI.Components.Toast do
   end
 
   @doc """
-  The ring of light of a toast, around any element: a box that runs a light along its border. Give the
-  child its own `rounded-*` (the ring follows the box's radius); the ring is drawn over the border and
-  takes no space.
+  The canvas's toast card (`sg-toast`), drawn in place: a 30px icon tile tinted by `kind`, the title and the
+  description, the `:action` buttons and a muted close button that hides the card (and runs `on_dismiss`).
 
-      <.aura size="lg" class="w-80 rounded-xl">
-        <div class="rounded-xl bg-white p-4 dark:bg-navy-700">Assistant checking the taxes…</div>
-      </.aura>
+      <.toast_card tone="dark" icon="huge-delete-02" title="Order #2488 deleted">
+        <:action><.button variant="soft" size="sm" phx-click="undo">Undo</.button></:action>
+      </.toast_card>
+
+  `aura` draws the card inside an `LineaUI.Components.Aura.aura/1` (`aura_tone`, `aura_width`, `aura_shadow`),
+  and `busy` puts a spinner at the right: the assistant, or a process outside the page, is working.
+
+      <.toast_card aura="spin" aura_tone="ai" busy dismissible={false} kind="primary" icon="huge-ai-magic"
+        title="Assistant reading the invoice" description="NF-e 48.211 · 44 items" />
+
+  `progress` (0 to 100) makes it a progress toast: the background fills up to that percentage, with a
+  spinner and the percentage at the right. `progress_state="done"` turns the fill green and keeps it
+  complete, `"fail"` turns it red and drops the spinner and the percentage (put a retry button in `:action`).
+  Don't pass `style` along with `progress`.
+
+      <.toast_card progress={42} kind="primary" icon="huge-file-01" title="Issuing the NF-e"
+        description="Signing the XML…" dismissible={false} />
   """
-  attr :variant, :string,
-    default: "default",
-    values: @aura_variants,
+  attr :id, :string, default: nil
+
+  attr :tone, :string,
+    default: "light",
+    values: ~w(light dark),
+    doc: "`light` is the panel card; `dark` the ink card (the canvas's `sg-toast dark`)."
+
+  attr :kind, :string,
+    default: "neutral",
+    values: ~w(neutral primary success warning error info),
+    doc: "The tint of the icon tile: the sunken gray, the accent, or the canvas's tones."
+
+  attr :icon, :string, default: nil, doc: "A `LineaUI.Components.Icon.icon/1` name for the tile."
+  attr :title, :string, required: true
+  attr :description, :string, default: nil
+
+  attr :dismissible, :boolean, default: true, doc: "The close button."
+  attr :close_label, :string, default: "Close", doc: "The `aria-label` of the close button."
+
+  attr :on_dismiss, :any,
+    default: nil,
+    doc: "A `%JS{}` run (after hiding the card) when the close button is pressed."
+
+  attr :busy, :boolean, default: false, doc: "A spinner at the right of the text."
+  attr :busy_label, :string, default: "Loading", doc: "The accessible name of the spinner."
+
+  attr :progress, :integer,
+    default: nil,
+    doc: "0 to 100: the card fills up to it and shows the percentage."
+
+  attr :progress_state, :string,
+    default: "run",
+    values: ~w(run done fail),
     doc:
-      "`default` rotates one light, `dual` two (assistant and green), `glow` pulses instead of rotating."
+      "`run` spins, `done` is complete and green, `fail` is red, without spinner or percentage."
 
-  attr :size, :string,
-    default: "sm",
-    values: @aura_sizes,
-    doc: "The thickness: 1px, 1.5px, 2.5px."
+  attr :aura, :string,
+    default: nil,
+    values: [nil | ~w(spin dual glow)],
+    doc: "Draws the card inside an aura in this mode."
 
-  attr :color, :string,
-    default: "assistant",
-    values: @aura_colors,
-    doc: "The light; `assistant` is the indigo to purple of the assistant."
+  attr :aura_tone, :string,
+    default: "accent",
+    values: ~w(accent ai info pos warn neg violet)
+
+  attr :aura_width, :string, default: "default", values: ~w(xs sm default lg)
+  attr :aura_shadow, :boolean, default: true
 
   attr :class, :any, default: nil
   attr :rest, :global
-  slot :inner_block, required: true
 
-  def aura(assigns) do
+  slot :icon_tile, doc: "Replaces the `icon` inside the tile."
+  slot :action, doc: "Buttons between the text and the close button."
+
+  def toast_card(%{aura: nil} = assigns) do
+    ~H"""
+    <.toast_card_box
+      id={@id}
+      tone={@tone}
+      kind={@kind}
+      icon={@icon}
+      title={@title}
+      description={@description}
+      dismissible={@dismissible}
+      close_label={@close_label}
+      on_dismiss={@on_dismiss}
+      busy={@busy}
+      busy_label={@busy_label}
+      progress={@progress}
+      progress_state={@progress_state}
+      class={@class}
+      {@rest}
+      icon_tile={@icon_tile}
+      action={@action}
+    />
+    """
+  end
+
+  def toast_card(assigns) do
+    ~H"""
+    <Aura.aura mode={@aura} tone={@aura_tone} width={@aura_width} shadow={@aura_shadow}>
+      <.toast_card_box
+        id={@id}
+        tone={@tone}
+        kind={@kind}
+        icon={@icon}
+        title={@title}
+        description={@description}
+        dismissible={@dismissible}
+        close_label={@close_label}
+        on_dismiss={@on_dismiss}
+        busy={@busy}
+        busy_label={@busy_label}
+        progress={@progress}
+        progress_state={@progress_state}
+        class={@class}
+        {@rest}
+        icon_tile={@icon_tile}
+        action={@action}
+      />
+    </Aura.aura>
+    """
+  end
+
+  attr :id, :string, default: nil
+  attr :tone, :string, required: true
+  attr :kind, :string, required: true
+  attr :icon, :string, default: nil
+  attr :title, :string, required: true
+  attr :description, :string, default: nil
+  attr :dismissible, :boolean, required: true
+  attr :close_label, :string, required: true
+  attr :on_dismiss, :any, default: nil
+  attr :busy, :boolean, required: true
+  attr :busy_label, :string, required: true
+  attr :progress, :integer, default: nil
+  attr :progress_state, :string, required: true
+  attr :class, :any, default: nil
+  attr :rest, :global
+  attr :icon_tile, :list, default: []
+  attr :action, :list, default: []
+
+  defp toast_card_box(assigns) do
     ~H"""
     <div
-      class={merge(["linea-aura", @class])}
-      data-aura={@variant}
-      data-aura-size={@size}
-      data-aura-color={@color}
+      id={@id}
+      class={
+        merge([
+          "sg-toast",
+          @tone == "dark" && "dark",
+          @progress && "prog",
+          @progress && @progress_state != "run" && @progress_state,
+          @class
+        ])
+      }
+      style={@progress && "--p:#{@progress}%"}
       {@rest}
     >
-      {render_slot(@inner_block)}
+      <span class={["sg-ic sg-toast-ic", card_tone(@kind)]} aria-hidden="true">
+        <.icon :if={@icon && @icon_tile == []} name={@icon} class="size-3.5" />
+        {render_slot(@icon_tile)}
+      </span>
+      <div class="sg-toast-body">
+        <span class="t">{@title}</span>
+        <span :if={@description} class="sg-toast-desc">{@description}</span>
+      </div>
+      {render_slot(@action)}
+      <.spinner
+        :if={@busy or (@progress && @progress_state == "run")}
+        variant="canvas"
+        size="xs"
+        label={@busy_label}
+      />
+      <span :if={@progress && @progress_state != "fail"} class="pct">{@progress}%</span>
+      <button
+        :if={@dismissible}
+        type="button"
+        class="sg-ib sm plain"
+        aria-label={@close_label}
+        phx-click={JS.hide(@on_dismiss || %JS{}, to: {:closest, ".sg-toast"})}
+      >
+        <.glyph name={:close} class="size-4" />
+      </button>
     </div>
     """
   end
+
+  defp card_tone("primary"), do: "acc"
+  defp card_tone("success"), do: "pos"
+  defp card_tone("warning"), do: "warn"
+  defp card_tone("error"), do: "neg"
+  defp card_tone("info"), do: "info"
+  defp card_tone(_kind), do: nil
 
   @doc """
   Leaves a toast in the flash of a `Plug.Conn` (after `fetch_flash`) or a LiveView socket. The

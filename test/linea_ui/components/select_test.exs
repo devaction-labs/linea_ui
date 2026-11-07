@@ -8,9 +8,9 @@ defmodule LineaUI.Components.SelectTest do
       html = render(~H|<.select native name="e" label="Event" options={~w(A B)} value="B" />|)
       classes = classes(html, "select")
       assert "form-select" in classes
-      assert "border-slate-300" in classes
+      assert "border-0" in classes
       assert "mt-1.5" in classes
-      assert "rounded-lg" in classes
+      assert "rounded-[11px]" in classes
       assert html |> find("label > span") |> LazyHTML.text() == "Event"
       assert html |> find("option[selected]") |> LazyHTML.attribute("value") == ["B"]
     end
@@ -21,8 +21,8 @@ defmodule LineaUI.Components.SelectTest do
                "select"
              )
 
-      assert "h-8" in classes(render(~H|<.select native size="sm" options={[]} />|), "select")
-      assert "h-12" in classes(render(~H|<.select native size="lg" options={[]} />|), "select")
+      assert "h-7" in classes(render(~H|<.select native size="sm" options={[]} />|), "select")
+      assert "h-10" in classes(render(~H|<.select native size="lg" options={[]} />|), "select")
 
       assert "rounded-full" in classes(
                render(~H|<.select native shape="pill" options={[]} />|),

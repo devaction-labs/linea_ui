@@ -12,3 +12,5 @@ preview/deps
 preview/priv/static/assets/
 preview/tmp/
 /.claude/
+
+/assets/keenicons/

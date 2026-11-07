@@ -28,7 +28,7 @@
   }
 
   :is(.card, .card-header, .card-footer)[data-size="md"] {
-    --card-p: 1.5rem;
+    --card-p: 1.25rem;
     --card-i: 0.25rem;
     --card-r: 1rem;
     --card-h: 0.875rem;
@@ -57,14 +57,14 @@
 
   .card[data-size] {
     --card-pad: var(--card-p);
-    --card-gap: var(--card-p);
+    --card-gap: calc(var(--card-p) * 0.5);
     --card-pgap: 0px;
     --card-m: 0px;
     --card-hx: 0px;
     --card-hy: 0px;
     --card-line: 0px;
     --card-linex: 0px;
-    --card-linec: rgb(15 23 42 / 0.09);
+    --card-linec: rgb(9 9 11 / 0.09);
     --card-band: transparent;
     --card-bm: 0px;
     --card-bx: 0px;
@@ -79,15 +79,15 @@
     --card-bleed-b: 0px;
     --card-bleed-rt: 0px;
     --card-bleed-rb: 0px;
-    --card-panel-bg: rgb(15 23 42 / 0.03);
-    --card-panel-edge: rgb(15 23 42 / 0.09);
-    --card-panel-shadow: inset 0 1px 2px rgb(15 23 42 / 0.05);
+    --card-panel-bg: rgb(9 9 11 / 0.03);
+    --card-panel-edge: rgb(9 9 11 / 0.09);
+    --card-panel-shadow: inset 0 1px 2px rgb(9 9 11 / 0.05);
     gap: var(--card-gap);
-    padding: var(--card-pad);
+    padding: calc(var(--card-pad) * 0.9) var(--card-pad);
     border-radius: var(--card-r);
 
     @variant dark {
-      --card-linec: rgb(105 122 155 / 0.35);
+      --card-linec: rgb(255 255 255 / 0.17);
       --card-panel-bg: rgb(0 0 0 / 0.2);
       --card-panel-edge: rgb(255 255 255 / 0.08);
       --card-panel-shadow: inset 0 1px 2px rgb(0 0 0 / 0.25);
@@ -132,42 +132,42 @@
 
   .card:is([data-variant="muted"], [data-variant="soft"], [data-variant="filled"]) {
     --card-panel-bg: #fff;
-    --card-panel-edge: rgb(15 23 42 / 0.11);
-    --card-panel-shadow: 0 1px 2px rgb(15 23 42 / 0.06);
+    --card-panel-edge: rgb(9 9 11 / 0.11);
+    --card-panel-shadow: 0 1px 2px rgb(9 9 11 / 0.06);
     box-shadow: var(--card-highlight, 0 0 #0000);
 
     @variant dark {
-      --card-panel-bg: rgb(105 122 155 / 0.2);
-      --card-panel-edge: rgb(105 122 155 / 0.45);
+      --card-panel-bg: rgb(255 255 255 / 0.1);
+      --card-panel-edge: rgb(255 255 255 / 0.23);
       --card-panel-shadow: 0 1px 2px rgb(0 0 0 / 0.25);
     }
   }
 
   .card[data-variant="muted"] {
-    --card-edge: rgb(15 23 42 / 0.11);
-    background-color: rgb(15 23 42 / 0.06);
+    --card-edge: rgb(9 9 11 / 0.11);
+    background-color: rgb(9 9 11 / 0.06);
 
     @variant dark {
-      --card-edge: rgb(105 122 155 / 0.45);
-      background-color: rgb(105 122 155 / 0.2);
+      --card-edge: rgb(255 255 255 / 0.23);
+      background-color: rgb(255 255 255 / 0.1);
     }
   }
 
   .card[data-variant="soft"] {
-    --card-edge: rgb(15 23 42 / 0.1);
-    background-color: rgb(15 23 42 / 0.04);
+    --card-edge: rgb(9 9 11 / 0.1);
+    background-color: rgb(9 9 11 / 0.04);
 
     @variant dark {
-      --card-edge: rgb(105 122 155 / 0.38);
-      background-color: rgb(105 122 155 / 0.12);
+      --card-edge: rgb(255 255 255 / 0.19);
+      background-color: rgb(255 255 255 / 0.06);
     }
   }
 
   .card[data-variant="filled"] {
-    background-color: rgb(15 23 42 / 0.06);
+    background-color: rgb(9 9 11 / 0.06);
 
     @variant dark {
-      background-color: rgb(105 122 155 / 0.2);
+      background-color: rgb(255 255 255 / 0.1);
     }
   }
 
@@ -177,11 +177,11 @@
     keeps an edge: level 1 is the tint, level 2 is recessed, level 3 is raised again.
   */
   .card .card:is([data-variant="muted"], [data-variant="soft"], [data-variant="filled"]) {
-    --card-edge: rgb(15 23 42 / 0.12);
-    background-color: rgb(15 23 42 / 0.05);
+    --card-edge: rgb(9 9 11 / 0.12);
+    background-color: rgb(9 9 11 / 0.05);
 
     @variant dark {
-      --card-edge: rgb(105 122 155 / 0.4);
+      --card-edge: rgb(255 255 255 / 0.2);
       background-color: rgb(0 0 0 / 0.18);
     }
   }
@@ -190,7 +190,7 @@
     background-color: #fff;
 
     @variant dark {
-      background-color: rgb(105 122 155 / 0.18);
+      background-color: rgb(255 255 255 / 0.09);
     }
   }
 
@@ -216,10 +216,10 @@
   }
 
   .card[data-body="separated"] {
-    --card-band: rgb(15 23 42 / 0.04);
+    --card-band: rgb(9 9 11 / 0.04);
 
     @variant dark {
-      --card-band: rgb(105 122 155 / 0.16);
+      --card-band: rgb(255 255 255 / 0.08);
     }
   }
 

@@ -102,14 +102,16 @@
 @layer components {
   .empty-grid {
     background-image:
-      linear-gradient(rgb(79 70 229 / 0.08) 1px, transparent 1px),
-      linear-gradient(90deg, rgb(79 70 229 / 0.08) 1px, transparent 1px);
+      linear-gradient(rgb(43 127 255 / 0.08) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(43 127 255 / 0.08) 1px, transparent 1px);
     background-size: 20px 20px;
     background-position: -1px -1px;
     mask-image: radial-gradient(closest-side, #000 30%, transparent 100%);
   }
 
-  .dark .empty-grid {
+  .dark .empty-grid:not([data-theme="light"] *),
+
+  [data-theme="dark"] .empty-grid{
     background-image:
       linear-gradient(rgb(129 140 248 / 0.09) 1px, transparent 1px),
       linear-gradient(90deg, rgb(129 140 248 / 0.09) 1px, transparent 1px);
@@ -117,13 +119,15 @@
 
   .timer-checker {
     background-image:
-      linear-gradient(rgb(79 70 229 / 0.08) 1px, transparent 1px),
-      linear-gradient(90deg, rgb(79 70 229 / 0.08) 1px, transparent 1px);
+      linear-gradient(rgb(43 127 255 / 0.08) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(43 127 255 / 0.08) 1px, transparent 1px);
     background-size: 20px 20px;
     background-position: -1px -1px;
   }
 
-  .dark .timer-checker {
+  .dark .timer-checker:not([data-theme="light"] *),
+
+  [data-theme="dark"] .timer-checker{
     background-image:
       linear-gradient(rgb(129 140 248 / 0.09) 1px, transparent 1px),
       linear-gradient(90deg, rgb(129 140 248 / 0.09) 1px, transparent 1px);
@@ -138,7 +142,9 @@
     background: radial-gradient(closest-side, transparent 30%, #fff 100%);
   }
 
-  .dark .timer-checker::after {
+  .dark .timer-checker::after:not([data-theme="light"] *),
+
+  [data-theme="dark"] .timer-checker::after{
     background: radial-gradient(closest-side, transparent 30%, var(--color-navy-700) 100%);
   }
 
@@ -147,7 +153,9 @@
     box-shadow: 0 0 0 3px rgb(16 185 129 / 0.1);
   }
 
-  .dark .timer-dot {
+  .dark .timer-dot:not([data-theme="light"] *),
+
+  [data-theme="dark"] .timer-dot{
     background-color: var(--color-success);
     box-shadow: 0 0 0 3px rgb(16 185 129 / 0.15);
   }
@@ -157,7 +165,9 @@
     box-shadow: 0 0 0 3px rgb(255 152 0 / 0.1);
   }
 
-  .dark [data-state="paused"] > .timer-dot {
+  .dark [data-state="paused"] > .timer-dot:not([data-theme="light"] *),
+
+  [data-theme="dark"] [data-state="paused"] > .timer-dot{
     background-color: var(--color-warning);
     box-shadow: 0 0 0 3px rgb(255 152 0 / 0.15);
   }

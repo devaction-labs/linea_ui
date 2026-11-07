@@ -122,4 +122,26 @@ defmodule LineaUI.Components.SignaturePadTest do
     assert html =~ "can&#39;t be blank"
     assert html =~ "Signature"
   end
+
+  test "variant canvas and footer={false}" do
+    assigns = %{}
+
+    html =
+      rendered_to_string(~H"""
+      <.signature_pad
+        id="s"
+        name="s"
+        variant="canvas"
+        footer={false}
+        labels={%{signature_hint: "Assine acima"}}
+      />
+      """)
+
+    assert html =~ "lu-sign "
+    assert html =~ ~s(class="lu-sign-foot">Assine acima)
+    refute html =~ "data-hint"
+    refute html =~ "data-status-empty"
+    refute html =~ "data-clear"
+    refute html =~ "×"
+  end
 end

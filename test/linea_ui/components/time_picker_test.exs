@@ -85,4 +85,39 @@ defmodule LineaUI.Components.TimePickerTest do
     assert labels["picker_minute_up"] == "Mais minutos"
     assert labels["picker_hour_down"] == "Diminuir hora"
   end
+
+  test "variant list: the fixed slots as radios, the value checked" do
+    assigns = %{}
+
+    html =
+      rendered_to_string(~H"""
+      <.time_picker
+        id="h"
+        name="hora"
+        variant="list"
+        value="14:30"
+        minute_step={15}
+        min_time="14:00"
+        max_time="14:45"
+      />
+      """)
+
+    doc = LazyHTML.from_fragment(html)
+
+    assert doc |> LazyHTML.query("#h input[type=radio]") |> LazyHTML.attribute("value") == [
+             "14:00",
+             "14:15",
+             "14:30",
+             "14:45"
+           ]
+
+    assert doc |> LazyHTML.query("#h input[checked]") |> LazyHTML.attribute("value") == ["14:30"]
+
+    assert doc
+           |> LazyHTML.query("#h input[type=radio]")
+           |> LazyHTML.attribute("name")
+           |> Enum.uniq() == ["hora"]
+
+    refute html =~ "LineaUI.TimePicker"
+  end
 end

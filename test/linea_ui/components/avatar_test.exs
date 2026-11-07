@@ -219,9 +219,17 @@ defmodule LineaUI.Components.AvatarTest do
       <.avatar id="c" initials="a" size="40" />
       <.avatar id="d" initials="a" size="48" />
       <.avatar id="e" initials="a" size="64" />
+      <.avatar id="f" initials="a" size="44" />
       """)
 
-    for {id, size} <- [a: "size-6", b: "size-8", c: "size-10", d: "size-12", e: "size-16"] do
+    for {id, size} <- [
+          a: "size-6",
+          b: "size-8",
+          c: "size-10",
+          d: "size-12",
+          e: "size-16",
+          f: "size-11"
+        ] do
       assert size in classes(html, "##{id}")
     end
   end
@@ -236,11 +244,13 @@ defmodule LineaUI.Components.AvatarTest do
       <.avatar id="e" initials="a" status="online" status_position="top-left" />
       """)
 
-    assert "bg-success-focus" in classes(html, "#a > div:last-child")
+    assert "bg-(--pos)" in classes(html, "#a > div:last-child")
     assert "-bottom-px" in classes(html, "#a > div:last-child")
-    assert "bg-warning-focus" in classes(html, "#b > div:last-child")
-    assert "bg-error-focus" in classes(html, "#c > div:last-child")
-    assert "bg-slate-400" in classes(html, "#d > div:last-child")
+    assert "size-[11px]" in classes(html, "#a > div:last-child")
+    assert "ring-(--panel)" in classes(html, "#a > div:last-child")
+    assert "bg-(--warn)" in classes(html, "#b > div:last-child")
+    assert "bg-(--neg)" in classes(html, "#c > div:last-child")
+    assert "bg-(--line-strong)" in classes(html, "#d > div:last-child")
     assert "left-0" in classes(html, "#e > div:last-child")
   end
 
@@ -286,7 +296,37 @@ defmodule LineaUI.Components.AvatarTest do
              |> Enum.to_list()
   end
 
-  test "avatar_group: overlap follows the size, hover lifts, +N has an inset border" do
+  test "pixel sizes take the canvas initials and an icon draws the sunken face" do
+    html =
+      render(~H"""
+      <.avatar id="a" name="Ana Souza" size="24" />
+      <.avatar id="b" name="Ana Souza" size="64" />
+      <.avatar id="c" name="Ana Souza" size="3xs" />
+      <.avatar id="d" icon="huge-user" alt="Pessoa" size="32" />
+      """)
+
+    assert "text-[10px]" in classes(html, "#a > div")
+    assert "text-[21px]" in classes(html, "#b > div")
+    assert "text-[9px]" in classes(html, "#c > div")
+    assert "bg-(--sunken)" in classes(html, "#d > div")
+    assert [_] = find(html, "#d > div > svg, #d > div > span") |> Enum.to_list()
+  end
+
+  test "avatar_group: the canvas overlap and the panel ring" do
+    html =
+      render(~H"""
+      <.avatar_group id="g" overlap="7" ring_color="panel" size="32" more={6}>
+        <.avatar name="Ana Souza" size="32" ring ring_color="panel" />
+      </.avatar_group>
+      """)
+
+    assert "-space-x-[7px]" in classes(html, "#g")
+    more = classes(html, "#g > .avatar:last-child .is-initial")
+    assert "ring-(--panel)" in more
+    assert "text-(--fg)" in more
+  end
+
+  test "avatar_group: overlap follows the size, hover lifts" do
     html =
       render(~H"""
       <.avatar_group id="g" overlap="auto" size="40" more={2}>
@@ -299,7 +339,7 @@ defmodule LineaUI.Components.AvatarTest do
     assert "[&>.avatar:hover]:-translate-y-0.5" in group
     assert "[&>.avatar:hover]:z-[2]" in group
     more = classes(html, "#g > .avatar:last-child .is-initial")
-    assert Enum.any?(more, &String.starts_with?(&1, "shadow-[inset_0_0_0_1px"))
+    assert "bg-(--sunken)" in more
   end
 
   test "avatar_group: the hidden people open from the +N in a popover" do

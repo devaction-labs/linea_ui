@@ -10,9 +10,10 @@
 // --settle     milliseconds to wait after --click and --hover, before the shot (a delayed close, a transition).
 // --select     clips the shot to the first element matching the selector (scrolled into view).
 // --eval       runs JavaScript in the page before the shot (click a trigger, open a menu...).
+// --dump       a JavaScript expression whose value is written, as JSON, to <out>.json (a layout check without an image).
 // --full       the whole page height instead of the viewport.
 import {spawn} from "node:child_process"
-import {mkdtempSync, writeFileSync} from "node:fs"
+import {mkdtempSync, rmSync, writeFileSync} from "node:fs"
 import {tmpdir} from "node:os"
 import {join} from "node:path"
 
@@ -23,10 +24,31 @@ const height = Number(opt.height ?? 900)
 const wait = Number(opt.wait ?? 1200)
 const port = 9300 + Math.floor(Math.random() * 600)
 
+const profile = mkdtempSync(join(tmpdir(), "shot-"))
 const chrome = spawn("chromium", [
   "--headless=new", `--remote-debugging-port=${port}`, "--no-first-run", "--hide-scrollbars",
-  "--disable-gpu", `--user-data-dir=${mkdtempSync(join(tmpdir(), "shot-"))}`, `--window-size=${width},${height}`, "about:blank",
+  "--disable-gpu", `--user-data-dir=${profile}`, `--window-size=${width},${height}`, "about:blank",
 ], {stdio: "ignore"})
+const dropProfile = async () => {
+  chrome.kill()
+  await new Promise((resolve) => {
+    if (chrome.exitCode !== null || chrome.signalCode !== null) resolve()
+    else {
+      chrome.once("exit", resolve)
+      setTimeout(resolve, 2000)
+    }
+  })
+  rmSync(profile, {recursive: true, force: true})
+}
+
+// A killed run (timeout, Ctrl-C, a parent that exits) would leave Chromium running and its profile growing in /tmp,
+// so every way out kills the browser and removes the profile.
+const cleanupSync = () => {
+  try { chrome.kill("SIGKILL") } catch {}
+  try { rmSync(profile, {recursive: true, force: true}) } catch {}
+}
+process.on("exit", cleanupSync)
+for (const signal of ["SIGINT", "SIGTERM", "SIGHUP"]) process.on(signal, () => process.exit(130))
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
 
@@ -42,7 +64,14 @@ const target = async () => {
   throw new Error("chromium did not start")
 }
 
-const ws = new WebSocket(await target())
+const ws = await (async () => {
+  try {
+    return new WebSocket(await target())
+  } catch (error) {
+    await dropProfile()
+    throw error
+  }
+})()
 await new Promise((r) => ws.addEventListener("open", r))
 let seq = 0
 const pending = new Map()
@@ -99,6 +128,7 @@ try {
     await send("Input.dispatchMouseEvent", {type: "mouseMoved", x: at.x, y: at.y})
     await sleep(500 + Number(opt.settle ?? 0))
   }
+  if (opt.dump) writeFileSync(out + ".json", JSON.stringify(await evaluate(opt.dump)))
   if (opt.full || opt.select) {
     const docHeight = await evaluate(`document.documentElement.scrollHeight`)
     await send("Emulation.setDeviceMetricsOverride", {width, height: docHeight, deviceScaleFactor: 1, mobile: false})
@@ -118,6 +148,6 @@ try {
   writeFileSync(out, Buffer.from(shot.data, "base64"))
   console.log(out)
 } finally {
-  ws.close()
-  chrome.kill()
+  try { ws.close() } catch {}
+  await dropProfile()
 }

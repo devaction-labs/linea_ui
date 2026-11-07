@@ -13,6 +13,13 @@ defmodule LineaUI.Components.Card do
       <.card variant="gradient" gradient="purple-indigo">…</.card>
       <.card variant="gradient_outline" gradient="sky-blue">…</.card>
 
+  `navigate`, `patch` or `href` make the whole card a link, laid out as a row that ends in an
+  arrow:
+
+      <.card navigate={~p"/banks/1"}>
+        <div class="grow">Banco do Brasil</div>
+      </.card>
+
   Without `:title` the content fills the card as is, padded evenly like a bordered `div`;
   `padded={false}` drops the default padding, for cards laid out by hand
   (`<.card padded={false} class="px-4 pb-4 sm:px-5">`).
@@ -84,35 +91,8 @@ defmodule LineaUI.Components.Card do
 
   use LineaUI.Component
 
-  @solid %{
-    "primary" => "rounded-lg bg-primary text-white dark:bg-accent",
-    "secondary" => "rounded-lg bg-secondary text-white",
-    "info" => "rounded-lg bg-info text-white",
-    "success" => "rounded-lg bg-success text-white",
-    "warning" => "rounded-lg bg-warning text-white",
-    "error" => "rounded-lg bg-error text-white"
-  }
-
-  @glow %{
-    "primary" =>
-      "rounded-lg bg-primary text-white shadow-lg shadow-primary/50 dark:bg-accent dark:shadow-accent/50",
-    "secondary" => "rounded-lg bg-secondary text-white shadow-lg shadow-secondary/50",
-    "info" => "rounded-lg bg-info text-white shadow-lg shadow-info/50",
-    "success" => "rounded-lg bg-success text-white shadow-lg shadow-success/50",
-    "warning" => "rounded-lg bg-warning text-white shadow-lg shadow-warning/50",
-    "error" => "rounded-lg bg-error text-white shadow-lg shadow-error/50"
-  }
-
-  @gradients %{
-    "purple-indigo" => "rounded-lg bg-gradient-to-br from-purple-500 to-indigo-600 text-white",
-    "fuchsia-pink" => "rounded-lg bg-gradient-to-r from-fuchsia-600 to-pink-600 text-white",
-    "amber-orange" => "rounded-lg bg-gradient-to-br from-amber-400 to-orange-600 text-white",
-    "sky-blue" => "rounded-lg bg-gradient-to-r from-sky-400 to-blue-600 text-white",
-    "green-fuchsia" => "rounded-lg bg-gradient-to-r from-green-400 to-fuchsia-400 text-white"
-  }
-
   @gradient_outlines %{
-    "purple-indigo" => "rounded-lg bg-gradient-to-r from-purple-500 to-indigo-600 p-1",
+    "purple-indigo" => "rounded-lg bg-gradient-to-r from-purple-500 to-blue-600 p-1",
     "fuchsia-pink" => "rounded-lg bg-gradient-to-r from-fuchsia-600 to-pink-600 p-1",
     "amber-orange" => "rounded-lg bg-gradient-to-r from-amber-400 to-orange-600 p-1",
     "sky-blue" => "rounded-lg bg-gradient-to-r from-sky-400 to-blue-600 p-1",
@@ -128,15 +108,6 @@ defmodule LineaUI.Components.Card do
   }
 
   @surfaces ~w(default flat bordered outline muted soft filled)
-
-  @aligns %{
-    "start" => "justify-start",
-    "center" => "justify-center",
-    "end" => "justify-end",
-    "between" => "justify-between"
-  }
-
-  @heading_sizes %{"base" => nil, "lg" => "text-base leading-6", "xl" => "text-xl leading-7"}
 
   @doc """
   Renders a card, with an optional `:title` above the content, or composed of
@@ -202,8 +173,21 @@ defmodule LineaUI.Components.Card do
     doc: "`false` leaves the card without padding; its parts then pad themselves."
   )
 
+  attr(:navigate, :string,
+    default: nil,
+    doc: "Makes the whole card a link (`<.link navigate>`): a row with an arrow at the end."
+  )
+
+  attr(:patch, :string, default: nil, doc: "As `navigate`, with `<.link patch>`.")
+  attr(:href, :string, default: nil, doc: "As `navigate`, with `<.link href>`.")
+
+  attr(:arrow, :boolean,
+    default: true,
+    doc: "The chevron at the end of a linked card (`navigate`, `patch` or `href`)."
+  )
+
   attr(:class, :any, default: nil)
-  attr(:rest, :global)
+  attr(:rest, :global, include: ~w(target rel download replace method))
 
   slot(:title, doc: "The card's heading, followed by the content.") do
     attr(:class, :any)
@@ -234,21 +218,53 @@ defmodule LineaUI.Components.Card do
     """
   end
 
+  def card(%{navigate: nil, patch: nil, href: nil} = assigns), do: render_card(assigns)
+
   def card(assigns) do
     ~H"""
-    <div
-      class={merge([surface(@variant, @color, @gradient), shape(@shape), @class])}
-      data-size={@size}
-      data-body={@body}
-      data-divider={@divider}
-      data-variant={data_variant(@variant)}
-      data-highlight={to_string(@highlight)}
-      data-padded={to_string(@padded)}
+    <.link
+      navigate={@navigate}
+      patch={@patch}
+      href={@href}
+      class={
+        merge([
+          "sg-card sg-card-link flex items-center gap-3.5 no-underline",
+          @variant == "soft" && "soft",
+          @class
+        ])
+      }
       {@rest}
     >
-      <.title_block title={@title} title_class={title_class(@variant)}>
-        {render_slot(@inner_block)}
-      </.title_block>
+      {render_slot(@inner_block)}
+      <svg
+        :if={@arrow}
+        class="size-4 shrink-0 fill-none stroke-current stroke-[1.7] [stroke-linecap:round] [stroke-linejoin:round]"
+        viewBox="0 0 24 24"
+        aria-hidden="true"
+      >
+        <path d="M10 7l5 5-5 5" />
+      </svg>
+    </.link>
+    """
+  end
+
+  defp render_card(assigns) do
+    ~H"""
+    <div
+      class={
+        merge([
+          "sg-card",
+          @variant == "soft" && "soft",
+          (@variant == "flush" or !@padded) && "flush",
+          @class
+        ])
+      }
+      {@rest}
+    >
+      <div :if={@title != []} class="sg-card-h">
+        <h3 :for={title <- @title} class={title[:class]}>{render_slot(title)}</h3>
+      </div>
+      {render_slot(@inner_block)}
     </div>
     """
   end
@@ -277,7 +293,7 @@ defmodule LineaUI.Components.Card do
 
   def card_header(assigns) do
     ~H"""
-    <div class={merge(["card-header", @class])} data-size={@size} {@rest}>
+    <div class={merge(["sg-card-h", @class])} {@rest}>
       {render_slot(@inner_block)}
     </div>
     """
@@ -304,7 +320,7 @@ defmodule LineaUI.Components.Card do
     ~H"""
     <.dynamic_tag
       tag_name={"h#{@level}"}
-      class={merge(["card-heading", heading_size(@size), @class])}
+      class={merge([@class])}
       {@rest}
     >
       {render_slot(@inner_block)}
@@ -319,7 +335,7 @@ defmodule LineaUI.Components.Card do
 
   def card_subheading(assigns) do
     ~H"""
-    <p class={merge(["card-subheading", @class])} {@rest}>{render_slot(@inner_block)}</p>
+    <span class={merge(["meta", @class])} {@rest}>{render_slot(@inner_block)}</span>
     """
   end
 
@@ -334,7 +350,7 @@ defmodule LineaUI.Components.Card do
 
   def card_actions(assigns) do
     ~H"""
-    <div class={merge(["card-actions", @class])} {@rest}>{render_slot(@inner_block)}</div>
+    <div class={merge(["end", @class])} {@rest}>{render_slot(@inner_block)}</div>
     """
   end
 
@@ -375,7 +391,7 @@ defmodule LineaUI.Components.Card do
 
   def card_footer(assigns) do
     ~H"""
-    <div class={merge(["card-footer", align(@align), @class])} data-size={@size} {@rest}>
+    <div class={merge(["sg-card-f", @class])} {@rest}>
       {render_slot(@inner_block)}
     </div>
     """
@@ -399,21 +415,6 @@ defmodule LineaUI.Components.Card do
   defp shape(shape), do: @shapes[shape]
   defp gradient_outline(gradient), do: @gradient_outlines[gradient]
   defp outline_inner_shape(shape), do: @outline_inner_shapes[shape]
-  defp heading_size(size), do: @heading_sizes[size]
-  defp align(align), do: @aligns[align]
-
-  defp data_variant(variant) when variant in @surfaces, do: variant
-  defp data_variant(_variant), do: nil
-
-  defp surface("flat", _color, _gradient), do: "card shadow-none"
-
-  defp surface("bordered", _color, _gradient),
-    do: "card border border-slate-150 shadow-none dark:border-navy-600"
-
-  defp surface(variant, _color, _gradient) when variant in @surfaces, do: "card"
-  defp surface("solid", color, _gradient), do: [@solid[color], "[--card-r:0.5rem]"]
-  defp surface("glow", color, _gradient), do: [@glow[color], "[--card-r:0.5rem]"]
-  defp surface("gradient", _color, gradient), do: [@gradients[gradient], "[--card-r:0.5rem]"]
 
   defp title_class(variant) when variant in @surfaces, do: @titles["light"]
   defp title_class(_variant), do: @titles["colored"]

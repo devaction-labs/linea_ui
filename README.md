@@ -92,10 +92,6 @@ by default. An app can have them drawn with [Hugeicons](https://hugeicons.com) (
 Rounded set) instead:
 
 ```elixir
-# mix.exs: the SVGs are vendored, not compiled
-{:hugeicons, github: "hugeicons/hugeicons", ref: "3365154e0ae2461fbfb6249b89649127207a4f9e",
- sparse: "icons", app: false, compile: false, depth: 1}
-
 # config/config.exs
 config :linea_ui, :icons, :hugeicons   # :lineone is the default
 ```
@@ -103,11 +99,29 @@ config :linea_ui, :icons, :hugeicons   # :lineone is the default
 ```css
 /* assets/css/app.css, after the linea_ui.css import: turns every huge-* class into a CSS mask */
 @plugin "../../deps/linea_ui/assets/css/hugeicons.cjs" {
-  dir: "deps/hugeicons/icons";
+  dir: "assets/vendor/hugeicons";
 }
 ```
 
-`dir` is the folder of the SVGs, relative to where Tailwind runs (the app's root). The setting is read when
+The SVGs are vendored into `dir` (relative to where Tailwind runs, the app's root) by a mix task that needs no
+extra dependency:
+
+```sh
+mix linea_ui.icons sync              # downloads every huge-* name found in lib, assets/js, assets/css and
+                                     # in linea_ui's own components (--prune removes the ones nobody uses)
+mix linea_ui.icons get search-01 tick-02   # adds icons by name (huge-search-01 works too)
+mix linea_ui.icons search invoice    # lists the upstream names containing a term
+mix linea_ui.icons update            # re-downloads every vendored icon at the ref
+```
+
+Options: `--dir` (default `assets/vendor/hugeicons`) and `--ref` (a commit, tag or branch of
+`hugeicons/hugeicons`; default the one in the folder's `.hugeicons.json`, else a commit pinned in the task;
+`--ref main` follows upstream). The folder also keeps that manifest and Hugeicons' MIT `LICENSE.md`; commit it
+all. Run `sync` after you write a new `huge-*` name. Alternative: vendor the whole repo as a git dependency
+(`{:hugeicons, github: "hugeicons/hugeicons", ref: "3365154e...", sparse: "icons", app: false, compile: false,
+depth: 1}`) and use `dir: "deps/hugeicons/icons"`.
+
+The setting is read when
 the page renders; the components whose hooks draw glyphs in the browser (toast, date picker) get it from a
 `data-icons` attribute. Restart the app after changing it. Glyphs that are artwork (the two-tone icons of the
 sidebar, the arrows of tooltips and popovers, the spinner) and the carets and check marks LineOne bakes into

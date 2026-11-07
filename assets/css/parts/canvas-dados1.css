@@ -1,0 +1,646 @@
+/* Canvas look for the dados1 components (see the Vitrine canvas). */
+
+/* ---------- bulk_bar: variant="solid", progress and confirm ---------- */
+.linea-bulk[data-variant="solid"] {
+  --bb-bg: var(--solid);
+  --bb-fg: var(--on-solid);
+  --bb-ring: transparent;
+  gap: 6px;
+  padding: 8px 8px 8px 16px;
+  border-radius: 14px;
+  font-size: 14px;
+  line-height: 20px;
+  box-shadow: var(--shadow-lg);
+}
+
+.linea-bulk-text {
+  margin-right: 8px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.linea-bulk[data-variant="solid"] .linea-bulk-link {
+  margin-right: 8px;
+  color: inherit;
+  text-decoration: underline;
+  font-size: 13px;
+}
+
+.linea-bulk-meter {
+  display: block;
+  flex: none;
+  width: 120px;
+  height: 6px;
+  margin: 0 8px;
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--sunken);
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+
+.linea-bulk-meter > i {
+  display: block;
+  height: 100%;
+  border-radius: 6px;
+  background: var(--accent);
+  transition: width 0.3s ease;
+}
+
+.linea-bulk-fraction {
+  font-family: var(--mono);
+  font-feature-settings: "zero";
+  font-size: 12.5px;
+  white-space: nowrap;
+}
+
+/* the canvas `sg-btn sm`: in the solid bar and in the confirm card of every bar */
+:is(.linea-bulk[data-variant="solid"], .linea-bulk-confirm) .linea-bulk-btn {
+  height: 30px;
+  gap: 7px;
+  padding: 0 11px;
+  border-radius: 999px;
+  font: 500 12.5px/1 var(--sans);
+  letter-spacing: -0.005em;
+  color: var(--ink);
+  background: var(--panel);
+  box-shadow: inset 0 0 0 1px var(--line-strong), var(--shadow-sm);
+}
+
+:is(.linea-bulk[data-variant="solid"], .linea-bulk-confirm) .linea-bulk-btn:is(:hover, :focus-visible) {
+  background: var(--hover);
+}
+
+:is(.linea-bulk[data-variant="solid"], .linea-bulk-confirm) .linea-bulk-btn[data-variant="primary"] {
+  color: var(--on-accent);
+  background: var(--accent);
+  box-shadow: var(--shadow);
+}
+
+:is(.linea-bulk[data-variant="solid"], .linea-bulk-confirm) .linea-bulk-btn[data-variant="soft"] {
+  color: var(--accent-ink);
+  background: var(--accent-soft);
+  box-shadow: none;
+}
+
+:is(.linea-bulk[data-variant="solid"], .linea-bulk-confirm) .linea-bulk-btn[data-variant="ghost"] {
+  color: var(--muted);
+  background: transparent;
+  box-shadow: none;
+}
+
+:is(.linea-bulk[data-variant="solid"], .linea-bulk-confirm) .linea-bulk-btn[data-variant="danger"] {
+  color: var(--neg);
+  background: var(--neg-soft);
+  box-shadow: none;
+}
+
+:is(.linea-bulk[data-variant="solid"], .linea-bulk-confirm) .linea-bulk-btn[aria-disabled="true"] {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* soft and ghost actions in the inverse and soft bars: a quiet film, and the plain text button */
+.linea-bulk:not([data-variant="solid"]) > .linea-bulk-btn[data-variant="soft"] {
+  background: var(--bb-film);
+}
+
+.linea-bulk:not([data-variant="solid"]) > .linea-bulk-btn[data-variant="ghost"] {
+  color: var(--bb-soft);
+}
+
+/* the canvas `sg-ib sm plain` close */
+.linea-bulk[data-variant="solid"] .linea-bulk-clear {
+  width: 28px;
+  min-width: 28px;
+  height: 28px;
+  padding: 0;
+  border-radius: 50%;
+  color: var(--muted);
+}
+
+/* the card that asks before a destructive action (the canvas `sg-menu`) */
+.linea-bulk-confirm {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 0;
+  z-index: 10;
+  width: 280px;
+  padding: 14px;
+  border-radius: 14px;
+  color: var(--fg);
+  font-size: 14px;
+  line-height: 20px;
+  text-align: left;
+  background: var(--panel);
+  box-shadow: 0 0 0 1px var(--line), var(--shadow-lg);
+}
+
+.linea-bulk[data-floating="true"] .linea-bulk-confirm {
+  top: auto;
+  bottom: calc(100% + 10px);
+}
+
+:is(.dark .sg:not([data-theme="light"]), .sg[data-theme="dark"]) .linea-bulk-confirm,
+.dark .linea-bulk-confirm:not([data-theme="light"] *) {
+  background: var(--raised);
+}
+
+.linea-bulk-confirm-title {
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.linea-bulk-confirm-text {
+  margin: 4px 0 12px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.linea-bulk-confirm-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+/* ---------- card: a linked card ---------- */
+.sg-card-link {
+  color: inherit;
+  text-decoration: none;
+  transition: box-shadow 0.15s ease;
+}
+
+.sg-card-link:hover {
+  box-shadow: 0 0 0 1px var(--line-strong), var(--shadow-sm);
+}
+
+.sg-card-link:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ---------- card_table variant="flat": a plain table in a card ---------- */
+.linea-ctable-flat-h {
+  padding: 16px 20px 4px;
+}
+
+.linea-ctable-flat-h .meta :is(a, button) {
+  color: var(--faint);
+  font-size: 13px;
+}
+
+.linea-ctable-flat-text p {
+  margin: 2px 0 0;
+  font-size: 13px;
+  line-height: 18px;
+  color: var(--muted);
+}
+
+.linea-ctable-flat-top {
+  padding: 12px 16px 0;
+}
+
+/* ---------- card_table (rows): the copy button of a `copy` column, the canvas `sg-ct-copy` ---------- */
+.linea-ctable .linea-ctable-cp {
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--muted);
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+
+.linea-ctable .linea-ctable-cp:hover {
+  background: var(--panel);
+  color: var(--ink);
+}
+
+.linea-ctable .linea-ctable-cp:focus-visible {
+  box-shadow: inset 0 0 0 2px var(--accent);
+}
+
+.linea-ctable .linea-ctable-cp[data-copied] {
+  color: var(--pos);
+}
+
+/* ---------- carousel variant="canvas" ---------- */
+.carousel[data-variant="canvas"] {
+  overflow: visible;
+}
+
+.carousel[data-variant="canvas"] > .carousel-track {
+  border-radius: 16px;
+  overflow: hidden;
+  overflow-x: auto;
+}
+
+.carousel[data-variant="canvas"] > .carousel-button {
+  width: 28px;
+  height: 28px;
+  margin-top: -14px;
+  border-radius: 50%;
+  color: var(--muted);
+  background: var(--panel);
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+
+.carousel[data-variant="canvas"] > .carousel-button[data-carousel-prev] {
+  left: 10px;
+}
+
+.carousel[data-variant="canvas"] > .carousel-button[data-carousel-next] {
+  right: 10px;
+}
+
+.carousel[data-variant="canvas"] > .carousel-button svg.carousel-chevron {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.carousel[data-variant="canvas"] > .carousel-button[data-carousel-prev] svg.carousel-chevron {
+  transform: rotate(180deg);
+}
+
+.carousel[data-variant="canvas"] > .carousel-pagination[data-carousel-pagination="fraction"] {
+  top: 12px;
+  right: 14px;
+  bottom: auto;
+  left: auto;
+  width: auto;
+  color: #fff;
+  font: 12px/16px var(--mono);
+  font-feature-settings: "zero";
+}
+
+/* the bullets under the track: the active one is a long ink pill */
+.carousel[data-variant="canvas"]:has(> [data-carousel-pagination="bullets"]) {
+  margin-bottom: 16px;
+}
+
+.carousel[data-variant="canvas"] > .carousel-pagination[data-carousel-pagination="bullets"] {
+  top: calc(100% + 10px);
+  bottom: auto;
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  line-height: 0;
+}
+
+.carousel[data-variant="canvas"] .carousel-bullet {
+  width: 6px;
+  height: 6px;
+  margin: 0;
+  border-radius: 6px;
+  background: var(--line-strong);
+  opacity: 1;
+  transition: width 0.2s ease;
+}
+
+.carousel[data-variant="canvas"] .carousel-bullet[data-active="true"] {
+  width: 18px;
+  background: var(--ink);
+}
+
+/* thumbnails under the track */
+.carousel.has-thumbs {
+  overflow: visible;
+  margin-bottom: 72px;
+}
+
+.carousel-thumbs {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  display: flex;
+  gap: 8px;
+}
+
+.carousel-thumb {
+  width: 64px;
+  height: 64px;
+  flex: none;
+  overflow: hidden;
+  border-radius: 10px;
+  background: var(--sunken);
+  box-shadow: inset 0 0 0 1px var(--line);
+  cursor: pointer;
+}
+
+.carousel-thumb[data-active="true"] {
+  box-shadow: 0 0 0 2px var(--ink);
+}
+
+.carousel-thumb:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+/* ---------- chart: the canvas text inside a `.sg` scope ---------- */
+.sg .linea-chart-label {
+  fill: var(--faint);
+}
+
+.sg .linea-chart-center-value {
+  fill: var(--ink);
+}
+
+/* bar_list: a ranking over full-width tracks (the canvas `sg-meter acc` rows) */
+.linea-bar-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.linea-bar-list-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.linea-bar-list-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 13px;
+}
+
+.linea-bar-list-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--ink);
+}
+
+.linea-bar-list-value {
+  flex: none;
+  font-family: var(--mono);
+  font-feature-settings: "zero";
+  color: var(--muted);
+}
+
+.linea-bar-list-track {
+  display: block;
+  height: 6px;
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--sunken);
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+
+.linea-bar-list-track > i {
+  display: block;
+  height: 100%;
+  border-radius: 6px;
+  background: var(--accent);
+}
+
+/* heatmap: the canvas `sg-heat`, five levels light and dark */
+.linea-heat-grid {
+  display: grid;
+  gap: 4px;
+}
+
+.linea-heat-grid > i,
+.linea-heat-scale > i {
+  display: block;
+  border-radius: 50%;
+  background: var(--heat0);
+}
+
+.linea-heat-grid > i {
+  width: var(--heat-size, 12px);
+  height: var(--heat-size, 12px);
+}
+
+.linea-heat-grid.is-square > i {
+  border-radius: 3px;
+}
+
+:is(.linea-heat-grid, .linea-heat-scale) > i[data-level="1"] {
+  background: var(--heat1);
+}
+
+:is(.linea-heat-grid, .linea-heat-scale) > i[data-level="2"] {
+  background: var(--heat2);
+}
+
+:is(.linea-heat-grid, .linea-heat-scale) > i[data-level="3"] {
+  background: var(--heat3);
+}
+
+:is(.linea-heat-grid, .linea-heat-scale) > i[data-level="4"] {
+  background: var(--heat4);
+}
+
+.linea-heat-scale {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11.5px;
+  color: var(--faint);
+}
+
+.linea-heat-scale > i {
+  width: 9px;
+  height: 9px;
+}
+
+/* ---------- data_table (advanced): the canvas `sg-table` rows and the canvas footer ---------- */
+.linea-dtable .linea-dt th {
+  height: 38px;
+  padding: 0 16px;
+  font-size: 12.5px;
+  font-weight: 450;
+  color: var(--faint);
+  border-bottom: 1px solid var(--line);
+}
+
+.linea-dtable:not([data-compact]) .linea-dt td {
+  height: 56px;
+  padding: 0 16px;
+}
+
+.linea-dtable .linea-dt td {
+  color: var(--fg);
+}
+
+.linea-dtable .linea-dt tbody tr {
+  border-bottom-color: var(--line);
+}
+
+.linea-dtable .linea-dt tbody tr:last-child {
+  border-bottom-color: transparent;
+}
+
+.linea-dtable-pager {
+  display: block;
+}
+
+.linea-dtable .linea-dt td .t {
+  color: var(--ink);
+  font-weight: 500;
+}
+
+.linea-dtable .linea-dt td .s {
+  margin-top: 1px;
+  font-size: 12px;
+  color: var(--faint);
+}
+
+/* ---------- cover ---------- */
+.linea-cover {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  padding: 22px;
+  overflow: hidden;
+  border-radius: 20px;
+  color: #eaf7f6;
+  background: linear-gradient(160deg, #0d8f91, #0b5f63 55%, #13232a);
+}
+
+.linea-cover[data-tone="neutral"] {
+  color: var(--ink);
+  background-color: var(--sunken);
+  background-image: radial-gradient(var(--line-strong) 1px, transparent 1px);
+  background-size: 14px 14px;
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+
+.linea-cover-title {
+  font-size: 22px;
+  line-height: 28px;
+  letter-spacing: -0.02em;
+  color: #fff;
+}
+
+.linea-cover[data-tone="neutral"] .linea-cover-title {
+  color: var(--ink);
+}
+
+.linea-cover-head {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  gap: 14px;
+  margin: -28px 0 0 20px;
+}
+
+.linea-cover-avatar {
+  display: inline-flex;
+  border-radius: 14px;
+  box-shadow: 0 0 0 4px var(--panel);
+}
+
+.linea-cover-text {
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 4px;
+}
+
+.linea-cover-name {
+  font-size: 17px;
+  line-height: 22px;
+  color: var(--ink);
+}
+
+.linea-cover-sub {
+  font-size: 12.5px;
+  color: var(--faint);
+}
+
+/* ---------- description_list ---------- */
+.linea-dl {
+  margin: 0;
+}
+
+.linea-dl[data-layout="inline"] > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.linea-dl[data-layout="inline"] dd {
+  text-align: right;
+}
+
+/* ---------- cash_timer ---------- */
+.linea-cash.has-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.linea-cash-head {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.linea-cash-icon {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.linea-cash-text {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.linea-cash-title {
+  color: var(--ink);
+}
+
+.linea-cash-sub {
+  font-size: 12.5px;
+  color: var(--faint);
+}
+
+.linea-cash-clock {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.linea-cash-time {
+  font: 700 18px/26px var(--mono);
+  font-feature-settings: "zero";
+  color: var(--ink);
+}
+
+.linea-cash-amount {
+  font: 12px/16px var(--mono);
+  color: var(--faint);
+}
+
+.linea-cash-diff {
+  font-family: var(--mono);
+  color: var(--warn);
+}
+
+.linea-cash-stats {
+  display: flex;
+  align-items: stretch;
+  margin: 0;
+}
+
+.linea-cash-stats dd {
+  margin: 0;
+}

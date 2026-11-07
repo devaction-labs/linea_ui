@@ -15,7 +15,7 @@ const build = (options, {width = 600, height, hidden = []} = {}) => {
   const legend = legendBox(config, data, {...size, hidden})
   const layout = plan(config, data, {...size, legend})
   const drawn = draw(layout, "t")
-  return {config, data, layout, drawn, svg: render(h("g", {}, drawn.layers.grid, drawn.layers.axes, drawn.layers.series, drawn.layers.labels))}
+  return {config, data, layout, drawn, svg: render(h("g", {}, drawn.layers.grid, drawn.layers.axes, drawn.layers.series, drawn.layers.labels, drawn.layers.annotations))}
 }
 
 const count = (text, pattern) => (text.match(pattern) ?? []).length
@@ -40,6 +40,27 @@ test("the plot leaves ApexCharts' margins: 30 above, 15 below plus the labels, h
   assert.equal(Math.round(layout.plot.h * 10) / 10, 200.7)
   assert.equal(layout.plot.w > 660 && layout.plot.w < 670, true)
   assert.deepEqual([layout.value.min, layout.value.max], [0, 60])
+})
+
+test("tickAmount on the categories of a line chart prints that many gaps of labels, evenly", () => {
+  const options = {
+    chart: {type: "line", height: 200},
+    xaxis: {categories: Array.from({length: 13}, (_, index) => `m${index}`), tickAmount: 4},
+    series: [{name: "A", data: Array.from({length: 13}, (_, index) => index)}],
+  }
+  const {layout} = build(options, {width: 800})
+  assert.deepEqual(layout.cat.labels.map((label) => label.text), ["m0", "m3", "m6", "m9", "m12"])
+})
+
+test("yaxis.labels.align left starts every label at the same x", () => {
+  const options = {
+    chart: {type: "line", height: 200},
+    xaxis: {categories: ["a", "b", "c"]},
+    yaxis: {labels: {align: "left"}},
+    series: [{name: "A", data: [0, 100000, 20000]}],
+  }
+  const {svg} = build(options, {width: 800})
+  assert.equal(count(svg, /text-anchor="start"/g) >= 2, true)
 })
 
 test("grouped columns sit side by side inside the band, rounded at both ends", () => {
@@ -218,4 +239,21 @@ test("a date axis formatter that reads opts.dateFormatter does not break the pla
   const {layout} = build(options, {width: 500})
   assert.equal(layout.cat.labels.length > 0, true)
   assert.equal(layout.cat.labels.every((one) => /^\d\d [A-Z][a-z]{2}$/.test(one.text)), true)
+})
+
+test("a y annotation draws a dashed line at its value and a badge on it", () => {
+  const options = {chart: {type: "bar", height: 150}, series: [{name: "V", data: [42, 58, 72]}], xaxis: {categories: ["a", "b", "c"]}, yaxis: {show: false, min: 0, max: 80}, annotations: {yaxis: [{y: 60, borderColor: "var(--ink)", strokeDashArray: 4, opacity: 0.55, label: {text: "Meta · 60", position: "left", style: {background: "var(--solid)", color: "var(--on-solid)"}}}]}}
+  const {layout, svg} = build(options, {width: 300})
+  const y = layout.along(60)
+  assert.equal(svg.includes(`y1="${Math.round(y * 100) / 100}"`), true)
+  assert.equal(svg.includes('stroke-dasharray="4"'), true)
+  assert.equal(svg.includes(">Meta · 60</text>"), true)
+  assert.equal(svg.includes('fill="var(--solid)"'), true)
+})
+
+test("category labels take a color and a weight per category, and bars an outline per bar", () => {
+  const options = {chart: {type: "bar", height: 150}, series: [{name: "V", data: [1, 2]}], xaxis: {categories: ["a", "b"], labels: {style: {colors: [null, "var(--accent-ink)"], fontWeight: [null, 600]}}}, stroke: {width: 1, colors: ["var(--line)", "transparent"]}, plotOptions: {bar: {distributed: true}}}
+  const {svg} = build(options, {width: 300})
+  assert.equal(svg.includes('style="fill:var(--accent-ink);font-weight:600">b</text>'), true)
+  assert.equal(count(svg, /stroke="var\(--line\)" stroke-width="1"/g), 1)
 })

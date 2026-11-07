@@ -22,7 +22,7 @@ defmodule LineaUI.Components.PaginationTest do
     assert count(html, "nav[aria-label=Pagination] ol.pagination > li") == 7
     assert count(html, "a[data-phx-link=patch][href='/p?page=3']") == 2
     assert count(html, "a[aria-current=page][href='/p?page=2']") == 1
-    assert "bg-primary" in classes(html, "a[aria-current=page]")
+    assert "bg-slate-900" in classes(html, "a[aria-current=page]")
     assert count(html, "a[aria-label='Previous page'][href='/p?page=1']") == 1
     assert count(html, "a[aria-label='Next page'][href='/p?page=3']") == 1
     assert "rounded-l-lg" in classes(html, "li:first-child")
@@ -78,7 +78,7 @@ defmodule LineaUI.Components.PaginationTest do
         ~H|<.pagination page={5} total_pages={10} on_change="go" divided shape="pill" size="lg" />|
       )
 
-    assert html =~ "..."
+    assert html =~ "…"
     assert "space-x-1.5" in classes(html, "ol")
     assert classes(html, "li") == []
     assert "rounded-full" in classes(html, "button[phx-value-page='10']")

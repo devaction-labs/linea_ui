@@ -177,4 +177,15 @@ defmodule LineaUI.Components.TagsInputTest do
     assert "text-end" in classes(html, "#u [data-counter]")
     refute "absolute" in classes(html, "#u [data-counter]")
   end
+
+  test "counter={false} leaves the 3 / 3 counter out" do
+    assigns = %{}
+
+    html =
+      rendered_to_string(~H|<.tags_input name="t" value={["a", "b"]} max={2} counter={false} />|)
+
+    refute html =~ "data-counter"
+    html = rendered_to_string(~H|<.tags_input name="t" value={["a", "b"]} max={2} />|)
+    assert html =~ "data-counter"
+  end
 end

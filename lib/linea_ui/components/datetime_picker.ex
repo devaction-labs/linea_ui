@@ -90,18 +90,20 @@ defmodule LineaUI.Components.DatetimePicker do
 
   @variants %{
     "outlined" =>
-      "form-input peer w-full cursor-pointer rounded-lg border border-slate-300 bg-transparent px-3 py-2 placeholder:text-slate-400/70 hover:border-slate-400 focus:border-primary focus:ring-3 focus:ring-primary/20 disabled:pointer-events-none disabled:select-none disabled:border-none disabled:bg-zinc-100 dark:border-navy-450 dark:hover:border-navy-400 dark:focus:border-accent dark:focus:ring-accent/20 dark:disabled:bg-navy-600",
+      "form-input peer h-10 w-full cursor-pointer rounded-[11px] border-0 bg-white px-3 py-0 text-[14px] shadow-[inset_0_0_0_1px_var(--color-slate-300),0_1px_2px_rgb(23_23_26/.05)] placeholder:text-slate-400 hover:shadow-[inset_0_0_0_1px_var(--color-slate-400),0_1px_2px_rgb(23_23_26/.05)] focus:shadow-[inset_0_0_0_1px_var(--color-primary),0_0_0_4px_color-mix(in_oklab,var(--color-primary)_14%,transparent)] focus:ring-0 disabled:pointer-events-none disabled:select-none disabled:bg-zinc-100 dark:bg-navy-750 dark:shadow-[inset_0_0_0_1px_var(--color-navy-450)] dark:hover:shadow-[inset_0_0_0_1px_var(--color-navy-400)] dark:focus:shadow-[inset_0_0_0_1px_var(--color-accent),0_0_0_4px_color-mix(in_oklab,var(--color-accent)_16%,transparent)] dark:disabled:bg-navy-600",
     "filled" =>
-      "form-input peer w-full cursor-pointer rounded-lg bg-slate-150 px-3 py-2 ring-primary/50 placeholder:text-slate-400 hover:bg-slate-200 focus:ring-3 disabled:pointer-events-none disabled:select-none disabled:opacity-60 dark:bg-navy-900/90 dark:ring-accent/50 dark:placeholder:text-navy-300 dark:hover:bg-navy-900 dark:focus:bg-navy-900"
+      "form-input peer w-full cursor-pointer rounded-lg bg-slate-150 px-3 py-2 ring-primary/50 placeholder:text-slate-500 hover:bg-slate-200 focus:ring-3 disabled:pointer-events-none disabled:select-none disabled:opacity-60 dark:bg-navy-900/90 dark:ring-accent/50 dark:placeholder:text-navy-300 dark:hover:bg-navy-900 dark:focus:bg-navy-900"
   }
 
   @errors %{
     "outlined" =>
-      "border-error hover:border-error focus:border-error focus:ring-error/20 dark:border-error dark:hover:border-error dark:focus:border-error dark:focus:ring-error/20",
+      "shadow-[inset_0_0_0_1px_var(--color-error),0_0_0_4px_color-mix(in_oklab,var(--color-error)_14%,transparent)] hover:shadow-[inset_0_0_0_1px_var(--color-error),0_0_0_4px_color-mix(in_oklab,var(--color-error)_14%,transparent)] focus:shadow-[inset_0_0_0_1px_var(--color-error),0_0_0_4px_color-mix(in_oklab,var(--color-error)_14%,transparent)] dark:shadow-[inset_0_0_0_1px_var(--color-error),0_0_0_4px_color-mix(in_oklab,var(--color-error)_16%,transparent)]",
     "filled" => "ring-1 ring-error focus:ring-error/50 dark:ring-error"
   }
 
   @sizes %{"sm" => "h-8 text-xs-plus", "md" => "", "lg" => "h-12 text-base"}
+
+  @icon_sizes %{"sm" => "size-4", "md" => "size-4", "lg" => "size-5"}
 
   @icon "pointer-events-none absolute flex h-full w-10 items-center justify-center text-slate-400 peer-focus:text-primary dark:text-navy-300 dark:peer-focus:text-accent"
 
@@ -249,7 +251,18 @@ defmodule LineaUI.Components.DatetimePicker do
     doc:
       "`auto` picks the panel by the width of the screen (one month and a Select button under 640px, two months side by side above). `compact` always uses the narrow panel, for a picker in a narrow space such as a sidebar or a modal."
 
-  attr :variant, :string, default: "outlined", values: ~w(outlined filled)
+  attr :variant, :string,
+    default: "outlined",
+    values: ~w(outlined filled),
+    doc: "`outlined` is the canvas input (40px, 11px corners, a hairline and the focus ring)."
+
+  attr :split, :boolean,
+    default: false,
+    doc:
+      "Single mode: the date and the time in two fields side by side (each with its icon and its caption, `date_label` and `time_label`); either opens the panel."
+
+  attr :date_label, :string, default: nil, doc: "With `split`: the caption of the date field."
+  attr :time_label, :string, default: nil, doc: "With `split`: the caption of the time field."
   attr :size, :string, default: "md", values: ~w(sm md lg)
 
   attr :placement, :string,
@@ -277,7 +290,7 @@ defmodule LineaUI.Components.DatetimePicker do
     assigns
     |> DatePicker.range_fields()
     |> assign_field()
-    |> assign_new(:id, fn -> gen_id("datetime") end)
+    |> then(&assign_new(&1, :id, fn -> stable_id("datetime", &1) end))
     |> then(&assign_new(&1, :name, fn -> &1.id end))
     |> assign_new(:value, fn -> nil end)
     |> legacy()
@@ -315,6 +328,7 @@ defmodule LineaUI.Components.DatetimePicker do
     }
 
     values = moments(assigns)
+    split_view? = assigns.split and assigns.mode == "single" and assigns.trigger == []
 
     assigns
     |> assign(
@@ -324,6 +338,10 @@ defmodule LineaUI.Components.DatetimePicker do
       names: names,
       values: values,
       display: display(values, assigns.mode, format, names, assigns.range_separator),
+      split_view: split_view?,
+      time_format_text: time_format,
+      date_text: display(values, "single", date_format, names, ""),
+      time_text: display(values, "single", time_format, names, ""),
       text: texts(locale, assigns.labels),
       input_name: input_name(assigns.name, assigns.mode),
       split: split(assigns.start_name, assigns.end_name, values),
@@ -332,7 +350,8 @@ defmodule LineaUI.Components.DatetimePicker do
       min: limit(assigns.min),
       max: limit(assigns.max),
       today: Shell.iso(assigns.today),
-      input_class: input_class(assigns)
+      input_class: input_class(assigns),
+      icon_sizes: @icon_sizes
     )
   end
 
@@ -516,6 +535,7 @@ defmodule LineaUI.Components.DatetimePicker do
         data-hour12={bool(@hour12)}
         data-format={@format}
         data-date-format={@date_format}
+        data-time-format={@time_format_text}
         data-separator={@range_separator}
         data-names={Phoenix.json_library().encode!(@names)}
         data-labels={Phoenix.json_library().encode!(@text)}
@@ -542,7 +562,53 @@ defmodule LineaUI.Components.DatetimePicker do
       >
         <div data-trigger class={@trigger == [] && "relative flex w-full"}>
           <div
-            :if={@trigger == []}
+            :if={@split_view}
+            id={@id <> "-field"}
+            phx-update="ignore"
+            class="grid w-full grid-cols-2 gap-3.5"
+          >
+            <label
+              :for={
+                {part, caption, text, icon} <- [
+                  {"date", @date_label, @date_text, :calendar},
+                  {"time", @time_label, @time_text, :clock}
+                ]
+              }
+              class="block min-w-0"
+              for={@id <> "-" <> part}
+            >
+              <span
+                :if={caption}
+                class="mb-1.5 block text-[13px]/5 font-medium text-slate-950 dark:text-navy-50"
+              >
+                {caption}
+              </span>
+              <span class="relative flex w-full">
+                <input
+                  type="text"
+                  id={@id <> "-" <> part}
+                  class={@input_class}
+                  value={text}
+                  disabled={@disabled}
+                  readonly
+                  aria-haspopup="dialog"
+                  aria-expanded="false"
+                  aria-controls={@id <> "-panel"}
+                  aria-invalid={@errors != [] && "true"}
+                  data-display-part={part}
+                />
+                <span :if={@show_icon} class={icon_class()}>
+                  <.glyph
+                    name={icon}
+                    class={["transition-colors duration-200", @icon_sizes[@size]]}
+                    stroke_width="1.5"
+                  />
+                </span>
+              </span>
+            </label>
+          </div>
+          <div
+            :if={@trigger == [] and not @split_view}
             id={@id <> "-field"}
             phx-update="ignore"
             class="relative flex w-full"
@@ -609,8 +675,6 @@ defmodule LineaUI.Components.DatetimePicker do
   defp dialog_label(text, "range"), do: text.datetime_dialog_range
 
   defp icon_class, do: @icon
-
-  @icon_sizes %{"sm" => "size-4", "md" => "size-[18px]", "lg" => "size-5"}
 
   defp default_icon(size) do
     assigns = %{class: ["transition-colors duration-200", @icon_sizes[size]]}

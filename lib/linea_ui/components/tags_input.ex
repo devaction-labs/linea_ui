@@ -14,7 +14,8 @@ defmodule LineaUI.Components.TagsInput do
   option in the list and a tag in the field, as in `LineaUI.Components.Select`.
 
   With `max`, the input is disabled at the limit, its placeholder becomes `limit_placeholder`
-  and a `3 / 3` counter appears under the field (on the right of the `help` line when there is one).
+  and a `3 / 3` counter appears under the field (on the right of the `help` line when there is one);
+  `counter={false}` leaves it out.
   A suggestion given as a map can carry a `hint` (`%{label: "Priority", value: "Priority", hint: "12 uses"}`),
   a dimmed note on the right of its row. A disabled field draws its tags without remove buttons. The row that creates a tag reads
   `Enter Add “pri”`: `create_label` and `create_hint` are its words.
@@ -101,6 +102,11 @@ defmodule LineaUI.Components.TagsInput do
     doc:
       "How many tags can be added. At the limit the input is disabled, shows `limit_placeholder` and a `3 / 3` counter appears under the field."
 
+  attr :counter, :boolean,
+    default: true,
+    doc:
+      "The `3 / 3` counter under the field at `max`; `false` hides it (say the limit in `help` instead)."
+
   attr :limit_placeholder, :string,
     default: "Limit reached",
     doc: "The placeholder of the disabled input at `max`."
@@ -130,7 +136,7 @@ defmodule LineaUI.Components.TagsInput do
     assigns
     |> assign(:multiple, true)
     |> assign_field()
-    |> assign_new(:id, fn -> gen_id("tags") end)
+    |> then(&assign_new(&1, :id, fn -> stable_id("tags", &1) end))
     |> then(&assign_new(&1, :name, fn -> &1.id end))
     |> assign_new(:value, fn -> nil end)
     |> assign(:options, assigns.options || assigns.suggestions)

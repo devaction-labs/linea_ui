@@ -41,15 +41,17 @@ defmodule LineaUI.Components.Autocomplete do
 
   use LineaUI.Component
 
+  alias LineaUI.Components.Form
   alias LineaUI.Components.Pickers
   alias LineaUI.Components.Select.Options
 
   @sizes %{
     "sm" =>
-      "[&_.ts-control]:h-8 [&_.ts-control]:py-0 [&_.ts-control]:text-xs-plus [&_.ts-control_input]:text-xs-plus",
-    "md" => nil,
+      "[&_.ts-control]:h-7 [&_.ts-control]:py-0 [&_.ts-control]:text-xs [&_.ts-control_input]:text-xs",
+    "md" =>
+      "[&_.ts-control]:h-10 [&_.ts-control]:py-0 [&_.ts-control]:text-[13px] [&_.ts-control_input]:text-[13px]",
     "lg" =>
-      "[&_.ts-control]:h-11 [&_.ts-control]:py-0 [&_.ts-control]:text-base [&_.ts-control_input]:text-base"
+      "[&_.ts-control]:h-10 [&_.ts-control]:py-0 [&_.ts-control]:text-sm [&_.ts-control_input]:text-sm"
   }
 
   @doc """
@@ -110,6 +112,17 @@ defmodule LineaUI.Components.Autocomplete do
     doc: "Shown when nothing matches; `%{query}` is replaced by what was typed."
 
   attr :loading_text, :string, default: "Searching…", doc: "Shown while the server searches."
+
+  attr :create, :string,
+    default: nil,
+    doc:
+      "A last row, under a line, offering to create what was typed (`\"Cadastrar “%{query}”\"`); `%{query}` is replaced by the text. Shows while there is a query, with or without results."
+
+  attr :on_create, :any,
+    default: nil,
+    doc:
+      "The event pushed (with `%{\"id\" => id, \"query\" => text}`) when the `create` row is chosen, or a `JS` command to run."
+
   attr :size, :string, default: "md", values: ~w(sm md lg)
   attr :class, :any, default: nil
 
@@ -121,13 +134,13 @@ defmodule LineaUI.Components.Autocomplete do
   slot :option,
     doc: "How a suggestion shows in the list; gets the option map (`label`, `value`, `data`)."
 
-  slot :prefix, doc: "An icon inside the control, before the text."
+  slot :prefix, doc: "A plain icon inside the control, before the text (the canvas search glass)."
 
   def autocomplete(assigns) do
     assigns
     |> assign_field()
     |> assign_new(:name, fn -> nil end)
-    |> then(&assign_new(&1, :id, fn -> &1.name || gen_id("autocomplete") end))
+    |> then(&assign_new(&1, :id, fn -> &1.name || stable_id("autocomplete", &1) end))
     |> assign_new(:value, fn -> nil end)
     |> prepare()
     |> render_autocomplete()
@@ -158,7 +171,10 @@ defmodule LineaUI.Components.Autocomplete do
 
   defp render_autocomplete(assigns) do
     ~H"""
-    <Pickers.field label={@label} help={@help} errors={@errors} for={@id <> "-input"}>
+    <label class="block" for={@id <> "-input"}>
+      <span :if={@label} class="block text-[13px]/5 font-medium text-slate-950 dark:text-navy-50">
+        {@label}
+      </span>
       <div
         id={@id}
         phx-hook="LineaUI.Autocomplete"
@@ -195,10 +211,7 @@ defmodule LineaUI.Components.Autocomplete do
           {@forwarded}
         />
         <div id={@id <> "-control"} class="ts-control items-center" phx-update="ignore">
-          <span
-            :for={prefix <- @prefix}
-            class="flex shrink-0 items-center pr-2 text-slate-400 dark:text-navy-300"
-          >
+          <span :for={prefix <- @prefix} class="ac-prefix">
             {render_slot(prefix)}
           </span>
           <input
@@ -255,12 +268,33 @@ defmodule LineaUI.Components.Autocomplete do
           >
             <.entry :for={entry <- @entries} entry={entry} id={@id} option_slot={@option} />
             <div id={@id <> "-status"} phx-update="ignore" data-status></div>
+            <div :if={@create} id={@id <> "-create"} phx-update="ignore" hidden data-create-wrap>
+              <hr class="ac-sep" />
+              <div
+                class="option create"
+                role="option"
+                id={@id <> "-create-row"}
+                aria-selected="false"
+                data-selectable="true"
+                data-create-row
+                data-on-create={is_binary(@on_create) && @on_create}
+                data-create-js={is_struct(@on_create, JS) && @on_create}
+                data-template={@create}
+              >
+                <svg viewBox="0 0 24 24" aria-hidden="true" class="ac-create-icon">
+                  <path d="M12 5v14M5 12h14" />
+                </svg>
+                <span data-create-text></span>
+              </div>
+            </div>
           </div>
         </div>
         <div hidden data-no-results>{@no_results}</div>
         <div hidden data-loading>{@loading_text}</div>
       </div>
-    </Pickers.field>
+      <Form.help_text :if={@help} class="mt-1 block">{@help}</Form.help_text>
+      <Form.error :for={message <- @errors} class="mt-1">{message}</Form.error>
+    </label>
     """
   end
 

@@ -17,9 +17,9 @@ defmodule LineaUI.Components.Switch do
 
   @variants %{
     {"basic", false} =>
-      "form-switch bg-slate-300 before:bg-slate-50 checked:before:bg-white dark:bg-navy-900 dark:before:bg-navy-300 dark:checked:before:bg-white",
+      "form-switch bg-slate-200 before:bg-white dark:bg-navy-450 dark:before:bg-white",
     {"basic", true} =>
-      "form-switch bg-slate-300 before:bg-slate-50 checked:before:bg-white dark:bg-navy-900 dark:before:bg-navy-300 dark:checked:before:bg-white",
+      "form-switch bg-slate-200 before:bg-white dark:bg-navy-450 dark:before:bg-white",
     {"outline", false} =>
       "form-switch is-outline border border-slate-400/70 bg-transparent before:bg-slate-300 dark:border-navy-400 dark:before:bg-navy-300",
     {"outline", true} =>
@@ -56,9 +56,9 @@ defmodule LineaUI.Components.Switch do
   }
 
   @sizes %{
-    "sm" => "h-3.5 w-7",
-    "md" => "h-5 w-10",
-    "lg" => "h-7 w-14"
+    "sm" => "is-sm h-4.5 w-6.5 [--thumb-border:4px] before:w-2.5 checked:before:translate-x-2",
+    "md" => "h-5 w-7.5 [--thumb-border:4px] before:w-3 checked:before:translate-x-2.5",
+    "lg" => "h-5.5 w-8.5 [--thumb-border:4px] before:w-3.5 checked:before:translate-x-3"
   }
 
   @label_sizes %{
@@ -100,7 +100,12 @@ defmodule LineaUI.Components.Switch do
   attr(:variant, :string, default: "basic", values: ~w(basic outline))
   attr(:filled, :boolean, default: false, doc: "A tinted track, for `outline`.")
   attr(:shape, :string, default: "pill", values: ~w(pill squircle))
-  attr(:size, :string, default: "md", values: ~w(sm md lg))
+
+  attr(:size, :string,
+    default: "md",
+    values: ~w(sm md lg),
+    doc: "`sm` is the canvas switch at .8 (29×18px), `md` the 36×22px one."
+  )
 
   attr(:thumb_inset, :integer,
     default: 2,
@@ -125,7 +130,10 @@ defmodule LineaUI.Components.Switch do
     doc: "Messages to show; `field` adds its own once the input was used."
   )
 
-  attr(:disabled, :boolean, default: false)
+  attr(:disabled, :boolean,
+    default: false,
+    doc: "Dims the whole row (switch, label and description) and ignores the pointer."
+  )
 
   attr(:wrapper_class, :any,
     default: nil,

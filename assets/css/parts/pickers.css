@@ -42,7 +42,8 @@
 .ts-wrapper[data-overflow="count"].plugin-clear_button.multi.has-items .ts-control { padding-right: 3.5rem; }
 .ts-wrapper[data-overflow="count"].has-items .ts-control > input::placeholder { color: transparent; }
 .ts-wrapper[data-overflow="count"].dropdown-active::after { transform: rotate(180deg); }
-.dark .ts-wrapper[data-overflow="count"]::after { background-color: var(--color-navy-300); }
+.dark .ts-wrapper[data-overflow="count"]::after:not([data-theme="light"] *),
+[data-theme="dark"] .ts-wrapper[data-overflow="count"]::after{ background-color: var(--color-navy-300); }
 .ts-wrapper[data-overflow="count"] .ts-control > .ts-more {
   font-variant-numeric: tabular-nums;
   cursor: pointer;
@@ -107,7 +108,8 @@
   transition: opacity .15s, background-color .15s, color .15s;
 }
 .ts-wrapper.plugin-clear_button.single .clear-button { right: 2.25rem; }
-.dark .ts-wrapper.plugin-clear_button .clear-button { color: var(--color-navy-300); }
+.dark .ts-wrapper.plugin-clear_button .clear-button:not([data-theme="light"] *),
+[data-theme="dark"] .ts-wrapper.plugin-clear_button .clear-button{ color: var(--color-navy-300); }
 .ts-wrapper.plugin-clear_button .clear-button::before {
   background-color: currentColor;
   content: "";
@@ -116,7 +118,8 @@
   width: .625rem;
 }
 .ts-wrapper.plugin-clear_button .clear-button:hover { background-color: color-mix(in oklab, currentColor 16%, transparent); color: var(--color-slate-700); }
-.dark .ts-wrapper.plugin-clear_button .clear-button:hover { color: var(--color-navy-50); }
+.dark .ts-wrapper.plugin-clear_button .clear-button:hover:not([data-theme="light"] *),
+[data-theme="dark"] .ts-wrapper.plugin-clear_button .clear-button:hover{ color: var(--color-navy-50); }
 
 /* The autocomplete holds one input (and maybe an icon before it): they stay on one line, the input takes what is left. */
 .ts-wrapper.autocomplete .ts-control { flex-wrap: nowrap; }
@@ -130,21 +133,23 @@
   outline: 2px solid color-mix(in oklab, var(--color-primary) 50%, transparent);
   outline-offset: 1px;
 }
-.dark .ts-wrapper.autocomplete.plugin-clear_button .clear-button:focus-visible { outline-color: color-mix(in oklab, var(--color-accent) 50%, transparent); }
+.dark .ts-wrapper.autocomplete.plugin-clear_button .clear-button:focus-visible:not([data-theme="light"] *),
+[data-theme="dark"] .ts-wrapper.autocomplete.plugin-clear_button .clear-button:focus-visible{ outline-color: color-mix(in oklab, var(--color-accent) 50%, transparent); }
 .ts-wrapper.autocomplete:not(.has-items) .clear-button { display: none; }
 /* With a value the clear button is always there, 10px from the edge (no caret to clear), and the text stops before it. */
 .ts-wrapper.autocomplete.plugin-clear_button.has-items:not(.disabled) .clear-button { opacity: 1; right: .625rem; }
 .ts-wrapper.autocomplete.plugin-clear_button .ts-control:not(.rtl) { padding-right: 2.25rem !important; }
 
 /* A disabled control keeps the dark surface (tom-select's #fafafa fill glared on it). */
-.ts-wrapper.disabled .ts-control:where(.dark, .dark *) { background-color: var(--color-navy-600); }
+.ts-wrapper.disabled .ts-control:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *):not(:where([data-theme="light"], [data-theme="light"] *)) { background-color: var(--color-navy-600); }
 
 /* The list of the autocomplete and of a compact tags input: no check column (a chosen row is told by its colour). */
 .ts-wrapper:is(.autocomplete, .compact) .ts-dropdown .option { padding-left: .75rem; }
 .ts-wrapper:is(.autocomplete, .compact) .ts-dropdown .option.selected::before { content: none; }
 /* The note on the right of a row (`hint:` of an option), and the label that gives way to it. */
 .ts-wrapper .ts-dropdown .option [data-hint] { color: var(--color-slate-400); flex: none; font-size: .75rem; font-weight: 400; white-space: nowrap; }
-.dark .ts-wrapper .ts-dropdown .option [data-hint] { color: var(--color-navy-300); }
+.dark .ts-wrapper .ts-dropdown .option [data-hint]:not([data-theme="light"] *),
+[data-theme="dark"] .ts-wrapper .ts-dropdown .option [data-hint]{ color: var(--color-navy-300); }
 .ts-wrapper .ts-dropdown .option:has([data-hint]) [data-text] { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 /* A field with errors keeps its red border on hover and focus. */
@@ -154,16 +159,19 @@
 
 /* The focus ring of the autocomplete and the compact tags input: the border plus a 3px halo. */
 .ts-wrapper:is(.autocomplete, .compact).input-active .ts-control { box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-primary) 18%, transparent); }
-.dark .ts-wrapper:is(.autocomplete, .compact).input-active .ts-control { box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-accent) 22%, transparent); }
+.dark .ts-wrapper:is(.autocomplete, .compact).input-active .ts-control:not([data-theme="light"] *),
+[data-theme="dark"] .ts-wrapper:is(.autocomplete, .compact).input-active .ts-control{ box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-accent) 22%, transparent); }
 .ts-wrapper:is(.autocomplete, .compact).is-invalid.input-active .ts-control { box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-error) 18%, transparent); }
 
 /* A disabled field keeps its tags' fill (the control itself is dimmed), in both themes. */
 .ts-wrapper.multi.disabled .ts-control > div { background-color: var(--color-slate-150); border-color: transparent; color: var(--color-slate-800); }
-.dark .ts-wrapper.multi.disabled .ts-control > div { background-color: var(--color-navy-500); color: var(--color-navy-50); }
+.dark .ts-wrapper.multi.disabled .ts-control > div:not([data-theme="light"] *),
+[data-theme="dark"] .ts-wrapper.multi.disabled .ts-control > div{ background-color: var(--color-navy-500); color: var(--color-navy-50); }
 
 /* The compact tags input: the create row is plain text, and the clear button stays while there are tags. */
 .ts-wrapper.compact .ts-dropdown .create { color: var(--color-slate-600); }
-.dark .ts-wrapper.compact .ts-dropdown .create { color: var(--color-navy-100); }
+.dark .ts-wrapper.compact .ts-dropdown .create:not([data-theme="light"] *),
+[data-theme="dark"] .ts-wrapper.compact .ts-dropdown .create{ color: var(--color-navy-100); }
 .ts-wrapper.compact .ts-dropdown .create strong { font-weight: 400; }
 .ts-wrapper.compact.plugin-clear_button.has-items:not(.disabled) .clear-button { opacity: 1; right: .625rem; }
 .ts-wrapper.compact.plugin-clear_button .ts-control:not(.rtl) { padding-right: 2.25rem !important; }
@@ -197,7 +205,8 @@
   border-top: 1px solid var(--color-slate-150);
   color: var(--color-slate-400);
 }
-.dark .ts-dropdown .ts-footer { border-color: var(--color-navy-500); color: var(--color-navy-300); }
+.dark .ts-dropdown .ts-footer:not([data-theme="light"] *),
+[data-theme="dark"] .ts-dropdown .ts-footer{ border-color: var(--color-navy-500); color: var(--color-navy-300); }
 .ts-control {
   border:1px solid #d0d0d0;
   border-radius:3px;
@@ -494,7 +503,7 @@
   top:0
 }
 .ts-wrapper.plugin-remove_button:not(.rtl) .item {
-  padding-right:0!important
+  padding-right:0
 }
 .ts-wrapper.plugin-remove_button:not(.rtl) .item .remove {
   border-left:1px solid #d0d0d0;
@@ -679,7 +688,8 @@
   overflow:hidden;
   z-index:30
 }
-.dark .ts-wrapper .ts-dropdown {
+.dark .ts-wrapper .ts-dropdown:not([data-theme="light"] *),
+[data-theme="dark"] .ts-wrapper .ts-dropdown{
   background-color:var(--color-navy-700);
   border-color:var(--color-navy-500);
   box-shadow:var(--shadow-soft-dark)
@@ -703,7 +713,8 @@
   color:var(--color-slate-400);
   text-align:center
 }
-.dark .ts-wrapper .ts-dropdown .no-results {
+.dark .ts-wrapper .ts-dropdown .no-results:not([data-theme="light"] *),
+[data-theme="dark"] .ts-wrapper .ts-dropdown .no-results{
   color:var(--color-navy-300)
 }
 .ts-wrapper .ts-dropdown .optgroup-header {
@@ -715,14 +726,16 @@
   padding:.5rem .75rem .25rem;
   text-transform:uppercase
 }
-.dark .ts-wrapper .ts-dropdown .optgroup-header {
+.dark .ts-wrapper .ts-dropdown .optgroup-header:not([data-theme="light"] *),
+[data-theme="dark"] .ts-wrapper .ts-dropdown .optgroup-header{
   color:var(--color-navy-300)
 }
 .ts-wrapper .ts-dropdown .active,.ts-wrapper .ts-dropdown .create:hover,.ts-wrapper .ts-dropdown .option:hover {
   background-color:var(--color-slate-100);
   color:var(--color-slate-800)
 }
-.dark .ts-wrapper .ts-dropdown .active,.dark .ts-wrapper .ts-dropdown .create:hover,.dark .ts-wrapper .ts-dropdown .option:hover {
+.dark .ts-wrapper .ts-dropdown .active:not([data-theme="light"] *),
+[data-theme="dark"] .ts-wrapper .ts-dropdown .active,.dark .ts-wrapper .ts-dropdown .create:hover:not([data-theme="light"] *),[data-theme="dark"] .ts-wrapper .ts-dropdown .create:hover,.dark .ts-wrapper .ts-dropdown .option:hover:not([data-theme="light"] *),[data-theme="dark"] .ts-wrapper .ts-dropdown .option:hover{
   background-color:var(--color-navy-600);
   color:var(--color-navy-50)
 }
@@ -730,7 +743,8 @@
   color:var(--color-primary);
   font-weight:500
 }
-.dark .ts-wrapper .ts-dropdown .option.selected {
+.dark .ts-wrapper .ts-dropdown .option.selected:not([data-theme="light"] *),
+[data-theme="dark"] .ts-wrapper .ts-dropdown .option.selected{
   color:var(--color-accent-light)
 }
 /* The check of a chosen option sits in a 16px slot before the label, out of the flow so a custom option keeps its own layout. */
@@ -752,7 +766,8 @@
 .ts-wrapper .ts-dropdown .create {
   color:var(--color-primary)
 }
-.dark .ts-wrapper .ts-dropdown .create {
+.dark .ts-wrapper .ts-dropdown .create:not([data-theme="light"] *),
+[data-theme="dark"] .ts-wrapper .ts-dropdown .create{
   color:var(--color-accent-light)
 }
 .ts-wrapper .ts-dropdown .create {
@@ -768,7 +783,8 @@
   font:500 .6875rem/1.25 var(--font-mono, ui-monospace, monospace);
   padding:.0625rem .3125rem
 }
-.dark .ts-wrapper .ts-dropdown .create-hint {
+.dark .ts-wrapper .ts-dropdown .create-hint:not([data-theme="light"] *),
+[data-theme="dark"] .ts-wrapper .ts-dropdown .create-hint{
   background-color:var(--color-navy-500);
   color:var(--color-navy-200)
 }
@@ -777,7 +793,8 @@
   color: var(--color-primary);
   font-weight: 600
 }
-.dark .ts-wrapper .ts-dropdown [data-selectable] .highlight {
+.dark .ts-wrapper .ts-dropdown [data-selectable] .highlight:not([data-theme="light"] *),
+[data-theme="dark"] .ts-wrapper .ts-dropdown [data-selectable] .highlight{
   color: var(--color-accent-light)
 }
 .ts-dropdown .ts-search {
@@ -788,7 +805,8 @@
   gap:.5rem;
   padding:.5rem .875rem
 }
-.dark .ts-dropdown .ts-search {
+.dark .ts-dropdown .ts-search:not([data-theme="light"] *),
+[data-theme="dark"] .ts-dropdown .ts-search{
   border-bottom-color:var(--color-navy-500);
   color:var(--color-navy-300)
 }
@@ -803,13 +821,15 @@
   outline:0;
   padding:0
 }
-.dark .ts-dropdown .ts-search input {
+.dark .ts-dropdown .ts-search input:not([data-theme="light"] *),
+[data-theme="dark"] .ts-dropdown .ts-search input{
   color:var(--color-navy-50)
 }
 .ts-dropdown .ts-search input::placeholder {
   color:var(--color-slate-400)
 }
-.dark .ts-dropdown .ts-search input::placeholder {
+.dark .ts-dropdown .ts-search input::placeholder:not([data-theme="light"] *),
+[data-theme="dark"] .ts-dropdown .ts-search input::placeholder{
   color:var(--color-navy-300)
 }
 /* A search field drawn as a box of its own inside the list, as the country list of the phone field has it. */
@@ -819,7 +839,8 @@
   margin:.375rem .375rem .125rem;
   padding:.375rem .625rem
 }
-.dark .ts-dropdown.has-boxed-search .ts-search {
+.dark .ts-dropdown.has-boxed-search .ts-search:not([data-theme="light"] *),
+[data-theme="dark"] .ts-dropdown.has-boxed-search .ts-search{
   border-color:var(--color-navy-450)
 }
 .ts-wrapper:is([data-search-mode="panel"],[data-search-mode="none"]) .ts-control,.ts-wrapper:is([data-search-mode="panel"],[data-search-mode="none"]) .ts-control input {
@@ -1513,13 +1534,15 @@ span.flatpickr-day.selected {
 .flatpickr-day.inRange {
   box-shadow:-5px 0 0 var(--color-slate-150),5px 0 0 var(--color-slate-150)
 }
-.dark .flatpickr-day.inRange {
+.dark .flatpickr-day.inRange:not([data-theme="light"] *),
+[data-theme="dark"] .flatpickr-day.inRange{
   box-shadow:none
 }
 .flatpickr-day.endRange.startRange+.endRange:not(:nth-child(7n+1)),.flatpickr-day.selected.startRange+.endRange:not(:nth-child(7n+1)),.flatpickr-day.startRange.startRange+.endRange:not(:nth-child(7n+1)) {
   box-shadow:none
 }
-.dark .flatpickr-day.endRange.startRange+.endRange:not(:nth-child(7n+1)),.dark .flatpickr-day.selected.startRange+.endRange:not(:nth-child(7n+1)),.dark .flatpickr-day.startRange.startRange+.endRange:not(:nth-child(7n+1)) {
+.dark .flatpickr-day.endRange.startRange+.endRange:not(:nth-child(7n+1)):not([data-theme="light"] *),
+[data-theme="dark"] .flatpickr-day.endRange.startRange+.endRange:not(:nth-child(7n+1)),.dark .flatpickr-day.selected.startRange+.endRange:not(:nth-child(7n+1)):not([data-theme="light"] *),[data-theme="dark"] .flatpickr-day.selected.startRange+.endRange:not(:nth-child(7n+1)),.dark .flatpickr-day.startRange.startRange+.endRange:not(:nth-child(7n+1)):not([data-theme="light"] *),[data-theme="dark"] .flatpickr-day.startRange.startRange+.endRange:not(:nth-child(7n+1)){
   box-shadow:var(--color-accent) -10px 0 0
 }
 .flatpickr-calendar.arrowTop:after,.flatpickr-calendar.arrowTop:before {
@@ -1548,7 +1571,8 @@ span.flatpickr-day.selected {
   outline: 2px solid color-mix(in oklab, var(--color-primary) 55%, transparent);
   outline-offset: -2px;
 }
-.dark :is(.flatpickr-months :is(.flatpickr-prev-month, .flatpickr-next-month), .flatpickr-day, .flatpickr-time .flatpickr-am-pm, .numInputWrapper :is(span, button)):focus-visible {
+.dark :is(.flatpickr-months :is(.flatpickr-prev-month, .flatpickr-next-month), .flatpickr-day, .flatpickr-time .flatpickr-am-pm, .numInputWrapper :is(span, button)):focus-visible:not([data-theme="light"] *),
+[data-theme="dark"] :is(.flatpickr-months :is(.flatpickr-prev-month, .flatpickr-next-month), .flatpickr-day, .flatpickr-time .flatpickr-am-pm, .numInputWrapper :is(span, button)):focus-visible{
   outline-color: color-mix(in oklab, var(--color-accent) 55%, transparent);
 }
 .numInputWrapper:focus-within :is(span, button) { opacity: 1; }
@@ -1571,7 +1595,8 @@ span.flatpickr-day.selected {
   padding: 12px 16px;
   width: max-content;
 }
-.dark .flatpickr-calendar.noCalendar {
+.dark .flatpickr-calendar.noCalendar:not([data-theme="light"] *),
+[data-theme="dark"] .flatpickr-calendar.noCalendar{
   --tp-ink: var(--color-navy-50);
   --tp-soft: var(--color-navy-300);
   --tp-line: var(--color-navy-450);
@@ -1669,7 +1694,8 @@ span.flatpickr-day.selected {
   margin-left: 6px;
   width: 52px;
 }
-.dark .flatpickr-calendar.noCalendar .flatpickr-time.stacked button.flatpickr-am-pm { color: var(--color-accent-light, var(--color-accent)); }
+.dark .flatpickr-calendar.noCalendar .flatpickr-time.stacked button.flatpickr-am-pm:not([data-theme="light"] *),
+[data-theme="dark"] .flatpickr-calendar.noCalendar .flatpickr-time.stacked button.flatpickr-am-pm{ color: var(--color-accent-light, var(--color-accent)); }
 .flatpickr-calendar.noCalendar .flatpickr-time.stacked button.flatpickr-am-pm:hover {
   background: color-mix(in oklab, var(--tp-ring) 20%, transparent);
 }
@@ -1775,7 +1801,7 @@ span.flatpickr-day.selected {
   font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
   padding: 8px;
 }
-.ql-toolbar.ql-snow:where(.dark, .dark *) {
+.ql-toolbar.ql-snow:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *):not(:where([data-theme="light"], [data-theme="light"] *)) {
   border-color: var(--color-navy-450);
 }
 .ql-snow.ql-toolbar::after {
@@ -1823,7 +1849,7 @@ span.flatpickr-day.selected {
 .ql-snow .ql-picker, .ql-snow .ql-fill, .ql-snow .ql-stroke.ql-fill, .ql-snow .ql-stroke {
   color: var(--color-slate-600);
 }
-:is(.ql-snow .ql-picker, .ql-snow .ql-fill, .ql-snow .ql-stroke.ql-fill, .ql-snow .ql-stroke):where(.dark, .dark *) {
+:is(.ql-snow .ql-picker, .ql-snow .ql-fill, .ql-snow .ql-stroke.ql-fill, .ql-snow .ql-stroke):where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *):not(:where([data-theme="light"], [data-theme="light"] *)) {
   color: var(--color-navy-200);
 }
 .ql-snow .ql-even { fill-rule: evenodd; }
@@ -1958,7 +1984,7 @@ span.flatpickr-day.selected {
   border-bottom-left-radius: .5rem;
   border-bottom-right-radius: .5rem;
 }
-.ql-container.ql-snow:where(.dark, .dark *) {
+.ql-container.ql-snow:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *):not(:where([data-theme="light"], [data-theme="light"] *)) {
   border-color: var(--color-navy-450);
 }
 .ql-toolbar.ql-snow + .ql-container.ql-snow {
@@ -1967,7 +1993,7 @@ span.flatpickr-day.selected {
 .ql-header-filled .ql-toolbar.ql-snow {
   background-color: color-mix(in oklab, var(--color-slate-150) 80%, transparent);
 }
-.ql-header-filled .ql-toolbar.ql-snow:where(.dark, .dark *) {
+.ql-header-filled .ql-toolbar.ql-snow:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *):not(:where([data-theme="light"], [data-theme="light"] *)) {
   background-color: color-mix(in oklab, var(--color-navy-500) 85%, transparent);
 }
 .ql-snow .ql-tooltip {
@@ -2024,33 +2050,34 @@ span.flatpickr-day.selected {
 }
 .filepond--panel-root {
   background-color: #f1f0ef;
-  border-radius: .5em;
+  border-radius: .375rem;
   inset: 0;
   pointer-events: none;
   position: absolute;
   transition: background-color .25s;
 }
-.filepond--panel-root:where(.dark, .dark *) {
+.filepond--panel-root:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *):not(:where([data-theme="light"], [data-theme="light"] *)) {
   background-color: var(--color-navy-500);
 }
 .filepond.fp-bordered .filepond--panel-root {
   background-color: transparent;
-  border: 2px dashed var(--color-slate-300);
+  border: 1px dashed var(--color-slate-400);
 }
-.filepond.fp-bordered .filepond--panel-root:where(.dark, .dark *) {
+.filepond.fp-bordered .filepond--panel-root:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *):not(:where([data-theme="light"], [data-theme="light"] *)) {
   background-color: transparent;
-  border-color: var(--color-navy-450);
+  border-color: var(--color-slate-600);
 }
+.filepond.fp-bordered:hover .filepond--panel-root { border-color: var(--color-primary); }
 .filepond.fp-bg-filled .filepond--panel-root {
   background-color: color-mix(in oklab, var(--color-slate-150) 80%, transparent);
 }
-.filepond.fp-bg-filled .filepond--panel-root:where(.dark, .dark *) {
+.filepond.fp-bg-filled .filepond--panel-root:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *):not(:where([data-theme="light"], [data-theme="light"] *)) {
   background-color: color-mix(in oklab, var(--color-navy-500) 85%, transparent);
 }
 .filepond--root[data-dragging] .filepond--panel-root {
   background-color: color-mix(in oklab, var(--color-slate-300) 40%, transparent);
 }
-.filepond--root[data-dragging] .filepond--panel-root:where(.dark, .dark *) {
+.filepond--root[data-dragging] .filepond--panel-root:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *):not(:where([data-theme="light"], [data-theme="light"] *)) {
   background-color: color-mix(in oklab, var(--color-navy-450) 55%, transparent);
 }
 .filepond.fp-bordered[data-dragging] .filepond--panel-root {
@@ -2058,7 +2085,7 @@ span.flatpickr-day.selected {
 }
 .filepond--drop-label {
   align-items: center;
-  color: var(--color-slate-600);
+  color: var(--color-slate-950);
   display: flex;
   justify-content: center;
   margin: 0;
@@ -2066,8 +2093,8 @@ span.flatpickr-day.selected {
   position: relative;
   user-select: none;
 }
-.filepond--drop-label:where(.dark, .dark *) {
-  color: var(--color-navy-100);
+.filepond--drop-label:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *):not(:where([data-theme="light"], [data-theme="light"] *)) {
+  color: var(--color-navy-50);
 }
 .filepond--drop-label:focus-visible {
   border-radius: .5em;
@@ -2077,13 +2104,13 @@ span.flatpickr-day.selected {
 .filepond.label-icon .filepond--drop-label {
   color: var(--color-slate-400);
 }
-.filepond.label-icon .filepond--drop-label:where(.dark, .dark *) {
+.filepond.label-icon .filepond--drop-label:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *):not(:where([data-theme="light"], [data-theme="light"] *)) {
   color: var(--color-navy-300);
 }
 .filepond--drop-label label {
   cursor: default;
   display: block;
-  font-size: .875em;
+  font-size: .8125rem;
   font-weight: 400;
   line-height: 1.5;
   margin: 0;
@@ -2294,7 +2321,7 @@ span.flatpickr-day.selected {
   background-color: #fef08a;
   color: inherit;
 }
-.ql-editor mark:where(.dark, .dark *) {
+.ql-editor mark:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *):not(:where([data-theme="light"], [data-theme="light"] *)) {
   background-color: color-mix(in oklab, #facc15 38%, transparent);
   color: var(--color-navy-50);
 }
@@ -2345,7 +2372,7 @@ span.flatpickr-day.selected {
   color: var(--color-primary);
   user-select: all;
 }
-.ql-editor .ql-token:where(.dark, .dark *) {
+.ql-editor .ql-token:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *):not(:where([data-theme="light"], [data-theme="light"] *)) {
   background-color: color-mix(in oklab, var(--color-accent-light) 15%, transparent);
   color: var(--color-accent-light);
 }
@@ -2358,13 +2385,13 @@ span.flatpickr-day.selected {
   padding: .375rem 0;
   border-radius: .375rem;
   background-color: #fff;
-  box-shadow: 0 0 0 1px var(--color-slate-150), 0 10px 30px rgb(15 23 42 / .12);
+  box-shadow: 0 0 0 1px var(--color-slate-150), 0 10px 30px rgb(9 9 11 / .12);
   font-family: var(--font-inter);
 }
 .ql-menu[hidden] {
   display: none;
 }
-.ql-menu:where(.dark, .dark *) {
+.ql-menu:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *):not(:where([data-theme="light"], [data-theme="light"] *)) {
   background-color: var(--color-navy-700);
   box-shadow: 0 0 0 1px var(--color-navy-500), 0 10px 30px rgb(0 0 0 / .35);
 }
@@ -2389,10 +2416,10 @@ span.flatpickr-day.selected {
   background-color: var(--color-slate-100);
   color: var(--color-slate-800);
 }
-.ql-menu:where(.dark, .dark *) .ql-menu-item {
+.ql-menu:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *):not(:where([data-theme="light"], [data-theme="light"] *)) .ql-menu-item {
   color: var(--color-navy-100);
 }
-.ql-menu:where(.dark, .dark *) .ql-menu-item[aria-selected="true"] {
+.ql-menu:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *):not(:where([data-theme="light"], [data-theme="light"] *)) .ql-menu-item[aria-selected="true"] {
   background-color: var(--color-navy-600);
   color: #fff;
 }
@@ -2409,7 +2436,7 @@ span.flatpickr-day.selected {
   background-color: var(--color-slate-150);
   color: var(--color-slate-600);
 }
-.ql-menu:where(.dark, .dark *) .ql-menu-icon {
+.ql-menu:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *):not(:where([data-theme="light"], [data-theme="light"] *)) .ql-menu-icon {
   background-color: var(--color-navy-500);
   color: var(--color-navy-100);
 }
@@ -2455,7 +2482,7 @@ span.flatpickr-day.selected {
   font-size: .75rem;
   color: var(--color-slate-400);
 }
-.ql-footer:where(.dark, .dark *) {
+.ql-footer:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *):not(:where([data-theme="light"], [data-theme="light"] *)) {
   border-color: var(--color-navy-450);
 }
 .ql-container.ql-snow.ql-has-footer {
@@ -2471,11 +2498,11 @@ span.flatpickr-day.selected {
 .ql-comment:focus-within {
   box-shadow: inset 0 0 0 1px var(--color-primary);
 }
-.ql-comment:where(.dark, .dark *) {
+.ql-comment:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *):not(:where([data-theme="light"], [data-theme="light"] *)) {
   background-color: transparent;
   box-shadow: inset 0 0 0 1px var(--color-navy-450);
 }
-.ql-comment:where(.dark, .dark *):focus-within {
+.ql-comment:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *):not(:where([data-theme="light"], [data-theme="light"] *)):focus-within {
   box-shadow: inset 0 0 0 1px var(--color-accent-light);
 }
 .ql-comment .ql-container.ql-snow {
@@ -2493,7 +2520,7 @@ span.flatpickr-day.selected {
   padding: .375rem .5rem;
   border-top: 1px solid var(--color-slate-150);
 }
-.ql-comment-bar:where(.dark, .dark *) {
+.ql-comment-bar:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *):not(:where([data-theme="light"], [data-theme="light"] *)) {
   border-top-color: var(--color-navy-500);
 }
 .ql-comment-tool {
@@ -2511,7 +2538,7 @@ span.flatpickr-day.selected {
   background-color: var(--color-slate-150);
   color: var(--color-slate-800);
 }
-.ql-comment-tool:where(.dark, .dark *):hover {
+.ql-comment-tool:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *):not(:where([data-theme="light"], [data-theme="light"] *)):hover {
   background-color: var(--color-navy-500);
   color: #fff;
 }
@@ -2526,7 +2553,7 @@ span.flatpickr-day.selected {
   font-weight: 500;
   line-height: 1.25rem;
 }
-.ql-kbd:where(.dark, .dark *) {
+.ql-kbd:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *):not(:where([data-theme="light"], [data-theme="light"] *)) {
   background-color: var(--color-navy-500);
   color: var(--color-navy-100);
 }
@@ -2547,7 +2574,7 @@ span.flatpickr-day.selected {
 .ql-submit:hover {
   background-color: var(--color-primary-focus);
 }
-.ql-submit:where(.dark, .dark *) {
+.ql-submit:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *):not(:where([data-theme="light"], [data-theme="light"] *)) {
   background-color: var(--color-accent);
 }
 
@@ -2567,7 +2594,7 @@ span.flatpickr-day.selected {
   --ql-primary-soft: color-mix(in oklab, var(--color-primary) 10%, transparent);
   --ql-pop: 0 10px 30px -8px rgb(48 46 56 / .18);
 }
-.ql-box:where(.dark, .dark *), .ql-comment:where(.dark, .dark *) {
+.ql-box:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *):not(:where([data-theme="light"], [data-theme="light"] *)), .ql-comment:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *):not(:where([data-theme="light"], [data-theme="light"] *)) {
   --ql-surface: var(--color-navy-750);
   --ql-hover: var(--color-navy-600);
   --ql-fill: var(--color-navy-800);
@@ -2587,7 +2614,7 @@ span.flatpickr-day.selected {
   border-radius: .5rem;
   background-color: #fff;
 }
-.ql-box:where(.dark, .dark *) {
+.ql-box:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *):not(:where([data-theme="light"], [data-theme="light"] *)) {
   background-color: var(--color-navy-700);
 }
 .ql-box:focus-within {
@@ -2740,7 +2767,7 @@ span.flatpickr-day.selected {
   background-color: #fff;
   box-shadow: 0 0 0 1px var(--color-slate-150), var(--ql-pop);
 }
-.ql-menu:where(.dark, .dark *) {
+.ql-menu:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *):not(:where([data-theme="light"], [data-theme="light"] *)) {
   background-color: var(--color-navy-700);
   box-shadow: 0 0 0 1px var(--color-navy-500), var(--ql-pop);
 }
@@ -2756,11 +2783,11 @@ span.flatpickr-day.selected {
   line-height: 23px;
   color: var(--ql-soft);
 }
-.ql-menu-item[aria-selected="true"], .ql-menu:where(.dark, .dark *) .ql-menu-item[aria-selected="true"] {
+.ql-menu-item[aria-selected="true"], .ql-menu:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *):not(:where([data-theme="light"], [data-theme="light"] *)) .ql-menu-item[aria-selected="true"] {
   background-color: var(--ql-hover);
   color: var(--ql-ink);
 }
-.ql-menu:where(.dark, .dark *) .ql-menu-item {
+.ql-menu:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *):not(:where([data-theme="light"], [data-theme="light"] *)) .ql-menu-item {
   color: var(--ql-soft);
 }
 .ql-menu-icon {
@@ -2768,7 +2795,7 @@ span.flatpickr-day.selected {
   background-color: var(--ql-fill);
   color: var(--ql-soft);
 }
-.ql-menu:where(.dark, .dark *) .ql-menu-icon {
+.ql-menu:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *):not(:where([data-theme="light"], [data-theme="light"] *)) .ql-menu-icon {
   background-color: var(--ql-fill);
   color: var(--ql-soft);
 }
@@ -2789,11 +2816,11 @@ span.flatpickr-day.selected {
 .ql-comment-tool {
   color: var(--ql-softer);
 }
-.ql-comment-tool:hover, .ql-comment-tool:where(.dark, .dark *):hover {
+.ql-comment-tool:hover, .ql-comment-tool:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *):not(:where([data-theme="light"], [data-theme="light"] *)):hover {
   background-color: var(--ql-hover);
   color: var(--ql-ink);
 }
-.ql-kbd, .ql-kbd:where(.dark, .dark *) {
+.ql-kbd, .ql-kbd:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *):not(:where([data-theme="light"], [data-theme="light"] *)) {
   height: 1.25rem;
   background-color: var(--ql-fill);
   color: var(--ql-softer);
@@ -2826,13 +2853,14 @@ span.flatpickr-day.selected {
   --lp-chevron: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
   background: #fff;
   border-radius: 12px;
-  box-shadow: 0 0 0 1px var(--lp-line), 0 10px 30px -6px rgb(15 23 42 / .14);
+  box-shadow: 0 0 0 1px var(--lp-line), 0 10px 30px -6px rgb(9 9 11 / .14);
   color: var(--lp-soft);
   font-family: var(--font-inter);
   padding: 12px;
   width: 300px;
 }
-.dark .flatpickr-calendar[data-skin="linea"] {
+.dark .flatpickr-calendar[data-skin="linea"]:not([data-theme="light"] *),
+[data-theme="dark"] .flatpickr-calendar[data-skin="linea"]{
   --lp-ink: var(--color-navy-50);
   --lp-soft: var(--color-navy-100);
   --lp-softer: var(--color-navy-200);
@@ -2910,7 +2938,8 @@ span.flatpickr-day.selected {
 }
 .flatpickr-calendar[data-skin="linea"] .flatpickr-monthDropdown-months:hover { background-color: var(--lp-hover); }
 .flatpickr-calendar[data-skin="linea"] .flatpickr-monthDropdown-months option { background: #fff; color: #334155; }
-.dark .flatpickr-calendar[data-skin="linea"] .flatpickr-monthDropdown-months option { background: var(--color-navy-700); color: var(--color-navy-100); }
+.dark .flatpickr-calendar[data-skin="linea"] .flatpickr-monthDropdown-months option:not([data-theme="light"] *),
+[data-theme="dark"] .flatpickr-calendar[data-skin="linea"] .flatpickr-monthDropdown-months option{ background: var(--color-navy-700); color: var(--color-navy-100); }
 .flatpickr-calendar[data-skin="linea"] .numInputWrapper { width: auto; }
 .flatpickr-calendar[data-skin="linea"] .numInputWrapper :is(.arrowUp, .arrowDown) { display: none; }
 .flatpickr-calendar[data-skin="linea"] input.cur-year {
@@ -2992,7 +3021,8 @@ span.flatpickr-day.selected {
   box-shadow: none;
   color: var(--lp-main);
 }
-.dark .flatpickr-calendar[data-skin="linea"] .flatpickr-day.inRange { color: var(--color-accent-light); }
+.dark .flatpickr-calendar[data-skin="linea"] .flatpickr-day.inRange:not([data-theme="light"] *),
+[data-theme="dark"] .flatpickr-calendar[data-skin="linea"] .flatpickr-day.inRange{ color: var(--color-accent-light); }
 .flatpickr-calendar[data-skin="linea"] .flatpickr-day:is(.selected, .startRange, .endRange),
 .flatpickr-calendar[data-skin="linea"] .flatpickr-day:is(.selected, .startRange, .endRange):hover {
   background: var(--lp-main);
@@ -3033,7 +3063,8 @@ span.flatpickr-day.selected {
   border-color: var(--color-primary);
   box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-primary) 20%, transparent);
 }
-.dark [data-skin="linea"] .flatpickr-input:is(:focus, [aria-expanded="true"]) {
+.dark [data-skin="linea"] .flatpickr-input:is(:focus, [aria-expanded="true"]):not([data-theme="light"] *),
+[data-theme="dark"] [data-skin="linea"] .flatpickr-input:is(:focus, [aria-expanded="true"]){
   border-color: var(--color-accent);
   box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-accent) 25%, transparent);
 }
@@ -3042,3 +3073,124 @@ span.flatpickr-day.selected {
   box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-error) 20%, transparent);
 }
 .flatpickr-calendar[data-skin="linea"] :is(.flatpickr-innerContainer, .flatpickr-rContainer, .flatpickr-days, .dayContainer) { border: 0; box-shadow: none; }
+
+/* The suggestion list of the select: a 6px panel with a thin edge and a soft shadow, 4px of padding, rows of
+   7px by 10px in 14px text and a neutral hovered row. */
+.ts-wrapper .ts-dropdown {
+  background-color: #fff;
+  border: 1px solid var(--color-slate-200);
+  border-radius: .375rem;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / .05), 0 2px 4px -2px rgb(0 0 0 / .05);
+  margin-top: .25rem;
+  padding: .25rem;
+}
+.dark .ts-wrapper .ts-dropdown:not([data-theme="light"] *),
+[data-theme="dark"] .ts-wrapper .ts-dropdown{ background-color: var(--color-navy-900); border-color: var(--color-navy-450); }
+.ts-wrapper .ts-dropdown .ts-dropdown-content { padding: 0; }
+.ts-wrapper .ts-dropdown .option {
+  border-radius: .375rem;
+  color: var(--color-slate-950);
+  font-size: .875rem;
+  line-height: 1.25rem;
+  padding: .4375rem .625rem;
+}
+.dark .ts-wrapper .ts-dropdown .option:not([data-theme="light"] *),
+[data-theme="dark"] .ts-wrapper .ts-dropdown .option{ color: var(--color-navy-50); }
+.ts-wrapper .ts-dropdown .option.active { background-color: var(--color-slate-100); color: var(--color-slate-950); }
+.dark .ts-wrapper .ts-dropdown .option.active:not([data-theme="light"] *),
+[data-theme="dark"] .ts-wrapper .ts-dropdown .option.active{ background-color: var(--color-navy-600); color: var(--color-navy-50); }
+.ts-wrapper .ts-dropdown .option .highlight { background: none; color: inherit; font-weight: 600; }
+.ts-wrapper.autocomplete .ts-control > input { color: var(--color-slate-950); }
+.dark .ts-wrapper.autocomplete .ts-control > input:not([data-theme="light"] *),
+[data-theme="dark"] .ts-wrapper.autocomplete .ts-control > input{ color: var(--color-navy-50); }
+
+/* The chips of a multiple select and a tags input: the secondary badge, 24px high with a 6px radius. */
+.ts-wrapper.multi .ts-control > div.item {
+  align-items: center;
+  background-color: var(--color-slate-100);
+  border-radius: .375rem;
+  color: var(--color-slate-900);
+  display: inline-flex;
+  font-size: .75rem;
+  gap: .375rem;
+  height: 1.5rem;
+  line-height: 1rem;
+  margin: 0 .25rem 0 0;
+  padding: 0 .45rem;
+}
+.dark .ts-wrapper.multi .ts-control > div.item:not([data-theme="light"] *),
+[data-theme="dark"] .ts-wrapper.multi .ts-control > div.item{ background-color: var(--color-navy-600); color: var(--color-navy-50); }
+.ts-wrapper.multi .ts-control { align-items: center; min-height: 2.125rem; padding: .1875rem .5rem; }
+.ts-wrapper.multi .ts-control > input { flex: 1 1 4rem; font-size: .8125rem; min-width: 4rem; padding: 0; }
+
+/* The calendar of the date picker: a 12px popover with a plain header (the month and the year as one bold
+   title, an arrow on each side), bold one-line weekdays, and days of 30px with an 8px radius. */
+.flatpickr-calendar {
+  background-color: #fff;
+  border: 1px solid var(--color-slate-200);
+  border-radius: .75rem;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / .05), 0 2px 4px -2px rgb(0 0 0 / .05);
+  font-size: .75rem;
+  padding: .25rem 1rem 1rem;
+  width: 17rem;
+}
+.dark .flatpickr-calendar:not([data-theme="light"] *),
+[data-theme="dark"] .flatpickr-calendar{ background-color: var(--color-navy-900); border-color: var(--color-navy-450); }
+.flatpickr-calendar:before, .flatpickr-calendar:after { display: none; }
+.flatpickr-calendar .flatpickr-months { background: transparent; border-radius: 0; padding-top: .75rem; }
+.flatpickr-calendar .flatpickr-months .flatpickr-month { background: transparent; color: var(--color-slate-950); }
+.dark .flatpickr-calendar .flatpickr-months .flatpickr-month:not([data-theme="light"] *),
+[data-theme="dark"] .flatpickr-calendar .flatpickr-months .flatpickr-month{ color: var(--color-navy-50); }
+.flatpickr-calendar .flatpickr-current-month { font-size: 1rem; font-weight: 700; }
+.flatpickr-calendar .flatpickr-current-month .flatpickr-monthDropdown-months,
+.flatpickr-calendar .flatpickr-current-month input.cur-year {
+  background: transparent;
+  color: inherit;
+  font-size: 1rem;
+  font-weight: 700;
+}
+.flatpickr-calendar .flatpickr-weekdays { background: transparent; height: 2rem; }
+.flatpickr-calendar span.flatpickr-weekday {
+  background: transparent;
+  color: var(--color-slate-500);
+  font-size: .75rem;
+  font-weight: 700;
+}
+.flatpickr-calendar .dayContainer { padding: 0; }
+.flatpickr-calendar .flatpickr-day {
+  border: 0;
+  border-radius: .5rem;
+  color: var(--color-slate-950);
+  font-size: .75rem;
+  font-weight: 400;
+  height: 1.875rem;
+  line-height: 1.875rem;
+  margin: .125rem 0;
+}
+.dark .flatpickr-calendar .flatpickr-day:not([data-theme="light"] *),
+[data-theme="dark"] .flatpickr-calendar .flatpickr-day{ color: var(--color-navy-50); }
+.flatpickr-calendar .flatpickr-day:hover { background: var(--color-slate-100); }
+.dark .flatpickr-calendar .flatpickr-day:hover:not([data-theme="light"] *),
+[data-theme="dark"] .flatpickr-calendar .flatpickr-day:hover{ background: var(--color-navy-600); }
+.flatpickr-calendar .flatpickr-day.today { background: var(--color-slate-100); color: var(--color-primary); font-weight: 700; }
+.dark .flatpickr-calendar .flatpickr-day.today:not([data-theme="light"] *),
+[data-theme="dark"] .flatpickr-calendar .flatpickr-day.today{ background: var(--color-navy-600); color: var(--color-accent-light); }
+.flatpickr-calendar .flatpickr-day.selected,
+.flatpickr-calendar .flatpickr-day.startRange,
+.flatpickr-calendar .flatpickr-day.endRange { background: var(--color-primary); color: #fff; font-weight: 600; }
+.flatpickr-calendar .flatpickr-day.prevMonthDay,
+.flatpickr-calendar .flatpickr-day.nextMonthDay { color: var(--color-slate-500); opacity: .3; }
+.flatpickr-calendar .flatpickr-innerContainer,
+.flatpickr-calendar .flatpickr-rContainer,
+.flatpickr-calendar .flatpickr-days,
+.flatpickr-calendar .dayContainer {
+  border: 0;
+  box-shadow: none;
+  max-width: 15rem;
+  min-width: 15rem;
+  width: 15rem;
+}
+.flatpickr-calendar .flatpickr-day { flex-basis: 14.2857%; max-width: none; }
+.flatpickr-calendar .flatpickr-weekdaycontainer { width: 15rem; }
+.dark .flatpickr-calendar :is(.flatpickr-days, .flatpickr-weekdays, .flatpickr-innerContainer, .flatpickr-rContainer, .dayContainer, .flatpickr-weekdaycontainer, span.flatpickr-weekday):not([data-theme="light"] *),
+[data-theme="dark"] .flatpickr-calendar :is(.flatpickr-days, .flatpickr-weekdays, .flatpickr-innerContainer, .flatpickr-rContainer, .dayContainer, .flatpickr-weekdaycontainer, span.flatpickr-weekday){ background: transparent; }

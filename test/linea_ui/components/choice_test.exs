@@ -35,7 +35,7 @@ defmodule LineaUI.Components.ChoiceTest do
       assert "rounded-full" in label
       assert "has-checked:bg-primary" in label
       assert "dark:has-checked:bg-accent" in label
-      assert "dark:bg-navy-500" in label
+      assert "dark:bg-navy-900" in label
 
       assert html |> find("label") |> Enum.map(&LazyHTML.text/1) |> Enum.map(&String.split/1) == [
                ["Todos", "128"],
@@ -56,9 +56,9 @@ defmodule LineaUI.Components.ChoiceTest do
       assert "grid-cols-2" in classes(html, "[role=radiogroup]")
       assert "form-radio" in classes(html, "input")
       assert "is-basic" in classes(html, "input")
-      card = classes(html, "label")
-      assert "has-checked:border-success" in card
-      assert "border-slate-300" in card
+      [first | _] = find(html, "label.lu-rcard") |> Enum.to_list()
+      assert LazyHTML.attribute(first, "data-color") == ["success"]
+      assert "is-stacked" in classes(html, "label")
       assert [_] = find(html, "label span.huge-store-01, label .huge-store-01") |> Enum.to_list()
       assert html |> find("label") |> Enum.at(0) |> LazyHTML.text() =~ "For one store"
       assert html |> find("label") |> Enum.at(0) |> LazyHTML.text() =~ "3"

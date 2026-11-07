@@ -186,12 +186,13 @@ defmodule LineaUI.Components.PhoneInputTest do
       assert attr_of(html, "[phx-hook='LineaUI.PhoneInput']", "data-flags") == ["true"]
     end
 
-    test "a 1px divider separates the picker from the number and the list is as wide as the field" do
+    test "a plain 1px divider separates the picker and the list is as wide as the field" do
       html = render(~H|<.phone_input name="phone" />|)
 
       divider = classes(html, "[data-prefix] > span[aria-hidden]")
       assert "w-px" in divider
-      assert "h-[18px]" in divider
+      assert "bg-slate-200" in divider
+      refute "bg-slate-100" in divider
       assert "w-full" in classes(html, "[data-dropdown]")
       assert "min-w-64" in classes(html, "[data-dropdown]")
       refute "w-72" in classes(html, "[data-dropdown]")
@@ -355,7 +356,7 @@ defmodule LineaUI.Components.PhoneInputTest do
       assert html |> find("label > span") |> LazyHTML.text() =~ "Phone number"
       assert html |> find(".text-error") |> LazyHTML.text() =~ "is invalid"
       assert html |> LazyHTML.from_fragment() |> LazyHTML.text() =~ "With area code"
-      assert "border-error" in classes(html, "input[data-display]")
+      assert Enum.any?(classes(html, "input[data-display]"), &(&1 =~ ~r/^shadow-.*--color-error/))
     end
 
     test "a generated id when there is neither a field nor a name" do

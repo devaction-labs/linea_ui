@@ -36,6 +36,9 @@ export const isFull = (count, multiple, max) => (multiple ? max != null && count
 export const choose = (values, value, {multiple, max}) =>
   multiple ? (values.includes(value) || isFull(values.length, true, max) ? values : [...values, value]) : [value]
 
+/** A pillbox choice: choosing a value that is already there takes it back, otherwise it is added as `choose` does. */
+export const toggleValue = (values, value, options) => (values.includes(value) ? removeValue(values, value) : choose(values, value, options))
+
 /** The values without `value`. */
 export const removeValue = (values, value) => values.filter((known) => known !== value)
 

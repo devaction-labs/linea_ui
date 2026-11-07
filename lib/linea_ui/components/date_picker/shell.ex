@@ -28,8 +28,8 @@ defmodule LineaUI.Components.DatePicker.Shell do
 
   @preset "rounded-full bg-slate-150 px-2.5 py-1 text-xs-plus font-medium text-slate-600 transition-colors hover:bg-slate-200 hover:text-slate-800 focus-visible:outline-2 focus-visible:outline-primary/50 data-active:bg-primary data-active:text-white dark:bg-navy-500 dark:text-navy-100 dark:hover:bg-navy-450 dark:hover:text-navy-50 dark:data-active:bg-accent dark:data-active:text-white"
 
-  @input "form-input flatpickr-input peer w-full rounded-lg border border-slate-300 bg-transparent px-3 py-2 placeholder:text-slate-400/70 hover:border-slate-400 focus:border-primary focus:ring-3 focus:ring-primary/20 disabled:pointer-events-none disabled:select-none disabled:border-none disabled:bg-zinc-100 dark:border-navy-450 dark:hover:border-navy-400 dark:focus:border-accent dark:focus:ring-accent/20 dark:disabled:bg-navy-600 disabled:cursor-not-allowed disabled:opacity-60"
-  @input_grouped "form-input flatpickr-input w-full rounded-l-lg border border-slate-300 bg-transparent px-3 py-2 placeholder:text-slate-400/70 hover:z-10 hover:border-slate-400 focus:z-10 focus:border-primary dark:border-navy-450 dark:hover:border-navy-400 dark:focus:border-accent disabled:cursor-not-allowed disabled:border-transparent disabled:bg-zinc-100 disabled:opacity-60 dark:disabled:bg-navy-600"
+  @input "form-input flatpickr-input peer w-full rounded-lg border border-slate-300 bg-transparent px-3 py-2 placeholder:text-slate-500 hover:border-slate-400 focus:border-primary focus:ring-3 focus:ring-primary/20 disabled:pointer-events-none disabled:select-none disabled:border-none disabled:bg-zinc-100 dark:border-navy-450 dark:hover:border-navy-400 dark:focus:border-accent dark:focus:ring-accent/20 dark:disabled:bg-navy-600 disabled:cursor-not-allowed disabled:opacity-60"
+  @input_grouped "form-input flatpickr-input w-full rounded-l-lg border border-slate-300 bg-transparent px-3 py-2 placeholder:text-slate-500 hover:z-10 hover:border-slate-400 focus:z-10 focus:border-primary dark:border-navy-450 dark:hover:border-navy-400 dark:focus:border-accent disabled:cursor-not-allowed disabled:border-transparent disabled:bg-zinc-100 disabled:opacity-60 dark:disabled:bg-navy-600"
 
   @error "border-error hover:border-error focus:border-error focus:ring-error/20 dark:border-error dark:hover:border-error dark:focus:border-error dark:focus:ring-error/20"
 
@@ -52,7 +52,7 @@ defmodule LineaUI.Components.DatePicker.Shell do
     assigns =
       assigns
       |> assign_field()
-      |> assign_new(:id, fn -> gen_id("picker") end)
+      |> then(&assign_new(&1, :id, fn -> stable_id("picker", &1) end))
       |> then(&assign_new(&1, :name, fn -> &1.id end))
       |> assign_new(:value, fn -> nil end)
       |> assign(:kind, kind)

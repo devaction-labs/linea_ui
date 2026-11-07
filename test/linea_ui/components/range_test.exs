@@ -17,6 +17,14 @@ defmodule LineaUI.Components.RangeTest do
   end
 
   describe "value, fill and marks" do
+    test "variant canvas marks the wrapper so the canvas slider look applies" do
+      html = render(~H|<.range id="c" name="c" value={12} show_value filled variant="canvas" />|)
+      assert "lu-range-canvas" in classes(html, "#c-slider")
+
+      html = render(~H|<.range id="d" name="d" value={12} show_value filled />|)
+      refute "lu-range-canvas" in classes(html, "#d-slider")
+    end
+
     test "show_value writes the formatted value beside the label" do
       html =
         render(

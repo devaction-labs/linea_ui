@@ -47,7 +47,7 @@ defmodule LineaUI.Components.TabsTest do
   end
 
   test "variants change the tab look" do
-    assert "border-b-2" in classes(render_tabs(%{}), "#t-tab-home")
+    assert "sg-tab" in classes(render_tabs(%{}), "#t-tab-home")
     assert "aria-selected:bg-white" in classes(render_tabs(%{variant: "boxed"}), "#t-tab-home")
     assert "bg-slate-200" in classes(render_tabs(%{variant: "boxed"}), "#t > div")
     pill = classes(render_tabs(%{variant: "pill"}), "#t-tab-home")
@@ -100,7 +100,7 @@ defmodule LineaUI.Components.TabsTest do
     assert ["px-3", "py-1", "text-xs-plus"] -- sm == []
     refute "py-1.5" in sm
     assert ["px-2.5", "py-0.5", "text-xs"] -- xs == []
-    assert "px-3" in line and "py-2" in line
+    assert "sg-tab" in line
   end
 
   test "text variant has no chrome" do
@@ -164,5 +164,20 @@ defmodule LineaUI.Components.TabsTest do
 
     assert count(html, "#mix-tab-a[aria-controls=mix-panel-a]") == 1
     assert count(html, "#mix-tab-b[aria-controls]") == 0
+  end
+
+  test "the segmented variant is the canvas sg-seg and a tab's count is the canvas badge" do
+    html =
+      render(~H"""
+      <.tabs id="t" variant="segmented" selected="b">
+        <:tab name="a">A</:tab>
+        <:tab name="b" count={4}>B</:tab>
+      </.tabs>
+      """)
+
+    assert "sg-seg" in classes(html, "[role=tablist]")
+    assert "sg-seg-tab" in classes(html, "#t-tab-a")
+    assert html |> find("#t-tab-b .sg-nav-n") |> LazyHTML.text() == "4"
+    assert [] = html |> find("#t-tab-a .sg-nav-n") |> Enum.to_list()
   end
 end

@@ -13,6 +13,14 @@ defmodule LineaUI.Components.TimePicker do
   change fires a bubbling `input` event for `phx-change`. The popup is an overlay:
   `LineaUI.open/close/toggle("id")` work on it.
 
+  ## A list of fixed slots
+
+  `variant="list"` draws no input: the times from `min_time` to `max_time`, every `minute_step` minutes, as a
+  menu-like list where one is chosen (an appointment slot, a delivery window). Each slot is a native radio, so the
+  form gets `"HH:MM"` under the field's name, the arrow keys move the choice and `phx-change` runs:
+
+      <.time_picker field={@form[:slot]} variant="list" min_time="14:00" max_time="14:45" minute_step={15} />
+
   ## Keyboard and screen readers
 
   The popup is a dialog with a name, and the hour and minute boxes, the arrows over them and the
@@ -62,6 +70,12 @@ defmodule LineaUI.Components.TimePicker do
     doc:
       "Single texts of the popup, over the `locale` ones: `:picker_time_dialog` (its name), `:picker_hour`, `:picker_minute`, `:picker_hour_up`, `:picker_hour_down`, `:picker_minute_up`, `:picker_minute_down`, `:picker_toggle_period` (the AM/PM button)."
 
+  attr :variant, :string,
+    default: "input",
+    values: ~w(input list),
+    doc:
+      "`input` opens the clock popup; `list` shows the fixed slots from `min_time` to `max_time` every `minute_step` minutes (see above)."
+
   attr :show_icon, :boolean, default: true
   attr :disabled, :boolean, default: false
   attr :on_change, :string, default: nil
@@ -71,6 +85,44 @@ defmodule LineaUI.Components.TimePicker do
 
   slot :icon, doc: "Replaces the clock icon."
   slot :trailing, doc: "Buttons joined to the right of the input."
+
+  def time_picker(%{variant: "list"} = assigns) do
+    assigns =
+      assigns
+      |> assign_field()
+      |> then(&assign_new(&1, :id, fn -> stable_id("time", &1) end))
+      |> then(&assign_new(&1, :name, fn -> &1.id end))
+      |> assign_new(:value, fn -> nil end)
+      |> then(&assign(&1, :chosen, hhmm(&1.value)))
+      |> then(&assign(&1, :slots, slots(&1.min_time, &1.max_time, &1.minute_step)))
+
+    ~H"""
+    <LineaUI.Components.Pickers.field label={@label} help={@help} errors={@errors} for={@id}>
+      <div
+        id={@id}
+        role="radiogroup"
+        aria-label={@label}
+        class={merge(["sg-time-list", @label && "mt-1.5", @class])}
+        {@rest}
+      >
+        <label :for={slot <- @slots} data-value={slot}>
+          <input
+            type="radio"
+            id={"#{@id}-#{String.replace(slot, ":", "")}"}
+            name={@name}
+            value={slot}
+            checked={slot == @chosen}
+            disabled={@disabled}
+            phx-click={
+              @on_change && JS.push(@on_change, value: %{id: @id, value: slot}, target: @target)
+            }
+          />
+          {slot}
+        </label>
+      </div>
+    </LineaUI.Components.Pickers.field>
+    """
+  end
 
   def time_picker(assigns) do
     assigns
@@ -87,5 +139,33 @@ defmodule LineaUI.Components.TimePicker do
       inline: false
     )
     |> LineaUI.Components.DatePicker.Shell.render_picker(:time, "LineaUI.TimePicker")
+  end
+
+  defp hhmm(%Time{} = time), do: time |> Time.to_string() |> String.slice(0, 5)
+  defp hhmm(value) when is_binary(value), do: String.slice(value, 0, 5)
+  defp hhmm(_value), do: nil
+
+  defp minutes(nil, default), do: default
+
+  defp minutes(text, default) do
+    with [h, m | _] <- String.split(text, ":"),
+         {hour, ""} <- Integer.parse(h),
+         {minute, ""} <- Integer.parse(m) do
+      hour * 60 + minute
+    else
+      _ -> default
+    end
+  end
+
+  defp slots(min_time, max_time, step) do
+    first = minutes(min_time, 0)
+    last = minutes(max_time, 23 * 60 + 59)
+
+    if last < first do
+      []
+    else
+      for m <- first..last//max(step, 1),
+          do: :io_lib.format("~2..0B:~2..0B", [div(m, 60), rem(m, 60)]) |> to_string()
+    end
   end
 end

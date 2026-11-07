@@ -38,6 +38,21 @@ defmodule LineaUI.Components.Steps do
           <.button size="sm" color="primary">Import sheet</.button>
         </:step>
       </.stepper>
+
+  `variant="canvas"` is the design canvas look: horizontal, small numbered circles joined by
+  1px lines (done in the accent tint with a check, the current one solid); vertical, 26px round
+  tiles (done green, current in the accent tint) joined by a line, each able to show an `icon`.
+
+      <.stepper variant="canvas" current={3}>
+        <:step label="Customer" />
+        <:step label="Items" />
+        <:step label="Payment" />
+      </.stepper>
+
+      <.stepper variant="canvas" orientation="vertical" current={1}>
+        <:step label="Company" sub="Done" />
+        <:step label="Certificate" sub="In progress" icon="huge-file-02" />
+      </.stepper>
   """
 
   use LineaUI.Component
@@ -244,6 +259,13 @@ defmodule LineaUI.Components.Steps do
 
   attr(:error, :boolean, default: false, doc: "Flags the current step as `error`.")
 
+  attr(:variant, :string,
+    default: "default",
+    values: ~w(default canvas),
+    doc:
+      "`canvas`: the design canvas steps (small numbered circles and 1px lines; vertical, round tiles joined by a line)."
+  )
+
   attr(:state_names, :map,
     default: @state_names,
     doc:
@@ -263,7 +285,61 @@ defmodule LineaUI.Components.Steps do
     )
 
     attr(:marker, :string, doc: "What the dot shows instead of the step number.")
+
+    attr(:icon, :string,
+      doc:
+        "An icon (`huge-file-02`) the dot shows instead of the number, the check or the marker."
+    )
+
     attr(:class, :any)
+  end
+
+  def stepper(%{variant: "canvas", orientation: "horizontal"} = assigns) do
+    assigns = assign(assigns, :entries, entries(assigns))
+
+    ~H"""
+    <ol class={merge(["sg-steps stepper-canvas m-0 list-none p-0", @class])} {@rest}>
+      <li
+        :for={entry <- @entries}
+        class={merge(["sg-step", canvas_step(entry.state), entry.class])}
+        aria-current={entry.state in ~w(current error) && "step"}
+        data-state={entry.state}
+      >
+        <i><.canvas_marker entry={entry} /></i>
+        <span><span class="sr-only">{Map.fetch!(@state_names, entry.state)}: </span>{entry.label}</span>
+        <span :if={entry.content != []}>{render_slot(entry.content)}</span>
+      </li>
+    </ol>
+    """
+  end
+
+  def stepper(%{variant: "canvas"} = assigns) do
+    assigns = assign(assigns, :entries, entries(assigns))
+
+    ~H"""
+    <ol class={merge(["stepper-canvas is-vertical m-0 flex list-none flex-col p-0", @class])} {@rest}>
+      <li
+        :for={entry <- @entries}
+        class={merge(["flex items-start gap-3", entry.class])}
+        aria-current={entry.state in ~w(current error) && "step"}
+        data-state={entry.state}
+      >
+        <span class="flex flex-col items-center">
+          <span class={["sg-ic stepper-canvas-dot", canvas_tile(entry.state)]}>
+            <.canvas_marker entry={entry} />
+          </span>
+          <span class="stepper-canvas-line"></span>
+        </span>
+        <span class="flex min-w-0 flex-1 flex-col pt-[3px]">
+          <b class="stepper-canvas-label">
+            <span class="sr-only">{Map.fetch!(@state_names, entry.state)}: </span>{entry.label}
+          </b>
+          <span :if={entry.sub} class="stepper-canvas-sub">{entry.sub}</span>
+        </span>
+        <span :if={entry.content != []} class="shrink-0">{render_slot(entry.content)}</span>
+      </li>
+    </ol>
+    """
   end
 
   def stepper(assigns) do
@@ -299,7 +375,12 @@ defmodule LineaUI.Components.Steps do
             @orientation == "vertical" && "size-7 text-xs",
             dot_class(entry.state)
           ]}>
-            <.stepper_marker state={entry.state} number={entry.number} marker={entry.marker} />
+            <.stepper_marker
+              state={entry.state}
+              number={entry.number}
+              marker={entry.marker}
+              icon={entry.icon}
+            />
           </span>
           <span class="min-w-0 flex-1 text-sm">
             <span class={["block", stepper_label(entry.state)]}>
@@ -324,6 +405,13 @@ defmodule LineaUI.Components.Steps do
   attr(:state, :string, required: true)
   attr(:number, :integer, required: true)
   attr(:marker, :string, required: true)
+  attr(:icon, :string, default: nil)
+
+  defp stepper_marker(%{icon: icon} = assigns) when is_binary(icon) do
+    ~H"""
+    <span class={[@icon, "size-3.5"]} aria-hidden="true"></span>
+    """
+  end
 
   defp stepper_marker(%{marker: marker} = assigns) when is_binary(marker), do: ~H"{@marker}"
 
@@ -336,6 +424,32 @@ defmodule LineaUI.Components.Steps do
   defp stepper_marker(%{state: "error"} = assigns), do: ~H"!"
   defp stepper_marker(assigns), do: ~H"{@number}"
 
+  attr(:entry, :map, required: true)
+
+  # the canvas marks a done step with a text check (horizontal) or the icon of the step
+  defp canvas_marker(%{entry: %{icon: icon}} = assigns) when is_binary(icon) do
+    ~H"""
+    <span class={[@entry.icon, "size-3.5"]} aria-hidden="true"></span>
+    """
+  end
+
+  defp canvas_marker(%{entry: %{marker: marker}} = assigns) when is_binary(marker),
+    do: ~H"{@entry.marker}"
+
+  defp canvas_marker(%{entry: %{state: "done"}} = assigns), do: ~H"✓"
+  defp canvas_marker(%{entry: %{state: "error"}} = assigns), do: ~H"!"
+  defp canvas_marker(assigns), do: ~H"{@entry.number}"
+
+  defp canvas_step("done"), do: "done"
+  defp canvas_step("current"), do: "cur"
+  defp canvas_step("error"), do: "err"
+  defp canvas_step("todo"), do: nil
+
+  defp canvas_tile("done"), do: "pos"
+  defp canvas_tile("current"), do: "acc"
+  defp canvas_tile("error"), do: "neg"
+  defp canvas_tile("todo"), do: nil
+
   defp entries(assigns) do
     assigns.step
     |> Enum.with_index()
@@ -344,6 +458,7 @@ defmodule LineaUI.Components.Steps do
         label: step.label,
         sub: Map.get(step, :sub),
         marker: Map.get(step, :marker),
+        icon: Map.get(step, :icon),
         class: Map.get(step, :class),
         content: (step.inner_block && [step]) || [],
         number: index + 1,

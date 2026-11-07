@@ -133,6 +133,12 @@ defmodule LineaUI.Components.Dropdown do
       "The shape of the trigger button. `nil` is `rounded` for the `label` button and `pill` for the `toggle_icon` one."
 
   attr :open, :boolean, default: false
+
+  attr :hover, :boolean,
+    default: false,
+    doc:
+      "Opens when the pointer is over the trigger or the menu, and closes shortly after it leaves (a click still works)."
+
   attr :placement, :string, default: "bottom-start", values: @placements
   attr :offset, :integer, default: 4, doc: "Pixels between the trigger and the menu."
   attr :close_on_select, :boolean, default: true
@@ -157,8 +163,12 @@ defmodule LineaUI.Components.Dropdown do
   def dropdown(assigns) do
     assigns =
       assigns
-      |> assign(:on_open_js, Overlay.callback(assigns.on_open, assigns.id, assigns.target))
-      |> assign(:on_close_js, Overlay.callback(assigns.on_close, assigns.id, assigns.target))
+      |> assign_derived(:on_open_js, [:on_open, :id, :target], fn ->
+        Overlay.callback(assigns.on_open, assigns.id, assigns.target)
+      end)
+      |> assign_derived(:on_close_js, [:on_close, :id, :target], fn ->
+        Overlay.callback(assigns.on_close, assigns.id, assigns.target)
+      end)
 
     ~H"""
     <div
@@ -167,6 +177,7 @@ defmodule LineaUI.Components.Dropdown do
       phx-hook="LineaUI.Dropdown"
       data-popup="menu"
       data-open={bool(@open)}
+      data-hover={bool(@hover)}
       data-placement={@placement}
       data-offset={@offset}
       data-close-on-select={bool(@close_on_select)}
@@ -211,7 +222,7 @@ defmodule LineaUI.Components.Dropdown do
         <div
           class={
             merge([
-              "popper-box rounded-lg border border-slate-150 bg-white py-1 font-inter dark:border-navy-500 dark:bg-navy-700",
+              "popper-box min-w-[220px] rounded-[14px] bg-white p-1.5 font-inter shadow-[0_0_0_1px_var(--color-slate-150),0_24px_60px_-20px_rgb(23_23_26/.28)] dark:bg-navy-700 dark:shadow-[0_0_0_1px_var(--color-navy-600)]",
               @class
             ])
           }
@@ -242,11 +253,11 @@ defmodule LineaUI.Components.Dropdown do
   @item_styles %{
     "default" => %{
       "neutral" =>
-        "flex h-8.5 items-center px-3 pr-8 font-medium tracking-wide outline-hidden transition-all hover:bg-slate-100 hover:text-slate-800 focus:bg-slate-100 focus:text-slate-800 dark:hover:bg-navy-600 dark:hover:text-navy-100 dark:focus:bg-navy-600 dark:focus:text-navy-100",
+        "flex h-[34px] items-center gap-2.5 rounded-[9px] px-2.5 text-[13.5px] text-slate-700 outline-hidden transition-colors hover:bg-slate-100 hover:text-slate-900 focus:bg-slate-100 focus:text-slate-900 aria-[current=true]:bg-slate-100 aria-[current=true]:text-slate-900 dark:text-navy-100 dark:hover:bg-navy-600 dark:hover:text-navy-50 dark:focus:bg-navy-600 dark:aria-[current=true]:bg-navy-600 dark:aria-[current=true]:text-navy-50",
       "primary" =>
-        "flex h-8.5 items-center px-3 pr-8 font-medium tracking-wide text-primary outline-hidden transition-all hover:bg-slate-100 focus:bg-slate-100 dark:text-accent-light dark:hover:bg-navy-600 dark:focus:bg-navy-600",
+        "flex h-[34px] items-center gap-2.5 rounded-[9px] px-2.5 text-[13.5px] text-primary outline-hidden transition-colors hover:bg-slate-100 focus:bg-slate-100 dark:text-accent-light dark:hover:bg-navy-600",
       "error" =>
-        "flex h-8.5 items-center px-3 pr-8 font-medium tracking-wide text-error outline-hidden transition-all hover:bg-error/20 focus:bg-error/20"
+        "flex h-[34px] items-center gap-2.5 rounded-[9px] px-2.5 text-[13.5px] text-error outline-hidden transition-colors hover:bg-error/10 focus:bg-error/10"
     },
     "media" => %{
       "neutral" =>
@@ -292,9 +303,7 @@ defmodule LineaUI.Components.Dropdown do
 
   def dropdown_item(assigns) do
     assigns =
-      assign(
-        assigns,
-        :classes,
+      assign_derived(assigns, :classes, [:variant, :color, :icon, :disabled, :class], fn ->
         merge([
           @item_styles[assigns.variant][assigns.color],
           assigns.icon != [] && "gap-3",
@@ -302,7 +311,7 @@ defmodule LineaUI.Components.Dropdown do
           "w-full text-left",
           assigns.class
         ])
-      )
+      end)
 
     render_item(assigns)
   end
@@ -342,7 +351,7 @@ defmodule LineaUI.Components.Dropdown do
 
   defp shortcut_hint(assigns) do
     ~H"""
-    <span class="ml-auto pl-4 font-mono text-[11px] font-normal text-slate-400 dark:text-navy-300">
+    <span class="ml-auto rounded-[5px] bg-(--sunken) px-1.5 font-mono text-[11px] leading-[18px] font-medium text-(--muted) shadow-[inset_0_0_0_1px_var(--line)]">
       {@text}
     </span>
     """
@@ -384,8 +393,8 @@ defmodule LineaUI.Components.Dropdown do
   def dropdown_submenu(assigns) do
     assigns =
       assigns
-      |> assign(:id, assigns.id || gen_id("submenu"))
-      |> assign(:item_class, @item_styles["default"]["neutral"])
+      |> assign(:id, assigns.id || stable_id("submenu", assigns, [:label]))
+      |> assign_derived(:item_class, [], fn -> @item_styles["default"]["neutral"] end)
 
     ~H"""
     <div
@@ -479,7 +488,7 @@ defmodule LineaUI.Components.Dropdown do
   def dropdown_separator(assigns) do
     ~H"""
     <div
-      class={merge(["my-1 h-px bg-slate-150 dark:bg-navy-500", @class])}
+      class={merge(["mx-1 my-[5px] h-px bg-(--line)", @class])}
       role="separator"
       {@rest}
     >
@@ -507,7 +516,7 @@ defmodule LineaUI.Components.Dropdown do
         placeholder={@placeholder}
         class={
           merge([
-            "form-input peer h-8 w-full rounded-md border border-slate-150 bg-transparent px-3 py-0 pl-9 text-xs-plus placeholder:text-slate-400/70 dark:border-navy-600",
+            "form-input peer h-8 w-full rounded-md border border-slate-150 bg-transparent px-3 py-0 pl-9 text-xs-plus placeholder:text-slate-500 dark:border-navy-600",
             @class
           ])
         }
@@ -558,8 +567,8 @@ defmodule LineaUI.Components.Dropdown do
 
   def dropdown_checkbox(assigns) do
     assigns
-    |> assign(:role, "menuitemcheckbox")
-    |> assign(:box, @check_box)
+    |> assign_derived(:role, [], fn -> "menuitemcheckbox" end)
+    |> assign_derived(:box, [], fn -> @check_box end)
     |> render_choice()
   end
 
@@ -585,23 +594,27 @@ defmodule LineaUI.Components.Dropdown do
 
   def dropdown_radio(assigns) do
     assigns
-    |> assign(:role, "menuitemradio")
-    |> assign(:box, @radio_box)
+    |> assign_derived(:role, [], fn -> "menuitemradio" end)
+    |> assign_derived(:box, [], fn -> @radio_box end)
     |> render_choice()
   end
 
   defp render_choice(assigns) do
     assigns =
-      assign(assigns,
-        input_id: assigns.id || "choice-#{:erlang.phash2({assigns.name, assigns.value})}",
-        input_type: (assigns.role == "menuitemradio" && "radio") || "checkbox",
-        item_class:
-          merge([
-            @choice_item,
-            assigns.disabled && "pointer-events-none opacity-55",
-            assigns.class
-          ])
-      )
+      assigns
+      |> assign_derived(:input_id, [:id, :name, :value], fn ->
+        assigns.id || "choice-#{:erlang.phash2({assigns.name, assigns.value})}"
+      end)
+      |> assign_derived(:input_type, [], fn ->
+        (assigns.role == "menuitemradio" && "radio") || "checkbox"
+      end)
+      |> assign_derived(:item_class, [:disabled, :class], fn ->
+        merge([
+          @choice_item,
+          assigns.disabled && "pointer-events-none opacity-55",
+          assigns.class
+        ])
+      end)
 
     ~H"""
     <div class="contents" role="none">
@@ -659,7 +672,7 @@ defmodule LineaUI.Components.Dropdown do
       role="presentation"
       class={
         merge([
-          "px-3 pt-2 pb-1 font-inter text-tiny-plus font-semibold tracking-widest text-slate-400 uppercase dark:text-navy-300",
+          "px-2.5 pt-2 pb-1 font-inter text-[11px] font-normal tracking-[.06em] text-(--faint) uppercase",
           @class
         ])
       }
@@ -709,14 +722,25 @@ defmodule LineaUI.Components.Dropdown do
     text = Strings.table(assigns.locale)
 
     assigns =
-      assign(assigns,
-        clear: assigns.clear_label || text.filter_clear,
-        apply: assigns.apply_label || text.filter_apply,
-        clear_js: action_js(assigns.on_clear, assigns.target),
-        apply_js: action_js(assigns.on_apply, assigns.target),
-        apply_suffix: (assigns.apply_count && " (#{assigns.apply_count})") || "",
-        apply_type: (assigns.on_apply == nil && "submit") || "button"
-      )
+      assigns
+      |> assign_derived(:clear, [:clear_label, :locale], fn ->
+        assigns.clear_label || text.filter_clear
+      end)
+      |> assign_derived(:apply, [:apply_label, :locale], fn ->
+        assigns.apply_label || text.filter_apply
+      end)
+      |> assign_derived(:clear_js, [:on_clear, :target], fn ->
+        action_js(assigns.on_clear, assigns.target)
+      end)
+      |> assign_derived(:apply_js, [:on_apply, :target], fn ->
+        action_js(assigns.on_apply, assigns.target)
+      end)
+      |> assign_derived(:apply_suffix, [:apply_count], fn ->
+        (assigns.apply_count && " (#{assigns.apply_count})") || ""
+      end)
+      |> assign_derived(:apply_type, [:on_apply], fn ->
+        (assigns.on_apply == nil && "submit") || "button"
+      end)
 
     ~H"""
     <div

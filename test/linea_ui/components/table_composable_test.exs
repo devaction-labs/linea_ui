@@ -21,7 +21,7 @@ defmodule LineaUI.Components.TableComposableTest do
       """)
 
     assert "linea-table" in classes(html, "table")
-    assert "is-hoverable" in classes(html, "table")
+    assert "sg-table" in classes(html, "table")
     assert "min-w-[760px]" in classes(html, "table")
     assert "overflow-x-auto" in classes(html, "div")
     assert ["hoverable"] = html |> find("table") |> LazyHTML.attribute("data-variant")

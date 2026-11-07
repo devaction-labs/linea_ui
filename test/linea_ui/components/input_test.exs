@@ -12,8 +12,7 @@ defmodule LineaUI.Components.InputTest do
     assert find(html, "label") |> Enum.to_list() == []
     classes = classes(html, "input")
     assert "form-input" in classes
-    assert "border-slate-300" in classes
-    assert "dark:focus:border-accent" in classes
+    assert "border-0" in classes
   end
 
   test "variant, size and shape pick LineOne's classes and class overrides them" do
@@ -39,14 +38,14 @@ defmodule LineaUI.Components.InputTest do
     assert [label] = find(html, "label.block") |> Enum.to_list()
     assert LazyHTML.text(label) =~ "Choose Username:"
     assert "mt-1.5" in classes(html, "label > span + span")
-    assert "text-tiny-plus" in classes(html, "label + span")
+    assert "leading-5" in classes(html, "label + span")
     assert LazyHTML.text(find(html, "label + span")) =~ "This is a help text"
   end
 
   test "state paints the border and the help line" do
     html = render(~H'<.input name="u" state="success" help="Username is valid" />')
-    assert "border-success" in classes(html, "input")
-    refute "border-slate-300" in classes(html, "input")
+    assert Enum.any?(classes(html, "input"), &(&1 =~ ~r/^shadow-.*--color-success/))
+    refute "border-slate-200" in classes(html, "input")
     assert "text-success" in classes(html, "label + span")
   end
 
@@ -55,7 +54,7 @@ defmodule LineaUI.Components.InputTest do
     assigns = %{field: field}
     html = rendered_to_string(~H'<.input field={@field} type="email" />')
     assert [_] = find(html, "input#user_email[name='user[email]'][value='a@b']") |> Enum.to_list()
-    assert "border-error" in classes(html, "input")
+    assert Enum.any?(classes(html, "input"), &(&1 =~ ~r/^shadow-.*--color-error/))
     assert LazyHTML.text(find(html, "span.text-error")) =~ "is invalid"
     assert [_] = find(html, "input[aria-invalid=true]") |> Enum.to_list()
 
@@ -202,5 +201,11 @@ defmodule LineaUI.Components.InputTest do
     refute "w-10" in suffix
     assert [_] = find(html, "[data-suffix] button#send") |> Enum.to_list()
     assert "pr-9" in classes(html, "input") or "px-9" in classes(html, "input")
+  end
+
+  test "label_hint puts a dimmed note at the right of the caption" do
+    html = render(~H'<.input name="ie" label="Inscrição estadual" label_hint="opcional" />')
+    assert "justify-between" in classes(html, "label > span")
+    assert LazyHTML.text(find(html, "label > span > span")) =~ "opcional"
   end
 end

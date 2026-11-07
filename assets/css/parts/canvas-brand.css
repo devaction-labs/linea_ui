@@ -1,0 +1,23 @@
+/* Canvas rules for the Signetum brand screens (canvas "Signetum — Landing page"). */
+
+/* AppAssistente: the conversations rail takes a faint tint of the accent. */
+.ai-conversations.rail,
+.dark .ai-conversations.rail,
+[data-theme="dark"] .ai-conversations.rail{background:color-mix(in srgb,var(--accent) 5%,var(--sunken))}
+
+/* Standalone pages (landing, brand): the board zeroes the margin of the subtitle paragraph. */
+.sg-solo .sg-sub{margin-top:0}
+
+/* An expanded module can be taller than the rail: the menu and its footer scroll as one, as the boards' page grows. */
+.linea-rail:not([data-collapsed="true"]) .rail-body{overflow-y:auto;scrollbar-width:none}
+.linea-rail:not([data-collapsed="true"]) .rail-body::-webkit-scrollbar{display:none}
+.linea-rail:not([data-collapsed="true"]) .rail-body>*{flex-shrink:0}
+.linea-rail:not([data-collapsed="true"]) .rail-nav{flex:1 0 auto;overflow:visible}
+
+/* text_editor, compact: the canvas's small editor card (a row of 28px icon buttons over the text). */
+.ql-box.ql-compact .ql-toolbar.ql-snow{padding:6px;background:transparent;border-color:var(--line)}
+.ql-box.ql-compact .ql-toolbar.ql-snow .ql-formats{margin-right:2px;display:inline-flex;gap:2px;vertical-align:top}
+.ql-box.ql-compact .ql-toolbar.ql-snow button{float:none;width:28px;height:28px;padding:0;border-radius:8px;display:grid;place-items:center}
+.ql-box.ql-compact .ql-toolbar.ql-snow [class*="huge-"]{float:none;width:16px;height:16px;color:var(--muted)}
+.ql-box.ql-compact .ql-container.ql-snow{border-color:var(--line)}
+.ql-box.ql-compact .ql-editor{min-height:120px;padding:14px 16px;font-size:14px;line-height:22px}

@@ -33,7 +33,7 @@ defmodule LineaUI.Components.SwitchTest do
     assert "bg-slate-100" in classes
     assert "rounded-lg" in classes
     assert "before:rounded-md" in classes
-    assert "h-7" in classes
+    assert "h-5.5" in classes
     assert "[--thumb-border:5px]" in classes
     assert "checked:before:!bg-error" in classes
     assert "text-base" in classes(html, "label span")
@@ -57,5 +57,13 @@ defmodule LineaUI.Components.SwitchTest do
              []
 
     refute "flex-row-reverse" in classes(html, "label:has(#b)")
+  end
+
+  test "the small switch carries is-sm, the canvas .8 size" do
+    assigns = %{}
+    html = rendered_to_string(~H|<.switch name="a" size="sm" />|)
+    assert html =~ "is-sm"
+    html = rendered_to_string(~H|<.switch name="a" />|)
+    refute html =~ "is-sm"
   end
 end

@@ -6,6 +6,12 @@ defmodule LineaUI.Components.Range do
       <.range field={@form[:level]} label="Level" min={0} max={10} size="lg" />
       <.range name="opacity" phx-debounce="100" />
 
+  `variant="canvas"` draws the design canvas's slider (a 4px track filled in the accent, a 16px white thumb, the
+  value in bold mono, the marks as plain faint numbers):
+
+      <.range name="discount" label="Desconto máximo" value={12} max={30} show_value value_format="%{value}%"
+        filled variant="canvas" />
+
   It is a native `<input type="range">`, so it submits with its form, fires `phx-change` as it is dragged
   and takes the arrow keys, Home, End and Page Up and Down.
 
@@ -95,6 +101,13 @@ defmodule LineaUI.Components.Range do
   )
 
   attr(:size, :string, default: "md", values: ~w(sm md lg))
+
+  attr(:variant, :string,
+    default: "default",
+    values: ~w(default canvas),
+    doc:
+      "`canvas` is the design canvas's `sg-slider`: a 4px sunken track filled in the accent, a 16px white thumb, the label at 13px medium, the value in bold mono and the marks as plain faint mono numbers. `color` and `size` do not apply."
+  )
 
   attr(:start_field, Phoenix.HTML.FormField,
     default: nil,
@@ -206,7 +219,7 @@ defmodule LineaUI.Components.Range do
     |> assign(
       pair?: pair?,
       vertical?: assigns.orientation == "vertical" and not pair?,
-      id: assigns.id || assigns.name || assigns.start_name || gen_id("range"),
+      id: assigns.id || assigns.name || assigns.start_name || stable_id("range", assigns),
       low: low,
       high: high,
       bounds: bounds(assigns.min, assigns.max),
@@ -216,6 +229,7 @@ defmodule LineaUI.Components.Range do
                assigns.steppers or assigns.orientation == "vertical")
     )
     |> then(&assign(&1, :classes, classes(&1)))
+    |> then(&assign(&1, :wrapper_class, wrapper_class(&1.variant, &1.wrapper_class)))
   end
 
   defp pair_values({low, high}, _pair?), do: {number(low), number(high)}
@@ -269,6 +283,9 @@ defmodule LineaUI.Components.Range do
 
   defp pair_text(template, low, high),
     do: value_text(template, low) <> " – " <> value_text(template, high)
+
+  defp wrapper_class("canvas", class), do: merge(["lu-range-canvas", class])
+  defp wrapper_class(_variant, class), do: class
 
   defp classes(assigns) do
     merge([

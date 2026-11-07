@@ -59,4 +59,10 @@ defmodule LineaUI.Components.TooltipTest do
     assert find(html, "#t") |> LazyHTML.attribute("data-open") == ["true"]
     assert find(html, "#t") |> LazyHTML.attribute("data-on-open") |> hd() =~ "opened"
   end
+
+  test "the dark color is the canvas tooltip theme" do
+    html = render(~H|<.tooltip id="t" text="Copiar" color="dark"><button>x</button></.tooltip>|)
+
+    assert html |> find("#t-tip .tippy-box") |> LazyHTML.attribute("data-theme") == ["dark"]
+  end
 end

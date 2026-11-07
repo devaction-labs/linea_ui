@@ -104,7 +104,7 @@ defmodule LineaUI.Components.DropdownTest do
              html |> find("span.ml-auto") |> Enum.map(&(&1 |> LazyHTML.text() |> String.trim()))
 
     assert ["ml-auto", "font-mono"] -- classes(html, "button[phx-click=edit] span") == []
-    assert "h-8.5" in classes(html, "button[phx-click=edit]")
+    assert "h-[34px]" in classes(html, "button[phx-click=edit]")
   end
 
   test "toggle_icon draws the flat round dots button" do
@@ -119,11 +119,10 @@ defmodule LineaUI.Components.DropdownTest do
       """)
 
     a = classes(html, "#a-button")
-    assert ["text-current", "rounded-full", "size-7", "-mr-2"] -- a == []
+    assert ["sg-ib", "plain", "-mr-2"] -- a == []
     refute "size-8" in a
     assert attr_of(html, "#a-button", "aria-label") == ["Menu"]
     assert [_] = find(html, "#a-button svg path[d^='M5 12h.01']") |> Enum.to_list()
-    assert "rounded-none" in classes(html, "#b-button")
     assert attr_of(html, "#b-button", "aria-label") == ["Row actions"]
     assert [_] = find(html, "#b-button svg path[d^='M12 5v.01']") |> Enum.to_list()
     assert attr_of(html, "#a-menu [role=menu]", "aria-labelledby") == ["a-button"]
@@ -143,10 +142,8 @@ defmodule LineaUI.Components.DropdownTest do
       </.dropdown>
       """)
 
-    refute "rounded-full" in classes(html, "#a-button")
-    refute "rounded-none" in classes(html, "#a-button")
-    assert "rounded-none" in classes(html, "#b-button")
-    assert "rounded-full" in classes(html, "#c-button")
+    refute "sq" in classes(html, "#a-button")
+    assert "sq" in classes(html, "#b-button")
   end
 
   test "a submenu: an item that opens a nested menu to its side" do
@@ -350,5 +347,21 @@ defmodule LineaUI.Components.DropdownTest do
 
       assert find(html, "div") |> LazyHTML.text() |> String.trim() == "Sort by"
     end
+  end
+
+  test "a shortcut is a kbd-looking chip and a current item is highlighted by aria-current" do
+    html =
+      render(~H"""
+      <.dropdown id="dd" label="Menu">
+        <.dropdown_item phx-click="a" shortcut="E">Edit</.dropdown_item>
+        <.dropdown_item phx-click="b" aria-current="true">Recent</.dropdown_item>
+      </.dropdown>
+      """)
+
+    assert find(html, "button[role=menuitem] span.font-mono") |> LazyHTML.text() |> String.trim() ==
+             "E"
+
+    assert attr_of(html, "button[aria-current=true]", "class") |> hd() =~
+             "aria-[current=true]:bg-slate-100"
   end
 end

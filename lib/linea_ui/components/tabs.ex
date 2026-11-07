@@ -1,7 +1,8 @@
 defmodule LineaUI.Components.Tabs do
   @moduledoc """
-  LineOne's tabs: underlined (`line`), on a gray track (`boxed`), rounded (`pill`) and plain text (`text`), laid out
-  horizontally or vertically, with or without icons.
+  LineOne's tabs: underlined (`line`), on a gray track (`boxed`), rounded (`pill`), plain text (`text`) and the design
+  canvas segmented control (`segmented`), laid out horizontally or vertically, with or without icons. A tab's `count`
+  draws the canvas count badge after its label.
 
       <.tabs id="profile-tabs" selected="home">
         <:tab name="home">Home</:tab>
@@ -24,6 +25,8 @@ defmodule LineaUI.Components.Tabs do
       <.tabs id="server-tabs" selected={@tab} on_change="select_tab">…</.tabs>
       <.tabs id="period" variant="boxed" size="sm"><:tab name="month">Last month</:tab></.tabs>
       <.tabs id="range" variant="text"><:tab name="week">Last 7 days</:tab><:tab name="all">All time</:tab></.tabs>
+      <.tabs id="view" variant="segmented"><:tab name="summary">Summary</:tab><:tab name="items">Items</:tab></.tabs>
+      <.tabs id="status"><:tab name="all" count={128}>All</:tab><:tab name="late" count={4}>Late</:tab></.tabs>
 
       def handle_event("select_tab", %{"id" => "server-tabs", "value" => tab}, socket),
         do: {:noreply, assign(socket, tab: tab)}
@@ -52,8 +55,7 @@ defmodule LineaUI.Components.Tabs do
   use LineaUI.Component
 
   @tab_base %{
-    {"line", "horizontal"} =>
-      "btn gap-2 rounded-none border-b-2 px-3 py-2 font-medium aria-selected:border-primary aria-selected:text-primary dark:aria-selected:border-accent dark:aria-selected:text-accent-light not-aria-selected:border-transparent not-aria-selected:hover:text-slate-800 not-aria-selected:focus:text-slate-800 dark:not-aria-selected:hover:text-navy-100 dark:not-aria-selected:focus:text-navy-100",
+    {"line", "horizontal"} => "sg-tab",
     {"line", "vertical"} =>
       "btn justify-start gap-2 rounded-none border-r-2 px-3 py-2 text-left font-medium aria-selected:border-primary aria-selected:text-primary dark:aria-selected:border-accent dark:aria-selected:text-accent-light not-aria-selected:border-transparent not-aria-selected:hover:text-slate-800 not-aria-selected:focus:text-slate-800 dark:not-aria-selected:hover:text-navy-100 dark:not-aria-selected:focus:text-navy-100",
     {"boxed", "horizontal"} =>
@@ -63,7 +65,9 @@ defmodule LineaUI.Components.Tabs do
     {"pill", "horizontal"} =>
       "btn h-8 gap-2 rounded-full text-xs-plus font-medium not-aria-selected:hover:bg-slate-300/20 not-aria-selected:focus:bg-slate-300/20 not-aria-selected:active:bg-slate-300/25 not-aria-selected:hover:text-slate-800 not-aria-selected:focus:text-slate-800 dark:not-aria-selected:hover:bg-navy-300/20 dark:not-aria-selected:focus:bg-navy-300/20 dark:not-aria-selected:active:bg-navy-300/25 dark:not-aria-selected:hover:text-navy-100 dark:not-aria-selected:focus:text-navy-100",
     {"pill", "vertical"} =>
-      "btn h-8 justify-start gap-2 rounded-full text-left text-xs-plus font-medium not-aria-selected:hover:bg-slate-300/20 not-aria-selected:focus:bg-slate-300/20 not-aria-selected:active:bg-slate-300/25 not-aria-selected:hover:text-slate-800 not-aria-selected:focus:text-slate-800 dark:not-aria-selected:hover:bg-navy-300/20 dark:not-aria-selected:focus:bg-navy-300/20 dark:not-aria-selected:active:bg-navy-300/25 dark:not-aria-selected:hover:text-navy-100 dark:not-aria-selected:focus:text-navy-100"
+      "btn h-8 justify-start gap-2 rounded-full text-left text-xs-plus font-medium not-aria-selected:hover:bg-slate-300/20 not-aria-selected:focus:bg-slate-300/20 not-aria-selected:active:bg-slate-300/25 not-aria-selected:hover:text-slate-800 not-aria-selected:focus:text-slate-800 dark:not-aria-selected:hover:bg-navy-300/20 dark:not-aria-selected:focus:bg-navy-300/20 dark:not-aria-selected:active:bg-navy-300/25 dark:not-aria-selected:hover:text-navy-100 dark:not-aria-selected:focus:text-navy-100",
+    {"segmented", "horizontal"} => "sg-seg-tab",
+    {"segmented", "vertical"} => "sg-seg-tab"
   }
 
   @text_base "btn gap-2 rounded-none p-0 font-medium tracking-wide not-aria-selected:hover:text-slate-800 not-aria-selected:focus:text-slate-800 dark:not-aria-selected:hover:text-navy-100 dark:not-aria-selected:focus:text-navy-100"
@@ -103,7 +107,9 @@ defmodule LineaUI.Components.Tabs do
     {"pill", "horizontal"} => "is-scrollbar-hidden overflow-x-auto",
     {"pill", "vertical"} => "shrink-0",
     {"text", "horizontal"} => "is-scrollbar-hidden overflow-x-auto",
-    {"text", "vertical"} => "shrink-0"
+    {"text", "vertical"} => "shrink-0",
+    {"segmented", "horizontal"} => "is-scrollbar-hidden overflow-x-auto",
+    {"segmented", "vertical"} => "shrink-0 self-start"
   }
 
   @track %{
@@ -114,14 +120,16 @@ defmodule LineaUI.Components.Tabs do
   }
 
   @list %{
-    {"line", "horizontal"} => "flex",
+    {"line", "horizontal"} => "sg-tabs",
     {"line", "vertical"} => "flex flex-col",
     {"boxed", "horizontal"} => "flex px-1.5 py-1",
     {"boxed", "vertical"} => "flex flex-col px-1.5 py-1",
     {"pill", "horizontal"} => "flex gap-2",
     {"pill", "vertical"} => "flex flex-col space-y-2",
     {"text", "horizontal"} => "flex gap-4",
-    {"text", "vertical"} => "flex flex-col space-y-2"
+    {"text", "vertical"} => "flex flex-col space-y-2",
+    {"segmented", "horizontal"} => "sg-seg",
+    {"segmented", "vertical"} => "sg-seg flex-col items-stretch rounded-[18px]"
   }
 
   @overlap %{
@@ -163,9 +171,9 @@ defmodule LineaUI.Components.Tabs do
 
   attr(:variant, :string,
     default: "line",
-    values: ~w(line boxed pill text),
+    values: ~w(line boxed pill text segmented),
     doc:
-      "`line` underlines the selected tab, `boxed` lifts it off a gray track, `pill` fills a rounded tab, `text` is plain text that only changes color (no border or background; spacing comes from `list_class`, `space-x-4` by default)."
+      "`line` underlines the selected tab, `boxed` lifts it off a gray track, `pill` fills a rounded tab, `text` is plain text that only changes color (no border or background; spacing comes from `list_class`, `space-x-4` by default), `segmented` is the design canvas segmented control (a sunken pill track, the selected tab raised on the panel color)."
   )
 
   attr(:size, :string,
@@ -223,6 +231,11 @@ defmodule LineaUI.Components.Tabs do
     )
 
     attr(:disabled, :boolean, doc: "Skipped by clicks and the arrow keys.")
+
+    attr(:count, :any,
+      doc: "A number drawn after the label in the canvas count badge (`sg-nav-n`)."
+    )
+
     attr(:patch, :string, doc: "Renders the tab as a `<.link patch>` (navigation tabs).")
     attr(:navigate, :string, doc: "Renders the tab as a `<.link navigate>` (navigation tabs).")
     attr(:href, :string, doc: "Renders the tab as a `<.link href>` (navigation tabs).")
@@ -240,27 +253,30 @@ defmodule LineaUI.Components.Tabs do
     key = {assigns.variant, assigns.orientation}
 
     assigns
-    |> assign(:selected, value)
-    |> assign(:root_class, merge([@root[assigns.orientation], assigns.class]))
-    |> assign(:scroll_class, @scroll[key])
-    |> assign(
-      :track_class,
+    |> assign_derived(:selected, [:selected, :tab], fn -> value end)
+    |> assign_derived(:root_class, [:orientation, :class], fn ->
+      merge([@root[assigns.orientation], assigns.class])
+    end)
+    |> assign_derived(:scroll_class, [:variant, :orientation], fn -> @scroll[key] end)
+    |> assign_derived(:track_class, [:bordered, :variant, :orientation], fn ->
       @track[{assigns.bordered and assigns.variant == "line", assigns.orientation}]
-    )
-    |> assign(
-      :list_classes,
+    end)
+    |> assign_derived(:list_classes, [:variant, :orientation, :overlap, :list_class], fn ->
       merge([@list[key], @overlap[{assigns.overlap, assigns.orientation}], assigns.list_class])
-    )
-    |> assign(:tab_class, tab_class(assigns, key))
-    |> assign(:panels_classes, merge([@panels[assigns.orientation], assigns.panels_class]))
-    |> assign(:panel_class, @transitions[assigns.transition])
-    |> assign(:event, event_name(assigns.on_change))
-    |> assign(:on_change_js, on_change_js(assigns.on_change))
-    |> assign(:panel_names, MapSet.new(assigns.panel, & &1.name))
-    |> assign(
-      :keep,
+    end)
+    |> assign_derived(:tab_class, [:variant, :orientation, :size, :color, :grow], fn ->
+      tab_class(assigns, key)
+    end)
+    |> assign_derived(:panels_classes, [:orientation, :panels_class], fn ->
+      merge([@panels[assigns.orientation], assigns.panels_class])
+    end)
+    |> assign_derived(:panel_class, [:transition], fn -> @transitions[assigns.transition] end)
+    |> assign_derived(:event, [:on_change], fn -> event_name(assigns.on_change) end)
+    |> assign_derived(:on_change_js, [:on_change], fn -> on_change_js(assigns.on_change) end)
+    |> assign_derived(:panel_names, [:panel], fn -> MapSet.new(assigns.panel, & &1.name) end)
+    |> assign_derived(:keep, [], fn ->
       JS.ignore_attributes(["aria-selected", "aria-current", "tabindex", "hidden"])
-    )
+    end)
     |> render_tabs()
   end
 
@@ -282,6 +298,10 @@ defmodule LineaUI.Components.Tabs do
   defp variant_color(%{variant: "pill", color: color}), do: @pill_colors[color]
   defp variant_color(%{variant: "text", color: color}), do: @text_colors[color]
   defp variant_color(_assigns), do: nil
+
+  # Each tab (or panel) with whether it is the selected one, as comprehension variables: a new
+  # selection sends the two that changed.
+  defp by_name(entries, selected), do: Enum.map(entries, &{&1, &1.name == selected})
 
   defp grow_class(true), do: "flex-1"
   defp grow_class(false), do: "shrink-0"
@@ -309,11 +329,11 @@ defmodule LineaUI.Components.Tabs do
         <div class={@track_class}>
           <div role="tablist" aria-orientation={@orientation} class={@list_classes}>
             <.tab_control
-              :for={tab <- @tab}
+              :for={{tab, selected} <- by_name(@tab, @selected)}
               tab={tab}
               id={"#{@id}-tab-#{tab.name}"}
               controls={MapSet.member?(@panel_names, tab.name) && "#{@id}-panel-#{tab.name}"}
-              selected={tab.name == @selected}
+              selected={selected}
               keep={@keep}
               class={merge([@tab_class, tab[:class]])}
             />
@@ -322,13 +342,13 @@ defmodule LineaUI.Components.Tabs do
       </div>
       <div :if={@panel != []} class={@panels_classes}>
         <div
-          :for={panel <- @panel}
+          :for={{panel, selected} <- by_name(@panel, @selected)}
           role="tabpanel"
           id={"#{@id}-panel-#{panel.name}"}
           aria-labelledby={"#{@id}-tab-#{panel.name}"}
           tabindex="0"
           data-value={panel.name}
-          hidden={panel.name != @selected}
+          hidden={!selected}
           phx-mounted={@keep}
           class={merge([@panel_class, "outline-hidden", panel[:class]])}
         >
@@ -367,7 +387,7 @@ defmodule LineaUI.Components.Tabs do
       phx-mounted={@keep}
       class={@class}
     >
-      {render_slot(@tab)}
+      {render_slot(@tab)}<.count tab={@tab} />
     </.link>
     """
   end
@@ -388,10 +408,20 @@ defmodule LineaUI.Components.Tabs do
       phx-mounted={@keep}
       class={@class}
     >
-      {render_slot(@tab)}
+      {render_slot(@tab)}<.count tab={@tab} />
     </button>
     """
   end
+
+  attr(:tab, :map, required: true)
+
+  defp count(%{tab: %{count: count}} = assigns) when not is_nil(count) do
+    ~H"""
+    <span class="sg-nav-n">{@tab.count}</span>
+    """
+  end
+
+  defp count(assigns), do: ~H""
 
   defp tabindex(true), do: "0"
   defp tabindex(false), do: "-1"

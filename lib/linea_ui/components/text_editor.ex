@@ -61,6 +61,16 @@ defmodule LineaUI.Components.TextEditor do
   1 to 4000 pixels and an `alt` of up to 300 characters. `<mark>` is kept everywhere. The names of the buttons
   come from `tool_labels` (`%{"image" => "Imagem", "variable" => "Variável", "mark" => "Destacar"}`).
 
+  ## Showing saved text
+
+  `text_editor_content/1` draws saved HTML read-only, in the editor's type (14px on 22px lines, lists and marks
+  as in the editor), for a page that shows what someone wrote. It takes the markup as its inner block, or `value`:
+  a string is escaped and shown as text; pass `{:safe, html}` (or `Phoenix.HTML.raw/1`) only for HTML your server
+  has sanitized.
+
+      <.text_editor_content value={Phoenix.HTML.raw(@sanitized_body)} />
+      <.text_editor_content><p>Olá, <strong>Joel</strong>!</p></.text_editor_content>
+
   ## Comments
 
   `variant="comment"` is the compact editor of a thread: no toolbar, a bar with a "mention" button,
@@ -230,6 +240,11 @@ defmodule LineaUI.Components.TextEditor do
 
   attr :mention_title, :string, default: "Mention someone", doc: "The caption of the \"@\" menu."
 
+  attr :mention_button, :boolean,
+    default: true,
+    doc:
+      "The \"@\" button of a comment's bar (when there are `mentions`); typing \"@\" works without it."
+
   attr :mention_label, :string,
     default: "Mention",
     doc: "The label of the mention button of a comment."
@@ -246,9 +261,14 @@ defmodule LineaUI.Components.TextEditor do
 
   attr :submit_label, :string, default: "Comment"
 
-  attr :submit_key, :string,
+  attr :bar, :boolean,
+    default: true,
+    doc:
+      "A comment's bar (mention, `:actions`, submit). `false` leaves only the text box, as a reply field in a thread; Ctrl+Enter still submits."
+
+  attr :submit_key, :any,
     default: "Ctrl ↵",
-    doc: "The shortcut shown next to a comment's button."
+    doc: "The shortcut shown next to a comment's button (a string); `nil` hides it."
 
   attr :clear_on_submit, :boolean, default: true, doc: "Empties the editor after it submits."
 
@@ -264,12 +284,15 @@ defmodule LineaUI.Components.TextEditor do
   slot :ai,
     doc: "The content of a button at the end of the toolbar that asks the assistant (`on_ai`)."
 
-  slot :actions, doc: "The buttons at the start of a comment's bar (attach...)."
+  slot :actions, doc: "The buttons of a comment's bar, before the submit button (attach...)."
+
+  slot :attachments,
+    doc: "What a comment carries (files as `<.chip>`), between the text and the bar."
 
   def text_editor(assigns) do
     assigns
     |> assign_field()
-    |> assign_new(:id, fn -> gen_id("editor") end)
+    |> then(&assign_new(&1, :id, fn -> stable_id("editor", &1) end))
     |> then(&assign_new(&1, :name, fn -> &1.id end))
     |> assign_new(:value, fn -> nil end)
     |> then(&assign(&1, :value, &1.value || ""))
@@ -298,6 +321,7 @@ defmodule LineaUI.Components.TextEditor do
             @variant == "default" && "ql-box",
             @variant == "default" && @errors != [] && "border-error",
             @variant == "comment" && "ql-comment",
+            @variant == "comment" && !@bar && "ql-comment-bare",
             @class
           ])
         }
@@ -406,10 +430,13 @@ defmodule LineaUI.Components.TextEditor do
           <span>{@hint}</span>
           <span data-count></span>
         </div>
-        <div :if={@variant == "comment"} class="ql-comment-bar" data-comment-bar>
+        <div :if={@variant == "comment" and @attachments != []} class="ql-attachments">
+          {render_slot(@attachments)}
+        </div>
+        <div :if={@variant == "comment" and @bar} class="ql-comment-bar" data-comment-bar>
           {render_slot(@actions)}
           <button
-            :if={@mentions != []}
+            :if={@mentions != [] and @mention_button}
             type="button"
             class="ql-comment-tool"
             aria-label={@mention_label}
@@ -419,7 +446,7 @@ defmodule LineaUI.Components.TextEditor do
           >
             @
           </button>
-          <kbd :if={@on_submit} class="ql-kbd">{@submit_key}</kbd>
+          <kbd :if={@on_submit && @submit_key} class="ql-kbd">{@submit_key}</kbd>
           <button type="button" class="ql-submit" disabled={@disabled} data-submit>
             {@submit_label}
           </button>
@@ -583,4 +610,24 @@ defmodule LineaUI.Components.TextEditor do
   defp default_color?("color", "#000000"), do: true
   defp default_color?("background", "#ffffff"), do: true
   defp default_color?(_tool, _color), do: false
+
+  @doc """
+  Renders saved rich text, read-only. See "Showing saved text" above: `value` is escaped unless it is already
+  marked safe, so only sanitized HTML should be passed as `{:safe, html}`.
+  """
+  attr :value, :any,
+    default: nil,
+    doc: "The text: a string (escaped) or sanitized HTML marked safe. The inner block wins."
+
+  attr :class, :any, default: nil
+  attr :rest, :global
+  slot :inner_block
+
+  def text_editor_content(assigns) do
+    ~H"""
+    <div class={merge(["ql-editor ql-readonly", @class])} {@rest}>
+      {if @inner_block != [], do: render_slot(@inner_block), else: @value}
+    </div>
+    """
+  end
 end

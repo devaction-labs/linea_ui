@@ -21,7 +21,7 @@ defmodule LineaUI.Components.OtpInput do
   browser (render `value=""` to clear a rejected code), and re-rendering what the browser sent
   does nothing.
 
-  A filled box has a primary border (`data-filled`); with errors it keeps the error border and
+  A filled box keeps the border of the others (it only carries `data-filled`); with errors it keeps the error border and
   with `state="success"` the success one. The error line has `role="alert"`; a `help` line under
   `state="success"` starts with a check-circle icon.
 
@@ -46,12 +46,12 @@ defmodule LineaUI.Components.OtpInput do
   alias LineaUI.Components.Overlay
 
   @sizes %{
-    "sm" => "h-10 rounded-lg text-base",
-    "md" => "h-[54px] rounded-xl text-[22px]",
-    "lg" => "h-16 rounded-xl text-2xl"
+    "sm" => "size-8.5 rounded-md text-sm",
+    "md" => "size-10 rounded-md text-base",
+    "lg" => "h-[54px] w-[46px] rounded-xl font-mono text-[22px]"
   }
 
-  @box "min-w-0 flex-1 px-0 text-center font-mono font-semibold shadow-soft"
+  @box "shrink-0 border-0 bg-white px-0 text-center font-semibold text-slate-950 shadow-[inset_0_0_0_1px_var(--color-slate-300)] focus:shadow-[inset_0_0_0_1.5px_var(--color-primary),0_0_0_4px_color-mix(in_oklab,var(--color-primary)_14%,transparent)] focus:ring-0 dark:bg-navy-750 dark:text-navy-50 dark:shadow-[inset_0_0_0_1px_var(--color-navy-450)] dark:focus:shadow-[inset_0_0_0_1.5px_var(--color-accent),0_0_0_4px_color-mix(in_oklab,var(--color-accent)_16%,transparent)]"
 
   @doc """
   Renders the boxes, with their caption, help and errors when given.
@@ -124,28 +124,39 @@ defmodule LineaUI.Components.OtpInput do
   def otp_input(assigns) do
     assigns
     |> assign_field()
-    |> assign_new(:name, fn -> nil end)
-    |> then(&assign_new(&1, :id, fn -> &1.name || gen_id("otp") end))
-    |> assign_new(:value, fn -> nil end)
+    |> put_default(:name, nil)
+    |> assign_otp_id()
+    |> put_default(:value, nil)
     |> assign_code()
     |> render_otp()
   end
+
+  # The id defaults to the name; without one it is derived from the label (stable across renders).
+  defp assign_otp_id(assigns) when is_map_key(assigns, :id), do: assigns
+  defp assign_otp_id(%{name: nil} = assigns), do: assign(assigns, :id, stable_id("otp", assigns))
+  defp assign_otp_id(assigns), do: assign_derived(assigns, :id, [:name], fn -> assigns.name end)
 
   defp assign_code(assigns) do
     cells = cells(assigns.value, assigns.length, assigns.mode)
     separators = separators(assigns.separator, assigns.length)
 
-    assign(assigns,
-      code: Enum.join(cells),
-      boxes:
-        cells
-        |> Enum.with_index(1)
-        |> Enum.map(fn {cell, number} ->
-          %{number: number, cell: cell, separator: number in separators}
-        end),
-      state: Control.state(assigns.state, assigns.errors),
-      callback: Overlay.callback(assigns.on_complete, assigns.id, assigns.target)
-    )
+    deps = [:value, :length, :mode, :separator]
+
+    assigns
+    |> assign_derived(:code, deps, fn -> Enum.join(cells) end)
+    |> assign_derived(:boxes, deps, fn ->
+      cells
+      |> Enum.with_index(1)
+      |> Enum.map(fn {cell, number} ->
+        %{number: number, cell: cell, separator: number in separators}
+      end)
+    end)
+    |> assign_derived(:state, [:state, :errors], fn ->
+      Control.state(assigns.state, assigns.errors)
+    end)
+    |> assign_derived(:callback, [:on_complete, :id, :target], fn ->
+      Overlay.callback(assigns.on_complete, assigns.id, assigns.target)
+    end)
   end
 
   defp cells(value, length, mode) do
@@ -170,7 +181,27 @@ defmodule LineaUI.Components.OtpInput do
 
   defp render_otp(%{label: nil, help: nil, errors: []} = assigns) do
     ~H"""
-    <div class={@wrapper_class}><.control {assigns} /></div>
+    <div class={@wrapper_class}>
+      <.control
+        id={@id}
+        name={@name}
+        size={@size}
+        state={@state}
+        class={@class}
+        label={@label}
+        aria_label={@aria_label}
+        length={@length}
+        mode={@mode}
+        code={@code}
+        autofocus={@autofocus}
+        callback={@callback}
+        boxes={@boxes}
+        mask={@mask}
+        disabled={@disabled}
+        digit_label={@digit_label}
+        rest={@rest}
+      />
+    </div>
     """
   end
 
@@ -186,19 +217,44 @@ defmodule LineaUI.Components.OtpInput do
       state={@state}
       class={@wrapper_class}
     >
-      <.control {assigns} />
+      <.control
+        id={@id}
+        name={@name}
+        size={@size}
+        state={@state}
+        class={@class}
+        label={@label}
+        aria_label={@aria_label}
+        length={@length}
+        mode={@mode}
+        code={@code}
+        autofocus={@autofocus}
+        callback={@callback}
+        boxes={@boxes}
+        mask={@mask}
+        disabled={@disabled}
+        digit_label={@digit_label}
+        rest={@rest}
+      />
     </Form.field>
     """
   end
 
   defp control(assigns) do
     assigns =
-      assign(assigns,
-        box_class: merge([@box, @sizes[assigns.size], filled(assigns.state), assigns.class]),
-        labelledby: assigns.label && assigns.id <> "-label",
-        group_class: merge(["flex w-full items-center gap-2", assigns.label && "mt-1.5"]),
-        group_label: assigns.label || assigns.aria_label
-      )
+      assigns
+      |> assign_derived(:box_class, [:size, :state, :class], fn ->
+        merge([@box, @sizes[assigns.size], filled(assigns.state), assigns.class])
+      end)
+      |> assign_derived(:labelledby, [:label, :id], fn ->
+        assigns.label && assigns.id <> "-label"
+      end)
+      |> assign_derived(:group_class, [:label], fn ->
+        merge(["flex w-full items-center gap-2", assigns.label && "mt-1.5"])
+      end)
+      |> assign_derived(:group_label, [:label, :aria_label], fn ->
+        assigns.label || assigns.aria_label
+      end)
 
     ~H"""
     <div
@@ -253,8 +309,16 @@ defmodule LineaUI.Components.OtpInput do
     """
   end
 
-  defp filled(state) when state in ["error", "success"], do: nil
-  defp filled(_state), do: "data-filled:border-primary dark:data-filled:border-accent"
+  # The boxes draw their border as a shadow, so the state ring has to come after it to win.
+  defp filled("error"),
+    do:
+      "shadow-[inset_0_0_0_1px_var(--color-error),0_0_0_4px_color-mix(in_oklab,var(--color-error)_14%,transparent)] focus:shadow-[inset_0_0_0_1.5px_var(--color-error),0_0_0_4px_color-mix(in_oklab,var(--color-error)_14%,transparent)] dark:shadow-[inset_0_0_0_1px_var(--color-error),0_0_0_4px_color-mix(in_oklab,var(--color-error)_16%,transparent)] dark:focus:shadow-[inset_0_0_0_1.5px_var(--color-error),0_0_0_4px_color-mix(in_oklab,var(--color-error)_16%,transparent)]"
+
+  defp filled("success"),
+    do:
+      "shadow-[inset_0_0_0_1px_var(--color-success),0_0_0_4px_color-mix(in_oklab,var(--color-success)_14%,transparent)] focus:shadow-[inset_0_0_0_1.5px_var(--color-success),0_0_0_4px_color-mix(in_oklab,var(--color-success)_14%,transparent)] dark:shadow-[inset_0_0_0_1px_var(--color-success),0_0_0_4px_color-mix(in_oklab,var(--color-success)_16%,transparent)] dark:focus:shadow-[inset_0_0_0_1.5px_var(--color-success),0_0_0_4px_color-mix(in_oklab,var(--color-success)_16%,transparent)]"
+
+  defp filled(_state), do: nil
 
   defp mask_type(true), do: "password"
   defp mask_type(false), do: "text"

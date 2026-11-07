@@ -10,7 +10,7 @@ defmodule LineaUI.Components.ClipboardTest do
     assert attr_of(html, "#c", "data-value") == ["secret"]
     assert attr_of(html, "#c", "data-toast") == ["Text Copied"]
     assert attr_of(html, "#c", "data-error-toast") == ["Error"]
-    assert "bg-primary" in classes(html, "#c")
+    assert "accent" in classes(html, "#c")
     assert String.trim(find(html, "#c") |> LazyHTML.text()) == "Copy"
   end
 
@@ -24,15 +24,14 @@ defmodule LineaUI.Components.ClipboardTest do
 
     assert attr_of(html, "#c", "data-from") == ["#text"]
     assert attr_of(html, "#c", "data-toast") == []
-    assert "h-6" in classes(html, "#c")
+    assert "sm" in classes(html, "#c")
     assert String.trim(find(html, "#c") |> LazyHTML.text()) == "Grab"
     assert attr_of(html, "#c", "data-on-copy") |> hd() =~ "copied"
   end
 
-  test "copied_label swaps the text and turns the button success green while data-copied is set" do
+  test "copied_label swaps the text while data-copied is set" do
     html = render(~H|<.clipboard id="c" value="x" copied_label="Copied">Copy</.clipboard>|)
 
-    assert "data-copied:bg-success" in classes(html, "#c")
     assert "group/clip" in classes(html, "#c")
     assert find(html, "#c span[aria-live=polite]") |> LazyHTML.text() |> String.trim() == "Copied"
 
@@ -41,7 +40,6 @@ defmodule LineaUI.Components.ClipboardTest do
            |> String.trim() == "Copy"
 
     plain = render(~H|<.clipboard id="c" value="x" />|)
-    refute "data-copied:bg-success" in classes(plain, "#c")
     assert find(plain, "#c span") |> Enum.empty?()
   end
 
@@ -61,13 +59,39 @@ defmodule LineaUI.Components.ClipboardTest do
     assert find(html, "#c span.group-data-copied\\/clip\\:inline") |> Enum.count() >= 1
   end
 
-  test "icon_only is a square icon button that still turns green" do
+  test "icon_only is the round canvas icon button" do
     html = render(~H|<.clipboard id="c" from="#cmd" icon_only aria-label="Copy command" />|)
 
     assert attr_of(html, "#c", "aria-label") == ["Copy command"]
-    assert "size-[2.375rem]" in classes(html, "#c")
-    assert "data-copied:bg-success" in classes(html, "#c")
+    assert "sg-ib" in classes(html, "#c")
+    refute "sg-btn" in classes(html, "#c")
     refute LazyHTML.text(find(html, "#c")) =~ "Copy"
+
+    small = render(~H|<.clipboard id="c" value="x" icon_only size="sm" variant="flat" />|)
+    assert "sm" in classes(small, "#c")
+    assert "plain" in classes(small, "#c")
+  end
+
+  test "copied starts the button in its copied state" do
+    html =
+      render(~H|<.clipboard id="c" value="x" copied copied_label="Copiado">Copiar</.clipboard>|)
+
+    assert attr_of(html, "#c", "data-copied") == [""]
+    assert attr_of(render(~H|<.clipboard id="c" value="x" />|), "#c", "data-copied") == []
+  end
+
+  test "locale pt_BR translates the default toasts and label; an explicit toast wins" do
+    html = render(~H|<.clipboard id="c" value="x" locale="pt_BR" />|)
+    assert attr_of(html, "#c", "data-toast") == ["Texto copiado"]
+    assert attr_of(html, "#c", "data-error-toast") == ["Erro ao copiar"]
+    assert String.trim(find(html, "#c") |> LazyHTML.text()) == "Copiar"
+
+    own = render(~H|<.clipboard id="c" value="x" locale="pt_BR" toast="Chave copiada" />|)
+    assert attr_of(own, "#c", "data-toast") == ["Chave copiada"]
+
+    input = render(~H|<.clipboard_input id="share" value="x" locale="pt_BR" />|)
+    assert attr_of(input, "#share-copy", "data-toast") == ["Texto copiado"]
+    assert find(input, "#share-copy") |> LazyHTML.text() |> String.trim() == "Copiar"
   end
 
   test "clipboard_input takes the copied label" do

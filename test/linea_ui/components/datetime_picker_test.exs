@@ -206,7 +206,7 @@ defmodule LineaUI.Components.DatetimePickerTest do
     assert html |> LazyHTML.from_fragment() |> LazyHTML.text() =~ "Local time"
     assert html |> LazyHTML.from_fragment() |> LazyHTML.text() =~ "is late"
     assert data(html, "#event_at-display", "aria-invalid") == ["true"]
-    assert "border-error" in classes(html, "#event_at-display")
+    assert Enum.any?(classes(html, "#event_at-display"), &(&1 =~ "--color-error"))
   end
 
   test "the panel and the status region are not inside a label" do
@@ -300,12 +300,12 @@ defmodule LineaUI.Components.DatetimePickerTest do
     medium = render(~H|<.datetime_picker id="d" name="at" />|)
     large = render(~H|<.datetime_picker id="d" name="at" size="lg" />|)
     assert "size-4" in classes(small, "#d-field svg")
-    assert "size-[18px]" in classes(medium, "#d-field svg")
+    assert "size-4" in classes(medium, "#d-field svg")
     assert "size-5" in classes(large, "#d-field svg")
 
     html = render(~H|<.datetime_picker id="d" name="at" />|)
     assert "rounded-xl" in classes(html, "#d-panel .popper-box")
-    assert "focus:ring-3" in classes(html, "#d-display")
+    assert "rounded-[11px]" in classes(html, "#d-display")
   end
 
   test "disabled disables the input and the hidden fields" do
@@ -390,5 +390,31 @@ defmodule LineaUI.Components.DatetimePickerTest do
     assert data(html, "#old", "data-interval") == ["5"]
     assert data(html, "#old", "data-default-time") == ["09:00"]
     assert data(html, "#old", "data-hour12") == ["false"]
+  end
+
+  test "split puts the date and the time in two captioned fields" do
+    html =
+      render(~H"""
+      <.datetime_picker
+        id="s"
+        name="at"
+        value="2026-11-05T14:30"
+        locale="pt_BR"
+        split
+        date_label="Data"
+        time_label="Hora"
+      />
+      """)
+
+    assert data(html, "#s-date", "value") == ["05/11/2026"]
+    assert data(html, "#s-time", "value") == ["14:30"]
+    assert data(html, "#s", "data-time-format") == ["H:i"]
+
+    assert html
+           |> find("#s-field label > span.block")
+           |> Enum.map(&LazyHTML.text/1)
+           |> Enum.map(&String.trim/1) == ["Data", "Hora"]
+
+    assert find(html, "#s-display") |> Enum.to_list() == []
   end
 end

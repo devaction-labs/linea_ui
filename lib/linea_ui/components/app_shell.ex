@@ -226,6 +226,11 @@ defmodule LineaUI.Components.AppShell do
   slot :sidebar, doc: "The main sidebar and its panel, or the sideblock."
   slot :header, doc: "The `header/1`."
   slot :aside, doc: "Fixed parts: the right sidebar, drawers."
+
+  slot :tab_bar,
+    doc:
+      "A bottom bar of tabs for phones (`layout=\"framed\"`), under the panel and hidden from 768px: a `tab_bar/1`."
+
   slot :inner_block
 
   def app_shell(%{layout: "framed"} = assigns) do
@@ -234,7 +239,7 @@ defmodule LineaUI.Components.AppShell do
       id={@id}
       class={
         merge([
-          "linea-frame flex h-dvh flex-col gap-2.5 bg-slate-150 max-md:pt-14 md:flex-row md:p-2.5 dark:bg-navy-900",
+          "sg linea-frame flex h-dvh flex-col gap-2.5 bg-slate-50 max-md:pt-14 md:flex-row md:p-2.5 dark:bg-navy-900",
           @class
         ])
       }
@@ -245,18 +250,24 @@ defmodule LineaUI.Components.AppShell do
       {render_slot(@aside)}
       <main class={
         merge([
-          "flex min-w-0 flex-1 flex-col gap-[18px] overflow-y-auto bg-white px-4 py-5 shadow-[0_3px_10px_rgb(48_46_56/.06)] md:rounded-xl md:px-7 md:py-[22px] dark:bg-navy-700 dark:shadow-none dark:md:ring-1 dark:md:ring-navy-600",
+          "flex min-w-0 flex-1 flex-col gap-6 overflow-y-auto bg-white px-4 pt-5 pb-10 shadow-[0_0_0_1px_var(--color-slate-150),0_1px_2px_rgb(23_23_26/.04),0_4px_16px_-6px_rgb(23_23_26/.08)] md:rounded-[22px] md:px-8 md:pt-5 md:pb-10 dark:bg-navy-900 dark:shadow-[0_0_0_1px_var(--color-navy-600)]",
           @main_class
         ])
       }>
         {render_slot(@inner_block)}
       </main>
+      <div :if={@tab_bar != []} class="-mt-2.5 bg-white md:hidden dark:bg-navy-900">
+        {render_slot(@tab_bar)}
+      </div>
     </div>
     """
   end
 
   def app_shell(assigns) do
-    assigns = assign_new(assigns, :open, fn -> open?(assigns) end)
+    assigns =
+      if is_map_key(assigns, :open),
+        do: assigns,
+        else: assign_derived(assigns, :open, [:sidebar_open, :layout], fn -> open?(assigns) end)
 
     ~H"""
     <div
@@ -410,7 +421,10 @@ defmodule LineaUI.Components.AppShell do
   slot :inner_block, required: true, doc: "The icon."
 
   def main_sidebar_link(assigns) do
-    assigns = assign(assigns, :active, assigns.active or active?(assigns.rest, assigns.current))
+    assigns =
+      assign_derived(assigns, :active, [:active, :rest, :current], fn ->
+        assigns.active or active?(assigns.rest, assigns.current)
+      end)
 
     ~H"""
     <.link
@@ -506,10 +520,9 @@ defmodule LineaUI.Components.AppShell do
 
   def sidebar_profile(assigns) do
     assigns =
-      assign(assigns,
-        profile_colors: @profile_colors,
-        status_class: @status_colors[assigns.status]
-      )
+      assigns
+      |> assign_derived(:profile_colors, [], fn -> @profile_colors end)
+      |> assign_derived(:status_class, [:status], fn -> @status_colors[assigns.status] end)
 
     ~H"""
     <div
@@ -685,7 +698,10 @@ defmodule LineaUI.Components.AppShell do
   slot :inner_block, required: true
 
   def sidebar_nav_link(assigns) do
-    assigns = assign(assigns, :active, assigns.active or active?(assigns.rest, assigns.current))
+    assigns =
+      assign_derived(assigns, :active, [:active, :rest, :current], fn ->
+        assigns.active or active?(assigns.rest, assigns.current)
+      end)
 
     ~H"""
     <li>
@@ -746,7 +762,9 @@ defmodule LineaUI.Components.AppShell do
     assigns =
       assigns
       |> assign(:item, items)
-      |> assign(:id, assigns.id || "sidebar-group-" <> slug(assigns.label))
+      |> assign_derived(:id, [:id, :label], fn ->
+        assigns.id || "sidebar-group-" <> slug(assigns.label)
+      end)
       |> then(&assign(&1, :open, group_open?(&1.open, items)))
 
     ~H"""
@@ -897,7 +915,13 @@ defmodule LineaUI.Components.AppShell do
 
   def sidebar_min_link(assigns) do
     active = assigns.active or active?(assigns.rest, assigns.current)
-    assigns = assign(assigns, active: active, state: min_state(active, assigns.color))
+
+    assigns =
+      assigns
+      |> assign_derived(:active, [:active, :rest, :current], fn -> active end)
+      |> assign_derived(:state, [:active, :rest, :current, :color], fn ->
+        min_state(active, assigns.color)
+      end)
 
     ~H"""
     <li>
@@ -1032,7 +1056,10 @@ defmodule LineaUI.Components.AppShell do
   slot :nav, doc: "The navigation row of a horizontal header."
 
   def header(assigns) do
-    assigns = assign(assigns, horizontal: assigns.nav != [], icon_button: @icon_button)
+    assigns =
+      assigns
+      |> assign_derived(:horizontal, [:nav], fn -> assigns.nav != [] end)
+      |> assign_derived(:icon_button, [], fn -> @icon_button end)
 
     ~H"""
     <nav id={@id} class={merge(["header print:hidden", @class])} {@rest}>
@@ -1354,7 +1381,10 @@ defmodule LineaUI.Components.AppShell do
   slot :inner_block, required: true
 
   def horizontal_nav_link(assigns) do
-    assigns = assign(assigns, :active, assigns.active or active?(assigns.rest, assigns.current))
+    assigns =
+      assign_derived(assigns, :active, [:active, :rest, :current], fn ->
+        assigns.active or active?(assigns.rest, assigns.current)
+      end)
 
     ~H"""
     <.link
@@ -1499,7 +1529,7 @@ defmodule LineaUI.Components.AppShell do
   attr :rest, :global
 
   def right_sidebar_toggle(assigns) do
-    assigns = assign(assigns, :icon_button, @icon_button)
+    assigns = assign_derived(assigns, :icon_button, [], fn -> @icon_button end)
 
     ~H"""
     <button
@@ -1551,7 +1581,10 @@ defmodule LineaUI.Components.AppShell do
   attr :class, :any, default: nil
   attr :rest, :global
 
-  slot :brand, doc: "The mark in its rounded box (a logo image)."
+  slot :brand,
+    doc:
+      "The mark in its rounded box (a logo image). With no `:brand` and no `:wordmark` the brand row and its rule are left out on wide screens (phones keep the bar for the hamburger)."
+
   slot :wordmark, doc: "The name next to the mark; hidden in the rail."
   slot :workspace, doc: "The workspace switcher under the brand; hidden in the rail."
 
@@ -1585,7 +1618,7 @@ defmodule LineaUI.Components.AppShell do
       data-target={@target}
       {@rest}
     >
-      <div class="rail-bar">
+      <div class={["rail-bar", (@brand == [] and @wordmark == []) && "rail-bar-bare"]}>
         <div class="rail-brand">
           <span :if={@brand != []} class="rail-mark">{render_slot(@brand)}</span>
           <span :if={@wordmark != []} class="rail-label rail-wordmark">{render_slot(@wordmark)}</span>
@@ -1618,6 +1651,48 @@ defmodule LineaUI.Components.AppShell do
         {render_slot(@bottom)}
       </div>
     </aside>
+    """
+  end
+
+  @doc """
+  A phone's bottom bar of tabs: one icon per section, the current one in the accent color. Put it in the
+  `:tab_bar` slot of `<.app_shell layout="framed">`, or at the foot of any phone-sized frame.
+
+      <.tab_bar>
+        <:tab navigate={~p"/today"} label="Today" active><.icon name="huge-home-01" /></:tab>
+        <:tab navigate={~p"/orders"} label="Orders"><.icon name="huge-shopping-cart-01" /></:tab>
+      </.tab_bar>
+  """
+  attr :label, :string, default: "Sections", doc: "The accessible name of the bar."
+
+  attr :current, :string,
+    default: nil,
+    doc: "The current path; the tab whose link matches it is active."
+
+  attr :class, :any, default: nil
+  attr :rest, :global
+
+  slot :tab, required: true, doc: "The icon; `label` is its accessible name." do
+    attr :href, :string
+    attr :navigate, :string
+    attr :patch, :string
+    attr :label, :string, required: true
+    attr :active, :boolean
+  end
+
+  def tab_bar(assigns) do
+    ~H"""
+    <nav aria-label={@label} class={merge(["linea-tabbar", @class])} {@rest}>
+      <.link
+        :for={tab <- @tab}
+        class="linea-tabbar-tab"
+        aria-label={tab.label}
+        aria-current={active?(tab, @current) && "page"}
+        {link_attrs(tab)}
+      >
+        {render_slot(tab)}
+      </.link>
+    </nav>
     """
   end
 
@@ -1685,7 +1760,10 @@ defmodule LineaUI.Components.AppShell do
   slot :inner_block, required: true, doc: "The icon."
 
   def rail_link(assigns) do
-    assigns = assign(assigns, :active, assigns.active or active?(assigns.rest, assigns.current))
+    assigns =
+      assign_derived(assigns, :active, [:active, :rest, :current], fn ->
+        assigns.active or active?(assigns.rest, assigns.current)
+      end)
 
     ~H"""
     <.link
@@ -1699,6 +1777,21 @@ defmodule LineaUI.Components.AppShell do
       <span :if={@badge} class="rail-badge">{@badge}</span>
       <span class="rail-tip" role="tooltip">{@label}</span>
     </.link>
+    """
+  end
+
+  @doc """
+  A small uppercase title over a group of `rail_link/1`s in the framed menu ("Operations"); hidden in the rail.
+
+      <.rail_heading>Operations</.rail_heading>
+  """
+  attr :class, :any, default: nil
+  attr :rest, :global
+  slot :inner_block, required: true
+
+  def rail_heading(assigns) do
+    ~H"""
+    <div class={merge(["rail-label rail-heading", @class])} {@rest}>{render_slot(@inner_block)}</div>
     """
   end
 
@@ -1809,7 +1902,10 @@ defmodule LineaUI.Components.AppShell do
   slot :inner_block, doc: "Replaces the initials, a picture for the workspace."
 
   def rail_workspace(assigns) do
-    assigns = assign(assigns, :initials, assigns.initials || workspace_initials(assigns.name))
+    assigns =
+      assign_derived(assigns, :initials, [:initials, :name], fn ->
+        assigns.initials || workspace_initials(assigns.name)
+      end)
 
     ~H"""
     <button type="button" class={merge(["rail-workspace", @class])} {@rest}>
@@ -1887,11 +1983,23 @@ defmodule LineaUI.Components.AppShell do
     default: "inline",
     values: ~w(inline page),
     doc:
-      "`inline` is LineOne's row, the title with its crumbs beside it. `page` is the framed shell's title block: the crumbs with the clock and the bell on top, then the badge, the 28px title with a context line and the actions, and the tabs."
+      "`inline` is LineOne's row, the title with its crumbs beside it. `page` is the framed shell's title block: the crumbs with the clock and the bell on top (left out when there is none of them), or a `back` link, then the badge, the 34px title with a context line and the actions, and the tabs."
 
   attr :description, :string,
     default: nil,
     doc: "The context line under the title (`variant=\"page\"`)."
+
+  attr :back, :string,
+    default: nil,
+    doc:
+      "A path to go back to: a \"‹ label\" link above the title, in place of the top row (`variant=\"page\"`)."
+
+  attr :back_label, :string, default: nil, doc: "The text of the `back` link."
+
+  attr :badge_position, :string,
+    default: "above",
+    values: ~w(above inline),
+    doc: "The `:badge` above the title, or `inline` beside it (`variant=\"page\"`)."
 
   attr :clock, :boolean,
     default: false,
@@ -1925,19 +2033,40 @@ defmodule LineaUI.Components.AppShell do
 
   slot :badge, doc: "The status badge above the title (`variant=\"page\"`)."
   slot :notifications, doc: "Replaces the bell with your own button or menu (`variant=\"page\"`)."
-  slot :tabs, doc: "The page's tabs under the title, over a rule (`variant=\"page\"`)."
+
+  slot :tabs,
+    doc:
+      "The page's tabs under the title, full width: a `tabs/1`, which draws its rule (`variant=\"page\"`)."
 
   def page_header(%{variant: "page"} = assigns) do
-    assigns = assign(assigns, :crumbs, mark_last(assigns.crumb))
+    assigns =
+      assigns
+      |> assign_derived(:crumbs, [:crumb], fn -> mark_last(assigns.crumb) end)
+      |> assign_derived(:top, [:leading, :crumb, :clock, :bell, :notifications], fn ->
+        top_row?(assigns)
+      end)
 
     ~H"""
-    <header class={merge(["flex flex-col gap-[18px]", @class])} {@rest}>
-      <div class="flex items-center gap-2.5">
+    <header
+      class={merge(["flex flex-col", gap_class(@top, @back, @tabs), @class])}
+      {@rest}
+    >
+      <.link
+        :if={@back}
+        navigate={@back}
+        class="flex w-fit items-center gap-1.5 text-[13px] text-slate-500 no-underline transition-colors hover:text-slate-800 dark:text-navy-200 dark:hover:text-navy-50"
+      >
+        <.glyph name={:chevron_left} class="size-3.5" />{@back_label}
+      </.link>
+      <%= if !@top do %>
+        {render_slot(@inner_block)}
+      <% end %>
+      <div :if={@top} class="flex items-center gap-2.5">
         {render_slot(@leading)}
         <nav
           :if={@crumb != []}
           aria-label="Breadcrumb"
-          class="flex min-w-0 flex-wrap items-center gap-2.5 text-sm text-slate-500 dark:text-navy-200"
+          class="flex min-h-8 min-w-0 flex-wrap items-center gap-2 rounded-full border border-slate-150 bg-white pr-3.5 pl-[13px] text-[13px] text-slate-500 dark:border-navy-600 dark:bg-navy-750 dark:text-navy-200"
         >
           <%= for {crumb, last} <- @crumbs do %>
             <.link
@@ -1978,20 +2107,43 @@ defmodule LineaUI.Components.AppShell do
           </button>
         </div>
       </div>
-      <div class="flex flex-wrap items-end justify-between gap-5">
-        <div class="min-w-0">
-          <div :if={@badge != []} class="flex items-center gap-2.5">{render_slot(@badge)}</div>
-          <h1 class="mt-1.5 mb-1 text-[28px] leading-9 font-semibold tracking-[-0.02em] text-slate-800 dark:text-navy-50">
+      <div
+        :if={@title != "" or @actions != []}
+        class={[
+          "flex flex-wrap justify-between gap-5",
+          if(@top, do: "items-end", else: "items-center")
+        ]}
+      >
+        <div class={["min-w-0", @badge_position == "inline" && "flex flex-wrap items-center gap-2.5"]}>
+          <div :if={@badge != [] and @badge_position == "above"} class="flex items-center gap-2.5">
+            {render_slot(@badge)}
+          </div>
+          <h1
+            :if={@title != ""}
+            class={[
+              "mb-0 text-[34px] leading-10 font-semibold tracking-[-0.03em] text-slate-900 dark:text-navy-50",
+              if(@top or (@badge_position == "above" and @badge != []), do: "mt-1", else: "mt-0")
+            ]}
+          >
             {@title}
           </h1>
-          <p :if={@description} class="text-sm text-slate-500 dark:text-navy-200">{@description}</p>
+          <div :if={@badge != [] and @badge_position == "inline"} class="flex items-center gap-2.5">
+            {render_slot(@badge)}
+          </div>
+          <p
+            :if={@description}
+            class={[
+              "text-[15px] leading-[22px] text-slate-500 dark:text-navy-300",
+              !@top && "mt-1.5",
+              @badge_position == "inline" && "basis-full"
+            ]}
+          >
+            {@description}
+          </p>
         </div>
         <div :if={@actions != []} class="flex items-center gap-2.5">{render_slot(@actions)}</div>
       </div>
-      <div
-        :if={@tabs != []}
-        class="-mb-px flex items-end gap-2.5 border-b border-slate-150 dark:border-navy-600"
-      >
+      <div :if={@tabs != []} class="-mb-px flex flex-col">
         {render_slot(@tabs)}
       </div>
     </header>
@@ -1999,7 +2151,7 @@ defmodule LineaUI.Components.AppShell do
   end
 
   def page_header(assigns) do
-    assigns = assign(assigns, :crumbs, mark_last(assigns.crumb))
+    assigns = assign_derived(assigns, :crumbs, [:crumb], fn -> mark_last(assigns.crumb) end)
 
     ~H"""
     <div class={merge(["flex items-center space-x-4 py-5 lg:py-6", @class])} {@rest}>
@@ -2028,6 +2180,17 @@ defmodule LineaUI.Components.AppShell do
     """
   end
 
+  defp top_row?(assigns) do
+    # `inner_block` is left out: a call with named slots always carries one (the whitespace between them).
+    assigns.leading != [] or assigns.crumb != [] or assigns.clock or assigns.bell or
+      assigns.notifications != []
+  end
+
+  defp gap_class(true, _back, _tabs), do: "gap-[18px]"
+  defp gap_class(false, back, _tabs) when is_binary(back), do: "gap-1.5"
+  defp gap_class(false, _back, [_ | _]), do: "gap-3.5"
+  defp gap_class(false, _back, _tabs), do: "gap-[18px]"
+
   defp mark_last(entries) do
     count = length(entries)
     Enum.with_index(entries, fn entry, index -> {entry, index == count - 1} end)
@@ -2047,7 +2210,7 @@ defmodule LineaUI.Components.AppShell do
   attr :rest, :global
 
   def theme_toggle(assigns) do
-    assigns = assign(assigns, :icon_button, @icon_button)
+    assigns = assign_derived(assigns, :icon_button, [], fn -> @icon_button end)
 
     ~H"""
     <button
@@ -2104,7 +2267,7 @@ defmodule LineaUI.Components.AppShell do
   end
 
   def monochrome_toggle(assigns) do
-    assigns = assign(assigns, :icon_button, @icon_button)
+    assigns = assign_derived(assigns, :icon_button, [], fn -> @icon_button end)
 
     ~H"""
     <button
@@ -2192,8 +2355,10 @@ defmodule LineaUI.Components.AppShell do
   defp rail_search(assigns) do
     assigns =
       assigns
-      |> assign(:attrs, assigns_to_attributes(assigns.search, [:inner_block, :__slot__, :class]))
-      |> assign(:extra_class, assigns.search[:class])
+      |> assign_derived(:attrs, [:search], fn ->
+        assigns_to_attributes(assigns.search, [:inner_block, :__slot__, :class])
+      end)
+      |> assign_derived(:extra_class, [:search], fn -> assigns.search[:class] end)
 
     ~H"""
     <button

@@ -1,6 +1,6 @@
 import test from "node:test"
 import assert from "node:assert/strict"
-import {PROGRESS_DONE_MS, actionPayload, auraOf, closeFor, colorFor, colorOf, durationFor, dotFor, durationOf, encodedJS, failedOf, invertFor, isRich, kindOf, mergeToast, needsAction, offsets, positionOf, progressKind, progressOf, resumeAfter, stack, stepsOf, surfaceFor, timeLeft, timerFor, unseen, withKindColor} from "./notice_logic.js"
+import {PROGRESS_DONE_MS, canvasAuraOf, canvasOf, canvasTileTone, actionPayload, auraOf, closeFor, colorFor, colorOf, durationFor, dotFor, durationOf, encodedJS, failedOf, invertFor, isRich, kindOf, mergeToast, needsAction, offsets, positionOf, progressKind, progressOf, resumeAfter, stack, stepsOf, surfaceFor, timeLeft, timerFor, unseen, withKindColor} from "./notice_logic.js"
 
 test("an unknown color is neutral", () => {
   assert.equal(colorOf("success"), "success")
@@ -218,4 +218,26 @@ test("a dark card with no kind leads with a dot; a kind, a light card or a plain
   assert.equal(dotFor({color: "dark", value: 40}), false)
   assert.equal(dotFor({color: "neutral", description: "x"}), false)
   assert.equal(dotFor({color: "dark"}), false)
+})
+
+test("a rich toast without steps is drawn as the canvas card", () => {
+  assert.equal(canvasOf({kind: "info"}), true)
+  assert.equal(canvasOf({message: "x", value: 10}), true)
+  assert.equal(canvasOf({message: "x"}), false)
+  assert.equal(canvasOf({kind: "info", steps: 3}), false)
+})
+
+test("the canvas aura maps the mode, the color and the size", () => {
+  assert.equal(canvasAuraOf({message: "x"}), null)
+  assert.deepEqual(canvasAuraOf({aura: "default"}), {mode: "", tone: "ai", width: ""})
+  assert.deepEqual(canvasAuraOf({aura: "dual", aura_color: "success", aura_size: "lg"}), {mode: "dual", tone: "pos", width: "lg"})
+  assert.deepEqual(canvasAuraOf({aura: "glow", aura_color: "warning", aura_size: "sm"}), {mode: "glow", tone: "warn", width: "sm"})
+  assert.deepEqual(canvasAuraOf({aura: "default", aura_color: "primary"}), {mode: "", tone: "", width: ""})
+})
+
+test("the tile of a canvas toast takes the tone of its kind", () => {
+  assert.equal(canvasTileTone("success", null, false), "pos")
+  assert.equal(canvasTileTone("loading", null, true), "acc")
+  assert.equal(canvasTileTone("neutral", "primary", false), "acc")
+  assert.equal(canvasTileTone(null, null, false), "")
 })

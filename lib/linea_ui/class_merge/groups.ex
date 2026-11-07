@@ -8,7 +8,13 @@ defmodule LineaUI.ClassMerge.Groups do
   @line_styles ~w(solid dashed dotted double none hidden)
   @shadow_sizes ~w(2xs xs sm md lg xl 2xl none inner soft soft-dark)
   @radius_sides ~w(t r b l s e tl tr br bl ss se es ee)
-  @bg_keywords ~r/^(fixed|local|scroll|clip-.+|origin-.+|repeat.*|no-repeat|auto|cover|contain|top|bottom|center|left|right|left-.+|right-.+|linear-.+|radial.*|conic.*|gradient-.+|none|blend-.+|size-.+|position-.+)$/
+  # Regex sources, compiled once and kept in `:persistent_term`: on OTP 28+ a `~r` in a module
+  # attribute or a function body is rebuilt on every use, at about three times the cost.
+  @bg_keywords Regex.source(
+                 ~r/^(fixed|local|scroll|clip-.+|origin-.+|repeat.*|no-repeat|auto|cover|contain|top|bottom|center|left|right|left-.+|right-.+|linear-.+|radial.*|conic.*|gradient-.+|none|blend-.+|size-.+|position-.+)$/
+               )
+  @arbitrary_size Regex.source(~r/^[\d.]+(px|rem|em|%)\]/)
+  @width Regex.source(~r/^(\d+|\[\d.*(px|rem)\]|\(length:.*\))$/)
 
   @display ~w(block inline-block inline flex inline-flex grid inline-grid hidden contents table table-row table-cell flow-root list-item)
   @position ~w(static fixed absolute relative sticky)
@@ -56,7 +62,30 @@ defmodule LineaUI.ClassMerge.Groups do
   defp with_prefix(nil, _prefix), do: nil
   defp with_prefix(group, prefix), do: {prefix, group}
 
-  defp split_variants(class) do
+  # `{variants, utility}`: the cut is after the last `:` outside brackets. ASCII classes are scanned
+  # byte by byte; anything else takes the grapheme walk, which treats a `:` with a combining mark
+  # as no separator.
+  defp split_variants(class), do: scan_variants(class, class, 0, 0, 0)
+
+  defp scan_variants(<<?:, rest::binary>>, class, pos, 0, _cut),
+    do: scan_variants(rest, class, pos + 1, 0, pos + 1)
+
+  defp scan_variants(<<?[, rest::binary>>, class, pos, depth, cut),
+    do: scan_variants(rest, class, pos + 1, depth + 1, cut)
+
+  defp scan_variants(<<?], rest::binary>>, class, pos, depth, cut),
+    do: scan_variants(rest, class, pos + 1, depth - 1, cut)
+
+  defp scan_variants(<<byte, _rest::binary>>, class, _pos, _depth, _cut) when byte >= 128,
+    do: split_graphemes(class)
+
+  defp scan_variants(<<_byte, rest::binary>>, class, pos, depth, cut),
+    do: scan_variants(rest, class, pos + 1, depth, cut)
+
+  defp scan_variants(<<>>, class, _pos, _depth, cut),
+    do: {binary_part(class, 0, cut), binary_part(class, cut, byte_size(class) - cut)}
+
+  defp split_graphemes(class) do
     class
     |> String.graphemes()
     |> Enum.reduce({[], "", 0}, &split_char/2)
@@ -199,7 +228,7 @@ defmodule LineaUI.ClassMerge.Groups do
   defp text(_value), do: "text-color"
 
   defp arbitrary_text(rest) do
-    case Regex.match?(~r/^[\d.]+(px|rem|em|%)\]/, rest) do
+    case Regex.match?(regex(:arbitrary_size, @arbitrary_size), rest) do
       true -> "text-size"
       false -> "text-color"
     end
@@ -210,7 +239,7 @@ defmodule LineaUI.ClassMerge.Groups do
   defp font(_value), do: "font-family"
 
   defp background(value) do
-    case Regex.match?(@bg_keywords, value) do
+    case Regex.match?(regex(:bg_keywords, @bg_keywords), value) do
       true -> "bg-" <> hd(String.split(value, "-"))
       false -> "bg-color"
     end
@@ -261,5 +290,17 @@ defmodule LineaUI.ClassMerge.Groups do
   defp grid("flow-" <> _), do: "grid-flow"
   defp grid(_value), do: nil
 
-  defp width?(value), do: Regex.match?(~r/^(\d+|\[\d.*(px|rem)\]|\(length:.*\))$/, value)
+  defp width?(value), do: Regex.match?(regex(:width, @width), value)
+
+  defp regex(name, source) do
+    case :persistent_term.get({__MODULE__, name}, nil) do
+      nil ->
+        regex = Regex.compile!(source)
+        :persistent_term.put({__MODULE__, name}, regex)
+        regex
+
+      regex ->
+        regex
+    end
+  end
 end

@@ -3,6 +3,9 @@ defmodule LineaUI.Components.Chart do
   A chart drawn by the package itself, as SVG, with LineOne's look (axis labels, grid lines, legend,
   tooltips, light and dark). It needs no JavaScript library: the `LineaUI.Chart` hook is all there is.
 
+  `bar_list/1` (a ranking over full-width tracks) and `heatmap/1` (dots in five levels) are the
+  canvas's two simpler charts, drawn on the server.
+
       <.chart
         id="sales"
         options={%{
@@ -43,8 +46,11 @@ defmodule LineaUI.Components.Chart do
   | `dollars_thousands` | `5000` -> `$5k` |
   | `brl` | `1284.9` -> `R$ 1.284,9` (pt-BR grouping) |
   | `brl_thousands` | `6000` -> `R$ 6 mil`, `31500` -> `R$ 31,5 mil`, values under 1000 as `brl` |
+  | `brl_kilo` | `20000` -> `R$ 20k`, `0` -> `0` |
+  | `brl_kilo_zero` | as `brl_kilo`, but `0` -> `R$ 0` (every label of the axis carries the currency) |
   | `number_br` | `1248` -> `1.248` |
   | `total_br` | for gauges and the donut total: the sum of the series as `number_br` (takes ApexCharts' `w`) |
+  | `total_brl_thousands` | the donut total as `R$ 248 mil` (takes ApexCharts' `w`) |
   | `percent` | `12.5` -> `12.5%` |
   | `percent_round` | `12.5` -> `13%` |
   | `round` | `2.6` -> `3` |
@@ -114,11 +120,11 @@ defmodule LineaUI.Components.Chart do
   `distributed`, `rangeBarOverlap` and `dataLabels.position` (`center` or `top`; `end` on rows writes the value just past the end of each bar, in room kept at the right of the plot). A stacked bar rounds
   the ends of the whole pile. `plotOptions.candlestick.colors` takes `upward` and `downward`.
 
-  **Axes**: `xaxis` (`type` `category`, `datetime` or `numeric`, `categories`, `min`, `max`, `tickAmount`,
+  **Axes**: `xaxis` (`type` `category`, `datetime` or `numeric`, `categories`, `min`, `max`, `tickAmount` (on a line or area chart of categories: that many gaps, so `tickAmount + 1` labels spread evenly),
   `position` `top`, `show`, `labels` with `show`, `formatter`, `format` for dates such as `"dd MMM"`,
   `hideOverlappingLabels`, `offsetX`, `offsetY`, `style.fontSize`, `axisBorder.show`, `axisTicks.show`,
   `crosshairs.show`, `tooltip.enabled`) and `yaxis` (`show`, `min`, `max`, `tickAmount`, `labels` with the
-  same keys, `axisBorder.show`, `axisTicks.show`, `tooltip.enabled`). For a horizontal bar the `yaxis`
+  same keys plus `align` (`"left"` on a vertical chart: the labels start at the left edge of the widest one, as a column of values; the default is right-aligned), `axisBorder.show`, `axisTicks.show`, `tooltip.enabled`). For a horizontal bar the `yaxis`
   options drive the category labels and the `xaxis` ones the value labels. Labels never rotate; the ones
   that would overlap are thinned out.
 
@@ -148,7 +154,7 @@ defmodule LineaUI.Components.Chart do
   between the spokes (the tooltip lists every series on the spoke). Escape or leaving the chart clears it.
 
   **Circular charts**: `plotOptions.pie` (`startAngle`, `endAngle`, `offsetX`, `offsetY`, `customScale`,
-  `donut.size`, `donut.labels` with `show`, `name`, `value` (`value.showPercent` writes `524 · 42%` for the hovered slice), `total` and `layout: "figure"`, the total large over its label and the hovered slice name over its value, `dataLabels.offset`),
+  `donut.size`, `donut.labels` with `show`, `name` (`name.show: false` centers the value alone; `value.fontFamily` sets its font), `value` (`value.showPercent` writes `524 · 42%` for the hovered slice), `total` and `layout: "figure"`, the total large over its label and the hovered slice name over its value, `dataLabels.offset`),
   `plotOptions.radialBar` (`startAngle`, `endAngle`, `hollow.size`, `track.show`,
   `track.margin`, `track.strokeWidth`, `track.opacity`, `dataLabels` with `show`, `name`, `value` and
   `total`, each taking `show`, `fontSize`, `fontWeight`, `color`, `offsetY` and `formatter`) and
@@ -156,6 +162,16 @@ defmodule LineaUI.Components.Chart do
 
   **Radar**: `plotOptions.radar` (`size`, `offsetX`, `offsetY`), `xaxis.categories` for the spokes (their
   labels are `#a8a8a8` unless `xaxis.labels.style.colors` says otherwise) and `yaxis` for the ring labels.
+
+  **Annotations**: `annotations.yaxis`, a list of lines at a value (`y`) across the plot, with
+  `borderColor`, `borderWidth`, `strokeDashArray`, `opacity` and a `label` badge (`text`, `position`
+  `left` or `right`, `offsetX`, `offsetY`, `borderRadius`, `style` with `background`, `color`, `fontSize`,
+  `fontWeight`): a target ("Meta · 60").
+
+  **Emphasis**: `xaxis.labels.style.colors` and `xaxis.labels.style.fontWeight` take one value or one per
+  category, to bring one label forward; on bars, `stroke.width` above zero outlines them, with
+  `stroke.colors` per bar when `distributed`. Colors may be CSS variables (`"var(--accent)"`), which follow
+  the theme.
 
   **responsive**: rules apply while the window is narrower than their `breakpoint`, the smaller
   breakpoints last, as in ApexCharts.
@@ -268,6 +284,109 @@ defmodule LineaUI.Components.Chart do
     </div>
     """
   end
+
+  @doc """
+  A ranking drawn as the canvas does it: each row has its label and its value above a full-width
+  track, filled in proportion to the largest `amount`. No JavaScript.
+
+      <.bar_list label="Maiores clientes por compras">
+        <:item label="Casa das Tintas" value="R$ 41,2 mil" amount={41_200} />
+        <:item label="Mercadinho Bom Preço" value="R$ 31,8 mil" amount={31_800} />
+      </.bar_list>
+  """
+  attr(:label, :string, default: nil, doc: "The list's `aria-label`.")
+
+  attr(:max, :any,
+    default: nil,
+    doc: "The amount of a full track; the largest `amount` when `nil`."
+  )
+
+  attr(:class, :any, default: nil)
+  attr(:rest, :global)
+
+  slot :item, required: true do
+    attr(:label, :string, required: true)
+    attr(:value, :string, doc: "The value as written beside the label.")
+    attr(:amount, :any, required: true, doc: "The number the track shows.")
+  end
+
+  def bar_list(assigns) do
+    assigns =
+      assign(
+        assigns,
+        :top,
+        assigns.max || assigns.item |> Enum.map(& &1.amount) |> Enum.max(fn -> 0 end)
+      )
+
+    ~H"""
+    <ul class={merge(["linea-bar-list", @class])} aria-label={@label} {@rest}>
+      <li :for={item <- @item} class="linea-bar-list-item">
+        <div class="linea-bar-list-row">
+          <span class="linea-bar-list-label">{item.label}</span>
+          <span :if={item[:value]} class="linea-bar-list-value">{item.value}</span>
+        </div>
+        <span
+          class="linea-bar-list-track"
+          role="meter"
+          aria-label={item.label}
+          aria-valuemin="0"
+          aria-valuemax={@top}
+          aria-valuenow={item.amount}
+          aria-valuetext={item[:value]}
+        >
+          <i style={"width: #{share(item.amount, @top)}%"}></i>
+        </span>
+      </li>
+    </ul>
+    """
+  end
+
+  @doc """
+  The canvas heat map: a grid of dots in five levels of the accent (`--heat0` to `--heat4`, light and
+  dark), with a "less ... more" scale under it.
+
+      <.heatmap levels={@levels} columns={20} label="Vendas por dia" less="Menos" more="Mais" />
+  """
+  attr(:levels, :list, required: true, doc: "One level per cell, 0 to 4, row by row.")
+  attr(:columns, :integer, default: 20)
+  attr(:size, :integer, default: 12, doc: "The cell size in pixels.")
+  attr(:shape, :string, default: "round", values: ~w(round square))
+  attr(:label, :string, required: true, doc: "What the map shows, for assistive technology.")
+  attr(:titles, :list, default: nil, doc: "A `title` per cell (the day and the value).")
+  attr(:less, :string, default: nil, doc: "The text before the scale; no scale without it.")
+  attr(:more, :string, default: nil, doc: "The text after the scale.")
+  attr(:class, :any, default: nil)
+  attr(:rest, :global)
+
+  def heatmap(assigns) do
+    assigns = assign(assigns, :cells, Enum.with_index(assigns.levels))
+
+    ~H"""
+    <div class={merge(["linea-heat", @class])} {@rest}>
+      <div
+        class={["linea-heat-grid", @shape == "square" && "is-square"]}
+        style={"grid-template-columns: repeat(#{@columns}, #{@size}px); --heat-size: #{@size}px"}
+        role="img"
+        aria-label={@label}
+      >
+        <i
+          :for={{level, index} <- @cells}
+          data-level={level(level)}
+          title={@titles && Enum.at(@titles, index)}
+        ></i>
+      </div>
+      <span :if={@less} class="linea-heat-scale" aria-hidden="true">
+        {@less} <i :for={level <- 0..4} data-level={level}></i> {@more}
+      </span>
+    </div>
+    """
+  end
+
+  defp level(level) when is_integer(level), do: level |> max(0) |> min(4)
+  defp level(_level), do: 0
+
+  defp share(_amount, top) when top in [0, nil], do: 0
+  defp share(amount, top), do: Float.round(min(amount / top, 1) * 100, 2)
 
   defp toggle(off, _id) when off in [false, nil], do: nil
 

@@ -77,25 +77,25 @@ defmodule LineaUI.Components.Input do
 
   @variants %{
     "outlined" =>
-      "form-input w-full rounded-lg border border-slate-300 bg-transparent px-3 py-2 placeholder:text-slate-400/70 hover:border-slate-400 focus:border-primary disabled:pointer-events-none disabled:select-none disabled:border-none disabled:bg-zinc-100 dark:border-navy-450 dark:hover:border-navy-400 dark:focus:border-accent dark:disabled:bg-navy-600",
+      "form-input w-full rounded-[11px] border-0 bg-white px-3 py-0 text-[14px] shadow-[inset_0_0_0_1px_var(--color-slate-300),0_1px_2px_rgb(23_23_26/.05)] placeholder:text-slate-400 hover:shadow-[inset_0_0_0_1px_var(--color-slate-400),0_1px_2px_rgb(23_23_26/.05)] focus:shadow-[inset_0_0_0_1px_var(--color-primary),0_0_0_4px_color-mix(in_oklab,var(--color-primary)_14%,transparent)] focus:ring-0 disabled:pointer-events-none disabled:select-none disabled:bg-zinc-100 dark:bg-navy-750 dark:shadow-[inset_0_0_0_1px_var(--color-navy-450)] dark:hover:shadow-[inset_0_0_0_1px_var(--color-navy-400)] dark:focus:shadow-[inset_0_0_0_1px_var(--color-accent),0_0_0_4px_color-mix(in_oklab,var(--color-accent)_16%,transparent)] dark:disabled:bg-navy-600",
     "filled" =>
-      "form-input w-full rounded-lg bg-slate-150 px-3 py-2 ring-primary/50 placeholder:text-slate-400 hover:bg-slate-200 focus:ring-3 disabled:pointer-events-none disabled:select-none disabled:opacity-60 dark:bg-navy-900/90 dark:ring-accent/50 dark:placeholder:text-navy-300 dark:hover:bg-navy-900 dark:focus:bg-navy-900",
-    "plain" => "form-input w-full bg-transparent px-3 py-2 placeholder:text-slate-400/70"
+      "form-input w-full rounded-[11px] bg-slate-150 px-3 py-0 ring-primary/50 placeholder:text-slate-500 hover:bg-slate-200 focus:ring-3 disabled:pointer-events-none disabled:select-none disabled:opacity-60 dark:bg-navy-900/90 dark:ring-accent/50 dark:placeholder:text-navy-300 dark:hover:bg-navy-900 dark:focus:bg-navy-900",
+    "plain" => "form-input w-full bg-transparent px-3 py-2 placeholder:text-slate-500"
   }
 
   @states %{
     {"outlined", "success"} =>
-      "border-success hover:border-success focus:border-success dark:border-success dark:hover:border-success dark:focus:border-success",
+      "shadow-[inset_0_0_0_1px_var(--color-success),0_0_0_4px_color-mix(in_oklab,var(--color-success)_14%,transparent)] hover:shadow-[inset_0_0_0_1px_var(--color-success),0_0_0_4px_color-mix(in_oklab,var(--color-success)_14%,transparent)] focus:shadow-[inset_0_0_0_1px_var(--color-success),0_0_0_4px_color-mix(in_oklab,var(--color-success)_14%,transparent)] dark:shadow-[inset_0_0_0_1px_var(--color-success),0_0_0_4px_color-mix(in_oklab,var(--color-success)_16%,transparent)] dark:hover:shadow-[inset_0_0_0_1px_var(--color-success),0_0_0_4px_color-mix(in_oklab,var(--color-success)_16%,transparent)] dark:focus:shadow-[inset_0_0_0_1px_var(--color-success),0_0_0_4px_color-mix(in_oklab,var(--color-success)_16%,transparent)]",
     {"outlined", "error"} =>
-      "border-error hover:border-error focus:border-error dark:border-error dark:hover:border-error dark:focus:border-error",
+      "shadow-[inset_0_0_0_1px_var(--color-error),0_0_0_4px_color-mix(in_oklab,var(--color-error)_14%,transparent)] hover:shadow-[inset_0_0_0_1px_var(--color-error),0_0_0_4px_color-mix(in_oklab,var(--color-error)_14%,transparent)] focus:shadow-[inset_0_0_0_1px_var(--color-error),0_0_0_4px_color-mix(in_oklab,var(--color-error)_14%,transparent)] dark:shadow-[inset_0_0_0_1px_var(--color-error),0_0_0_4px_color-mix(in_oklab,var(--color-error)_16%,transparent)] dark:hover:shadow-[inset_0_0_0_1px_var(--color-error),0_0_0_4px_color-mix(in_oklab,var(--color-error)_16%,transparent)] dark:focus:shadow-[inset_0_0_0_1px_var(--color-error),0_0_0_4px_color-mix(in_oklab,var(--color-error)_16%,transparent)]",
     {"filled", "success"} => "ring-1 ring-success focus:ring-success/50 dark:ring-success",
     {"filled", "error"} => "ring-1 ring-error focus:ring-error/50 dark:ring-error"
   }
 
   @sizes %{
-    "sm" => "h-8 text-xs-plus",
-    "md" => "",
-    "lg" => "h-12 text-base"
+    "sm" => "h-8 px-2.5 text-[13px]",
+    "md" => "h-10 text-sm",
+    "lg" => "h-12 px-4 text-[15px]"
   }
 
   @shapes %{
@@ -145,6 +145,12 @@ defmodule LineaUI.Components.Input do
 
   attr(:label, :string, default: nil, doc: "The caption.")
   attr(:label_class, :any, default: nil, doc: "Classes of the caption text.")
+
+  attr(:label_hint, :string,
+    default: nil,
+    doc: "A dimmed note at the right of the caption, as the canvas's \"opcional\"."
+  )
+
   attr(:help, :string, default: nil, doc: "The small line under the control.")
 
   attr(:errors, :list,
@@ -206,27 +212,39 @@ defmodule LineaUI.Components.Input do
     attr(:class, :any, doc: "Merged into the box around the content.")
   end
 
+  # What `attrs/1` reads (`raw`, `list_id` and `state` are derived before it).
+  @attrs_deps ~w(type id name raw value variant size shape align prefix suffix state class disabled
+                 list_id clear_on_submit mask mask_options rest)a
+
   def input(assigns) do
     assigns
     |> Control.assign_control()
     |> assign_mask_id()
-    |> then(&assign(&1, :state, Control.state(&1.state, &1.errors)))
+    |> then(
+      &assign_derived(&1, :state, [:state, :errors], fn -> Control.state(&1.state, &1.errors) end)
+    )
     |> assign_list()
-    |> then(&assign(&1, :raw, raw_input(&1)))
-    |> then(&assign(&1, :attrs, attrs(&1)))
+    |> then(
+      &assign_derived(&1, :raw, [:mask, :mask_submit, :id, :name, :value, :rest], fn ->
+        raw_input(&1)
+      end)
+    )
+    |> then(&assign_derived(&1, :attrs, @attrs_deps, fn -> attrs(&1) end))
     |> render_input()
   end
 
   defp assign_mask_id(%{mask: nil, clear_on_submit: false} = assigns), do: assigns
-  defp assign_mask_id(%{id: nil} = assigns), do: assign(assigns, :id, gen_id("input"))
+  defp assign_mask_id(%{id: nil} = assigns), do: assign(assigns, :id, stable_id("input", assigns))
   defp assign_mask_id(assigns), do: assigns
 
-  defp assign_list(%{options: []} = assigns), do: assign(assigns, :list_id, nil)
+  defp assign_list(%{options: []} = assigns),
+    do: assign_derived(assigns, :list_id, [:options], fn -> nil end)
 
   defp assign_list(%{id: nil} = assigns),
-    do: assign(assigns, id: gen_id("input")) |> assign_list()
+    do: assign(assigns, id: stable_id("input", assigns)) |> assign_list()
 
-  defp assign_list(assigns), do: assign(assigns, :list_id, "#{assigns.id}-options")
+  defp assign_list(assigns),
+    do: assign_derived(assigns, :list_id, [:options, :id], fn -> "#{assigns.id}-options" end)
 
   defp raw_input(%{mask: mask, mask_submit: "raw"} = assigns) when is_binary(mask) do
     Map.merge(
@@ -306,6 +324,7 @@ defmodule LineaUI.Components.Input do
       id={@id}
       label={@label}
       label_class={@label_class}
+      label_hint={@label_hint}
       help={@help}
       errors={@errors}
       state={@state}

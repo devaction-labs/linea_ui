@@ -92,4 +92,29 @@ defmodule LineaUI.Components.RatingTest do
     assert html =~ "4,5"
     assert html =~ "50%"
   end
+
+  test "outline draws amber line stars, the empty ones faded" do
+    assigns = %{}
+
+    html =
+      rendered_to_string(~H"""
+      <.rating value={4} variant="outline" show_value count={86} />
+      """)
+
+    assert html =~ ~s(fill="none")
+    assert html =~ ~s(stroke-width="1.7")
+    assert html =~ "text-(--warn)"
+    assert html =~ "opacity-30"
+    assert html =~ "font-mono"
+    assert html =~ "size-4"
+
+    html =
+      rendered_to_string(~H"""
+      <.rating name="g" value={2} variant="outline" />
+      """)
+
+    assert html =~ ~s(role="radiogroup")
+    assert html =~ "input:checked~label_svg]:opacity-100"
+    refute html =~ "text-yellow-400"
+  end
 end

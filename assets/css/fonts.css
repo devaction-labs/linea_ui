@@ -1,5 +1,5 @@
 /*
-  Poppins and Inter, served by the app at /linea_ui/fonts (see the README for the Plug.Static line).
+  Geist, Geist Mono, Poppins and Inter, served by the app at /linea_ui/fonts (see the README for the Plug.Static line).
 */
 
 @font-face {
@@ -56,4 +56,20 @@
   font-weight: 100 900;
   font-display: swap;
   src: url("/linea_ui/fonts/Inter-Variable.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Geist";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("/linea_ui/fonts/geist-variable.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Geist Mono";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("/linea_ui/fonts/geist-mono-variable.woff2") format("woff2");
 }

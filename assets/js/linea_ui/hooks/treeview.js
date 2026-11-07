@@ -79,6 +79,12 @@ const Treeview = {
   },
 
   clicked(event) {
+    const box = event.target.closest("[data-tree-check]")
+    if (box && this.el.dataset.onCheck) {
+      event.preventDefault()
+      emit(this, this.el.dataset.onCheck, {id: box.dataset.treeCheck, checked: box.dataset.checked !== "true"}, box)
+      return
+    }
     const leaf = event.target.closest("[data-tree-leaf]")
     leaf && emit(this, this.el.dataset.onSelect, {id: leaf.dataset.treeLeaf}, leaf)
   },

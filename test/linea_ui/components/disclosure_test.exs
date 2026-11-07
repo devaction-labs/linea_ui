@@ -160,4 +160,37 @@ defmodule LineaUI.Components.DisclosureTest do
     assert ["ac-panel", "px-6"] -- classes(html, "#a > .ac-panel") == []
     assert classes(html, "#b > .ac-panel") == ["ac-panel"]
   end
+
+  test "collapse takes the canvas variant" do
+    html =
+      render(~H"""
+      <.collapse id="c" variant="canvas" chevron="down">
+        <:trigger>Title</:trigger>
+        Body
+      </.collapse>
+      """)
+
+    assert attr_of(html, "#c", "data-variant") == ["canvas"]
+  end
+
+  test "collapse_text clamps a text and toggles it with a link" do
+    html =
+      render(~H"""
+      <.collapse_text id="t" lines={3} more="Mostrar mais" less="Mostrar menos">
+        Long text
+      </.collapse_text>
+      """)
+
+    assert attr_of(html, "#t", "data-open") == []
+    assert attr_of(html, "#t-text", "style") == ["--lines: 3"]
+    assert attr_of(html, "#t button", "aria-controls") == ["t-text"]
+    assert attr_of(html, "#t button", "aria-expanded") == ["false"]
+    assert find(html, "#t .collapse-text-more") |> LazyHTML.text() == "Mostrar mais"
+    assert find(html, "#t .collapse-text-less") |> LazyHTML.text() == "Mostrar menos"
+    assert attr_of(html, "#t button", "phx-click") |> hd() =~ "data-open"
+
+    html = render(~H|<.collapse_text id="o" open>Text</.collapse_text>|)
+    assert attr_of(html, "#o", "data-open") == ["true"]
+    assert attr_of(html, "#o button", "aria-expanded") == ["true"]
+  end
 end

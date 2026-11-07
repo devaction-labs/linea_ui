@@ -14,6 +14,10 @@ defmodule LineaUI.Components.Rating do
 
       <.rating_distribution average={4.5} counts={[800, 310, 110, 40, 24]} />
 
+  `variant="outline"` draws the canvas stars: amber line stars, the empty ones faded, the grade in bold mono.
+
+      <.rating value={4.2} variant="outline" size="sm" show_value count={86} />
+
   A value is drawn star by star: each one is filled by the proportion left, so `4.5` has four full
   stars and half of the fifth. The read-only rating is one `role="img"` with the text
   `4,5 de 5 estrelas`; pass `aria_label` for another language.
@@ -40,6 +44,15 @@ defmodule LineaUI.Components.Rating do
     "lg" => %{box: "size-7", gap: "gap-1", text: "text-base"}
   }
 
+  # The outline star sizes follow the canvas icons: 13px, 16px and 18px.
+  @outline_sizes %{
+    "sm" => %{box: "size-[13px]", gap: "gap-0.5", text: "text-[13px]"},
+    "md" => %{box: "size-4", gap: "gap-0.5", text: "text-sm"},
+    "lg" => %{box: "size-[18px]", gap: "gap-0.5", text: "text-base"}
+  }
+
+  @outline_path "M12 3l2.8 5.8 6.2.9-4.5 4.4 1.1 6.2L12 17.3 6.4 20.3l1.1-6.2L3 9.7l6.2-.9z"
+
   @path "M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11a.56.56 0 0 0 .48.35l5.52.44c.5.04.7.66.32.99l-4.2 3.6a.56.56 0 0 0-.18.56l1.28 5.39a.56.56 0 0 1-.84.61l-4.73-2.89a.56.56 0 0 0-.59 0l-4.73 2.89a.56.56 0 0 1-.84-.61l1.28-5.39a.56.56 0 0 0-.18-.56l-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44a.56.56 0 0 0 .48-.35z"
 
   @doc """
@@ -60,6 +73,13 @@ defmodule LineaUI.Components.Rating do
     doc: "A form field: fills `id`, `name`, `value` and `errors`."
 
   attr :max, :integer, default: 5, doc: "How many stars."
+
+  attr :variant, :string,
+    default: "solid",
+    values: ~w(solid outline),
+    doc:
+      "`solid` stars filled in yellow on grey, or `outline`, the canvas look: amber line stars, the empty ones faded."
+
   attr :size, :string, default: "md", values: ~w(sm md lg)
   attr :count, :integer, default: nil, doc: "How many reviews, shown as `(38)` after the stars."
 
@@ -100,11 +120,12 @@ defmodule LineaUI.Components.Rating do
   def rating(assigns) do
     assigns
     |> Control.assign_control()
-    |> then(&assign(&1, :id, &1.id || &1.name || gen_id("rating")))
+    |> then(&assign(&1, :id, &1.id || &1.name || stable_id("rating", &1)))
     |> then(&assign(&1, :value, number(&1.value)))
     |> then(&assign(&1, :interactive, interactive?(&1)))
-    |> then(&assign(&1, :styles, Map.fetch!(@sizes, &1.size)))
-    |> then(&assign(&1, :path, @path))
+    |> then(&assign(&1, :outline, &1.variant == "outline"))
+    |> then(&assign(&1, :styles, Map.fetch!(sizes(&1.outline), &1.size)))
+    |> then(&assign(&1, :path, if(&1.outline, do: @outline_path, else: @path)))
     |> render_rating()
   end
 
@@ -131,7 +152,10 @@ defmodule LineaUI.Components.Rating do
             "relative inline-flex flex-row-reverse justify-end",
             @styles.gap,
             @disabled && "pointer-events-none opacity-50",
-            "[&_input:checked~label_svg]:text-warning [&_label:hover_svg]:text-warning [&_label:hover~label_svg]:text-warning [&_label:hover_svg]:scale-110",
+            !@outline &&
+              "[&_input:checked~label_svg]:text-yellow-400 [&_label:hover_svg]:text-yellow-400 [&_label:hover~label_svg]:text-yellow-400 [&_label:hover_svg]:scale-110",
+            @outline &&
+              "[&_input:checked~label_svg]:opacity-100 [&_label:hover_svg]:opacity-100 [&_label:hover~label_svg]:opacity-100 [&_label:hover_svg]:scale-110",
             @class
           ])
         }
@@ -156,10 +180,13 @@ defmodule LineaUI.Components.Rating do
             <svg
               viewBox="0 0 24 24"
               aria-hidden="true"
-              fill="currentColor"
+              fill={if @outline, do: "none", else: "currentColor"}
+              {outline_stroke(@outline)}
               class={[
                 @styles.box,
-                "text-slate-300 transition-[color,transform] duration-100 motion-reduce:transition-none dark:text-navy-500"
+                !@outline && "text-slate-300 dark:text-navy-500",
+                @outline && "text-(--warn) opacity-30",
+                "transition-[color,opacity,transform] duration-100 motion-reduce:transition-none"
               ]}
             >
               <path d={@path} />
@@ -180,15 +207,32 @@ defmodule LineaUI.Components.Rating do
       {@rest}
     >
       <span role="img" aria-label={@label_text} class={["inline-flex", @styles.gap, @class]}>
-        <.star :for={n <- 1..@max//1} fill={fill(@value, n)} box={@styles.box} path={@path} />
+        <.star
+          :for={n <- 1..@max//1}
+          fill={fill(@value, n)}
+          box={@styles.box}
+          path={@path}
+          outline={@outline}
+        />
       </span>
       <span
         :if={@show_value}
-        class={["font-semibold tabular-nums text-slate-800 dark:text-navy-50", @styles.text]}
+        class={[
+          !@outline && "font-semibold tabular-nums text-slate-800 dark:text-navy-50",
+          @outline && "font-mono font-bold text-(--ink)",
+          @styles.text
+        ]}
       >
         {format(@value, @decimal)}
       </span>
-      <span :if={@count} class={["tabular-nums text-slate-500 dark:text-navy-200", @styles.text]}>
+      <span
+        :if={@count}
+        class={[
+          !@outline && "tabular-nums text-slate-500 dark:text-navy-200",
+          @outline && "tabular-nums text-(--faint)",
+          @styles.text
+        ]}
+      >
         ({@count})
       </span>
     </div>
@@ -198,6 +242,28 @@ defmodule LineaUI.Components.Rating do
   attr :fill, :float, required: true
   attr :box, :string, required: true
   attr :path, :string, required: true
+  attr :outline, :boolean, default: false
+
+  defp star(%{outline: true} = assigns) do
+    ~H"""
+    <span class={["relative inline-block shrink-0 text-(--warn)", @box]} aria-hidden="true">
+      <span class="absolute inset-0 block overflow-hidden opacity-30">
+        <svg viewBox="0 0 24 24" fill="none" {outline_stroke(true)} class={["block", @box]}>
+          <path d={@path} />
+        </svg>
+      </span>
+      <span
+        :if={@fill > 0}
+        class="absolute inset-0 block overflow-hidden"
+        style={"width: #{percent(@fill)}%"}
+      >
+        <svg viewBox="0 0 24 24" fill="none" {outline_stroke(true)} class={["block", @box]}>
+          <path d={@path} />
+        </svg>
+      </span>
+    </span>
+    """
+  end
 
   defp star(assigns) do
     ~H"""
@@ -207,7 +273,7 @@ defmodule LineaUI.Components.Rating do
       </span>
       <span
         :if={@fill > 0}
-        class="absolute inset-0 block overflow-hidden text-warning"
+        class="absolute inset-0 block overflow-hidden text-yellow-400"
         style={"width: #{percent(@fill)}%"}
       >
         <svg viewBox="0 0 24 24" fill="currentColor" class={["block", @box]}><path d={@path} /></svg>
@@ -302,6 +368,19 @@ defmodule LineaUI.Components.Rating do
       :error -> 0.0
     end
   end
+
+  defp sizes(true), do: @outline_sizes
+  defp sizes(false), do: @sizes
+
+  defp outline_stroke(true),
+    do: %{
+      stroke: "currentColor",
+      "stroke-width": "1.7",
+      "stroke-linecap": "round",
+      "stroke-linejoin": "round"
+    }
+
+  defp outline_stroke(false), do: %{}
 
   defp fill(value, n), do: min(1.0, max(0.0, value - (n - 1)))
 

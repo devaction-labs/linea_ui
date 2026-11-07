@@ -23,6 +23,18 @@ defmodule LineaUI.Components.Modal do
   Without a `:header` the close × sits in the card's corner above the content; give wide content
   (an image) a `close_variant="chip"` so the button keeps a backdrop.
 
+  `title` (with `description`) gives it the header of a sheet instead (the design canvas modal): the
+  19px title over a muted line with the round × at the end, the body under it, and the `:footer`
+  buttons aligned to the end over a line, like a `LineaUI.Components.Drawer` sheet:
+
+      <.modal id="delete-customer" title="Delete customer?" description="Casa das Tintas" class="max-w-[440px]">
+        <p>The orders stay in the history.</p>
+        <:footer>
+          <.button variant="ghost" phx-click={LineaUI.close("delete-customer")}>Cancel</.button>
+          <.button color="error">Delete customer</.button>
+        </:footer>
+      </.modal>
+
   `prevent_close` keeps Esc and the backdrop from closing it.
 
   A modal opened from a drawer (or from another modal) is drawn above it, and Esc closes only
@@ -32,6 +44,7 @@ defmodule LineaUI.Components.Modal do
 
   use LineaUI.Component
 
+  alias LineaUI.Components.Drawer
   alias LineaUI.Components.Overlay
 
   @animations %{
@@ -91,6 +104,12 @@ defmodule LineaUI.Components.Modal do
     doc: "Where the `scale` animation grows from."
 
   attr :blur, :boolean, default: false, doc: "Blurs the page behind the backdrop."
+
+  attr :backdrop_class, :any,
+    default: nil,
+    doc:
+      "Merged into the backdrop (`bg-black/30` for a lighter one than the default `bg-slate-900/60`)."
+
   attr :prevent_close, :boolean, default: false, doc: "Esc and the backdrop do not close it."
 
   attr :close_button, :boolean,
@@ -108,9 +127,17 @@ defmodule LineaUI.Components.Modal do
   attr :target, :any, default: nil, doc: "The `phx-target` of `on_open` / `on_close` events."
   attr :close_label, :string, default: "Close"
 
+  attr :title, :string,
+    default: nil,
+    doc:
+      "A sheet's header (the canvas modal): the title, `description` under it and the × (unless `close_button` is false); the `:footer` becomes the sheet's footer."
+
+  attr :description, :string, default: nil, doc: "The line under `title`."
+
   attr :body_class, :any,
     default: nil,
-    doc: "Merged into the body under a `:header` (`px-4 py-4 sm:px-5` by default)."
+    doc:
+      "Merged into the body under a `:header` (`px-4 py-4 sm:px-5` by default) or a `title` (the sheet body)."
 
   attr :class, :any, default: nil, doc: "Merged into the card."
   attr :rest, :global
@@ -132,7 +159,7 @@ defmodule LineaUI.Components.Modal do
   def modal(assigns) do
     assigns =
       assigns
-      |> assign(:layout, layout(assigns.header))
+      |> assign(:layout, layout(assigns.title, assigns.header))
       |> assign(:on_open_js, Overlay.callback(assigns.on_open, assigns.id, assigns.target))
       |> assign(:on_close_js, Overlay.callback(assigns.on_close, assigns.id, assigns.target))
 
@@ -147,12 +174,13 @@ defmodule LineaUI.Components.Modal do
       role="dialog"
       aria-modal="true"
       aria-hidden="true"
-      aria-labelledby={@header != [] && "#{@id}-title"}
+      aria-labelledby={(@header != [] or @title != nil) && "#{@id}-title"}
       phx-hook="LineaUI.Dialog"
       phx-mounted={JS.ignore_attributes(["class", "data-state", "aria-hidden", "style"])}
       data-state="closed"
       data-open={bool(@open)}
       data-kind="modal"
+      data-layout={@layout == :sheet && "sheet"}
       data-lock="true"
       data-leave-ms="300"
       data-prevent-close={bool(@prevent_close)}
@@ -161,7 +189,13 @@ defmodule LineaUI.Components.Modal do
       {@rest}
     >
       <div
-        class={["modal-overlay absolute inset-0 bg-slate-900/60", @blur && "backdrop-blur-sm"]}
+        class={
+          merge([
+            "modal-overlay absolute inset-0 bg-slate-900/60",
+            @blur && "backdrop-blur-sm",
+            @backdrop_class
+          ])
+        }
         data-backdrop
       >
       </div>
@@ -169,7 +203,7 @@ defmodule LineaUI.Components.Modal do
         id={"#{@id}-panel"}
         class={
           merge([
-            "modal-content relative flex w-full flex-col rounded-lg bg-white outline-hidden dark:bg-navy-700",
+            "modal-content relative flex w-full flex-col rounded-[22px] bg-white shadow-[0_0_0_1px_var(--color-slate-150),0_40px_90px_-30px_rgb(23_23_26/.4)] outline-hidden dark:bg-navy-700 dark:shadow-[0_0_0_1px_var(--color-navy-600)]",
             panel_class(@layout),
             size_class(@size),
             origin_class(@origin),
@@ -179,8 +213,18 @@ defmodule LineaUI.Components.Modal do
         tabindex="-1"
         data-panel
       >
+        <Drawer.sheet_header
+          :if={@layout == :sheet}
+          id={"#{@id}-title"}
+          drawer={@id}
+          title={@title}
+          description={@description}
+          close_button={@close_button}
+          close_label={@close_label}
+        />
         <.modal_header
           :for={header <- @header}
+          :if={@layout != :sheet}
           header={header}
           variant={Map.get(header, :variant, "bar")}
           id={@id}
@@ -188,7 +232,7 @@ defmodule LineaUI.Components.Modal do
           close_label={@close_label}
         />
         <button
-          :if={@header == [] and @close_button}
+          :if={@layout == :none and @close_button}
           type="button"
           class={
             merge([
@@ -202,8 +246,16 @@ defmodule LineaUI.Components.Modal do
           <Overlay.close_icon />
         </button>
         <.modal_body layout={@layout} class={@body_class}>{render_slot(@inner_block)}</.modal_body>
+        <Drawer.sheet_footer
+          :for={footer <- @footer}
+          :if={@layout == :sheet}
+          class={Map.get(footer, :class)}
+        >
+          {render_slot(footer)}
+        </Drawer.sheet_footer>
         <div
           :for={footer <- @footer}
+          :if={@layout != :sheet}
           class={merge(["space-x-2 px-4 pb-4 text-right sm:px-5", Map.get(footer, :class)])}
         >
           {render_slot(footer)}
@@ -273,6 +325,12 @@ defmodule LineaUI.Components.Modal do
 
   defp modal_body(%{layout: :none} = assigns), do: ~H"{render_slot(@inner_block)}"
 
+  defp modal_body(%{layout: :sheet} = assigns) do
+    ~H"""
+    <Drawer.sheet_body class={@class}>{render_slot(@inner_block)}</Drawer.sheet_body>
+    """
+  end
+
   defp modal_body(%{layout: :plain} = assigns) do
     ~H"""
     <div class={merge(["px-4 pb-4 sm:px-5", @class])}>{render_slot(@inner_block)}</div>
@@ -287,11 +345,13 @@ defmodule LineaUI.Components.Modal do
     """
   end
 
-  defp layout([]), do: :none
-  defp layout([%{variant: "plain"} | _]), do: :plain
-  defp layout([_ | _]), do: :bar
+  defp layout(title, _header) when is_binary(title), do: :sheet
+  defp layout(_title, []), do: :none
+  defp layout(_title, [%{variant: "plain"} | _]), do: :plain
+  defp layout(_title, [_ | _]), do: :bar
 
   defp panel_class(:bar), do: "overflow-hidden"
+  defp panel_class(:sheet), do: "max-h-full overflow-hidden"
   defp panel_class(_layout), do: "scrollbar-sm overflow-y-auto"
 
   defp close_variant_class(variant), do: Map.fetch!(@close_variants, variant)

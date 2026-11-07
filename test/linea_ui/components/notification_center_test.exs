@@ -112,4 +112,43 @@ defmodule LineaUI.Components.NotificationCenterTest do
     assert html =~ ~s(href="/settings")
     assert html =~ "Preferências de notificação"
   end
+
+  test "the canvas variant is the compact list: no title bar, tabs or footer, time at the right" do
+    html =
+      render(~H"""
+      <.notification_center
+        id="nc"
+        variant="canvas"
+        all_href="/all"
+        items={[
+          %{id: 1, title: "Novo pedido", body: "Hotel", at: "10:12", group: "Hoje", read: false},
+          %{id: 2, title: "NF-e", at: "18:40", group: "Ontem", type: "success", read: true}
+        ]}
+      />
+      """)
+
+    assert [_] = html |> find("#nc-panel .nc-canvas") |> Enum.to_list()
+    assert [] = html |> find("#nc-panel h3, #nc-panel [role=tablist]") |> Enum.to_list()
+    refute html |> find("#nc-panel") |> LazyHTML.text() =~ "Ver todas"
+    assert html |> find(".nc-canvas-h") |> Enum.map(&LazyHTML.text/1) == ["Hoje", "Ontem"]
+    assert html |> find(".nc-canvas-row[data-unread] .nc-canvas-at") |> LazyHTML.text() == "10:12"
+    assert "pos" in classes(html, ".nc-canvas-row:not([data-unread]) .sg-ic")
+  end
+
+  test "the empty state can show an icon tile" do
+    html =
+      render(~H"""
+      <.notification_center id="nc" variant="canvas" items={[]} empty="Tudo lido" />
+      """)
+
+    assert html |> find(".nc-canvas-empty b") |> LazyHTML.text() == "Tudo lido"
+    assert [_] = html |> find(".nc-canvas-empty .sg-ic.pos .huge-tick-02") |> Enum.to_list()
+
+    html =
+      render(~H"""
+      <.notification_center id="nc" items={[]} tabs={[]} empty_icon="huge-inbox" empty_tone="info" />
+      """)
+
+    assert [_] = html |> find("#nc-panel .sg-ic.info .huge-inbox") |> Enum.to_list()
+  end
 end

@@ -26,8 +26,10 @@ defmodule LineaUI.Components.Radio do
         %{label: "Month", value: "month", disabled: true}
       ]} />
 
-  `variant="card"` lays each option out as a bordered card (title, description, optional icon
-  and count) with 14px of side padding that rings in `color` (1px border, 3px ring) when chosen; `variant="chip"` renders pill chips, the
+  `variant="card"` lays each option out as the canvas card (`sg-choice`): white, 14px of padding, a 1px line
+  that turns to a 1.5px ink line when chosen (or the `color`, when not `neutral`), the title, the description,
+  an optional icon in a 36px square that takes the accent tint when chosen, and `count` as a big figure between
+  the title and the description (a price). `control="end"` puts the radio at the right; `variant="chip"` renders pill chips, the
   status filter of a list, with an optional count. Both keep a real radio underneath, so the
   arrow keys, the form and `phx-change` work as with plain radios.
 
@@ -83,6 +85,13 @@ defmodule LineaUI.Components.Radio do
       "`basic`/`outline` radios, `card` cards, `chip` pill chips, `segmented` a segmented control."
   )
 
+  attr(:control, :string,
+    default: "start",
+    values: ~w(start end),
+    doc:
+      "`variant=\"card\"`: the side of the card the radio sits on, `start` (before the text) or `end` (at the right)."
+  )
+
   attr(:filled, :boolean, default: false)
   attr(:shape, :string, default: "circle", values: ~w(circle squircle))
   attr(:size, :string, default: "md", values: Choice.sizes())
@@ -120,7 +129,7 @@ defmodule LineaUI.Components.Radio do
   def radio_group(assigns) do
     assigns
     |> Control.assign_control()
-    |> then(&assign(&1, :id, &1.id || gen_id("radio-group")))
+    |> then(&assign(&1, :id, &1.id || stable_id("radio-group", &1)))
     |> then(&assign(&1, :items, items(&1)))
     |> render_group()
   end
@@ -213,8 +222,30 @@ defmodule LineaUI.Components.Radio do
           ])
         }
       >
+        <.card
+          :for={item <- (@variant == "card" && @items) || []}
+          color={item.color || @color}
+          label={item.label}
+          description={item.description}
+          count={item.count}
+          icon={item.icon}
+          control={@control}
+          content={Choice.slot_content(item.content)}
+        >
+          <input
+            type="radio"
+            id={item.id}
+            name={@name}
+            value={item.value}
+            checked={item.checked}
+            disabled={@disabled || item.disabled}
+            class={item.classes}
+            aria-invalid={@errors != [] && "true"}
+            {@rest}
+          />
+        </.card>
         <Choice.item
-          :for={item <- @items}
+          :for={item <- (@variant != "card" && @items) || []}
           variant={@variant}
           color={item.color || @color}
           label={item.label}
@@ -238,6 +269,41 @@ defmodule LineaUI.Components.Radio do
         </Choice.item>
       </div>
     </Form.field>
+    """
+  end
+
+  # The canvas `sg-choice`: a white card with a 1px line that turns to a 1.5px ink line when chosen (or the
+  # `color`), an optional tinted icon square, and with `count` a big figure between the title and the description.
+  attr(:color, :string, required: true)
+  attr(:label, :string, default: nil)
+  attr(:description, :string, default: nil)
+  attr(:count, :any, default: nil)
+  attr(:icon, :string, default: nil)
+  attr(:control, :string, default: "start")
+  attr(:content, :list, default: [])
+  slot(:inner_block, required: true)
+
+  defp card(assigns) do
+    ~H"""
+    <label class={["lu-rcard", @count != nil && "is-stacked"]} data-color={@color}>
+      <span :if={@control == "start"} class="lu-rcard-control">{render_slot(@inner_block)}</span>
+      <span :if={@icon} class="sg-ic lu-rcard-icon">
+        <LineaUI.Components.Icon.icon name={@icon} class="size-4" />
+      </span>
+      <span class="lu-rcard-text">
+        <span class="lu-rcard-head">
+          <span class="lu-rcard-title">{@label}{render_slot(@content)}</span>
+          <span :if={@control == "end" && @count != nil} class="lu-rcard-control">
+            {render_slot(@inner_block)}
+          </span>
+        </span>
+        <span :if={@count != nil} class="lu-rcard-figure">{@count}</span>
+        <span :if={@description} class="lu-rcard-desc">{@description}</span>
+      </span>
+      <span :if={@control == "end" && @count == nil} class="lu-rcard-control">
+        {render_slot(@inner_block)}
+      </span>
+    </label>
     """
   end
 end

@@ -14,7 +14,7 @@ defmodule LineaUI.Components.CheckboxTest do
     assert "is-basic" in classes
     assert "size-5" in classes
     assert "rounded-sm" in classes
-    assert "checked:bg-slate-500" in classes
+    assert "checked:bg-slate-900" in classes
   end
 
   test "color, variant, filled, shape and size" do

@@ -31,6 +31,24 @@ defmodule LineaUI.Components.Treeview do
   `on_toggle` runs when the person opens or closes a branch, `on_select` when they click a
   leaf (or press Enter on it). See `treeview/1` for the payloads.
 
+  ## The canvas look
+
+  `variant="canvas"` draws the Signetum canvas tree: rows padded 6px 8px (8px corners, 2px apart; 36px with a boxed icon) in regular weight and the
+  ink, the top level in 550, a 14px chevron, the selected row tinted with the accent from the row's start (the
+  depth is a left padding inside the row) and boxed icons:
+
+      <.treeview id="notas" variant="canvas">
+        <.tree_item id="2026" label="Notas 2026" expanded>
+          <:icon><.icon name="huge-layers-01" boxed box_size="sm" class="size-3.5" /></:icon>
+          <.tree_item id="out" label="Outubro" branch />
+          <.tree_item id="nfe" label="NF-e 48.211.xml" selected />
+        </.tree_item>
+      </.treeview>
+
+  `branch` draws an item as a closed branch before its children are there (loaded when it opens).
+  `checked` (`true`, `false` or `"mixed"`) puts a checkbox before the label and sets `aria-checked`; a click on
+  it pushes the treeview's `on_check`. `chevrons={false}` leaves the chevrons out, for a checklist of categories.
+
   ## Streams
 
       <.treeview id="files" rows={@streams.files}>
@@ -85,6 +103,23 @@ defmodule LineaUI.Components.Treeview do
     doc: "Event name or `%JS{}`; pushed with `%{\"id\" => id}` when a leaf is picked."
   )
 
+  attr(:on_check, :any,
+    default: nil,
+    doc:
+      "Event name or `%JS{}`; pushed with `%{\"id\" => id, \"checked\" => boolean}` (the new state) when an item's checkbox is clicked."
+  )
+
+  attr(:variant, :string,
+    default: "lineone",
+    values: ~w(lineone canvas),
+    doc: "`canvas` is the Signetum canvas tree (see \"The canvas look\")."
+  )
+
+  attr(:chevrons, :boolean,
+    default: true,
+    doc: "`false` leaves out the chevrons and their space (a checklist of categories)."
+  )
+
   attr(:target, :any, default: nil, doc: "The `phx-target` the events go to.")
   attr(:rows, :list, default: nil, doc: "A list or a stream (`@streams.x`) rendered by `:row`.")
   attr(:row_id, :any, default: nil, doc: "A function giving each row's DOM id (streams give it).")
@@ -108,13 +143,21 @@ defmodule LineaUI.Components.Treeview do
     <ul
       id={@id}
       role="tree"
-      class={merge(["space-y-1 font-inter font-medium", @class])}
+      class={
+        merge([
+          "space-y-1 font-inter font-medium",
+          @variant == "canvas" && "tree-canvas",
+          !@chevrons && "tree-no-chevrons",
+          @class
+        ])
+      }
       phx-hook="LineaUI.Treeview"
       phx-update={@stream? && "stream"}
       phx-target={@target}
       data-expanded={Jason.encode!(@expanded)}
       data-on-toggle={@on_toggle}
       data-on-select={@on_select}
+      data-on-check={@on_check}
       {@rest}
     >
       {render_slot(@inner_block)}
@@ -145,6 +188,18 @@ defmodule LineaUI.Components.Treeview do
     doc: "Marks the item as the chosen one: `aria-selected` and a tinted header."
   )
 
+  attr(:branch, :boolean,
+    default: false,
+    doc: "Draws the item as a branch (a chevron that opens it) even with no children yet."
+  )
+
+  attr(:checked, :any,
+    default: nil,
+    values: [nil, true, false, "mixed"],
+    doc:
+      "A checkbox before the label (`\"mixed\"` for a branch partly checked); `nil` shows none."
+  )
+
   attr(:tag, :string, default: "li", values: ~w(li div))
   attr(:class, :any, default: nil)
   attr(:rest, :global)
@@ -155,7 +210,7 @@ defmodule LineaUI.Components.Treeview do
     assigns
     |> assign(:item_id, assigns.id || gen_id("tree-item"))
     |> assign(:layout, layout(assigns))
-    |> assign(:branch?, Enum.any?(assigns.inner_block, &filled?/1))
+    |> assign(:branch?, assigns.branch or Enum.any?(assigns.inner_block, &filled?/1))
     |> render_item()
   end
 
@@ -181,12 +236,17 @@ defmodule LineaUI.Components.Treeview do
         role="treeitem"
         class={@classes}
         aria-selected={@selected && "true"}
+        aria-checked={aria_checked(@checked)}
         data-tree-leaf={@item_id}
       >
-        <div class={["flex size-5 items-center justify-center", @layout == :advanced && "mr-1"]}>
+        <div class={[
+          "tree-spacer flex size-5 items-center justify-center",
+          @layout == :advanced && "mr-1"
+        ]}>
         </div>
-        <span :for={icon <- @icon} class="mr-3 flex">{render_slot(icon)}</span>
-        <span class="truncate">{@label}</span>
+        <.check :if={@checked != nil} id={@item_id} checked={@checked} />
+        <span :for={icon <- @icon} class="tree-icon mr-3 flex">{render_slot(icon)}</span>
+        <span class="tree-label truncate">{@label}</span>
       </div>
     </.dynamic_tag>
     """
@@ -216,21 +276,38 @@ defmodule LineaUI.Components.Treeview do
           class={@classes}
           aria-expanded={bool(@expanded)}
           aria-selected={@selected && "true"}
+          aria-checked={aria_checked(@checked)}
         >
           <span class={[
-            "btn size-5 rounded-lg p-0 hover:bg-slate-300/20 focus:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25",
+            "tree-toggle btn size-5 rounded-lg p-0 hover:bg-slate-300/20 focus:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25",
             @layout == :advanced && "mr-1"
           ]}>
             <.glyph name={:chevron_right_solid} class="tree-chevron size-4 transition-transform" />
           </span>
-          <span :for={icon <- @icon} class="mr-3 flex">{render_slot(icon)}</span>
-          <span class="truncate">{@label}</span>
+          <.check :if={@checked != nil} id={@item_id} checked={@checked} />
+          <span :for={icon <- @icon} class="tree-icon mr-3 flex">{render_slot(icon)}</span>
+          <span class="tree-label truncate">{@label}</span>
         </summary>
-        <ul role="group" class="mt-1 space-y-1 pl-4">
+        <ul role="group" class="tree-group mt-1 space-y-1 pl-4">
           {render_slot(@inner_block)}
         </ul>
       </details>
     </.dynamic_tag>
     """
   end
+
+  defp check(assigns) do
+    ~H"""
+    <span
+      class={["tree-check sg-box", @checked == true && "on", @checked == "mixed" && "mixed"]}
+      data-tree-check={@id}
+      data-checked={bool(@checked == true)}
+      aria-hidden="true"
+    ></span>
+    """
+  end
+
+  defp aria_checked(nil), do: nil
+  defp aria_checked("mixed"), do: "mixed"
+  defp aria_checked(checked), do: bool(checked)
 end

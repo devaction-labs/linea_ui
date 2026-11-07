@@ -27,6 +27,13 @@ defmodule LineaUI.Components.NumberInput do
   value (the hook keeps its distance in `--nlen`, the number of characters shown). A stepper
   is `disabled` at `min` and `max`.
 
+  `stepper_style` picks how the steppers look: `inset` (the default, the canvas stepper) is one
+  field with plain `−` and `+` icon buttons inside its ends; `round` is the canvas's compact one
+  for cart rows, two round outlined buttons with the bare number between them; `joined` is
+  LineOne's, the buttons as boxes joined to the input.
+
+      <.number_input name="qty" value={3} steppers stepper_style="round" min={0} />
+
   The behavior lives in the `LineaUI.NumberInput` hook, so the field needs a stable `id` (it
   gets one from `field` or `name`).
   """
@@ -43,16 +50,16 @@ defmodule LineaUI.Components.NumberInput do
 
   @shapes %{
     "rounded" =>
-      "[&>:first-child]:rounded-l-lg [&>:first-child_.form-input]:rounded-l-lg [&>:last-child]:rounded-r-lg [&>:last-child_.form-input]:rounded-r-lg",
+      "[&>:first-child]:rounded-l-md [&>:first-child_.form-input]:rounded-l-md [&>:last-child]:rounded-r-md [&>:last-child_.form-input]:rounded-r-md",
     "pill" =>
       "[&>:first-child]:rounded-l-full [&>:first-child_.form-input]:rounded-l-full [&>:last-child]:rounded-r-full [&>:last-child_.form-input]:rounded-r-full"
   }
 
-  @stepper "flex shrink-0 items-center justify-center border border-slate-300 px-3 text-slate-600 outline-hidden transition-colors hover:bg-slate-100 hover:text-slate-800 focus-visible:bg-slate-100 active:bg-slate-150 disabled:pointer-events-none disabled:opacity-35 dark:border-navy-450 dark:text-navy-100 dark:hover:bg-navy-600 dark:hover:text-navy-50 dark:focus-visible:bg-navy-600 dark:active:bg-navy-500"
+  @stepper "flex shrink-0 items-center justify-center border border-slate-200 px-3 text-slate-600 outline-hidden transition-colors hover:bg-slate-100 hover:text-slate-800 focus-visible:bg-slate-100 active:bg-slate-150 disabled:pointer-events-none disabled:opacity-35 dark:border-navy-450 dark:text-navy-100 dark:hover:bg-navy-600 dark:hover:text-navy-50 dark:focus-visible:bg-navy-600 dark:active:bg-navy-500"
 
-  @stepper_sizes %{"sm" => "h-8", "md" => "h-10", "lg" => "h-12"}
+  @stepper_sizes %{"sm" => "h-7", "md" => "h-10", "lg" => "h-11"}
 
-  @addon_sizes %{"sm" => "h-8 text-xs-plus", "md" => nil, "lg" => "h-12 text-base"}
+  @addon_sizes %{"sm" => "h-7 text-xs", "md" => "h-10 text-sm", "lg" => "h-11 text-sm"}
 
   @doc """
   Renders the number input.
@@ -103,6 +110,13 @@ defmodule LineaUI.Components.NumberInput do
   attr :max, :any, default: nil, doc: "The highest value."
   attr :step, :any, default: 1, doc: "What the arrow keys and the steppers add or take away."
   attr :steppers, :boolean, default: false, doc: "`−` and `+` buttons on either side."
+
+  attr :stepper_style, :string,
+    default: "inset",
+    values: ~w(inset round joined),
+    doc:
+      "With `steppers`: `inset` plain icon buttons inside one field (canvas), `round` two round buttons around the bare number (canvas, compact), `joined` boxes joined to the input (LineOne)."
+
   attr :decrement_label, :string, default: "Decrease", doc: "The accessible name of `−`."
   attr :increment_label, :string, default: "Increase", doc: "The accessible name of `+`."
   attr :prefix, :string, default: nil, doc: "A box before the input, like `R$`."
@@ -128,12 +142,24 @@ defmodule LineaUI.Components.NumberInput do
   def number_input(assigns) do
     assigns
     |> assign_field()
-    |> assign_new(:name, fn -> nil end)
-    |> then(&assign_new(&1, :id, fn -> &1.name || gen_id("number") end))
-    |> assign_new(:value, fn -> nil end)
+    |> put_default(:name, nil)
+    |> assign_number_id()
+    |> put_default(:value, nil)
     |> assign_format()
     |> render_number()
   end
+
+  # The id defaults to the name; without one it is derived from the label (stable across renders).
+  defp assign_number_id(assigns) when is_map_key(assigns, :id), do: assigns
+
+  defp assign_number_id(%{name: nil} = assigns),
+    do: assign(assigns, :id, stable_id("number", assigns))
+
+  defp assign_number_id(assigns),
+    do: assign_derived(assigns, :id, [:name], fn -> assigns.name end)
+
+  @separator_deps [:locale, :decimal_separator, :thousands_separator]
+  @format_deps @separator_deps ++ [:value, :decimals, :max_decimals]
 
   defp assign_format(assigns) do
     {decimal, group} = Format.separators(assigns.locale)
@@ -151,20 +177,23 @@ defmodule LineaUI.Components.NumberInput do
     min = Format.machine(assigns.min)
     max = Format.machine(assigns.max)
 
-    assign(assigns,
-      decimal: decimal,
-      group: group,
-      machine: Format.submitted(machine, opts),
-      display: Format.display(machine, opts),
-      min: min,
-      max: max,
-      step: Format.machine(assigns.step) || "1",
-      negative: negative?(min),
-      inputmode: inputmode(assigns.decimals, assigns.max_decimals),
-      state: error_state(assigns.errors),
-      forwarded: Pickers.forwarded(assigns.rest),
-      input_rest: Map.drop(assigns.rest, [:"phx-debounce", :"phx-throttle"])
-    )
+    assigns
+    |> assign_derived(:decimal, @separator_deps, fn -> decimal end)
+    |> assign_derived(:group, @separator_deps, fn -> group end)
+    |> assign_derived(:machine, @format_deps, fn -> Format.submitted(machine, opts) end)
+    |> assign_derived(:display, @format_deps, fn -> Format.display(machine, opts) end)
+    |> assign_derived(:min, [:min], fn -> min end)
+    |> assign_derived(:max, [:max], fn -> max end)
+    |> assign_derived(:step, [:step], fn -> Format.machine(assigns.step) || "1" end)
+    |> assign_derived(:negative, [:min], fn -> negative?(min) end)
+    |> assign_derived(:inputmode, [:decimals, :max_decimals], fn ->
+      inputmode(assigns.decimals, assigns.max_decimals)
+    end)
+    |> assign_derived(:state, [:errors], fn -> error_state(assigns.errors) end)
+    |> assign_derived(:forwarded, [:rest], fn -> Pickers.forwarded(assigns.rest) end)
+    |> assign_derived(:input_rest, [:rest], fn ->
+      Map.drop(assigns.rest, [:"phx-debounce", :"phx-throttle"])
+    end)
   end
 
   defp thousands(nil, group), do: group
@@ -183,7 +212,38 @@ defmodule LineaUI.Components.NumberInput do
 
   defp render_number(%{label: nil, help: nil, errors: []} = assigns) do
     ~H"""
-    <div class={@wrapper_class}><.control {assigns} /></div>
+    <div class={@wrapper_class}>
+      <.control
+        align={@align}
+        class={@class}
+        decimal={@decimal}
+        decimals={@decimals}
+        decrement_label={@decrement_label}
+        disabled={@disabled}
+        display={@display}
+        forwarded={@forwarded}
+        group={@group}
+        id={@id}
+        increment_label={@increment_label}
+        inputmode={@inputmode}
+        input_rest={@input_rest}
+        machine={@machine}
+        max={@max}
+        max_decimals={@max_decimals}
+        min={@min}
+        name={@name}
+        negative={@negative}
+        prefix={@prefix}
+        shape={@shape}
+        size={@size}
+        state={@state}
+        step={@step}
+        steppers={@steppers}
+        stepper_style={@stepper_style}
+        suffix={@suffix}
+        variant={@variant}
+      />
+    </div>
     """
   end
 
@@ -198,20 +258,147 @@ defmodule LineaUI.Components.NumberInput do
       state={@state}
       class={@wrapper_class}
     >
-      <.control {assigns} />
+      <.control
+        align={@align}
+        class={@class}
+        decimal={@decimal}
+        decimals={@decimals}
+        decrement_label={@decrement_label}
+        disabled={@disabled}
+        display={@display}
+        forwarded={@forwarded}
+        group={@group}
+        id={@id}
+        increment_label={@increment_label}
+        inputmode={@inputmode}
+        input_rest={@input_rest}
+        machine={@machine}
+        max={@max}
+        max_decimals={@max_decimals}
+        min={@min}
+        name={@name}
+        negative={@negative}
+        prefix={@prefix}
+        shape={@shape}
+        size={@size}
+        state={@state}
+        step={@step}
+        steppers={@steppers}
+        stepper_style={@stepper_style}
+        suffix={@suffix}
+        variant={@variant}
+      />
     </Form.field>
+    """
+  end
+
+  defp control(%{steppers: true, stepper_style: style} = assigns) when style in ~w(inset round) do
+    assigns =
+      assign_derived(assigns, :shown, [:display], fn -> String.length(assigns.display) end)
+
+    ~H"""
+    <div
+      id={@id <> "-number"}
+      class="w-full"
+      phx-hook="LineaUI.NumberInput"
+      data-value={@machine}
+      data-decimal={@decimal}
+      data-group={@group}
+      data-decimals={@decimals}
+      data-max-decimals={@max_decimals}
+      data-min={@min}
+      data-max={@max}
+      data-step={@step}
+      data-negative={bool(@negative)}
+    >
+      <div class={[
+        "lc-stepper",
+        @stepper_style,
+        @size,
+        @state == "error" && "is-error",
+        @disabled && "is-disabled"
+      ]}>
+        <button
+          type="button"
+          class="lc-step"
+          tabindex="-1"
+          aria-label={@decrement_label}
+          aria-controls={@id}
+          disabled={@disabled}
+          data-step-by="down"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14" /></svg>
+        </button>
+        <div
+          class="relative min-w-0 flex-1 [&_.form-input]:w-full"
+          style={if(@suffix && @align == "center", do: "--nlen: #{@shown}")}
+          data-field
+        >
+          <Input.input
+            type="text"
+            id={@id}
+            value={@display}
+            variant="plain"
+            align={align(@align)}
+            disabled={@disabled}
+            class={merge([@align == "center" && "text-center", @class])}
+            role="spinbutton"
+            inputmode={@inputmode}
+            autocomplete="off"
+            aria-valuenow={@machine}
+            aria-valuemin={@min}
+            aria-valuemax={@max}
+            aria-invalid={@state == "error" && "true"}
+            data-display
+            {@input_rest}
+          />
+          <span
+            :if={@suffix}
+            class={[
+              "lc-step-suffix pointer-events-none absolute inset-y-0 flex items-center",
+              (@align == "center" && "start-1/2 ms-[calc(var(--nlen,0)*0.5ch+0.35em)]") || "end-1"
+            ]}
+            data-suffix
+          >
+            {@suffix}
+          </span>
+        </div>
+        <button
+          type="button"
+          class="lc-step"
+          tabindex="-1"
+          aria-label={@increment_label}
+          aria-controls={@id}
+          disabled={@disabled}
+          data-step-by="up"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>
+        </button>
+      </div>
+      <input
+        type="hidden"
+        id={@id <> "-value"}
+        name={@name}
+        value={@machine}
+        disabled={@disabled}
+        phx-update="ignore"
+        data-value-input
+        {@forwarded}
+      />
+    </div>
     """
   end
 
   defp control(assigns) do
     assigns =
-      assign(assigns,
-        group_class: merge([@group, @shapes[assigns.shape]]),
-        stepper_class: merge([@stepper, @stepper_sizes[assigns.size]]),
-        field_height: @stepper_sizes[assigns.size],
-        addon_class: @addon_sizes[assigns.size],
-        shown: String.length(assigns.display)
-      )
+      assigns
+      |> assign_derived(:group_class, [:shape], fn -> merge([@group, @shapes[assigns.shape]]) end)
+      |> assign_derived(:stepper_class, [:size], fn ->
+        merge([@stepper, @stepper_sizes[assigns.size]])
+      end)
+      |> assign_derived(:field_height, [:size], fn -> @stepper_sizes[assigns.size] end)
+      |> assign_derived(:addon_class, [:size], fn -> @addon_sizes[assigns.size] end)
+      |> assign_derived(:shown, [:display], fn -> String.length(assigns.display) end)
 
     ~H"""
     <div

@@ -72,7 +72,7 @@ defmodule LineaUI.Components.AutocompleteTest do
     assert "plugin-clear_button" in root
     assert "is-invalid" in root
     assert "disabled" in root
-    assert "[&_.ts-control]:h-8" in root
+    assert "[&_.ts-control]:h-7" in root
     assert [_] = find(html, "button[type=button][data-clear]") |> Enum.to_list()
     assert attr_of(html, "[data-clear]", "aria-label") == ["Clear"]
     assert [_] = find(html, "[data-clear] svg[aria-hidden=true]") |> Enum.to_list()
@@ -134,5 +134,39 @@ defmodule LineaUI.Components.AutocompleteTest do
     assert [_, _] = find(html, ".option [data-hint]") |> Enum.to_list()
     assert [_] = find(html, ".option[data-disabled] [data-hint]") |> Enum.to_list()
     assert [_, _, _] = find(html, ".option [data-text]") |> Enum.to_list()
+  end
+
+  test "create adds the hidden create row with its template and event" do
+    html =
+      render(~H"""
+      <.autocomplete
+        id="f"
+        name="f"
+        options={[]}
+        create="Cadastrar “%{query}”"
+        on_create="new_supplier"
+      />
+      """)
+
+    row = find(html, "#f-create [data-create-row]")
+    assert LazyHTML.attribute(row, "data-template") == ["Cadastrar “%{query}”"]
+    assert LazyHTML.attribute(row, "data-on-create") == ["new_supplier"]
+    assert LazyHTML.attribute(find(html, "#f-create"), "hidden") == [""]
+
+    assert find(render(~H|<.autocomplete id="g" name="g" options={[]} />|), "[data-create-row]")
+           |> Enum.to_list() == []
+  end
+
+  test "the label is the medium-weight caption and the prefix a plain icon" do
+    html =
+      render(~H"""
+      <.autocomplete id="p" name="p" label="Fornecedor" options={[]}>
+        <:prefix><svg id="glass" /></:prefix>
+      </.autocomplete>
+      """)
+
+    assert "font-medium" in classes(html, "label > span")
+    assert "ac-prefix" in classes(html, ".ac-prefix")
+    assert [_] = find(html, ".ac-prefix #glass") |> Enum.to_list()
   end
 end

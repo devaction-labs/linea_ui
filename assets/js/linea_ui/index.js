@@ -6,10 +6,10 @@
  *
  * Every hook is registered as `LineaUI.<Name>`, the value the components put in `phx-hook`.
  */
+import AiComposer from "./hooks/ai_composer.js"
 import Autocomplete from "./hooks/autocomplete.js"
 import BulkBar from "./hooks/bulk_bar.js"
 import Calendar from "./hooks/calendar.js"
-import CardTable from "./hooks/card_table.js"
 import Carousel from "./hooks/carousel.js"
 import Chart from "./hooks/chart.js"
 import Clipboard from "./hooks/clipboard.js"
@@ -19,9 +19,11 @@ import DataTable from "./hooks/data_table.js"
 import DatePicker from "./hooks/date_picker.js"
 import DatetimePicker from "./hooks/datetime_picker.js"
 import Dialog from "./hooks/dialog.js"
+import ActionMenu from "./hooks/action_menu.js"
 import Dropdown from "./hooks/dropdown.js"
 import Fab from "./hooks/fab.js"
 import InputMask from "./hooks/input_mask.js"
+import Layout from "./hooks/layout.js"
 import NumberInput from "./hooks/number_input.js"
 import Otp from "./hooks/otp.js"
 import PhoneInput from "./hooks/phone_input.js"
@@ -46,10 +48,10 @@ import Treeview from "./hooks/treeview.js"
 import Upload from "./hooks/upload.js"
 
 export const Hooks = {
+  ...AiComposer,
   ...Autocomplete,
   ...BulkBar,
   ...Calendar,
-  ...CardTable,
   ...Carousel,
   ...Chart,
   ...Clipboard,
@@ -59,9 +61,11 @@ export const Hooks = {
   ...DatePicker,
   ...DatetimePicker,
   ...Dialog,
+  ...ActionMenu,
   ...Dropdown,
   ...Fab,
   ...InputMask,
+  ...Layout,
   ...NumberInput,
   ...Otp,
   ...PhoneInput,

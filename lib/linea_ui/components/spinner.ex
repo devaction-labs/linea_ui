@@ -7,6 +7,10 @@ defmodule LineaUI.Components.Spinner do
       <.spinner color="primary" variant="soft" elastic />
       <.spinner color="success" variant="grow" size="lg" />
       <.spinner color="error" variant="svg" />
+      <.spinner variant="canvas" size="md" />
+
+  The `canvas` variant is the design canvas's `sg-spin`: a thin line-colored ring with an accent arc, in
+  14, 18, 20, 24 or 32px (`size` `xs`, `sm`, `md`, `lg`, `xl`).
 
   The ring turns in 0.75s (the elastic one keeps its own pace) and the growing dot pulses in 1s.
 
@@ -108,11 +112,17 @@ defmodule LineaUI.Components.Spinner do
 
   attr(:variant, :string,
     default: "border",
-    values: ~w(border soft grow svg),
-    doc: "`border` is the ring with a gap, `soft` the tinted ring, `grow` the pulsing dot."
+    values: ~w(border soft grow svg canvas),
+    doc:
+      "`border` is the ring with a gap, `soft` the tinted ring, `grow` the pulsing dot, `canvas` the canvas `sg-spin` (accent arc on a line-colored ring; `current` and `white` tint it with the text color or white, `success` `warning` `error` `info` with the canvas tones)."
   )
 
-  attr(:size, :string, default: "sm", values: ~w(xs sm md lg xl))
+  attr(:size, :string,
+    default: "sm",
+    values: ~w(xs sm md lg xl),
+    doc: "With `variant=\"canvas\"`: 14, 18, 20, 24 and 32px."
+  )
+
   attr(:elastic, :boolean, default: false, doc: "LineOne's elastic timing function.")
   attr(:label, :string, default: "Loading")
   attr(:class, :any, default: nil)
@@ -129,6 +139,17 @@ defmodule LineaUI.Components.Spinner do
       <span class={["absolute inline-block h-full w-full rounded-full opacity-75", dot(@color)]}></span>
       <span class={["absolute inline-block h-full w-full rounded-full opacity-75", dot(@color)]}></span>
     </div>
+    """
+  end
+
+  def spinner(%{variant: "canvas"} = assigns) do
+    ~H"""
+    <span
+      role="status"
+      aria-label={@label}
+      class={merge(["spinner sg-spin animate-spin", @size, canvas_tone(@color), @class])}
+      {@rest}
+    ></span>
     """
   end
 
@@ -188,6 +209,13 @@ defmodule LineaUI.Components.Spinner do
     </div>
     """
   end
+
+  defp canvas_tone(color) when color in ~w(current white), do: color
+  defp canvas_tone("success"), do: "pos"
+  defp canvas_tone("warning"), do: "warn"
+  defp canvas_tone("error"), do: "neg"
+  defp canvas_tone("info"), do: "info"
+  defp canvas_tone(_color), do: nil
 
   defp size(size), do: @sizes[size]
   defp ring_width(size), do: @ring_widths[size]

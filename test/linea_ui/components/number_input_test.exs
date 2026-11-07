@@ -110,11 +110,11 @@ defmodule LineaUI.Components.NumberInputTest do
   end
 
   test "the field is as tall as its steppers, so the group has one height" do
-    for {size, height} <- [{"sm", "h-8"}, {"md", "h-10"}, {"lg", "h-12"}] do
+    for {size, height} <- [{"sm", "h-7"}, {"md", "h-10"}, {"lg", "h-11"}] do
       html =
         Phoenix.LiveViewTest.render_component(
           &number_input/1,
-          %{id: "n", name: "n", size: size, steppers: true}
+          %{id: "n", name: "n", size: size, steppers: true, stepper_style: "joined"}
         )
 
       assert height in classes(html, "#n")
@@ -129,6 +129,7 @@ defmodule LineaUI.Components.NumberInputTest do
         id="q"
         name="qty"
         steppers
+        stepper_style="joined"
         prefix="R$"
         suffix="un"
         size="sm"
@@ -140,8 +141,8 @@ defmodule LineaUI.Components.NumberInputTest do
 
     assert attr_of(html, "button[data-step-by]", "data-step-by") == ["down", "up"]
     assert attr_of(html, "button[data-step-by=up]", "aria-label") == ["Increase"]
-    assert "h-8" in classes(html, "button[data-step-by=up]")
-    assert html |> find("span.bg-slate-150") |> LazyHTML.text() =~ "R$"
+    assert "h-7" in classes(html, "button[data-step-by=up]")
+    assert html |> find("span.bg-slate-100") |> LazyHTML.text() =~ "R$"
     assert html |> find("span.pointer-events-none") |> LazyHTML.text() =~ "un"
     assert attr_of(html, "input[name=qty]", "phx-debounce") == ["200"]
     assert attr_of(html, "#q", "phx-debounce") == []
@@ -164,7 +165,11 @@ defmodule LineaUI.Components.NumberInputTest do
   end
 
   test "the suffix stays at the edge when the value is not centered or has no steppers" do
-    html = render(~H|<.number_input id="q" name="qty" steppers suffix="un" value={12} />|)
+    html =
+      render(
+        ~H|<.number_input id="q" name="qty" steppers stepper_style="joined" suffix="un" value={12} />|
+      )
+
     assert "end-3" in classes(html, "span[data-suffix]")
     assert "pe-9" in classes(html, "input[data-display]")
     refute attr_of(html, "[data-field]", "style") |> Enum.join() =~ "--nlen"
@@ -181,12 +186,20 @@ defmodule LineaUI.Components.NumberInputTest do
   test "label, help, errors, disabled and the generated id" do
     html =
       render(~H"""
-      <.number_input name="a" label="Amount" help="In reais" errors={["is invalid"]} disabled steppers />
+      <.number_input
+        name="a"
+        label="Amount"
+        help="In reais"
+        errors={["is invalid"]}
+        disabled
+        steppers
+        stepper_style="joined"
+      />
       """)
 
     assert html |> find("label") |> LazyHTML.text() =~ "Amount"
     assert html |> find(".text-error") |> LazyHTML.text() =~ "is invalid"
-    assert "border-error" in classes(html, "#a")
+    assert Enum.any?(classes(html, "#a"), &(&1 =~ ~r/^shadow-.*--color-error/))
     assert attr_of(html, "#a", "disabled") == [""]
     assert attr_of(html, "input[name=a]", "disabled") == [""]
     assert attr_of(html, "button[data-step-by=up]", "disabled") == [""]
@@ -195,5 +208,20 @@ defmodule LineaUI.Components.NumberInputTest do
     assert [id] = attr_of(html, "input[data-display]", "id")
     assert id =~ "number-"
     assert "text-center" in classes(html, "input[data-display]")
+  end
+
+  test "the canvas steppers: inset by default, round on request" do
+    html = render(~H|<.number_input id="i" name="i" steppers value={12} />|)
+    assert "inset" in classes(html, ".lc-stepper")
+    assert [_, _] = find(html, ".lc-stepper button.lc-step") |> Enum.to_list()
+    assert "form-input" in classes(html, "#i")
+
+    html = render(~H|<.number_input id="r" name="r" steppers stepper_style="round" value={3} />|)
+    assert "round" in classes(html, ".lc-stepper")
+
+    html =
+      render(~H|<.number_input id="u" name="u" steppers suffix="un" align="center" value={24} />|)
+
+    assert LazyHTML.text(find(html, "[data-suffix]")) =~ "un"
   end
 end

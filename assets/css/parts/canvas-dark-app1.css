@@ -1,0 +1,128 @@
+/* Dark-mode fixes found comparing the Signetum app1 screens with the canvas dark boards. */
+
+/* The framed menu (`rail_*`): LineOne's navy picks drift from the canvas dark tokens (`sg-nav-*`):
+   the current page sits on `--raised` with the 1px `--line` ring, links in `--fg`, icons muted. */
+:is(.dark .sg:not([data-theme="light"]), .sg[data-theme="dark"]) .linea-rail {
+  --rail-pill: var(--raised);
+  --rail-panel: var(--raised);
+  --rail-shadow: 0 0 0 1px var(--line);
+}
+:is(.dark .sg:not([data-theme="light"]), .sg[data-theme="dark"]) .rail-item {
+  color: var(--fg);
+  font-weight: 450;
+}
+:is(.dark .sg:not([data-theme="light"]), .sg[data-theme="dark"]) .rail-item:hover {
+  background: var(--hover);
+  color: var(--ink);
+}
+:is(.dark .sg:not([data-theme="light"]), .sg[data-theme="dark"]) :is(.rail-item.is-active, .rail-module > .rail-item[aria-current="true"]) {
+  background: var(--raised);
+  color: var(--ink);
+  font-weight: 550;
+}
+:is(.dark .sg:not([data-theme="light"]), .sg[data-theme="dark"]) .rail-item:not(.is-active) .rail-icon {
+  color: var(--muted);
+}
+:is(.dark .sg:not([data-theme="light"]), .sg[data-theme="dark"]) .linea-rail:not([data-collapsed="true"]) .rail-badge {
+  background: var(--sunken);
+  box-shadow: inset 0 0 0 1px var(--line);
+  color: var(--muted);
+}
+:is(.dark .sg:not([data-theme="light"]), .sg[data-theme="dark"]) .rail-heading {
+  color: var(--faint);
+}
+/* The collapse button of the menu header: faint, 16px glyph. */
+:is(.dark .sg:not([data-theme="light"]), .sg[data-theme="dark"]) [data-rail-toggle] {
+  color: var(--faint);
+}
+:is(.dark .sg:not([data-theme="light"]), .sg[data-theme="dark"]) [data-rail-toggle] svg {
+  width: 16px;
+  height: 16px;
+  stroke-width: 1.7;
+}
+
+/* The breadcrumb pill of the page header: muted trail, line-strong separators, the current page in the ink. */
+:is(.dark .sg:not([data-theme="light"]), .sg[data-theme="dark"]) nav[aria-label="Breadcrumb"] {
+  color: var(--muted);
+  border-color: var(--line);
+}
+:is(.dark .sg:not([data-theme="light"]), .sg[data-theme="dark"]) nav[aria-label="Breadcrumb"] > span[aria-hidden="true"] {
+  color: var(--line-strong);
+}
+
+/* The pages under a module of the menu (`sg-nav-sub`): muted, the current one in the ink on `--hover`;
+   the list sits 2px lower than the flow puts it. */
+.linea-rail .rail-sub {
+  margin-top: 0.25rem;
+}
+:is(.dark .sg:not([data-theme="light"]), .sg[data-theme="dark"]) .rail-sub > a {
+  color: var(--muted);
+}
+:is(.dark .sg:not([data-theme="light"]), .sg[data-theme="dark"]) .rail-sub > a:hover {
+  color: var(--ink);
+}
+:is(.dark .sg:not([data-theme="light"]), .sg[data-theme="dark"]) .rail-sub > a[aria-current="page"] {
+  background: var(--hover);
+  color: var(--ink);
+}
+:is(.dark .sg:not([data-theme="light"]), .sg[data-theme="dark"]) .rail-sub {
+  border-left-color: var(--line);
+}
+
+/* The collapsed menu of the canvas (CompShellRecolhido): 72px wide, 44px items 6px apart. */
+@media (min-width: 768px) {
+  .linea-rail[data-collapsed="true"] {
+    width: 72px;
+    padding-inline: 14px;
+  }
+  .linea-rail[data-collapsed="true"] .rail-nav {
+    gap: 6px;
+  }
+}
+
+/* The command palette, canvas variant: an item's `sub` sits at the right of its row, faint (the canvas
+   draws "R$ 3.120,50" and "Feira de Santana" there), not under the label. */
+.palette-canvas [data-item] > .min-w-0 {
+  display: contents;
+}
+.palette-canvas [data-item] > .min-w-0 > span:nth-child(2) {
+  margin-left: auto;
+  padding-left: 12px;
+  font-size: 12.5px;
+  white-space: nowrap;
+  color: var(--faint);
+}
+/* ...and the assistant row carries a plain muted sparkle, not the gradient tile of the default look. */
+.palette-canvas .bg-gradient-to-br {
+  background: none;
+  color: var(--muted);
+  width: 16px;
+  height: 16px;
+}
+
+/* The collapsed menu of the canvas, as drawn: no rule under the logo, no red badge dots, and the person's
+   avatar at the foot. Scoped to the canvas (`.sg`), so a menu outside it keeps the kit's default look. */
+.linea-rail .rail-mini-user {
+  display: none;
+}
+@media (min-width: 768px) {
+  .sg .linea-rail[data-collapsed="true"] .rail-bar {
+    border-bottom-color: transparent;
+  }
+  .sg .linea-rail[data-collapsed="true"] .rail-badge {
+    display: none;
+  }
+  .sg .linea-rail[data-collapsed="true"] .rail-mini-user {
+    display: grid;
+    place-items: center;
+    margin-top: 2px;
+  }
+}
+@media (min-width: 768px) {
+  .sg .linea-rail[data-collapsed="true"] {
+    padding-bottom: 18px;
+  }
+  .sg .linea-rail[data-collapsed="true"] .rail-nav {
+    padding-top: 18px;
+  }
+}

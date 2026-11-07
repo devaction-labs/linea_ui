@@ -17,8 +17,13 @@ defmodule LineaUI.Components.Segmented do
 
       <.segmented field={@form[:regime]} options={["Simples Nacional", "Regime normal"]} />
 
-  Options are strings, `{label, value}` tuples or maps with `:label`, `:value`, and optionally `:count` (a small
-  number after the label) and `:disabled`.
+  Options are strings, `{label, value}` tuples or maps with `:label`, `:value`, and optionally `:icon` (a `huge-*`
+  icon before the label), `:count` (a faint mono number after the label) and `:disabled`.
+
+      <.segmented id="view" value="board" options={[
+        %{label: "Quadro", value: "board", icon: "huge-kanban"},
+        %{label: "Lista", value: "list", icon: "huge-list-view"}
+      ]} />
 
   It is a `role="group"` of buttons with `aria-pressed`. The choice is made in the browser, without a round trip;
   a new `value` from the server wins, and a patch that does not change it leaves the person's choice alone. Arrow
@@ -34,6 +39,8 @@ defmodule LineaUI.Components.Segmented do
 
   use LineaUI.Component
 
+  import LineaUI.Components.Icon, only: [icon: 1]
+
   alias LineaUI.Components.Control
   alias LineaUI.Components.Form
   alias LineaUI.Components.Overlay
@@ -41,7 +48,7 @@ defmodule LineaUI.Components.Segmented do
 
   @sizes %{
     "sm" => "h-6 px-2.5 text-xs",
-    "md" => "h-7.5 px-3 text-xs-plus",
+    "md" => "h-[30px] px-3.5 text-[13.5px]",
     "lg" => "h-9.5 px-4.5 text-sm"
   }
 
@@ -94,12 +101,23 @@ defmodule LineaUI.Components.Segmented do
   def segmented(assigns) do
     assigns
     |> Control.assign_control()
-    |> then(&assign(&1, :id, &1.id || &1.name || gen_id("segmented")))
-    |> then(&assign(&1, :value, value(&1.value)))
-    |> then(&assign(&1, :segments, segments(&1)))
-    |> then(&assign(&1, :on_change_js, Overlay.callback(&1.on_change, &1.id, &1.target)))
+    |> assign_id()
+    |> then(&assign_derived(&1, :value, [:value], fn -> value(&1.value) end))
+    |> then(&assign_derived(&1, :segments, [:options, :id], fn -> segments(&1) end))
+    |> then(
+      &assign_derived(&1, :on_change_js, [:on_change, :id, :target], fn ->
+        Overlay.callback(&1.on_change, &1.id, &1.target)
+      end)
+    )
     |> render_segmented()
   end
+
+  # Without id and name, the id is derived from the label (stable across renders).
+  defp assign_id(%{id: nil, name: nil} = assigns),
+    do: assign(assigns, :id, stable_id("segmented", assigns))
+
+  defp assign_id(assigns),
+    do: assign_derived(assigns, :id, [:id, :name], fn -> assigns.id || assigns.name end)
 
   defp render_segmented(assigns) do
     ~H"""
@@ -110,7 +128,9 @@ defmodule LineaUI.Components.Segmented do
         aria-labelledby={@label && "#{@id}-label"}
         phx-hook="LineaUI.Segmented"
         phx-target={@target}
-        class={merge([track(@full), @label && "mt-1.5", @class])}
+        class={
+          merge(["sg-seg", @size == "sm" && "sm", @full && "flex w-full", @label && "mt-1.5", @class])
+        }
         data-value={@value}
         data-on-change={@on_change_js}
         {@rest}
@@ -126,26 +146,18 @@ defmodule LineaUI.Components.Segmented do
           data-value-input
         />
         <button
-          :for={segment <- @segments}
+          :for={{segment, pressed} <- pressed(@segments, @value)}
           type="button"
           id={segment.id}
-          aria-pressed={bool(segment.value == @value)}
+          aria-pressed={bool(pressed)}
           disabled={@disabled || segment.disabled}
-          class={
-            merge([
-              "group/segment inline-flex items-center justify-center whitespace-nowrap rounded-md font-medium text-slate-500 outline-hidden transition-colors duration-200 hover:text-slate-700 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-primary/50 disabled:pointer-events-none disabled:opacity-60 aria-pressed:bg-white aria-pressed:text-slate-800 aria-pressed:shadow-soft dark:text-navy-200 dark:hover:text-navy-50 dark:focus-visible:outline-accent/50 dark:aria-pressed:bg-navy-500 dark:aria-pressed:text-navy-50 dark:aria-pressed:shadow-soft-dark",
-              size_class(@size),
-              @full && "flex-1"
-            ])
-          }
+          class={merge([@full && "flex-1 justify-center"])}
           phx-mounted={JS.ignore_attributes(["aria-pressed", "tabindex"])}
           data-value={segment.value}
         >
+          <.icon :if={segment.icon} name={segment.icon} class="size-4 shrink-0" />
           {segment.label}
-          <span
-            :if={segment.count != nil}
-            class="ml-1.5 font-inter text-tiny-plus font-medium text-slate-400 group-aria-pressed/segment:text-primary dark:text-navy-300 dark:group-aria-pressed/segment:text-accent-light"
-          >
+          <span :if={segment.count != nil} class="font-mono font-normal text-(--faint)">
             {segment.count}
           </span>
         </button>
@@ -165,13 +177,21 @@ defmodule LineaUI.Components.Segmented do
         label: option.label,
         value: option.value,
         disabled: option.disabled,
-        count: count(option.data)
+        count: count(option.data),
+        icon: icon_name(option.data)
       }
     end)
   end
 
+  # Each segment with whether it is the chosen one, as comprehension variables: a new value
+  # sends the two segments that changed.
+  defp pressed(segments, value), do: Enum.map(segments, &{&1, &1.value == value})
+
   defp count(%{count: count}), do: count
   defp count(_data), do: nil
+
+  defp icon_name(%{icon: icon}) when is_binary(icon), do: icon
+  defp icon_name(_data), do: nil
 
   defp value(nil), do: ""
   defp value(value), do: to_string(value)

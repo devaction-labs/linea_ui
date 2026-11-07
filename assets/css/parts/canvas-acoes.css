@@ -1,0 +1,61 @@
+/* Canvas look for the acoes components (see the Vitrine canvas). */
+
+/* ---------- Button: disabled and loading ---------- */
+:is(.sg-btn, .sg-ib):is(:disabled, [aria-disabled="true"]):not([aria-busy="true"]){opacity:.45;cursor:not-allowed}
+:is(.sg-btn, .sg-ib)[aria-busy="true"]{cursor:progress}
+
+/* ---------- Spinner (variant="canvas"): sg-spin sizes and tones ---------- */
+.sg-spin.spinner{display:inline-block;flex:none}
+.sg-spin.xs{width:14px;height:14px}
+.sg-spin.sm{width:18px;height:18px}
+.sg-spin.md{width:20px;height:20px}
+.sg-spin.lg{width:24px;height:24px}
+.sg-spin.xl{width:32px;height:32px}
+.sg-spin.current{border-color:color-mix(in srgb,currentColor 30%,transparent);border-top-color:currentColor}
+.sg-spin.white{border-color:rgb(255 255 255/.3);border-top-color:#fff}
+.sg-spin.pos{border-top-color:var(--pos)}
+.sg-spin.warn{border-top-color:var(--warn)}
+.sg-spin.neg{border-top-color:var(--neg)}
+.sg-spin.info{border-top-color:var(--info)}
+
+/* ---------- Alert (variant="canvas"): sg-alert body, actions and the tones canvas.css lacks ---------- */
+.sg-alert.info{background:var(--info-soft);box-shadow:none;color:var(--info)}
+.sg-alert.pos{background:var(--pos-soft);box-shadow:none;color:var(--pos)}
+.sg-alert > svg, .sg-alert > .i, .sg-alert > [class*="huge-"]{flex:none;width:16px;height:16px}
+.sg-alert-body{flex:1;min-width:0}
+.sg-alert-actions{display:flex;align-items:center;gap:8px;margin-top:10px}
+
+/* ---------- Progress: the sg-meter tones ---------- */
+.sg-meter.pos i{background:var(--pos)}
+.sg-meter.warn i{background:var(--warn)}
+.sg-meter.neg i{background:var(--neg)}
+.sg-meter.info i{background:var(--info)}
+
+/* ---------- Skeleton (variant="canvas"): sg-skel shapes ---------- */
+.sg-skel.circle,.sg-skel.pill{border-radius:999px}
+.sg-skel.square{border-radius:0}
+.sg-skel.lg{border-radius:12px}
+
+/* ---------- Empty state (variant="canvas" and "plain") ---------- */
+.sg-empty .art.pos{color:var(--pos)}
+.sg-empty-title{margin:0;font-size:16px;font-weight:700;line-height:20px;color:var(--ink)}
+.sg-empty-text{margin:0;max-width:320px;font-size:13.5px;color:var(--muted)}
+.sg-empty-actions{display:flex;align-items:center;gap:8px}
+.sg-empty-line{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--faint)}
+.sg-empty-line-icon{display:inline-flex;flex:none}
+
+/* ---------- Fab (variant="canvas"): the solid button, the dial square and its menu ---------- */
+.sg-fab{position:fixed;z-index:var(--linea-z-fab, 90);border-radius:18px}
+.sg-fab .huge-add-01,.sg-fab > svg{flex:none}
+.sg-fab-dial .sg-m-fab{position:static;border:0;padding:0;margin:0;cursor:pointer;font:inherit}
+.sg-fab-dial .sg-menu{min-width:200px}
+.sg-menu > .sg-menu-item{all:unset;box-sizing:border-box;display:flex;align-items:center;gap:10px;height:34px;padding:0 10px;border-radius:9px;font-size:13.5px;color:var(--fg);cursor:pointer}
+.sg-menu > .sg-menu-item:is(:hover, :focus-visible){background:var(--hover);color:var(--ink)}
+.sg-menu > .sg-menu-item:is(:disabled, [aria-disabled="true"]){opacity:.45;cursor:not-allowed}
+.sg-menu-ic{display:inline-flex;flex:none;color:var(--muted)}
+
+/* ---------- Toast card (toast_card/1): the sg-toast parts ---------- */
+.sg-toast .sg-toast-ic{width:30px;height:30px}
+.sg-toast-body{display:flex;flex-direction:column;flex:1;min-width:0}
+.sg-toast-desc{font-size:12.5px;color:var(--faint)}
+.sg-toast > .sg-btn,.sg-toast > .sg-ib{flex:none}

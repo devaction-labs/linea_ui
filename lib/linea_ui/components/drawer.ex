@@ -20,7 +20,7 @@ defmodule LineaUI.Components.Drawer do
         </:footer>
       </.drawer>
 
-  `size` sets the sheet's width (`sm` 400px, `md` 560px, `lg` 760px, `xl` 1080px), never wider
+  `size` sets the sheet's width (`sm` 400px, `md` 520px, `lg` 640px, `xl` 1080px), never wider
   than the screen, so it is full width on a phone. Buttons in the header go in `:actions`, a back
   arrow (a sheet opened from another) in `:back`.
 
@@ -68,16 +68,16 @@ defmodule LineaUI.Components.Drawer do
   @sizes %{
     nil => "w-72",
     "sm" => "w-full max-w-[400px]",
-    "md" => "w-full max-w-[560px]",
-    "lg" => "w-full max-w-[760px]",
+    "md" => "w-full max-w-[520px]",
+    "lg" => "w-full max-w-[640px]",
     "xl" => "w-full max-w-[1080px]"
   }
 
   @float_sizes %{
     nil => "w-72 max-w-[calc(100%-1.5rem)]",
     "sm" => "w-full max-w-[min(400px,calc(100%-1.5rem))]",
-    "md" => "w-full max-w-[min(560px,calc(100%-1.5rem))]",
-    "lg" => "w-full max-w-[min(760px,calc(100%-1.5rem))]",
+    "md" => "w-full max-w-[min(520px,calc(100%-1.5rem))]",
+    "lg" => "w-full max-w-[min(640px,calc(100%-1.5rem))]",
     "xl" => "w-full max-w-[min(1080px,calc(100%-1.5rem))]"
   }
 
@@ -124,7 +124,7 @@ defmodule LineaUI.Components.Drawer do
     default: nil,
     values: [nil, "sm", "md", "lg", "xl"],
     doc:
-      "The sheet's width: `sm` 400px, `md` 560px, `lg` 760px, `xl` 1080px, full width on a phone. `nil` is LineOne's `w-72` frame."
+      "The sheet's width: `sm` 400px, `md` 520px, `lg` 640px, `xl` 1080px, full width on a phone. `nil` is LineOne's `w-72` frame."
 
   attr :variant, :string,
     default: nil,
@@ -216,6 +216,7 @@ defmodule LineaUI.Components.Drawer do
       aria-labelledby={@headed && "#{@id}-title"}
       phx-hook="LineaUI.Dialog"
       phx-mounted={JS.ignore_attributes(["data-state", "aria-hidden", "style"])}
+      phx-remove={JS.add_class("drawer-leaving", to: "##{@id}") |> JS.hide(to: "##{@id}", time: 220)}
       data-state="closed"
       data-open={bool(@open)}
       data-kind="drawer"
@@ -230,7 +231,7 @@ defmodule LineaUI.Components.Drawer do
     >
       <div
         :if={@overlay}
-        class="drawer-overlay fixed inset-0 hidden bg-slate-900/45"
+        class="drawer-overlay fixed inset-0 hidden bg-[rgb(23_23_26/.28)] backdrop-blur-[2px]"
         phx-mounted={JS.ignore_attributes(["class"])}
         data-backdrop
       >
@@ -363,7 +364,7 @@ defmodule LineaUI.Components.Drawer do
     <header
       class={
         merge([
-          "flex shrink-0 items-start gap-3 border-b border-slate-150 px-4 pt-5 pb-4 dark:border-navy-700 sm:px-5.5",
+          "flex shrink-0 items-start gap-3 px-4 pt-[22px] pb-3.5 sm:px-6",
           @class
         ])
       }
@@ -376,24 +377,24 @@ defmodule LineaUI.Components.Drawer do
         <h2
           :if={@content == [] and @title}
           id={@id}
-          class="text-lg/[26px] font-medium text-slate-800 dark:text-navy-50"
+          class="text-[19px]/6 font-semibold tracking-[-0.02em] text-slate-900 dark:text-navy-50"
         >
           {@title}
         </h2>
         <p
           :if={@content == [] and @description}
-          class="mt-0.5 text-[13px]/[18px] text-slate-400 dark:text-navy-300"
+          class="mt-0.5 text-[13px]/[18px] text-slate-500 dark:text-navy-300"
         >
           {@description}
         </p>
       </div>
-      <div :if={@actions != []} class="flex shrink-0 flex-wrap items-center gap-2">
+      <div :if={@actions != []} class="flex shrink-0 flex-wrap items-center gap-1.5">
         {render_slot(@actions)}
       </div>
       <button
         :if={@close_button}
         type="button"
-        class="btn -mr-1.5 size-8 shrink-0 rounded-full p-0 text-slate-500 hover:bg-slate-300/20 hover:text-slate-800 focus:bg-slate-300/20 active:bg-slate-300/25 dark:text-navy-200 dark:hover:bg-navy-300/20 dark:hover:text-navy-50 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25"
+        class="sg-ib sm shrink-0"
         aria-label={@close_label}
         phx-click={@close_js}
         data-drawer-close
@@ -419,7 +420,7 @@ defmodule LineaUI.Components.Drawer do
     <div
       class={
         merge([
-          "scrollbar-sm flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto px-4 py-5 sm:px-5.5",
+          "scrollbar-sm flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto px-4 pt-1 pb-5 sm:px-6",
           @class
         ])
       }
@@ -449,7 +450,7 @@ defmodule LineaUI.Components.Drawer do
     <footer
       class={
         merge([
-          "flex shrink-0 items-center justify-end gap-2 border-t border-slate-150 bg-slate-50 px-4 py-3.5 dark:border-navy-700 dark:bg-navy-750 sm:px-5.5",
+          "flex shrink-0 items-center justify-end gap-2 border-t border-slate-150 bg-white px-4 py-3.5 dark:border-navy-700 dark:bg-navy-750 sm:px-6",
           @class
         ])
       }

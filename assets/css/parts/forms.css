@@ -71,11 +71,11 @@
 
 input.form-range::-webkit-slider-thumb {
   background: #fff;
-  box-shadow: 0 0 0 2px currentColor, 0 2px 6px rgb(15 23 42 / 0.2);
+  box-shadow: 0 0 0 2px currentColor, 0 2px 6px rgb(9 9 11 / 0.2);
 }
 input.form-range::-moz-range-thumb {
   background: #fff;
-  box-shadow: 0 0 0 2px currentColor, 0 2px 6px rgb(15 23 42 / 0.2);
+  box-shadow: 0 0 0 2px currentColor, 0 2px 6px rgb(9 9 11 / 0.2);
 }
 input.form-range:focus-visible::-webkit-slider-thumb {
   box-shadow: 0 0 0 2px currentColor, 0 0 0 6px color-mix(in srgb, currentColor 25%, transparent);
@@ -122,7 +122,8 @@ input.form-range:focus-visible::-moz-range-thumb {
   left: 0;
   background: var(--color-slate-150);
 }
-.dark .linea-range-pair > .linea-range-track {
+.dark .linea-range-pair > .linea-range-track:not([data-theme="light"] *),
+[data-theme="dark"] .linea-range-pair > .linea-range-track{
   background: var(--color-navy-500);
 }
 .linea-range-pair > .linea-range-fill {

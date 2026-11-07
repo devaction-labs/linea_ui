@@ -1,0 +1,18 @@
+/* Canvas rules for the Signetum fin1 screens (canvas "Signetum — Landing page"). */
+
+/* The pager summary of a table card is 13px, as the canvas pager (the pagination footer draws 12.5px). */
+.sg-pager .text-\[12\.5px\] { font-size: 13px; }
+
+/* Choice cards of the finance sheets: the canvas lays the title and the help on the body's 1.5 line height. */
+.fin-choices .lu-rcard-title { line-height: 21px; }
+.fin-choices .lu-rcard-desc { line-height: 18.75px; }
+
+/* The share and close buttons of a finance sheet sit 6px apart, as the canvas header. */
+.fin-sheet [data-drawer-header] { gap: 6px; }
+
+/* A choice card with a badge: the badge goes to the far end of the title line. */
+.fin-choices .lu-rcard-title { display: flex; flex: 1; align-items: center; gap: 8px; }
+
+/* The extrato chart keeps its x labels in the card's padding, under the svg. */
+#extrato-balance svg { overflow: visible; }
+#analise-flow svg { overflow: visible; }

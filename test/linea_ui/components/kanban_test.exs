@@ -48,9 +48,10 @@ defmodule LineaUI.Components.KanbanTest do
     assert attr_of(html, "section#col-open", "data-disabled") == []
     assert attr_of(html, "section > article", "data-id") == ["1", "2"]
     assert "w-[272px]" in classes(html, "section")
-    assert "rounded-[14px]" in classes(html, "section")
-    assert "dark:bg-navy-900" in classes(html, "section")
+    assert "rounded-[18px]" in classes(html, "section")
+    assert "bg-[var(--sunken)]" in classes(html, "section")
     assert LazyHTML.text(find(html, "section > div")) =~ "2"
+    assert LazyHTML.text(find(html, "section > div > span.sg-nav-n")) =~ "2"
   end
 
   test "the list and the card item default to the id" do
@@ -138,6 +139,19 @@ defmodule LineaUI.Components.KanbanTest do
     assert find(empty, "div[data-empty] svg[viewBox]") |> Enum.count() == 1
   end
 
+  test "an empty with no title is the compact dashed hint" do
+    html =
+      render(~H"""
+      <.kanban_column id="c" label="Ganho" count={0}>
+        <:empty>Arraste para cá</:empty>
+      </.kanban_column>
+      """)
+
+    assert ["sg-drop", "sg-kb-empty"] == classes(html, "div[data-empty]")
+    assert LazyHTML.text(find(html, "div[data-empty]")) =~ "Arraste para cá"
+    assert find(html, "div[data-empty] svg") |> Enum.count() == 0
+  end
+
   test "the column and the lost aside tint when a card is over them and draw no ring or outline" do
     html =
       render(~H"""
@@ -172,7 +186,7 @@ defmodule LineaUI.Components.KanbanTest do
 
     assert attr_of(html, "article#c1", "draggable") == []
     assert attr_of(html, "article#c1", "data-id") == ["2462"]
-    assert "rounded-xl" in classes(html, "article")
+    assert "rounded-[14px]" in classes(html, "article")
     assert "cursor-grab" in classes(html, "article")
     assert "data-[dragging]:shadow-none" in classes(html, "article")
     assert "extra" in classes(html, "article")

@@ -27,22 +27,28 @@ defmodule LineaUI.Components.Textarea do
 
   @variants %{
     "outlined" =>
-      "form-textarea w-full rounded-lg border border-slate-300 bg-transparent p-2.5 placeholder:text-slate-400/70 ring-primary/25 hover:border-slate-400 focus:border-primary focus:ring-3 disabled:pointer-events-none disabled:select-none disabled:bg-slate-150 disabled:opacity-60 dark:border-navy-450 dark:ring-accent/30 dark:hover:border-navy-400 dark:focus:border-accent dark:disabled:bg-navy-600",
+      "form-textarea w-full rounded-[11px] border-0 bg-white px-3 py-2.5 text-[14px] leading-[22px] text-slate-950 shadow-[inset_0_0_0_1px_var(--color-slate-300),0_1px_2px_rgb(23_23_26/.05)] placeholder:text-slate-400 hover:shadow-[inset_0_0_0_1px_var(--color-slate-400),0_1px_2px_rgb(23_23_26/.05)] focus:shadow-[inset_0_0_0_1px_var(--color-primary),0_0_0_4px_color-mix(in_oklab,var(--color-primary)_14%,transparent)] focus:ring-0 disabled:pointer-events-none disabled:select-none disabled:bg-zinc-100 dark:bg-navy-750 dark:text-navy-50 dark:shadow-[inset_0_0_0_1px_var(--color-navy-450)] dark:hover:shadow-[inset_0_0_0_1px_var(--color-navy-400)] dark:focus:shadow-[inset_0_0_0_1px_var(--color-accent),0_0_0_4px_color-mix(in_oklab,var(--color-accent)_16%,transparent)] dark:disabled:bg-navy-600",
     "filled" =>
-      "form-textarea w-full rounded-lg bg-slate-150 p-2.5 placeholder:text-slate-400 disabled:pointer-events-none disabled:select-none disabled:opacity-60 dark:bg-navy-900 dark:placeholder:text-navy-300",
-    "plain" => "form-textarea w-full bg-transparent p-3 placeholder:text-slate-400/70"
+      "form-textarea w-full rounded-md bg-slate-150 p-3 text-[13px] placeholder:text-slate-500 disabled:pointer-events-none disabled:select-none disabled:opacity-60 dark:bg-navy-900 dark:placeholder:text-navy-300",
+    "plain" => "form-textarea w-full bg-transparent p-3 placeholder:text-slate-500"
+  }
+
+  @sizes %{
+    "sm" => "p-2.5 text-xs",
+    "md" => nil,
+    "lg" => "p-4 text-sm"
   }
 
   @states %{
     {"outlined", "success"} =>
-      "border-success ring-success/25 hover:border-success focus:border-success dark:border-success dark:ring-success/30 dark:hover:border-success dark:focus:border-success",
+      "shadow-[inset_0_0_0_1px_var(--color-success),0_0_0_4px_color-mix(in_oklab,var(--color-success)_14%,transparent)] hover:shadow-[inset_0_0_0_1px_var(--color-success),0_0_0_4px_color-mix(in_oklab,var(--color-success)_14%,transparent)] focus:shadow-[inset_0_0_0_1px_var(--color-success),0_0_0_4px_color-mix(in_oklab,var(--color-success)_14%,transparent)] dark:shadow-[inset_0_0_0_1px_var(--color-success),0_0_0_4px_color-mix(in_oklab,var(--color-success)_16%,transparent)] dark:hover:shadow-[inset_0_0_0_1px_var(--color-success),0_0_0_4px_color-mix(in_oklab,var(--color-success)_16%,transparent)] dark:focus:shadow-[inset_0_0_0_1px_var(--color-success),0_0_0_4px_color-mix(in_oklab,var(--color-success)_16%,transparent)]",
     {"outlined", "error"} =>
-      "border-error ring-error/25 hover:border-error focus:border-error dark:border-error dark:ring-error/30 dark:hover:border-error dark:focus:border-error",
+      "shadow-[inset_0_0_0_1px_var(--color-error),0_0_0_4px_color-mix(in_oklab,var(--color-error)_14%,transparent)] hover:shadow-[inset_0_0_0_1px_var(--color-error),0_0_0_4px_color-mix(in_oklab,var(--color-error)_14%,transparent)] focus:shadow-[inset_0_0_0_1px_var(--color-error),0_0_0_4px_color-mix(in_oklab,var(--color-error)_14%,transparent)] dark:shadow-[inset_0_0_0_1px_var(--color-error),0_0_0_4px_color-mix(in_oklab,var(--color-error)_16%,transparent)] dark:hover:shadow-[inset_0_0_0_1px_var(--color-error),0_0_0_4px_color-mix(in_oklab,var(--color-error)_16%,transparent)] dark:focus:shadow-[inset_0_0_0_1px_var(--color-error),0_0_0_4px_color-mix(in_oklab,var(--color-error)_16%,transparent)]",
     {"filled", "success"} => "ring-1 ring-success dark:ring-success",
     {"filled", "error"} => "ring-1 ring-error dark:ring-error"
   }
 
-  @frame "rounded-lg border border-slate-300 ring-primary/25 transition-colors duration-200 focus-within:!border-primary focus-within:ring-3 hover:border-slate-400 dark:border-navy-450 dark:ring-accent/30 dark:focus-within:!border-accent dark:hover:border-navy-400"
+  @frame "rounded-md border border-slate-200 ring-primary/25 transition-colors duration-200 focus-within:!border-primary focus-within:ring-3 hover:border-slate-400 dark:border-navy-450 dark:ring-accent/30 dark:focus-within:!border-accent dark:hover:border-navy-400"
 
   @framed_padding %{
     {true, false} => "pt-0",
@@ -60,6 +66,13 @@ defmodule LineaUI.Components.Textarea do
   attr(:value, :any)
   attr(:rows, :integer, default: 4)
   attr(:variant, :string, default: "outlined", values: ~w(outlined filled plain))
+
+  attr(:size, :string,
+    default: "md",
+    values: ~w(sm md lg),
+    doc: "Three paddings and text sizes: 10px and 12px, 12px and 13px, 16px and 14px."
+  )
+
   attr(:resizable, :boolean, default: false)
 
   attr(:counter, :boolean,
@@ -67,6 +80,19 @@ defmodule LineaUI.Components.Textarea do
     doc:
       "Shows a live character count under the text (\"68 / 200\" with `maxlength`, \"2 / 20 mín.\" below `min_length`). " <>
         "It warns from 90% of the limit and turns red past it; it updates while typing, without the server."
+  )
+
+  attr(:counter_format, :string,
+    default: "%{count} / %{max}",
+    doc:
+      "The counter's text with a `maxlength`: `%{count}` and `%{max}` are replaced (`\"%{count} de %{max}\"` reads \"58 de 300\")."
+  )
+
+  attr(:counter_align, :string,
+    default: "end",
+    values: ~w(end start),
+    doc:
+      "`end` puts the counter at the right of the help line; `start` puts it right under the text, at the left, as a help line of its own."
   )
 
   attr(:min_length, :integer,
@@ -112,20 +138,37 @@ defmodule LineaUI.Components.Textarea do
   slot(:header, doc: "Content above the text, laid out as a row.")
   slot(:footer, doc: "Content below the text, laid out as a row with space between.")
 
+  @classes_deps ~w(header footer variant size resizable autogrow state class)a
+
   def textarea(assigns) do
     assigns
     |> Control.assign_control()
-    |> then(&assign(&1, :state, Control.state(&1.state, &1.errors)))
-    |> then(&assign(&1, :id, &1.id || ((&1.counter or &1.autogrow) && gen_id("textarea")) || nil))
-    |> then(&assign(&1, :classes, classes(&1)))
-    |> then(&assign(&1, :length, length_of(&1)))
-    |> assign(:frame, @frame)
+    |> then(
+      &assign_derived(&1, :state, [:state, :errors], fn -> Control.state(&1.state, &1.errors) end)
+    )
+    |> assign_id()
+    |> then(&assign_derived(&1, :classes, @classes_deps, fn -> classes(&1) end))
+    |> then(&assign_derived(&1, :length, [:value], fn -> length_of(&1) end))
+    |> assign_derived(:frame, [], fn -> @frame end)
     |> render_textarea()
   end
+
+  # The counter and autogrow hooks need an id: derived from the name, else from label/placeholder
+  # (stable across renders; pass `id` to tell apart two nameless textareas with the same label).
+  defp assign_id(%{id: nil} = assigns),
+    do:
+      assign(
+        assigns,
+        :id,
+        ((assigns.counter or assigns.autogrow) && stable_id("textarea", assigns)) || nil
+      )
+
+  defp assign_id(assigns), do: assigns
 
   defp classes(%{header: [], footer: []} = assigns) do
     merge([
       @variants[assigns.variant],
+      @sizes[assigns.size],
       resize(assigns.resizable and not assigns.autogrow),
       grow(assigns.autogrow),
       @states[{assigns.variant, assigns.state}],
@@ -169,19 +212,46 @@ defmodule LineaUI.Components.Textarea do
   end
 
   # Mirrors `counterState` of `lib/textarea_logic.js`, so the first paint already says the right thing.
-  defp counter_state(size, min, max) do
+  defp counter_state(size, min, max, format) do
     cond do
       min && size > 0 && size < min -> {"#{size} / #{min} mín.", "bad"}
       is_nil(max) -> {to_string(size), "ok"}
-      size > max -> {"#{size} / #{max}", "bad"}
-      size >= max * @warn_at -> {"#{size} / #{max}", "warn"}
-      true -> {"#{size} / #{max}", "ok"}
+      size > max -> {fill(format, size, max), "bad"}
+      size >= max * @warn_at -> {fill(format, size, max), "warn"}
+      true -> {fill(format, size, max), "ok"}
     end
   end
 
+  defp fill(format, size, max),
+    do:
+      format
+      |> String.replace("%{count}", to_string(size))
+      |> String.replace("%{max}", to_string(max))
+
+  # The help line keeps its muted color under `state="error"`; only error messages are red.
+  defp help_state("error", []), do: nil
+  defp help_state(state, _errors), do: state
+
   defp render_textarea(%{label: nil, help: nil, errors: [], header: [], footer: []} = assigns) do
     ~H"""
-    <.control {control_assigns(assigns, false)} />
+    <.control
+      id={@id}
+      name={@name}
+      value={@value}
+      rows={@rows}
+      classes={@classes}
+      disabled={@disabled}
+      state={@state}
+      rest={@rest}
+      counter={@counter}
+      min_length={@min_length}
+      autogrow={@autogrow}
+      max_rows={@max_rows}
+      length={@length}
+      counter_format={@counter_format}
+      counter_align={@counter_align}
+      aside={false}
+    />
     """
   end
 
@@ -193,11 +263,36 @@ defmodule LineaUI.Components.Textarea do
       label_class={@label_class}
       help={@help}
       errors={@errors}
-      state={@state}
+      state={help_state(@state, @errors)}
       class={@wrapper_class}
     >
-      <.control {control_assigns(assigns, true)} />
-      <:aside :if={@counter}><.counter {control_assigns(assigns, true)} /></:aside>
+      <.control
+        id={@id}
+        name={@name}
+        value={@value}
+        rows={@rows}
+        classes={@classes}
+        disabled={@disabled}
+        state={@state}
+        rest={@rest}
+        counter={@counter}
+        min_length={@min_length}
+        autogrow={@autogrow}
+        max_rows={@max_rows}
+        length={@length}
+        counter_format={@counter_format}
+        counter_align={@counter_align}
+        aside={@counter_align == "end"}
+      />
+      <:aside :if={@counter and @counter_align == "end"}>
+        <.counter
+          id={@id}
+          length={@length}
+          min_length={@min_length}
+          rest={@rest}
+          counter_format={@counter_format}
+        />
+      </:aside>
     </Form.field>
     """
   end
@@ -210,14 +305,39 @@ defmodule LineaUI.Components.Textarea do
       label_class={@label_class}
       help={@help}
       errors={@errors}
-      state={@state}
+      state={help_state(@state, @errors)}
       as="div"
       class={@wrapper_class}
     >
-      <:aside :if={@counter}><.counter {control_assigns(assigns, true)} /></:aside>
+      <:aside :if={@counter}>
+        <.counter
+          id={@id}
+          length={@length}
+          min_length={@min_length}
+          rest={@rest}
+          counter_format={@counter_format}
+        />
+      </:aside>
       <div class={merge([@frame, @label && "mt-1.5", @frame_class])}>
         <div :for={header <- @header} class="flex justify-between">{render_slot(header)}</div>
-        <label class="block"><.control {control_assigns(assigns, true)} /></label>
+        <label class="block"><.control
+          id={@id}
+          name={@name}
+          value={@value}
+          rows={@rows}
+          classes={@classes}
+          disabled={@disabled}
+          state={@state}
+          rest={@rest}
+          counter={@counter}
+          min_length={@min_length}
+          autogrow={@autogrow}
+          max_rows={@max_rows}
+          length={@length}
+          counter_format={@counter_format}
+          counter_align={@counter_align}
+          aside={true}
+        /></label>
         <div :for={footer <- @footer} class="flex justify-between px-2.5 py-2">
           {render_slot(footer)}
         </div>
@@ -226,54 +346,100 @@ defmodule LineaUI.Components.Textarea do
     """
   end
 
-  defp control_assigns(assigns, aside) do
-    assigns
-    |> Map.take([
-      :id,
-      :name,
-      :value,
-      :rows,
-      :classes,
-      :disabled,
-      :state,
-      :rest,
-      :counter,
-      :min_length,
-      :autogrow,
-      :max_rows,
-      :length
-    ])
-    |> Map.put(:aside, aside)
-  end
-
   # With a caption, help or errors the counter shares their row (`Form.field`'s `:aside`); alone it
   # sits right under the control.
   defp control(%{counter: true, aside: false} = assigns) do
     ~H"""
     <div class="w-full">
-      <.field_control {assigns} described_by={"#{@id}-counter"} />
-      <div class="mt-1 flex justify-end px-0.5"><.counter {assigns} /></div>
+      <.field_control
+        id={@id}
+        name={@name}
+        value={@value}
+        rows={@rows}
+        classes={@classes}
+        disabled={@disabled}
+        state={@state}
+        rest={@rest}
+        counter={@counter}
+        min_length={@min_length}
+        autogrow={@autogrow}
+        max_rows={@max_rows}
+        counter_format={@counter_format}
+        described_by={"#{@id}-counter"}
+      />
+      <div class={[
+        "mt-1 flex px-0.5",
+        (@counter_align == "start" && "justify-start") || "justify-end"
+      ]}>
+        <.counter
+          id={@id}
+          length={@length}
+          min_length={@min_length}
+          rest={@rest}
+          counter_format={@counter_format}
+        />
+      </div>
     </div>
     """
   end
 
   defp control(%{counter: true} = assigns) do
     ~H"""
-    <.field_control {assigns} described_by={"#{@id}-counter"} />
+    <.field_control
+      id={@id}
+      name={@name}
+      value={@value}
+      rows={@rows}
+      classes={@classes}
+      disabled={@disabled}
+      state={@state}
+      rest={@rest}
+      counter={@counter}
+      min_length={@min_length}
+      autogrow={@autogrow}
+      max_rows={@max_rows}
+      counter_format={@counter_format}
+      described_by={"#{@id}-counter"}
+    />
     """
   end
 
   defp control(assigns) do
     ~H"""
-    <.field_control {assigns} described_by={nil} />
+    <.field_control
+      id={@id}
+      name={@name}
+      value={@value}
+      rows={@rows}
+      classes={@classes}
+      disabled={@disabled}
+      state={@state}
+      rest={@rest}
+      counter={@counter}
+      min_length={@min_length}
+      autogrow={@autogrow}
+      max_rows={@max_rows}
+      counter_format={@counter_format}
+      described_by={nil}
+    />
     """
   end
 
   defp counter(assigns) do
-    {text, tone} =
-      counter_state(assigns.length, assigns.min_length, limit(assigns.rest[:maxlength]))
+    deps = [:length, :min_length, :rest, :counter_format]
 
-    assigns = assign(assigns, text: text, tone: tone)
+    {text, tone} =
+      counter_state(
+        assigns.length,
+        assigns.min_length,
+        limit(assigns.rest[:maxlength]),
+        assigns.counter_format
+      )
+
+    assigns =
+      assigns
+      |> assign_derived(:text, deps, fn -> text end)
+      |> assign_derived(:tone, deps, fn -> tone end)
 
     ~H"""
     <span
@@ -281,7 +447,7 @@ defmodule LineaUI.Components.Textarea do
       aria-live="polite"
       aria-atomic="true"
       data-tone={@tone}
-      class="text-tiny-plus tabular-nums text-slate-400 data-[tone=bad]:text-error data-[tone=warn]:text-warning dark:text-navy-300"
+      class="text-xs tabular-nums text-slate-400 data-[tone=bad]:text-error data-[tone=warn]:text-warning dark:text-navy-300"
     >{@text}</span>
     """
   end
@@ -300,6 +466,7 @@ defmodule LineaUI.Components.Textarea do
       data-counter={@counter && "#{@id}-counter"}
       data-min={@counter && @min_length}
       data-max={@counter && limit(@rest[:maxlength])}
+      data-format={@counter && @counter_format}
       data-autogrow={@autogrow && ""}
       data-max-rows={@autogrow && @max_rows}
       {@rest}

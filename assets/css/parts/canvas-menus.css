@@ -1,0 +1,191 @@
+/* ActionMenu (the canvas `sg-am*`): the "⋯" button of one item and its raised menu; the Dropdown's menu is `sg-menu` in canvas.css. */
+
+.linea-am-root {
+  position: relative;
+  display: inline-flex;
+}
+
+.linea-am-trig {
+  box-sizing: border-box;
+  display: inline-grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  color: var(--muted);
+  font: inherit;
+  cursor: pointer;
+}
+
+.linea-am-trig:hover,
+.linea-am-trig[aria-expanded="true"] {
+  background: var(--hover);
+  color: var(--ink);
+}
+
+.linea-am-trig[aria-expanded="true"] {
+  box-shadow: inset 0 0 0 1px var(--line-strong);
+}
+
+.linea-am-trig:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+/* the item whose actions are open */
+:is([data-am-row], .linea-ctable-row)[data-am-open],
+tr[data-am-open] > td {
+  background: color-mix(in srgb, var(--accent) 6%, var(--panel));
+}
+
+.linea-am {
+  min-width: 220px;
+  padding: 6px;
+  border-radius: 12px;
+  background: var(--raised);
+  box-shadow:
+    0 0 0 1px var(--line-strong),
+    0 14px 34px -10px rgb(0 0 0 / 0.22),
+    0 2px 6px rgb(0 0 0 / 0.06);
+  text-align: left;
+}
+
+.linea-am:where(.dark *, [data-theme="dark"] *):not(:where([data-theme="light"], [data-theme="light"] *)) {
+  background: #26262b;
+  box-shadow:
+    0 0 0 1px #3b3b42,
+    inset 0 1px 0 rgb(255 255 255 / 0.06),
+    0 20px 44px -8px rgb(0 0 0 / 0.75),
+    0 2px 8px rgb(0 0 0 / 0.4);
+}
+
+.linea-am-h {
+  margin-bottom: 4px;
+  padding: 6px 10px;
+  border-bottom: 1px solid var(--line);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 20px;
+  color: var(--ink);
+}
+
+.linea-am-i {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 34px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  font: inherit;
+  font-size: 13.5px;
+  line-height: 20px;
+  color: var(--fg);
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+  outline: none;
+}
+
+.linea-am-i > [class*="huge-"] {
+  color: var(--muted);
+}
+
+.linea-am-i:is(:hover, :focus-visible) {
+  background: var(--hover);
+  color: var(--ink);
+}
+
+.linea-am-i:is(:hover, :focus-visible) > [class*="huge-"] {
+  color: var(--ink);
+}
+
+.linea-am:where(.dark *, [data-theme="dark"] *):not(:where([data-theme="light"], [data-theme="light"] *)) .linea-am-i:is(:hover, :focus-visible) {
+  background: #313137;
+}
+
+.linea-am:where(.dark *, [data-theme="dark"] *):not(:where([data-theme="light"], [data-theme="light"] *)) .linea-am-h {
+  border-color: #34343a;
+}
+
+.linea-am:where(.dark *, [data-theme="dark"] *):not(:where([data-theme="light"], [data-theme="light"] *)) .linea-am-i[data-disabled]:is(:hover, :focus-visible) > [class*="huge-"] {
+  color: var(--muted);
+}
+
+.linea-am-sep {
+  background: #34343a;
+}
+
+.linea-am-t {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.linea-am-hint {
+  margin-top: 1px;
+  font-size: 11.5px;
+  color: var(--faint);
+}
+
+.linea-am-kbd {
+  margin-left: auto;
+  padding: 0 6px;
+  border-radius: 5px;
+  background: var(--sunken);
+  box-shadow: inset 0 0 0 1px var(--line);
+  font: 500 11px/18px var(--mono);
+  color: var(--muted);
+}
+
+.linea-am-i[data-danger],
+.linea-am-i[data-danger] > [class*="huge-"] {
+  color: var(--neg);
+}
+
+.linea-am-i[data-danger]:is(:hover, :focus-visible) {
+  background: color-mix(in srgb, var(--neg) 10%, transparent);
+}
+
+.linea-am-i[data-disabled] {
+  padding-top: 6px;
+  padding-bottom: 6px;
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.linea-am-i[data-disabled]:is(:hover, :focus-visible) {
+  background: none;
+  color: var(--fg);
+}
+
+.linea-am-sep {
+  height: 1px;
+  margin: 5px 4px;
+  background: var(--line);
+}
+
+/* Dropdown (the canvas `sg-menu`): the icon of an item is muted, ink on hover */
+[data-panel] [role="menuitem"]:not(.linea-am-i, .text-error, .text-primary) > [class*="huge-"] {
+  color: var(--muted);
+}
+
+[data-panel] [role="menuitem"]:not(.linea-am-i, .text-error, .text-primary):is(:hover, :focus) > [class*="huge-"] {
+  color: var(--ink);
+}
+
+/* the destructive item uses the canvas `neg` token (readable in dark) */
+[data-panel] [role="menuitem"].text-error {
+  color: var(--neg);
+}
+
+[data-panel] [role="menuitem"].text-error:is(:hover, :focus) {
+  background: color-mix(in srgb, var(--neg) 10%, transparent);
+}

@@ -40,6 +40,8 @@ defmodule LineaUI.Components.Accordion do
     "border-bottom" => "flex flex-col divide-y divide-slate-150 dark:divide-navy-500",
     "bordered" =>
       "flex flex-col divide-y divide-slate-150 overflow-hidden rounded-[10px] border border-slate-150 dark:divide-navy-500 dark:border-navy-500",
+    "canvas" =>
+      "flex flex-col divide-y divide-slate-150 overflow-hidden rounded-[14px] shadow-[inset_0_0_0_1px_var(--color-slate-150)] dark:divide-navy-500 dark:shadow-[inset_0_0_0_1px_var(--color-navy-500)]",
     "divided" => "flex flex-col space-y-3",
     "primary" => "flex flex-col divide-y overflow-hidden rounded-[10px] border",
     "advanced" => "flex flex-col space-y-3"

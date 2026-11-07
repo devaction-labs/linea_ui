@@ -4,7 +4,8 @@
  * `phx-update="ignore"`) holds the hex text; whenever the color changes it fires a bubbling `input` event, so a `phx-change`
  * runs, and pushes `data-on-change` with `%{"id" => id, "value" => hex}` to the `phx-target`. A new `data-value` from the
  * server wins; a patch that did not change it keeps the color in the browser. The inner controls have no name, so their
- * own `input` and `change` events stop here.
+ * own `input` and `change` events stop here. The swatches variant has no area, sliders or chip; only what is there is
+ * painted.
  */
 import {notify} from "../lib/dom.js"
 import {areaKey, areaPoint, areaText, colorOfHex, hexOfColor, parseHex, sameHex, toHex} from "../lib/color_logic.js"
@@ -32,11 +33,12 @@ const ColorPicker = {
     this.el.addEventListener("change", this.onChange)
     this.el.addEventListener("click", this.onClick)
     this.el.addEventListener("focusout", this.onFocusOut)
-    this.area().addEventListener("keydown", this.onKeyDown)
-    this.area().addEventListener("pointerdown", this.onDown)
-    this.area().addEventListener("pointermove", this.onMove)
-    this.area().addEventListener("pointerup", this.onUp)
-    this.area().addEventListener("pointercancel", this.onUp)
+    const area = this.area()
+    area?.addEventListener("keydown", this.onKeyDown)
+    area?.addEventListener("pointerdown", this.onDown)
+    area?.addEventListener("pointermove", this.onMove)
+    area?.addEventListener("pointerup", this.onUp)
+    area?.addEventListener("pointercancel", this.onUp)
     this.paint()
   },
 
@@ -76,6 +78,12 @@ const ColorPicker = {
     color && ((this.color = this.alpha ? color : {...color, a: 100}), (this.hex = toHex(parseHex(text), this.alpha)))
   },
 
+  // A swatch or a typed hex: takes the color, then change() compares against the previous hex, so it notifies.
+  pick(text) {
+    const color = colorOfHex(text)
+    color && ((this.color = this.alpha ? color : {...color, a: 100}), this.change(toHex(parseHex(text), this.alpha)))
+  },
+
   commit(color) {
     const hex = hexOfColor(color, this.alpha)
     this.color = color
@@ -107,16 +115,17 @@ const ColorPicker = {
 
   typed(text) {
     const parsed = colorOfHex(text)
-    parsed && (this.take(text), this.change(toHex(parseHex(text), this.alpha)))
+    parsed && this.pick(text)
   },
 
   settle() {
-    this.hexField().value = this.hex
+    const field = this.hexField()
+    field && (field.value = this.hex)
   },
 
   click(event) {
     const preset = event.target.closest("[data-preset]")
-    preset && (this.take(preset.dataset.preset), this.change(toHex(parseHex(preset.dataset.preset), this.alpha)))
+    preset && this.pick(preset.dataset.preset)
   },
 
   pointerDown(event) {
@@ -153,23 +162,29 @@ const ColorPicker = {
     const {h, s, v, a} = this.color
     const opaque = hexOfColor({h, s, v, a: 100})
     const area = this.area()
-    area.style.backgroundColor = `hsl(${h} 100% 50%)`
-    area.setAttribute("aria-valuenow", String(s))
-    area.setAttribute("aria-valuetext", areaText(this.el.dataset.areaText, this.color))
-    const knob = this.q("[data-knob]")
-    knob.style.left = `${s}%`
-    knob.style.top = `${100 - v}%`
-    knob.style.backgroundColor = opaque
-    this.q("[data-hue]").value = String(h)
+    area && this.paintArea(area, opaque)
+    const hue = this.q("[data-hue]")
+    hue && (hue.value = String(h))
     const alpha = this.q("[data-alpha-input]")
     alpha && ((alpha.value = String(a)), (alpha.style.background = `linear-gradient(90deg, transparent, ${opaque}), ${CHECKER}`))
     const chip = this.q("[data-chip]")
-    chip.style.backgroundColor = opaque
-    chip.style.opacity = String(a / 100)
-    document.activeElement === this.hexField() || (this.hexField().value = this.hex)
+    chip && ((chip.style.backgroundColor = opaque), (chip.style.opacity = String(a / 100)))
+    const field = this.hexField()
+    field && document.activeElement !== field && (field.value = this.hex)
     this.value().value = this.hex
     this.el.querySelectorAll("[data-preset]").forEach((button) => button.setAttribute("aria-pressed", String(sameHex(button.dataset.preset, this.hex))))
   },
+}
+
+ColorPicker.paintArea = function (area, opaque) {
+  const {h, s, v} = this.color
+  area.style.backgroundColor = `hsl(${h} 100% 50%)`
+  area.setAttribute("aria-valuenow", String(s))
+  area.setAttribute("aria-valuetext", areaText(this.el.dataset.areaText, this.color))
+  const knob = this.q("[data-knob]")
+  knob.style.left = `${s}%`
+  knob.style.top = `${100 - v}%`
+  knob.style.backgroundColor = opaque
 }
 
 export default {"LineaUI.ColorPicker": ColorPicker}
