@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.13.0 (2026-11-07)
 
 - AI components at canvas parity (AiChat, AiMessage, AiComposer; light and dark): the spark is the Hugeicons `sparkles` glyph (was `ai-magic`), and the AI components draw `invoice-01`, `package`, `user-multiple`, `wallet-01`, `bank`, `shield-01` and `tick-02` as the Hugeicons themselves, not the canvas shell glyphs. New `ai_chat` attr `composer` (default `true`; `false` leaves the composer out, as in the canvas "Proposta aprovada" board).
 - `ai_greeting` at canvas parity: the whole first line is a living gradient (`sg-glow-text`: 100deg, accent/blue/violet/pink stops, 6s alternate, 12s under `prefers-reduced-motion`; keyframes `linea-glow`), new attr `tone` (`brand` default, `warm`) and a `md` size (36px) beside `sm` (30px) and `lg` (40px). `conversation_list` draws `message-01`, `add-01` and `search-01` as the Hugeicons themselves, as in the canvas board.
