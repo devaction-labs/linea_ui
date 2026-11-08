@@ -1,0 +1,65 @@
+/* ErrorPage (canvas "ErrorPage"): the error screens. `sg-err` is the full page (brand and status on top, the text on the
+   left, the dotted panel with the big gradient code and a floating card on the right, the request id at the bottom);
+   `sg-err-state` the error inside the app (the code with an icon tile, centered). `data-tone` picks the color of the
+   code: neutral (404), error (500), warning (403, 429, offline), accent (401, 419, 503). */
+.sg-err{--err:var(--ink);min-height:100dvh;display:flex;flex-direction:column;gap:28px;padding:28px 40px;background:var(--panel);color:var(--fg)}
+.sg-err[data-tone="error"],.sg-err-state[data-tone="error"]{--err:var(--neg)}
+.sg-err[data-tone="warning"],.sg-err-state[data-tone="warning"]{--err:var(--warn)}
+.sg-err[data-tone="accent"],.sg-err-state[data-tone="accent"]{--err:var(--accent)}
+.sg-err-top{display:flex;align-items:center;gap:12px;min-height:34px}
+.sg-err-status{margin-left:auto;display:inline-flex;align-items:center;gap:8px;height:34px;padding:0 14px;border-radius:999px;background:var(--panel);box-shadow:0 0 0 1px var(--line);font-size:13px;color:var(--fg);text-decoration:none;white-space:nowrap}
+.sg-err-status:hover{box-shadow:0 0 0 1px var(--line-strong)}
+.sg-err-status>i{--dot:var(--pos);width:8px;height:8px;border-radius:50%;background:var(--dot);box-shadow:0 0 0 3px color-mix(in srgb,var(--dot) 22%,transparent)}
+.sg-err-status[data-status="warning"]>i{--dot:var(--warn)}.sg-err-status[data-status="down"]>i{--dot:var(--neg)}
+.sg-err-status>svg,.sg-err-status>span[class*="huge-"]{width:15px;height:15px;color:var(--faint)}
+.sg-err-main{flex:1;min-height:0;display:flex;gap:64px;align-items:stretch;padding-left:24px}
+.sg-err-text{width:520px;flex:none;display:flex;flex-direction:column;gap:26px;justify-content:center}
+.sg-err-label{display:flex;align-items:center;gap:8px;font:400 12.5px/1.2 var(--mono);color:var(--accent-ink,var(--accent))}
+.sg-err[data-tone="error"] .sg-err-label{color:var(--neg)}.sg-err[data-tone="warning"] .sg-err-label{color:var(--warn)}
+.sg-err-code{display:inline-flex;align-items:center;height:22px;padding:0 8px;border-radius:7px;background:var(--accent-soft);color:var(--accent-ink,var(--accent));font:500 12px/1 var(--mono)}
+.sg-err[data-tone="error"] .sg-err-code{background:var(--neg-soft);color:var(--neg)}
+.sg-err[data-tone="warning"] .sg-err-code{background:var(--warn-soft);color:var(--warn)}
+.sg-err-title{margin:0;font-size:46px;line-height:52px;font-weight:600;letter-spacing:-.035em;color:var(--ink);text-wrap:balance}
+.sg-err-desc{margin:-8px 0 0;max-width:46ch;font-size:16.5px;line-height:26px;color:var(--muted)}
+.sg-err-actions{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+.sg-err-art{position:relative;flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center;padding:56px;border-radius:28px;overflow:hidden;background-color:var(--sunken);background-image:radial-gradient(color-mix(in srgb,var(--ink) 14%,transparent) 1px,transparent 1px);background-size:18px 18px;box-shadow:inset 0 0 0 1px var(--line)}
+.sg-err-rings{position:absolute;right:-200px;bottom:-220px;width:640px;opacity:.5;pointer-events:none}
+.sg-err-rings circle{fill:none;stroke:var(--line-strong);stroke-width:1}
+.sg-err-digits{position:relative;margin-left:-8px;font:600 230px/.8 var(--mono);letter-spacing:-.09em;white-space:nowrap;background:linear-gradient(180deg,var(--err) 0%,color-mix(in srgb,var(--err) 55%,transparent) 55%,transparent 100%);-webkit-background-clip:text;background-clip:text;color:transparent;user-select:none}
+.sg-err-card{position:relative;margin-top:-54px;max-width:420px;padding:18px 20px;border-radius:18px;background:var(--panel);box-shadow:var(--shadow-lg),0 0 0 1px var(--line)}
+.sg-err-foot{display:flex;flex-wrap:wrap;align-items:center;gap:8px 18px;font-size:12.5px;color:var(--faint)}
+.sg-err-foot .rid{display:inline-flex;align-items:center;gap:8px}.sg-err-foot .rid>code{font-family:var(--mono);color:var(--fg);user-select:all;cursor:text}
+.sg-err-foot .end{margin-left:auto;display:inline-flex;align-items:center;gap:10px}
+.sg-err-foot a{color:inherit;text-decoration:none}.sg-err-foot a:hover{color:var(--ink)}
+/* Links under the actions ("Talvez você procure", "Quem pode liberar") */
+.sg-err-links{display:flex;flex-direction:column;gap:4px;padding-top:22px;border-top:1px solid var(--line)}
+.sg-err-links>.h{margin-bottom:6px;font-size:12.5px;color:var(--faint)}
+.sg-err-links>a{display:flex;align-items:center;gap:12px;margin:0 -10px;padding:8px 10px;border-radius:10px;text-decoration:none;color:inherit}
+.sg-err-links>a:hover{background:var(--hover,var(--sunken))}
+.sg-err-links .ic{display:grid;place-items:center;flex:none;width:30px;height:30px;border-radius:9px;background:var(--sunken);box-shadow:inset 0 0 0 1px var(--line);color:var(--muted)}
+.sg-err-links .ic>*{width:16px;height:16px}
+.sg-err-links .t{display:flex;flex-direction:column;flex:1;min-width:0}
+.sg-err-links .t>b{font-size:14px;font-weight:500;color:var(--ink)}.sg-err-links .t>span{font-size:12.5px;color:var(--faint)}
+.sg-err-links .chev{width:16px;height:16px;color:var(--faint)}
+/* Inside the app: centered, the code with the icon tile on it */
+.sg-err-state{--err:var(--ink);display:grid;place-items:center;min-height:min(640px,70dvh);padding:24px 0}
+.sg-err-state>.in{display:flex;flex-direction:column;align-items:center;gap:18px;max-width:520px;text-align:center}
+.sg-err-state .mark{position:relative;display:grid;place-items:center}
+.sg-err-state .sg-err-digits{margin:0;font-size:150px}
+.sg-err-state .tile{position:absolute;bottom:6px;display:grid;place-items:center;width:56px;height:56px;border-radius:18px;background:var(--sunken);color:var(--ink);box-shadow:inset 0 0 0 1px var(--line),0 0 0 6px var(--panel)}
+.sg-err-state[data-tone="error"] .tile{background:var(--neg-soft);color:var(--neg)}
+.sg-err-state[data-tone="warning"] .tile{background:var(--warn-soft);color:var(--warn)}
+.sg-err-state[data-tone="accent"] .tile{background:var(--accent-soft);color:var(--accent-ink,var(--accent))}
+.sg-err-state .tile>*{width:26px;height:26px}
+.sg-err-state h1{margin:8px 0 0;font-size:28px;line-height:34px;font-weight:600;letter-spacing:-.025em;color:var(--ink)}
+.sg-err-state p{margin:-6px 0 0;font-size:15px;line-height:23px;color:var(--muted)}
+.sg-err-state .sg-err-actions{justify-content:center}
+.sg-err-state .more{width:100%;text-align:left}
+/* Smaller screens: the panel goes under the text, then away on a phone */
+@media (max-width:1100px){.sg-err-main{flex-direction:column;gap:32px;padding-left:0}.sg-err-text{width:auto}.sg-err-art{min-height:380px}}
+@media (max-width:640px){
+  .sg-err{padding:20px 16px;gap:24px}.sg-err-status{display:none}.sg-err-art{display:none}
+  .sg-err-text{justify-content:flex-start;gap:20px;padding-top:24px}.sg-err-title{font-size:32px;line-height:38px}.sg-err-desc{font-size:15px;line-height:23px}
+  .sg-err-foot .end{margin-left:0}
+  .sg-err-state .sg-err-digits{font-size:120px}
+}

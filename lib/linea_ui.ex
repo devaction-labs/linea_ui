@@ -54,6 +54,7 @@ defmodule LineaUI do
     mini_card: LineaUI.Components.MiniCard,
     pixel_card: LineaUI.Components.PixelCard,
     theme_switch: LineaUI.Components.ThemeSwitch,
+    error_page: LineaUI.Components.ErrorPage,
     breadcrumb: LineaUI.Components.Breadcrumb,
     card_table: LineaUI.Components.CardTable,
     kpi_card: LineaUI.Components.KpiCard,
