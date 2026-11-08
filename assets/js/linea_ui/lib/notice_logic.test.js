@@ -9,7 +9,7 @@ test("an unknown color is neutral", () => {
 
 test("a position is split into its two parts, with LineOne's default", () => {
   assert.deepEqual(positionOf("left-top"), {x: "left", y: "top", key: "left-top"})
-  assert.deepEqual(positionOf(undefined), {x: "right", y: "bottom", key: "right-bottom"})
+  assert.deepEqual(positionOf(undefined), {x: "center", y: "bottom", key: "center-bottom"})
   assert.deepEqual(positionOf("middle", "center-top"), {x: "center", y: "top", key: "center-top"})
 })
 

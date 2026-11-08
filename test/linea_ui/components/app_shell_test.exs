@@ -342,6 +342,19 @@ defmodule LineaUI.Components.AppShellTest do
     assert [_] = find(html, "li svg") |> Enum.to_list()
   end
 
+  test "page_header with an icon puts it before the title" do
+    html =
+      render(~H"""
+      <.page_header variant="page" title="Site novo" description="Loja virtual">
+        <:icon><span id="tile">SIT</span></:icon>
+      </.page_header>
+      """)
+
+    assert [_] = find(html, "#tile") |> Enum.to_list()
+    assert html =~ ~r/id="tile".*<h1/s
+    refute render(~H|<.page_header variant="page" title="Sem ícone" />|) =~ "flex-none\">"
+  end
+
   test "page_header puts its actions at the right end and omits the box without them" do
     with_actions =
       render(~H"""
