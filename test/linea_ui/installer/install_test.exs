@@ -289,6 +289,69 @@ defmodule LineaUI.Installer.InstallTest do
     end
   end
 
+  describe "--kit" do
+    test "creates the nav module, the shell layout and the config" do
+      igniter = install(project(), ["--kit"])
+      nav = content(igniter, "lib/e2e_app_web/nav.ex")
+      shell = content(igniter, "lib/e2e_app_web/components/layouts/shell.ex")
+      config = content(igniter, "config/config.exs")
+
+      assert nav =~ "defmodule E2eAppWeb.Nav"
+      assert nav =~ "def items(assigns)"
+      assert nav =~ "assigns[:abertos]"
+      assert shell =~ "defmodule E2eAppWeb.Layouts.Shell"
+      assert shell =~ "def app_shell(assigns)"
+      assert shell =~ "<LineaUI.Components.Shell.shell current={@current_path}"
+      assert config =~ "sidebar: :sections"
+      assert config =~ "nav: {E2eAppWeb.Nav, :items}"
+    end
+
+    test "the generated files compile" do
+      igniter = install(project(), ["--kit"])
+
+      for file <- ["lib/e2e_app_web/nav.ex", "lib/e2e_app_web/components/layouts/shell.ex"] do
+        assert {:ok, _} = Code.string_to_quoted(content(igniter, file))
+      end
+
+      nav = content(igniter, "lib/e2e_app_web/nav.ex")
+      [{module, _}] = Code.compile_string(nav)
+      items = module.items(%{abertos: 3})
+      assert [%{label: "Início"}, _, %{group: "Vendas", items: [%{count: 3}]}] = items
+    end
+
+    test "a notice lists the files, the formats and current_path" do
+      igniter = install(project(), ["--kit"])
+
+      assert_has_notice(
+        igniter,
+        &(&1 =~ "nav.ex" and &1 =~ "sidebar: :rail" and &1 =~ "<.sidebar>")
+      )
+
+      assert_has_notice(igniter, &(&1 =~ "on_mount" and &1 =~ "current_path"))
+    end
+
+    test "is off by default" do
+      igniter = install(project())
+
+      refute Igniter.exists?(igniter, "lib/e2e_app_web/nav.ex")
+      refute Igniter.exists?(igniter, "lib/e2e_app_web/components/layouts/shell.ex")
+    end
+
+    test "leaves existing files alone and warns" do
+      igniter =
+        install(project(%{"lib/e2e_app_web/nav.ex" => "defmodule E2eAppWeb.Nav do\nend\n"}), [
+          "--kit"
+        ])
+
+      assert content(igniter, "lib/e2e_app_web/nav.ex") == "defmodule E2eAppWeb.Nav do\nend\n"
+      assert_has_warning(igniter, &(&1 =~ "nav.ex already exists"))
+    end
+
+    test "a second run changes nothing" do
+      project() |> install(["--kit"]) |> settle() |> install(["--kit"]) |> assert_unchanged()
+    end
+  end
+
   describe "idempotence" do
     test "a second run changes nothing" do
       first = project() |> install() |> settle()

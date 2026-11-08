@@ -22,6 +22,10 @@ if Code.ensure_loaded?(Igniter) do
 
     ## Options
 
+    * `--kit` - generates the app shell with a menu: `lib/my_app_web/nav.ex` (the menu as data, in
+      `MyAppWeb.Nav.items/1`), `lib/my_app_web/components/layouts/shell.ex` (`app_shell/1`, which renders
+      `LineaUI.Components.Shell.shell/1`) and `config :linea_ui, :shell, sidebar: :sections, nav: {MyAppWeb.Nav, :items}`.
+      A notice says how to change the sidebar format and feed `current_path`
     * `--hugeicons` - draws the components' glyphs with Hugeicons: sets
       `config :linea_ui, :icons, :hugeicons`, adds the Tailwind plugin to `app.css` (reading
       `assets/vendor/hugeicons`) and tells you to run `mix linea_ui.icons sync`, which downloads the SVGs
@@ -35,15 +39,15 @@ if Code.ensure_loaded?(Igniter) do
 
     use Igniter.Mix.Task
 
-    alias LineaUI.Installer.{Agent, Assets, Hugeicons, Web}
+    alias LineaUI.Installer.{Agent, Assets, Hugeicons, Kit, Web}
 
     @impl Igniter.Mix.Task
     def info(_argv, _composing_task) do
       %Igniter.Mix.Task.Info{
         group: :linea_ui,
         example: "mix igniter.install linea_ui",
-        schema: [hugeicons: :boolean, replace_daisyui: :boolean, skill: :boolean],
-        defaults: [hugeicons: false, replace_daisyui: false, skill: true]
+        schema: [kit: :boolean, hugeicons: :boolean, replace_daisyui: :boolean, skill: :boolean],
+        defaults: [kit: false, hugeicons: false, replace_daisyui: false, skill: true]
       }
     end
 
@@ -57,6 +61,7 @@ if Code.ensure_loaded?(Igniter) do
       |> Web.endpoint()
       |> Web.html_helpers()
       |> hugeicons(options[:hugeicons])
+      |> kit(options[:kit])
       |> skill(options[:skill])
       |> replaced_daisyui(options[:replace_daisyui])
       |> Igniter.add_notice(notice())
@@ -73,6 +78,9 @@ if Code.ensure_loaded?(Igniter) do
 
     defp hugeicons(igniter, true), do: Hugeicons.install(igniter)
     defp hugeicons(igniter, false), do: igniter
+
+    defp kit(igniter, true), do: Kit.install(igniter)
+    defp kit(igniter, false), do: igniter
 
     defp skill(igniter, true), do: Agent.skill(igniter)
     defp skill(igniter, false), do: igniter
@@ -100,7 +108,7 @@ else
     @moduledoc """
     Writes the Claude Code skill (`mix linea_ui.gen.skill`), points `AGENTS.md` and `CLAUDE.md`
     (those that exist) at it, and prints the lines to add to `app.css`, `app.js`, the endpoint and
-    the web module, and the lines for the optional Hugeicons icon set. Running it twice changes
+    the web module, and the lines for the optional Hugeicons icon set (and, with `--kit`, for the app shell). Running it twice changes
     nothing the second time.
 
     With the `igniter` dependency this task makes those edits itself:
@@ -111,10 +119,31 @@ else
     use Mix.Task
 
     @impl true
-    def run(_args) do
+    def run(args) do
       Mix.Task.run("linea_ui.gen.skill", [])
       Enum.each(~w(AGENTS.md CLAUDE.md), &point/1)
       Mix.shell().info(instructions())
+      if "--kit" in args, do: Mix.shell().info(kit_instructions())
+    end
+
+    defp kit_instructions do
+      """
+      With --kit, by hand:
+
+        config/config.exs:
+          config :linea_ui, :shell, sidebar: :sections, nav: {MyAppWeb.Nav, :items}
+
+        lib/<app>_web/nav.ex: a module MyAppWeb.Nav with `def items(assigns)` returning a list of
+          maps such as %{label: "Home", icon: "home", navigate: "/"}, or groups
+          %{group: "Sales", icon: "cart", items: [...]}
+
+        your layout:
+          <LineaUI.Components.Shell.shell current={@current_path} user={@current_user}>
+            {render_slot(@inner_block)}
+          </LineaUI.Components.Shell.shell>
+
+        sidebar: :rail or :tree in the config changes the menu format; the items stay.
+      """
     end
 
     defp point(file) do
