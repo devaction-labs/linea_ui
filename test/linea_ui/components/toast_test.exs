@@ -326,7 +326,7 @@ defmodule LineaUI.Components.ToastTest do
 
   test "payload and update carry the status and reject an unknown one" do
     assert Toast.payload("x", status: :run, value: 42)["status"] == "run"
-    assert Toast.payload("x", [])["status"] == nil
+    assert Toast.payload("x", [])["status"] == "ok"
     assert Toast.changes("a", status: :ok)["status"] == "ok"
 
     assert Toast.payload("x", actions: [[label: "Logs", variant: :ghost]])["actions"]
@@ -334,5 +334,22 @@ defmodule LineaUI.Components.ToastTest do
            |> Map.get("variant") == "ghost"
 
     assert_raise ArgumentError, fn -> Toast.payload("x", status: :weird) end
+  end
+
+  describe "default look" do
+    test "a plain toast is a status card, by kind" do
+      assert Toast.payload("Saved.", kind: :success)["status"] == "ok"
+      assert Toast.payload("Saved.", kind: :info)["status"] == "ok"
+      assert Toast.payload("Failed.", kind: :error)["status"] == "err"
+      assert Toast.payload("Careful.", kind: :warning)["status"] == "err"
+      assert Toast.payload("Working.", kind: :loading)["status"] == "run"
+    end
+
+    test "rich toasts keep their card" do
+      assert Toast.payload("x", description: "more")["status"] == nil
+      assert Toast.payload("x", aura: true)["status"] == nil
+      assert Toast.payload("x", value: 10)["status"] == nil
+    end
+
   end
 end
