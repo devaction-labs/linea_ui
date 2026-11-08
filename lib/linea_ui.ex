@@ -55,6 +55,7 @@ defmodule LineaUI do
     pixel_card: LineaUI.Components.PixelCard,
     shell: LineaUI.Components.Shell,
     sidebar: LineaUI.Components.Sidebar,
+    theme_switch: LineaUI.Components.ThemeSwitch,
     breadcrumb: LineaUI.Components.Breadcrumb,
     card_table: LineaUI.Components.CardTable,
     kpi_card: LineaUI.Components.KpiCard,

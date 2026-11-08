@@ -2198,7 +2198,8 @@ defmodule LineaUI.Components.AppShell do
 
   @doc """
   LineOne's dark mode button: a moon in dark mode, a sun in light mode. It toggles the `dark` class of `<html>`
-  and keeps it in `localStorage["dark-mode"]`. `on_change` gets `%{"dark" => boolean}` (an event name) or runs
+  and keeps it in `localStorage["dark-mode"]` (and the choice in `localStorage["theme"]`, as `theme_switch/1` does, so
+  the two stay in step). `on_change` gets `%{"dark" => boolean}` (an event name) or runs
   (a `%JS{}`).
 
       <.theme_toggle id="theme" on_change="theme-changed" />
@@ -2302,6 +2303,9 @@ defmodule LineaUI.Components.AppShell do
   The script for the root layout's `<head>` that applies the stored dark mode before the first paint (LineOne's
   "prevent flickering" script) and the stored monochrome mode as soon as `<body>` exists.
 
+  It reads the `theme_switch` choice (`localStorage["theme"]`: `"light"`, `"dark"` or `"system"`, which follows
+  `prefers-color-scheme`) and, when there is none, the `localStorage["dark-mode"]` flag the `theme_toggle` always kept.
+
       <head>
         <.theme_script />
       </head>
@@ -2313,7 +2317,11 @@ defmodule LineaUI.Components.AppShell do
     <script phx-no-curly-interpolation {@rest}>
       (() => {
         try {
-          localStorage.getItem("dark-mode") === "dark" && document.documentElement.classList.add("dark");
+          const theme = localStorage.getItem("theme");
+          (theme === "system"
+            ? matchMedia("(prefers-color-scheme: dark)").matches
+            : theme === "dark" || (theme !== "light" && localStorage.getItem("dark-mode") === "dark")) &&
+            document.documentElement.classList.add("dark");
           localStorage.getItem("monochrome-mode") === "monochrome" &&
             document.addEventListener("DOMContentLoaded", () => document.body.classList.add("is-monochrome"));
         } catch (_e) {}
