@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.15.3 (2026-11-08)
 
 - `sidebar` and `shell`: the foot of the menu is a choice, `footer` (`"user"`, `"version"` or `"none"`; atoms work too; `config :linea_ui, :shell, footer: :version`, the attribute wins). Left out, each format keeps its own (user card in the `tree`, plan card in `sections`, avatar in the `rail`). `"user"` also draws the same user card in `sections`; `"version"` is the canvas line (`sg-sb-ver`: status dot, version, build, "What's new" link) in place of the user (`tree`, `rail`) or of the plan card (`sections`); in the `rail` it is at the foot of the panel, so it is not shown when the rail is collapsed to icons. `version` is now a string or `%{version, build, href | navigate | patch, label, title, status}` (`label` defaults to "What's new"; the link only exists with a destination; `status` `:ok`, `:warning` or `:down` colours the dot); it also comes from the config. `footer: :version` without a `version` draws nothing. Collapsed to icons the line is the dot, with the version in `title` and `aria-label`. The old mono text line of 0.15.2 is replaced by the canvas style.
 - `show_user` is deprecated: `show_user={false}` is `footer="none"` (or `"version"` when there is a `version`). A `version` without `footer` shows the version line instead of the user (in 0.15.2 it was under the user card).
