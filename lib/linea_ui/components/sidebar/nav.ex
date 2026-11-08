@@ -65,6 +65,17 @@ defmodule LineaUI.Components.Sidebar.Nav do
   end
 
   @doc false
+  def show_user?(value), do: value != false and (value != nil or config(:show_user) != false)
+
+  @doc false
+  def version(value) do
+    case value || config(:version) do
+      version when is_binary(version) and version != "" -> version
+      _none -> nil
+    end
+  end
+
+  @doc false
   def nav(nil, assigns) do
     case config(:nav) do
       {module, function} -> apply(module, function, [assigns])

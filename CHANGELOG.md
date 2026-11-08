@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- `sidebar` and `shell`: `show_user` (default `true`; `false` takes the user card of the `tree` and the avatar of the `rail` out, `user` is still accepted) and `version` (a quiet mono line at the foot of the menu, under the user card, in the three formats; `title` and `aria-label` with the full text; compact when collapsed, class `sg-sb-ver`). Both come from `config :linea_ui, :shell, show_user: false, version: "v1.4.2"` when the attribute is left out; the attribute wins. The kit does not read the version of the app: pass `Application.spec/2` in the layout. `mix linea_ui.install --kit` explains them in its notice.
+- Fix: the photo of an avatar (`.sg-av > img`) overflowed the circle in apps whose Tailwind does not scan deps. The `<img>` lost its Tailwind classes; `canvas.css` crops it (`overflow:hidden`, `object-fit:cover`, `border-radius:inherit`).
+
 ## 0.15.1 (2026-11-08)
 
 - `sidebar` (`tree` format): items with `children` get a chevron button at the right of their row that closes and opens the children (`aria-expanded`, `aria-controls`, open at first, sibling of the link). `collapsible: false` on the item takes it away. The ids come from `Sidebar.Nav.build`. With the menu collapsed to icons the children stay as before. CSS in `canvas-sidebar.css` (`sg-sb-ct`). The group titles of the `tree` already closed.

@@ -218,6 +218,7 @@
 .sg-av{width:32px;height:32px;border-radius:50%;flex:none;display:grid;place-items:center;font-size:12px;font-weight:600;color:#fff;background:var(--c1)}
 .sg-av.sm{width:24px;height:24px;font-size:10px}.sg-av.lg{width:44px;height:44px;font-size:15px}.sg-av.xl{width:64px;height:64px;font-size:21px}
 .sg-av.sq{border-radius:10px}
+.sg-av{overflow:hidden}.sg-av>img{display:block;width:100%;height:100%;object-fit:cover;border-radius:inherit}
 .sg-avs{display:flex}.sg-avs .sg-av{box-shadow:0 0 0 2px var(--panel);margin-left:-7px}.sg-avs .sg-av:first-child{margin-left:0}
 
 /* ---------- Meters ---------- */
