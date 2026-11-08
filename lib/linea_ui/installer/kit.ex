@@ -144,9 +144,10 @@ if Code.ensure_loaded?(Igniter) do
 
       Use it in your layout: `<#{inspect(shell)}.app_shell current_path={@current_path} current_user={@current_user}>`.
 
-      Two more options of the same config, both off by default: `show_user: false` takes the user card out of
-      the menu (when the topbar has the avatar) and `version: "v1.4.2"` shows the version of the system at the
-      foot of the menu. Or per screen, `<.shell show_user={false} version={...}>`.
+      The foot of the menu is a choice, `footer: :user | :version | :none` (the user card, the version of the
+      system with its build and a "What's new" link, or nothing when the topbar has the avatar), with
+      `version: "v1.4.2"` (or a map `%{version, build, navigate, label}`). Or per screen,
+      `<.shell footer="version" version={...}>`.
 
       The menu format changes with `sidebar: :rail` or `sidebar: :tree` in the config, or per screen with
       `<.shell sidebar="tree">`. The items do not change. `<.sidebar>` is available to render the menu

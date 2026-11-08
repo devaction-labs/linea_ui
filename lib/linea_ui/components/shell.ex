@@ -20,14 +20,19 @@ defmodule LineaUI.Components.Shell do
   `sidebar` is the format and `nav` is `{module, function}`, called with the assigns of the shell, when the
   attributes are left out. The attributes always win.
 
-  The app already has the avatar in its topbar? `show_user={false}` (or `show_user: false` in the config) takes
-  the user card out of the menu. `version` puts the version of the system in a quiet line at the foot of the
-  menu (under the user card when there is one). The kit does not read the version of your app: pass it, from
-  `Application.spec/2`, or write it in the config (which runs before the app is loaded, so no `spec` there).
+  ## The foot of the menu
 
-      <.shell show_user={false} version={"v" <> to_string(Application.spec(:my_app, :vsn))} …>
+  `footer` is `"user"`, `"version"` or `"none"` (see "The foot" in `sidebar/1`): the user, the version line
+  of the canvas (`version`, a string or `%{version, build, navigate, label, title, status}`) or nothing, in the
+  three formats. Left out, each format keeps its own (user card, plan card, avatar). The app already has the
+  avatar in its topbar? `footer="none"`. `show_user={false}` still works and is deprecated. The kit does not read
+  the version of your app: pass it, from `Application.spec/2`, or write it in the config (which runs before the
+  app is loaded, so no `spec` there).
 
-      config :linea_ui, :shell, show_user: false, version: "v1.4.2"
+      <.shell footer="version" version={%{version: "v" <> to_string(Application.spec(:my_app, :vsn)),
+        build: "2a9f1c3", navigate: ~p"/changelog", label: "Novidades"}} …>
+
+      config :linea_ui, :shell, footer: :version, version: "v1.4.2"
 
   The `:topbar` slot is a row at the top of the page panel. In the `sections` format, which has no collapse
   button of its own, the row starts with the button that collapses the menu (`collapsible`). Below 768px the
@@ -54,15 +59,19 @@ defmodule LineaUI.Components.Shell do
   attr :brand, :map, default: nil, doc: "`%{name, logo}` (or `src`), as in `sidebar/1`."
   attr :user, :map, default: nil, doc: "`%{name, email, initials, avatar, color}`."
 
+  attr :footer, :any,
+    default: nil,
+    doc:
+      "`\"user\"`, `\"version\"` or `\"none\"`: what the foot of the menu shows (see `sidebar/1`). The `:shell` config `footer` when left out, else each format's own."
+
   attr :show_user, :boolean,
     default: nil,
-    doc:
-      "`false` takes the user out of the menu (see `sidebar/1`). The `:shell` config `show_user` when left out, else `true`."
+    doc: "Deprecated, use `footer`: `false` is `footer=\"none\"` (see `sidebar/1`)."
 
-  attr :version, :string,
+  attr :version, :any,
     default: nil,
     doc:
-      "The version of the system, a quiet line at the foot of the menu (see `sidebar/1`). The `:shell` config `version` when left out."
+      "The version of the system: a string or `%{version, build, href | navigate | patch, label, title, status}` (see `sidebar/1`). The `:shell` config `version` when left out."
 
   attr :plan, :map, default: nil, doc: "`%{name, badge}`, the plan card of `sections`."
   attr :trial, :map, default: nil, doc: "The trial card of the `rail` (see `sidebar/1`)."
@@ -105,6 +114,7 @@ defmodule LineaUI.Components.Shell do
         current={@current}
         brand={@brand}
         user={@user}
+        footer={@footer}
         show_user={@show_user}
         version={@version}
         plan={@plan}

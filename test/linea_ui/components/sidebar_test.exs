@@ -80,6 +80,7 @@ defmodule LineaUI.Components.SidebarTest do
       |> Map.put_new(:current, nil)
       |> Map.put_new(:brand, @brand)
       |> Map.put_new(:user, @user)
+      |> Map.put_new(:footer, nil)
       |> Map.put_new(:show_user, nil)
       |> Map.put_new(:version, nil)
       |> Map.put_new(:plan, @plan)
@@ -96,6 +97,7 @@ defmodule LineaUI.Components.SidebarTest do
       current={@current}
       brand={@brand}
       user={@user}
+      footer={@footer}
       show_user={@show_user}
       version={@version}
       plan={@plan}
@@ -541,42 +543,188 @@ defmodule LineaUI.Components.SidebarTest do
       end
     end
 
-    test "`show_user={false}` takes the card of the tree and the avatar of the rail out" do
-      for format <- ["tree", "rail", "sections"] do
-        html = html(%{format: format, show_user: false})
-        assert find(html, ".sg-sb-user, .sg-sb-rail > .sg-av") |> Enum.empty?()
-      end
+    test "no `footer`: each format keeps its own (the user card, the plan card, the avatar)" do
+      html = html(%{format: "tree"})
+      assert find(html, ".sg-sb-user") != []
+      assert find(html, ".sg-sb-ver, .sg-sb-plan") |> Enum.empty?()
 
-      assert find(html(%{format: "tree"}), ".sg-sb-user") != []
-      assert find(html(%{format: "rail"}), ".sg-sb-rail > .sg-av") != []
+      html = html(%{format: "sections"})
+      assert find(html, ".sg-sb-plan") != []
+      assert find(html, ".sg-sb-user, .sg-sb-ver") |> Enum.empty?()
+
+      html = html(%{format: "rail"})
+      assert find(html, ".sg-sb-rail > .sg-av") != []
+      assert find(html, ".sg-sb-ver") |> Enum.empty?()
     end
 
-    test "`version` is a line at the foot of every format, under the user card, with title and aria-label" do
+    test "`footer=\"user\"`: the card (tree, sections), the avatar (rail); an atom works too" do
+      for footer <- ["user", :user] do
+        html = html(%{format: "tree", footer: footer})
+        assert texts(html, ".sg-sb-body > .sg-sb-user b") == ["Marina Costa"]
+
+        html = html(%{format: "sections", footer: footer})
+        assert texts(html, ".sg-sb-body > .sg-sb-user b") == ["Marina Costa"]
+        assert find(html, ".sg-sb-plan") |> Enum.empty?()
+
+        html = html(%{format: "rail", footer: footer, version: "v1.0.0"})
+        assert find(html, ".sg-sb-rail > .sg-av") != []
+        assert find(html, ".sg-sb-ver") |> Enum.empty?()
+      end
+    end
+
+    test "`footer=\"version\"`: the line, in place of the user (tree, rail) or of the plan card (sections)" do
+      for format <- ["tree", "rail", "sections"] do
+        html = html(%{format: format, footer: "version", version: "v1.4.2"})
+        assert texts(html, ".sg-sb-ver") == ["v1.4.2"]
+        assert find(html, ".sg-sb-user, .sg-sb-plan, .sg-sb-rail > .sg-av") |> Enum.empty?()
+        assert attrs(html, ".sg-sb-ver", "aria-label") == ["Version v1.4.2"]
+        assert attrs(html, ".sg-sb-ver", "title") == ["Version v1.4.2"]
+        assert attrs(html, ".sg-sb-ver > .dot", "aria-hidden") == ["true"]
+        assert find(html, ".sg-sb-ver .b, .sg-sb-ver a") |> Enum.empty?()
+      end
+
+      assert texts(
+               html(%{format: "tree", footer: "version", version: "v1"}),
+               ".sg-sb-body > .sg-sb-ver"
+             ) ==
+               ["v1"]
+
+      assert find(
+               html(%{format: "rail", footer: :version, version: "v1"}),
+               ".sg-sb-panel > .sg-sb-ver"
+             ) !=
+               []
+
+      html = html(%{format: "sections", footer: :version, version: "v1"})
+      assert find(html, ".sg-sb-foot + .sg-sb-ver") != []
+    end
+
+    test "`footer=\"version\"` without a version draws nothing, and the plan card is gone" do
+      for format <- ["tree", "rail", "sections"] do
+        html = html(%{format: format, footer: "version"})
+
+        assert find(html, ".sg-sb-user, .sg-sb-plan, .sg-sb-ver, .sg-sb-rail > .sg-av")
+               |> Enum.empty?()
+      end
+    end
+
+    test "`footer=\"none\"`: nothing, even with a version" do
+      for format <- ["tree", "rail", "sections"] do
+        html = html(%{format: format, footer: "none", version: "v1.4.2"})
+
+        assert find(html, ".sg-sb-user, .sg-sb-plan, .sg-sb-ver, .sg-sb-rail > .sg-av")
+               |> Enum.empty?()
+      end
+    end
+
+    test "`version` as a map: build, link, label, title and status" do
+      version = %{
+        version: "v1.4.2",
+        build: "2a9f1c3",
+        navigate: "/changelog",
+        label: "Novidades",
+        title: "Hoje"
+      }
+
+      for format <- ["tree", "rail", "sections"] do
+        html = html(%{format: format, footer: "version", version: version})
+        assert texts(html, ".sg-sb-ver .v") == ["v1.4.2"]
+        assert texts(html, ".sg-sb-ver .b") == ["2a9f1c3"]
+        assert attrs(html, ".sg-sb-ver", "aria-label") == ["Version v1.4.2 (2a9f1c3)"]
+        assert attrs(html, ".sg-sb-ver a.new", "href") == ["/changelog"]
+        assert attrs(html, ".sg-sb-ver a.new", "title") == ["Hoje"]
+        assert texts(html, ".sg-sb-ver a.new") == ["Novidades"]
+        assert attrs(html, ".sg-sb-ver a.new > svg", "aria-hidden") == ["true"]
+        assert attrs(html, ".sg-sb-ver", "data-status") == ["ok"]
+      end
+    end
+
+    test "the link needs a destination; navigate, patch and href all work; the label defaults to English" do
+      html = html(%{format: "tree", footer: "version", version: %{version: "v1", build: "abc"}})
+      assert find(html, ".sg-sb-ver a") |> Enum.empty?()
+
+      for key <- [:navigate, :patch, :href] do
+        html =
+          html(%{format: "tree", footer: "version", version: %{:version => "v1", key => "/novo"}})
+
+        assert attrs(html, ".sg-sb-ver a.new", "href") == ["/novo"]
+        assert texts(html, ".sg-sb-ver a.new") == ["What's new"]
+        assert attrs(html, ".sg-sb-ver a.new", "title") == []
+      end
+    end
+
+    test "`status` colours the dot: ok by default, warning and down; the rest is ok" do
+      for {status, expected} <- [
+            {:warning, "warning"},
+            {"down", "down"},
+            {:ok, "ok"},
+            {:nope, "ok"},
+            {nil, "ok"}
+          ] do
+        html =
+          html(%{format: "tree", footer: "version", version: %{version: "v1", status: status}})
+
+        assert attrs(html, ".sg-sb-ver", "data-status") == [expected]
+      end
+    end
+
+    test "`version` without `footer` shows the line, in place of the user" do
       for format <- ["tree", "rail", "sections"] do
         html = html(%{format: format, version: "v1.4.2"})
         assert texts(html, ".sg-sb-ver") == ["v1.4.2"]
-        assert attrs(html, ".sg-sb-ver", "title") == ["v1.4.2"]
-        assert attrs(html, ".sg-sb-ver", "aria-label") == ["v1.4.2"]
-        assert find(html(%{format: format}), ".sg-sb-ver") |> Enum.empty?()
+        assert find(html, ".sg-sb-user, .sg-sb-plan, .sg-sb-rail > .sg-av") |> Enum.empty?()
       end
-
-      html = html(%{format: "tree", version: "1.4.2-rc1"})
-      assert texts(html, ".sg-sb-user + .sg-sb-ver") == ["1.4.2-rc1"]
-
-      html = html(%{format: "tree", version: "v1.4.2", show_user: false})
-      assert find(html, ".sg-sb-user") |> Enum.empty?()
-      assert texts(html, ".sg-sb-body > .sg-sb-ver") == ["v1.4.2"]
     end
 
-    test "both come from the config, and the attributes win" do
-      Application.put_env(:linea_ui, :shell, show_user: false, version: "v9.0.0")
+    test "`show_user={false}` (deprecated) is `footer=\"none\"`, or the version when there is one" do
+      for format <- ["tree", "rail", "sections"] do
+        html = html(%{format: format, show_user: false})
+        assert find(html, ".sg-sb-user, .sg-sb-ver, .sg-sb-rail > .sg-av") |> Enum.empty?()
+
+        html = html(%{format: format, show_user: false, version: "v1.4.2"})
+        assert texts(html, ".sg-sb-ver") == ["v1.4.2"]
+        assert find(html, ".sg-sb-user, .sg-sb-rail > .sg-av") |> Enum.empty?()
+      end
+    end
+
+    test "the config sets `footer` and `version` (a string or a map), and the attributes win" do
+      Application.put_env(:linea_ui, :shell, footer: :version, version: "v9.0.0")
       html = html(%{format: "tree"})
       assert find(html, ".sg-sb-user") |> Enum.empty?()
       assert texts(html, ".sg-sb-ver") == ["v9.0.0"]
 
-      html = html(%{format: "tree", show_user: true, version: "v2.0.0"})
+      assert attrs(
+               html(%{format: "tree", version: %{version: "v8", build: "abc"}}),
+               ".sg-sb-ver",
+               "aria-label"
+             ) ==
+               ["Version v8 (abc)"]
+
+      html = html(%{format: "tree", footer: "user"})
       assert find(html, ".sg-sb-user") != []
-      assert texts(html, ".sg-sb-ver") == ["v2.0.0"]
+      assert find(html, ".sg-sb-ver") |> Enum.empty?()
+
+      html = html(%{format: "tree", footer: "none"})
+      assert find(html, ".sg-sb-user, .sg-sb-ver") |> Enum.empty?()
+
+      Application.put_env(:linea_ui, :shell, version: %{version: "v7.0.0", navigate: "/n"})
+      html = html(%{format: "sections"})
+      assert texts(html, ".sg-sb-ver .v") == ["v7.0.0"]
+      assert attrs(html, ".sg-sb-ver a", "href") == ["/n"]
+
+      Application.put_env(:linea_ui, :shell, footer: :none)
+      assert find(html(%{format: "tree"}), ".sg-sb-user, .sg-sb-ver") |> Enum.empty?()
+
+      Application.put_env(:linea_ui, :shell, footer: :version)
+      assert find(html(%{format: "tree"}), ".sg-sb-user, .sg-sb-ver") |> Enum.empty?()
+    end
+
+    test "the config `show_user: false` still takes the user out" do
+      Application.put_env(:linea_ui, :shell, show_user: false)
+      assert find(html(%{format: "tree"}), ".sg-sb-user") |> Enum.empty?()
+
+      html = html(%{format: "tree", footer: "user"})
+      assert find(html, ".sg-sb-user") != []
     end
   end
 

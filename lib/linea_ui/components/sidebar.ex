@@ -15,7 +15,7 @@ defmodule LineaUI.Components.Sidebar do
       the foot items) beside the raised panel of the active module: its title, a create button, its items, a
       coloured tree, the "try" shortcuts and the trial card.
     * `tree`: the brand with a collapse button, groups with a label and a chevron, children joined by a line,
-      square coloured icons, a notice dot and the user card at the foot.
+      square coloured icons, a notice dot and the user card at the foot (see "The foot" for the version line instead).
 
       <.sidebar format="rail" nav={MyAppWeb.Nav.items(assigns)} current={@current_path}
         brand={%{name: "Linea", logo: "S"}} user={%{name: "Marina Costa", email: "marina@linea.com"}} />
@@ -71,7 +71,42 @@ defmodule LineaUI.Components.Sidebar do
       config :linea_ui, :shell, sidebar: :sections, nav: {MyAppWeb.Nav, :items}
 
   `sidebar` (an atom or a string) is the format when `format` is left out and `nav` is `{module, function}`,
-  called with the assigns of the component, when `nav` is left out. What you pass always wins.
+  called with the assigns of the component, when `nav` is left out. `footer: :version` and `version: "v1.4.2"`
+  (or a map) are the foot (see "The foot"). What you pass always wins.
+
+  ## The foot
+
+  The foot of the menu is a choice (`footer`, in the three formats):
+
+    * `"user"`: the person. The user card in the `tree` and in `sections` (the same `.sg-sb-user` card, in place
+      of the plan card), the avatar in the `rail`.
+    * `"version"`: the version line of the canvas (a status dot, `v1.4.2`, the build and the "What's new" link)
+      in place of the user (`tree`, `rail`) or of the plan card (`sections`). The line is at the foot of the
+      panel in the `rail`, so a `rail` collapsed to icons (which hides the panel) does not show it.
+    * `"none"`: nothing, for an app that already shows the user in its topbar.
+    * left out: each format as it was, the user card in the `tree`, the plan card in `sections`, the avatar in
+      the `rail`.
+
+  `version` is a string or a map; only `version` is required:
+
+      version="v1.4.2"
+      version=%{version: "v1.4.2", build: "2a9f1c3", navigate: "/changelog", label: "Novidades",
+                title: "Updated today", status: :ok}
+
+    * `build`: the short hash after the version.
+    * `navigate`, `patch` or `href`: where the link goes; without one there is no link.
+    * `label`: the text of the link (`"What's new"` when left out). `title`: its tooltip.
+    * `status`: `:ok` (default, green dot), `:warning` or `:down`.
+
+  `footer: :version` without a `version` draws nothing. A `version` without `footer` shows the version line (as
+  in 0.15). `show_user={false}` is deprecated: it is `footer="none"`, or `"version"` when there is a `version`.
+  Collapsed to icons the line is the dot, centred, with the version and the build in its `title` and
+  `aria-label` (`"Version v1.4.2 (2a9f1c3)"`).
+
+  The kit does not read the version of your app: pass it, from `Application.spec/2`, in the layout.
+
+      <.shell footer="version" version={%{version: "v" <> to_string(Application.spec(:my_app, :vsn)),
+        build: "2a9f1c3", navigate: ~p"/changelog", label: "Novidades"}} …>
 
   ## Collapsing
 
@@ -111,15 +146,20 @@ defmodule LineaUI.Components.Sidebar do
     doc:
       "`%{name, email, initials, avatar, color}`: the avatar of the rail and the user card of the `tree`. `avatar` is an image URL, `color` the background of the initials."
 
+  attr :footer, :any,
+    default: nil,
+    doc:
+      "What the foot of the menu shows: `\"user\"`, `\"version\"` or `\"none\"` (an atom works too). The `:shell` config `footer` when left out, else each format's own (the user card of the `tree`, the plan card of `sections`, the avatar of the `rail`)."
+
   attr :show_user, :boolean,
     default: nil,
     doc:
-      "`false` takes the user (the card of the `tree`, the avatar of the `rail`) out of the menu; `user` is still accepted. The `:shell` config `show_user` when left out, else `true`."
+      "Deprecated, use `footer`. `false` is `footer=\"none\"` (or `\"version\"` when there is a `version`). The `:shell` config `show_user` when left out."
 
-  attr :version, :string,
+  attr :version, :any,
     default: nil,
     doc:
-      "The version of the system, e.g. `\"v1.4.2\"` (shown as it comes): a quiet line at the foot of the menu, under the user card when there is one. The `:shell` config `version` when left out."
+      "The version of the system: a string (`\"v1.4.2\"`) or `%{version, build, href | navigate | patch, label, title, status}` (see \"The foot\"). The `:shell` config `version` when left out."
 
   attr :plan, :map, default: nil, doc: "`%{name, badge}`: the plan card of `sections`."
 
@@ -166,10 +206,17 @@ defmodule LineaUI.Components.Sidebar do
     assigns =
       assigns
       |> assign_derived(:fmt, [:format], fn -> Nav.format(assigns.format) end)
-      |> assign_derived(:card, [:user, :show_user], fn ->
-        Nav.show_user?(assigns.show_user) && assigns.user
+      |> assign_derived(:foot, [:footer, :show_user, :version, :user, :plan], fn ->
+        ver = Nav.version(assigns.version)
+        foot = Nav.footer(assigns.footer, assigns.show_user, assigns.version, ver)
+
+        %{
+          user: foot in ["default", "user"] && assigns.user,
+          card: foot == "user" && assigns.user,
+          plan: foot == "default" && assigns.plan,
+          ver: foot == "version" && ver
+        }
       end)
-      |> assign_derived(:ver, [:version], fn -> Nav.version(assigns.version) end)
       |> assign_derived(:menu, [:nav, :current, :format, :id, :rest], fn ->
         nav = Nav.nav(assigns.nav, assigns)
         Nav.build(nav, assigns.current, Nav.format(assigns.format), assigns.id)
@@ -196,8 +243,9 @@ defmodule LineaUI.Components.Sidebar do
         id={@id}
         menu={@menu}
         brand={@brand}
-        plan={@plan}
-        version={@ver}
+        plan={@foot.plan}
+        user={@foot.card}
+        version={@foot.ver}
         mobile_label={@mobile_label}
       >
         <:mark :if={@brand_mark != []}>{render_slot(@brand_mark)}</:mark>
@@ -208,8 +256,8 @@ defmodule LineaUI.Components.Sidebar do
         id={@id}
         menu={@menu}
         brand={@brand}
-        user={@card}
-        version={@ver}
+        user={@foot.user}
+        version={@foot.ver}
         collapsible={@collapsible}
         collapse_label={@collapse_label}
         mobile_label={@mobile_label}
@@ -222,8 +270,8 @@ defmodule LineaUI.Components.Sidebar do
         id={@id}
         menu={@menu}
         brand={@brand}
-        user={@card}
-        version={@ver}
+        user={@foot.user}
+        version={@foot.ver}
         trial={@trial}
         rail_extra={@rail_extra}
         collapsible={@collapsible}
@@ -247,7 +295,8 @@ defmodule LineaUI.Components.Sidebar do
   attr :menu, :map, required: true
   attr :brand, :map, default: nil
   attr :plan, :map, default: nil
-  attr :version, :string, default: nil
+  attr :user, :map, default: nil
+  attr :version, :map, default: nil
   attr :mobile_label, :string, required: true
   slot :mark
   slot :footer
@@ -272,8 +321,9 @@ defmodule LineaUI.Components.Sidebar do
           <span :if={@plan[:badge]} class="pro">{@plan[:badge]}</span>
         </div>
         {render_slot(@footer)}
-        <.version :if={@version} version={@version} />
       </div>
+      <.user_card :if={@user} user={@user} />
+      <.version :if={@version} version={@version} />
     </div>
     """
   end
@@ -304,7 +354,7 @@ defmodule LineaUI.Components.Sidebar do
   attr :menu, :map, required: true
   attr :brand, :map, default: nil
   attr :user, :map, default: nil
-  attr :version, :string, default: nil
+  attr :version, :map, default: nil
   attr :collapsible, :boolean, default: true
   attr :collapse_label, :string, required: true
   attr :mobile_label, :string, required: true
@@ -336,15 +386,7 @@ defmodule LineaUI.Components.Sidebar do
         <.row :for={item <- @menu.footer_items} item={item} format="tree" />
         {render_slot(@footer)}
       </div>
-      <div :if={@user} class="sg-sb-user">
-        <div class="me">
-          <.avatar user={@user} />
-          <div class="who">
-            <b>{@user[:name]}</b>
-            <span :if={@user[:email]}>{@user[:email]}</span>
-          </div>
-        </div>
-      </div>
+      <.user_card :if={@user} user={@user} />
       <.version :if={@version} version={@version} />
     </div>
     """
@@ -356,7 +398,7 @@ defmodule LineaUI.Components.Sidebar do
   attr :menu, :map, required: true
   attr :brand, :map, default: nil
   attr :user, :map, default: nil
-  attr :version, :string, default: nil
+  attr :version, :map, default: nil
   attr :trial, :map, default: nil
   attr :rail_extra, :list, default: []
   attr :collapsible, :boolean, default: true
@@ -383,7 +425,6 @@ defmodule LineaUI.Components.Sidebar do
         <.rail_dot :for={extra <- @rail_extra} extra={extra} />
         <span class="grow"></span>
         <.rail_icon :for={item <- @menu.footer_items} item={item} />
-        <.version :if={@version} version={@version} />
       </div>
       <div :if={@menu.module} class="sg-sb-panel">
         <div class="sg-sb-ph">
@@ -438,6 +479,7 @@ defmodule LineaUI.Components.Sidebar do
           </div>
         </div>
         {render_slot(@footer)}
+        <.version :if={@version} version={@version} />
       </div>
     </div>
     """
@@ -683,11 +725,40 @@ defmodule LineaUI.Components.Sidebar do
     """
   end
 
-  attr :version, :string, required: true
+  attr :version, :map, required: true
 
   defp version(assigns) do
     ~H"""
-    <div class="sg-sb-ver" role="note" title={@version} aria-label={@version}>{@version}</div>
+    <div
+      class="sg-sb-ver"
+      role="group"
+      title={@version.aria}
+      aria-label={@version.aria}
+      data-status={@version.status}
+    >
+      <span class="dot" aria-hidden="true"></span>
+      <span class="v">{@version.version}</span>
+      <span :if={@version.build} class="b">{@version.build}</span>
+      <.link :if={@version.link} class="new" title={@version.title} {@version.link}>
+        {@version.label}<svg class="i sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
+      </.link>
+    </div>
+    """
+  end
+
+  attr :user, :map, required: true
+
+  defp user_card(assigns) do
+    ~H"""
+    <div class="sg-sb-user">
+      <div class="me">
+        <.avatar user={@user} />
+        <div class="who">
+          <b>{@user[:name]}</b>
+          <span :if={@user[:email]}>{@user[:email]}</span>
+        </div>
+      </div>
+    </div>
     """
   end
 
