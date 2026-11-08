@@ -342,6 +342,16 @@ defmodule LineaUI.Components.AppShellTest do
     assert [_] = find(html, "li svg") |> Enum.to_list()
   end
 
+  test "rail_version shows the version, the build and the link" do
+    html = render(~H|<.rail_version version="v1.4.2" build="2a9f1c3" href="/novidades" link_label="Novidades" />|)
+
+    assert "rail-version" in classes(html, "div")
+    assert html =~ "v1.4.2"
+    assert html =~ "2a9f1c3"
+    assert html =~ ~s|href="/novidades"|
+    refute render(~H|<.rail_version version="v1" />|) =~ "<a"
+  end
+
   test "page_header with an icon puts it before the title" do
     html =
       render(~H"""

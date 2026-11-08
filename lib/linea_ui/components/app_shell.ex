@@ -1599,7 +1599,9 @@ defmodule LineaUI.Components.AppShell do
     attr :"phx-target", :any
   end
 
-  slot :bottom, doc: "Items under the navigation: settings, the person."
+  slot :bottom,
+    doc:
+      "Items under the navigation: settings and the person (`rail_user/1`), or the system's version (`rail_version/1`) when the header already shows the person. Leave it out for no footer."
   slot :inner_block, required: true, doc: "The navigation: `rail_link/1` and `rail_module/1`."
 
   def framed_sidebar(assigns) do
@@ -1962,6 +1964,59 @@ defmodule LineaUI.Components.AppShell do
         <span :if={@subtitle} class="block truncate text-xs text-slate-400 dark:text-navy-300">
           {@subtitle}
         </span>
+      </span>
+    </div>
+    """
+  end
+
+  @doc """
+  The system's version at the bottom of the framed menu, instead of the person when the header already
+  shows them: a status dot, the version in mono, the build and a link to what is new. In the rail only the
+  dot stays, with the version as its tooltip. Leave `:bottom` empty for no footer at all.
+
+      <:bottom>
+        <.rail_version version="v1.4.2" build="2a9f1c3" href={~p"/novidades"} link_label="Novidades" />
+      </:bottom>
+
+  The version usually comes from the app: `Application.spec(:my_app, :vsn)`, and the build from the deploy
+  (the commit SHA in an env var).
+  """
+  attr :version, :string, required: true
+  attr :build, :string, default: nil
+  attr :href, :string, default: nil, doc: "The page of what is new."
+  attr :navigate, :string, default: nil
+  attr :link_label, :string, default: "What's new"
+  attr :status, :string, default: "ok", values: ~w(ok warning down), doc: "The color of the dot."
+  attr :class, :any, default: nil
+  attr :rest, :global
+
+  def rail_version(assigns) do
+    ~H"""
+    <div class={merge(["rail-user rail-version text-[12.5px] text-slate-400 dark:text-navy-300", @class])} title={@version} {@rest}>
+      <span
+        aria-hidden="true"
+        class={[
+          "ml-1.5 size-[7px] flex-none rounded-full",
+          @status == "ok" && "bg-success shadow-[0_0_0_3px_color-mix(in_srgb,var(--color-success)_20%,transparent)]",
+          @status == "warning" && "bg-warning shadow-[0_0_0_3px_color-mix(in_srgb,var(--color-warning)_20%,transparent)]",
+          @status == "down" && "bg-error shadow-[0_0_0_3px_color-mix(in_srgb,var(--color-error)_20%,transparent)]"
+        ]}
+      >
+      </span>
+      <span class="rail-label flex min-w-0 flex-1 items-center gap-2">
+        <span class="font-mono font-medium text-slate-800 dark:text-navy-50">{@version}</span>
+        <span :if={@build} class="truncate font-mono text-xs">{@build}</span>
+        <.link
+          :if={@href || @navigate}
+          href={@href}
+          navigate={@navigate}
+          class="ml-auto inline-flex items-center gap-0.5 text-slate-500 hover:text-slate-800 dark:text-navy-200 dark:hover:text-white"
+        >
+          {@link_label}
+          <svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="m9 6 6 6-6 6" />
+          </svg>
+        </.link>
       </span>
     </div>
     """
