@@ -145,6 +145,9 @@ defmodule LineaUI.Components.Sidebar.Nav do
 
     %{
       kind: :item,
+      tree_id: "#{id}-t",
+      collapsible:
+        format == "tree" and children != [] and Map.get(item, :collapsible, true) != false,
       label: item[:label],
       icon: icon(item[:icon]),
       link: link_attrs(item),

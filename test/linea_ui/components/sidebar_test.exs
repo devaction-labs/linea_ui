@@ -363,6 +363,72 @@ defmodule LineaUI.Components.SidebarTest do
       assert texts(html, "div.sg-sb-gt") == ["Fixo"]
     end
 
+    test "an item with children has a chevron button, sibling of its link, tied to the children",
+         %{
+           html: html
+         } do
+      assert attrs(html, "button.sg-sb-ct", "aria-expanded") == ["true"]
+      assert attrs(html, "button.sg-sb-ct", "aria-label") == ["Pedidos"]
+      assert find(html, "a button") |> Enum.empty?()
+      assert find(html, "button.sg-sb-ct svg path[d='M7 10l5 5 5-5']") |> Enum.count() == 1
+      [controls] = attrs(html, "button.sg-sb-ct", "aria-controls")
+      assert attrs(html, "div.sg-sb-tree.line", "id") == [controls]
+      assert find(html, "div#" <> controls <> " a") |> Enum.count() == 2
+      assert find(html, "div#" <> controls <> "[data-closed]") |> Enum.empty?()
+    end
+
+    test "`collapsible: false` takes the chevron of an item away" do
+      nav = [
+        %{
+          group: "G",
+          items: [%{label: "P", collapsible: false, children: [%{label: "A", href: "/a"}]}]
+        }
+      ]
+
+      html = html(%{format: "tree", nav: nav})
+      assert find(html, "button.sg-sb-ct") |> Enum.empty?()
+      assert find(html, ".sg-sb-tree.line") |> Enum.count() == 1
+    end
+
+    test "an active child leaves the children open" do
+      html = html(%{format: "tree", current: "/pedidos?status=aberto"})
+      assert attrs(html, "button.sg-sb-ct", "aria-expanded") == ["true"]
+      assert find(html, "div.sg-sb-tree[data-closed]") |> Enum.empty?()
+      assert texts(html, ".sg-sb-tree a.on .lbl") == ["Abertos"]
+    end
+
+    test "the ids of groups and children are unique and stable" do
+      nav = [
+        %{label: "A", href: "/a", children: [%{label: "A1", href: "/a1"}]},
+        %{
+          group: "G",
+          items: [
+            %{label: "B", href: "/b", children: [%{label: "B1", href: "/b1"}]},
+            %{label: "C", href: "/c", children: [%{label: "C1", href: "/c1"}]}
+          ]
+        }
+      ]
+
+      first = html(%{format: "tree", nav: nav})
+      ids = attrs(first, "button.sg-sb-ct, button.sg-sb-gt", "aria-controls")
+      assert length(ids) == 4
+      assert ids == Enum.uniq(ids)
+      assert attrs(first, "div.sg-sb-tree, div.sg-sb-grp", "id") |> Enum.sort() == Enum.sort(ids)
+
+      assert ids ==
+               attrs(
+                 html(%{format: "tree", nav: nav}),
+                 "button.sg-sb-ct, button.sg-sb-gt",
+                 "aria-controls"
+               )
+    end
+
+    test "the sections and rail formats have no chevron on items" do
+      for format <- ~w(sections rail) do
+        assert find(html(%{format: format}), "button.sg-sb-ct") |> Enum.empty?()
+      end
+    end
+
     test "the foot of the menu has the items of the foot group without its label", %{html: html} do
       assert texts(html, ".sg-sb-foot .sg-sb-a > .lbl") == ["Ajuda"]
       assert find(html, ".sg-sb-h2") |> Enum.empty?()

@@ -37,6 +37,8 @@ defmodule LineaUI.Components.Sidebar do
     * `color`: a colour for the icon: a round chip in the rail's tree (children), a square chip in the `tree`
       format (items). A name (`blue`, `green`, `rose`, `violet`, `orange`, `ink`) or any CSS colour.
     * `children`: items under it, joined by a line (`tree`), a coloured tree (`rail`) or a plain tree.
+    * `collapsible`: in the `tree` format an item with `children` gets a chevron at the right that closes and
+      opens them (open at first); `false` takes it away. It is `true` when left out.
     * `active`: marks it active; `current` marks the item whose `navigate`/`patch`/`href` is the current
       path (path and query are compared).
     * `formats`: a list of formats that show it (`["rail"]`: only the rail); every format when left out.
@@ -574,7 +576,24 @@ defmodule LineaUI.Components.Sidebar do
       ></span>
       <span class="rail-tip" role="tooltip">{@item.label}</span>
     </.link>
-    <div :if={@item.children != []} class={["sg-sb-tree", @format == "tree" && "line"]}>
+    <button
+      :if={@item.collapsible}
+      type="button"
+      class="sg-sb-ct"
+      aria-expanded="true"
+      aria-controls={@item.tree_id}
+      aria-label={@item.label}
+      phx-mounted={JS.ignore_attributes(["aria-expanded"])}
+      phx-click={toggle(@item.tree_id)}
+    >
+      <svg class="i sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10l5 5 5-5" /></svg>
+    </button>
+    <div
+      :if={@item.children != []}
+      id={@item.collapsible && @item.tree_id}
+      class={["sg-sb-tree", @format == "tree" && "line"]}
+      phx-mounted={@item.collapsible && JS.ignore_attributes(["data-closed"])}
+    >
       <svg
         :if={@item.branch}
         class="tb"

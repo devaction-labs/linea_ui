@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- `sidebar` (`tree` format): items with `children` get a chevron button at the right of their row that closes and opens the children (`aria-expanded`, `aria-controls`, open at first, sibling of the link). `collapsible: false` on the item takes it away. The ids come from `Sidebar.Nav.build`. With the menu collapsed to icons the children stay as before. CSS in `canvas-sidebar.css` (`sg-sb-ct`). The group titles of the `tree` already closed.
+
 ## 0.15.0 (2026-11-08)
 
 - `error_page`, `error_state` and `error_links` (`LineaUI.Components.ErrorPage`, canvas ErrorPage, light and dark): the error screens. `error_page` is the whole page for an `ErrorHTML` (brand and status link on top; the code chip and label, title, description, actions and links on the left; the dotted panel with rings, the 230px mono code fading down and a floating `card` on the right; request id with copy, timestamp and help links at the bottom), stacking under 1100px. `error_state` is the error inside the app (the 150px code with an icon tile, centered). `code` picks the tone (`neutral` 404, `error` 5xx, `warning` 403/429/offline, `accent` 401/419/503) and English defaults for label, title, description and icon. CSS `canvas-error-page.css` (`sg-err`).
