@@ -675,7 +675,6 @@ defmodule LineaUI.Components.Sidebar do
         :if={@brand[:src]}
         src={@brand[:src]}
         alt=""
-        class="size-full rounded-[inherit] object-cover"
       />
       <%= if !@brand[:src] do %>
         {@brand[:logo]}

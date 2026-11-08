@@ -3,7 +3,8 @@
 ## Unreleased
 
 - `sidebar` and `shell`: `show_user` (default `true`; `false` takes the user card of the `tree` and the avatar of the `rail` out, `user` is still accepted) and `version` (a quiet mono line at the foot of the menu, under the user card, in the three formats; `title` and `aria-label` with the full text; compact when collapsed, class `sg-sb-ver`). Both come from `config :linea_ui, :shell, show_user: false, version: "v1.4.2"` when the attribute is left out; the attribute wins. The kit does not read the version of the app: pass `Application.spec/2` in the layout. `mix linea_ui.install --kit` explains them in its notice.
-- Fix: the photo of an avatar (`.sg-av > img`) overflowed the circle in apps whose Tailwind does not scan deps. The `<img>` lost its Tailwind classes; `canvas.css` crops it (`overflow:hidden`, `object-fit:cover`, `border-radius:inherit`).
+- Fix: the photo of an avatar (`.sg-av > img`) overflowed the circle in apps whose Tailwind does not scan deps. The `<img>` lost its Tailwind classes; `canvas.css` crops it (`overflow:hidden`, `object-fit:cover`, `border-radius:inherit`). The same for the image of the brand logo (`.sg-sb-logo > img`).
+- Fix: the `tree` collapsed to icons had a horizontal scrollbar above the foot: the group title (`button.sg-sb-gt`, `width:100%` plus the 8px margins) was wider than the 36px column.
 
 ## 0.15.1 (2026-11-08)
 

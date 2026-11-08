@@ -533,6 +533,14 @@ defmodule LineaUI.Components.SidebarTest do
       end
     end
 
+    test "the image of the brand logo is a bare <img> too" do
+      for format <- ["sections", "tree", "rail"] do
+        html = html(%{format: format, brand: %{name: "Linea", src: "/logo.png"}})
+        assert attrs(html, ".sg-sb-logo > img", "src") |> Enum.uniq() == ["/logo.png"]
+        assert attrs(html, ".sg-sb-logo > img", "class") |> Enum.reject(&is_nil/1) == []
+      end
+    end
+
     test "`show_user={false}` takes the card of the tree and the avatar of the rail out" do
       for format <- ["tree", "rail", "sections"] do
         html = html(%{format: format, show_user: false})
