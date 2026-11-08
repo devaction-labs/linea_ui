@@ -21,6 +21,8 @@ defmodule LineaUI.Components.ShellTest do
       |> Map.put_new(:current, nil)
       |> Map.put_new(:collapsible, true)
       |> Map.put_new(:collapsed, false)
+      |> Map.put_new(:show_user, nil)
+      |> Map.put_new(:version, nil)
 
     ~H"""
     <.shell
@@ -30,6 +32,8 @@ defmodule LineaUI.Components.ShellTest do
       current={@current}
       collapsible={@collapsible}
       collapsed={@collapsed}
+      show_user={@show_user}
+      version={@version}
       brand={%{name: "Linea", logo: "S"}}
       user={%{name: "Marina Costa"}}
       plan={%{name: "Linea", badge: "Pro"}}
@@ -107,6 +111,26 @@ defmodule LineaUI.Components.ShellTest do
     assert attrs(html, "#app-menu", "data-format") == ["rail"]
     assert "Pedidos" in texts(html, ".sg-sb-a > .lbl")
     refute "Perfil" in texts(html, ".sg-sb-a > .lbl")
+  end
+
+  test "`show_user` and `version` reach the menu, from the attributes or the config (the attributes win)" do
+    html = html(%{sidebar: "tree"})
+    assert find(html, ".sg-sb-user") != []
+    assert find(html, ".sg-sb-ver") |> Enum.empty?()
+
+    html = html(%{sidebar: "tree", show_user: false, version: "v1.4.2"})
+    assert find(html, ".sg-sb-user") |> Enum.empty?()
+    assert texts(html, ".sg-sb-ver") == ["v1.4.2"]
+    assert attrs(html, ".sg-sb-ver", "aria-label") == ["v1.4.2"]
+
+    Application.put_env(:linea_ui, :shell, sidebar: :tree, show_user: false, version: "v9.0.0")
+    html = html()
+    assert find(html, ".sg-sb-user") |> Enum.empty?()
+    assert texts(html, ".sg-sb-ver") == ["v9.0.0"]
+
+    html = html(%{show_user: true, version: "v2.0.0"})
+    assert find(html, ".sg-sb-user") != []
+    assert texts(html, ".sg-sb-ver") == ["v2.0.0"]
   end
 
   test "the menu collapses: the hook, the start state and the toggle of `sections` in the top bar" do

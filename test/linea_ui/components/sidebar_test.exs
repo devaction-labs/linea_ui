@@ -80,6 +80,8 @@ defmodule LineaUI.Components.SidebarTest do
       |> Map.put_new(:current, nil)
       |> Map.put_new(:brand, @brand)
       |> Map.put_new(:user, @user)
+      |> Map.put_new(:show_user, nil)
+      |> Map.put_new(:version, nil)
       |> Map.put_new(:plan, @plan)
       |> Map.put_new(:trial, @trial)
       |> Map.put_new(:rail_extra, @extra)
@@ -94,6 +96,8 @@ defmodule LineaUI.Components.SidebarTest do
       current={@current}
       brand={@brand}
       user={@user}
+      show_user={@show_user}
+      version={@version}
       plan={@plan}
       trial={@trial}
       rail_extra={@rail_extra}
@@ -515,6 +519,64 @@ defmodule LineaUI.Components.SidebarTest do
 
       html = html(%{format: "rail", user: nil, trial: nil, rail_extra: []})
       assert find(html, ".sg-sb-trial, .sg-av, a.dot") |> Enum.empty?()
+    end
+  end
+
+  describe "the user and the version" do
+    @photo %{name: "Marina Costa", avatar: "/marina.png"}
+
+    test "the photo is a bare <img>: the size and the crop come from the CSS of the kit" do
+      for format <- ["tree", "rail"] do
+        html = html(%{format: format, user: @photo})
+        assert attrs(html, ".sg-av > img", "src") == ["/marina.png"]
+        assert attrs(html, ".sg-av > img", "class") == []
+      end
+    end
+
+    test "the image of the brand logo is a bare <img> too" do
+      for format <- ["sections", "tree", "rail"] do
+        html = html(%{format: format, brand: %{name: "Linea", src: "/logo.png"}})
+        assert attrs(html, ".sg-sb-logo > img", "src") |> Enum.uniq() == ["/logo.png"]
+        assert attrs(html, ".sg-sb-logo > img", "class") |> Enum.reject(&is_nil/1) == []
+      end
+    end
+
+    test "`show_user={false}` takes the card of the tree and the avatar of the rail out" do
+      for format <- ["tree", "rail", "sections"] do
+        html = html(%{format: format, show_user: false})
+        assert find(html, ".sg-sb-user, .sg-sb-rail > .sg-av") |> Enum.empty?()
+      end
+
+      assert find(html(%{format: "tree"}), ".sg-sb-user") != []
+      assert find(html(%{format: "rail"}), ".sg-sb-rail > .sg-av") != []
+    end
+
+    test "`version` is a line at the foot of every format, under the user card, with title and aria-label" do
+      for format <- ["tree", "rail", "sections"] do
+        html = html(%{format: format, version: "v1.4.2"})
+        assert texts(html, ".sg-sb-ver") == ["v1.4.2"]
+        assert attrs(html, ".sg-sb-ver", "title") == ["v1.4.2"]
+        assert attrs(html, ".sg-sb-ver", "aria-label") == ["v1.4.2"]
+        assert find(html(%{format: format}), ".sg-sb-ver") |> Enum.empty?()
+      end
+
+      html = html(%{format: "tree", version: "1.4.2-rc1"})
+      assert texts(html, ".sg-sb-user + .sg-sb-ver") == ["1.4.2-rc1"]
+
+      html = html(%{format: "tree", version: "v1.4.2", show_user: false})
+      assert find(html, ".sg-sb-user") |> Enum.empty?()
+      assert texts(html, ".sg-sb-body > .sg-sb-ver") == ["v1.4.2"]
+    end
+
+    test "both come from the config, and the attributes win" do
+      Application.put_env(:linea_ui, :shell, show_user: false, version: "v9.0.0")
+      html = html(%{format: "tree"})
+      assert find(html, ".sg-sb-user") |> Enum.empty?()
+      assert texts(html, ".sg-sb-ver") == ["v9.0.0"]
+
+      html = html(%{format: "tree", show_user: true, version: "v2.0.0"})
+      assert find(html, ".sg-sb-user") != []
+      assert texts(html, ".sg-sb-ver") == ["v2.0.0"]
     end
   end
 

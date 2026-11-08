@@ -111,6 +111,16 @@ defmodule LineaUI.Components.Sidebar do
     doc:
       "`%{name, email, initials, avatar, color}`: the avatar of the rail and the user card of the `tree`. `avatar` is an image URL, `color` the background of the initials."
 
+  attr :show_user, :boolean,
+    default: nil,
+    doc:
+      "`false` takes the user (the card of the `tree`, the avatar of the `rail`) out of the menu; `user` is still accepted. The `:shell` config `show_user` when left out, else `true`."
+
+  attr :version, :string,
+    default: nil,
+    doc:
+      "The version of the system, e.g. `\"v1.4.2\"` (shown as it comes): a quiet line at the foot of the menu, under the user card when there is one. The `:shell` config `version` when left out."
+
   attr :plan, :map, default: nil, doc: "`%{name, badge}`: the plan card of `sections`."
 
   attr :trial, :map,
@@ -156,6 +166,10 @@ defmodule LineaUI.Components.Sidebar do
     assigns =
       assigns
       |> assign_derived(:fmt, [:format], fn -> Nav.format(assigns.format) end)
+      |> assign_derived(:card, [:user, :show_user], fn ->
+        Nav.show_user?(assigns.show_user) && assigns.user
+      end)
+      |> assign_derived(:ver, [:version], fn -> Nav.version(assigns.version) end)
       |> assign_derived(:menu, [:nav, :current, :format, :id, :rest], fn ->
         nav = Nav.nav(assigns.nav, assigns)
         Nav.build(nav, assigns.current, Nav.format(assigns.format), assigns.id)
@@ -183,6 +197,7 @@ defmodule LineaUI.Components.Sidebar do
         menu={@menu}
         brand={@brand}
         plan={@plan}
+        version={@ver}
         mobile_label={@mobile_label}
       >
         <:mark :if={@brand_mark != []}>{render_slot(@brand_mark)}</:mark>
@@ -193,7 +208,8 @@ defmodule LineaUI.Components.Sidebar do
         id={@id}
         menu={@menu}
         brand={@brand}
-        user={@user}
+        user={@card}
+        version={@ver}
         collapsible={@collapsible}
         collapse_label={@collapse_label}
         mobile_label={@mobile_label}
@@ -206,7 +222,8 @@ defmodule LineaUI.Components.Sidebar do
         id={@id}
         menu={@menu}
         brand={@brand}
-        user={@user}
+        user={@card}
+        version={@ver}
         trial={@trial}
         rail_extra={@rail_extra}
         collapsible={@collapsible}
@@ -230,6 +247,7 @@ defmodule LineaUI.Components.Sidebar do
   attr :menu, :map, required: true
   attr :brand, :map, default: nil
   attr :plan, :map, default: nil
+  attr :version, :string, default: nil
   attr :mobile_label, :string, required: true
   slot :mark
   slot :footer
@@ -254,6 +272,7 @@ defmodule LineaUI.Components.Sidebar do
           <span :if={@plan[:badge]} class="pro">{@plan[:badge]}</span>
         </div>
         {render_slot(@footer)}
+        <.version :if={@version} version={@version} />
       </div>
     </div>
     """
@@ -285,6 +304,7 @@ defmodule LineaUI.Components.Sidebar do
   attr :menu, :map, required: true
   attr :brand, :map, default: nil
   attr :user, :map, default: nil
+  attr :version, :string, default: nil
   attr :collapsible, :boolean, default: true
   attr :collapse_label, :string, required: true
   attr :mobile_label, :string, required: true
@@ -325,6 +345,7 @@ defmodule LineaUI.Components.Sidebar do
           </div>
         </div>
       </div>
+      <.version :if={@version} version={@version} />
     </div>
     """
   end
@@ -335,6 +356,7 @@ defmodule LineaUI.Components.Sidebar do
   attr :menu, :map, required: true
   attr :brand, :map, default: nil
   attr :user, :map, default: nil
+  attr :version, :string, default: nil
   attr :trial, :map, default: nil
   attr :rail_extra, :list, default: []
   attr :collapsible, :boolean, default: true
@@ -361,6 +383,7 @@ defmodule LineaUI.Components.Sidebar do
         <.rail_dot :for={extra <- @rail_extra} extra={extra} />
         <span class="grow"></span>
         <.rail_icon :for={item <- @menu.footer_items} item={item} />
+        <.version :if={@version} version={@version} />
       </div>
       <div :if={@menu.module} class="sg-sb-panel">
         <div class="sg-sb-ph">
@@ -652,12 +675,19 @@ defmodule LineaUI.Components.Sidebar do
         :if={@brand[:src]}
         src={@brand[:src]}
         alt=""
-        class="size-full rounded-[inherit] object-cover"
       />
       <%= if !@brand[:src] do %>
         {@brand[:logo]}
       <% end %>
     </span>
+    """
+  end
+
+  attr :version, :string, required: true
+
+  defp version(assigns) do
+    ~H"""
+    <div class="sg-sb-ver" role="note" title={@version} aria-label={@version}>{@version}</div>
     """
   end
 
@@ -676,7 +706,6 @@ defmodule LineaUI.Components.Sidebar do
         :if={@user[:avatar]}
         src={@user[:avatar]}
         alt=""
-        class="size-full rounded-full object-cover"
       />
       <%= if !@user[:avatar] do %>
         {Nav.initials(@user)}

@@ -20,6 +20,15 @@ defmodule LineaUI.Components.Shell do
   `sidebar` is the format and `nav` is `{module, function}`, called with the assigns of the shell, when the
   attributes are left out. The attributes always win.
 
+  The app already has the avatar in its topbar? `show_user={false}` (or `show_user: false` in the config) takes
+  the user card out of the menu. `version` puts the version of the system in a quiet line at the foot of the
+  menu (under the user card when there is one). The kit does not read the version of your app: pass it, from
+  `Application.spec/2`, or write it in the config (which runs before the app is loaded, so no `spec` there).
+
+      <.shell show_user={false} version={"v" <> to_string(Application.spec(:my_app, :vsn))} …>
+
+      config :linea_ui, :shell, show_user: false, version: "v1.4.2"
+
   The `:topbar` slot is a row at the top of the page panel. In the `sections` format, which has no collapse
   button of its own, the row starts with the button that collapses the menu (`collapsible`). Below 768px the
   menu is a top bar with a hamburger.
@@ -44,6 +53,17 @@ defmodule LineaUI.Components.Shell do
   attr :current, :string, default: nil, doc: "The current path; marks the active item."
   attr :brand, :map, default: nil, doc: "`%{name, logo}` (or `src`), as in `sidebar/1`."
   attr :user, :map, default: nil, doc: "`%{name, email, initials, avatar, color}`."
+
+  attr :show_user, :boolean,
+    default: nil,
+    doc:
+      "`false` takes the user out of the menu (see `sidebar/1`). The `:shell` config `show_user` when left out, else `true`."
+
+  attr :version, :string,
+    default: nil,
+    doc:
+      "The version of the system, a quiet line at the foot of the menu (see `sidebar/1`). The `:shell` config `version` when left out."
+
   attr :plan, :map, default: nil, doc: "`%{name, badge}`, the plan card of `sections`."
   attr :trial, :map, default: nil, doc: "The trial card of the `rail` (see `sidebar/1`)."
   attr :rail_extra, :list, default: [], doc: "The extra apps of the `rail` (see `sidebar/1`)."
@@ -85,6 +105,8 @@ defmodule LineaUI.Components.Shell do
         current={@current}
         brand={@brand}
         user={@user}
+        show_user={@show_user}
+        version={@version}
         plan={@plan}
         trial={@trial}
         rail_extra={@rail_extra}
