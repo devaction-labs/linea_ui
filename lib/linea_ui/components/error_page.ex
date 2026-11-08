@@ -23,7 +23,7 @@ defmodule LineaUI.Components.ErrorPage do
 
   `code` is the HTTP status (an integer or text, `"OFF"` for offline). It picks the color of the big code
   (`tone`: `neutral` for 404, `error` for 5xx, `warning` for 403, 429 and offline, `accent` for 401, 419 and 503)
-  and the English defaults of `label`, `title` and `description` (and of the `error_state` icon), all of which
+  and the English defaults of `label` (`error_page`), `title` and `description` (and of the `error_state` icon), all of which
   you pass translated.
 
   ## The page
@@ -45,18 +45,50 @@ defmodule LineaUI.Components.ErrorPage do
   import LineaUI.Components.Icon, only: [icon: 1]
 
   @defaults %{
-    "400" => {"neutral", "Bad request", "That request didn't make sense.", "Something in the address or the form was not what we expected. Go back and try again.", "huge-alert-02"},
-    "401" => {"accent", "Session expired", "Your session expired.", "For security, you were signed out after a while without use. Sign in again to carry on where you left off.", "huge-square-lock-02"},
-    "403" => {"warning", "Access denied", "You don't have access to this area.", "Ask whoever manages the account to give you access; you will be told when it is granted.", "huge-square-lock-02"},
-    "404" => {"neutral", "Page not found", "We couldn't find this page.", "The address may have been mistyped, or the record was deleted or moved.", "huge-search-01"},
-    "419" => {"accent", "Session expired", "Your session expired.", "For security, you were signed out after a while without use. Sign in again to carry on where you left off.", "huge-square-lock-02"},
-    "422" => {"warning", "Unprocessable", "We couldn't process this.", "The data sent could not be used. Check it and try again.", "huge-alert-02"},
-    "429" => {"warning", "Too many requests", "Easy, that was too fast.", "We got many actions in a row from this account. Access comes back by itself in a few seconds.", "huge-clock-01"},
-    "500" => {"error", "Internal error", "Something went wrong on our side.", "Nothing you did caused this. The team got the error report and your data is safe; try again in a moment.", "huge-alert-02"},
-    "502" => {"error", "Bad gateway", "Something went wrong on our side.", "A service we depend on did not answer properly. Try again in a moment.", "huge-alert-02"},
-    "503" => {"accent", "Under maintenance", "We'll be right back.", "We are updating the system. Try again in a few minutes.", "huge-clock-01"},
-    "504" => {"error", "Timeout", "That took too long.", "A service we depend on took too long to answer. Try again in a moment.", "huge-clock-01"},
-    "OFF" => {"warning", "No connection", "You are offline.", "The internet connection was lost. Try again when the network is back.", "huge-cloud-off"}
+    "400" =>
+      {"neutral", "Bad request", "That request didn't make sense.",
+       "Something in the address or the form was not what we expected. Go back and try again.",
+       "huge-alert-02"},
+    "401" =>
+      {"accent", "Session expired", "Your session expired.",
+       "For security, you were signed out after a while without use. Sign in again to carry on where you left off.",
+       "huge-square-lock-02"},
+    "403" =>
+      {"warning", "Access denied", "You don't have access to this area.",
+       "Ask whoever manages the account to give you access; you will be told when it is granted.",
+       "huge-square-lock-02"},
+    "404" =>
+      {"neutral", "Page not found", "We couldn't find this page.",
+       "The address may have been mistyped, or the record was deleted or moved.",
+       "huge-search-01"},
+    "419" =>
+      {"accent", "Session expired", "Your session expired.",
+       "For security, you were signed out after a while without use. Sign in again to carry on where you left off.",
+       "huge-square-lock-02"},
+    "422" =>
+      {"warning", "Unprocessable", "We couldn't process this.",
+       "The data sent could not be used. Check it and try again.", "huge-alert-02"},
+    "429" =>
+      {"warning", "Too many requests", "Easy, that was too fast.",
+       "We got many actions in a row from this account. Access comes back by itself in a few seconds.",
+       "huge-clock-01"},
+    "500" =>
+      {"error", "Internal error", "Something went wrong on our side.",
+       "Nothing you did caused this. The team got the error report and your data is safe; try again in a moment.",
+       "huge-alert-02"},
+    "502" =>
+      {"error", "Bad gateway", "Something went wrong on our side.",
+       "A service we depend on did not answer properly. Try again in a moment.", "huge-alert-02"},
+    "503" =>
+      {"accent", "Under maintenance", "We'll be right back.",
+       "We are updating the system. Try again in a few minutes.", "huge-clock-01"},
+    "504" =>
+      {"error", "Timeout", "That took too long.",
+       "A service we depend on took too long to answer. Try again in a moment.", "huge-clock-01"},
+    "OFF" =>
+      {"warning", "No connection", "You are offline.",
+       "The internet connection was lost. Try again when the network is back.",
+       "huge-wifi-off-01"}
   }
 
   @doc "The defaults of the code: `{tone, label, title, description, icon}`."
@@ -69,21 +101,24 @@ defmodule LineaUI.Components.ErrorPage do
   defp fallback(_key), do: @defaults["400"]
 
   defp put_defaults(assigns) do
-    {tone, label, title, description, icon} = defaults(assigns.code)
+    {tone, _label, title, description, _icon} = defaults(assigns.code)
 
     assigns
     |> assign(:tone, assigns.tone || tone)
-    |> assign(:label, assigns.label || label)
     |> assign(:title, assigns.title || title)
     |> assign(:description, assigns.description || description)
-    |> assign(:icon, assigns[:icon] || icon)
   end
 
   @doc """
   Renders the whole error page.
   """
   attr :code, :any, required: true, doc: "The HTTP status (`404`) or a short text (`\"OFF\"`)."
-  attr :tone, :string, default: nil, values: [nil, "neutral", "error", "warning", "accent"], doc: "The color of the code; by `code` when `nil`."
+
+  attr :tone, :string,
+    default: nil,
+    values: [nil, "neutral", "error", "warning", "accent"],
+    doc: "The color of the code; by `code` when `nil`."
+
   attr :label, :string, default: nil, doc: "The words after the code chip (`Page not found`)."
   attr :title, :string, default: nil
   attr :description, :string, default: nil
@@ -114,7 +149,12 @@ defmodule LineaUI.Components.ErrorPage do
   slot :footer, doc: "The links at the right end of the footer."
 
   def error_page(assigns) do
-    assigns = assigns |> assign(:icon, nil) |> put_defaults()
+    {_tone, label, _title, _description, _icon} = defaults(assigns.code)
+
+    assigns =
+      assigns
+      |> put_defaults()
+      |> assign(:label, assigns.label || label)
 
     ~H"""
     <div id={@id} class={merge(["sg-err", @class])} data-tone={@tone} {@rest}>
@@ -178,7 +218,11 @@ defmodule LineaUI.Components.ErrorPage do
   attr :icon, :string, default: nil, doc: "A `huge-*` icon for the tile; by `code` when `nil`."
   attr :title, :string, default: nil
   attr :description, :string, default: nil
-  attr :label, :string, default: nil
+
+  attr :id, :string,
+    default: nil,
+    doc: "Derives the id of the title (`\"\#{id}-title\"`); `err-<code>-title` when `nil`."
+
   attr :class, :any, default: nil
   attr :rest, :global
 
@@ -187,16 +231,31 @@ defmodule LineaUI.Components.ErrorPage do
   slot :more, doc: "Under the actions, full width."
 
   def error_state(assigns) do
-    assigns = put_defaults(assigns)
+    {_tone, _label, _title, _description, icon} = defaults(assigns.code)
+
+    assigns =
+      assigns
+      |> put_defaults()
+      |> assign(:icon, assigns.icon || icon)
+      |> assign(
+        :title_id,
+        if(assigns.id, do: "#{assigns.id}-title", else: "err-#{assigns.code}-title")
+      )
 
     ~H"""
-    <section class={merge(["sg-err-state", @class])} data-tone={@tone} aria-labelledby={"err-#{@code}-title"} {@rest}>
+    <section
+      id={@id}
+      class={merge(["sg-err-state", @class])}
+      data-tone={@tone}
+      aria-labelledby={@title_id}
+      {@rest}
+    >
       <div class="in">
         <div class="mark">
           <div class="sg-err-digits" aria-hidden="true">{@code}</div>
           <span class="tile" aria-hidden="true"><.icon name={@icon} /></span>
         </div>
-        <h1 id={"err-#{@code}-title"}>{@title}</h1>
+        <h1 id={@title_id}>{@title}</h1>
         <p :if={@inner_block != []}>{render_slot(@inner_block)}</p>
         <p :if={@inner_block == [] and @description}>{@description}</p>
         <div :if={@actions != []} class="sg-err-actions">{render_slot(@actions)}</div>

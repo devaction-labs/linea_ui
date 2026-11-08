@@ -350,6 +350,5 @@ defmodule LineaUI.Components.ToastTest do
       assert Toast.payload("x", aura: true)["status"] == nil
       assert Toast.payload("x", value: 10)["status"] == nil
     end
-
   end
 end

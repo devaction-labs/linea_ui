@@ -2036,6 +2036,7 @@ defmodule LineaUI.Components.AppShell do
   slot :icon,
     doc:
       "A tile or avatar before the title and the description, e.g. a project's colored square (`variant=\"page\"`)."
+
   slot :notifications, doc: "Replaces the bell with your own button or menu (`variant=\"page\"`)."
 
   slot :tabs,
@@ -2119,34 +2120,37 @@ defmodule LineaUI.Components.AppShell do
         ]}
       >
         <div class={["flex min-w-0 items-center gap-3.5", @icon == [] && "contents"]}>
-        <div :if={@icon != []} class="flex flex-none">{render_slot(@icon)}</div>
-        <div class={["min-w-0", @badge_position == "inline" && "flex flex-wrap items-center gap-2.5"]}>
-          <div :if={@badge != [] and @badge_position == "above"} class="flex items-center gap-2.5">
-            {render_slot(@badge)}
+          <div :if={@icon != []} class="flex flex-none">{render_slot(@icon)}</div>
+          <div class={[
+            "min-w-0",
+            @badge_position == "inline" && "flex flex-wrap items-center gap-2.5"
+          ]}>
+            <div :if={@badge != [] and @badge_position == "above"} class="flex items-center gap-2.5">
+              {render_slot(@badge)}
+            </div>
+            <h1
+              :if={@title != ""}
+              class={[
+                "mb-0 text-[34px] leading-10 font-semibold tracking-[-0.03em] text-slate-900 dark:text-navy-50",
+                if(@top or (@badge_position == "above" and @badge != []), do: "mt-1", else: "mt-0")
+              ]}
+            >
+              {@title}
+            </h1>
+            <div :if={@badge != [] and @badge_position == "inline"} class="flex items-center gap-2.5">
+              {render_slot(@badge)}
+            </div>
+            <p
+              :if={@description}
+              class={[
+                "text-[15px] leading-[22px] text-slate-500 dark:text-navy-300",
+                !@top && "mt-1.5",
+                @badge_position == "inline" && "basis-full"
+              ]}
+            >
+              {@description}
+            </p>
           </div>
-          <h1
-            :if={@title != ""}
-            class={[
-              "mb-0 text-[34px] leading-10 font-semibold tracking-[-0.03em] text-slate-900 dark:text-navy-50",
-              if(@top or (@badge_position == "above" and @badge != []), do: "mt-1", else: "mt-0")
-            ]}
-          >
-            {@title}
-          </h1>
-          <div :if={@badge != [] and @badge_position == "inline"} class="flex items-center gap-2.5">
-            {render_slot(@badge)}
-          </div>
-          <p
-            :if={@description}
-            class={[
-              "text-[15px] leading-[22px] text-slate-500 dark:text-navy-300",
-              !@top && "mt-1.5",
-              @badge_position == "inline" && "basis-full"
-            ]}
-          >
-            {@description}
-          </p>
-        </div>
         </div>
         <div :if={@actions != []} class="flex items-center gap-2.5">{render_slot(@actions)}</div>
       </div>

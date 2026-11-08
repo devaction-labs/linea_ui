@@ -1,7 +1,9 @@
 defmodule LineaUI.Components.ErrorPageTest do
   use LineaUI.ComponentCase, async: true
 
-  defp text(html, selector), do: html |> find(selector) |> Enum.map(&LazyHTML.text/1) |> Enum.map(&String.trim/1)
+  defp text(html, selector),
+    do: html |> find(selector) |> Enum.map(&LazyHTML.text/1) |> Enum.map(&String.trim/1)
+
   defp attr_of(html, selector, name), do: html |> find(selector) |> LazyHTML.attribute(name)
 
   test "error_page takes the defaults of the code" do
@@ -20,14 +22,24 @@ defmodule LineaUI.Components.ErrorPageTest do
     assert attr_of(render(~H|<.error_page code={500} />|), ".sg-err", "data-tone") == ["error"]
     assert attr_of(render(~H|<.error_page code={503} />|), ".sg-err", "data-tone") == ["accent"]
     assert attr_of(render(~H|<.error_page code="off" />|), ".sg-err", "data-tone") == ["warning"]
-    assert attr_of(render(~H|<.error_page code={418} tone="accent" />|), ".sg-err", "data-tone") == ["accent"]
+
+    assert attr_of(render(~H|<.error_page code={418} tone="accent" />|), ".sg-err", "data-tone") ==
+             ["accent"]
+
     assert attr_of(render(~H|<.error_page code={599} />|), ".sg-err", "data-tone") == ["error"]
   end
 
   test "error_page with texts, slots and the request id" do
     html =
       render(~H"""
-      <.error_page code={403} label="Acesso negado" title="Sem acesso" description="Peça acesso." request_id="req_1" timestamp="06/11/2026 08:41">
+      <.error_page
+        code={403}
+        label="Acesso negado"
+        title="Sem acesso"
+        description="Peça acesso."
+        request_id="req_1"
+        timestamp="06/11/2026 08:41"
+      >
         <:brand><b id="brand">Linea</b></:brand>
         <:status href="/status" status="warning">Instabilidade</:status>
         <:actions><a id="home" href="/">Início</a></:actions>
@@ -65,7 +77,9 @@ defmodule LineaUI.Components.ErrorPageTest do
       <.error_state code={404} title="Pedido #2499 não encontrado">
         Pode ter sido excluído.
         <:actions><a id="all" href="/pedidos">Ver todos</a></:actions>
-        <:more><table id="recent"></table></:more>
+        <:more>
+          <table id="recent"></table>
+        </:more>
       </.error_state>
       """)
 
@@ -78,8 +92,33 @@ defmodule LineaUI.Components.ErrorPageTest do
 
   test "error_state falls back to the description and the icon of the code" do
     html = render(~H|<.error_state code={500} icon="huge-copy-01" />|)
-    assert text(html, "p") == ["Nothing you did caused this. The team got the error report and your data is safe; try again in a moment."]
+
+    assert text(html, "p") == [
+             "Nothing you did caused this. The team got the error report and your data is safe; try again in a moment."
+           ]
+
     assert "huge-copy-01" in classes(html, ".tile > span")
     assert attr_of(html, "section", "data-tone") == ["error"]
+  end
+
+  test "error_state derives the title id from id, and keeps err-<code>-title without it" do
+    html = render(~H|<.error_state code={404} id="orders-missing" />|)
+    assert attr_of(html, "section", "id") == ["orders-missing"]
+    assert attr_of(html, "section", "aria-labelledby") == ["orders-missing-title"]
+    assert attr_of(html, "h1", "id") == ["orders-missing-title"]
+
+    html = render(~H|<.error_state code={404} />|)
+    assert attr_of(html, "section", "aria-labelledby") == ["err-404-title"]
+    assert attr_of(html, "h1", "id") == ["err-404-title"]
+  end
+
+  test "error_state has no label attr and error_page still defaults its label" do
+    refute Enum.any?(
+             LineaUI.Components.ErrorPage.__components__().error_state.attrs,
+             &(&1.name == :label)
+           )
+
+    html = render(~H|<.error_page code={404} />|)
+    assert text(html, ".sg-err-label") == ["404Page not found"]
   end
 end
