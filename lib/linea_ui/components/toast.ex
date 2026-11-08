@@ -219,9 +219,9 @@ defmodule LineaUI.Components.Toast do
   attr :flash, :map, default: %{}, doc: "The `@flash`, where `put_toast/3` leaves its toasts."
 
   attr :position, :string,
-    default: "right-bottom",
+    default: "center-bottom",
     values: @positions,
-    doc: "The default position."
+    doc: "The default position: centered at the bottom of the screen."
 
   attr :duration, :integer, default: 5000, doc: "The default duration, in milliseconds."
 

@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Toasts appear centered at the bottom of the screen by default: `toaster` `position` now defaults to `center-bottom` (was `right-bottom`), and so does the hook's fallback. Pass `position="right-bottom"` to keep the old corner, on the toaster or on a single toast.
+
 ## 0.13.0 (2026-11-07)
 
 - AI components at canvas parity (AiChat, AiMessage, AiComposer; light and dark): the spark is the Hugeicons `sparkles` glyph (was `ai-magic`), and the AI components draw `invoice-01`, `package`, `user-multiple`, `wallet-01`, `bank`, `shield-01` and `tick-02` as the Hugeicons themselves, not the canvas shell glyphs. New `ai_chat` attr `composer` (default `true`; `false` leaves the composer out, as in the canvas "Proposta aprovada" board).

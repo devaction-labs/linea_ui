@@ -21,12 +21,12 @@ export const colorOf = (color) => (COLORS.includes(color) ? color : "neutral")
 
 /**
  * The horizontal and vertical part of a position; anything unknown falls back to `fallback`, and then to
- * `right-bottom`, LineOne's default.
+ * `center-bottom`, the default: centered at the bottom of the screen.
  *
  * @returns {{x: "left" | "center" | "right", y: "top" | "bottom", key: string}}
  */
-export const positionOf = (position, fallback = "right-bottom") => {
-  const key = [position, fallback].find((candidate) => POSITIONS.includes(candidate)) ?? "right-bottom"
+export const positionOf = (position, fallback = "center-bottom") => {
+  const key = [position, fallback].find((candidate) => POSITIONS.includes(candidate)) ?? "center-bottom"
   const [x, y] = key.split("-")
   return {x, y, key}
 }
