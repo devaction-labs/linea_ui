@@ -443,7 +443,10 @@ const ShellRail = {
     this.onClick = (event) => this.click(event)
     this.onKey = (event) => event.key === "Escape" && this.el.dataset.mobileOpen === "true" && this.mobile(false)
     this.onResize = () => !isMobile(window.innerWidth) && this.mobile(false)
-    this.onTip = (event) => this.collapsed() && pinTip(event.target.closest?.(".rail-item"))
+    this.onTip = (event) => {
+      const host = event.target.closest?.(".rail-item, [data-rail-tip]")
+      host && (this.collapsed() || host.dataset.railTip === "always") && pinTip(host)
+    }
     document.addEventListener("click", this.onClick)
     document.addEventListener("keydown", this.onKey)
     window.addEventListener("resize", this.onResize, {passive: true})

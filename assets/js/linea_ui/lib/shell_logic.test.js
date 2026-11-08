@@ -1,6 +1,6 @@
 import test from "node:test"
 import assert from "node:assert/strict"
-import {breakpointName, clockText, initialCollapsed, initialOpen, isMobile, modeOn, modeValue, place, railValue, side, smAndUp, storedCollapsed, storedValue, tabChoice, tabKey, tipSpot, xlAndUp} from "./shell_logic.js"
+import {arrowTarget, breakpointName, choiceIsDark, shownChoice, themeChoice, clockText, initialCollapsed, initialOpen, isMobile, modeOn, modeValue, place, railValue, side, smAndUp, storedCollapsed, storedValue, tabChoice, tabKey, tipSpot, xlAndUp} from "./shell_logic.js"
 
 test("a right sidebar keeps its chosen panel under a key of its id", () => {
   assert.equal(tabKey("right-sidebar"), "linea-right-tab:right-sidebar")
@@ -108,4 +108,26 @@ test("the side of a placement", () => {
 
 test("a collapsed item's tooltip is centred on it, to its right", () => {
   assert.deepEqual(tipSpot({top: 100, height: 40, right: 60}, 12), {top: 120, left: 72})
+})
+
+test("the theme choice falls back to the dark mode flag LineOne kept, and system follows the browser", () => {
+  assert.equal(themeChoice("system", ""), "system")
+  assert.equal(themeChoice("light", "dark"), "light")
+  assert.equal(themeChoice(null, "dark"), "dark")
+  assert.equal(themeChoice("junk", ""), "light")
+  assert.equal(choiceIsDark("system", true), true)
+  assert.equal(choiceIsDark("system", false), false)
+  assert.equal(choiceIsDark("dark", false), true)
+  assert.equal(choiceIsDark("light", true), false)
+  assert.equal(shownChoice("system", false, true), "dark")
+  assert.equal(shownChoice("system", true, true), "system")
+  assert.equal(shownChoice("dark", false, false), "dark")
+})
+
+test("arrow keys move among the options and wrap", () => {
+  assert.equal(arrowTarget("ArrowRight", 2, 3), 0)
+  assert.equal(arrowTarget("ArrowLeft", 0, 3), 2)
+  assert.equal(arrowTarget("Home", 2, 3), 0)
+  assert.equal(arrowTarget("End", 0, 3), 2)
+  assert.equal(arrowTarget("a", 0, 3), null)
 })

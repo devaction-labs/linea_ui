@@ -41,6 +41,26 @@ export const modeValue = (on, value) => (on ? value : "")
 /** Whether a stored mode is on. */
 export const modeOn = (stored, value) => stored === value
 
+/** The key the theme switch keeps its choice under (`"light"`, `"dark"` or `"system"`). */
+export const THEME_KEY = "theme"
+export const THEMES = ["light", "dark", "system"]
+
+/**
+ * The theme the person chose: the stored `theme` when it is one of the three, otherwise what the dark mode flag
+ * (`localStorage["dark-mode"]`, all LineOne knew) says.
+ */
+export const themeChoice = (stored, darkFlag) => (THEMES.includes(stored) ? stored : modeOn(darkFlag, DARK_VALUE) ? "dark" : "light")
+
+/** Whether a choice is dark right now: `"system"` follows the browser's `prefers-color-scheme`. */
+export const choiceIsDark = (choice, prefersDark) => (choice === "system" ? Boolean(prefersDark) : choice === "dark")
+
+/** The option a switch without a "system" button shows for a choice: the one the system resolves to. */
+export const shownChoice = (choice, system, prefersDark) => (choice !== "system" || system ? choice : prefersDark ? "dark" : "light")
+
+/** The next option for an arrow key among `count` options (wraps), or `null` for any other key. */
+export const arrowTarget = (key, index, count) =>
+  ({ArrowRight: (index + 1) % count, ArrowDown: (index + 1) % count, ArrowLeft: (index + count - 1) % count, ArrowUp: (index + count - 1) % count, Home: 0, End: count - 1})[key] ?? null
+
 const clampTo = (value, min, max) => Math.max(min, Math.min(value, Math.max(min, max)))
 
 const CORNERS = {
