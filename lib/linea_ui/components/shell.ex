@@ -61,9 +61,9 @@ defmodule LineaUI.Components.Shell do
   def shell(assigns) do
     assigns =
       assigns
-      |> assign_derived(:fmt, [:sidebar], fn -> Sidebar.format(assigns.sidebar) end)
+      |> assign_derived(:fmt, [:sidebar], fn -> Sidebar.Nav.format(assigns.sidebar) end)
       |> assign_derived(:items, [:nav, :current, :user, :brand, :plan, :trial, :rest], fn ->
-        Sidebar.nav(assigns.nav, assigns)
+        Sidebar.Nav.nav(assigns.nav, assigns)
       end)
       |> assign_derived(:menu_id, [:id], fn -> assigns.id <> "-menu" end)
 

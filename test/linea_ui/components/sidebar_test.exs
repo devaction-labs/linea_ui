@@ -421,7 +421,7 @@ defmodule LineaUI.Components.SidebarTest do
     end
 
     test "every short name maps to a Hugeicons class" do
-      for {_name, class} <- LineaUI.Components.Sidebar.icon_names(),
+      for {_name, class} <- LineaUI.Components.Sidebar.Nav.icon_names(),
           do: assert(class =~ ~r/^huge-/)
     end
   end
