@@ -64,16 +64,81 @@ defmodule LineaUI.Components.Sidebar.Nav do
     end
   end
 
-  @doc false
-  def show_user?(value), do: value != false and (value != nil or config(:show_user) != false)
+  @footers ~w(user version none)
+  @statuses ~w(ok warning down)
 
-  @doc false
-  def version(value) do
-    case value || config(:version) do
-      version when is_binary(version) and version != "" -> version
-      _none -> nil
+  @doc """
+  What the foot of the menu shows, as `"user"`, `"version"`, `"none"` or `"default"` (each format's own: the
+  user card of the `tree`, the plan card of `sections`, the avatar of the `rail`). `version` is the
+  already-normalised version (`version/1`) or `nil`.
+
+  Order: the `footer` attribute, then the deprecated `show_user={false}`, then a `version` attribute, then the
+  `:shell` config (`footer`, `show_user: false`, `version`).
+  """
+  @spec footer(term(), term(), term(), map() | nil) :: String.t()
+  def footer(footer, show_user, version_attr, version) do
+    cond do
+      value = footer(footer) -> value
+      show_user == false -> legacy(version)
+      version_attr not in [nil, ""] -> "version"
+      value = footer(config(:footer)) -> value
+      show_user == nil and config(:show_user) == false -> legacy(version)
+      version -> "version"
+      true -> "default"
     end
   end
+
+  defp footer(nil), do: nil
+
+  defp footer(value) when is_atom(value) or is_binary(value) do
+    case to_string(value) do
+      footer when footer in @footers -> footer
+      _other -> nil
+    end
+  end
+
+  defp footer(_value), do: nil
+
+  defp legacy(nil), do: "none"
+  defp legacy(_version), do: "version"
+
+  @doc """
+  The version of the system as the foot draws it: a string (`"v1.4.2"`) or `%{version, build, href | navigate |
+  patch, label, title, status}`, else the `version` of the `:shell` config. `nil` when there is none.
+  """
+  @spec version(term()) :: map() | nil
+  def version(value), do: value |> Kernel.||(config(:version)) |> normalize_version()
+
+  defp normalize_version(version) when is_binary(version) and version != "",
+    do: normalize_version(%{version: version})
+
+  defp normalize_version(%{version: version} = data) when is_binary(version) and version != "" do
+    build = present(data[:build])
+
+    %{
+      version: version,
+      build: build,
+      aria: "Version " <> version <> if(build, do: " (#{build})", else: ""),
+      link: if(Enum.any?([:navigate, :patch, :href], &is_binary(data[&1])), do: link_attrs(data)),
+      label: present(data[:label]) || "What's new",
+      title: present(data[:title]),
+      status: status(data[:status])
+    }
+  end
+
+  defp normalize_version(_none), do: nil
+
+  defp present(value) when is_binary(value) and value != "", do: value
+  defp present(_value), do: nil
+
+  defp status(value) when is_atom(value) or is_binary(value) do
+    case to_string(value) do
+      status when status in @statuses -> status
+      _other -> "ok"
+    end
+  end
+
+  defp status(_value), do: "ok"
 
   @doc false
   def nav(nil, assigns) do

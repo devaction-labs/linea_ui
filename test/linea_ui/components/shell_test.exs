@@ -21,6 +21,7 @@ defmodule LineaUI.Components.ShellTest do
       |> Map.put_new(:current, nil)
       |> Map.put_new(:collapsible, true)
       |> Map.put_new(:collapsed, false)
+      |> Map.put_new(:footer, nil)
       |> Map.put_new(:show_user, nil)
       |> Map.put_new(:version, nil)
 
@@ -32,6 +33,7 @@ defmodule LineaUI.Components.ShellTest do
       current={@current}
       collapsible={@collapsible}
       collapsed={@collapsed}
+      footer={@footer}
       show_user={@show_user}
       version={@version}
       brand={%{name: "Linea", logo: "S"}}
@@ -113,24 +115,69 @@ defmodule LineaUI.Components.ShellTest do
     refute "Perfil" in texts(html, ".sg-sb-a > .lbl")
   end
 
-  test "`show_user` and `version` reach the menu, from the attributes or the config (the attributes win)" do
+  test "`footer` and `version` reach the menu in the three formats (user, version, none)" do
+    for sidebar <- ["tree", "sections", "rail"] do
+      html = html(%{sidebar: sidebar, footer: "version", version: "v1.4.2"})
+      assert texts(html, ".sg-sb-ver") == ["v1.4.2"]
+      assert find(html, ".sg-sb-user, .sg-sb-plan, .sg-sb-rail > .sg-av") |> Enum.empty?()
+
+      html = html(%{sidebar: sidebar, footer: :none, version: "v1.4.2"})
+
+      assert find(html, ".sg-sb-user, .sg-sb-plan, .sg-sb-ver, .sg-sb-rail > .sg-av")
+             |> Enum.empty?()
+
+      html = html(%{sidebar: sidebar, footer: "user"})
+      assert find(html, ".sg-sb-user, .sg-sb-rail > .sg-av") != []
+      assert find(html, ".sg-sb-ver, .sg-sb-plan") |> Enum.empty?()
+    end
+
     html = html(%{sidebar: "tree"})
     assert find(html, ".sg-sb-user") != []
     assert find(html, ".sg-sb-ver") |> Enum.empty?()
+  end
+
+  test "`version` as a map reaches the line" do
+    version = %{
+      version: "v1.4.2",
+      build: "2a9f1c3",
+      href: "/novidades",
+      label: "Novidades",
+      status: :warning
+    }
+
+    html = html(%{sidebar: "tree", footer: "version", version: version})
+    assert attrs(html, ".sg-sb-ver", "aria-label") == ["Version v1.4.2 (2a9f1c3)"]
+    assert attrs(html, ".sg-sb-ver", "data-status") == ["warning"]
+    assert texts(html, ".sg-sb-ver a.new") == ["Novidades"]
+    assert attrs(html, ".sg-sb-ver a.new", "href") == ["/novidades"]
+  end
+
+  test "`show_user={false}` (deprecated) still works: none, or the version when there is one" do
+    html = html(%{sidebar: "tree", show_user: false})
+    assert find(html, ".sg-sb-user, .sg-sb-ver") |> Enum.empty?()
 
     html = html(%{sidebar: "tree", show_user: false, version: "v1.4.2"})
     assert find(html, ".sg-sb-user") |> Enum.empty?()
     assert texts(html, ".sg-sb-ver") == ["v1.4.2"]
-    assert attrs(html, ".sg-sb-ver", "aria-label") == ["v1.4.2"]
+  end
+
+  test "the config sets the foot and the attributes win" do
+    Application.put_env(:linea_ui, :shell, sidebar: :tree, footer: :version, version: "v9.0.0")
+    html = html()
+    assert find(html, ".sg-sb-user") |> Enum.empty?()
+    assert texts(html, ".sg-sb-ver") == ["v9.0.0"]
+
+    html = html(%{footer: "user", version: "v2.0.0"})
+    assert find(html, ".sg-sb-user") != []
+    assert find(html, ".sg-sb-ver") |> Enum.empty?()
+
+    html = html(%{footer: "none"})
+    assert find(html, ".sg-sb-user, .sg-sb-ver") |> Enum.empty?()
 
     Application.put_env(:linea_ui, :shell, sidebar: :tree, show_user: false, version: "v9.0.0")
     html = html()
     assert find(html, ".sg-sb-user") |> Enum.empty?()
     assert texts(html, ".sg-sb-ver") == ["v9.0.0"]
-
-    html = html(%{show_user: true, version: "v2.0.0"})
-    assert find(html, ".sg-sb-user") != []
-    assert texts(html, ".sg-sb-ver") == ["v2.0.0"]
   end
 
   test "the menu collapses: the hook, the start state and the toggle of `sections` in the top bar" do
