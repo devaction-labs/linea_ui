@@ -2032,6 +2032,10 @@ defmodule LineaUI.Components.AppShell do
       "Before the breadcrumb on the top row, where `rail_toggle/1` goes to collapse the menu (`variant=\"page\"`)."
 
   slot :badge, doc: "The status badge above the title (`variant=\"page\"`)."
+
+  slot :icon,
+    doc:
+      "A tile or avatar before the title and the description, e.g. a project's colored square (`variant=\"page\"`)."
   slot :notifications, doc: "Replaces the bell with your own button or menu (`variant=\"page\"`)."
 
   slot :tabs,
@@ -2114,6 +2118,8 @@ defmodule LineaUI.Components.AppShell do
           if(@top, do: "items-end", else: "items-center")
         ]}
       >
+        <div class={["flex min-w-0 items-center gap-3.5", @icon == [] && "contents"]}>
+        <div :if={@icon != []} class="flex flex-none">{render_slot(@icon)}</div>
         <div class={["min-w-0", @badge_position == "inline" && "flex flex-wrap items-center gap-2.5"]}>
           <div :if={@badge != [] and @badge_position == "above"} class="flex items-center gap-2.5">
             {render_slot(@badge)}
@@ -2140,6 +2146,7 @@ defmodule LineaUI.Components.AppShell do
           >
             {@description}
           </p>
+        </div>
         </div>
         <div :if={@actions != []} class="flex items-center gap-2.5">{render_slot(@actions)}</div>
       </div>
