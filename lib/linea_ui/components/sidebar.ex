@@ -575,6 +575,24 @@ defmodule LineaUI.Components.Sidebar do
       <span class="rail-tip" role="tooltip">{@item.label}</span>
     </.link>
     <div :if={@item.children != []} class={["sg-sb-tree", @format == "tree" && "line"]}>
+      <svg
+        :if={@item.branch}
+        class="tb"
+        height={@item.branch.height}
+        viewBox={"0 0 24 #{@item.branch.height}"}
+        aria-hidden="true"
+      >
+        <path class="t" d={@item.branch.trunk} />
+        <path :if={@item.branch.path} class="a" d={@item.branch.path} />
+        <circle :for={n <- @item.branch.nodes} :if={n.on} class="h" cx="16" cy={"#{n.y}.0"} r="7" />
+        <circle
+          :for={n <- @item.branch.nodes}
+          class={["n", n.on && "on"]}
+          cx="16"
+          cy={"#{n.y}.0"}
+          r="3.75"
+        />
+      </svg>
       <.row :for={child <- @item.children} item={child} format={@format} child />
     </div>
     """

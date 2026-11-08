@@ -162,6 +162,7 @@ defmodule LineaUI.Components.SidebarTest do
       assert texts(html, ".sg-sb-tree .sg-sb-a > .lbl") == ["Abertos", "Cancelados"]
       assert texts(html, ".sg-sb-tree .sg-sb-n") == ["8"]
       assert find(html, ".sg-sb-tree.line") |> Enum.empty?()
+      assert find(html, "svg.tb") |> Enum.empty?()
       assert [_] = Enum.to_list(find(html, ".sg-sb-a > .red"))
     end
 
@@ -303,6 +304,56 @@ defmodule LineaUI.Components.SidebarTest do
       assert classes(html, "a.sq > span") |> Enum.take(2) == ["sqi", "ink"]
       assert [_] = Enum.to_list(find(html, "a.sq > .red"))
       assert attrs(html, "a.sq", "aria-current") == ["page"]
+    end
+
+    test "the connector draws a branch and a node per child, the active path in the accent" do
+      nav = [
+        %{
+          group: "Vendas",
+          items: [
+            %{
+              label: "Pedidos",
+              href: "/p",
+              children: [
+                %{label: "A", href: "/a"},
+                %{label: "B", href: "/b"},
+                %{label: "C", href: "/c"}
+              ]
+            }
+          ]
+        }
+      ]
+
+      html = html(%{format: "tree", nav: nav, current: "/a"})
+
+      assert attrs(html, "svg.tb", "height") == ["97"]
+      assert attrs(html, "svg.tb", "viewBox") == ["0 0 24 97"]
+
+      assert attrs(html, "svg.tb path.t", "d") == [
+               "M1 0V83.0M1 13.0Q1 21.0 9 21.0H12M1 48.0Q1 56.0 9 56.0H12M1 83.0Q1 91.0 9 91.0H12"
+             ]
+
+      assert attrs(html, "svg.tb path.a", "d") == ["M1 0V13.0Q1 21.0 9 21.0H12"]
+      assert attrs(html, "svg.tb circle.h", "cy") == ["21.0"]
+      assert attrs(html, "svg.tb circle.n.on", "cy") == ["21.0"]
+      assert attrs(html, "svg.tb circle.n", "cy") == ["21.0", "56.0", "91.0"]
+
+      html = html(%{format: "tree", nav: nav, current: "/c"})
+      assert attrs(html, "svg.tb path.a", "d") == ["M1 0V83.0Q1 91.0 9 91.0H12"]
+      assert attrs(html, "svg.tb circle.h", "cy") == ["91.0"]
+
+      html = html(%{format: "tree", nav: nav, current: "/nada"})
+      assert find(html, "svg.tb path.a") |> Enum.empty?()
+      assert find(html, "svg.tb circle.h") |> Enum.empty?()
+      assert find(html, "svg.tb circle.n.on") |> Enum.empty?()
+      assert attrs(html, "svg.tb circle.n", "cy") == ["21.0", "56.0", "91.0"]
+    end
+
+    test "one child makes a short connector" do
+      nav = [%{group: "G", items: [%{label: "P", children: [%{label: "A", href: "/a"}]}]}]
+      html = html(%{format: "tree", nav: nav})
+      assert attrs(html, "svg.tb", "height") == ["27"]
+      assert attrs(html, "svg.tb path.t", "d") == ["M1 0V13.0M1 13.0Q1 21.0 9 21.0H12"]
     end
 
     test "a group with `collapsible: false` has a label without a button" do
