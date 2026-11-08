@@ -109,3 +109,16 @@ export const clockText = (date, locale) => {
   const time = new Intl.DateTimeFormat(locale, {hour: "2-digit", minute: "2-digit", hour12: false}).format(date)
   return `${label(parts.weekday)}, ${parts.day} ${parts.month} ${parts.year} · ${time}`
 }
+
+/** The key the theme switch keeps its choice under: `"light"`, `"dark"` or `"system"`. */
+export const THEME_KEY = "theme"
+export const THEMES = ["light", "dark", "system"]
+
+/**
+ * The stored choice of the theme switch. Without one, the dark mode toggle's own key decides (`"dark"` → dark), and
+ * with neither the page follows the system.
+ */
+export const themeChoice = (stored, legacy) => (THEMES.includes(stored) ? stored : legacy === DARK_VALUE ? "dark" : legacy === "" ? "light" : "system")
+
+/** Whether a choice draws the page dark, given whether the system prefers dark. */
+export const themeDark = (choice, prefersDark) => choice === "dark" || (choice === "system" && Boolean(prefersDark))

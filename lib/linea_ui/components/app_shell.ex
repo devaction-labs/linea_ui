@@ -2299,8 +2299,8 @@ defmodule LineaUI.Components.AppShell do
   end
 
   @doc """
-  The script for the root layout's `<head>` that applies the stored dark mode before the first paint (LineOne's
-  "prevent flickering" script) and the stored monochrome mode as soon as `<body>` exists.
+  The script for the root layout's `<head>` that applies the stored theme (`theme_switch/1`'s `light`, `dark` or
+  `system`, else the dark mode key) before the first paint (LineOne's "prevent flickering" script) and the stored monochrome mode as soon as `<body>` exists.
 
       <head>
         <.theme_script />
@@ -2313,7 +2313,10 @@ defmodule LineaUI.Components.AppShell do
     <script phx-no-curly-interpolation {@rest}>
       (() => {
         try {
-          localStorage.getItem("dark-mode") === "dark" && document.documentElement.classList.add("dark");
+          const theme = localStorage.getItem("theme");
+          const dark = theme === "dark" || (theme === "system" && matchMedia("(prefers-color-scheme: dark)").matches) ||
+            (!theme && localStorage.getItem("dark-mode") === "dark");
+          dark && document.documentElement.classList.add("dark");
           localStorage.getItem("monochrome-mode") === "monochrome" &&
             document.addEventListener("DOMContentLoaded", () => document.body.classList.add("is-monochrome"));
         } catch (_e) {}

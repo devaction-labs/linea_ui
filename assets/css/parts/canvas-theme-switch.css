@@ -1,0 +1,30 @@
+/* ThemeSwitch (canvas "ThemeSwitch"): the light/dark/system choice. `sg-theme` is the segmented pill whose thumb slides to
+   the chosen option (data-value), `sg-theme icons` the compact icon-only one for the topbar, `sg-theme-sw` the sun/moon
+   switch. Pure CSS for the look; the LineaUI.ThemeSwitch hook keeps data-value and aria-checked in step. */
+.sg-theme{--n:3;position:relative;display:inline-grid;grid-auto-flow:column;grid-auto-columns:1fr;padding:3px;border-radius:999px;background:var(--sunken);box-shadow:inset 0 0 0 1px var(--line);isolation:isolate;vertical-align:middle}
+.sg-theme.two{--n:2}
+.sg-theme::before{content:"";position:absolute;z-index:-1;top:3px;bottom:3px;left:3px;width:calc((100% - 6px) / var(--n));border-radius:999px;background:var(--panel);box-shadow:0 0 0 1px var(--line),0 1px 3px rgb(23 23 26/.1);transition:transform .28s cubic-bezier(.3,.7,.4,1)}
+.sg-theme[data-value="dark"]::before{transform:translateX(100%)}
+.sg-theme[data-value="system"]::before{transform:translateX(200%)}
+.sg-theme>button{all:unset;box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;gap:6px;height:28px;padding:0 13px;border-radius:999px;font-size:13px;line-height:1;color:var(--muted);cursor:pointer;white-space:nowrap;transition:color .2s}
+.sg-theme>button>svg,.sg-theme>button>.i,.sg-theme>button>span[class*="hero-"],.sg-theme>button>span[class*="huge-"]{width:15px;height:15px;flex:none}
+.sg-theme>button:hover{color:var(--ink)}
+.sg-theme>button[aria-checked="true"]{color:var(--ink);font-weight:500}
+.sg-theme>button[aria-checked="true"]>:first-child{color:var(--accent-ink,var(--accent))}
+.sg-theme>button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.sg-theme.icons>button{width:30px;height:28px;padding:0}
+.sg-theme.icons>button>.lbl{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.sg-theme.sm>button{height:24px;padding:0 10px;font-size:12px}.sg-theme.sm.icons>button{width:26px;padding:0}
+:is(.dark,[data-theme="dark"]) .sg-theme:not(:where([data-theme="light"] *))::before{background:var(--raised);box-shadow:0 0 0 1px var(--line-strong),0 1px 3px rgb(0 0 0/.35)}
+@media (prefers-reduced-motion:reduce){.sg-theme::before{transition:none}}
+
+.sg-theme-sw{all:unset;box-sizing:border-box;position:relative;display:inline-flex;align-items:center;justify-content:space-between;width:58px;height:30px;padding:0 8px;border-radius:999px;background:var(--sunken);box-shadow:inset 0 0 0 1px var(--line);color:var(--faint);cursor:pointer;vertical-align:middle;transition:background .3s}
+.sg-theme-sw>.end{width:14px;height:14px;display:grid;place-items:center}.sg-theme-sw>.end>*{width:14px;height:14px}
+.sg-theme-sw>.k{position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;background:var(--panel);color:#f59e0b;box-shadow:0 0 0 1px var(--line),0 1px 3px rgb(0 0 0/.18);transition:transform .32s cubic-bezier(.3,.7,.4,1),background .3s,color .3s}
+.sg-theme-sw>.k>*{width:14px;height:14px}
+.sg-theme-sw>.k>.moon{display:none}
+.sg-theme-sw[aria-checked="true"]{background:#1d1d24;box-shadow:inset 0 0 0 1px #34343c}
+.sg-theme-sw[aria-checked="true"]>.k{transform:translateX(28px);background:#2c2c35;color:#c4b5fd;box-shadow:0 0 0 1px #3d3d47,0 1px 3px rgb(0 0 0/.4)}
+.sg-theme-sw[aria-checked="true"]>.k>.sun{display:none}.sg-theme-sw[aria-checked="true"]>.k>.moon{display:block}
+.sg-theme-sw:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){.sg-theme-sw>.k{transition:none}}

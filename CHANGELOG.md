@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- `theme_switch` (`LineaUI.Components.ThemeSwitch`, canvas ThemeSwitch, light and dark): light, dark or system, wired to LineaUI's dark mode. `variant` `segmented` (default: a pill whose thumb slides to the choice, icon and label), `icons` (compact, for a topbar) or `switch` (sun/moon `role="switch"`); `size` `sm`/`md`, `system={false}`, `light_label`/`dark_label`/`system_label`, `on_change` with `%{"theme", "dark"}`. The choice is `localStorage["theme"]`; `system` follows `prefers-color-scheme` live; `theme_toggle` and every switch on the page stay in step, and `theme_script` applies the stored theme before the first paint. Hook `LineaUI.ThemeSwitch`, CSS `canvas-theme-switch.css`.
 - Toasts appear centered at the bottom of the screen by default: `toaster` `position` now defaults to `center-bottom` (was `right-bottom`), and so does the hook's fallback. Pass `position="right-bottom"` to keep the old corner, on the toaster or on a single toast.
 - The status card (compact, inverse) is the default look of a plain toast: `put_toast(socket, "Saved.", kind: :success)` draws the green-dot status card; `:error`/`:warning` the red dot, `:loading` the filling circle. Toasts with `description`, `aura`, `value`, `steps` or `template` keep their card. `config :linea_ui, :toast_style, :card` restores the classic card.
 

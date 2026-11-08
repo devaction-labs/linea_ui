@@ -109,3 +109,17 @@ test("the side of a placement", () => {
 test("a collapsed item's tooltip is centred on it, to its right", () => {
   assert.deepEqual(tipSpot({top: 100, height: 40, right: 60}, 12), {top: 120, left: 72})
 })
+
+test("the theme switch reads its choice, then the dark mode key, then follows the system", async () => {
+  const {themeChoice, themeDark} = await import("./shell_logic.js")
+  assert.equal(themeChoice("dark", null), "dark")
+  assert.equal(themeChoice("system", "dark"), "system")
+  assert.equal(themeChoice(null, "dark"), "dark")
+  assert.equal(themeChoice(null, ""), "light")
+  assert.equal(themeChoice(null, null), "system")
+  assert.equal(themeChoice("junk", null), "system")
+  assert.equal(themeDark("dark", false), true)
+  assert.equal(themeDark("light", true), false)
+  assert.equal(themeDark("system", true), true)
+  assert.equal(themeDark("system", false), false)
+})
