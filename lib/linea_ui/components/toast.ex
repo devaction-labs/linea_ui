@@ -137,6 +137,13 @@ defmodule LineaUI.Components.Toast do
 
   `status_toast/1` draws the same card in the page.
 
+  **This is the default look.** A plain toast (a message and, at most, a `kind`) is drawn as a status card:
+  `:success`, `:info` and no kind are `:ok`, `:error` and `:warning` are `:err`, `:loading` is `:run`. A
+  toast with a `description`, an `aura`, a `value`, `steps` or a `template` keeps its own card. To go
+  back to the classic card for every plain toast:
+
+      config :linea_ui, :toast_style, :card
+
   ## Steps
 
   A batch that goes in stages is a toast with `steps` (how many) and `step` (how many are done): a title with
@@ -652,8 +659,25 @@ defmodule LineaUI.Components.Toast do
       "bar" => Keyword.get(opts, :bar, false),
       "steps" => opts |> Keyword.get(:steps) |> steps!(),
       "step" => opts |> Keyword.get(:step) |> step!(),
-      "status" => opts |> Keyword.get(:status) |> status!()
+      "status" => opts |> Keyword.get(:status) |> status!() || default_status(kind, opts)
     }
+  end
+
+  # The default look of a plain toast (a message and a `kind`) is the compact inverse status card,
+  # centered at the bottom: success and info are a green dot, error and warning a red one, loading
+  # the filling circle. `config :linea_ui, :toast_style, :card` keeps the classic card. Toasts with a
+  # description, an aura, progress, steps or a template keep their own look.
+  @rich_keys ~w(description aura value steps step template)a
+
+  defp default_status(kind, opts) do
+    if Application.get_env(:linea_ui, :toast_style, :status) == :status and
+         not Enum.any?(@rich_keys, &Keyword.get(opts, &1)) do
+      case kind do
+        k when k in ["error", "warning"] -> "err"
+        "loading" -> "run"
+        _ -> "ok"
+      end
+    end
   end
 
   @doc false
