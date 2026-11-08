@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.15.1 (2026-11-08)
 
 - `sidebar` (`tree` format): items with `children` get a chevron button at the right of their row that closes and opens the children (`aria-expanded`, `aria-controls`, open at first, sibling of the link). `collapsible: false` on the item takes it away. The ids come from `Sidebar.Nav.build`. With the menu collapsed to icons the children stay as before. CSS in `canvas-sidebar.css` (`sg-sb-ct`). The group titles of the `tree` already closed.
 
