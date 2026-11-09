@@ -37,6 +37,7 @@
 @import "./parts/canvas-hero-card.css";
 @import "./parts/canvas-navbar.css";
 @import "./parts/canvas-landing-nav.css";
+@import "./parts/canvas-auth-split.css";
 @import "./parts/canvas-aura.css";
 @import "./parts/canvas-brand.css";
 @import "./parts/canvas-admin.css";

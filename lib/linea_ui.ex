@@ -60,6 +60,7 @@ defmodule LineaUI do
     hero_card: LineaUI.Components.HeroCard,
     navbar: LineaUI.Components.Navbar,
     landing_nav: LineaUI.Components.LandingNav,
+    auth_split: LineaUI.Components.AuthSplit,
     breadcrumb: LineaUI.Components.Breadcrumb,
     card_table: LineaUI.Components.CardTable,
     kpi_card: LineaUI.Components.KpiCard,
