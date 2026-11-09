@@ -24,6 +24,7 @@ import ActionMenu from "./hooks/action_menu.js"
 import Dropdown from "./hooks/dropdown.js"
 import Fab from "./hooks/fab.js"
 import InputMask from "./hooks/input_mask.js"
+import LandingNav from "./hooks/landing_nav.js"
 import Layout from "./hooks/layout.js"
 import NumberInput from "./hooks/number_input.js"
 import Otp from "./hooks/otp.js"
@@ -67,6 +68,7 @@ export const Hooks = {
   ...Dropdown,
   ...Fab,
   ...InputMask,
+  ...LandingNav,
   ...Layout,
   ...NumberInput,
   ...Otp,

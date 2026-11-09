@@ -34,7 +34,14 @@ defmodule LineaUI.Components.Shell do
 
       config :linea_ui, :shell, footer: :version, version: "v1.4.2"
 
-  The `:topbar` slot is a row at the top of the page panel. In the `sections` format, which has no collapse
+  The `:topbar` slot is a row at the top of the page panel. It takes a `navbar/1`, the canvas top bar
+  (breadcrumb, search, notifications, theme, language and the user):
+
+      <:topbar>
+        <.navbar><.navbar_crumbs items={[%{label: "Início", navigate: ~p"/"}, %{label: "Projetos"}]} /><:end>…</:end></.navbar>
+      </:topbar>
+
+  In the `sections` format, which has no collapse
   button of its own, the row starts with the button that collapses the menu (`collapsible`). Below 768px the
   menu is a top bar with a hamburger.
   """
