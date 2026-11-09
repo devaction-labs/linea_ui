@@ -6,6 +6,7 @@
 - Pills as an opt-in: `shape="pill"` on `button` (an icon button too, round) and the new `shape` attr on `segmented` (`rounded` default, `pill`); `data-shape="pill"` on any ancestor (on the `<html>` for the whole app) sets the three tokens to 999px.
 - `segmented`: a gray track with 11px corners, the chosen segment white at 8px and the `count` in a small mono box (filled on the chosen segment).
 - `sidebar`: collapsible groups (`tree` format and the nested groups of the `rail` panel) and items with `children` (`tree`) now start closed, except the one that holds the active item; with no active item everything starts closed (`aria-expanded="false"` and `data-closed`; the menu collapsed to icons still shows them). New `open: true | false` key on groups and items to force the first state. Non-collapsible ones stay shown. A toggle done in the browser still survives patches.
+- `scene/1` (Illustration): four portrait scenes for the picture half of `auth_split` or any tall picture, cropped to fill their box — `voyage` (a sailing ship), `lighthouse` (dusk on a cliff), `balloons` (hot air balloons over hills) and `aurora` (northern lights over a snowy cabin); `position` holds the crop, `label` makes it an image for screen readers.
 
 ## 0.16.0 (2026-11-09)
 
