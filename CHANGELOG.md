@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.16.0 (2026-11-09)
 
 - `auth_split` and `oauth_button` (`LineaUI.Components.AuthSplit`, canvas AuthSplit): the sign in / sign up screen in two halves — the form on the left (brand, a soft glow, title, subtitle, provider buttons with an "Or" divider, the form, a footer line) and a picture on the right with a testimonial over it (quote, stars, author and role); `variant` card (floating on the dotted canvas) or full, `:aside` to replace the right half; the picture goes away under 1024px. `oauth_button` for Google, Apple and GitHub (Hugeicons line icons), as a link or a button. CSS `canvas-auth-split.css`.
 - `navbar` (`LineaUI.Components.Navbar`, canvas Navbar): the app's top bar, for the `:topbar` of `shell`. `variant` default/float/clear/dense/mobile; slots `inner_block` (left), `:center`, `:end` and `:tabs` (two rows). Pieces: `navbar_brand`, `navbar_crumbs`, `navbar_workspace`, `navbar_chip`, `navbar_slash`, `navbar_env`, `navbar_links`, `navbar_tabs`, `navbar_title`, `navbar_search` (a trigger for the command palette), `navbar_bell`, `navbar_icon`, `navbar_lang`, `navbar_sep`, `navbar_sync`, `navbar_avatars` and `navbar_user` (`avatar`, `ring` or `named`, with an optional `:menu`: `navbar_menu_head`, `navbar_menu_status`, `navbar_menu_row`, `navbar_menu_item`). CSS `canvas-navbar.css`.
