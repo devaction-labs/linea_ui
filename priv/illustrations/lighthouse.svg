@@ -1,0 +1,30 @@
+<svg viewBox="0 0 560 680" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="lh-sky" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#2b2e6b"/><stop offset=".45" stop-color="#7a4e8f"/><stop offset=".72" stop-color="#e98a6d"/><stop offset="1" stop-color="#f8c78a"/></linearGradient>
+    <linearGradient id="lh-sea" x1="0" y1="470" x2="0" y2="680" gradientUnits="userSpaceOnUse"><stop stop-color="#e59a7a"/><stop offset=".25" stop-color="#7b5c8a"/><stop offset="1" stop-color="#252a5a"/></linearGradient>
+    <linearGradient id="lh-beam" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#fff3c4" stop-opacity=".75"/><stop offset="1" stop-color="#fff3c4" stop-opacity="0"/></linearGradient>
+    <radialGradient id="lh-sun" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(150 470) scale(220)"><stop stop-color="#ffe2a8"/><stop offset=".3" stop-color="#ffd08a" stop-opacity=".6"/><stop offset="1" stop-color="#ffd08a" stop-opacity="0"/></radialGradient>
+  </defs>
+  <rect width="560" height="680" fill="url(#lh-sky)"/>
+  <g fill="#fff"><circle cx="60" cy="60" r="1.6"/><circle cx="140" cy="110" r="1.2"/><circle cx="230" cy="50" r="1.8"/><circle cx="300" cy="140" r="1.1"/><circle cx="90" cy="190" r="1.2"/><circle cx="200" cy="230" r="1"/><circle cx="480" cy="40" r="1.4"/><circle cx="520" cy="120" r="1.1"/></g>
+  <circle cx="150" cy="470" r="220" fill="url(#lh-sun)"/>
+  <circle cx="150" cy="468" r="44" fill="#ffe0a6"/>
+  <path d="M0 468h560v212H0z" fill="url(#lh-sea)"/>
+  <g stroke="#ffd9a8" stroke-linecap="round" opacity=".7"><path d="M110 486h80M90 502h120M120 520h60" stroke-width="3"/></g>
+  <g stroke="#f3b8a0" stroke-width="2" stroke-linecap="round" opacity=".35"><path d="M20 580q24-6 48 0M200 620q26-7 52 0M60 650q22-6 44 0"/></g>
+  <path d="M440 206L-40 96v220z" fill="url(#lh-beam)" opacity=".85"/>
+  <!-- penhasco -->
+  <path d="M300 680V520l40-30 30 10 40-60 60 6 40-30 50 24v240z" fill="#2b2448"/>
+  <path d="M340 490l30 10 40-60 60 6 40-30 50 24v24l-50-14-40 26-58-6-40 58-32-8-40 34z" fill="#3a3160"/>
+  <!-- farol -->
+  <path d="M412 440h60l-8-200h-44z" fill="#f4efe8"/>
+  <path d="M414 400h56l-1.6-40h-52.8zM417 320h50l-1.6-40h-46.8z" fill="#d6463b"/>
+  <path d="M442 440h30l-8-200h-22z" fill="#000" opacity=".12"/>
+  <path d="M410 240h64v-12h-64z" fill="#2b2448"/>
+  <path d="M418 228h48v-36h-48z" fill="#fff1b8"/>
+  <path d="M418 192h48l-24-24z" fill="#d6463b"/>
+  <path d="M440 168v-10" stroke="#2b2448" stroke-width="3" stroke-linecap="round"/>
+  <path d="M426 192v36M442 192v36M458 192v36" stroke="#2b2448" stroke-width="2"/>
+  <path d="M420 440h44v-24h-44z" fill="#2b2448" opacity=".6"/>
+  <g stroke="#fff" stroke-width="2" stroke-linecap="round" opacity=".7"><path d="M250 300q6-6 12 0q6-6 12 0"/><path d="M290 330q5-5 10 0q5-5 10 0"/></g>
+</svg>

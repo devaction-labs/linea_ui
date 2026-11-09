@@ -1,0 +1,51 @@
+<svg viewBox="0 0 560 680" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="vy-sky" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#3f86c9"/><stop offset=".5" stop-color="#8cc3e6"/><stop offset=".78" stop-color="#d9ecf2"/><stop offset="1" stop-color="#f6eed6"/></linearGradient>
+    <linearGradient id="vy-sea" x1="0" y1="470" x2="0" y2="680" gradientUnits="userSpaceOnUse"><stop stop-color="#5aa0c8"/><stop offset=".4" stop-color="#2f6f9e"/><stop offset="1" stop-color="#173e63"/></linearGradient>
+    <linearGradient id="vy-sail" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#fbeedb"/><stop offset=".6" stop-color="#f1d9b8"/><stop offset="1" stop-color="#d9b48a"/></linearGradient>
+    <linearGradient id="vy-hull" x1="0" y1="430" x2="0" y2="520" gradientUnits="userSpaceOnUse"><stop stop-color="#8a5a35"/><stop offset="1" stop-color="#4f2f1b"/></linearGradient>
+    <radialGradient id="vy-sun" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(400 430) scale(260)"><stop stop-color="#fff7da"/><stop offset=".4" stop-color="#fff2c8" stop-opacity=".55"/><stop offset="1" stop-color="#fff2c8" stop-opacity="0"/></radialGradient>
+  </defs>
+  <rect width="560" height="680" fill="url(#vy-sky)"/>
+  <circle cx="400" cy="430" r="260" fill="url(#vy-sun)"/>
+  <g fill="#fff">
+    <path d="M330 150c0-26 21-46 46-46 12 0 23 5 31 12 8-16 25-27 44-27 27 0 49 21 50 48 22 3 39 21 39 43 0 24-20 44-44 44H366c-20 0-36-16-36-36 0-14 8-27 20-33z" opacity=".95"/>
+    <path d="M-20 260c0-22 18-40 40-40 9 0 17 3 24 8 7-18 25-31 46-31 25 0 45 18 49 41 18 3 32 19 32 38 0 21-17 38-38 38H10c-17 0-30-13-30-30z" opacity=".9"/>
+    <path d="M420 330c0-15 12-27 27-27 7 0 13 2 18 6 6-11 17-18 30-18 19 0 34 15 34 34v1c12 2 21 12 21 24 0 14-11 25-25 25h-92c-14 0-25-11-25-25 0-11 5-17 12-20z" opacity=".85"/>
+  </g>
+  <path d="M0 470h560v210H0z" fill="url(#vy-sea)"/>
+  <path d="M0 470c90 6 180 6 280 2s200-6 280-2v8H0z" fill="#e8f2f2" opacity=".55"/>
+  <g stroke="#cfe6ef" stroke-linecap="round" opacity=".55" stroke-width="2">
+    <path d="M30 540q20-6 40 0M120 600q24-7 48 0M420 560q22-6 44 0M470 630q26-7 52 0M250 650q20-6 40 0"/>
+  </g>
+  <!-- navio -->
+  <g>
+    <path d="M140 452h270l-28 62c-6 12-18 20-32 20H210c-15 0-29-9-35-23z" fill="url(#vy-hull)"/>
+    <path d="M150 466h252" stroke="#c99a5f" stroke-width="5"/>
+    <g fill="#2e1c10"><circle cx="190" cy="485" r="4"/><circle cx="228" cy="485" r="4"/><circle cx="266" cy="485" r="4"/><circle cx="304" cy="485" r="4"/><circle cx="342" cy="485" r="4"/></g>
+    <path d="M396 452l40-26 6 8-34 26z" fill="#4f2f1b"/>
+    <path d="M206 452V170M290 452V120M366 452V200" stroke="#3a2416" stroke-width="5" stroke-linecap="round"/>
+    <path d="M436 426L290 140M436 426L366 210" stroke="#3a2416" stroke-width="1.4" opacity=".7"/>
+    <path d="M150 452L206 180M150 452L290 130" stroke="#3a2416" stroke-width="1.2" opacity=".6"/>
+    <g fill="url(#vy-sail)" stroke="#c49b6c" stroke-width="1.2">
+      <path d="M166 206c40-8 76-8 82 0 8 28 8 56 0 84-30-6-62-6-90 0 10-28 12-56 8-84z"/>
+      <path d="M160 304c44-8 86-8 94 0 8 32 8 64 0 96-34-6-70-6-104 0 12-32 14-64 10-96z"/>
+      <path d="M246 150c46-8 86-8 92 0 8 32 8 62 0 92-34-6-70-6-102 0 12-30 14-60 10-92z"/>
+      <path d="M240 258c52-9 98-9 106 0 9 36 9 70 0 104-38-7-80-7-118 0 13-34 16-68 12-104z"/>
+      <path d="M332 228c34-6 62-6 68 0 6 24 6 46 0 70-24-5-50-5-74 0 8-24 10-46 6-70z"/>
+      <path d="M326 312c38-6 70-6 76 0 7 28 7 54 0 80-28-5-56-5-84 0 10-26 12-52 8-80z"/>
+    </g>
+    <path d="M206 170l26 8-26 8zM290 120l30 9-30 9zM366 200l22 7-22 7z" fill="#d94a3a"/>
+  </g>
+  <path d="M120 528c60 10 250 14 330 2" stroke="#e8f2f2" stroke-width="3" stroke-linecap="round" opacity=".6"/>
+  <!-- folhas -->
+  <g fill="#3f8f45">
+    <path d="M-10 40c60 0 110 20 150 60-50-10-100-14-150-6z"/>
+    <path d="M-10 70c50 20 90 50 110 100-40-30-80-46-120-50z" fill="#56a64e"/>
+    <path d="M0 10c70-20 130-10 180 20-60 0-120 6-180 20z" fill="#2f7a3c"/>
+    <path d="M30 0c30 30 50 70 50 120-20-40-44-70-70-90z" fill="#6cbf55"/>
+  </g>
+  <g stroke="#2b4a66" stroke-width="2.2" stroke-linecap="round" opacity=".7">
+    <path d="M300 70q6-6 12 0q6-6 12 0"/><path d="M340 96q5-5 10 0q5-5 10 0"/><path d="M470 260q6-6 12 0q6-6 12 0"/>
+  </g>
+</svg>

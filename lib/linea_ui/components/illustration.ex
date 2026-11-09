@@ -44,6 +44,60 @@ defmodule LineaUI.Components.Illustration do
     """
   end
 
+  @scenes for name <- ~w(voyage lighthouse balloons aurora), into: %{} do
+             path = Path.expand("../../../priv/illustrations/#{name}.svg", __DIR__)
+             @external_resource path
+
+             svg =
+               path
+               |> File.read!()
+               |> String.replace(
+                 ~r/<svg[^>]*>/,
+                 ~s(<svg viewBox="0 0 560 680" fill="none" preserveAspectRatio="POSITION slice" xmlns="http://www.w3.org/2000/svg" class="CLASS" role="img" aria-label="LABEL">),
+                 global: false
+               )
+
+             {name, svg}
+           end
+
+  @doc """
+  Renders one of the portrait scenes for the picture half of `auth_split` (or any tall picture), cropped to
+  fill its box:
+
+    * `voyage` — a sailing ship on the sea, clouds and palm leaves;
+    * `lighthouse` — a lighthouse on a cliff at dusk, its beam over the sea;
+    * `balloons` — hot air balloons over green hills in the morning;
+    * `aurora` — the northern lights over snowy mountains and a cabin with its window lit.
+
+  `position` is where the crop holds (`preserveAspectRatio`): `xMidYMid` (default), `xMidYMax` to keep the
+  bottom, `xMinYMid` to keep the left. `label` is read by screen readers; leave it empty when the picture is
+  only decoration.
+
+      <.auth_split …><:art><.scene name="voyage" /></:art></.auth_split>
+  """
+  attr :name, :string, required: true, values: ~w(voyage lighthouse balloons aurora)
+  attr :position, :string, default: "xMidYMid"
+  attr :label, :string, default: ""
+  attr :class, :any, default: "h-full w-full"
+
+  def scene(assigns) do
+    svg =
+      @scenes
+      |> Map.fetch!(assigns.name)
+      |> String.replace("POSITION", assigns.position)
+      |> String.replace("CLASS", Enum.join(List.wrap(assigns.class), " "))
+      |> String.replace(~s(role="img" aria-label="LABEL"), label_attrs(assigns.label))
+
+    assigns = assign(assigns, :svg, svg)
+
+    ~H"""
+    {Phoenix.HTML.raw(@svg)}
+    """
+  end
+
+  defp label_attrs(""), do: ~s(aria-hidden="true")
+  defp label_attrs(label), do: ~s(role="img" aria-label="#{Phoenix.HTML.html_escape(label) |> Phoenix.HTML.safe_to_string()}")
+
   @doc """
   Renders the girl with a box, for an empty area.
   """
