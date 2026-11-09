@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- `hero_card` (`LineaUI.Components.HeroCard`, canvas HeroCard): the welcome or insight card at the top of a page — mono caps eyebrow with an optional icon, title, description and actions on the left; a picture (`src` or the `:art` slot) on the right, as tall as the card and fading into it; on a phone the picture goes on top. `size` md/lg, `variant` soft/panel, `position` for the crop. New illustration `summit/1` (a snowy peak, hills and a person), cropped to fill its box; its `id` attr (default `"hs"`) prefixes the SVG's gradient ids, so give each summit on a page its own (for example one hidden on mobile) when more than one may render. CSS `canvas-hero-card.css`.
+
 ## 0.15.3 (2026-11-08)
 
 - `sidebar` and `shell`: the foot of the menu is a choice, `footer` (`"user"`, `"version"` or `"none"`; atoms work too; `config :linea_ui, :shell, footer: :version`, the attribute wins). Left out, each format keeps its own (user card in the `tree`, plan card in `sections`, avatar in the `rail`). `"user"` also draws the same user card in `sections`; `"version"` is the canvas line (`sg-sb-ver`: status dot, version, build, "What's new" link) in place of the user (`tree`, `rail`) or of the plan card (`sections`); in the `rail` it is at the foot of the panel, so it is not shown when the rail is collapsed to icons. `version` is now a string or `%{version, build, href | navigate | patch, label, title, status}` (`label` defaults to "What's new"; the link only exists with a destination; `status` `:ok`, `:warning` or `:down` colours the dot); it also comes from the config. `footer: :version` without a `version` draws nothing. Collapsed to icons the line is the dot, with the version in `title` and `aria-label`. The old mono text line of 0.15.2 is replaced by the canvas style.

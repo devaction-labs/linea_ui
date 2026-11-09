@@ -1,0 +1,22 @@
+/* HeroCard (canvas "HeroCard"): the welcome or insight card at the top of a page. The text on the left (eyebrow in
+   mono caps, title, description, actions); the picture on the right, covering the card's height and fading into it
+   from the left. On a phone the picture goes on top and fades down. */
+.linea-hero{position:relative;display:flex;align-items:center;min-height:208px;overflow:hidden;border-radius:22px;background:color-mix(in srgb,var(--sunken) 70%,var(--panel));box-shadow:0 0 0 1px var(--line)}
+.linea-hero[data-variant="panel"]{background:var(--panel);box-shadow:0 0 0 1px var(--line),var(--shadow-sm)}
+.linea-hero-body{position:relative;z-index:1;display:flex;flex-direction:column;align-items:flex-start;gap:12px;max-width:min(560px,56%);padding:28px 32px}
+.linea-hero-eyebrow{display:inline-flex;align-items:center;gap:7px;font:500 11.5px/1.2 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--accent-ink,var(--accent))}
+.linea-hero-eyebrow>svg,.linea-hero-eyebrow>span[class*="huge-"]{width:14px;height:14px}
+.linea-hero-title{margin:0;font-size:30px;line-height:36px;font-weight:600;letter-spacing:-.025em;color:var(--ink);text-wrap:balance}
+.linea-hero[data-size="lg"] .linea-hero-title{font-size:36px;line-height:42px}
+.linea-hero[data-size="lg"]{min-height:248px}
+.linea-hero:not(:has(.linea-hero-art)) .linea-hero-body{max-width:640px}
+.linea-hero-desc{margin:0;max-width:52ch;font-size:15px;line-height:23px;color:var(--muted)}
+.linea-hero-actions{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:8px}
+.linea-hero-art{position:absolute;top:0;right:0;bottom:0;width:58%;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 40%);mask-image:linear-gradient(90deg,transparent 0,#000 40%);pointer-events:none}
+.linea-hero-art>img,.linea-hero-art>svg{display:block;width:100%;height:100%;object-fit:cover;object-position:var(--hero-position,center)}
+@media (max-width:640px){
+  .linea-hero{flex-direction:column;align-items:stretch;min-height:0}
+  .linea-hero-art{position:relative;order:-1;width:100%;height:150px;-webkit-mask-image:linear-gradient(180deg,#000 50%,transparent);mask-image:linear-gradient(180deg,#000 50%,transparent)}
+  .linea-hero-body{max-width:none;margin-top:-28px;padding:0 20px 22px}
+  .linea-hero-title,.linea-hero[data-size="lg"] .linea-hero-title{font-size:24px;line-height:30px}
+}
