@@ -56,6 +56,7 @@ defmodule LineaUI do
     theme_switch: LineaUI.Components.ThemeSwitch,
     error_page: LineaUI.Components.ErrorPage,
     hero_card: LineaUI.Components.HeroCard,
+    auth_split: LineaUI.Components.AuthSplit,
     breadcrumb: LineaUI.Components.Breadcrumb,
     card_table: LineaUI.Components.CardTable,
     kpi_card: LineaUI.Components.KpiCard,

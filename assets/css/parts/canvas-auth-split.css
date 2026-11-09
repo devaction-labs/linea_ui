@@ -1,0 +1,35 @@
+/* AuthSplit (canvas "AuthSplit"): the sign in / sign up screen in two halves. The form on the left, on the panel color
+   with a soft glow at the top and the brand in the corner; on the right a picture filling its half, inset, with a
+   testimonial over its lower part (the quote, the stars, who said it). `card` floats it on the dotted canvas;
+   `full` takes the whole screen. Under 1024px the picture goes away and the form stays. */
+.linea-auth{--auth-glow-1:#f9a8d4;--auth-glow-2:#c4b5fd;min-height:100dvh;display:grid;place-items:center;padding:40px 24px;background-color:var(--canvas);background-image:radial-gradient(color-mix(in srgb,var(--ink) 12%,transparent) 1.2px,transparent 1.2px);background-size:22px 22px}
+.linea-auth[data-variant="full"]{padding:0;background-image:none}
+.linea-auth-card{display:grid;grid-template-columns:1fr 1fr;width:100%;max-width:1120px;min-height:640px;padding:8px;border-radius:26px;background:var(--panel);box-shadow:0 0 0 1px var(--line),0 40px 80px -30px rgb(16 24 64/.35)}
+.linea-auth[data-variant="full"] .linea-auth-card{max-width:none;min-height:100dvh;border-radius:0;box-shadow:none}
+.linea-auth[data-aside="none"] .linea-auth-card{grid-template-columns:1fr;max-width:560px}
+.linea-auth-form{position:relative;display:flex;flex-direction:column;padding:22px 26px 28px;overflow:hidden;border-radius:20px}
+.linea-auth-form::before{content:"";position:absolute;inset:-40% -20% auto;height:70%;background:radial-gradient(40% 60% at 30% 40%,color-mix(in srgb,var(--auth-glow-1) 70%,transparent),transparent 70%),radial-gradient(45% 60% at 70% 30%,color-mix(in srgb,var(--auth-glow-2) 75%,transparent),transparent 70%),radial-gradient(40% 50% at 50% 80%,color-mix(in srgb,var(--accent) 22%,transparent),transparent 70%);filter:blur(30px);opacity:.85;pointer-events:none}
+.dark .linea-auth-form::before,[data-theme="dark"] .linea-auth-form::before{opacity:.3}
+.linea-auth[data-glow="false"] .linea-auth-form::before{display:none}
+.linea-auth-brand{position:relative;display:flex;align-items:center;gap:9px;font-size:15px;font-weight:600;color:var(--ink);text-decoration:none}
+.linea-auth-body{position:relative;flex:1;display:flex;flex-direction:column;justify-content:center;gap:18px;width:100%;max-width:380px;margin:0 auto;padding:28px 0}
+.linea-auth-head{display:flex;flex-direction:column;gap:6px;text-align:center;margin-bottom:6px}
+.linea-auth-title{margin:0;font-size:26px;line-height:32px;font-weight:600;letter-spacing:-.025em;color:var(--ink)}
+.linea-auth-sub{margin:0;font-size:14.5px;line-height:21px;color:var(--muted)}
+.linea-auth-foot{position:relative;text-align:center;font-size:13.5px;color:var(--muted)}
+.linea-auth-foot a{color:var(--ink);font-weight:500;text-decoration:underline;text-underline-offset:3px}
+.linea-auth-providers{display:grid;grid-template-columns:repeat(auto-fit,minmax(0,1fr));gap:10px}
+.linea-oauth{display:inline-flex;align-items:center;justify-content:center;gap:9px;height:42px;padding:0 14px;border:0;border-radius:12px;background:var(--panel);box-shadow:0 0 0 1px var(--line),0 1px 2px rgb(15 15 20/.05);font:inherit;font-size:14px;font-weight:500;color:var(--ink);text-decoration:none;cursor:pointer}
+.linea-oauth:hover{box-shadow:0 0 0 1px var(--line-strong),0 2px 6px -2px rgb(15 15 20/.12)}
+.linea-oauth>svg,.linea-oauth>span[class*="huge-"]{width:18px;height:18px}
+.linea-auth-aside{position:relative;overflow:hidden;border-radius:20px;background:var(--sunken)}
+.linea-auth-aside>img,.linea-auth-aside>.art>svg,.linea-auth-aside>.art>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.linea-auth-aside>.art{position:absolute;inset:0}
+.linea-auth-quote{position:absolute;left:0;right:0;bottom:0;margin:0;display:flex;flex-direction:column;gap:22px;padding:120px 28px 28px;background:linear-gradient(180deg,transparent,rgb(6 12 28/.55) 45%,rgb(6 12 28/.82));color:#fff}
+.linea-auth-quote blockquote{margin:0;font-size:24px;line-height:32px;font-weight:500;letter-spacing:-.015em;text-wrap:balance}
+.linea-auth-quote figcaption{display:flex;align-items:flex-end;justify-content:space-between;gap:16px}
+.linea-auth-stars{display:flex;gap:6px}.linea-auth-stars svg{width:18px;height:18px;fill:#fff}
+.linea-auth-stars svg.off{fill:rgb(255 255 255/.3)}
+.linea-auth-who{display:flex;flex-direction:column;align-items:flex-end;text-align:right}.linea-auth-who b{font-size:17px;font-weight:600}.linea-auth-who span{font-size:13px;opacity:.8}
+@media (max-width:1024px){.linea-auth-card{grid-template-columns:1fr;max-width:560px}.linea-auth-aside{display:none}}
+@media (max-width:640px){.linea-auth{padding:0;background-image:none}.linea-auth-card{min-height:100dvh;padding:0;border-radius:0;box-shadow:none}.linea-auth-form{border-radius:0;padding:18px 20px 24px}.linea-auth-title{font-size:23px;line-height:29px}}
