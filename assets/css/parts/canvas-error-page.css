@@ -7,7 +7,7 @@
 .sg-err[data-tone="warning"],.sg-err-state[data-tone="warning"]{--err:var(--warn)}
 .sg-err[data-tone="accent"],.sg-err-state[data-tone="accent"]{--err:var(--accent)}
 .sg-err-top{display:flex;align-items:center;gap:12px;min-height:34px}
-.sg-err-status{margin-left:auto;display:inline-flex;align-items:center;gap:8px;height:34px;padding:0 14px;border-radius:999px;background:var(--panel);box-shadow:0 0 0 1px var(--line);font-size:13px;color:var(--fg);text-decoration:none;white-space:nowrap}
+.sg-err-status{margin-left:auto;display:inline-flex;align-items:center;gap:8px;height:34px;padding:0 14px;border-radius:var(--pill);background:var(--panel);box-shadow:0 0 0 1px var(--line);font-size:13px;color:var(--fg);text-decoration:none;white-space:nowrap}
 .sg-err-status:hover{box-shadow:0 0 0 1px var(--line-strong)}
 .sg-err-status>i{--dot:var(--pos);width:8px;height:8px;border-radius:50%;background:var(--dot);box-shadow:0 0 0 3px color-mix(in srgb,var(--dot) 22%,transparent)}
 .sg-err-status[data-status="warning"]>i{--dot:var(--warn)}.sg-err-status[data-status="down"]>i{--dot:var(--neg)}

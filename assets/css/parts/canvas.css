@@ -13,7 +13,7 @@
   --c1:#0d8f91;--c2:#2f5fd0;--c3:#8a5cd6;--c4:#d97a1e;--c5:#a1a1a6;
   --heat0:#ecebe7;--heat1:#cfe9e6;--heat2:#93d1cc;--heat3:#4fb3ae;--heat4:#0d8f91;
   --shadow-sm:0 1px 2px rgb(23 23 26/.04);--shadow:0 1px 2px rgb(23 23 26/.04),0 4px 16px -6px rgb(23 23 26/.08);--shadow-lg:0 24px 60px -20px rgb(23 23 26/.28),0 2px 6px rgb(23 23 26/.06);
-  --r-sm:8px;--r:12px;--r-lg:16px;--r-xl:22px;--pill:999px;
+  --r-sm:8px;--r:12px;--r-lg:16px;--r-xl:22px;--pill:10px;--pill-in:8px;--pill-xs:6px;
   --sans:"Geist",ui-sans-serif,system-ui,sans-serif;--mono:"Geist Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
 }
 .sg[data-theme="light"]{
@@ -25,7 +25,7 @@
   --c1:#0d8f91;--c2:#2f5fd0;--c3:#8a5cd6;--c4:#d97a1e;--c5:#a1a1a6;
   --heat0:#ecebe7;--heat1:#cfe9e6;--heat2:#93d1cc;--heat3:#4fb3ae;--heat4:#0d8f91;
   --shadow-sm:0 1px 2px rgb(23 23 26/.04);--shadow:0 1px 2px rgb(23 23 26/.04),0 4px 16px -6px rgb(23 23 26/.08);--shadow-lg:0 24px 60px -20px rgb(23 23 26/.28),0 2px 6px rgb(23 23 26/.06);
-  --r-sm:8px;--r:12px;--r-lg:16px;--r-xl:22px;--pill:999px;
+  --r-sm:8px;--r:12px;--r-lg:16px;--r-xl:22px;--pill:10px;--pill-in:8px;--pill-xs:6px;
   --sans:"Geist",ui-sans-serif,system-ui,sans-serif;--mono:"Geist Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
 }
 .sg{
@@ -144,9 +144,9 @@
 .sg-btn.sm{height:30px;padding:0 11px;font-size:12.5px}.sg-btn.lg{height:44px;padding:0 20px;font-size:15px}
 .sg-btn.block{display:flex;width:100%}
 .sg-btn.sq{border-radius:10px}
-.sg-ib{all:unset;box-sizing:border-box;width:34px;height:34px;border-radius:50%;display:inline-grid;place-items:center;color:var(--muted);background:var(--panel);box-shadow:inset 0 0 0 1px var(--line);cursor:pointer;position:relative;flex:none}
+.sg-ib{all:unset;box-sizing:border-box;width:34px;height:34px;border-radius:var(--pill);display:inline-grid;place-items:center;color:var(--muted);background:var(--panel);box-shadow:inset 0 0 0 1px var(--line);cursor:pointer;position:relative;flex:none}
 .sg-ib.plain{box-shadow:none;background:transparent}
-.sg-ib.sm{width:28px;height:28px}
+.sg-ib.sm{width:28px;height:28px;border-radius:var(--pill-in)}
 .sg-ib .pip{position:absolute;top:6px;right:7px;width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 2px var(--panel)}
 
 /* Segmented / tabs */
@@ -472,3 +472,18 @@ input.form-switch:checked::before{left:17px;transform:none;translate:none !impor
 .sg-table :is(th,td).text-right{text-align:right}
 .sg-table :is(th,td).text-center{text-align:center}
 .sg .huge-copy-01{--huge-copy-01:url("data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%221.7%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Cpath d=%22M8 8h12v12H8zM4 16V4h12%22/%3E%3C/svg%3E")}
+
+/* Sem pílula: os controles usam cantos de 10px (o token --pill), o segmentado é uma trilha com o escolhido em
+   branco e o contador numa caixinha; só switch, avatar e pontos continuam redondos. */
+.sg-seg{gap:2px;padding:3px;border-radius:calc(var(--pill) + 1px);background:var(--sunken);box-shadow:inset 0 0 0 1px var(--line)}
+.sg-seg button{height:32px;padding:0 18px;border-radius:var(--pill-in);justify-content:center;gap:8px}
+.sg-seg.sm button{height:26px;padding:0 11px;border-radius:calc(var(--pill-in) - 1px);gap:6px}
+.sg-seg button .n,.sg-seg button>span.font-mono{display:inline-grid;place-items:center;min-width:20px;height:20px;padding:0 6px;border-radius:var(--pill-xs);font:500 11.5px/1 var(--mono);color:var(--muted)}
+.sg-seg button.on .n,.sg-seg button[aria-pressed="true"]>span.font-mono,.sg-seg button.on>span.font-mono{background:var(--sunken);color:var(--ink)}
+.sg-seg.sm button .n,.sg-seg.sm button>span.font-mono{min-width:16px;height:16px;padding:0 4px;font-size:10.5px}
+.sg-sw,input.form-switch,.sg-theme-sw{border-radius:999px}
+.sg-btn.pill{border-radius:999px}
+/* Pílula de volta, como opção: data-shape="pill" num ancestral (no <html> vale para o app inteiro) troca os
+   tokens; os componentes com `shape` aceitam shape="pill" um a um. */
+[data-shape="pill"],[data-shape="pill"] .sg,[data-shape="pill"] .sg[data-theme]{--pill:999px;--pill-in:999px;--pill-xs:999px}
+[data-shape="pill"] .sg-ib{border-radius:50%}

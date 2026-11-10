@@ -31,6 +31,8 @@ defmodule LineaUI.Components.ButtonTest do
 
     assert "lg" in classes(render(~H|<.button size="lg">Go</.button>|), "button")
     assert "sq" in classes(render(~H|<.button shape="square">Go</.button>|), "button")
+    assert "pill" in classes(render(~H|<.button shape="pill">Go</.button>|), "button")
+    refute "pill" in classes(render(~H|<.button>Go</.button>|), "button")
   end
 
   test "icon makes the round canvas icon button" do

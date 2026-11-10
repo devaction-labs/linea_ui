@@ -4,7 +4,7 @@ defmodule LineaUI.Components.Button do
 
       <.button>Neutral</.button>
       <.button color="primary">Save</.button>
-      <.button color="error" variant="outline" shape="pill">Delete</.button>
+      <.button color="error" variant="outline">Delete</.button>
       <.button color="info" icon aria-label="Search"><svg>…</svg></.button>
       <.button navigate={~p"/orders"} color="primary" variant="soft">Orders</.button>
       <.button icon variant="flat" color="current" aria-label="Menu"><svg>…</svg></.button>
@@ -45,7 +45,11 @@ defmodule LineaUI.Components.Button do
   )
 
   attr(:size, :string, default: "md", values: ~w(xs sm md lg xl))
-  attr(:shape, :string, default: "pill", values: ~w(rounded pill square))
+  attr(:shape, :string,
+    default: "rounded",
+    values: ~w(rounded pill square),
+    doc: "`rounded` (10px corners, the default), `pill` (fully round ends, opt-in) or `square`."
+  )
   attr(:icon, :boolean, default: false, doc: "A square button that holds only an icon.")
   attr(:type, :string, default: "button")
   attr(:disabled, :boolean, default: false)
@@ -84,7 +88,7 @@ defmodule LineaUI.Components.Button do
     |> render_button()
   end
 
-  # The canvas buttons: `sg-btn` (pill) and `sg-ib` (the round icon button), with their own variants.
+  # The canvas buttons: `sg-btn` (10px corners) and `sg-ib` (the square icon button), with their own variants.
   defp classes(assigns) do
     merge([
       (assigns.icon && icon_class(assigns)) || button_class(assigns),
@@ -106,7 +110,8 @@ defmodule LineaUI.Components.Button do
       tone(color, variant),
       size in ~w(xs sm) && "sm",
       size in ~w(lg xl) && "lg",
-      shape == "square" && "sq"
+      shape == "square" && "sq",
+      shape == "pill" && "pill"
     ]
   end
 

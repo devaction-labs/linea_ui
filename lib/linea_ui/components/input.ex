@@ -58,7 +58,7 @@ defmodule LineaUI.Components.Input do
 
       <.input name="message" value={@message} placeholder="Message">
         <:suffix interactive>
-          <.button variant="flat" class="size-7 rounded-full p-0" type="submit" aria-label="Send">
+          <.button variant="flat" class="size-7 rounded-[var(--pill-in,8px)] p-0" type="submit" aria-label="Send">
             <.icon name="huge-sent" class="size-4" />
           </.button>
         </:suffix>
