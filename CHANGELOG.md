@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- `button`: each variant has its own hover. The base `.sg-btn:hover` only reached the default button; `accent`, `solid`, `soft`, `ghost` and `danger` came later in the cascade and cancelled it, so they had none. Primary mixes 12% ink into the accent, mono mixes 15% panel into the solid, soft and error deepen their tint, ghost takes the hover gray and ink text.
+- `button icon` (`sg-ib`): hover gray with ink icon.
+
 ## 0.17.2 (2026-11-10)
 
 - `sidebar`: clicking a collapsible row toggles it, not only the chevron. The rail group header is a button; a tree item without a destination is a button; an item with one keeps its link and the click also opens its children.
