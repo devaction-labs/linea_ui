@@ -244,8 +244,8 @@ defmodule LineaUI.Components.SidebarTest do
       assert texts(html, ".sg-sb-panel a.sg-sb-new") == ["Novo pedido"]
       assert attrs(html, "a.sg-sb-new", "href") == ["/pedidos/novo"]
       assert texts(html, ".sg-sb-panel .sg-sb-gh") == ["Notas", "Experimente"]
-      assert attrs(html, ".sg-sb-gh button.tg", "aria-expanded") == ["false"]
-      assert attrs(html, ".sg-sb-gh button.tg", "aria-controls") |> length() == 1
+      assert attrs(html, "button.sg-sb-gh", "aria-expanded") == ["false"]
+      assert attrs(html, "button.sg-sb-gh", "aria-controls") |> length() == 1
       assert texts(html, ".sg-sb-tree a.t .lbl") == ["Abertos", "Cancelados"]
       assert classes(html, ".sg-sb-tree a.t:first-child > span") |> Enum.take(2) == ["ci", "blue"]
 
@@ -279,12 +279,23 @@ defmodule LineaUI.Components.SidebarTest do
 
     test "a nested group of the panel starts closed, and open when it holds the current item" do
       html = html(%{format: "rail", current: "/pedidos"})
-      assert attrs(html, ".sg-sb-gh button.tg", "aria-expanded") == ["false"]
+      assert attrs(html, "button.sg-sb-gh", "aria-expanded") == ["false"]
       assert find(html, "div.sg-sb-grp[data-closed]") |> Enum.count() == 1
 
       html = html(%{format: "rail", current: "/notas"})
-      assert attrs(html, ".sg-sb-gh button.tg", "aria-expanded") == ["true"]
+      assert attrs(html, "button.sg-sb-gh", "aria-expanded") == ["true"]
       assert find(html, "div.sg-sb-grp[data-closed]") |> Enum.empty?()
+    end
+
+    test "the header of a nested group is the toggle, with the chevron decorative inside" do
+      html = html(%{format: "rail", current: "/pedidos"})
+      assert texts(html, "button.sg-sb-gh") == ["Notas"]
+      assert attrs(html, "button.sg-sb-gh", "type") == ["button"]
+      [controls] = attrs(html, "button.sg-sb-gh", "aria-controls")
+      assert attrs(html, "div.sg-sb-grp", "id") |> Enum.member?(controls)
+      assert find(html, "button.sg-sb-gh button") |> Enum.empty?()
+      assert attrs(html, "button.sg-sb-gh > span.tg", "aria-hidden") == ["true"]
+      assert find(html, "button.sg-sb-gh .tg svg") |> Enum.count() == 1
     end
 
     test "the panel button is left out with `collapsible` false" do
@@ -393,6 +404,33 @@ defmodule LineaUI.Components.SidebarTest do
       assert find(html, "div#" <> controls <> "[data-closed]") |> Enum.count() == 1
     end
 
+    test "an item without destination is a button that toggles its tree" do
+      nav = [%{group: "G", items: [%{label: "P", children: [%{label: "A", href: "/a"}]}]}]
+      html = html(%{format: "tree", nav: nav})
+      assert find(html, "button.sg-sb-ct") |> Enum.empty?()
+      assert texts(html, "button.sg-sb-a .lbl") == ["P"]
+      assert attrs(html, "button.sg-sb-a", "type") == ["button"]
+      assert attrs(html, "button.sg-sb-a", "aria-expanded") == ["false"]
+      [controls] = attrs(html, "button.sg-sb-a", "aria-controls")
+      assert attrs(html, "div.sg-sb-tree", "id") == [controls]
+      assert find(html, "button.sg-sb-a > span.cv svg") |> Enum.count() == 1
+      assert find(html, "button.sg-sb-a button") |> Enum.empty?()
+    end
+
+    test "an item with destination keeps its link, and the click also opens the children", %{
+      html: html
+    } do
+      assert find(html, "button.sg-sb-a") |> Enum.empty?()
+      [controls] = attrs(html, "button.sg-sb-ct", "aria-controls")
+      [id] = attrs(html, "button.sg-sb-ct", "id")
+      assert id == controls <> "-btn"
+      [click] = attrs(html, "a.sg-sb-a[phx-click]", "phx-click")
+      assert click =~ "aria-expanded"
+      assert click =~ "#" <> id
+      assert click =~ "data-closed"
+      assert click =~ "#" <> controls
+    end
+
     test "`collapsible: false` takes the chevron of an item away" do
       nav = [
         %{
@@ -445,7 +483,7 @@ defmodule LineaUI.Components.SidebarTest do
 
       html = html(%{format: "tree", nav: nav, current: "/y"})
       assert attrs(html, "button.sg-sb-gt", "aria-expanded") == ["true", "false"]
-      assert attrs(html, "button.sg-sb-ct", "aria-expanded") == ["true", "false"]
+      assert attrs(html, "button.sg-sb-a", "aria-expanded") == ["true", "false"]
       assert find(html, "div.sg-sb-grp[data-closed]") |> Enum.count() == 1
       assert find(html, "div.sg-sb-tree[data-closed]") |> Enum.count() == 1
     end

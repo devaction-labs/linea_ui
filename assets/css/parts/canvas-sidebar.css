@@ -86,14 +86,25 @@
 /* what the markup adds to the board: buttons, labels, the groups that close */
 .sg-sb-body{display:contents}
 .sg-sb-mbar,.sg-sb-burger{display:none}
-.sg-sb :is(button.sw,button.col,button.tg,button.sg-sb-gt,button.sg-sb-ct,.sg-sb-ph button){font:inherit;border:0;cursor:pointer;background:none}
+.sg-sb :is(button.sw,button.col,button.tg,button.sg-sb-gt,button.sg-sb-gh,button.sg-sb-ct,.sg-sb-ph button){font:inherit;border:0;cursor:pointer;background:none}
+.sg-sb button.sg-sb-gh{font:500 11.5px/14px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);width:100%;text-align:left}
+.sg-sb button.sg-sb-gh:hover{color:var(--ink)}
+.sg-sb button.sg-sb-gh .tg{transition:transform .15s}
+.sg-sb button.sg-sb-a.rw{width:100%;border:0;background:none;font:inherit;font-size:14.5px;text-align:left;cursor:pointer}
+.sg-sb button.sg-sb-a.rw:hover{background:var(--hover)}
+.sg-sb button.sg-sb-a.rw.on{background:var(--hover);color:var(--ink);font-weight:550}
+.sg-sb-tree .sg-sb-a.rw{font-size:14px}
+.sg-sb button.sg-sb-a.rw>.cv{margin-left:auto;display:grid;place-items:center;flex:none;color:var(--muted)}
+.sg-sb button.sg-sb-a.rw>.cv .i{width:16px;height:16px;transition:transform .15s}
+.sg-sb button.sg-sb-a.rw[aria-expanded="false"]>.cv .i{transform:rotate(-90deg)}
+.sg-sb[data-collapsed="true"]:not(.railx) button.sg-sb-a.rw>.cv{display:none}
 .sg-sb :is(button.sw,button.col,button.tg,.sg-sb-ph button){padding:0}
 .sg-sb button.sw{color:var(--muted)}
 .sg-sb button.col{background:var(--panel)}
 .sg-sb button.tg{background:var(--sunken);color:inherit}
 .sg-sb button.sg-sb-gt{width:100%;text-align:left}
 .sg-sb button.sg-sb-gt .i{transition:transform .15s}
-.sg-sb button.sg-sb-gt[aria-expanded="false"] .i,.sg-sb button.tg[aria-expanded="false"] .i{transform:rotate(-90deg)}
+.sg-sb button.sg-sb-gt[aria-expanded="false"] .i,.sg-sb button.tg[aria-expanded="false"] .i,.sg-sb button.sg-sb-gh[aria-expanded="false"] .tg .i{transform:rotate(-90deg)}
 .sg-sb button.sg-sb-ct{align-self:flex-end;position:relative;flex:none;width:28px;height:34px;margin:-35px 6px 0 0;padding:0;display:grid;place-items:center;border-radius:8px;color:var(--muted)}
 .sg-sb button.sg-sb-ct:hover{background:var(--hover)}
 .sg-sb button.sg-sb-ct .i{transition:transform .15s}
