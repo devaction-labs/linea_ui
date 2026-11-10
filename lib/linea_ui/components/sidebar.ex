@@ -38,7 +38,9 @@ defmodule LineaUI.Components.Sidebar do
       format (items). A name (`blue`, `green`, `rose`, `violet`, `orange`, `ink`) or any CSS colour.
     * `children`: items under it, joined by a line (`tree`), a coloured tree (`rail`) or a plain tree.
     * `collapsible`: in the `tree` format an item with `children` gets a chevron at the right that closes and
-      opens them (open at first); `false` takes it away. It is `true` when left out.
+      opens them; `false` takes it away. It is `true` when left out. It starts open only when it holds the
+      active item (itself or a child), closed otherwise.
+    * `open`: `true` or `false` forces a collapsible item open or closed at first, whatever the route.
     * `active`: marks it active; `current` marks the item whose `navigate`/`patch`/`href` is the current
       path (path and query are compared).
     * `formats`: a list of formats that show it (`["rail"]`: only the rail); every format when left out.
@@ -48,7 +50,9 @@ defmodule LineaUI.Components.Sidebar do
     * `group`: the label.
     * `icon`: the icon of the group in the `rail`.
     * `items`: its items (and, in the `rail` panel, nested groups with a `collapsible` header).
-    * `collapsible`: `false` takes the chevron (and the toggle) away; it is `true` when left out.
+    * `collapsible`: `false` takes the chevron (and the toggle) away and the group is always shown; it is
+      `true` when left out. A collapsible group starts open only when it holds the active item.
+    * `open`: `true` or `false` forces a collapsible group open or closed at first, whatever the route.
     * `navigate`, `patch`, `href`: where the group's icon goes in the rail (the first item's when left out).
     * `footer: true`: the group is the foot of the menu ("settings and help"): in `sections` under its label,
       in `tree` without it, in the `rail` as icons at the bottom.
@@ -549,7 +553,7 @@ defmodule LineaUI.Components.Sidebar do
       :if={@entry.collapsible}
       type="button"
       class="sg-sb-gt"
-      aria-expanded="true"
+      aria-expanded={if @entry.open, do: "true", else: "false"}
       aria-controls={@entry.id}
       phx-mounted={JS.ignore_attributes(["aria-expanded"])}
       phx-click={toggle(@entry.id)}
@@ -558,7 +562,12 @@ defmodule LineaUI.Components.Sidebar do
       <svg class="i sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10l5 5 5-5" /></svg>
     </button>
     <div :if={!@entry.collapsible} class="sg-sb-gt">{@entry.label}</div>
-    <div id={@entry.id} class="sg-sb-grp" phx-mounted={JS.ignore_attributes(["data-closed"])}>
+    <div
+      id={@entry.id}
+      class="sg-sb-grp"
+      data-closed={!@entry.open && "true"}
+      phx-mounted={JS.ignore_attributes(["data-closed"])}
+    >
       <.row :for={item <- @entry.items} item={item} format="tree" />
     </div>
     """
@@ -574,7 +583,7 @@ defmodule LineaUI.Components.Sidebar do
         type="button"
         class="tg"
         aria-label={@entry.label}
-        aria-expanded="true"
+        aria-expanded={if @entry.open, do: "true", else: "false"}
         aria-controls={@entry.id}
         phx-mounted={JS.ignore_attributes(["aria-expanded"])}
         phx-click={toggle(@entry.id)}
@@ -582,7 +591,12 @@ defmodule LineaUI.Components.Sidebar do
         <svg class="i sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10l5 5 5-5" /></svg>
       </button>
     </div>
-    <div id={@entry.id} class="sg-sb-grp" phx-mounted={JS.ignore_attributes(["data-closed"])}>
+    <div
+      id={@entry.id}
+      class="sg-sb-grp"
+      data-closed={!@entry.open && "true"}
+      phx-mounted={JS.ignore_attributes(["data-closed"])}
+    >
       <.row :for={item <- @entry.items} item={item} format="rail" />
     </div>
     """
@@ -645,7 +659,7 @@ defmodule LineaUI.Components.Sidebar do
       :if={@item.collapsible}
       type="button"
       class="sg-sb-ct"
-      aria-expanded="true"
+      aria-expanded={if @item.open, do: "true", else: "false"}
       aria-controls={@item.tree_id}
       aria-label={@item.label}
       phx-mounted={JS.ignore_attributes(["aria-expanded"])}
@@ -657,6 +671,7 @@ defmodule LineaUI.Components.Sidebar do
       :if={@item.children != []}
       id={@item.collapsible && @item.tree_id}
       class={["sg-sb-tree", @format == "tree" && "line"]}
+      data-closed={!@item.open && "true"}
       phx-mounted={@item.collapsible && JS.ignore_attributes(["data-closed"])}
     >
       <svg

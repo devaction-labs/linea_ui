@@ -1,0 +1,39 @@
+<svg viewBox="0 0 560 680" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bl-sky" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#a9d8f0"/><stop offset=".6" stop-color="#f4e6ef"/><stop offset="1" stop-color="#fde3cf"/></linearGradient>
+    <linearGradient id="bl-h1" x1="0" y1="470" x2="0" y2="680" gradientUnits="userSpaceOnUse"><stop stop-color="#b6d98a"/><stop offset="1" stop-color="#7dbb5f"/></linearGradient>
+    <linearGradient id="bl-h2" x1="0" y1="520" x2="0" y2="680" gradientUnits="userSpaceOnUse"><stop stop-color="#7cc265"/><stop offset="1" stop-color="#3f8f4a"/></linearGradient>
+  </defs>
+  <rect width="560" height="680" fill="url(#bl-sky)"/>
+  <circle cx="430" cy="140" r="46" fill="#fff6dc"/>
+  <g fill="#fff" opacity=".9">
+    <path d="M40 210c0-16 13-29 29-29 8 0 15 3 20 9 6-12 18-20 32-20 20 0 36 16 36 36v1c11 3 19 13 19 25 0 14-11 25-25 25H62c-12 0-22-10-22-22 0-10 6-18 14-21z"/>
+    <path d="M380 300c0-13 10-23 23-23 6 0 11 2 15 6 5-9 14-15 25-15 16 0 29 13 29 29 10 2 17 11 17 21 0 12-10 22-22 22h-73c-11 0-19-8-19-19 0-9 2-15 5-21z"/>
+  </g>
+  <path d="M0 500c80-40 160-50 250-30s170 10 310-20v230H0z" fill="url(#bl-h1)"/>
+  <path d="M0 560c100-30 210-26 300-10s170 0 260-20v150H0z" fill="url(#bl-h2)"/>
+  <g fill="#2f7a3c"><path d="M80 560l10-30 10 30zM96 566l8-22 8 22zM470 548l10-30 10 30zM486 554l8-22 8 22z"/></g>
+  <!-- balão grande -->
+  <g>
+    <path d="M280 120c-70 0-112 52-112 108 0 60 60 104 92 136h40c32-32 92-76 92-136 0-56-42-108-112-108z" fill="#e8574b"/>
+    <path d="M280 120c-28 0-44 52-44 108 0 60 18 104 28 136h32c10-32 28-76 28-136 0-56-16-108-44-108z" fill="#f6c453"/>
+    <path d="M280 120c-8 0-12 52-12 108 0 60 4 104 6 136h12c2-32 6-76 6-136 0-56-4-108-12-108z" fill="#e8574b"/>
+    <path d="M168 228c0 60 60 104 92 136h40c32-32 92-76 92-136" stroke="#000" stroke-opacity=".08" stroke-width="10"/>
+    <path d="M262 364l6 30M298 364l-6 30" stroke="#6b4a2e" stroke-width="2"/>
+    <path d="M264 394h32v26h-32z" fill="#8a5a35"/>
+  </g>
+  <!-- balão médio -->
+  <g transform="translate(410 330) scale(.5)">
+    <path d="M0 0c-70 0-112 52-112 108 0 60 60 104 92 136h40c32-32 92-76 92-136C112 52 70 0 0 0z" fill="#4f8fd6"/>
+    <path d="M0 0c-28 0-44 52-44 108 0 60 18 104 28 136h32c10-32 28-76 28-136C44 52 28 0 0 0z" fill="#f4efe8"/>
+    <path d="M-18 244l6 30M18 244l-6 30" stroke="#6b4a2e" stroke-width="3"/>
+    <path d="M-16 274h32v26h-32z" fill="#8a5a35"/>
+  </g>
+  <!-- balão pequeno -->
+  <g transform="translate(110 360) scale(.34)">
+    <path d="M0 0c-70 0-112 52-112 108 0 60 60 104 92 136h40c32-32 92-76 92-136C112 52 70 0 0 0z" fill="#8a5cd6"/>
+    <path d="M0 0c-28 0-44 52-44 108 0 60 18 104 28 136h32c10-32 28-76 28-136C44 52 28 0 0 0z" fill="#f6c453"/>
+    <path d="M-16 274h32v26h-32z" fill="#8a5a35"/>
+  </g>
+  <g stroke="#5a6b8a" stroke-width="2" stroke-linecap="round" opacity=".6"><path d="M150 90q6-6 12 0q6-6 12 0"/><path d="M190 110q5-5 10 0q5-5 10 0"/></g>
+</svg>
