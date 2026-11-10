@@ -193,18 +193,22 @@ defmodule LineaUI.Components.Sidebar.Nav do
       |> Enum.with_index()
       |> Enum.map(fn {entry, index} -> entry(entry, current, "#{id}-#{index}", format) end)
 
+    collapsible = Map.get(group, :collapsible, true) != false
+    active = Enum.any?(items, &(&1.active or &1.deep))
+
     %{
       kind: :group,
       id: id,
       label: label,
       icon: icon(group[:icon]),
       items: items,
-      collapsible: Map.get(group, :collapsible, true) != false,
+      collapsible: collapsible,
+      open: open?(group, collapsible, active),
       footer: group[:footer] == true,
       link: group_link(group, items),
       action: action(group[:action], current),
       try: tries(group[:try], current),
-      active: Enum.any?(items, &(&1.active or &1.deep)),
+      active: active,
       deep: false
     }
   end
@@ -218,12 +222,17 @@ defmodule LineaUI.Components.Sidebar.Nav do
       |> Enum.map(fn {child, index} -> entry(child, current, "#{id}-#{index}", format) end)
 
     {color, style} = color(item[:color])
+    active = active?(item, current)
+    deep = active or Enum.any?(children, &(&1.active or &1.deep))
+
+    collapsible =
+      format == "tree" and children != [] and Map.get(item, :collapsible, true) != false
 
     %{
       kind: :item,
       tree_id: "#{id}-t",
-      collapsible:
-        format == "tree" and children != [] and Map.get(item, :collapsible, true) != false,
+      collapsible: collapsible,
+      open: open?(item, collapsible, deep),
       label: item[:label],
       icon: icon(item[:icon]),
       link: link_attrs(item),
@@ -233,10 +242,16 @@ defmodule LineaUI.Components.Sidebar.Nav do
       style: style,
       children: children,
       branch: branch(children, format),
-      active: active?(item, current),
-      deep: active?(item, current) or Enum.any?(children, &(&1.active or &1.deep))
+      active: active,
+      deep: deep
     }
   end
+
+  # A toggle starts closed unless it holds the active route; `open: true | false` overrides. What cannot be
+  # toggled is always shown.
+  defp open?(_entry, false, _holds_active), do: true
+  defp open?(%{open: open}, true, _holds_active) when is_boolean(open), do: open
+  defp open?(_entry, true, holds_active), do: holds_active
 
   # The connector of the `tree` format, drawn once per group: a trunk, a rounded branch and a node per child,
   # and the way down to the active child in the accent. Rows are 34px plus 1px of gap, the first centre at 21.
