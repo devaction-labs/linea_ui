@@ -96,11 +96,12 @@ defmodule LineaUI.Components.Button do
     ])
   end
 
-  defp icon_class(%{size: size, variant: variant}) do
+  defp icon_class(%{size: size, variant: variant, shape: shape}) do
     [
       "sg-ib",
       size in ~w(xs sm) && "sm",
-      variant in ~w(flat ghost dim) && "plain"
+      variant in ~w(flat ghost dim) && "plain",
+      shape == "pill" && "pill"
     ]
   end
 

@@ -486,5 +486,5 @@ input.form-switch:checked::before{left:17px;transform:none;translate:none !impor
 .sg-btn.pill{border-radius:999px}
 /* Pílula de volta, como opção: data-shape="pill" num ancestral (no <html> vale para o app inteiro) troca os
    tokens; os componentes com `shape` aceitam shape="pill" um a um. */
-[data-shape="pill"],[data-shape="pill"] .sg,[data-shape="pill"] .sg[data-theme]{--pill:999px;--pill-in:999px;--pill-xs:999px}
-[data-shape="pill"] .sg-ib{border-radius:50%}
+[data-shape="pill"],[data-shape="pill"] .sg,[data-shape="pill"] .sg[data-theme],.sg[data-theme][data-shape="pill"]{--pill:999px;--pill-in:999px;--pill-xs:999px}
+[data-shape="pill"] .sg-ib,.sg-ib.pill{border-radius:50%}
