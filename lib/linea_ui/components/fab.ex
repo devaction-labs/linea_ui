@@ -363,7 +363,7 @@ defmodule LineaUI.Components.Fab do
         class="sg-m-fab"
       >
         <span class="linea-fab-dial-icon flex" aria-hidden="true">
-          {render_slot(@icon) || plus(%{dims: %{icon: "size-5.5"}})}
+          {render_slot(@icon)}<.plus :if={@icon == []} class="size-5.5" />
         </span>
       </button>
       <button
@@ -391,7 +391,7 @@ defmodule LineaUI.Components.Fab do
           ])
         }>
           <span class="linea-fab-dial-icon flex" aria-hidden="true">
-            {render_slot(@icon) || plus(assigns)}
+            {render_slot(@icon)}<.plus :if={@icon == []} class={@dims.icon} />
           </span>
         </span>
       </button>
@@ -457,10 +457,12 @@ defmodule LineaUI.Components.Fab do
     """
   end
 
+  attr(:class, :string, required: true)
+
   defp plus(assigns) do
     ~H"""
     <svg
-      class={@dims.icon}
+      class={@class}
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
@@ -598,7 +600,7 @@ defmodule LineaUI.Components.Fab do
         @dims.tile
       ])
     }>
-      {render_slot(@icon) || sparkle(assigns)}
+      {render_slot(@icon)}<.sparkle :if={@icon == []} class={@dims.icon} />
       <span
         :if={@badge}
         class="absolute -top-1 -right-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-error px-1 text-[11px] leading-none font-semibold text-white ring-2 ring-white dark:ring-navy-900"
@@ -628,10 +630,12 @@ defmodule LineaUI.Components.Fab do
   defp blank?(content),
     do: content |> Phoenix.HTML.Safe.to_iodata() |> IO.iodata_to_binary() |> String.trim() == ""
 
+  attr(:class, :string, required: true)
+
   defp sparkle(assigns) do
     ~H"""
     <svg
-      class={@dims.icon}
+      class={@class}
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"

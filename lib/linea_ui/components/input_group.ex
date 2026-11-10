@@ -116,8 +116,27 @@ defmodule LineaUI.Components.InputGroup do
       |> assign(:base_id, assigns.id || group_id(assigns.label))
 
     if assigns.label == nil and assigns.help == nil and assigns.errors == [] do
-      render_group(assigns)
+      ~H"""
+      <.group
+        id={@id}
+        shape={@shape}
+        size={@size}
+        label={@label}
+        base_id={@base_id}
+        state={@state}
+        has_messages={false}
+        class={@class}
+        {@rest}
+      >
+        {render_slot(@inner_block)}
+      </.group>
+      """
     else
+      assigns =
+        assign_derived(assigns, :group_class, [:label, :class], fn ->
+          merge([assigns.label && "mt-1.5", assigns.class])
+        end)
+
       ~H"""
       <div class={@wrapper_class}>
         <span
@@ -132,7 +151,19 @@ defmodule LineaUI.Components.InputGroup do
         >
           {@label}
         </span>
-        {render_group(assign(assigns, :class, merge([@label && "mt-1.5", @class])))}
+        <.group
+          id={@id}
+          shape={@shape}
+          size={@size}
+          label={@label}
+          base_id={@base_id}
+          state={@state}
+          has_messages={@help != nil or @errors != []}
+          class={@group_class}
+          {@rest}
+        >
+          {render_slot(@inner_block)}
+        </.group>
         <div :if={@help || @errors != []} id={"#{@base_id}-messages"}>
           <Form.help_text :if={@help} state={if @state == "success", do: "success"}>
             {@help}
@@ -147,12 +178,20 @@ defmodule LineaUI.Components.InputGroup do
   defp group_id(nil), do: nil
   defp group_id(label), do: "input-group-#{:erlang.phash2(label)}"
 
-  defp render_group(assigns) do
+  attr(:id, :any, required: true)
+  attr(:shape, :string, required: true)
+  attr(:size, :string, required: true)
+  attr(:label, :string, required: true)
+  attr(:base_id, :any, required: true)
+  attr(:state, :string, required: true)
+  attr(:has_messages, :boolean, required: true)
+  attr(:class, :any, required: true)
+  attr(:rest, :global)
+  slot(:inner_block, required: true)
+
+  defp group(assigns) do
     assigns =
-      assigns
-      |> assign(:has_messages, assigns.help != nil or assigns.errors != [])
-      |> assign(
-        :classes,
+      assign_derived(assigns, :classes, [:shape, :size, :state, :class], fn ->
         merge([
           @base,
           @shapes[assigns.shape],
@@ -160,7 +199,7 @@ defmodule LineaUI.Components.InputGroup do
           assigns.state == "error" && @invalid,
           assigns.class
         ])
-      )
+      end)
 
     ~H"""
     <div
