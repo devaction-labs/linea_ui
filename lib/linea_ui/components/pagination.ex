@@ -398,7 +398,7 @@ defmodule LineaUI.Components.Pagination do
   # inert (a `<span aria-disabled>`) but is not dimmed, as on the canvas
   defp entry_class(%{shape: "canvas"}, _arrow, _number, _disabled),
     do:
-      "grid size-7 place-items-center rounded-full bg-[var(--panel)] text-[var(--muted)] shadow-[inset_0_0_0_1px_var(--line)] hover:bg-[var(--hover)]"
+      "grid size-7 place-items-center rounded-[var(--pill-in,8px)] bg-[var(--panel)] text-[var(--muted)] shadow-[inset_0_0_0_1px_var(--line)] hover:bg-[var(--hover)]"
 
   defp entry_class(assigns, :gap, _number, _disabled),
     do: [@item[assigns.size], @shapes[assigns.shape], divided_fill(assigns)]

@@ -711,7 +711,7 @@
   }
 
   .linea-chart-summary-chip {
-    @apply rounded-full bg-slate-150 px-2 py-0.5 text-xs font-medium tabular-nums dark:bg-navy-500;
+    @apply rounded-(--pill-xs) bg-slate-150 px-2 py-0.5 text-xs font-medium tabular-nums dark:bg-navy-500;
   }
 
   .linea-chart-summary-item {

@@ -18,12 +18,15 @@ defmodule LineaUI.Components.Segmented do
       <.segmented field={@form[:regime]} options={["Simples Nacional", "Regime normal"]} />
 
   Options are strings, `{label, value}` tuples or maps with `:label`, `:value`, and optionally `:icon` (a `huge-*`
-  icon before the label), `:count` (a faint mono number after the label) and `:disabled`.
+  icon before the label), `:count` (a mono number in a small box after the label) and `:disabled`.
 
       <.segmented id="view" value="board" options={[
         %{label: "Quadro", value: "board", icon: "huge-kanban"},
         %{label: "Lista", value: "list", icon: "huge-list-view"}
       ]} />
+
+  The chosen segment is white on a gray track, both with rounded corners; `shape="pill"` gives round ends
+  (or `data-shape="pill"` on the `<html>`, for the whole app).
 
   It is a `role="group"` of buttons with `aria-pressed`. The choice is made in the browser, without a round trip;
   a new `value` from the server wins, and a patch that does not change it leaves the person's choice alone. Arrow
@@ -79,6 +82,11 @@ defmodule LineaUI.Components.Segmented do
   attr :errors, :list, default: []
   attr :size, :string, default: "md", values: ~w(sm md lg)
 
+  attr :shape, :string,
+    default: "rounded",
+    values: ~w(rounded pill),
+    doc: "`rounded` (a track with 11px corners and the chosen segment at 8px, the default) or `pill` (round ends, opt-in)."
+
   attr :full, :boolean,
     default: false,
     doc: "Stretches the control over the width, the segments sharing it."
@@ -132,6 +140,7 @@ defmodule LineaUI.Components.Segmented do
           merge(["sg-seg", @size == "sm" && "sm", @full && "flex w-full", @label && "mt-1.5", @class])
         }
         data-value={@value}
+        data-shape={@shape == "pill" && "pill"}
         data-on-change={@on_change_js}
         {@rest}
       >
