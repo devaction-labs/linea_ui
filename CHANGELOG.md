@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- No more pills by default: controls take rounded corners. The tokens `--pill` (10px), `--pill-in` (8px, the inner piece: a chosen segment, a theme thumb, a small icon button) and `--pill-xs` (6px, count boxes) drive buttons, icon buttons, segmented, chips, breadcrumbs, the theme switch, the bulk bar buttons, the AI chips, the error status link and the navbar bits. `button` `shape` now defaults to `rounded` (was `pill`), and so does the `dropdown` `toggle_icon` trigger; `pagination`, `choice` chips and the input send button follow. Switches, avatars and dots stay round.
+- Pills as an opt-in: `shape="pill"` on `button` (an icon button too, round) and the new `shape` attr on `segmented` (`rounded` default, `pill`); `data-shape="pill"` on any ancestor (on the `<html>` for the whole app) sets the three tokens to 999px.
+- `segmented`: a gray track with 11px corners, the chosen segment white at 8px and the `count` in a small mono box (filled on the chosen segment).
+
 ## 0.16.0 (2026-11-09)
 
 - `auth_split` and `oauth_button` (`LineaUI.Components.AuthSplit`, canvas AuthSplit): the sign in / sign up screen in two halves — the form on the left (brand, a soft glow, title, subtitle, provider buttons with an "Or" divider, the form, a footer line) and a picture on the right with a testimonial over it (quote, stars, author and role); `variant` card (floating on the dotted canvas) or full, `:aside` to replace the right half; the picture goes away under 1024px. `oauth_button` for Google, Apple and GitHub (Hugeicons line icons), as a link or a button. CSS `canvas-auth-split.css`.

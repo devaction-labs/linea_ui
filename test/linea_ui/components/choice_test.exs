@@ -32,7 +32,7 @@ defmodule LineaUI.Components.ChoiceTest do
       assert "sr-only" in classes(html, "input")
       refute "form-radio" in classes(html, "input")
       label = classes(html, "label")
-      assert "rounded-full" in label
+      assert "rounded-[var(--pill-in,8px)]" in label
       assert "has-checked:bg-primary" in label
       assert "dark:has-checked:bg-accent" in label
       assert "dark:bg-navy-900" in label

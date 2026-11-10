@@ -38,7 +38,7 @@
 .sg-nb-tabs{display:flex;gap:22px;margin-top:-4px}
 .sg-nb-tabs a{position:relative;display:inline-flex;align-items:center;gap:7px;padding:10px 0 12px;font-size:14px;color:var(--muted);text-decoration:none}
 .sg-nb-tabs a.on{color:var(--ink);font-weight:500}.sg-nb-tabs a.on::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:2px;border-radius:2px;background:var(--ink)}
-.sg-nb-tabs .n{padding:1px 7px;border-radius:99px;background:var(--sunken);font:500 11.5px var(--mono);color:var(--muted)}
+.sg-nb-tabs .n{padding:1px 7px;border-radius:var(--pill-xs);background:var(--sunken);font:500 11.5px var(--mono);color:var(--muted)}
 .sg-nb-avs{display:inline-flex;align-items:center;margin-right:6px}.sg-nb-avs .sg-av{width:26px;height:26px;font-size:10px;margin-left:-7px;box-shadow:0 0 0 2px var(--panel)}.sg-nb-avs .sg-av:first-child{margin-left:0}
 .sg-nb-avs .more{display:grid;place-items:center;width:26px;height:26px;margin-left:-7px;border-radius:50%;background:var(--sunken);box-shadow:0 0 0 2px var(--panel);font:600 10.5px var(--mono);color:var(--muted)}
 /* busca no centro */
@@ -50,7 +50,7 @@
 .sg-nb-chip:hover{background:var(--sunken)}.sg-nb-chip b{font-weight:600}
 .sg-nb-chip .sg-nb-tag{padding:1px 7px;border-radius:6px;background:var(--accent-soft);color:var(--accent-ink,var(--accent));font-size:11.5px;font-weight:600}
 .sg-nb-sq{display:grid;place-items:center;width:24px;height:24px;border-radius:7px;color:#fff;font:600 9.5px var(--mono)}
-.sg-nb-env{display:inline-flex;align-items:center;gap:7px;height:26px;margin-left:6px;padding:0 10px;border-radius:99px;background:var(--pos-soft);color:var(--pos);font-size:12.5px;font-weight:500}
+.sg-nb-env{display:inline-flex;align-items:center;gap:7px;height:26px;margin-left:6px;padding:0 10px;border-radius:var(--pill-in);background:var(--pos-soft);color:var(--pos);font-size:12.5px;font-weight:500}
 .sg-nb-env>i{width:6px;height:6px;border-radius:50%;background:currentColor}.sg-nb-env.warn{background:var(--warn-soft);color:var(--warn)}
 .sg-nb-txt{padding:6px 10px;border-radius:9px;font-size:13.5px;color:var(--muted);text-decoration:none}.sg-nb-txt:hover{color:var(--ink);background:var(--sunken)}
 /* sobre o destaque */

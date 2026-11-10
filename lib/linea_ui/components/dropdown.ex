@@ -13,7 +13,7 @@ defmodule LineaUI.Components.Dropdown do
         </.dropdown_item>
       </.dropdown>
 
-  `toggle_icon` draws LineOne's flat round icon button with the three dots (the menu of a card):
+  `toggle_icon` draws LineOne's flat icon button (10px corners) with the three dots (the menu of a card):
 
       <.dropdown id="card-menu" toggle_icon="dots" placement="bottom-end">
         <.dropdown_item href="#">Action</.dropdown_item>
@@ -23,7 +23,7 @@ defmodule LineaUI.Components.Dropdown do
   other trigger goes in the `:toggle` slot:
 
       <.dropdown id="more">
-        <:toggle><.button icon variant="flat" shape="pill" aria-label="More">⋮</.button></:toggle>
+        <:toggle><.button icon variant="flat" aria-label="More">⋮</.button></:toggle>
         …
       </.dropdown>
 
@@ -116,7 +116,7 @@ defmodule LineaUI.Components.Dropdown do
     default: nil,
     values: [nil, "dots", "dots-vertical"],
     doc:
-      "Draws LineOne's flat icon-button trigger with three dots, horizontal (`dots`) or vertical (`dots-vertical`). It inherits the parent's text color and is `size-8` and round; `label` and the `:toggle` slot win over it."
+      "Draws LineOne's flat icon-button trigger with three dots, horizontal (`dots`) or vertical (`dots-vertical`). It inherits the parent's text color and is `size-8` with 10px corners (the `pill` shape makes it round); `label` and the `:toggle` slot win over it."
 
   attr :toggle_class, :any,
     default: nil,
@@ -130,7 +130,7 @@ defmodule LineaUI.Components.Dropdown do
     default: nil,
     values: [nil, "rounded", "pill", "square"],
     doc:
-      "The shape of the trigger button. `nil` is `rounded` for the `label` button and `pill` for the `toggle_icon` one."
+      "The shape of the trigger button. `nil` is `rounded` (10px corners) for both the `label` and the `toggle_icon` button; `pill` is opt-in."
 
   attr :open, :boolean, default: false
 
@@ -202,7 +202,7 @@ defmodule LineaUI.Components.Dropdown do
           icon
           variant="flat"
           color="current"
-          shape={@shape || "pill"}
+          shape={@shape || "rounded"}
           class={merge(["size-8", @toggle_class])}
           id={"#{@id}-button"}
           aria-label={@toggle_label}

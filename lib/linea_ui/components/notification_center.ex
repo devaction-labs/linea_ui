@@ -260,7 +260,7 @@ defmodule LineaUI.Components.NotificationCenter do
         <span
           :if={@unread_count > 0}
           aria-label={"#{@unread_count} #{@unread_label}"}
-          class="rounded-full bg-primary/15 px-2 py-1 font-mono text-xs font-semibold leading-none text-primary dark:bg-accent-light/15 dark:text-accent-light"
+          class="rounded-(--pill-xs) bg-primary/15 px-2 py-1 font-mono text-xs font-semibold leading-none text-primary dark:bg-accent-light/15 dark:text-accent-light"
         >
           {@unread_count}
         </span>

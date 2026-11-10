@@ -107,7 +107,7 @@ defmodule LineaUI.Components.DropdownTest do
     assert "h-[34px]" in classes(html, "button[phx-click=edit]")
   end
 
-  test "toggle_icon draws the flat round dots button" do
+  test "toggle_icon draws the flat dots button, rounded by default" do
     html =
       render(~H"""
       <.dropdown id="a" toggle_icon="dots" toggle_class="-mr-2 size-7">
@@ -121,6 +121,7 @@ defmodule LineaUI.Components.DropdownTest do
     a = classes(html, "#a-button")
     assert ["sg-ib", "plain", "-mr-2"] -- a == []
     refute "size-8" in a
+    refute "pill" in a
     assert attr_of(html, "#a-button", "aria-label") == ["Menu"]
     assert [_] = find(html, "#a-button svg path[d^='M5 12h.01']") |> Enum.to_list()
     assert attr_of(html, "#b-button", "aria-label") == ["Row actions"]

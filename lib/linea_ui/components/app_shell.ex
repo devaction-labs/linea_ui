@@ -1124,7 +1124,7 @@ defmodule LineaUI.Components.AppShell do
                   phx-mounted={JS.ignore_attributes(["class", "aria-expanded"])}
                   placeholder={@search_placeholder}
                   aria-label={@search_placeholder}
-                  class="form-input peer h-full w-60 rounded-full bg-slate-150 px-4 pl-9 text-xs-plus text-slate-800 ring-primary/50 hover:bg-slate-200 focus:ring-3 dark:bg-navy-900/90 dark:text-navy-100 dark:placeholder-navy-300 dark:ring-accent/50 dark:hover:bg-navy-900 dark:focus:bg-navy-900"
+                  class="form-input peer h-full w-60 rounded-(--pill) bg-slate-150 px-4 pl-9 text-xs-plus text-slate-800 ring-primary/50 hover:bg-slate-200 focus:ring-3 dark:bg-navy-900/90 dark:text-navy-100 dark:placeholder-navy-300 dark:ring-accent/50 dark:hover:bg-navy-900 dark:focus:bg-navy-900"
                   {@search_input}
                 />
                 <div class="pointer-events-none absolute flex h-full w-10 items-center justify-center text-slate-400 peer-focus:text-primary dark:text-navy-300 dark:peer-focus:text-accent">
@@ -2071,7 +2071,7 @@ defmodule LineaUI.Components.AppShell do
         <nav
           :if={@crumb != []}
           aria-label="Breadcrumb"
-          class="flex min-h-8 min-w-0 flex-wrap items-center gap-2 rounded-full border border-slate-150 bg-white pr-3.5 pl-[13px] text-[13px] text-slate-500 dark:border-navy-600 dark:bg-navy-750 dark:text-navy-200"
+          class="flex min-h-8 min-w-0 flex-wrap items-center gap-2 rounded-(--pill) border border-slate-150 bg-white pr-3.5 pl-[13px] text-[13px] text-slate-500 dark:border-navy-600 dark:bg-navy-750 dark:text-navy-200"
         >
           <%= for {crumb, last} <- @crumbs do %>
             <.link

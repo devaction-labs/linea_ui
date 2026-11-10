@@ -3,7 +3,7 @@
    canvas variables, so only what the variables do not cover is set below. ---------- */
 
 /* chip: a query, a context, an attachment */
-.ai-chip{display:flex;align-items:center;gap:5px;height:24px;padding:0 9px;border-radius:999px;background:var(--sunken);box-shadow:inset 0 0 0 1px var(--line);font-size:12px;color:var(--fg)}
+.ai-chip{display:flex;align-items:center;gap:5px;height:24px;padding:0 9px;border-radius:calc(var(--pill-in) - 1px);background:var(--sunken);box-shadow:inset 0 0 0 1px var(--line);font-size:12px;color:var(--fg)}
 .ai-chip.neg{box-shadow:inset 0 0 0 1px var(--neg);color:var(--neg)}
 
 /* tool trace */
