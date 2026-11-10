@@ -85,7 +85,8 @@ defmodule LineaUI.Components.Segmented do
   attr :shape, :string,
     default: "rounded",
     values: ~w(rounded pill),
-    doc: "`rounded` (a track with 11px corners and the chosen segment at 8px, the default) or `pill` (round ends, opt-in)."
+    doc:
+      "`rounded` (a track with 11px corners and the chosen segment at 8px, the default) or `pill` (round ends, opt-in)."
 
   attr :full, :boolean,
     default: false,

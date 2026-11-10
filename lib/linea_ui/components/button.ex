@@ -45,11 +45,13 @@ defmodule LineaUI.Components.Button do
   )
 
   attr(:size, :string, default: "md", values: ~w(xs sm md lg xl))
+
   attr(:shape, :string,
     default: "rounded",
     values: ~w(rounded pill square),
     doc: "`rounded` (10px corners, the default), `pill` (fully round ends, opt-in) or `square`."
   )
+
   attr(:icon, :boolean, default: false, doc: "A square button that holds only an icon.")
   attr(:type, :string, default: "button")
   attr(:disabled, :boolean, default: false)

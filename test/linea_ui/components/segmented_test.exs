@@ -169,7 +169,15 @@ defmodule LineaUI.Components.SegmentedTest do
   end
 
   test "rounded by default, pill as an opt-in" do
-    assert attr_of(render(~H|<.segmented id="r" options={["A"]} />|), "#r", "data-shape") in [[], [nil]]
-    assert attr_of(render(~H|<.segmented id="p" options={["A"]} shape="pill" />|), "#p", "data-shape") == ["pill"]
+    assert attr_of(render(~H|<.segmented id="r" options={["A"]} />|), "#r", "data-shape") in [
+             [],
+             [nil]
+           ]
+
+    assert attr_of(
+             render(~H|<.segmented id="p" options={["A"]} shape="pill" />|),
+             "#p",
+             "data-shape"
+           ) == ["pill"]
   end
 end
