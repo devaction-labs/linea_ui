@@ -1718,7 +1718,7 @@ defmodule LineaUI.Components.AppShell do
       data-rail-toggle={@for}
       {@rest}
     >
-      {render_slot(@inner_block) || rail_toggle_icon(assigns)}
+      {render_slot(@inner_block)}<.rail_toggle_icon :if={@inner_block == []} />
     </button>
     """
   end

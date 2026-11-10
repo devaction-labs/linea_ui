@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.17.1 (2026-11-10)
+
+- LiveView change tracking: `data_table` renders its body and its loading body as components with explicit attrs (no more `assigns` passed to a function or spread in the template, the hand-built `__changed__` is gone); `input_group` and the default icons of `avatar`, `fab`, `kanban` and `app_shell` are components too. Rendered HTML is unchanged. Tests guard that a change to an unrelated attr does not re-send the rows of a 50-row table.
+
 ## 0.17.0 (2026-11-10)
 
 - No more pills by default: controls take rounded corners. The tokens `--pill` (10px), `--pill-in` (8px, the inner piece: a chosen segment, a theme thumb, a small icon button) and `--pill-xs` (6px, count boxes) drive buttons, icon buttons, segmented, chips, breadcrumbs, the theme switch, the bulk bar buttons, the AI chips, the error status link and the navbar bits. `button` `shape` now defaults to `rounded` (was `pill`), and so does the `dropdown` `toggle_icon` trigger; `pagination`, `choice` chips and the input send button follow. Switches, avatars and dots stay round.

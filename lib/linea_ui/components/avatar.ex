@@ -532,7 +532,7 @@ defmodule LineaUI.Components.Avatar do
         @face_class
       ])
     }>
-      {render_slot(@inner_block) || sparkle(assigns)}
+      {render_slot(@inner_block)}<.sparkle :if={@inner_block == []} />
     </div>
     """
   end
@@ -548,7 +548,7 @@ defmodule LineaUI.Components.Avatar do
         @face_class
       ])
     }>
-      {render_slot(@inner_block) || plus(assigns)}
+      {render_slot(@inner_block)}<.plus :if={@inner_block == []} />
     </div>
     """
   end

@@ -242,4 +242,61 @@ defmodule LineaUI.Components.DataTableTest do
     assert [_] = find(canvas, "#c .sg-pager") |> Enum.to_list()
     assert find(canvas, "#c .sg-pager") |> LazyHTML.text() =~ "1–3 de 30"
   end
+
+  describe "change tracking" do
+    defmodule Page do
+      use Phoenix.Component
+      import LineaUI.Components.DataTable
+
+      def page(assigns) do
+        ~H"""
+        <.data_table
+          id="t"
+          rows={@rows}
+          class={@cls}
+          variant={@variant}
+          total={@total}
+          on_page="pg"
+          page_size={50}
+        >
+          <:col :let={r} label="Name">{r.name}</:col>
+          <:col :let={r} label="Email">{r.email}</:col>
+        </.data_table>
+        """
+      end
+    end
+
+    # the diff of a second render where only `changed` differs from the first
+    defp second_diff(variant, changed) do
+      rows = for i <- 1..50, do: %{name: "Row-#{i}", email: "row#{i}@example.com"}
+      base = %{rows: rows, cls: "a", variant: variant, total: 120}
+      alias Phoenix.LiveView.Diff
+
+      {_diff, prints, comps} =
+        Diff.render(
+          %Phoenix.LiveView.Socket{},
+          Page.page(Map.put(base, :__changed__, nil)),
+          Diff.new_fingerprints(),
+          Diff.new_components()
+        )
+
+      assigns =
+        base
+        |> Map.merge(changed)
+        |> Map.put(:__changed__, Map.new(changed, &{elem(&1, 0), true}))
+
+      {diff, _, _} = Diff.render(%Phoenix.LiveView.Socket{}, Page.page(assigns), prints, comps)
+      Jason.encode!(diff)
+    end
+
+    for variant <- ["advanced", "grid"] do
+      test "an unrelated change does not send the rows of the #{variant} table" do
+        for changed <- [%{cls: "b"}, %{total: 130}] do
+          json = second_diff(unquote(variant), changed)
+          refute json =~ "Row-"
+          assert byte_size(json) < 1_000
+        end
+      end
+    end
+  end
 end

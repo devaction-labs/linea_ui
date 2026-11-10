@@ -409,7 +409,45 @@ defmodule LineaUI.Components.DataTable do
           />
         </label>
       </form>
-      {data_table_body(assigns, "data-grid", "none")}
+      <.dt_body
+        id={@id}
+        variant="data-grid"
+        rounded="none"
+        rows={@rows}
+        hoverable={@hoverable}
+        wrapper_class={@wrapper_class}
+        col={@col}
+        action={@action}
+        expand={@expand}
+        empty={@empty}
+        foot={@foot}
+        row_id={@row_id}
+        row_key={@row_key}
+        row_item={@row_item}
+        row_click={@row_click}
+        row_class={@row_class}
+        row_attrs={@row_attrs}
+        sort_by={@sort_by}
+        sort_dir={@sort_dir}
+        on_sort={@on_sort}
+        on_select={@on_select}
+        on_select_all={@on_select_all}
+        selected={@selected}
+        all_selected={@all_selected}
+        target={@target}
+        expand_label={@expand_label}
+        compact={@compact}
+        headless={@headless}
+        borderless={@borderless}
+        sticky_header={@sticky_header}
+        scroll_label={@scroll_label}
+        sort_label={@sort_label}
+        row_label={@row_label}
+        select_all_label={@select_all_label}
+        select_label={@select_label}
+        peek={@peek}
+        peek_label={@peek_label}
+      />
       <div
         :if={@paginated}
         class="flex flex-col justify-between gap-3.5 px-4 py-3.5 text-[12.5px] text-slate-500 sm:flex-row sm:items-center sm:px-0 dark:text-navy-200"
@@ -521,9 +559,47 @@ defmodule LineaUI.Components.DataTable do
         </div>
       </div>
       <div class={["sg-card flush", @title_bar && "mt-3"]}>
-        <.loading_body :if={@loading} {assigns} />
+        <.loading_body :if={@loading} col={@col} loading_rows={@loading_rows} />
         <%= if !@loading do %>
-          {data_table_body(assigns, "data", "top")}
+          <.dt_body
+            id={@id}
+            variant="data"
+            rounded="top"
+            rows={@rows}
+            hoverable={@hoverable}
+            wrapper_class={@wrapper_class}
+            col={@col}
+            action={@action}
+            expand={@expand}
+            empty={@empty}
+            foot={@foot}
+            row_id={@row_id}
+            row_key={@row_key}
+            row_item={@row_item}
+            row_click={@row_click}
+            row_class={@row_class}
+            row_attrs={@row_attrs}
+            sort_by={@sort_by}
+            sort_dir={@sort_dir}
+            on_sort={@on_sort}
+            on_select={@on_select}
+            on_select_all={@on_select_all}
+            selected={@selected}
+            all_selected={@all_selected}
+            target={@target}
+            expand_label={@expand_label}
+            compact={@compact}
+            headless={@headless}
+            borderless={@borderless}
+            sticky_header={@sticky_header}
+            scroll_label={@scroll_label}
+            sort_label={@sort_label}
+            row_label={@row_label}
+            select_all_label={@select_all_label}
+            select_label={@select_label}
+            peek={@peek}
+            peek_label={@peek_label}
+          />
         <% end %>
         <div :if={@paginated and @pager == "canvas"} class="sg-pager linea-dtable-pager">
           <Pagination.pagination
@@ -598,47 +674,102 @@ defmodule LineaUI.Components.DataTable do
     """
   end
 
-  @table_keys ~w(row_id row_key row_item row_click sort_by sort_dir on_sort on_select on_select_all
-                 selected all_selected expand_label target col action expand empty compact headless
-                 borderless row_class row_attrs sticky_header foot scroll_label sort_label row_label select_all_label select_label peek peek_label)a
+  # The table inside the data table, with every value it needs as an attr, so a change in the
+  # data table sends what it touches (the rows are loop variables of the table's own comprehension)
+  # and not the whole body. The slots go through as attrs: they already are lists of entries.
+  attr(:id, :string, required: true)
+  attr(:variant, :string, required: true)
+  attr(:rounded, :string, required: true)
+  attr(:rows, :any, required: true)
+  attr(:hoverable, :any, default: nil)
+  attr(:expand, :any, default: [])
+  attr(:wrapper_class, :any, default: nil)
 
-  # Which of the table's assigns follow which of ours, so the table keeps its change tracking.
-  @table_sources Map.merge(Map.new(@table_keys, &{&1, [&1]}), %{
-                   id: [:id],
-                   rows: [:rows],
-                   hoverable: [:hoverable, :expand],
-                   wrapper_class: [:wrapper_class]
-                 })
+  attr(:col, :any, default: [])
+  attr(:action, :any, default: [])
+  attr(:empty, :any, default: [])
+  attr(:foot, :any, default: [])
 
-  # Called as a function (the slots go through as they are) with the change tracking of the
-  # data table's own assigns, so a change sends what it touches, not the whole table.
-  defp data_table_body(assigns, variant, rounded) do
-    assigns
-    |> Map.take(@table_keys)
-    |> Map.merge(%{
-      id: assigns.id <> "-table",
-      rows: assigns.rows,
-      variant: variant,
-      rounded: rounded,
-      hoverable: hoverable(assigns.hoverable, assigns.expand),
-      rest: %{},
-      class: nil,
-      wrapper_class: assigns.wrapper_class,
-      __changed__: table_changed(assigns)
-    })
-    |> Table.table()
+  attr(:row_id, :any, default: nil)
+  attr(:row_key, :any, default: nil)
+  attr(:row_item, :any, default: nil)
+  attr(:row_click, :any, default: nil)
+  attr(:row_class, :any, default: nil)
+  attr(:row_attrs, :any, default: nil)
+  attr(:sort_by, :any, default: nil)
+  attr(:sort_dir, :any, default: nil)
+  attr(:on_sort, :any, default: nil)
+  attr(:on_select, :any, default: nil)
+  attr(:on_select_all, :any, default: nil)
+  attr(:selected, :any, default: [])
+  attr(:all_selected, :any, default: false)
+  attr(:target, :any, default: nil)
+  attr(:expand_label, :any, default: nil)
+  attr(:compact, :any, default: false)
+  attr(:headless, :any, default: false)
+  attr(:borderless, :any, default: false)
+  attr(:sticky_header, :any, default: false)
+  attr(:scroll_label, :any, default: nil)
+  attr(:sort_label, :any, default: nil)
+  attr(:row_label, :any, default: nil)
+  attr(:select_all_label, :any, default: nil)
+  attr(:select_label, :any, default: nil)
+  attr(:peek, :any, default: false)
+  attr(:peek_label, :any, default: nil)
+
+  defp dt_body(assigns) do
+    assigns =
+      assigns
+      |> assign_derived(:table_hoverable, [:hoverable, :expand], fn ->
+        hoverable(assigns.hoverable, assigns.expand)
+      end)
+      |> assign_derived(:slots, [:col, :action, :expand, :empty, :foot], fn ->
+        Map.take(assigns, [:col, :action, :expand, :empty, :foot])
+      end)
+
+    ~H"""
+    <Table.table
+      id={@id <> "-table"}
+      variant={@variant}
+      rounded={@rounded}
+      rows={@rows}
+      hoverable={@table_hoverable}
+      wrapper_class={@wrapper_class}
+      row_id={@row_id}
+      row_key={@row_key}
+      row_item={@row_item}
+      row_click={@row_click}
+      row_class={@row_class}
+      row_attrs={@row_attrs}
+      sort_by={@sort_by}
+      sort_dir={@sort_dir}
+      on_sort={@on_sort}
+      on_select={@on_select}
+      on_select_all={@on_select_all}
+      selected={@selected}
+      all_selected={@all_selected}
+      target={@target}
+      expand_label={@expand_label}
+      compact={@compact}
+      headless={@headless}
+      borderless={@borderless}
+      sticky_header={@sticky_header}
+      scroll_label={@scroll_label}
+      sort_label={@sort_label}
+      row_label={@row_label}
+      select_all_label={@select_all_label}
+      select_label={@select_label}
+      peek={@peek}
+      peek_label={@peek_label}
+      {@slots}
+    />
+    """
   end
-
-  defp table_changed(%{__changed__: changed}) when is_map(changed) do
-    for {key, sources} <- @table_sources,
-        Enum.any?(sources, &is_map_key(changed, &1)),
-        into: %{},
-        do: {key, true}
-  end
-
-  defp table_changed(_assigns), do: nil
 
   # the first load: the headers over skeleton rows (the canvas `sg-skel` bars)
+  attr(:col, :any, required: true)
+  attr(:loading_rows, :integer, required: true)
+
   defp loading_body(assigns) do
     ~H"""
     <table class="linea-dt w-full text-left text-[13.5px]">

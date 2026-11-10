@@ -473,7 +473,7 @@ defmodule LineaUI.Components.Kanban do
       class={@classes}
       {@rest}
     >
-      {render_slot(@icon) || lost_icon(assigns)}
+      {render_slot(@icon)}<.lost_icon :if={@icon == []} />
       <span :if={@count} class={@pill}>{@count}</span>
       <span class="rotate-180 text-[13px] font-semibold [writing-mode:vertical-rl]">
         {lost_text(@label, @meta)}
