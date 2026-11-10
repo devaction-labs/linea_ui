@@ -24,6 +24,10 @@ defmodule LineaUI.Components.ButtonTest do
            )
 
     assert "ghost" in classes(render(~H|<.button variant="flat">Go</.button>|), "button")
+    assert "filled" in classes(render(~H|<.button variant="soft">Go</.button>|), "button")
+    assert "subtle" in classes(render(~H|<.button variant="dim">Go</.button>|), "button")
+    assert "xs" in classes(render(~H|<.button size="xs">Go</.button>|), "button")
+    refute "sm" in classes(render(~H|<.button size="xs">Go</.button>|), "button")
 
     html = render(~H|<.button size="sm" class="px-8">Go</.button>|)
     assert "sm" in classes(html, "button")

@@ -101,7 +101,8 @@ defmodule LineaUI.Components.Button do
   defp icon_class(%{size: size, variant: variant, shape: shape}) do
     [
       "sg-ib",
-      size in ~w(xs sm) && "sm",
+      size == "sm" && "sm",
+      size == "xs" && "xs",
       variant in ~w(flat ghost dim) && "plain",
       shape == "pill" && "pill"
     ]
@@ -111,19 +112,25 @@ defmodule LineaUI.Components.Button do
     [
       "sg-btn",
       tone(color, variant),
-      size in ~w(xs sm) && "sm",
-      size in ~w(lg xl) && "lg",
+      size_class(size),
       shape == "square" && "sq",
       shape == "pill" && "pill"
     ]
   end
 
+  defp size_class("md"), do: nil
+  defp size_class(size), do: size
+
+  # Neutral `soft` is the gray tint (`filled`); a colored `soft` keeps the accent tint. `dim` is the
+  # muted text that darkens on hover (`subtle`).
   defp tone("mono", _variant), do: "solid"
   defp tone("error", _variant), do: "danger"
   defp tone("primary", "solid"), do: "accent"
   defp tone("primary", "glow"), do: "accent"
+  defp tone(color, "soft") when color in ~w(neutral secondary current white), do: "filled"
   defp tone(_color, variant) when variant in ~w(soft bordered), do: "soft"
-  defp tone(_color, variant) when variant in ~w(flat ghost dim), do: "ghost"
+  defp tone(_color, "dim"), do: "subtle"
+  defp tone(_color, variant) when variant in ~w(flat ghost), do: "ghost"
   defp tone(_color, _variant), do: nil
 
   defp render_button(%{rest: rest} = assigns)

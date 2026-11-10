@@ -77,10 +77,10 @@ defmodule LineaUI.Components.Input do
 
   @variants %{
     "outlined" =>
-      "form-input w-full rounded-[11px] border-0 bg-white px-3 py-0 text-[14px] shadow-[inset_0_0_0_1px_var(--color-slate-300),0_1px_2px_rgb(23_23_26/.05)] placeholder:text-slate-400 hover:shadow-[inset_0_0_0_1px_var(--color-slate-400),0_1px_2px_rgb(23_23_26/.05)] focus:shadow-[inset_0_0_0_1px_var(--color-primary),0_0_0_4px_color-mix(in_oklab,var(--color-primary)_14%,transparent)] focus:ring-0 disabled:pointer-events-none disabled:select-none disabled:bg-zinc-100 dark:bg-navy-750 dark:shadow-[inset_0_0_0_1px_var(--color-navy-450)] dark:hover:shadow-[inset_0_0_0_1px_var(--color-navy-400)] dark:focus:shadow-[inset_0_0_0_1px_var(--color-accent),0_0_0_4px_color-mix(in_oklab,var(--color-accent)_16%,transparent)] dark:disabled:bg-navy-600",
+      "form-input w-full rounded-(--pill) border-0 bg-(--ctl) px-3 py-0 text-[14px] leading-[22px] text-(--fg) shadow-[inset_0_0_0_1px_var(--ctl-line),var(--shadow-xs)] placeholder:text-(--faint) hover:shadow-[inset_0_0_0_1px_var(--ctl-line-strong),var(--shadow-xs)] focus:shadow-[inset_0_0_0_1px_var(--accent),0_0_0_3px_color-mix(in_srgb,var(--accent)_22%,transparent)] focus:ring-0 disabled:pointer-events-none disabled:select-none disabled:opacity-50",
     "filled" =>
-      "form-input w-full rounded-[11px] bg-slate-150 px-3 py-0 ring-primary/50 placeholder:text-slate-500 hover:bg-slate-200 focus:ring-3 disabled:pointer-events-none disabled:select-none disabled:opacity-60 dark:bg-navy-900/90 dark:ring-accent/50 dark:placeholder:text-navy-300 dark:hover:bg-navy-900 dark:focus:bg-navy-900",
-    "plain" => "form-input w-full bg-transparent px-3 py-2 placeholder:text-slate-500"
+      "form-input w-full rounded-(--pill) border-0 bg-(--ctl-fill) px-3 py-0 text-[14px] leading-[22px] text-(--fg) placeholder:text-(--faint) hover:bg-(--ctl-fill-hover) focus:bg-(--ctl) focus:shadow-[inset_0_0_0_1px_var(--accent),0_0_0_3px_color-mix(in_srgb,var(--accent)_22%,transparent)] focus:ring-0 disabled:pointer-events-none disabled:select-none disabled:opacity-50",
+    "plain" => "form-input w-full bg-transparent px-3 py-2 placeholder:text-(--faint)"
   }
 
   @states %{
@@ -88,12 +88,14 @@ defmodule LineaUI.Components.Input do
       "shadow-[inset_0_0_0_1px_var(--color-success),0_0_0_4px_color-mix(in_oklab,var(--color-success)_14%,transparent)] hover:shadow-[inset_0_0_0_1px_var(--color-success),0_0_0_4px_color-mix(in_oklab,var(--color-success)_14%,transparent)] focus:shadow-[inset_0_0_0_1px_var(--color-success),0_0_0_4px_color-mix(in_oklab,var(--color-success)_14%,transparent)] dark:shadow-[inset_0_0_0_1px_var(--color-success),0_0_0_4px_color-mix(in_oklab,var(--color-success)_16%,transparent)] dark:hover:shadow-[inset_0_0_0_1px_var(--color-success),0_0_0_4px_color-mix(in_oklab,var(--color-success)_16%,transparent)] dark:focus:shadow-[inset_0_0_0_1px_var(--color-success),0_0_0_4px_color-mix(in_oklab,var(--color-success)_16%,transparent)]",
     {"outlined", "error"} =>
       "shadow-[inset_0_0_0_1px_var(--color-error),0_0_0_4px_color-mix(in_oklab,var(--color-error)_14%,transparent)] hover:shadow-[inset_0_0_0_1px_var(--color-error),0_0_0_4px_color-mix(in_oklab,var(--color-error)_14%,transparent)] focus:shadow-[inset_0_0_0_1px_var(--color-error),0_0_0_4px_color-mix(in_oklab,var(--color-error)_14%,transparent)] dark:shadow-[inset_0_0_0_1px_var(--color-error),0_0_0_4px_color-mix(in_oklab,var(--color-error)_16%,transparent)] dark:hover:shadow-[inset_0_0_0_1px_var(--color-error),0_0_0_4px_color-mix(in_oklab,var(--color-error)_16%,transparent)] dark:focus:shadow-[inset_0_0_0_1px_var(--color-error),0_0_0_4px_color-mix(in_oklab,var(--color-error)_16%,transparent)]",
-    {"filled", "success"} => "ring-1 ring-success focus:ring-success/50 dark:ring-success",
-    {"filled", "error"} => "ring-1 ring-error focus:ring-error/50 dark:ring-error"
+    {"filled", "success"} =>
+      "shadow-[inset_0_0_0_1px_var(--color-success)] focus:shadow-[inset_0_0_0_1px_var(--color-success),0_0_0_3px_color-mix(in_srgb,var(--color-success)_18%,transparent)]",
+    {"filled", "error"} =>
+      "shadow-[inset_0_0_0_1px_var(--color-error)] focus:shadow-[inset_0_0_0_1px_var(--color-error),0_0_0_3px_color-mix(in_srgb,var(--color-error)_18%,transparent)]"
   }
 
   @sizes %{
-    "sm" => "h-8 px-2.5 text-[13px]",
+    "sm" => "h-8 rounded-(--pill-in) px-2.5 text-[13px]",
     "md" => "h-10 text-sm",
     "lg" => "h-12 px-4 text-[15px]"
   }
@@ -105,9 +107,9 @@ defmodule LineaUI.Components.Input do
 
   @aligns %{"left" => nil, "right" => "text-right"}
 
-  @icon "pointer-events-none absolute flex h-full w-10 items-center justify-center text-slate-400 peer-focus:text-primary dark:text-navy-300 dark:peer-focus:text-accent"
+  @icon "pointer-events-none absolute flex h-full w-10 items-center justify-center text-(--faint) peer-focus:text-(--accent)"
 
-  @interactive_icon "absolute flex h-full w-10 items-center justify-center text-slate-400 dark:text-navy-300"
+  @interactive_icon "absolute flex h-full w-10 items-center justify-center text-(--faint) hover:text-(--ink)"
 
   @doc """
   Renders a text-like `<input>`, with its caption, help and errors when given.
