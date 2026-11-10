@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.17.0 (2026-11-10)
 
 - No more pills by default: controls take rounded corners. The tokens `--pill` (10px), `--pill-in` (8px, the inner piece: a chosen segment, a theme thumb, a small icon button) and `--pill-xs` (6px, count boxes) drive buttons, icon buttons, segmented, chips, breadcrumbs, the theme switch, the bulk bar buttons, the AI chips, the error status link and the navbar bits. `button` `shape` now defaults to `rounded` (was `pill`), and so does the `dropdown` `toggle_icon` trigger; `pagination`, `choice` chips and the input send button follow. Switches, avatars and dots stay round.
 - Pills as an opt-in: `shape="pill"` on `button` (an icon button too, round) and the new `shape` attr on `segmented` (`rounded` default, `pill`); `data-shape="pill"` on any ancestor (on the `<html>` for the whole app) sets the three tokens to 999px.
