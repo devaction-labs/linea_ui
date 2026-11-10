@@ -232,6 +232,7 @@ defmodule LineaUI.Components.Sidebar.Nav do
       kind: :item,
       tree_id: "#{id}-t",
       collapsible: collapsible,
+      toggle_row: collapsible and not Enum.any?([:navigate, :patch, :href], &is_binary(item[&1])),
       open: open?(item, collapsible, deep),
       label: item[:label],
       icon: icon(item[:icon]),

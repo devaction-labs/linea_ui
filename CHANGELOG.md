@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.17.2 (2026-11-10)
+
+- `sidebar`: clicking a collapsible row toggles it, not only the chevron. The rail group header is a button; a tree item without a destination is a button; an item with one keeps its link and the click also opens its children.
+
 ## 0.17.1 (2026-11-10)
 
 - LiveView change tracking: `data_table` renders its body and its loading body as components with explicit attrs (no more `assigns` passed to a function or spread in the template, the hand-built `__changed__` is gone); `input_group` and the default icons of `avatar`, `fab`, `kanban` and `app_shell` are components too. Rendered HTML is unchanged. Tests guard that a change to an unrelated attr does not re-send the rows of a 50-row table.

@@ -38,7 +38,8 @@ defmodule LineaUI.Components.Sidebar do
       format (items). A name (`blue`, `green`, `rose`, `violet`, `orange`, `ink`) or any CSS colour.
     * `children`: items under it, joined by a line (`tree`), a coloured tree (`rail`) or a plain tree.
     * `collapsible`: in the `tree` format an item with `children` gets a chevron at the right that closes and
-      opens them; `false` takes it away. It is `true` when left out. It starts open only when it holds the
+      opens them, and the row itself toggles too when it has no destination (`navigate`, `patch` or `href`);
+      with a destination, clicking the link also opens them. `false` takes it away. It is `true` when left out. It starts open only when it holds the
       active item (itself or a child), closed otherwise.
     * `open`: `true` or `false` forces a collapsible item open or closed at first, whatever the route.
     * `active`: marks it active; `current` marks the item whose `navigate`/`patch`/`href` is the current
@@ -50,7 +51,7 @@ defmodule LineaUI.Components.Sidebar do
     * `group`: the label.
     * `icon`: the icon of the group in the `rail`.
     * `items`: its items (and, in the `rail` panel, nested groups with a `collapsible` header).
-    * `collapsible`: `false` takes the chevron (and the toggle) away and the group is always shown; it is
+    * `collapsible`: the whole header row is the toggle (not just the chevron); `false` takes the chevron (and the toggle) away and the group is always shown; it is
       `true` when left out. A collapsible group starts open only when it holds the active item.
     * `open`: `true` or `false` forces a collapsible group open or closed at first, whatever the route.
     * `navigate`, `patch`, `href`: where the group's icon goes in the rail (the first item's when left out).
@@ -576,21 +577,21 @@ defmodule LineaUI.Components.Sidebar do
   # a nested group of the rail panel
   defp entry(%{entry: %{kind: :group}, format: "rail"} = assigns) do
     ~H"""
-    <div class="sg-sb-gh">
+    <button
+      :if={@entry.collapsible}
+      type="button"
+      class="sg-sb-gh"
+      aria-expanded={if @entry.open, do: "true", else: "false"}
+      aria-controls={@entry.id}
+      phx-mounted={JS.ignore_attributes(["aria-expanded"])}
+      phx-click={toggle(@entry.id)}
+    >
       {@entry.label}
-      <button
-        :if={@entry.collapsible}
-        type="button"
-        class="tg"
-        aria-label={@entry.label}
-        aria-expanded={if @entry.open, do: "true", else: "false"}
-        aria-controls={@entry.id}
-        phx-mounted={JS.ignore_attributes(["aria-expanded"])}
-        phx-click={toggle(@entry.id)}
-      >
+      <span class="tg" aria-hidden="true">
         <svg class="i sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10l5 5 5-5" /></svg>
-      </button>
-    </div>
+      </span>
+    </button>
+    <div :if={!@entry.collapsible} class="sg-sb-gh">{@entry.label}</div>
     <div
       id={@entry.id}
       class="sg-sb-grp"
@@ -600,6 +601,12 @@ defmodule LineaUI.Components.Sidebar do
       <.row :for={item <- @entry.items} item={item} format="rail" />
     </div>
     """
+  end
+
+  # a link to a page also opens its children (it never closes them: it navigates)
+  defp open(id) do
+    JS.set_attribute({"aria-expanded", "true"}, to: "#" <> id <> "-btn")
+    |> JS.remove_attribute("data-closed", to: "#" <> id)
   end
 
   defp toggle(id) do
@@ -625,7 +632,30 @@ defmodule LineaUI.Components.Sidebar do
       end)
 
     ~H"""
+    <button
+      :if={@item.toggle_row}
+      type="button"
+      class={[
+        "sg-sb-a",
+        "rw",
+        @item.active && "on",
+        @child && @format == "rail" && "t",
+        @chip == "sqi" && "sq"
+      ]}
+      aria-current={@item.active && "page"}
+      aria-expanded={if @item.open, do: "true", else: "false"}
+      aria-controls={@item.tree_id}
+      data-rail-tip
+      phx-mounted={JS.ignore_attributes(["aria-expanded"])}
+      phx-click={toggle(@item.tree_id)}
+    >
+      <.row_body item={@item} chip={@chip} />
+      <span class="cv" aria-hidden="true">
+        <svg class="i sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10l5 5 5-5" /></svg>
+      </span>
+    </button>
     <.link
+      :if={!@item.toggle_row}
       class={[
         "sg-sb-a",
         @item.active && "on",
@@ -634,29 +664,14 @@ defmodule LineaUI.Components.Sidebar do
       ]}
       aria-current={@item.active && "page"}
       data-rail-tip
+      phx-click={@item.collapsible && open(@item.tree_id)}
       {@item.link}
     >
-      <span
-        :if={@chip && @item.icon}
-        class={[@chip, @item.color]}
-        style={@item.style}
-      >
-        <Icon.icon name={@item.icon} class="i sm" />
-      </span>
-      <Icon.icon :if={!@chip && @item.icon} name={@item.icon} class="i" />
-      <span class="lbl">{@item.label}</span>
-      <span :if={@item.count} class="sg-sb-n">{@item.count}</span>
-      <span
-        :if={@item.badge}
-        class="red"
-        role={is_binary(@item.badge) && "img"}
-        aria-label={is_binary(@item.badge) && @item.badge}
-        aria-hidden={!is_binary(@item.badge) && "true"}
-      ></span>
-      <span class="rail-tip" role="tooltip">{@item.label}</span>
+      <.row_body item={@item} chip={@chip} />
     </.link>
     <button
-      :if={@item.collapsible}
+      :if={@item.collapsible && !@item.toggle_row}
+      id={@item.tree_id <> "-btn"}
       type="button"
       class="sg-sb-ct"
       aria-expanded={if @item.open, do: "true", else: "false"}
@@ -694,6 +709,28 @@ defmodule LineaUI.Components.Sidebar do
       </svg>
       <.row :for={child <- @item.children} item={child} format={@format} child />
     </div>
+    """
+  end
+
+  attr :item, :map, required: true
+  attr :chip, :string, default: nil
+
+  defp row_body(assigns) do
+    ~H"""
+    <span :if={@chip && @item.icon} class={[@chip, @item.color]} style={@item.style}>
+      <Icon.icon name={@item.icon} class="i sm" />
+    </span>
+    <Icon.icon :if={!@chip && @item.icon} name={@item.icon} class="i" />
+    <span class="lbl">{@item.label}</span>
+    <span :if={@item.count} class="sg-sb-n">{@item.count}</span>
+    <span
+      :if={@item.badge}
+      class="red"
+      role={is_binary(@item.badge) && "img"}
+      aria-label={is_binary(@item.badge) && @item.badge}
+      aria-hidden={!is_binary(@item.badge) && "true"}
+    ></span>
+    <span class="rail-tip" role="tooltip">{@item.label}</span>
     """
   end
 
