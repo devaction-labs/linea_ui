@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.17.3 (2026-11-10)
 
 - `button`: each variant has its own hover. The base `.sg-btn:hover` only reached the default button; `accent`, `solid`, `soft`, `ghost` and `danger` came later in the cascade and cancelled it, so they had none. Primary mixes 12% ink into the accent, mono mixes 15% panel into the solid, soft and error deepen their tint, ghost takes the hover gray and ink text.
 - `button icon` (`sg-ib`): hover gray with ink icon.
