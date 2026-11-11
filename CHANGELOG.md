@@ -1,11 +1,11 @@
 # Changelog
 
-## 0.17.3 (2026-11-10)
+## Unreleased
 
 - Refined controls (the "component specimen" level):
   - New control tokens, defined for light and dark: `--ctl`, `--ctl-line`, `--ctl-line-strong`, `--ctl-hover`, `--ctl-fill`, `--ctl-fill-hover`, `--ctl-track` and `--shadow-xs`. Borders and fills are a fine alpha of the ink color.
   - `button`: font 14/20 · 500 and 16px icons with 12px leading padding. The sizes are now distinct: `xs` 24, `sm` 32, `md` 36, `lg` 40 and `xl` 44 (`xs` and `xl` used to fall back to `sm` and `lg`), and the radius shrinks with the size.
-  - `button` variants: neutral `variant="soft"` is now the gray **filled** button (a colored `soft` keeps the accent tint), and `variant="dim"` is the **subtle** button (muted text that darkens on hover).
+  - **Visible change.** `button` variants: neutral `variant="soft"` is now the gray **filled** button (a colored `soft` keeps the accent tint), and `variant="dim"` is the **subtle** button (muted text that darkens on hover).
   - `button` states: every variant has its own hover, a focus ring and 50% opacity when disabled.
   - Icon button: 36/32/24 px with the same states.
   - `input`: `--ctl` background, a fine border that firms up on hover, a 3px accent halo on focus, 10px corners and `--faint` placeholder and icons. `filled` is the gray tint and turns white on focus.
@@ -21,7 +21,7 @@
   - Menu: 4px padding, 32px items with 8px corners and a hover.
   - Chip 28px on `--ctl`. Toast, alert and tooltip have 10–12px corners.
 
-## Unreleased
+## 0.17.3 (2026-11-10)
 
 - `button`: each variant has its own hover. The base `.sg-btn:hover` only reached the default button; `accent`, `solid`, `soft`, `ghost` and `danger` came later in the cascade and cancelled it, so they had none. Primary mixes 12% ink into the accent, mono mixes 15% panel into the solid, soft and error deepen their tint, ghost takes the hover gray and ink text.
 - `button icon` (`sg-ib`): hover gray with ink icon.
