@@ -33,3 +33,13 @@
 .linea-auth-who{display:flex;flex-direction:column;align-items:flex-end;text-align:right}.linea-auth-who b{font-size:17px;font-weight:600}.linea-auth-who span{font-size:13px;opacity:.8}
 @media (max-width:1024px){.linea-auth-card{grid-template-columns:1fr;max-width:560px}.linea-auth-aside{display:none}}
 @media (max-width:640px){.linea-auth{padding:0;background-image:none}.linea-auth-card{min-height:100dvh;padding:0;border-radius:0;box-shadow:none}.linea-auth-form{border-radius:0;padding:18px 20px 24px}.linea-auth-title{font-size:23px;line-height:29px}}
+.linea-auth-sent{display:flex;align-items:center;gap:14px;padding:14px;border-radius:14px;background:var(--sunken);font-size:14px;color:var(--muted)}
+.linea-auth-sent .tile{display:grid;place-items:center;flex:none;width:44px;height:44px;border-radius:12px;background:var(--accent-soft);color:var(--accent-ink,var(--accent))}.linea-auth-sent .tile svg{width:22px;height:22px}
+.linea-auth-alert{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;background:var(--neg-soft);color:var(--neg);font-size:13.5px}.linea-auth-alert svg{width:15px;height:15px}
+.linea-auth-spin{width:16px;height:16px;border-radius:50%;border:2px solid rgb(255 255 255/.35);border-top-color:#fff;margin-right:6px}
+.linea-auth .sg-input .addon svg{width:17px;height:17px;color:var(--faint)}
+/* Not in the canvas rules (its board is a still): the spinner turns, and the busy button is the canvas's .85 */
+.sg-btn.is-loading{opacity:.85}
+@keyframes linea-auth-spin{to{transform:rotate(360deg)}}
+.linea-auth-spin{animation:linea-auth-spin .7s linear infinite}
+@media (prefers-reduced-motion:reduce){.linea-auth-spin{animation-duration:2s}}
