@@ -27,7 +27,7 @@
 }
 
 .linea-am-trig[aria-expanded="true"] {
-  box-shadow: inset 0 0 0 1px var(--line-strong);
+  box-shadow: inset 0 0 0 1px var(--ctl-line);
 }
 
 .linea-am-trig:focus-visible {

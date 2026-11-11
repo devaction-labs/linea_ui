@@ -12,6 +12,14 @@
   - `switch`: 32×20 with a 14px thumb and an alpha track.
   - `checkbox` and `radio`: 16px with a 1px border and the xs shadow.
   - `card`: a fine border and the xs shadow, 20px padding and a 14.5/20 · 600 title.
+- The same refinement for every other component in the canvas CSS:
+  - Surfaces (popovers, menus, panels, tooltips, toasts) use the fine `--ctl-line` border, and the light shadow is now `--shadow-xs`.
+  - Item hovers use `--ctl-fill`, and focus rings are a 3px tint.
+  - Breadcrumb 32px; badge 22px and tag 24px with 6px corners.
+  - Tabs: 14/20 type, 20px gap and a hover color.
+  - Table: 40px header and 52px rows, with a row hover.
+  - Menu: 4px padding, 32px items with 8px corners and a hover.
+  - Chip 28px on `--ctl`. Toast, alert and tooltip have 10–12px corners.
 
 ## Unreleased
 

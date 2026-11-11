@@ -3,7 +3,7 @@
    switch. Pure CSS for the look; the LineaUI.ThemeSwitch hook keeps data-value and aria-checked in step. */
 .sg-theme{--n:3;position:relative;display:inline-grid;grid-auto-flow:column;grid-auto-columns:1fr;padding:3px;border-radius:calc(var(--pill) + 1px);background:var(--sunken);box-shadow:inset 0 0 0 1px var(--line);isolation:isolate;vertical-align:middle}
 .sg-theme.two{--n:2}
-.sg-theme::before{content:"";position:absolute;z-index:-1;top:3px;bottom:3px;left:3px;width:calc((100% - 6px) / var(--n));border-radius:var(--pill-in);background:var(--panel);box-shadow:0 0 0 1px var(--line),0 1px 3px rgb(23 23 26/.1);transition:transform .28s cubic-bezier(.3,.7,.4,1)}
+.sg-theme::before{content:"";position:absolute;z-index:-1;top:3px;bottom:3px;left:3px;width:calc((100% - 6px) / var(--n));border-radius:var(--pill-in);background:var(--panel);box-shadow:0 0 0 1px var(--ctl-line),0 1px 3px rgb(23 23 26/.1);transition:transform .28s cubic-bezier(.3,.7,.4,1)}
 .sg-theme[data-value="dark"]::before{transform:translateX(100%)}
 .sg-theme[data-value="system"]::before{transform:translateX(200%)}
 .sg-theme>button{all:unset;box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;gap:6px;height:28px;padding:0 13px;border-radius:var(--pill-in);font-size:13px;line-height:1;color:var(--muted);cursor:pointer;white-space:nowrap;transition:color .2s}
@@ -20,7 +20,7 @@
 
 .sg-theme-sw{all:unset;box-sizing:border-box;position:relative;display:inline-flex;align-items:center;justify-content:space-between;width:58px;height:30px;padding:0 8px;border-radius:999px;background:var(--sunken);box-shadow:inset 0 0 0 1px var(--line);color:var(--faint);cursor:pointer;vertical-align:middle;transition:background .3s}
 .sg-theme-sw>.end{width:14px;height:14px;display:grid;place-items:center}.sg-theme-sw>.end>*{width:14px;height:14px}
-.sg-theme-sw>.k{position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;background:var(--panel);color:#f59e0b;box-shadow:0 0 0 1px var(--line),0 1px 3px rgb(0 0 0/.18);transition:transform .32s cubic-bezier(.3,.7,.4,1),background .3s,color .3s}
+.sg-theme-sw>.k{position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;background:var(--panel);color:#f59e0b;box-shadow:0 0 0 1px var(--ctl-line),0 1px 3px rgb(0 0 0/.18);transition:transform .32s cubic-bezier(.3,.7,.4,1),background .3s,color .3s}
 .sg-theme-sw>.k>*{width:14px;height:14px}
 .sg-theme-sw>.k>.moon{display:none}
 .sg-theme-sw[aria-checked="true"]{background:#1d1d24;box-shadow:inset 0 0 0 1px #34343c}

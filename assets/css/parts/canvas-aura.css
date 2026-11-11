@@ -37,12 +37,12 @@
 .toastify.rich.canvas .sg-toast{cursor:default}
 .toastify.rich.canvas .sg-toast .t{font-weight:550}
 /* A canvas toast behind the newest of a closed pile: the card stays drawn (surface, border, shadow), fills the clipped box and hides its content */
-.toastify.rich.canvas[data-behind]{overflow:hidden;border-radius:16px;box-shadow:0 0 0 1px var(--line),var(--shadow-lg)}
+.toastify.rich.canvas[data-behind]{overflow:hidden;border-radius:16px;box-shadow:0 0 0 1px var(--ctl-line),var(--shadow-lg)}
 .toastify.rich.canvas[data-behind]>*{opacity:1;width:100%;height:100%;max-width:none}
 .toastify.rich.canvas[data-behind] .sg-aura{display:flex;background:transparent;filter:none;padding:0;animation:none}
 .toastify.rich.canvas[data-behind] .sg-aura>.sg-toast{flex:1;min-height:0}
 .toastify.rich.canvas[data-behind] .sg-aura::before{display:none}
-.toastify.rich.canvas[data-behind] .sg-aura>.sg-toast{box-shadow:0 0 0 1px var(--line)!important}
+.toastify.rich.canvas[data-behind] .sg-aura>.sg-toast{box-shadow:0 0 0 1px var(--ctl-line)!important}
 .toastify.rich.canvas[data-behind] .sg-toast{box-sizing:border-box;width:100%;height:100%;overflow:hidden}
 .toastify.rich.canvas[data-behind] .sg-toast>*{visibility:hidden}
 .toastify.rich.canvas[data-behind] .sg-toast.prog{background:var(--panel)}

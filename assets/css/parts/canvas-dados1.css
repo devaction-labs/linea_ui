@@ -63,7 +63,7 @@
   letter-spacing: -0.005em;
   color: var(--ink);
   background: var(--panel);
-  box-shadow: inset 0 0 0 1px var(--line-strong), var(--shadow-sm);
+  box-shadow: inset 0 0 0 1px var(--ctl-line), var(--shadow-xs);
 }
 
 :is(.linea-bulk[data-variant="solid"], .linea-bulk-confirm) .linea-bulk-btn:is(:hover, :focus-visible) {
@@ -132,7 +132,7 @@
   line-height: 20px;
   text-align: left;
   background: var(--panel);
-  box-shadow: 0 0 0 1px var(--line), var(--shadow-lg);
+  box-shadow: 0 0 0 1px var(--ctl-line), var(--shadow-lg);
 }
 
 .linea-bulk[data-floating="true"] .linea-bulk-confirm {
@@ -170,7 +170,7 @@
 }
 
 .sg-card-link:hover {
-  box-shadow: 0 0 0 1px var(--line-strong), var(--shadow-sm);
+  box-shadow: 0 0 0 1px var(--line-strong), var(--shadow-xs);
 }
 
 .sg-card-link:focus-visible {
