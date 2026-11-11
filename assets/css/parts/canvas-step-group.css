@@ -50,3 +50,4 @@
 /* the same row as a real <button> (a step that has a log), and the log's own hidden state */
 button.sg-sgp-r{width:100%;margin:0;background:transparent;border:0;border-bottom:1px solid var(--line);font:inherit;text-align:left;cursor:pointer}
 .sg-sgp-b[hidden],.sg-sgp-log[hidden]{display:none}
+.sg-sgp-b>.sg-sgp-r:has(+ .sg-sgp-log[hidden]:last-child){border-bottom:0}

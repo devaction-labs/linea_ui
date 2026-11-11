@@ -62,10 +62,6 @@ defmodule LineaUI.Components.StepGroup do
     default: false,
     doc: "Starts with the panel hidden. The user's toggling wins afterwards."
 
-  attr :toggle_label, :string,
-    default: nil,
-    doc: "The accessible name of the header button; the title when `nil`."
-
   attr :class, :any, default: nil
   attr :rest, :global
 
@@ -157,7 +153,7 @@ defmodule LineaUI.Components.StepGroup do
   attr :class, :string, required: true
 
   defp status_icon(assigns) do
-    assigns = assign(assigns, :path, Map.get(@icons, assigns.status))
+    assigns = assign_derived(assigns, :path, [:status], fn -> Map.get(@icons, assigns.status) end)
 
     ~H"""
     <span class={["sg-sgs", @class]} aria-hidden="true">
