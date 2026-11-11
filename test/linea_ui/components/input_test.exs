@@ -22,8 +22,8 @@ defmodule LineaUI.Components.InputTest do
       """)
 
     classes = classes(html, "input")
-    assert "bg-slate-150" in classes
-    assert "focus:ring-3" in classes
+    assert "bg-(--ctl-fill)" in classes
+    assert "focus:bg-(--ctl)" in classes
     assert "h-12" in classes
     assert "rounded-full" in classes
     assert "px-6" in classes
@@ -90,7 +90,7 @@ defmodule LineaUI.Components.InputTest do
   test "disabled and hidden types" do
     html = render(~H'<.input name="u" disabled />')
     assert [_] = find(html, "input[disabled]") |> Enum.to_list()
-    assert "disabled:bg-zinc-100" in classes(html, "input")
+    assert "disabled:opacity-50" in classes(html, "input")
 
     html = render(~H'<.input type="hidden" name="t" value="x" />')
     assert [_] = find(html, "input[type=hidden][name=t][value=x]") |> Enum.to_list()

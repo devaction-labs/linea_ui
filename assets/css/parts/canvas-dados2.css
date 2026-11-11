@@ -47,9 +47,9 @@
 .tree-canvas li{margin:0 !important}
 .tree-canvas .tree-group{display:flex;flex-direction:column;gap:2px;margin:2px 0 0;padding:0}
 .tree-canvas [role="treeitem"]{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:8px;font-size:14px;line-height:20px;font-weight:400;letter-spacing:0;color:var(--ink);background:none}
-.tree-canvas [role="treeitem"]:hover{background:var(--hover);color:var(--ink)}
+.tree-canvas [role="treeitem"]:hover{background:var(--ctl-fill);color:var(--ink)}
 .tree-canvas [role="treeitem"]:focus{background:none;color:var(--ink)}
-.tree-canvas [role="treeitem"]:focus-visible{background:var(--hover)}
+.tree-canvas [role="treeitem"]:focus-visible{background:var(--ctl-fill)}
 .tree-canvas [role="treeitem"][aria-selected="true"]{background:var(--accent-soft);color:var(--ink)}
 .tree-canvas > li > details > summary .tree-label{font-weight:550}
 .tree-canvas .tree-toggle{width:14px;height:14px;min-width:14px;padding:0;margin:0;border-radius:0;background:none;color:inherit}

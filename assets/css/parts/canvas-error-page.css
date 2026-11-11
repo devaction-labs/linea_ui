@@ -7,7 +7,7 @@
 .sg-err[data-tone="warning"],.sg-err-state[data-tone="warning"]{--err:var(--warn)}
 .sg-err[data-tone="accent"],.sg-err-state[data-tone="accent"]{--err:var(--accent)}
 .sg-err-top{display:flex;align-items:center;gap:12px;min-height:34px}
-.sg-err-status{margin-left:auto;display:inline-flex;align-items:center;gap:8px;height:34px;padding:0 14px;border-radius:var(--pill);background:var(--panel);box-shadow:0 0 0 1px var(--line);font-size:13px;color:var(--fg);text-decoration:none;white-space:nowrap}
+.sg-err-status{margin-left:auto;display:inline-flex;align-items:center;gap:8px;height:34px;padding:0 14px;border-radius:var(--pill);background:var(--panel);box-shadow:0 0 0 1px var(--ctl-line);font-size:13px;color:var(--fg);text-decoration:none;white-space:nowrap}
 .sg-err-status:hover{box-shadow:0 0 0 1px var(--line-strong)}
 .sg-err-status>i{--dot:var(--pos);width:8px;height:8px;border-radius:50%;background:var(--dot);box-shadow:0 0 0 3px color-mix(in srgb,var(--dot) 22%,transparent)}
 .sg-err-status[data-status="warning"]>i{--dot:var(--warn)}.sg-err-status[data-status="down"]>i{--dot:var(--neg)}
@@ -26,7 +26,7 @@
 .sg-err-rings{position:absolute;right:-200px;bottom:-220px;width:640px;opacity:.5;pointer-events:none}
 .sg-err-rings circle{fill:none;stroke:var(--line-strong);stroke-width:1}
 .sg-err-digits{position:relative;margin:-.14em 0 0 -8px;padding-top:.14em;font:600 230px/.8 var(--mono);letter-spacing:-.09em;white-space:nowrap;background:linear-gradient(180deg,var(--err) 0%,color-mix(in srgb,var(--err) 55%,transparent) 55%,transparent 100%);-webkit-background-clip:text;background-clip:text;color:transparent;user-select:none}
-.sg-err-card{position:relative;margin-top:-54px;max-width:420px;padding:18px 20px;border-radius:18px;background:var(--panel);box-shadow:var(--shadow-lg),0 0 0 1px var(--line)}
+.sg-err-card{position:relative;margin-top:-54px;max-width:420px;padding:18px 20px;border-radius:18px;background:var(--panel);box-shadow:var(--shadow-lg),0 0 0 1px var(--ctl-line)}
 .sg-err-foot{display:flex;flex-wrap:wrap;align-items:center;gap:8px 18px;font-size:12.5px;color:var(--faint)}
 .sg-err-foot .rid{display:inline-flex;align-items:center;gap:8px}.sg-err-foot .rid>code{font-family:var(--mono);color:var(--fg);user-select:all;cursor:text}
 .sg-err-foot .end{margin-left:auto;display:inline-flex;align-items:center;gap:10px}

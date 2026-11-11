@@ -15,13 +15,13 @@
 :is(.sg-chipin, .ts-wrapper[phx-hook="LineaUI.Select"].multi .ts-control) {
   display: flex; flex-wrap: wrap; gap: 6px; align-items: center; box-sizing: border-box;
   height: auto; min-height: 40px; padding: 5px 12px 5px 5px; border: 0; border-radius: 11px;
-  background-color: var(--panel); box-shadow: inset 0 0 0 1px var(--line-strong), var(--shadow-sm);
+  background-color: var(--panel); box-shadow: inset 0 0 0 1px var(--ctl-line), var(--shadow-xs);
   font-size: 14px; line-height: 20px; color: var(--ink);
 }
 .sg-chipin > .faint { color: var(--faint); }
 .sg-chipin > :not(.sg-chip) { font-size: 14px !important; padding-left: 5px; }
 .ts-wrapper[phx-hook="LineaUI.Select"].multi .ts-control > input { padding: 0 0 0 5px !important; font-size: 14px; color: var(--ink); }
-.ts-wrapper[phx-hook="LineaUI.Select"].multi:is(.focus, .input-active, .dropdown-active) .ts-control { box-shadow: inset 0 0 0 1px var(--accent), 0 0 0 4px var(--accent-soft); }
+.ts-wrapper[phx-hook="LineaUI.Select"].multi:is(.focus, .input-active, .dropdown-active) .ts-control { box-shadow: inset 0 0 0 1px var(--accent), 0 0 0 3px color-mix(in srgb,var(--accent) 22%,transparent); }
 .ts-wrapper[phx-hook="LineaUI.Select"].multi.is-invalid .ts-control { box-shadow: inset 0 0 0 1px var(--neg), 0 0 0 4px color-mix(in srgb, var(--neg) 14%, transparent); }
 :is(.dark .sg:not([data-theme="light"]), .sg[data-theme="dark"], .dark) .ts-wrapper[phx-hook="LineaUI.Select"].multi .ts-control { background-color: var(--panel); }
 /* a select that keeps one line (`overflow="count"`) is as tall as the field and never grows */

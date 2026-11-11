@@ -4,7 +4,7 @@
    `full` takes the whole screen. Under 1024px the picture goes away and the form stays. */
 .linea-auth{--auth-glow-1:#f9a8d4;--auth-glow-2:#c4b5fd;min-height:100dvh;display:grid;place-items:center;padding:40px 24px;background-color:var(--canvas);background-image:radial-gradient(color-mix(in srgb,var(--ink) 12%,transparent) 1.2px,transparent 1.2px);background-size:22px 22px}
 .linea-auth[data-variant="full"]{padding:0;background-image:none}
-.linea-auth-card{display:grid;grid-template-columns:1fr 1fr;width:100%;max-width:1120px;min-height:640px;padding:8px;border-radius:26px;background:var(--panel);box-shadow:0 0 0 1px var(--line),0 40px 80px -30px rgb(16 24 64/.35)}
+.linea-auth-card{display:grid;grid-template-columns:1fr 1fr;width:100%;max-width:1120px;min-height:640px;padding:8px;border-radius:26px;background:var(--panel);box-shadow:0 0 0 1px var(--ctl-line),0 40px 80px -30px rgb(16 24 64/.35)}
 .linea-auth[data-variant="full"] .linea-auth-card{max-width:none;min-height:100dvh;border-radius:0;box-shadow:none}
 .linea-auth[data-aside="none"] .linea-auth-card{grid-template-columns:1fr;max-width:560px}
 .linea-auth-form{position:relative;display:flex;flex-direction:column;padding:22px 26px 28px;overflow:hidden;border-radius:20px}
@@ -19,7 +19,7 @@
 .linea-auth-foot{position:relative;text-align:center;font-size:13.5px;color:var(--muted)}
 .linea-auth-foot a{color:var(--ink);font-weight:500;text-decoration:underline;text-underline-offset:3px}
 .linea-auth-providers{display:grid;grid-template-columns:repeat(auto-fit,minmax(0,1fr));gap:10px}
-.linea-oauth{display:inline-flex;align-items:center;justify-content:center;gap:9px;height:42px;padding:0 14px;border:0;border-radius:12px;background:var(--panel);box-shadow:0 0 0 1px var(--line),0 1px 2px rgb(15 15 20/.05);font:inherit;font-size:14px;font-weight:500;color:var(--ink);text-decoration:none;cursor:pointer}
+.linea-oauth{display:inline-flex;align-items:center;justify-content:center;gap:9px;height:42px;padding:0 14px;border:0;border-radius:12px;background:var(--panel);box-shadow:0 0 0 1px var(--ctl-line),0 1px 2px rgb(15 15 20/.05);font:inherit;font-size:14px;font-weight:500;color:var(--ink);text-decoration:none;cursor:pointer}
 .linea-oauth:hover{box-shadow:0 0 0 1px var(--line-strong),0 2px 6px -2px rgb(15 15 20/.12)}
 .linea-oauth>svg,.linea-oauth>span[class*="huge-"]{width:18px;height:18px}
 .linea-auth-aside{position:relative;overflow:hidden;border-radius:20px;background:var(--sunken)}

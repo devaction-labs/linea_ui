@@ -1,8 +1,8 @@
 /* HeroCard (canvas "HeroCard"): the welcome or insight card at the top of a page. The text on the left (eyebrow in
    mono caps, title, description, actions); the picture on the right, covering the card's height and fading into it
    from the left. On a phone the picture goes on top and fades down. */
-.linea-hero{position:relative;display:flex;align-items:center;min-height:208px;overflow:hidden;border-radius:22px;background:color-mix(in srgb,var(--sunken) 70%,var(--panel));box-shadow:0 0 0 1px var(--line)}
-.linea-hero[data-variant="panel"]{background:var(--panel);box-shadow:0 0 0 1px var(--line),var(--shadow-sm)}
+.linea-hero{position:relative;display:flex;align-items:center;min-height:208px;overflow:hidden;border-radius:22px;background:color-mix(in srgb,var(--sunken) 70%,var(--panel));box-shadow:0 0 0 1px var(--ctl-line)}
+.linea-hero[data-variant="panel"]{background:var(--panel);box-shadow:0 0 0 1px var(--ctl-line),var(--shadow-xs)}
 .linea-hero-body{position:relative;z-index:1;display:flex;flex-direction:column;align-items:flex-start;gap:12px;max-width:min(560px,56%);padding:28px 32px}
 .linea-hero-eyebrow{display:inline-flex;align-items:center;gap:7px;font:500 11.5px/1.2 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--accent-ink,var(--accent))}
 .linea-hero-eyebrow>svg,.linea-hero-eyebrow>span[class*="huge-"]{width:14px;height:14px}

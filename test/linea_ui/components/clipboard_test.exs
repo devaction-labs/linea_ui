@@ -24,7 +24,7 @@ defmodule LineaUI.Components.ClipboardTest do
 
     assert attr_of(html, "#c", "data-from") == ["#text"]
     assert attr_of(html, "#c", "data-toast") == []
-    assert "sm" in classes(html, "#c")
+    assert "xs" in classes(html, "#c")
     assert String.trim(find(html, "#c") |> LazyHTML.text()) == "Grab"
     assert attr_of(html, "#c", "data-on-copy") |> hd() =~ "copied"
   end
