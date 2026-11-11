@@ -115,6 +115,7 @@ defmodule LineaUI do
     signature_pad: LineaUI.Components.SignaturePad,
     skeleton: LineaUI.Components.Skeleton,
     spinner: LineaUI.Components.Spinner,
+    step_group: LineaUI.Components.StepGroup,
     steps: LineaUI.Components.Steps,
     switch: LineaUI.Components.Switch,
     table: LineaUI.Components.Table,

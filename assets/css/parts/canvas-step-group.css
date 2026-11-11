@@ -1,0 +1,52 @@
+/* StepGroup (canvas "StepGroup"): a framed card of process steps, each with a status and a log. */
+.sg-sgp{border-radius:14px;background:var(--sunken);box-shadow:0 0 0 1px var(--ctl-line);padding:0 3px 3px}
+.sg-sgp.is-collapsed{padding-bottom:0}
+.sg-sgp-h{all:unset;box-sizing:border-box;display:flex;align-items:center;gap:10px;width:100%;height:52px;padding:0 12px 0 13px;cursor:pointer;border-radius:14px}
+.sg-sgp-h .t{font-size:14px;font-weight:550;color:var(--ink)}
+.sg-sgp-h .m{margin-left:auto;font-family:'Geist Mono',ui-monospace,monospace;font-size:12.5px;color:var(--muted)}
+.sg-sgp-h .c{margin-left:auto;display:grid;place-items:center;width:26px;height:26px;border-radius:7px;color:var(--muted)}
+.sg-sgp-h .m+.c{margin-left:8px}
+.sg-sgp-h:hover .c,.sg-sgp-h.hv .c{background:var(--ctl-fill);color:var(--ink)}
+.sg-sgp-b{border-radius:var(--pill);background:var(--panel);box-shadow:0 0 0 1px var(--ctl-line),0 1px 2px rgb(15 15 20/.04);overflow:hidden}
+.sg-sgp-r{display:grid;grid-template-columns:minmax(0,1fr) auto 28px;align-items:center;gap:16px;min-height:54px;padding:0 10px 0 16px;border-bottom:1px solid var(--line);font-size:14px;color:var(--fg);text-decoration:none}
+.sg-sgp-r.lead{grid-template-columns:20px minmax(0,1fr) auto 28px;gap:12px}
+.sg-sgp-b>:last-child{border-bottom:0}
+.sg-sgp-r:hover,.sg-sgp-r.hv{background:var(--ctl-fill)}
+.sg-sgp-r .t{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sg-sgp-r .s{font-family:'Geist Mono',ui-monospace,monospace;font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.sg-sgp-r.ok .s{color:var(--muted)}.sg-sgp-r.fail .s{color:var(--neg)}.sg-sgp-r.run .s{color:var(--accent-ink)}.sg-sgp-r.wait .s,.sg-sgp-r.skip .s{color:var(--faint)}
+.sg-sgp-r.wait .t,.sg-sgp-r.skip .t{color:var(--faint)}
+.sg-sgp-r .c{display:grid;place-items:center;color:var(--faint);transition:transform .15s}
+.sg-sgp-r.open .c{transform:rotate(90deg);color:var(--ink)}
+.sg-sgp-r.open{background:var(--ctl-fill)}
+.sg-sgp-log{padding:10px 0;border-bottom:1px solid var(--line);background:var(--sunken);font-family:'Geist Mono',ui-monospace,monospace;font-size:12.5px;line-height:21px;color:var(--fg);max-height:220px;overflow:auto}
+.sg-sgp-log>div{display:grid;grid-template-columns:44px 74px minmax(0,1fr);padding:0 16px 0 0}
+.sg-sgp-log .n{color:var(--faint);text-align:right;padding-right:14px}.sg-sgp-log .ts{color:var(--faint)}
+.sg-sgp-log .err{color:var(--neg)}.sg-sgp-log .ok{color:var(--pos)}.sg-sgp-log .dim{color:var(--muted)}
+.sg-sgs{flex:none;width:20px;height:20px;border-radius:50%;display:grid;place-items:center}
+.sg-sgs svg{width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.sg-sgs.ok{background:var(--pos);color:#fff}
+.sg-sgs.fail{background:var(--neg);color:#fff}
+.sg-sgs.cancel{background:var(--panel);color:var(--muted);box-shadow:inset 0 0 0 1px var(--ctl-line)}
+.sg-sgs.cancel svg{width:10px;height:10px}
+.sg-sgs.skip{color:var(--faint);box-shadow:inset 0 0 0 1px var(--line)}
+.sg-sgs.wait{box-shadow:none;border:1.5px dashed var(--line-strong);box-sizing:border-box}
+.sg-sgs.run{box-sizing:border-box;border:2px solid color-mix(in srgb,var(--accent) 22%,transparent);border-top-color:var(--accent);animation:sg-sgs-spin .8s linear infinite}
+@keyframes sg-sgs-spin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.sg-sgs.run{animation-duration:2s}}
+.sg-sgs.info{background:var(--accent);color:#fff}
+.sg-sgp-h.d{height:auto;min-height:52px;padding-block:9px;cursor:default}
+.sg-sgp-h .col{min-width:0;gap:1px}
+.sg-sgp-h .d{font-size:12.5px;color:var(--muted)}
+.sg-sgp-pad{padding:20px}
+.sg-sgp-r.av{grid-template-columns:32px minmax(0,1fr) auto 28px;gap:12px}
+.sg-sgp-r.ico{grid-template-columns:20px minmax(0,1fr) auto 28px;gap:12px}
+.sg-sgp-r.ico>.i{color:var(--faint)}
+.sg-sgp-r .sub{display:block;font-size:12.5px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sg-sgp-r .t b{font-weight:550;color:var(--ink)}
+.sg-sgp-r.chk{grid-template-columns:18px minmax(0,1fr) auto;gap:12px;padding-right:16px}
+.sg-sgp-r.chk{grid-template-columns:18px auto minmax(0,1fr)}
+.sg-sgp-r.chk .s{text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* the same row as a real <button> (a step that has a log), and the log's own hidden state */
+button.sg-sgp-r{width:100%;margin:0;background:transparent;border:0;border-bottom:1px solid var(--line);font:inherit;text-align:left;cursor:pointer}
+.sg-sgp-b[hidden],.sg-sgp-log[hidden]{display:none}
