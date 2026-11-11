@@ -51,6 +51,7 @@ defmodule LineaUI do
     autocomplete: LineaUI.Components.Autocomplete,
     avatar: LineaUI.Components.Avatar,
     badge: LineaUI.Components.Badge,
+    glow_text: LineaUI.Components.GlowText,
     mini_card: LineaUI.Components.MiniCard,
     pixel_card: LineaUI.Components.PixelCard,
     shell: LineaUI.Components.Shell,

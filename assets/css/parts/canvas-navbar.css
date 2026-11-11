@@ -49,6 +49,7 @@
 .sg-nb-chip{display:inline-flex;align-items:center;gap:8px;height:34px;padding:0 8px 0 5px;border:0;border-radius:10px;background:transparent;color:var(--ink);cursor:pointer;font-size:14px}
 .sg-nb-chip:hover{background:var(--sunken)}.sg-nb-chip b{font-weight:600}
 .sg-nb-chip .sg-nb-tag{padding:1px 7px;border-radius:6px;background:var(--accent-soft);color:var(--accent-ink,var(--accent));font-size:11.5px;font-weight:600}
+.sg-nb-chip .tag{padding:1px 7px;border-radius:6px;background:var(--accent-soft);color:var(--accent-ink,var(--accent));font-size:11.5px;font-weight:600}
 .sg-nb-sq{display:grid;place-items:center;width:24px;height:24px;border-radius:7px;color:#fff;font:600 9.5px var(--mono)}
 .sg-nb-env{display:inline-flex;align-items:center;gap:7px;height:26px;margin-left:6px;padding:0 10px;border-radius:var(--pill-in);background:var(--pos-soft);color:var(--pos);font-size:12.5px;font-weight:500}
 .sg-nb-env>i{width:6px;height:6px;border-radius:50%;background:currentColor}.sg-nb-env.warn{background:var(--warn-soft);color:var(--warn)}

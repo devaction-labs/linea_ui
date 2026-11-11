@@ -38,7 +38,7 @@
 :is(.dark .sg:not([data-theme="light"]), .sg[data-theme="dark"]) [data-rail-toggle] svg {
   width: 16px;
   height: 16px;
-  stroke-width: 1.7;
+  stroke-width: 1.5;
 }
 
 /* The breadcrumb pill of the page header: muted trail, line-strong separators, the current page in the ink. */

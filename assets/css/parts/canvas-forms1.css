@@ -5,7 +5,7 @@
 .sg-chip.static{padding-right:10px}
 .sg-chip .sg-chip-av{width:24px;height:24px;font-size:10px;font-weight:600}
 .sg-chip-x{display:inline-grid;place-items:center;width:14px;height:14px;padding:0;margin:0;border:0;background:none;color:inherit;cursor:pointer;border-radius:4px}
-.sg-chip-x svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.sg-chip-x svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
 .sg-chip-x:hover{color:var(--ink)}
 .sg-chip-x:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
 
@@ -31,7 +31,7 @@
 .ts-wrapper.autocomplete .ts-dropdown .ac-spinner{width:16px;height:16px;border:2px solid var(--line);border-top-color:var(--accent);color:inherit}
 .ts-wrapper.autocomplete .ac-sep{border:0;height:1px;background:var(--line);margin:5px 4px}
 .ts-wrapper.autocomplete .ts-dropdown .option.create{color:var(--fg)}
-.ts-wrapper.autocomplete .ac-create-icon{width:16px;height:16px;flex:none;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.ts-wrapper.autocomplete .ac-create-icon{width:16px;height:16px;flex:none;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
 
 /* ---------- Calendar: the canvas mini month ---------- */
 .lc-mini-wrap{display:block}
@@ -40,7 +40,7 @@
 .lc-mini.two{width:270px;padding:12px}
 .lc-mini-h{display:flex;align-items:center;gap:8px;margin-bottom:6px}
 .lc-mini-h b{flex:1;min-width:0;font-weight:600;color:var(--ink)}
-.lc-mini-h .sg-ib svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.lc-mini-h .sg-ib svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
 .lc-mini-h .sg-ib:disabled{cursor:default}
 .lc-mini-name{display:block;margin-bottom:6px;font-size:13.5px;font-weight:600;color:var(--ink)}
 .lc-mini .sg-cal > button{all:unset;box-sizing:border-box;height:36px;display:grid;place-items:center;border-radius:10px;color:var(--fg);font-variant-numeric:tabular-nums;cursor:pointer}
@@ -138,7 +138,7 @@
 .lc-stepper .lc-step:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
 .lc-stepper .lc-step:disabled{opacity:.35;cursor:default;background:none}
 .lc-stepper.round .lc-step,.lc-stepper.round .lc-step:disabled{background:var(--panel);box-shadow:inset 0 0 0 1px var(--line)}
-.lc-stepper .lc-step svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.lc-stepper .lc-step svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
 .lc-stepper .form-input,.lc-stepper .form-input:focus{height:100%;min-height:0;padding:0 4px;border:0;background:none;box-shadow:none;outline:none;font:14px var(--mono);font-feature-settings:"zero";color:var(--ink)}
 .lc-stepper.round .form-input{padding:0}
 .lc-stepper .lc-step-suffix{font:14px var(--mono);color:var(--ink)}
