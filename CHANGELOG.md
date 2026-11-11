@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.17.3 (2026-11-10)
 
 - Refined controls (the "component specimen" level):
   - New control tokens, defined for light and dark: `--ctl`, `--ctl-line`, `--ctl-line-strong`, `--ctl-hover`, `--ctl-fill`, `--ctl-fill-hover`, `--ctl-track` and `--shadow-xs`. Borders and fills are a fine alpha of the ink color.
