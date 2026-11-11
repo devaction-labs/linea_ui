@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.18.0 (2026-11-11)
 
 - New `step_group` (and `step_group_line`): the canvas StepGroup, a framed card for processes in steps (build, deploy, invoice issuing) with an overall status, title and duration in the header, a raised panel of steps (status, mono result) and a log per step. Collapsing the card and opening a log are client-side `JS`, and the browser keeps that state across patches.
 - Refined controls (the "component specimen" level):
