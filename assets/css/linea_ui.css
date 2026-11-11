@@ -44,6 +44,7 @@
 @import "./parts/canvas-fiscal.css";
 @import "./parts/canvas-fin1.css";
 @import "./parts/canvas-fin2.css";
+@import "./parts/canvas-step-group.css";
 
 @source "../../lib";
 @source "../js";

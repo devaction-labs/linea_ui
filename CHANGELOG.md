@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- New `step_group` (and `step_group_line`): the canvas StepGroup, a framed card for processes in steps (build, deploy, invoice issuing) with an overall status, title and duration in the header, a raised panel of steps (status, mono result) and a log per step. Collapsing the card and opening a log are client-side `JS`, and the browser keeps that state across patches.
 - Refined controls (the "component specimen" level):
   - New control tokens, defined for light and dark: `--ctl`, `--ctl-line`, `--ctl-line-strong`, `--ctl-hover`, `--ctl-fill`, `--ctl-fill-hover`, `--ctl-track` and `--shadow-xs`. Borders and fills are a fine alpha of the ink color.
   - `button`: font 14/20 · 500 and 16px icons with 12px leading padding. The sizes are now distinct: `xs` 24, `sm` 32, `md` 36, `lg` 40 and `xl` 44 (`xs` and `xl` used to fall back to `sm` and `lg`), and the radius shrinks with the size.
