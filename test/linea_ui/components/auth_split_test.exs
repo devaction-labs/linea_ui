@@ -69,4 +69,58 @@ defmodule LineaUI.Components.AuthSplitTest do
     assert [_] = find(html, ".linea-auth-aside #custom") |> Enum.to_list()
     assert find(html, ".linea-auth-quote") |> Enum.to_list() == []
   end
+
+  test "auth_sent: the tile with the mail icon, the message, polite status" do
+    html = render(~H"<.auth_sent class=\"x\">Abra o <b>e-mail</b>.</.auth_sent>")
+
+    assert attr_of(html, ".linea-auth-sent", "role") == ["status"]
+    assert "x" in classes(html, ".linea-auth-sent")
+    assert attr_of(html, ".linea-auth-sent .tile svg", "aria-hidden") == ["true"]
+    assert text(html, ".linea-auth-sent > span:not(.tile)") == ["Abra o e-mail."]
+  end
+
+  test "auth_sent: the :icon slot replaces the mail icon" do
+    html = render(~H"<.auth_sent><:icon><i id=\"mine\"></i></:icon>Oi</.auth_sent>")
+
+    assert [_] = find(html, ".tile #mine") |> Enum.to_list()
+    assert find(html, ".tile svg") |> Enum.to_list() == []
+  end
+
+  test "auth_alert: the icon and the message, as an alert" do
+    html = render(~H"<.auth_alert>Corrija os campos.</.auth_alert>")
+
+    assert attr_of(html, ".linea-auth-alert", "role") == ["alert"]
+    assert attr_of(html, ".linea-auth-alert svg", "aria-hidden") == ["true"]
+    assert text(html, ".linea-auth-alert") == ["Corrija os campos."]
+  end
+
+  test "auth_submit: idle is a plain submit button" do
+    html = render(~H"<.auth_submit>Cadastrar</.auth_submit>")
+
+    assert attr_of(html, "button", "type") == ["submit"]
+    assert classes(html, "button") |> Enum.sort() == ~w(accent block lg sg-btn)
+    assert find(html, ".linea-auth-spin") |> Enum.to_list() == []
+    assert attr_of(html, "button", "disabled") == []
+    assert attr_of(html, "button", "aria-busy") == []
+    assert text(html, "button") == ["Cadastrar"]
+  end
+
+  test "auth_submit: loading disables, marks aria-busy and shows the spinner and the label" do
+    html =
+      render(~H"""
+      <.auth_submit loading loading_label="Criando a conta…">Cadastrar</.auth_submit>
+      """)
+
+    assert [_] = find(html, "button.is-loading > .linea-auth-spin") |> Enum.to_list()
+    assert attr_of(html, ".linea-auth-spin", "aria-hidden") == ["true"]
+    assert attr_of(html, "button", "disabled") == [""]
+    assert attr_of(html, "button", "aria-busy") == ["true"]
+    assert text(html, "button") == ["Criando a conta…"]
+  end
+
+  test "auth_submit: loading without loading_label keeps the label" do
+    html = render(~H"<.auth_submit loading>Cadastrar</.auth_submit>")
+
+    assert text(html, "button") == ["Cadastrar"]
+  end
 end
