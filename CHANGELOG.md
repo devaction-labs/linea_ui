@@ -2,6 +2,11 @@
 
 ## 0.18.0 (2026-11-11)
 
+- New `glow_text`: text with a living gradient (the canvas GlowText). `tone` is `default` or `warm` and `as` is `span`, `h1`, `h2`, `h3` or `p`. The animation slows under `prefers-reduced-motion`.
+- `auth_split`: `auth_sent` (link sent), `auth_alert` (the error notice on top of the form) and `auth_submit` cover the canvas's link sent, errors and sending states. With `loading`, `auth_submit` turns disabled, sets `aria-busy` and shows the `.linea-auth-spin` spinner, with `loading_label` replacing its label.
+- `tabs`: `overdue` on a `:tab` with a `count` draws the count in the negative tone (`st-over`).
+- `navbar_chip`: the `tag` carries the canvas `.tag` look.
+- Line icons use the canvas stroke, 1.5 instead of 1.7. This covers `.sg .i`, the shell and settings icons, chip close, autocomplete create, `sg-ib`, stepper, carousel chevron, cash icon and the dark rail toggle.
 - New `step_group` (and `step_group_line`): the canvas StepGroup, a framed card for processes in steps (build, deploy, invoice issuing) with an overall status, title and duration in the header, a raised panel of steps (status, mono result) and a log per step. Collapsing the card and opening a log are client-side `JS`, and the browser keeps that state across patches.
 - Refined controls (the "component specimen" level):
   - New control tokens, defined for light and dark: `--ctl`, `--ctl-line`, `--ctl-line-strong`, `--ctl-hover`, `--ctl-fill`, `--ctl-fill-hover`, `--ctl-track` and `--shadow-xs`. Borders and fills are a fine alpha of the ink color.

@@ -180,4 +180,22 @@ defmodule LineaUI.Components.TabsTest do
     assert html |> find("#t-tab-b .sg-nav-n") |> LazyHTML.text() == "4"
     assert [] = html |> find("#t-tab-a .sg-nav-n") |> Enum.to_list()
   end
+
+  test "the count badge is negative when the tab is overdue" do
+    assigns = %{__changed__: nil}
+
+    html =
+      rendered_to_string(~H"""
+      <.tabs id="o">
+        <:tab name="a" count={3} overdue>Late</:tab>
+        <:tab name="b" count={5}>Ok</:tab>
+        <:panel name="a">A</:panel>
+        <:panel name="b">B</:panel>
+      </.tabs>
+      """)
+
+    assert count(html, "#o-tab-a .sg-nav-n.st-over") == 1
+    assert count(html, "#o-tab-b .sg-nav-n") == 1
+    assert count(html, "#o-tab-b .sg-nav-n.st-over") == 0
+  end
 end

@@ -141,6 +141,7 @@ defmodule LineaUI.Components.NavbarTest do
       assert text(html, ".sg-nb-sq") == ["LB"]
       assert attrs(html, ".sg-nb-sq", "style") == ["background:#1a7f4b"]
       assert text(html, ".sg-nb-tag") == ["Pro"]
+      assert text(html, "button.sg-nb-chip span.tag") == ["Pro"]
 
       assert text(render(~H|<.navbar_slash />|), ".sg-nb-slash") == ["/"]
     end

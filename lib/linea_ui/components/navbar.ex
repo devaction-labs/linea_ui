@@ -275,7 +275,7 @@ defmodule LineaUI.Components.Navbar do
     <button type="button" class={merge(["sg-nb-chip", @class])} {@rest}>
       <span :if={@square} class="sg-nb-sq" style={@color && "background:#{@color}"}>{@square}</span>
       <b>{@label}</b>
-      <span :if={@tag} class="sg-nb-tag">{@tag}</span>
+      <span :if={@tag} class="sg-nb-tag tag">{@tag}</span>
       <.icon name="huge-arrow-down-01" class="i sm" />
     </button>
     """

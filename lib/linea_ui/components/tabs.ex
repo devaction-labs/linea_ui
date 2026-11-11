@@ -236,6 +236,11 @@ defmodule LineaUI.Components.Tabs do
       doc: "A number drawn after the label in the canvas count badge (`sg-nav-n`)."
     )
 
+    attr(:overdue, :boolean,
+      doc:
+        "With `count`: draws the count badge in the negative tone (`st-over`), for overdue items."
+    )
+
     attr(:patch, :string, doc: "Renders the tab as a `<.link patch>` (navigation tabs).")
     attr(:navigate, :string, doc: "Renders the tab as a `<.link navigate>` (navigation tabs).")
     attr(:href, :string, doc: "Renders the tab as a `<.link href>` (navigation tabs).")
@@ -417,7 +422,7 @@ defmodule LineaUI.Components.Tabs do
 
   defp count(%{tab: %{count: count}} = assigns) when not is_nil(count) do
     ~H"""
-    <span class="sg-nav-n">{@tab.count}</span>
+    <span class={["sg-nav-n", @tab[:overdue] && "st-over"]}>{@tab.count}</span>
     """
   end
 

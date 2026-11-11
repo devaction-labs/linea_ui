@@ -1,0 +1,9 @@
+
+/* GlowText: degradê vivo, as cores vão mudando pelo texto */
+.sg-glow-text{--g1:var(--accent);--g2:#4f8cff;--g3:#8a5cd6;--g4:#e0609c;
+  background:linear-gradient(100deg,var(--g1) 0%,var(--g2) 20%,var(--g3) 40%,var(--g4) 60%,var(--g3) 80%,var(--g1) 100%);
+  background-size:400% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;
+  animation:sg-glow 6s ease-in-out infinite alternate;width:max-content;max-width:100%}
+.sg-glow-text.warm{--g1:#f472b6;--g2:#fb7185;--g3:#fb923c;--g4:#e879f9}
+@keyframes sg-glow{0%{background-position:0% 50%}100%{background-position:100% 50%}}
+@media (prefers-reduced-motion:reduce){.sg-glow-text{animation-duration:12s}}
