@@ -4,7 +4,7 @@ defmodule LineaUI.Components.BreadcrumbTest do
   test "links for the trail, plain text and aria-current for the last step" do
     html =
       render(~H"""
-      <.breadcrumb>
+      <.breadcrumb variant="plain">
         <:item href="/">Home</:item>
         <:item navigate="/elements">Elements</:item>
         <:item>Breadcrumb</:item>
@@ -43,7 +43,7 @@ defmodule LineaUI.Components.BreadcrumbTest do
   test "the current page is soft and cut with an ellipsis, with its title" do
     html =
       render(~H"""
-      <.breadcrumb>
+      <.breadcrumb variant="plain">
         <:item href="/">Home</:item>
         <:item title="A very long page name">A very long page name</:item>
       </.breadcrumb>
@@ -62,7 +62,7 @@ defmodule LineaUI.Components.BreadcrumbTest do
 
     html =
       rendered_to_string(~H"""
-      <.breadcrumb>
+      <.breadcrumb variant="plain">
         <:item :for={f <- @path} phx-click="open" phx-value-id={f.id} phx-target="#fm">{f.name}</:item>
         <:item id="now" data-kind="current">Now</:item>
       </.breadcrumb>

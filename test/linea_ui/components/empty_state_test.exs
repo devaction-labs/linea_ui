@@ -10,7 +10,7 @@ defmodule LineaUI.Components.EmptyStateTest do
   test "a card with the grid, the icon, the kicker, the title and the reason" do
     html =
       render(~H"""
-      <.empty_state icon="huge-search-01" kicker="Receivables" title="No receivable yet">
+      <.empty_state variant="card" icon="huge-search-01" kicker="Receivables" title="No receivable yet">
         A receivable is created when an invoice is authorized.
       </.empty_state>
       """)
@@ -40,13 +40,13 @@ defmodule LineaUI.Components.EmptyStateTest do
   end
 
   test "the heading level" do
-    html = render(~H|<.empty_state title="Empty" level={3} />|)
+    html = render(~H|<.empty_state variant="card" title="Empty" level={3} />|)
     assert texts(html, "h3") == ["Empty"]
     assert find(html, "h2") |> Enum.count() == 0
   end
 
   test "without a reason, a kicker or an action those parts are not drawn" do
-    html = render(~H|<.empty_state title="Empty" />|)
+    html = render(~H|<.empty_state variant="card" title="Empty" />|)
 
     assert find(html, "p") |> Enum.count() == 0
     assert find(html, "section > span:not([aria-hidden])") |> Enum.count() == 0
@@ -56,7 +56,7 @@ defmodule LineaUI.Components.EmptyStateTest do
   test "the action slot holds the next step" do
     html =
       render(~H"""
-      <.empty_state title="Empty">
+      <.empty_state variant="card" title="Empty">
         <:action><.button>New order</.button></:action>
       </.empty_state>
       """)
@@ -67,8 +67,8 @@ defmodule LineaUI.Components.EmptyStateTest do
   test "tone paints the icon tile" do
     html =
       render(~H"""
-      <.empty_state title="A" icon="huge-search-01" />
-      <.empty_state title="B" icon="huge-search-01" tone="gradient" class="mt-4" />
+      <.empty_state variant="card" title="A" icon="huge-search-01" />
+      <.empty_state variant="card" title="B" icon="huge-search-01" tone="gradient" class="mt-4" />
       """)
 
     assert find(html, ".from-blue-600") |> Enum.count() == 1
@@ -79,7 +79,7 @@ defmodule LineaUI.Components.EmptyStateTest do
   test "an illustration replaces the icon" do
     html =
       render(~H"""
-      <.empty_state title="Empty" icon="huge-search-01">
+      <.empty_state variant="card" title="Empty" icon="huge-search-01">
         <:illustration><img src="/empty.svg" alt="" /></:illustration>
       </.empty_state>
       """)
@@ -123,7 +123,7 @@ defmodule LineaUI.Components.EmptyStateTest do
   test "class and rest land on the root" do
     html =
       render(~H"""
-      <.empty_state id="e" title="Empty" class="max-w-sm" data-x="1" />
+      <.empty_state variant="card" id="e" title="Empty" class="max-w-sm" data-x="1" />
       <.empty_state id="i" variant="inline" title="Empty" class="mt-2" data-y="2" />
       """)
 

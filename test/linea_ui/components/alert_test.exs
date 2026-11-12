@@ -2,7 +2,7 @@ defmodule LineaUI.Components.AlertTest do
   use LineaUI.ComponentCase, async: true
 
   test "a neutral solid alert by default" do
-    html = render(~H"<.alert>Hello</.alert>")
+    html = render(~H"<.alert variant=\"solid\">Hello</.alert>")
     assert [_] = find(html, "div[role=alert]") |> Enum.to_list()
     classes = classes(html, "[role=alert]")
     assert "bg-slate-200" in classes
@@ -29,7 +29,7 @@ defmodule LineaUI.Components.AlertTest do
       render(~H"""
       <.alert id="o" color="info" variant="outline">x</.alert>
       <.alert id="b" color="success" variant="bordered">x</.alert>
-      <.alert id="d" color="dark">x</.alert>
+      <.alert variant="solid" id="d" color="dark">x</.alert>
       """)
 
     assert "border-info" in classes(html, "#o")
@@ -64,7 +64,7 @@ defmodule LineaUI.Components.AlertTest do
   test "an inline icon comes before the text" do
     html =
       render(~H"""
-      <.alert color="error"><:icon><svg id="i"></svg></:icon>Text</.alert>
+      <.alert variant="solid" color="error"><:icon><svg id="i"></svg></:icon>Text</.alert>
       """)
 
     assert "gap-2" in classes(html, "[role=alert]")
@@ -87,7 +87,7 @@ defmodule LineaUI.Components.AlertTest do
   test "open={false} renders it hidden, and actions render after the content" do
     html =
       render(~H"""
-      <.alert open={false}>
+      <.alert variant="solid" open={false}>
         x
         <:action><button id="act">Go</button></:action>
       </.alert>

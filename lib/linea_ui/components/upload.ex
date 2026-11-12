@@ -17,7 +17,7 @@ defmodule LineaUI.Components.Upload do
   The component renders `live_file_input` itself, so it must be inside the form that has the
   `phx-change` LiveView uploads need.
 
-  `variant="canvas"` is the Signetum canvas look: a dashed drop area (icon, `drop_label`, `hint`),
+  `variant="canvas"` (the default; `variant="pond"` is the old LineOne FilePond panel) is the Signetum canvas look: a dashed drop area (icon, `drop_label`, `hint`),
   each file as a card with its icon, name, size, a progress meter and a remove button, and a
   red drop area with the error when a file is refused. `layout="thumbs"` shows 96px image
   thumbnails followed by a small dashed "+" tile.
@@ -57,10 +57,10 @@ defmodule LineaUI.Components.Upload do
     doc: "Files side by side, as LineOne's Two/Three/Four Grid."
 
   attr :variant, :string,
-    default: "pond",
-    values: ~w(pond canvas),
+    default: "canvas",
+    values: ~w(canvas pond),
     doc:
-      "`pond` is LineOne's FilePond panel; `canvas` the Signetum canvas drop area and file cards."
+      "`canvas` (the default) is the Signetum canvas drop area and file cards; `pond` is the old LineOne FilePond panel."
 
   attr :layout, :string,
     default: "panel",

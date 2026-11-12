@@ -28,7 +28,7 @@ defmodule LineaUI.Components.Carousel do
 
   ## Canvas look and thumbnails
 
-  `variant="canvas"` is the design canvas carousel: a 16px rounded track, round white arrows (the
+  `variant="canvas"` (the default; `variant="classic"` is the old LineOne carousel) is the design canvas carousel: a 16px rounded track, round white arrows (the
   canvas `sg-ib`), the fraction as a small mono `1/3` at the top right, and bullets under the track
   (the active one a long ink pill). `:thumb` slots draw a row of 64px thumbnails under the track,
   one per slide, that pick the slide and ring the active one:
@@ -115,10 +115,10 @@ defmodule LineaUI.Components.Carousel do
   attr(:label, :string, default: nil, doc: "The carousel's `aria-label`.")
 
   attr(:variant, :string,
-    default: "default",
-    values: ~w(default canvas),
+    default: "canvas",
+    values: ~w(canvas classic),
     doc:
-      "`canvas` is the design canvas look: a rounded track, round white arrows, a mono `1/3` fraction at the top right and the bullets below the track."
+      "`canvas` (the default) is the design canvas look: a rounded track, round white arrows, a mono `1/3` fraction at the top right and the bullets below the track."
   )
 
   attr(:thumb_label, :string,
@@ -140,7 +140,7 @@ defmodule LineaUI.Components.Carousel do
     <div
       id={@id}
       class={merge(["carousel", @thumb != [] && "has-thumbs", @class])}
-      data-variant={@variant != "default" && @variant}
+      data-variant={@variant != "classic" && @variant}
       role="region"
       aria-roledescription="carousel"
       aria-label={@label}

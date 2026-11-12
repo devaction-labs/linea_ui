@@ -9,7 +9,12 @@ defmodule LineaUI.Components.UploadTest do
 
   test "the drop panel renders live_file_input and the drop target" do
     assigns = %{__changed__: nil, upload: config()}
-    html = rendered_to_string(~H|<.upload upload={@upload} bordered filled columns={3} />|)
+
+    html =
+      rendered_to_string(
+        ~H|<.upload variant="pond" upload={@upload} bordered filled columns={3} />|
+      )
+
     ref = assigns.upload.ref
 
     assert find(html, "[phx-hook='LineaUI.Upload'][phx-drop-target='#{ref}']") |> Enum.count() ==
@@ -33,7 +38,7 @@ defmodule LineaUI.Components.UploadTest do
 
     html =
       rendered_to_string(~H"""
-      <.upload upload={@upload} layout="circle" class="w-28">
+      <.upload variant="pond" upload={@upload} layout="circle" class="w-28">
         <:label><svg id="icon" /></:label>
       </.upload>
       """)
@@ -68,7 +73,7 @@ defmodule LineaUI.Components.UploadTest do
 
   test "too_many_files keeps its default text" do
     assigns = %{__changed__: nil, upload: too_many(2)}
-    html = rendered_to_string(~H|<.upload upload={@upload} />|)
+    html = rendered_to_string(~H|<.upload variant="pond" upload={@upload} />|)
 
     assert html |> find(".filepond--errors li") |> LazyHTML.text() |> String.trim() ==
              "Too many files"
@@ -81,7 +86,8 @@ defmodule LineaUI.Components.UploadTest do
       texts: %{too_many_files: "Only %{max} files"}
     }
 
-    html = rendered_to_string(~H|<.upload upload={@upload} error_texts={@texts} />|)
+    html =
+      rendered_to_string(~H|<.upload variant="pond" upload={@upload} error_texts={@texts} />|)
 
     assert html |> find(".filepond--errors li") |> LazyHTML.text() |> String.trim() ==
              "Only 3 files"
@@ -112,7 +118,7 @@ defmodule LineaUI.Components.UploadTest do
     upload = with_entries([{"a", "a.pdf", 1000, 10, false}])
     upload = %{upload | errors: [{upload.ref, :too_many_files}]}
     assigns = %{__changed__: nil, upload: upload}
-    html = rendered_to_string(~H|<.upload upload={@upload} />|)
+    html = rendered_to_string(~H|<.upload variant="pond" upload={@upload} />|)
 
     assert find(html, ".filepond--pond > .filepond--panel-root") |> Enum.count() == 1
     assert find(html, ".filepond--pond > .filepond--drop-label") |> Enum.count() == 1
@@ -134,7 +140,7 @@ defmodule LineaUI.Components.UploadTest do
       )
 
     assigns = %{__changed__: nil, upload: upload}
-    html = rendered_to_string(~H|<.upload upload={@upload} />|)
+    html = rendered_to_string(~H|<.upload variant="pond" upload={@upload} />|)
 
     assert find(html, ".filepond--item[data-state=processing]") |> Enum.count() == 1
     assert find(html, ".filepond--item[data-state=complete]") |> Enum.count() == 1
@@ -226,7 +232,7 @@ defmodule LineaUI.Components.UploadTest do
       ])
 
     assigns = %{__changed__: nil, upload: upload}
-    html = rendered_to_string(~H|<.upload upload={@upload} />|)
+    html = rendered_to_string(~H|<.upload variant="pond" upload={@upload} />|)
 
     sizes = html |> find(".filepond--file-info-sub") |> LazyHTML.text()
     assert sizes =~ "210 KB"
@@ -237,7 +243,10 @@ defmodule LineaUI.Components.UploadTest do
 
   test "data-dragging passes through to the drop panel" do
     assigns = %{__changed__: nil, upload: config()}
-    html = rendered_to_string(~H|<.upload upload={@upload} bordered data-dragging />|)
+
+    html =
+      rendered_to_string(~H|<.upload variant="pond" upload={@upload} bordered data-dragging />|)
+
     assert find(html, ".filepond--root[data-dragging]") |> Enum.count() == 1
   end
 

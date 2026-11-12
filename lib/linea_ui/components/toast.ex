@@ -283,7 +283,7 @@ defmodule LineaUI.Components.Toast do
         <.glyph name={name} class="size-4.5" />
       </template>
       <template data-toast-icon="loading">
-        <.spinner color="current" size="xs" label={@loading_label} class="size-4" />
+        <.spinner variant="border" color="current" size="xs" label={@loading_label} class="size-4" />
       </template>
     </div>
     """

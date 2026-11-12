@@ -39,7 +39,7 @@ defmodule LineaUI.Components.Steps do
         </:step>
       </.stepper>
 
-  `variant="canvas"` is the design canvas look: horizontal, small numbered circles joined by
+  `variant="canvas"` (the default; `variant="classic"` is the old LineOne stepper) is the design canvas look: horizontal, small numbered circles joined by
   1px lines (done in the accent tint with a check, the current one solid); vertical, 26px round
   tiles (done green, current in the accent tint) joined by a line, each able to show an `icon`.
 
@@ -260,10 +260,10 @@ defmodule LineaUI.Components.Steps do
   attr(:error, :boolean, default: false, doc: "Flags the current step as `error`.")
 
   attr(:variant, :string,
-    default: "default",
-    values: ~w(default canvas),
+    default: "canvas",
+    values: ~w(canvas classic),
     doc:
-      "`canvas`: the design canvas steps (small numbered circles and 1px lines; vertical, round tiles joined by a line)."
+      "`canvas` (the default): the design canvas steps (small numbered circles and 1px lines; vertical, round tiles joined by a line)."
   )
 
   attr(:state_names, :map,

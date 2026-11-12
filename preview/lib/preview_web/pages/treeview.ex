@@ -17,7 +17,7 @@ defmodule PreviewWeb.Pages.Treeview do
     <.example title="Basic Treeview" class="max-w-xl">
       <p>{@text}</p>
       <div class="mt-5">
-        <.treeview id="tree1" on_select="select" on_toggle="toggle">
+        <.treeview variant="lineone" id="tree1" on_select="select" on_toggle="toggle">
           <.tree_item id="tree1-application" label="Application">
             <.tree_item
               :for={name <- ["Chrome", "VS Code", "Mail App", "Firefox"]}
@@ -45,7 +45,7 @@ defmodule PreviewWeb.Pages.Treeview do
     <.example title="Advanced Treeview" class="max-w-xl">
       <p>{@text}</p>
       <div class="mt-5">
-        <.treeview id="tree2">
+        <.treeview variant="lineone" id="tree2">
           <.tree_item label="Design">
             <:icon><.folder /></:icon>
             <.tree_item label="Web Apps">

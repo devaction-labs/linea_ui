@@ -1597,7 +1597,7 @@ defmodule LineaUI.Components.Table do
             class={Enum.at(@shapes, index) == "number" && "text-right"}
           >
             <span :if={@columns != []}>{Enum.at(@columns, index)}</span>
-            <.skeleton :if={@columns == []} class="h-3 w-16" />
+            <.skeleton :if={@columns == []} variant="lineone" class="h-3 w-16" />
           </th>
         </tr>
       </thead>
@@ -1619,27 +1619,27 @@ defmodule LineaUI.Components.Table do
   defp skeleton_cell(%{shape: "avatar"} = assigns) do
     ~H"""
     <div class="flex items-center gap-2.5">
-      <.skeleton shape="circle" class="size-7 shrink-0" />
-      <.skeleton class={["h-2.5", skeleton_bar(@row, @column)]} />
+      <.skeleton variant="lineone" shape="circle" class="size-7 shrink-0" />
+      <.skeleton variant="lineone" class={["h-2.5", skeleton_bar(@row, @column)]} />
     </div>
     """
   end
 
   defp skeleton_cell(%{shape: "pill"} = assigns) do
     ~H"""
-    <.skeleton shape="pill" class="h-5 w-[70px]" />
+    <.skeleton variant="lineone" shape="pill" class="h-5 w-[70px]" />
     """
   end
 
   defp skeleton_cell(%{shape: "number"} = assigns) do
     ~H"""
-    <.skeleton class="ml-auto h-2.5 w-16" />
+    <.skeleton variant="lineone" class="ml-auto h-2.5 w-16" />
     """
   end
 
   defp skeleton_cell(assigns) do
     ~H"""
-    <.skeleton class={["h-3", skeleton_width(@row, @column)]} />
+    <.skeleton variant="lineone" class={["h-3", skeleton_width(@row, @column)]} />
     """
   end
 

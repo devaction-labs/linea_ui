@@ -152,7 +152,7 @@ defmodule LineaUI.Components.DisclosureTest do
     html =
       render(~H"""
       <.collapse id="a" variant="framed" panel_class="px-6"><:trigger>A</:trigger>x</.collapse>
-      <.collapse id="b"><:trigger>B</:trigger>x</.collapse>
+      <.collapse id="b" variant="classic"><:trigger>B</:trigger>x</.collapse>
       """)
 
     assert find(html, "#a") |> LazyHTML.attribute("data-variant") == ["framed"]

@@ -4,12 +4,16 @@ defmodule LineaUI.Components.FabTest do
   defp attr_of(html, selector, name), do: html |> find(selector) |> LazyHTML.attribute(name)
 
   defp fab_html(attrs),
-    do: Phoenix.LiveViewTest.render_component(&fab/1, Enum.into(attrs, %{id: "f", label: "Go"}))
+    do:
+      Phoenix.LiveViewTest.render_component(
+        &fab/1,
+        Enum.into(attrs, %{id: "f", label: "Go", variant: "pill"})
+      )
 
   test "a named slot with no text around it keeps the label visible" do
     html =
       render(~H"""
-      <.fab id="ask" label="Ask the assistant">
+      <.fab variant="pill" id="ask" label="Ask the assistant">
         <:icon><span id="own-icon">i</span></:icon>
       </.fab>
       """)
@@ -21,14 +25,14 @@ defmodule LineaUI.Components.FabTest do
   end
 
   test "text inside replaces the visible label and keeps the aria-label" do
-    html = render(~H|<.fab id="ask" label="Ask the assistant">Perguntar</.fab>|)
+    html = render(~H|<.fab variant="pill" id="ask" label="Ask the assistant">Perguntar</.fab>|)
 
     assert String.trim(find(html, "#ask .linea-fab-label") |> LazyHTML.text()) == "Perguntar"
     assert attr_of(html, "#ask", "aria-label") == ["Ask the assistant"]
   end
 
   test "a button labelled for assistive tech, bubble at rest, with the sparkle" do
-    html = render(~H|<.fab id="ask" label="Ask the assistant" phx-click="open" />|)
+    html = render(~H|<.fab variant="pill" id="ask" label="Ask the assistant" phx-click="open" />|)
 
     assert attr_of(html, "button#ask", "aria-label") == ["Ask the assistant"]
     assert attr_of(html, "#ask", "type") == ["button"]
@@ -63,7 +67,8 @@ defmodule LineaUI.Components.FabTest do
   end
 
   test "auto takes the hook, the delay and keeps data-state client-owned" do
-    html = render(~H|<.fab id="f" label="Go" retract="auto" retract_after={6000} />|)
+    html =
+      render(~H|<.fab variant="pill" id="f" label="Go" retract="auto" retract_after={6000} />|)
 
     assert attr_of(html, "#f", "phx-hook") == ["LineaUI.Fab"]
     assert attr_of(html, "#f", "data-retract-after") == ["6000"]
@@ -71,7 +76,7 @@ defmodule LineaUI.Components.FabTest do
   end
 
   test "the delay defaults to 4000 ms" do
-    html = render(~H|<.fab id="f" label="Go" retract="auto" />|)
+    html = render(~H|<.fab variant="pill" id="f" label="Go" retract="auto" />|)
     assert attr_of(html, "#f", "data-retract-after") == ["4000"]
   end
 
@@ -83,16 +88,16 @@ defmodule LineaUI.Components.FabTest do
   end
 
   test "always shows the label as the native tooltip" do
-    html = render(~H|<.fab id="f" label="Chat with us" retract="always" />|)
+    html = render(~H|<.fab variant="pill" id="f" label="Chat with us" retract="always" />|)
     assert attr_of(html, "#f", "title") == ["Chat with us"]
     assert attr_of(html, "#f", "aria-label") == ["Chat with us"]
   end
 
   test "expanded forces the pill open and drops the hook" do
-    html = render(~H|<.fab id="f" label="Go" expanded />|)
+    html = render(~H|<.fab variant="pill" id="f" label="Go" expanded />|)
     assert attr_of(html, "#f", "data-state") == ["expanded"]
 
-    html = render(~H|<.fab id="f" label="Go" retract="auto" expanded />|)
+    html = render(~H|<.fab variant="pill" id="f" label="Go" retract="auto" expanded />|)
     assert attr_of(html, "#f", "data-state") == ["expanded"]
     assert attr_of(html, "#f", "phx-hook") == []
   end
@@ -109,40 +114,55 @@ defmodule LineaUI.Components.FabTest do
   end
 
   test "class overrides the offset" do
-    html = render(~H|<.fab id="f" label="Go" class="bottom-24" />|)
+    html = render(~H|<.fab variant="pill" id="f" label="Go" class="bottom-24" />|)
     assert "bottom-24" in classes(html, "#f")
     assert "bottom-6" not in classes(html, "#f")
   end
 
   test "colors and sizes" do
-    assert "bg-primary" in classes(render(~H|<.fab id="f" label="Go" color="primary" />|), "#f")
-    assert "bg-white" in classes(render(~H|<.fab id="f" label="Go" color="light" />|), "#f")
+    assert "bg-primary" in classes(
+             render(~H|<.fab variant="pill" id="f" label="Go" color="primary" />|),
+             "#f"
+           )
 
-    html = render(~H|<.fab id="f" label="Go" />|)
+    assert "bg-white" in classes(
+             render(~H|<.fab variant="pill" id="f" label="Go" color="light" />|),
+             "#f"
+           )
+
+    html = render(~H|<.fab variant="pill" id="f" label="Go" />|)
     assert "from-primary" in classes(html, "#f > span")
     assert "size-10" in classes(html, "#f > span")
 
-    html = render(~H|<.fab id="f" label="Go" size="lg" />|)
+    html = render(~H|<.fab variant="pill" id="f" label="Go" size="lg" />|)
     assert "size-12" in classes(html, "#f > span")
   end
 
   test "a link with navigate, href or patch" do
-    html = render(~H|<.fab id="f" label="Help" navigate="/help" />|)
+    html = render(~H|<.fab variant="pill" id="f" label="Help" navigate="/help" />|)
     assert attr_of(html, "a#f", "href") == ["/help"]
     assert attr_of(html, "a#f", "aria-label") == ["Help"]
     assert find(html, "button") |> Enum.count() == 0
 
-    assert attr_of(render(~H|<.fab id="f" label="Help" href="/x" />|), "a#f", "href") == ["/x"]
+    assert attr_of(
+             render(~H|<.fab variant="pill" id="f" label="Help" href="/x" />|),
+             "a#f",
+             "href"
+           ) == ["/x"]
 
-    assert attr_of(render(~H|<.fab id="f" label="Help" patch="/y" />|), "a#f", "data-phx-link") ==
+    assert attr_of(
+             render(~H|<.fab variant="pill" id="f" label="Help" patch="/y" />|),
+             "a#f",
+             "data-phx-link"
+           ) ==
              ["patch"]
   end
 
   test "disabled" do
-    html = render(~H|<.fab id="f" label="Go" disabled />|)
+    html = render(~H|<.fab variant="pill" id="f" label="Go" disabled />|)
     assert attr_of(html, "button#f", "disabled") == [""]
 
-    html = render(~H|<.fab id="f" label="Go" disabled navigate="/x" />|)
+    html = render(~H|<.fab variant="pill" id="f" label="Go" disabled navigate="/x" />|)
     assert attr_of(html, "a#f", "aria-disabled") == ["true"]
     assert attr_of(html, "a#f", "tabindex") == ["-1"]
   end
@@ -150,7 +170,7 @@ defmodule LineaUI.Components.FabTest do
   test "badge, icon slot and label override" do
     html =
       render(~H"""
-      <.fab id="f" label="Messages" badge={3}>
+      <.fab variant="pill" id="f" label="Messages" badge={3}>
         <:icon><i class="glyph"></i></:icon>
         Chat
       </.fab>
@@ -164,7 +184,7 @@ defmodule LineaUI.Components.FabTest do
   end
 
   test "no badge by default" do
-    html = render(~H|<.fab id="f" label="Go" />|)
+    html = render(~H|<.fab variant="pill" id="f" label="Go" />|)
     assert find(html, "#f .bg-error") |> Enum.count() == 0
   end
 
@@ -178,6 +198,7 @@ defmodule LineaUI.Components.FabTest do
 
       Phoenix.LiveViewTest.rendered_to_string(~H"""
       <.fab_dial
+        variant="pill"
         id="quick"
         label="Quick actions"
         position={@position}
@@ -246,10 +267,13 @@ defmodule LineaUI.Components.FabTest do
     end
 
     test "offset also moves the pill fab" do
-      html = render(~H|<.fab id="a" label="Ask" position="top-left" offset={40} />|)
+      html =
+        render(~H|<.fab variant="pill" id="a" label="Ask" position="top-left" offset={40} />|)
+
       assert attr_of(html, "#a", "style") == ["top: 40px; left: 40px"]
 
-      refute attr_of(render(~H|<.fab id="b" label="Ask" />|), "#b", "style") |> Enum.join() =~
+      refute attr_of(render(~H|<.fab variant="pill" id="b" label="Ask" />|), "#b", "style")
+             |> Enum.join() =~
                "px"
     end
 

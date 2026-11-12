@@ -1,9 +1,10 @@
 defmodule LineaUI.Components.Pagination do
   @moduledoc ~S"""
-  LineOne's pagination: a joined bar or `divided` buttons, `rounded` or `pill`, in three sizes.
+  The pagination: the design canvas pager by default (`shape="canvas"`), or LineOne's joined bar or
+  `divided` buttons, `rounded` or `pill` (`shape="rounded"` is the old default), in three sizes.
 
       <.pagination page={@page} total_pages={10} patch={&"/orders?page=#{&1}"} />
-      <.pagination page={@page} total_pages={10} navigate={&"/orders?page=#{&1}"} divided />
+      <.pagination page={@page} total_pages={10} navigate={&"/orders?page=#{&1}"} divided shape="rounded" />
       <.pagination page={@page} total_pages={10} on_change="paginate" shape="pill" />
 
   Each page is a link when `patch`, `navigate` or `href` is given: a function from the page
@@ -150,10 +151,10 @@ defmodule LineaUI.Components.Pagination do
   attr(:divided, :boolean, default: false, doc: "Separate buttons instead of one joined bar.")
 
   attr(:shape, :string,
-    default: "rounded",
-    values: ~w(rounded pill canvas),
+    default: "canvas",
+    values: ~w(canvas rounded pill),
     doc:
-      "`canvas` is the design canvas pager: square-ish ink current page, mono numbers, the arrows as 28px bordered circles after the pages (not dimmed at either end)."
+      "`canvas` (the default) is the design canvas pager: square-ish ink current page, mono numbers, the arrows as 28px bordered circles after the pages (not dimmed at either end). The old LineOne look is `rounded` (or `pill`)."
   )
 
   attr(:size, :string, default: "md", values: ~w(sm md lg))

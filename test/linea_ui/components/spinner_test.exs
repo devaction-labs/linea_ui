@@ -2,7 +2,7 @@ defmodule LineaUI.Components.SpinnerTest do
   use LineaUI.ComponentCase, async: true
 
   test "the default spinner is LineOne's border ring" do
-    html = render(~H"<.spinner />")
+    html = render(~H"<.spinner variant=\"border\" />")
     assert "spinner" in classes(html, "[role=status]")
     refute "sg-spin" in classes(html, "[role=status]")
   end

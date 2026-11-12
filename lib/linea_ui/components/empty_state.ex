@@ -20,7 +20,7 @@ defmodule LineaUI.Components.EmptyState do
   `icon` is a Hugeicons name (`huge-*`), which needs the Tailwind plugin of the Icons section of the README;
   leave it out, or pass the `illustration` slot, to draw something else.
 
-  The `card` variant is a centered block for a whole area; the `inline` one is a compact notice for inside
+  The `canvas` variant is the default (below); `card` is the old LineOne centered block for a whole area; the `inline` one is a compact notice for inside
   tables, lists and search results, in a neutral, success or error color.
 
   The `canvas` variant is the design canvas's `sg-empty`: the icon on a 96×72 sunken tile, the title, the
@@ -68,8 +68,8 @@ defmodule LineaUI.Components.EmptyState do
   The content is the reason it is empty; `action` takes the one next step (a button, or a button and a quiet link).
   """
   attr :variant, :string,
-    default: "card",
-    values: ~w(card inline table canvas plain),
+    default: "canvas",
+    values: ~w(canvas card inline table plain),
     doc:
       "`card` fills an area, `inline` is a compact notice for lists and search results, `table` is the centered notice (a 48px disc, a title, the reason and the next step) for the body of an empty table, `canvas` the canvas's `sg-empty` (icon on a 96×72 tile), `plain` the canvas's faint one-line notice."
 

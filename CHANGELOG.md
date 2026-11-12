@@ -2,6 +2,29 @@
 
 ## Unreleased
 
+- **Breaking visual change: the canvas (Signetum) look is now the default.** These attrs defaulted to the old LineOne look and the canvas was opt-in; the canvas is now the default value and the old look is reachable with an explicit value. Passing `variant="canvas"` (`shape="canvas"` on `pagination`) still works. Nothing in the canvas look changed. Where `default` was the old value it is now `classic`.
+
+  | component | attr | new default | old look |
+  |---|---|---|---|
+  | `alert` | `variant` | `canvas` | `solid` (also `outline`, `soft`, `bordered`) |
+  | `accordion` | `variant` | `canvas` | `basic` |
+  | `breadcrumb` | `variant` | `canvas` | `plain` |
+  | `collapse` | `variant` | `canvas` | `classic` (or `nil`) |
+  | `fab`, `fab_dial` | `variant` | `canvas` | `pill` |
+  | `pagination` | `shape` | `canvas` | `rounded` (or `pill`) |
+  | `skeleton` | `variant` | `canvas` | `lineone` |
+  | `spinner` | `variant` | `canvas` | `border` (also `soft`, `grow`, `svg`) |
+  | `stepper` | `variant` | `canvas` | `classic` (was `default`) |
+  | `treeview` | `variant` | `canvas` | `lineone` |
+  | `upload` | `variant` | `canvas` | `pond` |
+  | `range` | `variant` | `canvas` | `classic` (was `default`) |
+  | `signature_pad` | `variant` | `canvas` | `classic` (was `default`) |
+  | `notification_center` | `variant` | `canvas` | `classic` (was `default`) |
+  | `command_palette` | `variant` | `canvas` | `classic` (was `default`) |
+  | `carousel` | `variant` | `canvas` | `classic` (was `default`) |
+  | `empty_state` | `variant` | `canvas` | `card` |
+
+  Inside the kit, the `toast` loading spinner and the `table` skeleton rows keep their old look (`variant="border"`, `variant="lineone"`). The preview's LineOne pages pass the old value explicitly.
 - `input`: a `:suffix` slot that holds text takes `text` (`<:suffix text>4 pessoas</:suffix>`). The box sizes to its content with the usual right inset and the input's right padding follows its width (new hook `LineaUI.InputSuffix`; 2.25rem until it runs). Icon suffixes render as before.
 
 ## 0.18.0 (2026-11-11)

@@ -12,11 +12,11 @@ defmodule PreviewWeb.Pages.Spinner do
       title="Basic Spinner"
       text="A Spinner component is used to show the user a timely process is currently taking place. Check out code for detail of usage."
     >
-      <.spinner :for={color <- @colors} color={color} />
+      <.spinner variant="border" :for={color <- @colors} color={color} />
     </.example>
 
     <.example title="Elastic Timing Function" text={@timing}>
-      <.spinner :for={color <- @colors} color={color} elastic />
+      <.spinner variant="border" :for={color <- @colors} color={color} elastic />
     </.example>
 
     <.example

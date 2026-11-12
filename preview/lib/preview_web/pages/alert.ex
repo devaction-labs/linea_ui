@@ -13,7 +13,7 @@ defmodule PreviewWeb.Pages.Alert do
         text="The alert component is used to convey important information to the user through the use of contextual types, icons, and colors"
         class="mt-5 max-w-2xl space-y-4"
       >
-        <.alert :for={color <- @colors} color={color}>This is simple alert</.alert>
+        <.alert variant="solid" :for={color <- @colors} color={color}>This is simple alert</.alert>
       </.example>
 
       <.example
@@ -104,7 +104,7 @@ defmodule PreviewWeb.Pages.Alert do
             <:icon boxed><.info_icon /></:icon>
             This is simple alert
           </.alert>
-          <.alert id="alert-dismissable-2" color="dark">
+          <.alert variant="solid" id="alert-dismissable-2" color="dark">
             <p>Lorem ipsum dolor sit amet consectetur.</p>
             <:action>
               <button

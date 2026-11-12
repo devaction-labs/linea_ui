@@ -6,7 +6,7 @@ defmodule LineaUI.Components.Range do
       <.range field={@form[:level]} label="Level" min={0} max={10} size="lg" />
       <.range name="opacity" phx-debounce="100" />
 
-  `variant="canvas"` draws the design canvas's slider (a 4px track filled in the accent, a 16px white thumb, the
+  `variant="canvas"` (the default; `variant="classic"` is the old LineOne slider) draws the design canvas's slider (a 4px track filled in the accent, a 16px white thumb, the
   value in bold mono, the marks as plain faint numbers):
 
       <.range name="discount" label="Desconto máximo" value={12} max={30} show_value value_format="%{value}%"
@@ -103,10 +103,10 @@ defmodule LineaUI.Components.Range do
   attr(:size, :string, default: "md", values: ~w(sm md lg))
 
   attr(:variant, :string,
-    default: "default",
-    values: ~w(default canvas),
+    default: "canvas",
+    values: ~w(canvas classic),
     doc:
-      "`canvas` is the design canvas's `sg-slider`: a 4px sunken track filled in the accent, a 16px white thumb, the label at 13px medium, the value in bold mono and the marks as plain faint mono numbers. `color` and `size` do not apply."
+      "`canvas` (the default) is the design canvas's `sg-slider`: a 4px sunken track filled in the accent, a 16px white thumb, the label at 13px medium, the value in bold mono and the marks as plain faint mono numbers. `color` and `size` do not apply."
   )
 
   attr(:start_field, Phoenix.HTML.FormField,

@@ -15,7 +15,7 @@ defmodule LineaUI.Components.Collapse do
         …
       </.collapse>
 
-  `variant` gives it one of three looks without writing the trigger's classes: `framed` (a card with a
+  `variant` is the design canvas section by default (see below); `classic` (or `nil`) is the old bare look, and `variant` gives it one of three more looks without writing the trigger's classes: `framed` (a card with a
   12px radius and an inset 1px border, a hover fill, 16/14px padding), `flat` (only a rule under it) and
   `section` (a small uppercase label):
 
@@ -69,10 +69,10 @@ defmodule LineaUI.Components.Collapse do
       "Draws a chevron at the end of the trigger (which becomes a flex row with `justify-between`). `down` turns upside down while open, `right` turns down."
 
   attr :variant, :string,
-    default: nil,
-    values: [nil, "framed", "flat", "section", "canvas"],
+    default: "canvas",
+    values: [nil, "classic", "framed", "flat", "section", "canvas"],
     doc:
-      "A ready-made look: `framed` (card with an inset border), `flat` (a rule under it), `section` (an uppercase label), `canvas` (the design canvas section). `nil` leaves the trigger to its `class`."
+      "A ready-made look; `canvas` (the default) is the design canvas section. `classic` (or `nil`) is the old look, no look at all: the trigger is left to its `class`. Others: `framed` (card with an inset border), `flat` (a rule under it), `section` (an uppercase label), `canvas` (the design canvas section). `nil` leaves the trigger to its `class`."
 
   attr :panel_class, :any,
     default: nil,
@@ -102,7 +102,7 @@ defmodule LineaUI.Components.Collapse do
       phx-hook="LineaUI.Collapse"
       phx-mounted={JS.ignore_attributes(["open", "name"])}
       data-open={bool(@open)}
-      data-variant={@variant}
+      data-variant={@variant not in [nil, "classic"] && @variant}
       data-on-open={@on_open_js}
       data-on-close={@on_close_js}
       {@rest}

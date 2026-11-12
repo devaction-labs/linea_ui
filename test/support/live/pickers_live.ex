@@ -26,7 +26,7 @@ defmodule LineaUI.Test.PickersLive do
       <.date_picker field={@form[:day]} />
       <.time_picker field={@form[:at]} on_change="time_changed" />
       <.text_editor field={@form[:body]} on_change="body_changed" />
-      <.upload upload={@uploads.photos} on_cancel="cancel" />
+      <.upload variant="pond" upload={@uploads.photos} on_cancel="cancel" />
     </.form>
     <.select id="authors" name="authors" options={@authors} multiple on_search="search" />
     <p id="last">{inspect(@last)}</p>

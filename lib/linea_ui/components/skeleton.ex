@@ -17,7 +17,7 @@ defmodule LineaUI.Components.Skeleton do
         <.skeleton class="h-3 w-8/12" />
       </.skeleton_group>
 
-  `variant="canvas"` draws the design canvas's `sg-skel` (the warm gray gradient of the Signetum
+  `variant="canvas"` (the default; `variant="lineone"` is the old slate block) draws the design canvas's `sg-skel` (the warm gray gradient of the Signetum
   screens, 8px corners); `shape` still rounds it (`circle` for an avatar):
 
       <.skeleton variant="canvas" shape="circle" class="size-8" />
@@ -52,9 +52,10 @@ defmodule LineaUI.Components.Skeleton do
   attr(:animation, :string, default: "wave", values: ~w(wave pulse none))
 
   attr(:variant, :string,
-    default: "lineone",
-    values: ~w(lineone canvas),
-    doc: "`lineone` is LineOne's slate block; `canvas` the canvas's `sg-skel`."
+    default: "canvas",
+    values: ~w(canvas lineone),
+    doc:
+      "`canvas` (the default) is the canvas's `sg-skel`; `lineone` is the old LineOne slate block."
   )
 
   attr(:shape, :string,

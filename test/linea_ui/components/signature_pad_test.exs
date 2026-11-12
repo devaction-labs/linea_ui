@@ -8,7 +8,11 @@ defmodule LineaUI.Components.SignaturePadTest do
 
   test "a hidden input carries the field name and the saved SVG" do
     assigns = %{svg: @svg}
-    html = rendered_to_string(~H|<.signature_pad id="s" name="sign[svg]" value={@svg} />|)
+
+    html =
+      rendered_to_string(
+        ~H|<.signature_pad variant="classic" id="s" name="sign[svg]" value={@svg} />|
+      )
 
     assert attr_of(html, "input[type=hidden]", "name") == ["sign[svg]"]
     assert attr_of(html, "input[type=hidden]", "value") == [@svg]
@@ -17,13 +21,16 @@ defmodule LineaUI.Components.SignaturePadTest do
   end
 
   test "an empty pad submits an empty value" do
-    html = render(~H|<.signature_pad name="sign" />|)
+    html = render(~H|<.signature_pad variant="classic" name="sign" />|)
 
     assert attr_of(html, "input[type=hidden]", "value") == [""]
   end
 
   test "the hook, its mode and its ink go on the root" do
-    html = render(~H|<.signature_pad id="s" name="sign" mode="type" text="Ana" ink="#112233" />|)
+    html =
+      render(
+        ~H|<.signature_pad variant="classic" id="s" name="sign" mode="type" text="Ana" ink="#112233" />|
+      )
 
     assert attr_of(html, "#s-signature", "phx-hook") == ["LineaUI.SignaturePad"]
     assert attr_of(html, "#s-signature", "data-mode") == ["type"]
@@ -34,7 +41,7 @@ defmodule LineaUI.Components.SignaturePadTest do
   end
 
   test "the drawing surface is client-owned and described for assistive technology" do
-    html = render(~H|<.signature_pad id="s" name="sign" height={220} />|)
+    html = render(~H|<.signature_pad variant="classic" id="s" name="sign" height={220} />|)
 
     assert attr_of(html, "#s-pad", "phx-update") == ["ignore"]
     assert attr_of(html, "#s-pad", "role") == ["img"]
@@ -44,27 +51,27 @@ defmodule LineaUI.Components.SignaturePadTest do
   end
 
   test "the mode switch has a button per mode and shows the active one pressed" do
-    html = render(~H|<.signature_pad name="sign" mode="type" />|)
+    html = render(~H|<.signature_pad variant="classic" name="sign" mode="type" />|)
 
     assert attr_of(html, "[data-mode-button=draw]", "aria-pressed") == ["false"]
     assert attr_of(html, "[data-mode-button=type]", "aria-pressed") == ["true"]
   end
 
   test "a single mode hides the switch and sets the mode" do
-    html = render(~H|<.signature_pad name="sign" modes={["type"]} />|)
+    html = render(~H|<.signature_pad variant="classic" name="sign" modes={["type"]} />|)
 
     assert count(html, "[data-mode-button]") == 0
     assert attr_of(html, "div[data-modes]", "data-mode") == ["type"]
   end
 
   test "unknown modes fall back to both" do
-    html = render(~H|<.signature_pad name="sign" modes={["scribble"]} />|)
+    html = render(~H|<.signature_pad variant="classic" name="sign" modes={["scribble"]} />|)
 
     assert attr_of(html, "div[data-modes]", "data-modes") == ["draw,type"]
   end
 
   test "there is a clear button and both statuses, the empty one showing" do
-    html = render(~H|<.signature_pad name="sign" />|)
+    html = render(~H|<.signature_pad variant="classic" name="sign" />|)
 
     assert count(html, "[data-clear]") == 1
     assert attr_of(html, "[data-status-ready]", "hidden") == [""]
@@ -73,9 +80,12 @@ defmodule LineaUI.Components.SignaturePadTest do
 
   test "pt_BR names the texts in Portuguese and labels override single ones" do
     html =
-      render(
-        ~H|<.signature_pad name="sign" locale="pt_BR" labels={%{signature_clear: "Apagar"}} />|
-      )
+      render(~H|<.signature_pad
+  variant="classic"
+  name="sign"
+  locale="pt_BR"
+  labels={%{signature_clear: "Apagar"}}
+/>|)
 
     assert LazyHTML.text(find(html, "[data-clear]")) |> String.trim() == "Apagar"
     assert LazyHTML.text(find(html, "[data-status-empty]")) |> String.trim() == "Sem assinatura"
@@ -87,7 +97,7 @@ defmodule LineaUI.Components.SignaturePadTest do
   end
 
   test "disabled stops the pad and its buttons" do
-    html = render(~H|<.signature_pad name="sign" disabled />|)
+    html = render(~H|<.signature_pad variant="classic" name="sign" disabled />|)
 
     assert attr_of(html, "div[data-modes]", "data-disabled") == ["true"]
     assert attr_of(html, "[data-clear]", "disabled") == [""]
@@ -97,9 +107,14 @@ defmodule LineaUI.Components.SignaturePadTest do
 
   test "on_change, target and debounce reach the hook and the hidden input" do
     html =
-      render(
-        ~H|<.signature_pad id="s" name="sign" on_change="signed" target="#form" phx-debounce="300" />|
-      )
+      render(~H|<.signature_pad
+  variant="classic"
+  id="s"
+  name="sign"
+  on_change="signed"
+  target="#form"
+  phx-debounce="300"
+/>|)
 
     assert attr_of(html, "#s-signature", "data-on-change") == ["signed"]
     assert attr_of(html, "#s-signature", "phx-target") == ["#form"]
@@ -114,7 +129,11 @@ defmodule LineaUI.Components.SignaturePadTest do
       )
 
     assigns = %{form: form}
-    html = rendered_to_string(~H|<.signature_pad field={@form[:signature]} label="Signature" />|)
+
+    html =
+      rendered_to_string(
+        ~H|<.signature_pad variant="classic" field={@form[:signature]} label="Signature" />|
+      )
 
     assert attr_of(html, "input[type=hidden]", "name") == ["receipt[signature]"]
     assert attr_of(html, "input[type=hidden]", "id") == ["receipt_signature"]

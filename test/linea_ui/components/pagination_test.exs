@@ -16,7 +16,7 @@ defmodule LineaUI.Components.PaginationTest do
   test "patch links with the current page marked" do
     html =
       render(~H"""
-      <.pagination page={2} total_pages={5} patch={&"/p?page=#{&1}"} />
+      <.pagination shape="rounded" page={2} total_pages={5} patch={&"/p?page=#{&1}"} />
       """)
 
     assert count(html, "nav[aria-label=Pagination] ol.pagination > li") == 7
@@ -30,26 +30,32 @@ defmodule LineaUI.Components.PaginationTest do
   end
 
   test "navigate and href links" do
-    html = render(~H|<.pagination page={1} total_pages={3} navigate={&"/n/#{&1}"} />|)
+    html =
+      render(~H|<.pagination shape="rounded" page={1} total_pages={3} navigate={&"/n/#{&1}"} />|)
+
     assert count(html, "a[data-phx-link=redirect][href='/n/2']") == 2
 
-    html = render(~H|<.pagination page={1} total_pages={3} href={&"/h/#{&1}"} />|)
+    html = render(~H|<.pagination shape="rounded" page={1} total_pages={3} href={&"/h/#{&1}"} />|)
     assert count(html, "a[href='/h/3']") == 1
   end
 
   test "the first page disables the previous arrow" do
-    html = render(~H|<.pagination page={1} total_pages={3} on_change="go" />|)
+    html = render(~H|<.pagination shape="rounded" page={1} total_pages={3} on_change="go" />|)
     assert count(html, "span[aria-label='Previous page'][aria-disabled=true]") == 1
     assert "opacity-60" in classes(html, "span[aria-label='Previous page']")
   end
 
   test "on_change buttons with a target, or JS" do
-    html = render(~H|<.pagination page={1} total_pages={3} on_change="go" target="#x" />|)
+    html =
+      render(
+        ~H|<.pagination shape="rounded" page={1} total_pages={3} on_change="go" target="#x" />|
+      )
+
     assert count(html, "button[phx-click=go][phx-value-page='2'][phx-target='#x']") == 2
 
     html =
       render(
-        ~H|<.pagination page={1} total_pages={3} on_change={Phoenix.LiveView.JS.push("go")} />|
+        ~H|<.pagination shape="rounded" page={1} total_pages={3} on_change={Phoenix.LiveView.JS.push("go")} />|
       )
 
     assert [click | _] =
@@ -59,14 +65,14 @@ defmodule LineaUI.Components.PaginationTest do
   end
 
   test "pages are named for screen readers and the ellipsis is hidden" do
-    html = render(~H|<.pagination page={5} total_pages={10} on_change="go" />|)
+    html = render(~H|<.pagination shape="rounded" page={5} total_pages={10} on_change="go" />|)
 
     assert count(html, "button[aria-label='Page 5'][aria-current=page]") == 1
     assert count(html, "span[aria-hidden=true]") == 2
 
     html =
       render(
-        ~H|<.pagination page={2} total_pages={3} on_change="go" page_label="Página %{page}" />|
+        ~H|<.pagination shape="rounded" page={2} total_pages={3} on_change="go" page_label="Página %{page}" />|
       )
 
     assert count(html, "button[aria-label='Página 3']") == 1
@@ -87,7 +93,9 @@ defmodule LineaUI.Components.PaginationTest do
     assert "size-4.5" in classes(html, "svg")
 
     html =
-      render(~H|<.pagination page={1} total_pages={2} on_change="go" size="sm" arrows={false} />|)
+      render(
+        ~H|<.pagination shape="rounded" page={1} total_pages={2} on_change="go" size="sm" arrows={false} />|
+      )
 
     assert "h-7" in classes(html, "button")
     assert count(html, "li") == 2
@@ -97,6 +105,7 @@ defmodule LineaUI.Components.PaginationTest do
     html =
       render(~H"""
       <.pagination
+        shape="rounded"
         id="p"
         page={2}
         page_size={15}
@@ -114,15 +123,26 @@ defmodule LineaUI.Components.PaginationTest do
     assert [] = html |> find("form") |> Enum.to_list()
     assert ["p"] = html |> find("nav") |> LazyHTML.attribute("id")
 
-    html = render(~H|<.pagination page={9} page_size={15} total_entries={128} on_change="go" />|)
+    html =
+      render(
+        ~H|<.pagination shape="rounded" page={9} page_size={15} total_entries={128} on_change="go" />|
+      )
 
     assert "Showing 121–128 of 128" =
              html |> find("[role=status]") |> LazyHTML.text() |> String.trim()
 
-    html = render(~H|<.pagination page={1} page_size={15} total_entries={0} on_change="go" />|)
+    html =
+      render(
+        ~H|<.pagination shape="rounded" page={1} page_size={15} total_entries={0} on_change="go" />|
+      )
+
     assert "Showing 0–0 of 0" = html |> find("[role=status]") |> LazyHTML.text() |> String.trim()
 
-    html = render(~H|<.pagination page={1} total_pages={1} total_entries={4} on_change="go" />|)
+    html =
+      render(
+        ~H|<.pagination shape="rounded" page={1} total_pages={1} total_entries={4} on_change="go" />|
+      )
+
     assert "Showing 1–4 of 4" = html |> find("[role=status]") |> LazyHTML.text() |> String.trim()
   end
 
@@ -130,6 +150,7 @@ defmodule LineaUI.Components.PaginationTest do
     html =
       render(~H"""
       <.pagination
+        shape="rounded"
         page={1}
         page_size={15}
         total_entries={128}
@@ -151,9 +172,9 @@ defmodule LineaUI.Components.PaginationTest do
   test "the labels are 12.5, 13.5 and 14.5px, the large one with 14px of padding" do
     html =
       render(~H"""
-      <.pagination page={1} total_pages={3} on_change="go" size="sm" />
-      <.pagination page={1} total_pages={3} on_change="go" />
-      <.pagination page={1} total_pages={3} on_change="go" size="lg" />
+      <.pagination shape="rounded" page={1} total_pages={3} on_change="go" size="sm" />
+      <.pagination shape="rounded" page={1} total_pages={3} on_change="go" />
+      <.pagination shape="rounded" page={1} total_pages={3} on_change="go" size="lg" />
       """)
 
     assert "text-[12.5px]" in classes(html, "button[phx-value-page='2'].h-7")
@@ -166,6 +187,7 @@ defmodule LineaUI.Components.PaginationTest do
     html =
       render(~H"""
       <.pagination
+        shape="rounded"
         id="p"
         page={1}
         page_size={30}
@@ -192,13 +214,17 @@ defmodule LineaUI.Components.PaginationTest do
     assert ["30"] = html |> find("option[selected]") |> LazyHTML.attribute("value")
     assert "px-4" in classes(html, "div")
 
-    html = render(~H|<.pagination page={1} total_pages={3} page_sizes={[10]} on_change="go" />|)
+    html =
+      render(
+        ~H|<.pagination shape="rounded" page={1} total_pages={3} page_sizes={[10]} on_change="go" />|
+      )
+
     assert [] = html |> find("[role=status]") |> Enum.to_list()
     assert [] = html |> find("form[id]") |> Enum.to_list()
   end
 
   test "without total_pages or entries there is a single page" do
-    html = render(~H|<.pagination page={1} on_change="go" />|)
+    html = render(~H|<.pagination shape="rounded" page={1} on_change="go" />|)
     assert [_] = html |> find("[aria-current=page]") |> Enum.to_list()
   end
 end

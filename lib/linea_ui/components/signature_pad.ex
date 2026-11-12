@@ -15,7 +15,7 @@ defmodule LineaUI.Components.SignaturePad do
 
       <img src={"data:image/svg+xml;base64," <> Base.encode64(@signature)} alt="Signature" />
 
-  `variant="canvas"` draws the design canvas's pad (a card with the dashed line and the hint under it, at the
+  `variant="canvas"` (the default; `variant="classic"` is the old LineOne pad) draws the design canvas's pad (a card with the dashed line and the hint under it, at the
   left), and `footer={false}` drops the status and Clear line under the pad:
 
       <.signature_pad name="sign" modes={["draw"]} variant="canvas" footer={false} height={150} />
@@ -77,10 +77,10 @@ defmodule LineaUI.Components.SignaturePad do
   attr :disabled, :boolean, default: false
 
   attr :variant, :string,
-    default: "default",
-    values: ~w(default canvas),
+    default: "canvas",
+    values: ~w(canvas classic),
     doc:
-      "`canvas` is the design canvas's pad: a 16px card with the dashed line near its foot and the hint under it, at the left (always shown, like a caption), without the × mark."
+      "`canvas` (the default) is the design canvas's pad: a 16px card with the dashed line near its foot and the hint under it, at the left (always shown, like a caption), without the × mark."
 
   attr :footer, :boolean,
     default: true,
@@ -171,7 +171,7 @@ defmodule LineaUI.Components.SignaturePad do
           style={"height: #{@height}px"}
           class={
             merge([
-              @variant == "default" &&
+              @variant == "classic" &&
                 "relative w-full touch-none overflow-hidden rounded-lg border border-slate-300 bg-white select-none data-[mode=draw]:cursor-crosshair dark:border-navy-450 dark:bg-navy-700",
               @variant == "canvas" &&
                 "lu-sign relative w-full touch-none overflow-hidden select-none data-[mode=draw]:cursor-crosshair",
@@ -181,11 +181,11 @@ defmodule LineaUI.Components.SignaturePad do
           }
         >
           <span
-            :if={@variant == "default"}
+            :if={@variant == "classic"}
             class="pointer-events-none absolute inset-x-6 bottom-10.5 border-t border-dashed border-slate-300 dark:border-navy-450"
           ></span>
           <span
-            :if={@variant == "default"}
+            :if={@variant == "classic"}
             class="pointer-events-none absolute bottom-12 left-6 font-inter text-sm font-medium text-slate-400 dark:text-navy-300"
           >
             ×
@@ -213,7 +213,7 @@ defmodule LineaUI.Components.SignaturePad do
             class="pointer-events-none absolute bottom-11.5 left-11 text-4xl text-slate-800 italic dark:text-navy-50 [font-family:'Brush_Script_MT','Segoe_Script','Snell_Roundhand',cursive]"
           ></span>
           <span
-            :if={@variant == "default"}
+            :if={@variant == "classic"}
             data-hint
             class="pointer-events-none absolute inset-0 flex items-center justify-center text-xs-plus text-slate-400"
           >

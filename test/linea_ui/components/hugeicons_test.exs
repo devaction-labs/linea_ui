@@ -59,7 +59,7 @@ defmodule LineaUI.Components.HugeiconsTest do
   test "breadcrumb separates with the Hugeicons chevron" do
     html =
       render(~H"""
-      <.breadcrumb>
+      <.breadcrumb variant="plain">
         <:item href="/">Home</:item>
         <:item>Now</:item>
       </.breadcrumb>
@@ -72,7 +72,7 @@ defmodule LineaUI.Components.HugeiconsTest do
   test "carousel arrows are the Hugeicons arrow with no size of their own" do
     html =
       render(~H"""
-      <.carousel id="c" navigation>
+      <.carousel id="c" variant="classic" navigation>
         <.carousel_slide>A</.carousel_slide>
       </.carousel>
       """)
@@ -200,7 +200,7 @@ defmodule LineaUI.Components.HugeiconsTest do
     }
 
     assigns = %{__changed__: nil, upload: %{upload_config() | entries: [entry]}}
-    html = rendered_to_string(~H|<.upload upload={@upload} />|)
+    html = rendered_to_string(~H|<.upload variant="pond" upload={@upload} />|)
     assert huge(html) == ["huge-cancel-01"]
     assert svgs(html) == 0
   end
