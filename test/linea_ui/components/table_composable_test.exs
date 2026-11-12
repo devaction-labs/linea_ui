@@ -249,7 +249,7 @@ defmodule LineaUI.Components.TableComposableTest do
       />
       """)
 
-    assert 2 = html |> find("tbody td:nth-child(2) .rounded-full") |> Enum.count()
+    assert 2 = html |> find("tbody td:nth-child(2) .circle") |> Enum.count()
     assert 2 = html |> find("tbody td:nth-child(3) .w-\\[70px\\]") |> Enum.count()
     assert 2 = html |> find("tbody td:nth-child(4) .ml-auto") |> Enum.count()
     assert "text-right" in classes(html, "th:nth-child(4)")

@@ -24,7 +24,8 @@
   | `carousel` | `variant` | `canvas` | `classic` (was `default`) |
   | `empty_state` | `variant` | `canvas` | `card` |
 
-  Inside the kit, the `toast` loading spinner and the `table` skeleton rows keep their old look (`variant="border"`, `variant="lineone"`). The preview's LineOne pages pass the old value explicitly.
+  The preview's LineOne pages pass the old value explicitly.
+- The `toast` loading spinner and the `table` skeleton rows (`table_skeleton`, the data table's loading rows) use the canvas look too, now that it is the default of `spinner` and `skeleton`.
 - `input`: a `:suffix` slot that holds text takes `text` (`<:suffix text>4 pessoas</:suffix>`). The box sizes to its content with the usual right inset and the input's right padding follows its width (new hook `LineaUI.InputSuffix`; 2.25rem until it runs). Icon suffixes render as before.
 
 ## 0.18.0 (2026-11-11)
