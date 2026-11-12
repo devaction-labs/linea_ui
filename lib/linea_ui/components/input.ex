@@ -64,6 +64,14 @@ defmodule LineaUI.Components.Input do
         </:suffix>
       </.input>
 
+  A suffix that holds text (a unit, a count) takes `text`: the box sizes to its content and the
+  input's right padding follows it (the `LineaUI.InputSuffix` hook publishes the width, 2.25rem
+  until it runs, as for an icon). Icon suffixes are unchanged.
+
+      <.input name="guests" type="number">
+        <:suffix text>4 pessoas</:suffix>
+      </.input>
+
   The mask runs in the `LineaUI.InputMask` hook, so a masked input needs a stable `id` (it gets
   one from `field`; pass one otherwise when the input re-renders).
   """
@@ -110,6 +118,10 @@ defmodule LineaUI.Components.Input do
   @icon "pointer-events-none absolute flex h-full w-10 items-center justify-center text-(--faint) peer-focus:text-(--accent)"
 
   @interactive_icon "absolute flex h-full w-10 items-center justify-center text-(--faint) hover:text-(--ink)"
+
+  @text_suffix "pointer-events-none absolute flex h-full items-center whitespace-nowrap pr-3 pl-1 text-[13px] text-(--faint) peer-focus:text-(--accent)"
+
+  @interactive_text_suffix "absolute flex h-full items-center whitespace-nowrap pr-3 pl-1 text-[13px] text-(--faint) hover:text-(--ink)"
 
   @doc """
   Renders a text-like `<input>`, with its caption, help and errors when given.
@@ -211,6 +223,11 @@ defmodule LineaUI.Components.Input do
         "Its content takes clicks (a button): the box drops `pointer-events-none` and the focus color."
     )
 
+    attr(:text, :boolean,
+      doc:
+        "The content is text: the box sizes to it instead of the fixed icon box, and the input's right padding follows."
+    )
+
     attr(:class, :any, doc: "Merged into the box around the content.")
   end
 
@@ -235,9 +252,17 @@ defmodule LineaUI.Components.Input do
     |> render_input()
   end
 
+  defp assign_mask_id(%{mask: nil, clear_on_submit: false, id: nil, suffix: [_ | _]} = assigns),
+    do: assign_mask_id(assigns, text_suffix?(assigns.suffix))
+
   defp assign_mask_id(%{mask: nil, clear_on_submit: false} = assigns), do: assigns
   defp assign_mask_id(%{id: nil} = assigns), do: assign(assigns, :id, stable_id("input", assigns))
   defp assign_mask_id(assigns), do: assigns
+
+  defp assign_mask_id(assigns, true), do: assign(assigns, :id, stable_id("input", assigns))
+  defp assign_mask_id(assigns, false), do: assigns
+
+  defp text_suffix?(suffix), do: Enum.any?(suffix, &(&1[:text] == true))
 
   defp assign_list(%{options: []} = assigns),
     do: assign_derived(assigns, :list_id, [:options], fn -> nil end)
@@ -304,9 +329,16 @@ defmodule LineaUI.Components.Input do
   end
 
   defp icon_padding(%{prefix: [], suffix: []}), do: nil
-  defp icon_padding(%{prefix: [], suffix: _}), do: "peer pr-9"
+
+  defp icon_padding(%{prefix: [], suffix: suffix}),
+    do: suffix_padding(text_suffix?(suffix), "peer")
+
   defp icon_padding(%{prefix: _, suffix: []}), do: "peer pl-9"
-  defp icon_padding(_assigns), do: "peer px-9"
+  defp icon_padding(%{suffix: suffix}), do: suffix_padding(text_suffix?(suffix), "peer pl-9")
+
+  defp suffix_padding(true, base), do: base <> " pr-[var(--linea-suffix-w,2.25rem)]"
+  defp suffix_padding(false, "peer"), do: "peer pr-9"
+  defp suffix_padding(false, "peer pl-9"), do: "peer px-9"
 
   defp render_input(%{type: "hidden"} = assigns) do
     ~H"""
@@ -316,7 +348,7 @@ defmodule LineaUI.Components.Input do
 
   defp render_input(%{label: nil, help: nil, errors: [], options: []} = assigns) do
     ~H"""
-    <.control attrs={@attrs} raw={@raw} prefix={@prefix} suffix={@suffix} />
+    <.control id={@id} attrs={@attrs} raw={@raw} prefix={@prefix} suffix={@suffix} />
     """
   end
 
@@ -332,7 +364,7 @@ defmodule LineaUI.Components.Input do
       state={@state}
       class={@wrapper_class}
     >
-      <.control attrs={@attrs} raw={@raw} prefix={@prefix} suffix={@suffix} />
+      <.control id={@id} attrs={@attrs} raw={@raw} prefix={@prefix} suffix={@suffix} />
       <datalist :if={@list_id} id={@list_id}>
         <option :for={option <- @options} value={option}></option>
       </datalist>
@@ -348,13 +380,22 @@ defmodule LineaUI.Components.Input do
 
   defp control(assigns) do
     ~H"""
-    <span class="relative flex w-full">
+    <span
+      id={text_suffix?(@suffix) && "#{@id}-field"}
+      class="relative flex w-full"
+      phx-hook={text_suffix?(@suffix) && "LineaUI.InputSuffix"}
+    >
       <input {@attrs} />
       <input :if={@raw} type="hidden" {@raw} />
       <span :for={prefix <- @prefix} class={adornment(prefix, "left-0")} data-prefix>
         {render_slot(prefix)}
       </span>
-      <span :for={suffix <- @suffix} class={adornment(suffix, "right-0")} data-suffix>
+      <span
+        :for={suffix <- @suffix}
+        class={adornment(suffix, "right-0")}
+        data-suffix
+        data-suffix-text={suffix[:text] == true && ""}
+      >
         {render_slot(suffix)}
       </span>
     </span>
@@ -362,8 +403,15 @@ defmodule LineaUI.Components.Input do
   end
 
   defp adornment(entry, side),
-    do: merge([adornment_base(entry[:interactive] == true), side, entry[:class]])
+    do:
+      merge([
+        adornment_base(entry[:interactive] == true, entry[:text] == true),
+        side,
+        entry[:class]
+      ])
 
-  defp adornment_base(true), do: @interactive_icon
-  defp adornment_base(false), do: @icon
+  defp adornment_base(true, false), do: @interactive_icon
+  defp adornment_base(false, false), do: @icon
+  defp adornment_base(true, true), do: @interactive_text_suffix
+  defp adornment_base(false, true), do: @text_suffix
 end

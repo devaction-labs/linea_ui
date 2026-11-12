@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- `input`: a `:suffix` slot that holds text takes `text` (`<:suffix text>4 pessoas</:suffix>`). The box sizes to its content with the usual right inset and the input's right padding follows its width (new hook `LineaUI.InputSuffix`; 2.25rem until it runs). Icon suffixes render as before.
+
 ## 0.18.0 (2026-11-11)
 
 - New `glow_text`: text with a living gradient (the canvas GlowText). `tone` is `default` or `warm` and `as` is `span`, `h1`, `h2`, `h3` or `p`. The animation slows under `prefers-reduced-motion`.
