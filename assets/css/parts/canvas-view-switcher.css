@@ -1,0 +1,33 @@
+/* ViewSwitcher (canvas "ViewSwitcher"): the views of a collection (List, Board…) as a row of tabs, and a "+ View"
+   button whose menu offers the views that can be added, each with an icon tile, a name and a line of description. */
+.linea-views{display:inline-flex;align-items:center;gap:4px;max-width:100%;font-family:var(--sans);color:var(--fg)}
+.linea-views-tabs{display:flex;align-items:center;gap:4px;min-width:0;overflow-x:auto;scrollbar-width:none}
+.linea-views-tabs::-webkit-scrollbar{display:none}
+.linea-views-tab,.linea-views-add{all:unset;box-sizing:border-box;display:inline-flex;align-items:center;gap:8px;flex:none;height:32px;padding:0 12px 0 10px;border-radius:var(--pill-in);font:500 14px/20px var(--sans);letter-spacing:-.006em;white-space:nowrap;color:var(--muted);cursor:pointer;transition:background-color .15s,color .15s,box-shadow .15s}
+.linea-views-tab:hover{color:var(--ink);background:var(--ctl-hover)}
+.linea-views-tab:is([aria-pressed="true"],[aria-current="page"]){color:var(--ink);background:var(--ctl-fill);box-shadow:inset 0 0 0 1px var(--ctl-line)}
+.linea-views-tab:focus-visible,.linea-views-add:focus-visible{box-shadow:inset 0 0 0 1px var(--accent),0 0 0 3px color-mix(in srgb,var(--accent) 22%,transparent)}
+.linea-views-tab[aria-disabled="true"]{opacity:.5;pointer-events:none}
+.linea-views-tab > [class*="huge-"],.linea-views-add > [class*="huge-"],.linea-views-tab > .i,.linea-views-add > .i{width:16px;height:16px;flex:none}
+.linea-views-count{font:500 11.5px/16px var(--mono);padding:0 5px;border-radius:5px;color:var(--muted);background:var(--ctl-fill)}
+.linea-views-sep{flex:none;width:1px;height:20px;margin:0 8px;background:var(--ctl-line)}
+.linea-views-add{color:var(--ink);background:var(--ctl-fill)}
+.linea-views-add:hover,[data-open="true"] > [data-trigger] > .linea-views-add{background:var(--ctl-fill-hover)}
+
+/* the menu: a title and a grid of options */
+.popper-box.linea-views-menu,.linea-views-menu{box-sizing:border-box;width:min(488px,calc(100vw - 24px));min-width:0;padding:12px;border-radius:14px;font-family:var(--sans);color:var(--fg);background:var(--panel);box-shadow:0 0 0 1px var(--ctl-line),var(--shadow-lg)}
+.linea-views-menu.is-single{width:min(280px,calc(100vw - 24px))}
+.linea-views-title{margin:0;padding:2px 8px 10px;font:400 13px/18px var(--sans);color:var(--muted)}
+.linea-views-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 8px}
+.linea-views-menu.is-single .linea-views-grid{grid-template-columns:minmax(0,1fr)}
+.linea-views-option{all:unset;box-sizing:border-box;display:flex;align-items:center;gap:12px;min-width:0;padding:4px 10px 4px 4px;border-radius:var(--pill);cursor:pointer;transition:background-color .15s}
+.linea-views-option:is(:hover,:focus,[aria-current="true"]){background:var(--ctl-fill)}
+.linea-views-option:focus-visible{box-shadow:inset 0 0 0 1px var(--accent)}
+.linea-views-option[aria-disabled="true"]{opacity:.5;pointer-events:none}
+.linea-views-tile{flex:none;display:grid;place-items:center;width:40px;height:40px;border-radius:var(--pill);color:var(--ink);background:var(--ctl);box-shadow:inset 0 0 0 1px var(--ctl-line),var(--shadow-xs)}
+.linea-views-tile > [class*="huge-"],.linea-views-tile > .i{width:18px;height:18px}
+.linea-views-text{display:flex;flex-direction:column;min-width:0}
+.linea-views-text > b{font:500 14.5px/20px var(--sans);letter-spacing:-.008em;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.linea-views-text > span{font:400 13px/18px var(--sans);color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.linea-views-check{flex:none;margin-left:auto;width:16px;height:16px;color:var(--accent)}
+@media (max-width:520px){.linea-views-grid{grid-template-columns:minmax(0,1fr)}}
