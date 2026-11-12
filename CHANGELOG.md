@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- `view_switcher`: the check of an added view is the accent colour again (the dropdown rule that mutes an item's icon reached it), also on hover and focus.
+
 ## 0.20.0 (2026-11-12)
 
 - New `view_switcher`: the views of a collection (List, Board…) as a row of tabs and a "+ View" button whose menu offers the views that can be added, each with an icon tile, a name and a description, in two columns (the canvas ViewSwitcher). `views` and `options` are lists of maps; a tab sends `on_change` and an option `on_add`, both with `%{"view" => value}`, and a view with `:patch`, `:navigate` or `:href` is a link. The menu is a `dropdown`, so it floats in the top layer and works from the keyboard.

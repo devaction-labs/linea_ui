@@ -30,4 +30,6 @@
 .linea-views-text > b{font:500 14.5px/20px var(--sans);letter-spacing:-.008em;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .linea-views-text > span{font:400 13px/18px var(--sans);color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .linea-views-check{flex:none;margin-left:auto;width:16px;height:16px;color:var(--accent)}
+/* the menu rule that mutes a menuitem's direct icon ([data-panel] [role=menuitem] > [class*=huge-]) must not reach the check */
+[data-panel] .linea-views-grid > .linea-views-option[role="menuitem"] > .linea-views-check.linea-views-check{color:var(--accent)}
 @media (max-width:520px){.linea-views-grid{grid-template-columns:minmax(0,1fr)}}
