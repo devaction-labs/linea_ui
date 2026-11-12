@@ -207,6 +207,43 @@ defmodule LineaUI.Components.FlowTest do
     assert find(html, ".linea-flow-toolbar, .linea-flow-panel") |> Enum.count() == 0
   end
 
+  test "the hint slot is a floating note inside the stage, title in bold" do
+    html =
+      render(~H"""
+      <.flow id="k">
+        <:node id="a" title="A" />
+        <:hint title="Comece pelo gatilho">Depois use o + para adicionar um agente.</:hint>
+      </.flow>
+      """)
+
+    one(html, ".linea-flow-stage > .linea-flow-hint")
+    assert find(html, ".linea-flow-hint > b") |> LazyHTML.text() == "Comece pelo gatilho"
+    assert find(html, ".linea-flow-hint") |> LazyHTML.text() =~ "Depois use o + para adicionar"
+    assert find(html, ".linea-flow-hint") |> LazyHTML.attribute("style") == [""]
+  end
+
+  test "the hint takes left, top and width, a class, and no title means no bold line" do
+    html =
+      render(~H"""
+      <.flow id="k">
+        <:node id="a" title="A" />
+        <:hint left={400} top={10} width={200} class="extra">Only text</:hint>
+      </.flow>
+      """)
+
+    assert find(html, ".linea-flow-hint") |> LazyHTML.attribute("style") == [
+             "left:400px;top:10px;width:200px"
+           ]
+
+    assert "extra" in classes(html, ".linea-flow-hint")
+    assert find(html, ".linea-flow-hint > b") |> Enum.count() == 0
+  end
+
+  test "without a hint nothing is rendered for it" do
+    html = render(~H'<.flow id="k"><:node id="a" title="A" /></.flow>')
+    assert find(html, ".linea-flow-hint") |> Enum.count() == 0
+  end
+
   test "the panel head has no close button without on_close" do
     html =
       render(~H"""

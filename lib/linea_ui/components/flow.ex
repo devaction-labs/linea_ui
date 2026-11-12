@@ -60,6 +60,10 @@ defmodule LineaUI.Components.Flow do
   `on_add` set, the nodes with no outgoing edge get the + button under them; it pushes `on_add` (an event
   name or a `%JS{}`) with `phx-value-id` of the node.
 
+  The `:hint` slot is a floating note on the board (`<:hint title="Comece pelo gatilho">Depois use o +…</:hint>`):
+  the title in bold above the text, placed at `left`/`top` (372 and 92 px of the stage, to the right of a
+  first node) and `width` (240).
+
   The `:toolbar` slot is the bar at the bottom of the board. The `:panel` slot is the aside on the right,
   composed with `flow_panel_head/1`, `flow_panel_tabs/1`, `flow_panel_body/1` and `flow_panel_foot/1` and the
   rest of the kit (`tabs`, `input`, `select`, `button`...); without it the board takes the whole width.
@@ -121,6 +125,16 @@ defmodule LineaUI.Components.Flow do
 
   slot :actions,
     doc: "Buttons shown beside the selected node; the node id is the slot argument (`:let={id}`)."
+
+  slot :hint,
+    doc:
+      "A floating note on the board, for an empty or new flow: a title in bold, then the text. Free-positioned in the stage." do
+    attr :title, :string, doc: "The bold first line."
+    attr :left, :integer, doc: "Distance from the left of the stage in px. Defaults to 372."
+    attr :top, :integer, doc: "Distance from the top of the stage in px. Defaults to 92."
+    attr :width, :integer, doc: "Width in px. Defaults to 240."
+    attr :class, :any
+  end
 
   slot :toolbar, doc: "The bar at the bottom of the board, centred."
 
@@ -211,6 +225,13 @@ defmodule LineaUI.Components.Flow do
                 </article>
               </div>
             <% end %>
+            <div
+              :for={hint <- @hint}
+              class={merge(["linea-flow-hint", hint[:class]])}
+              style={hint_style(hint)}
+            >
+              <b :if={hint[:title]}>{hint.title}</b>{render_slot(hint)}
+            </div>
           </div>
         </div>
         <div :if={@toolbar != []} class="linea-flow-toolbar" role="toolbar">
@@ -352,6 +373,12 @@ defmodule LineaUI.Components.Flow do
       {render_slot(@inner_block)}
     </footer>
     """
+  end
+
+  defp hint_style(hint) do
+    [left: hint[:left], top: hint[:top], width: hint[:width]]
+    |> Enum.reject(&is_nil(elem(&1, 1)))
+    |> Enum.map_join(";", fn {name, px} -> "#{name}:#{px}px" end)
   end
 
   # The layout. Returns a list of layers: %{band: nil | band, nodes: [%{node, style, leaf}]}.
