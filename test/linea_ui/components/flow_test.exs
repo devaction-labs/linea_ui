@@ -111,7 +111,7 @@ defmodule LineaUI.Components.FlowTest do
     assigns = %{}
 
     html =
-      rendered_to_string(~H"""
+      render(~H"""
       <.flow id="f" height="640px">
         <.flow_node id="a" x={0} y={0} title="A" />
       </.flow>
