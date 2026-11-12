@@ -105,6 +105,7 @@ defmodule LineaUI.Components.ViewSwitcher do
             role="menuitem"
             tabindex="-1"
             aria-disabled={option[:disabled] && "true"}
+            disabled={option[:disabled]}
             phx-click={@on_add}
             phx-value-view={option.value}
             phx-target={@target}
@@ -129,23 +130,24 @@ defmodule LineaUI.Components.ViewSwitcher do
   attr :on_change, :any, required: true
   attr :target, :any, required: true
 
-  defp tab(%{view: view} = assigns)
-       when is_map_key(view, :patch) or is_map_key(view, :navigate) or is_map_key(view, :href) do
-    assigns = assign(assigns, :link, Map.take(view, [:patch, :navigate, :href]))
+  # a disabled view is never a link: it is the disabled button, which cannot navigate
+  defp tab(%{view: view} = assigns) do
+    link = Map.take(view, [:patch, :navigate, :href])
 
+    if link != %{} and view[:disabled] != true,
+      do: assigns |> assign(:link, link) |> link_tab(),
+      else: button_tab(assigns)
+  end
+
+  defp link_tab(assigns) do
     ~H"""
-    <.link
-      class="linea-views-tab"
-      aria-current={@active && "page"}
-      aria-disabled={@view[:disabled] && "true"}
-      {@link}
-    >
+    <.link class="linea-views-tab" aria-current={@active && "page"} {@link}>
       <.tab_body view={@view} />
     </.link>
     """
   end
 
-  defp tab(assigns) do
+  defp button_tab(assigns) do
     ~H"""
     <button
       type="button"
