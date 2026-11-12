@@ -90,6 +90,7 @@ defmodule LineaUI do
     connection_banner: LineaUI.Components.ConnectionBanner,
     fab: LineaUI.Components.Fab,
     filter_menu: LineaUI.Components.FilterMenu,
+    flow: LineaUI.Components.Flow,
     form_section: LineaUI.Components.FormSection,
     form: LineaUI.Components.Form,
     icon: LineaUI.Components.Icon,
