@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- New `view_switcher`: the views of a collection (List, Board…) as a row of tabs and a "+ View" button whose menu offers the views that can be added, each with an icon tile, a name and a description, in two columns (the canvas ViewSwitcher). `views` and `options` are lists of maps; a tab sends `on_change` and an option `on_add`, both with `%{"view" => value}`, and a view with `:patch`, `:navigate` or `:href` is a link. The menu is a `dropdown`, so it floats in the top layer and works from the keyboard.
+
 ## 0.19.0 (2026-11-12)
 
 - **Breaking visual change: the canvas (Signetum) look is now the default.** These attrs defaulted to the old LineOne look and the canvas was opt-in; the canvas is now the default value and the old look is reachable with an explicit value. Passing `variant="canvas"` (`shape="canvas"` on `pagination`) still works. Nothing in the canvas look changed. Where `default` was the old value it is now `classic`.

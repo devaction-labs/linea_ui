@@ -133,6 +133,7 @@ defmodule LineaUI do
     tooltip: LineaUI.Components.Tooltip,
     treeview: LineaUI.Components.Treeview,
     typography: LineaUI.Components.Typography,
+    view_switcher: LineaUI.Components.ViewSwitcher,
     upload: LineaUI.Components.Upload
   }
 
