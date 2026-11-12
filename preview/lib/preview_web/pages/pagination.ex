@@ -24,7 +24,7 @@ defmodule PreviewWeb.Pages.Pagination do
       <div class="max-w-xl">
         <p>{@basic}</p>
         <div class="mt-5">
-          <.pagination page={@pages["basic"]} total_pages={5} on_change="page:basic" />
+          <.pagination shape="rounded" page={@pages["basic"]} total_pages={5} on_change="page:basic" />
         </div>
       </div>
     </.example>
@@ -45,7 +45,7 @@ defmodule PreviewWeb.Pages.Pagination do
       <div class="max-w-xl">
         <p>Pagination can be divided. Check out code for detail of usage.</p>
         <div class="mt-5">
-          <.pagination page={@pages["divided"]} total_pages={5} on_change="page:divided" divided />
+          <.pagination shape="rounded" page={@pages["divided"]} total_pages={5} on_change="page:divided" divided />
         </div>
       </div>
     </.example>
@@ -67,7 +67,7 @@ defmodule PreviewWeb.Pages.Pagination do
       <div class="max-w-xl">
         <p>{@basic}</p>
         <div class="mt-5 space-y-4">
-          <.pagination
+          <.pagination shape="rounded"
             :for={size <- ~w(sm md lg)}
             page={@pages["size"]}
             total_pages={5}
@@ -84,8 +84,8 @@ defmodule PreviewWeb.Pages.Pagination do
           also be a patch or navigate link.
         </p>
         <div class="mt-5 space-y-4">
-          <.pagination page={5} total_pages={20} patch={&"/pagination?page=#{&1}"} />
-          <.pagination page={1} total_pages={20} patch={&"/pagination?page=#{&1}"} divided />
+          <.pagination shape="rounded" page={5} total_pages={20} patch={&"/pagination?page=#{&1}"} />
+          <.pagination shape="rounded" page={1} total_pages={20} patch={&"/pagination?page=#{&1}"} divided />
         </div>
       </div>
     </.example>

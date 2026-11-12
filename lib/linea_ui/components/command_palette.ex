@@ -35,7 +35,7 @@ defmodule LineaUI.Components.CommandPalette do
   the server filters instead: the query is pushed (debounced) and the palette shows the `items` it renders, still
   narrowed by scope.
 
-  `variant="canvas"` is the design canvas look (the canvas menu: a 14px panel, 34px rows with muted icons, small
+  `variant="canvas"` (the default; `variant="classic"` is the old LineOne palette) is the design canvas look (the canvas menu: a 14px panel, 34px rows with muted icons, small
   faint group headings, mono keys); `hints={false}` drops the keys footer and `highlight="typed"` leaves the rows
   unmarked until something is typed (or an arrow or the mouse picks one), as the canvas shows its "recent" list.
   An item's `avatar` (the attrs of `LineaUI.Components.Avatar.avatar/1`) takes the place of its icon:
@@ -72,7 +72,7 @@ defmodule LineaUI.Components.CommandPalette do
 
   # the canvas menu (`sg-menu`): the classes that differ from the default look
   @looks %{
-    "default" => %{
+    "classic" => %{
       card: "rounded-xl",
       head: "h-[67px] gap-2.5 border-b border-slate-200 px-5 dark:border-navy-450",
       search: "size-4 shrink-0 text-slate-950 dark:text-navy-50",
@@ -188,10 +188,10 @@ defmodule LineaUI.Components.CommandPalette do
       "The key that toggles the palette from anywhere: `Mod` is Ctrl or ⌘. `nil` leaves it to `LineaUI.open/1`."
 
   attr :variant, :string,
-    default: "default",
-    values: ~w(default canvas),
+    default: "canvas",
+    values: ~w(canvas classic),
     doc:
-      "`canvas`: the design canvas menu look (34px rows, muted icons, faint headings, mono keys)."
+      "`canvas` (the default): the design canvas menu look (34px rows, muted icons, faint headings, mono keys)."
 
   attr :hints, :boolean, default: true, doc: "Shows the footer with the keys hints."
 

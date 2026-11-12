@@ -45,6 +45,7 @@
 @import "./parts/canvas-fin1.css";
 @import "./parts/canvas-fin2.css";
 @import "./parts/canvas-step-group.css";
+@import "./parts/canvas-flow.css";
 @import "./parts/canvas-glow-text.css";
 
 @source "../../lib";

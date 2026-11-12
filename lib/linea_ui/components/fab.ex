@@ -41,7 +41,7 @@ defmodule LineaUI.Components.Fab do
 
   ## The canvas look
 
-  `variant="canvas"` is the design canvas's FAB: the solid ink button (`sg-btn solid lg`) with 18px corners,
+  `variant="canvas"` (the default; `variant="pill"` is the old retracting pill) is the design canvas's FAB: the solid ink button (`sg-btn solid lg`) with 18px corners,
   the icon and the label always shown (`retract`, `color`, `size` and `badge` do not apply). `offset` moves
   it from the corner, in pixels, in either variant:
 
@@ -49,7 +49,7 @@ defmodule LineaUI.Components.Fab do
         <:icon><.icon name="huge-add-01" class="size-4" /></:icon>
       </.fab>
 
-  On `fab_dial/1`, `variant="canvas"` is the 56px solid square (`sg-m-fab`) and its actions are a canvas
+  On `fab_dial/1`, `variant="canvas"` (the default; `pill` is the old one) is the 56px solid square (`sg-m-fab`) and its actions are a canvas
   menu (`sg-menu`), a list of icon and label rows.
 
   The button sits under modals and drawers and above the page (`--linea-z-fab`, 90 by default; an app raises it in
@@ -126,10 +126,10 @@ defmodule LineaUI.Components.Fab do
   attr(:size, :string, default: "md", values: ~w(md lg))
 
   attr(:variant, :string,
-    default: "pill",
-    values: ~w(pill canvas),
+    default: "canvas",
+    values: ~w(canvas pill),
     doc:
-      "`pill` is the retracting navy pill; `canvas` the canvas's solid ink button with the label always shown."
+      "`canvas` (the default) is the canvas's solid ink button with the label always shown; `pill` is the old LineOne retracting navy pill."
   )
 
   attr(:offset, :integer,
@@ -250,10 +250,10 @@ defmodule LineaUI.Components.Fab do
   attr(:size, :string, default: "md", values: ~w(md lg))
 
   attr(:variant, :string,
-    default: "pill",
-    values: ~w(pill canvas),
+    default: "canvas",
+    values: ~w(canvas pill),
     doc:
-      "`pill` is the round button with labelled mini actions; `canvas` the canvas's 56px solid square with the actions in a menu (`sg-menu`)."
+      "`canvas` (the default) is the canvas's 56px solid square with the actions in a menu (`sg-menu`); `pill` is the old round button with labelled mini actions."
   )
 
   attr(:offset, :integer,

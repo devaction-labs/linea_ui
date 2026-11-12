@@ -11,7 +11,7 @@ defmodule PreviewWeb.Pages.Carousel do
     <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:gap-6">
       <div class="space-y-4 sm:space-y-5 lg:space-y-6">
         <.section title="Default Carousel">
-          <.carousel id="carousel1" navigation class="rounded-lg" index={@slide} on_change="slid">
+          <.carousel variant="classic" id="carousel1" navigation class="rounded-lg" index={@slide} on_change="slid">
             <.carousel_slide :for={
               {image, position} <- [
                 {6, ""},
@@ -25,14 +25,14 @@ defmodule PreviewWeb.Pages.Carousel do
           </.carousel>
         </.section>
         <.section title="Lazy Loading Images">
-          <.carousel id="carousel2" navigation pagination="progress" class="rounded-lg">
+          <.carousel variant="classic" id="carousel2" navigation pagination="progress" class="rounded-lg">
             <.carousel_slide :for={image <- [3, 19, 17, 18]}>
               <.photo n={image} loading="lazy" />
             </.carousel_slide>
           </.carousel>
         </.section>
         <.section title="Space Between">
-          <.carousel id="carousel3" pagination="bullets" gap={30}>
+          <.carousel variant="classic" id="carousel3" pagination="bullets" gap={30}>
             <.carousel_slide
               :for={
                 {image, position} <- [
@@ -49,24 +49,24 @@ defmodule PreviewWeb.Pages.Carousel do
           </.carousel>
         </.section>
         <.section title="Zoom">
-          <.carousel id="carousel4" navigation pagination="bullets" zoom={4}>
+          <.carousel variant="classic" id="carousel4" navigation pagination="bullets" zoom={4}>
             <.carousel_slide :for={image <- [9, 2, 7, 9]}><.photo n={image} /></.carousel_slide>
           </.carousel>
         </.section>
         <.section title="Flip Effect">
-          <.carousel id="carousel5" effect="flip" navigation pagination="bullets">
+          <.carousel variant="classic" id="carousel5" effect="flip" navigation pagination="bullets">
             <.carousel_slide :for={image <- [9, 2, 7, 9]}><.photo n={image} /></.carousel_slide>
           </.carousel>
         </.section>
         <.section title="Cube Effect">
-          <.carousel id="carousel6" effect="cube" pagination="bullets">
+          <.carousel variant="classic" id="carousel6" effect="cube" pagination="bullets">
             <.carousel_slide :for={image <- [4, 6, 2, 1]}>
               <.photo n={image} class="rounded-lg" />
             </.carousel_slide>
           </.carousel>
         </.section>
         <.section title="Card Effect" wrapper="mx-auto mt-5 w-10/12">
-          <.carousel id="carousel7" effect="cards">
+          <.carousel variant="classic" id="carousel7" effect="cards">
             <.carousel_slide :for={image <- [4, 6, 2, 1]} class="rounded-lg">
               <.photo n={image} class="rounded-lg" />
             </.carousel_slide>
@@ -75,7 +75,7 @@ defmodule PreviewWeb.Pages.Carousel do
       </div>
       <div class="space-y-4 sm:space-y-5 lg:space-y-6">
         <.section title="Pagination">
-          <.carousel id="carousel8" pagination="bullets" class="rounded-lg">
+          <.carousel variant="classic" id="carousel8" pagination="bullets" class="rounded-lg">
             <.carousel_slide :for={
               {image, position} <- [
                 {5, ""},
@@ -89,7 +89,7 @@ defmodule PreviewWeb.Pages.Carousel do
           </.carousel>
         </.section>
         <.section title="Vertical Slider">
-          <.carousel id="carousel9" direction="vertical" pagination="bullets" class="h-64 rounded-lg">
+          <.carousel variant="classic" id="carousel9" direction="vertical" pagination="bullets" class="h-64 rounded-lg">
             <.carousel_slide :for={
               {image, position} <- [{4, "object-center"}, {8, ""}, {2, ""}, {1, ""}]
             }>
@@ -98,7 +98,7 @@ defmodule PreviewWeb.Pages.Carousel do
           </.carousel>
         </.section>
         <.section title="With Scrollbar">
-          <.carousel
+          <.carousel variant="classic"
             id="carousel10"
             navigation
             pagination="scrollbar"
@@ -118,7 +118,7 @@ defmodule PreviewWeb.Pages.Carousel do
           </.carousel>
         </.section>
         <.section title="Fade Effect">
-          <.carousel id="carousel11" effect="fade" navigation class="rounded-lg">
+          <.carousel variant="classic" id="carousel11" effect="fade" navigation class="rounded-lg">
             <.carousel_slide :for={
               {image, position} <- [
                 {5, ""},
@@ -132,7 +132,7 @@ defmodule PreviewWeb.Pages.Carousel do
           </.carousel>
         </.section>
         <.section title="Coverflow Effect">
-          <.carousel id="carousel12" effect="coverflow" navigation class="rounded-lg">
+          <.carousel variant="classic" id="carousel12" effect="coverflow" navigation class="rounded-lg">
             <.carousel_slide :for={
               {image, position} <- [
                 {9, ""},
@@ -146,7 +146,7 @@ defmodule PreviewWeb.Pages.Carousel do
           </.carousel>
         </.section>
         <.section title="Parallax">
-          <.carousel id="carousel13" navigation class="h-64 rounded-lg">
+          <.carousel variant="classic" id="carousel13" navigation class="h-64 rounded-lg">
             <:background>
               <div
                 class="carousel-parallax-bg"
@@ -171,7 +171,7 @@ defmodule PreviewWeb.Pages.Carousel do
           </.carousel>
         </.section>
         <.section title="Creative Effect">
-          <.carousel id="carousel14" effect="creative" class="rounded-lg">
+          <.carousel variant="classic" id="carousel14" effect="creative" class="rounded-lg">
             <.carousel_slide :for={image <- [4, 6, 2, 1]}>
               <.photo n={image} class="rounded-lg" />
             </.carousel_slide>

@@ -108,7 +108,7 @@ defmodule PreviewWeb.Pages.Upload do
     <.example title={@title} class="max-w-xl">
       <.intro />
       <form id={"#{@upload.name}-form"} phx-change="validate" class="mt-5">
-        <.upload
+        <.upload variant="pond"
           upload={@upload}
           bordered={@bordered}
           filled={@filled}
@@ -127,7 +127,7 @@ defmodule PreviewWeb.Pages.Upload do
 
   defp circle(assigns) do
     ~H"""
-    <.upload
+    <.upload variant="pond"
       upload={@upload}
       layout="circle"
       bordered={@bordered}

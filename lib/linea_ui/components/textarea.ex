@@ -9,6 +9,8 @@ defmodule LineaUI.Components.Textarea do
       <.textarea name="note" maxlength={200} counter autogrow max_rows={8} />
       <.textarea name="why" counter min_length={20} />
 
+      <.textarea name="msg" tokens value="A fatura {{fatura.numero}} está {{diferenca.pct}} acima." />
+
       <.textarea name="post" rows={5} placeholder="Write the post">
         <:header>
           <.input name="title" variant="plain" class="p-3 text-lg font-medium" placeholder="Title" />
@@ -110,6 +112,13 @@ defmodule LineaUI.Components.Textarea do
     doc: "With `autogrow`, the most lines it grows to before it scrolls."
   )
 
+  attr(:tokens, :boolean,
+    default: false,
+    doc:
+      "Draws the `{{name}}` placeholders of the text in the mono face, muted (the template variables of a message). " <>
+        "A mirror behind the same text, drawn on the server and kept by the `LineaUI.TextareaTokens` hook, over a textarea whose own text is transparent: you type in a plain textarea."
+  )
+
   attr(:state, :string, default: nil, values: [nil, "success", "error"])
   attr(:label, :string, default: nil, doc: "The caption.")
   attr(:label_class, :any, default: nil, doc: "Classes of the caption text.")
@@ -149,6 +158,7 @@ defmodule LineaUI.Components.Textarea do
     |> assign_id()
     |> then(&assign_derived(&1, :classes, @classes_deps, fn -> classes(&1) end))
     |> then(&assign_derived(&1, :length, [:value], fn -> length_of(&1) end))
+    |> then(&assign_derived(&1, :segments, [:value, :tokens], fn -> segments(&1) end))
     |> assign_derived(:frame, [], fn -> @frame end)
     |> render_textarea()
   end
@@ -160,7 +170,8 @@ defmodule LineaUI.Components.Textarea do
       assign(
         assigns,
         :id,
-        ((assigns.counter or assigns.autogrow) && stable_id("textarea", assigns)) || nil
+        ((assigns.counter or assigns.autogrow or assigns.tokens) &&
+           stable_id("textarea", assigns)) || nil
       )
 
   defp assign_id(assigns), do: assigns
@@ -247,6 +258,8 @@ defmodule LineaUI.Components.Textarea do
       min_length={@min_length}
       autogrow={@autogrow}
       max_rows={@max_rows}
+      tokens={@tokens}
+      segments={@segments}
       length={@length}
       counter_format={@counter_format}
       counter_align={@counter_align}
@@ -279,6 +292,8 @@ defmodule LineaUI.Components.Textarea do
         min_length={@min_length}
         autogrow={@autogrow}
         max_rows={@max_rows}
+        tokens={@tokens}
+        segments={@segments}
         length={@length}
         counter_format={@counter_format}
         counter_align={@counter_align}
@@ -333,6 +348,8 @@ defmodule LineaUI.Components.Textarea do
           min_length={@min_length}
           autogrow={@autogrow}
           max_rows={@max_rows}
+          tokens={@tokens}
+          segments={@segments}
           length={@length}
           counter_format={@counter_format}
           counter_align={@counter_align}
@@ -364,6 +381,8 @@ defmodule LineaUI.Components.Textarea do
         min_length={@min_length}
         autogrow={@autogrow}
         max_rows={@max_rows}
+        tokens={@tokens}
+        segments={@segments}
         counter_format={@counter_format}
         described_by={"#{@id}-counter"}
       />
@@ -398,6 +417,8 @@ defmodule LineaUI.Components.Textarea do
       min_length={@min_length}
       autogrow={@autogrow}
       max_rows={@max_rows}
+      tokens={@tokens}
+      segments={@segments}
       counter_format={@counter_format}
       described_by={"#{@id}-counter"}
     />
@@ -419,6 +440,8 @@ defmodule LineaUI.Components.Textarea do
       min_length={@min_length}
       autogrow={@autogrow}
       max_rows={@max_rows}
+      tokens={@tokens}
+      segments={@segments}
       counter_format={@counter_format}
       described_by={nil}
     />
@@ -452,7 +475,83 @@ defmodule LineaUI.Components.Textarea do
     """
   end
 
+  defp field_control(%{tokens: true} = assigns) do
+    ~H"""
+    <div id={"#{@id}-tokens"} class="linea-tokens" phx-hook="LineaUI.TextareaTokens">
+      <.field_textarea
+        id={@id}
+        name={@name}
+        value={@value}
+        rows={@rows}
+        classes={@classes}
+        disabled={@disabled}
+        state={@state}
+        rest={@rest}
+        counter={@counter}
+        min_length={@min_length}
+        autogrow={@autogrow}
+        max_rows={@max_rows}
+        counter_format={@counter_format}
+        described_by={@described_by}
+      />
+      <div
+        class={merge(["linea-tokens-mirror", @classes])}
+        aria-hidden="true"
+        data-token-mirror
+        phx-no-format
+      ><.mirror_piece :for={{kind, text} <- @segments} kind={kind} text={text} />&#8203;</div>
+    </div>
+    """
+  end
+
   defp field_control(assigns) do
+    ~H"""
+    <.field_textarea
+      id={@id}
+      name={@name}
+      value={@value}
+      rows={@rows}
+      classes={@classes}
+      disabled={@disabled}
+      state={@state}
+      rest={@rest}
+      counter={@counter}
+      min_length={@min_length}
+      autogrow={@autogrow}
+      max_rows={@max_rows}
+      counter_format={@counter_format}
+      described_by={@described_by}
+    />
+    """
+  end
+
+  defp mirror_piece(%{kind: :token} = assigns) do
+    ~H|<code class="linea-token">{@text}</code>|
+  end
+
+  defp mirror_piece(assigns) do
+    ~H|{@text}|
+  end
+
+  @token ~r/(\{\{[^{}\n]*\}\})|([^{]+|\{)/
+
+  # The pieces of the text for the mirror: `{:token, "{{a.b}}"}` and `{:text, "..."}`, in order. The same
+  # rule as `splitTokens` of `lib/token_mirror.js`.
+  defp segments(%{tokens: false}), do: []
+
+  defp segments(%{value: value}) do
+    "text"
+    |> Phoenix.HTML.Form.normalize_value(value)
+    |> to_string()
+    |> then(&Regex.scan(@token, &1, capture: :all_but_first))
+    |> Enum.map(fn
+      ["", text] -> {:text, text}
+      [token] -> {:token, token}
+      [token, _text] -> {:token, token}
+    end)
+  end
+
+  defp field_textarea(assigns) do
     ~H"""
     <textarea
       id={@id}
@@ -470,7 +569,7 @@ defmodule LineaUI.Components.Textarea do
       data-autogrow={@autogrow && ""}
       data-max-rows={@autogrow && @max_rows}
       {@rest}
-    >{Phoenix.HTML.Form.normalize_value("textarea", @value)}</textarea>
+    >{Phoenix.HTML.Form.normalize_value("text", @value)}</textarea>
     """
   end
 end

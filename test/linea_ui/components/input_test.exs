@@ -208,4 +208,50 @@ defmodule LineaUI.Components.InputTest do
     assert "justify-between" in classes(html, "label > span")
     assert LazyHTML.text(find(html, "label > span > span")) =~ "opcional"
   end
+
+  test "a text suffix sizes to its content and the input padding follows it" do
+    html =
+      render(~H"""
+      <.input name="guests" id="guests">
+        <:suffix text>4 pessoas</:suffix>
+      </.input>
+      """)
+
+    suffix = classes(html, "[data-suffix]")
+    assert "whitespace-nowrap" in suffix
+    refute "w-10" in suffix
+    assert "right-0" in suffix
+    assert "pr-[var(--linea-suffix-w,2.25rem)]" in classes(html, "input")
+    refute "pr-9" in classes(html, "input")
+
+    assert [_] =
+             find(html, "span#guests-field[phx-hook=\"LineaUI.InputSuffix\"]") |> Enum.to_list()
+
+    assert [_] = find(html, "[data-suffix-text]") |> Enum.to_list()
+  end
+
+  test "a text suffix next to a prefix keeps the left padding; an icon suffix has no hook" do
+    html =
+      render(~H"""
+      <.input name="a" id="a">
+        <:prefix><svg></svg></:prefix>
+        <:suffix text>kg</:suffix>
+      </.input>
+      """)
+
+    assert "pl-9" in classes(html, "input")
+    assert "pr-[var(--linea-suffix-w,2.25rem)]" in classes(html, "input")
+
+    icon =
+      render(~H"""
+      <.input name="b">
+        <:suffix><svg></svg></:suffix>
+      </.input>
+      """)
+
+    assert "pr-9" in classes(icon, "input")
+    assert "w-10" in classes(icon, "[data-suffix]")
+    assert find(icon, "[phx-hook]") |> Enum.to_list() == []
+    assert find(icon, "[data-suffix-text]") |> Enum.to_list() == []
+  end
 end

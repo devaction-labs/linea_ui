@@ -134,7 +134,7 @@ defmodule PreviewWeb.Pages.Additions do
       >
         {tag}
       </.tag>
-      <.collapse id="c-chev" chevron="down" open class="w-56">
+      <.collapse variant="classic" id="c-chev" chevron="down" open class="w-56">
         <:trigger class="text-xs font-medium uppercase">My files</:trigger>
         Body
       </.collapse>
@@ -147,7 +147,7 @@ defmodule PreviewWeb.Pages.Additions do
         Inbox
         <:count>12</:count>
       </.menu_item>
-      <.breadcrumb>
+      <.breadcrumb variant="plain">
         <:item phx-click="noop">Docs</:item>
         <:item phx-click="noop">Pictures</:item>
         <:item>Trip</:item>
@@ -168,7 +168,7 @@ defmodule PreviewWeb.Pages.Additions do
           <:point><.avatar src="/lineone/images/avatar/avatar-8.jpg" class="size-full" /></:point>
         </.timeline_item>
       </.timeline>
-      <.carousel id="c-out" navigation="outside" pagination="bullets" class="mt-6 max-w-md">
+      <.carousel variant="classic" id="c-out" navigation="outside" pagination="bullets" class="mt-6 max-w-md">
         <.carousel_slide class="flex h-32 items-center justify-center bg-primary/10">
           One
         </.carousel_slide>

@@ -31,7 +31,7 @@ defmodule LineaUI.Components.NotificationCenterTest do
 
     html =
       rendered_to_string(~H"""
-      <.notification_center id="nc" items={@items} all_href="/notifications" />
+      <.notification_center variant="classic" id="nc" items={@items} all_href="/notifications" />
       """)
 
     assert html =~ ~s(aria-label="Notificações, 2 não lidas")
@@ -53,6 +53,7 @@ defmodule LineaUI.Components.NotificationCenterTest do
     html =
       rendered_to_string(~H"""
       <.notification_center
+        variant="classic"
         id="nc"
         items={@items}
         tabs={[
@@ -75,7 +76,14 @@ defmodule LineaUI.Components.NotificationCenterTest do
 
     html =
       rendered_to_string(~H"""
-      <.notification_center id="nc" items={[]} on_read_all="read_all" tabs={[]} empty="Tudo em dia" />
+      <.notification_center
+        variant="classic"
+        id="nc"
+        items={[]}
+        on_read_all="read_all"
+        tabs={[]}
+        empty="Tudo em dia"
+      />
       """)
 
     refute html =~ "bg-error ring-2"
@@ -91,7 +99,14 @@ defmodule LineaUI.Components.NotificationCenterTest do
 
     html =
       rendered_to_string(~H"""
-      <.notification_center id="nc" items={@items} on_read_all="read_all" on_read="read" target="#host" />
+      <.notification_center
+        variant="classic"
+        id="nc"
+        items={@items}
+        on_read_all="read_all"
+        on_read="read"
+        target="#host"
+      />
       """)
 
     assert html =~ "read_all"
@@ -105,7 +120,13 @@ defmodule LineaUI.Components.NotificationCenterTest do
 
     html =
       rendered_to_string(~H"""
-      <.notification_center id="nc" items={@items} unread={12} preferences_href="/settings" />
+      <.notification_center
+        variant="classic"
+        id="nc"
+        items={@items}
+        unread={12}
+        preferences_href="/settings"
+      />
       """)
 
     assert html =~ ">\n          12\n" or html =~ "12"
@@ -146,7 +167,14 @@ defmodule LineaUI.Components.NotificationCenterTest do
 
     html =
       render(~H"""
-      <.notification_center id="nc" items={[]} tabs={[]} empty_icon="huge-inbox" empty_tone="info" />
+      <.notification_center
+        variant="classic"
+        id="nc"
+        items={[]}
+        tabs={[]}
+        empty_icon="huge-inbox"
+        empty_tone="info"
+      />
       """)
 
     assert [_] = html |> find("#nc-panel .sg-ic.info .huge-inbox") |> Enum.to_list()

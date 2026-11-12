@@ -40,7 +40,7 @@ defmodule LineaUI.Components.NotificationCenter do
   that are not `read`, and any other id the items with that `category`. The number beside a tab is how
   many unread items it holds. Without `tabs` the panel has no tab bar.
 
-  `variant="canvas"` is the compact panel of the design canvas: no title bar, tabs or footer, only the
+  `variant="canvas"` (the default; `variant="classic"` is the old LineOne panel with title bar, tabs and footer) is the compact panel of the design canvas: no title bar, tabs or footer, only the
   list grouped by day, each row with its icon tile, the title, the body and the time at the right, the
   unread ones on the accent tint; its empty state is an icon tile (`empty_icon`, `empty_tone`) over
   the text.
@@ -128,10 +128,10 @@ defmodule LineaUI.Components.NotificationCenter do
   attr :empty_text, :string, default: "Quando houver novidades, elas aparecem aqui."
 
   attr :variant, :string,
-    default: "default",
-    values: ~w(default canvas),
+    default: "canvas",
+    values: ~w(canvas classic),
     doc:
-      "`canvas`: the compact canvas panel (no title bar, tabs or footer; the time at the right; unread rows tinted)."
+      "`canvas` (the default): the compact canvas panel (no title bar, tabs or footer; the time at the right; unread rows tinted)."
 
   attr :empty_icon, :string,
     default: nil,

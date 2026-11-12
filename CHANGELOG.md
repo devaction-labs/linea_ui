@@ -1,5 +1,35 @@
 # Changelog
 
+## Unreleased
+
+- **Breaking visual change: the canvas (Signetum) look is now the default.** These attrs defaulted to the old LineOne look and the canvas was opt-in; the canvas is now the default value and the old look is reachable with an explicit value. Passing `variant="canvas"` (`shape="canvas"` on `pagination`) still works. Nothing in the canvas look changed. Where `default` was the old value it is now `classic`.
+
+  | component | attr | new default | old look |
+  |---|---|---|---|
+  | `alert` | `variant` | `canvas` | `solid` (also `outline`, `soft`, `bordered`) |
+  | `accordion` | `variant` | `canvas` | `basic` |
+  | `breadcrumb` | `variant` | `canvas` | `plain` |
+  | `collapse` | `variant` | `canvas` | `classic` (or `nil`) |
+  | `fab`, `fab_dial` | `variant` | `canvas` | `pill` |
+  | `pagination` | `shape` | `canvas` | `rounded` (or `pill`) |
+  | `skeleton` | `variant` | `canvas` | `lineone` |
+  | `spinner` | `variant` | `canvas` | `border` (also `soft`, `grow`, `svg`) |
+  | `stepper` | `variant` | `canvas` | `classic` (was `default`) |
+  | `treeview` | `variant` | `canvas` | `lineone` |
+  | `upload` | `variant` | `canvas` | `pond` |
+  | `range` | `variant` | `canvas` | `classic` (was `default`) |
+  | `signature_pad` | `variant` | `canvas` | `classic` (was `default`) |
+  | `notification_center` | `variant` | `canvas` | `classic` (was `default`) |
+  | `command_palette` | `variant` | `canvas` | `classic` (was `default`) |
+  | `carousel` | `variant` | `canvas` | `classic` (was `default`) |
+  | `empty_state` | `variant` | `canvas` | `card` |
+
+  The preview's LineOne pages pass the old value explicitly.
+- The `toast` loading spinner and the `table` skeleton rows (`table_skeleton`, the data table's loading rows) use the canvas look too, now that it is the default of `spinner` and `skeleton`.
+- `input`: a `:suffix` slot that holds text takes `text` (`<:suffix text>4 pessoas</:suffix>`). The box sizes to its content with the usual right inset and the input's right padding follows its width (new hook `LineaUI.InputSuffix`; 2.25rem until it runs). Icon suffixes render as before.
+- `textarea`: `tokens` draws the `{{name}}` placeholders of the text in the mono face, muted, as the canvas's message field does. A mirror with the same box draws the text (server-rendered, escaped) over a textarea with transparent text and a visible caret; new hook `LineaUI.TextareaTokens` rebuilds it on input, follows the scroll and matches each token's width to the textarea's. Off by default; a textarea without `tokens` renders exactly as before.
+- `flow`: a `:hint` slot, the floating note of an empty board (`<:hint title="Comece pelo gatilho">Depois use o +…</:hint>`), with `left`, `top` and `width` (372, 92 and 240 px by default, as in the canvas).
+
 ## 0.18.0 (2026-11-11)
 
 - New `glow_text`: text with a living gradient (the canvas GlowText). `tone` is `default` or `warm` and `as` is `span`, `h1`, `h2`, `h3` or `p`. The animation slows under `prefers-reduced-motion`.
@@ -8,6 +38,7 @@
 - `navbar_chip`: the `tag` carries the canvas `.tag` look.
 - Line icons use the canvas stroke, 1.5 instead of 1.7. This covers `.sg .i`, the shell and settings icons, chip close, autocomplete create, `sg-ib`, stepper, carousel chevron, cash icon and the dark rail toggle.
 - New `step_group` (and `step_group_line`): the canvas StepGroup, a framed card for processes in steps (build, deploy, invoice issuing) with an overall status, title and duration in the header, a raised panel of steps (status, mono result) and a log per step. Collapsing the card and opening a log are client-side `JS`, and the browser keeps that state across patches.
+- New `flow` (with `flow_section`, `flow_chips`, `flow_chip` and `flow_panel_head`, `flow_panel_tabs`, `flow_panel_body`, `flow_panel_foot`): the canvas Flow, a workflow editor on a dotted board. `:node` slots (a `kind` tab with `kind_icon`, a titled card with sections and a `metrics` footer, `status` `running`/`done`/`waiting`/`error`/`skipped`, `selected` with the `:actions` slot beside it), `edges` with `label` and `status` (`done` paints a traversed edge green), `on_add` for the + under the leaves, a `:toolbar` and a `:panel` slot. The layout and the SVG connections are rendered by the server, with no JavaScript.
 - Refined controls (the "component specimen" level):
   - New control tokens, defined for light and dark: `--ctl`, `--ctl-line`, `--ctl-line-strong`, `--ctl-hover`, `--ctl-fill`, `--ctl-fill-hover`, `--ctl-track` and `--shadow-xs`. Borders and fills are a fine alpha of the ink color.
   - `button`: font 14/20 · 500 and 16px icons with 12px leading padding. The sizes are now distinct: `xs` 24, `sm` 32, `md` 36, `lg` 40 and `xl` 44 (`xs` and `xl` used to fall back to `sm` and `lg`), and the radius shrinks with the size.

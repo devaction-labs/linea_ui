@@ -2,7 +2,7 @@ defmodule LineaUI.Components.SkeletonTest do
   use LineaUI.ComponentCase, async: true
 
   test "the default skeleton is LineOne's waving block" do
-    html = render(~H|<.skeleton class="h-3 w-full" />|)
+    html = render(~H|<.skeleton variant="lineone" class="h-3 w-full" />|)
     assert "skeleton" in classes(html, "div")
     refute "sg-skel" in classes(html, "div")
   end

@@ -50,9 +50,9 @@ defmodule LineaUI.Components.SimpleElementsTest do
     test "wave by default, pulse or none, shapes" do
       html =
         render(~H"""
-        <.skeleton id="w" class="h-3 w-full" />
-        <.skeleton id="p" animation="pulse" shape="circle" />
-        <.skeleton id="n" animation="none" shape="square" />
+        <.skeleton variant="lineone" id="w" class="h-3 w-full" />
+        <.skeleton variant="lineone" id="p" animation="pulse" shape="circle" />
+        <.skeleton variant="lineone" id="n" animation="none" shape="square" />
         """)
 
       assert ["skeleton", "animate-wave" | _] = classes(html, "#w")
@@ -65,8 +65,10 @@ defmodule LineaUI.Components.SimpleElementsTest do
     test "a group announces the loading and keeps the blocks hidden" do
       html =
         render(~H"""
-        <.skeleton_group id="g" label="Loading orders"><.skeleton class="h-3" /></.skeleton_group>
-        <.skeleton_group id="d"><.skeleton class="h-3" /></.skeleton_group>
+        <.skeleton_group id="g" label="Loading orders">
+          <.skeleton variant="lineone" class="h-3" />
+        </.skeleton_group>
+        <.skeleton_group id="d"><.skeleton variant="lineone" class="h-3" /></.skeleton_group>
         """)
 
       assert [_] = find(html, ~s|#g[role="status"][aria-busy="true"]|) |> Enum.to_list()
@@ -80,7 +82,7 @@ defmodule LineaUI.Components.SimpleElementsTest do
     test "border, soft, grow and svg, with sizes and elastic timing" do
       html =
         render(~H"""
-        <.spinner id="b" color="primary" />
+        <.spinner variant="border" id="b" color="primary" />
         <.spinner id="s" variant="soft" color="info" size="lg" elastic />
         <.spinner id="g" variant="grow" color="error" />
         <.spinner id="v" variant="svg" color="success" />

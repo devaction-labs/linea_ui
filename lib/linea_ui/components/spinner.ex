@@ -9,7 +9,7 @@ defmodule LineaUI.Components.Spinner do
       <.spinner color="error" variant="svg" />
       <.spinner variant="canvas" size="md" />
 
-  The `canvas` variant is the design canvas's `sg-spin`: a thin line-colored ring with an accent arc, in
+  The `canvas` variant (the default; `variant="border"`, `soft`, `grow` and `svg` are the old LineOne spinners) is the design canvas's `sg-spin`: a thin line-colored ring with an accent arc, in
   14, 18, 20, 24 or 32px (`size` `xs`, `sm`, `md`, `lg`, `xl`).
 
   The ring turns in 0.75s (the elastic one keeps its own pace) and the growing dot pulses in 1s.
@@ -111,10 +111,10 @@ defmodule LineaUI.Components.Spinner do
   )
 
   attr(:variant, :string,
-    default: "border",
-    values: ~w(border soft grow svg canvas),
+    default: "canvas",
+    values: ~w(canvas border soft grow svg),
     doc:
-      "`border` is the ring with a gap, `soft` the tinted ring, `grow` the pulsing dot, `canvas` the canvas `sg-spin` (accent arc on a line-colored ring; `current` and `white` tint it with the text color or white, `success` `warning` `error` `info` with the canvas tones)."
+      "`canvas` (the default) is the canvas `sg-spin`; `border` is the old LineOne ring with a gap, `soft` the tinted ring, `grow` the pulsing dot, `canvas` the canvas `sg-spin` (accent arc on a line-colored ring; `current` and `white` tint it with the text color or white, `success` `warning` `error` `info` with the canvas tones)."
   )
 
   attr(:size, :string,

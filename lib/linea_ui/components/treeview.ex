@@ -33,7 +33,7 @@ defmodule LineaUI.Components.Treeview do
 
   ## The canvas look
 
-  `variant="canvas"` draws the Signetum canvas tree: rows padded 6px 8px (8px corners, 2px apart; 36px with a boxed icon) in regular weight and the
+  `variant="canvas"` (the default; `variant="lineone"` is the old LineOne tree) draws the Signetum canvas tree: rows padded 6px 8px (8px corners, 2px apart; 36px with a boxed icon) in regular weight and the
   ink, the top level in 550, a 14px chevron, the selected row tinted with the accent from the row's start (the
   depth is a left padding inside the row) and boxed icons:
 
@@ -110,9 +110,10 @@ defmodule LineaUI.Components.Treeview do
   )
 
   attr(:variant, :string,
-    default: "lineone",
-    values: ~w(lineone canvas),
-    doc: "`canvas` is the Signetum canvas tree (see \"The canvas look\")."
+    default: "canvas",
+    values: ~w(canvas lineone),
+    doc:
+      "`canvas` (the default) is the Signetum canvas tree (see \"The canvas look\"); `lineone` is the old LineOne tree."
   )
 
   attr(:chevrons, :boolean,

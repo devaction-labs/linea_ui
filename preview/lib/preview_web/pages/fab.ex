@@ -14,7 +14,7 @@ defmodule PreviewWeb.Pages.Fab do
       class="mt-5"
     >
       <div id="stage-hover" class={[@stage, "h-44"]}>
-        <.fab id="fab-hover" label="Ask the assistant" class={@offset} phx-click="noop" />
+        <.fab variant="pill" id="fab-hover" label="Ask the assistant" class={@offset} phx-click="noop" />
       </div>
     </.example>
 
@@ -24,13 +24,13 @@ defmodule PreviewWeb.Pages.Fab do
       class="mt-5"
     >
       <div id="stage-auto" class={[@stage, "h-44"]}>
-        <.fab id="fab-auto" label="Need a hand?" retract="auto" retract_after={3000} class={@offset} />
+        <.fab variant="pill" id="fab-auto" label="Need a hand?" retract="auto" retract_after={3000} class={@offset} />
       </div>
     </.example>
 
     <.example title="Retract: never" text="Always expanded." class="mt-5">
       <div id="stage-never" class={[@stage, "h-44"]}>
-        <.fab id="fab-never" label="Ask the assistant" retract="never" class={@offset} />
+        <.fab variant="pill" id="fab-never" label="Ask the assistant" retract="never" class={@offset} />
       </div>
     </.example>
 
@@ -40,16 +40,16 @@ defmodule PreviewWeb.Pages.Fab do
       class="mt-5"
     >
       <div id="stage-always" class={[@stage, "h-44"]}>
-        <.fab id="fab-always" label="Ask the assistant" retract="always" badge={3} class={@offset} />
+        <.fab variant="pill" id="fab-always" label="Ask the assistant" retract="always" badge={3} class={@offset} />
       </div>
     </.example>
 
     <.example title="Colors and sizes" class="mt-5">
       <div id="stage-colors" class={[@stage, "h-96"]}>
-        <.fab id="fab-c1" label="Assistant" retract="never" class="!bottom-4 !right-4" />
-        <.fab id="fab-c2" label="Primary" retract="never" color="primary" class="!bottom-24 !right-4" />
-        <.fab id="fab-c3" label="Dark" retract="never" color="dark" class="!bottom-44 !right-4" />
-        <.fab
+        <.fab variant="pill" id="fab-c1" label="Assistant" retract="never" class="!bottom-4 !right-4" />
+        <.fab variant="pill" id="fab-c2" label="Primary" retract="never" color="primary" class="!bottom-24 !right-4" />
+        <.fab variant="pill" id="fab-c3" label="Dark" retract="never" color="dark" class="!bottom-44 !right-4" />
+        <.fab variant="pill"
           id="fab-c4"
           label="Light"
           retract="never"
@@ -57,7 +57,7 @@ defmodule PreviewWeb.Pages.Fab do
           position="bottom-left"
           class="!bottom-4 !left-4"
         />
-        <.fab
+        <.fab variant="pill"
           id="fab-c5"
           label="Large"
           retract="never"
@@ -65,7 +65,7 @@ defmodule PreviewWeb.Pages.Fab do
           position="top-left"
           class="!top-4 !left-4"
         />
-        <.fab
+        <.fab variant="pill"
           id="fab-c6"
           label="Forced open"
           expanded
@@ -82,7 +82,7 @@ defmodule PreviewWeb.Pages.Fab do
       class="mt-5"
     >
       <div id="stage-disabled" class={[@stage, "h-40"]}>
-        <.fab
+        <.fab variant="pill"
           id="fab-d1"
           label="New proposal"
           retract="never"
@@ -90,7 +90,7 @@ defmodule PreviewWeb.Pages.Fab do
           disabled
           class="!bottom-4 !right-4"
         />
-        <.fab
+        <.fab variant="pill"
           id="fab-d2"
           label="Talk to the team"
           retract="never"
@@ -107,7 +107,7 @@ defmodule PreviewWeb.Pages.Fab do
       class="mt-5"
     >
       <div id="stage-dial" class={[@stage, "h-80"]}>
-        <.fab_dial id="fab-dial" label="Quick actions" class={@offset}>
+        <.fab_dial variant="pill" id="fab-dial" label="Quick actions" class={@offset}>
           <:action label="New contact" phx-click="noop">
             <.icon name="huge-user-add-01" class="size-4.5" />
           </:action>

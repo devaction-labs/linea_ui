@@ -8,7 +8,7 @@ defmodule PreviewWeb.Pages.Breadcrumb do
       text="Breadcrumbs consist of a list of links that help a user visualize a page's location within the hierarchical structure of a website. Check out code for detail of usage."
       class="mt-4"
     >
-      <.breadcrumb>
+      <.breadcrumb variant="plain">
         <:item href="#">Home</:item>
         <:item href="#">Elements</:item>
         <:item>Breadcrumb</:item>
@@ -74,7 +74,7 @@ defmodule PreviewWeb.Pages.Breadcrumb do
 
   defp trail(assigns) do
     ~H"""
-    <.breadcrumb>
+    <.breadcrumb variant="plain">
       <:separator>{render_slot(@separator)}</:separator>
       <:item href="#">Home</:item>
       <:item href="#">Elements</:item>

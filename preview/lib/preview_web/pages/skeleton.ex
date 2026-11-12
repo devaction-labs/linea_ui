@@ -59,16 +59,16 @@ defmodule PreviewWeb.Pages.Skeleton do
     ~H"""
     <div class={["flex flex-col border border-slate-150 dark:border-navy-500", @class]}>
       <div class="flex space-x-5 px-5 py-4">
-        <.skeleton animation={@animation} shape="circle" class="size-16" />
+        <.skeleton variant="lineone" animation={@animation} shape="circle" class="size-16" />
         <div class="flex flex-1 flex-col justify-between py-2">
-          <.skeleton animation={@animation} class="h-3 w-full" />
-          <.skeleton animation={@animation} class="h-3 w-full" />
+          <.skeleton variant="lineone" animation={@animation} class="h-3 w-full" />
+          <.skeleton variant="lineone" animation={@animation} class="h-3 w-full" />
         </div>
       </div>
-      <.skeleton animation={@animation} shape="square" class="h-48 w-full" />
+      <.skeleton variant="lineone" animation={@animation} shape="square" class="h-48 w-full" />
       <div class="w-full px-6 py-4">
-        <.skeleton animation={@animation} class="h-3 w-full" />
-        <.skeleton animation={@animation} class="mt-4 h-3 w-8/12" />
+        <.skeleton variant="lineone" animation={@animation} class="h-3 w-full" />
+        <.skeleton variant="lineone" animation={@animation} class="mt-4 h-3 w-8/12" />
       </div>
     </div>
     """
@@ -80,12 +80,12 @@ defmodule PreviewWeb.Pages.Skeleton do
   defp post(assigns) do
     ~H"""
     <div class={["flex flex-col", @class]}>
-      <.skeleton animation={@animation} shape="lg" class="h-48 w-full" />
+      <.skeleton variant="lineone" animation={@animation} shape="lg" class="h-48 w-full" />
       <div class="flex space-x-5 py-4">
-        <.skeleton animation={@animation} shape="circle" class="size-16" />
+        <.skeleton variant="lineone" animation={@animation} shape="circle" class="size-16" />
         <div class="flex flex-1 flex-col justify-between py-2">
-          <.skeleton animation={@animation} class="h-3 w-10/12" />
-          <.skeleton animation={@animation} class="h-6 w-full" />
+          <.skeleton variant="lineone" animation={@animation} class="h-3 w-10/12" />
+          <.skeleton variant="lineone" animation={@animation} class="h-6 w-full" />
         </div>
       </div>
     </div>
@@ -99,13 +99,13 @@ defmodule PreviewWeb.Pages.Skeleton do
     ~H"""
     <div class={["flex flex-col space-y-4 border border-slate-150 dark:border-navy-500", @class]}>
       <div class="px-4 pt-4">
-        <.skeleton animation={@animation} shape="pill" class="h-8 w-10/12" />
+        <.skeleton variant="lineone" animation={@animation} shape="pill" class="h-8 w-10/12" />
       </div>
-      <.skeleton animation={@animation} shape="square" class="h-48 w-full" />
+      <.skeleton variant="lineone" animation={@animation} shape="square" class="h-48 w-full" />
       <div class="flex flex-1 flex-col justify-between space-y-4 p-4">
-        <.skeleton animation={@animation} class="h-4 w-9/12" />
-        <.skeleton animation={@animation} class="h-4 w-6/12" />
-        <.skeleton animation={@animation} class="h-4 w-full" />
+        <.skeleton variant="lineone" animation={@animation} class="h-4 w-9/12" />
+        <.skeleton variant="lineone" animation={@animation} class="h-4 w-6/12" />
+        <.skeleton variant="lineone" animation={@animation} class="h-4 w-full" />
       </div>
     </div>
     """

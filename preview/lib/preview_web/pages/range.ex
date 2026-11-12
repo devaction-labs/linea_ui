@@ -14,14 +14,14 @@ defmodule PreviewWeb.Pages.Range do
       text="Use our custom range inputs for consistent cross-browser styling and built-in customization. Check out code for detail of usage."
       class="mt-5 max-w-xl"
     >
-      <.range name="basic" />
+      <.range variant="classic" name="basic" />
     </.example>
     <.example
       title="Colored Input Range"
       text="Input Range Thumb can have different colors. Check out code for detail of usage."
       class="mt-5 max-w-xl space-y-6"
     >
-      <.range
+      <.range variant="classic"
         :for={color <- ~w(primary secondary info success warning error)}
         name={"color-#{color}"}
         value={50}
@@ -33,7 +33,7 @@ defmodule PreviewWeb.Pages.Range do
       text="Input Ranges can have various sizes. Check out code for detail of usage."
       class="mt-5 max-w-xl space-y-6"
     >
-      <.range :for={size <- ~w(sm md lg)} name={"size-#{size}"} size={size} />
+      <.range variant="classic" :for={size <- ~w(sm md lg)} name={"size-#{size}"} size={size} />
     </.example>
     <.example
       id="live-range"
@@ -42,7 +42,7 @@ defmodule PreviewWeb.Pages.Range do
       class="mt-5 max-w-xl"
     >
       <form id="volume-form" phx-change="volume">
-        <.range id="volume" name="volume" value={@volume} color="primary" label="Volume" />
+        <.range variant="classic" id="volume" name="volume" value={@volume} color="primary" label="Volume" />
       </form>
       <p class="mt-2 text-xs-plus">Volume: <span id="volume-value">{@volume}</span></p>
     </.example>

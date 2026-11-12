@@ -24,6 +24,7 @@ import ActionMenu from "./hooks/action_menu.js"
 import Dropdown from "./hooks/dropdown.js"
 import Fab from "./hooks/fab.js"
 import InputMask from "./hooks/input_mask.js"
+import InputSuffix from "./hooks/input_suffix.js"
 import LandingNav from "./hooks/landing_nav.js"
 import Layout from "./hooks/layout.js"
 import NumberInput from "./hooks/number_input.js"
@@ -40,6 +41,7 @@ import Sortable from "./hooks/sortable.js"
 import Tabs from "./hooks/tabs.js"
 import TagsInput from "./hooks/tags_input.js"
 import Textarea from "./hooks/textarea.js"
+import TextareaTokens from "./hooks/textarea_tokens.js"
 import TextEditor from "./hooks/text_editor.js"
 import Theme from "./hooks/theme.js"
 import TimePicker from "./hooks/time_picker.js"
@@ -68,6 +70,7 @@ export const Hooks = {
   ...Dropdown,
   ...Fab,
   ...InputMask,
+  ...InputSuffix,
   ...LandingNav,
   ...Layout,
   ...NumberInput,
@@ -84,6 +87,7 @@ export const Hooks = {
   ...Tabs,
   ...TagsInput,
   ...Textarea,
+  ...TextareaTokens,
   ...TextEditor,
   ...Theme,
   ...TimePicker,

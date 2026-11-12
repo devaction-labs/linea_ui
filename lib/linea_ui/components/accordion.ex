@@ -1,7 +1,8 @@
 defmodule LineaUI.Components.Accordion do
   @moduledoc """
-  LineOne's accordion and collapse: a list of sections that open under their titles, in LineOne's
-  six styles (basic, border bottom, full bordered, divided items, primary, advanced).
+  The accordion: a list of sections that open under their titles, in the design canvas look by default
+  (`variant="canvas"`). `variant="basic"` is the old LineOne default and the other LineOne styles are
+  border-bottom, bordered (full), divided items, primary and advanced.
 
       <.accordion id="faq" variant="bordered">
         <.accordion_item id="faq-1" title="Accordion Item 1" open>
@@ -72,10 +73,10 @@ defmodule LineaUI.Components.Accordion do
   attr :id, :string, required: true
 
   attr :variant, :string,
-    default: "basic",
+    default: "canvas",
     values: Map.keys(@variants),
     doc:
-      "LineOne's sections: `basic`, `border-bottom`, `bordered` (full bordered), `divided` (items apart), `primary`, `advanced` (a header slot per item)."
+      "`canvas` (the default) is the design canvas accordion. The old LineOne look is `basic`; LineOne's sections: `basic`, `border-bottom`, `bordered` (full bordered), `divided` (items apart), `primary`, `advanced` (a header slot per item)."
 
   attr :color, :string,
     default: "primary",

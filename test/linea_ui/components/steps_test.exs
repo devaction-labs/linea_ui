@@ -82,7 +82,7 @@ defmodule LineaUI.Components.StepsTest do
   test "the stepper derives each state from current" do
     html =
       render(~H"""
-      <.stepper current={1}>
+      <.stepper variant="classic" current={1}>
         <:step label="Company" sub="Tax id" />
         <:step label="Certificate" sub="File" />
         <:step label="Profile" />
@@ -105,7 +105,7 @@ defmodule LineaUI.Components.StepsTest do
   test "an error flags the current step and keeps aria-current on it" do
     html =
       render(~H"""
-      <.stepper current={1} error>
+      <.stepper variant="classic" current={1} error>
         <:step label="A" />
         <:step label="B" />
         <:step label="C" />
@@ -121,7 +121,7 @@ defmodule LineaUI.Components.StepsTest do
   test "the dot shows the number, a check for done steps and a marker when given" do
     html =
       render(~H"""
-      <.stepper current={2}>
+      <.stepper variant="classic" current={2}>
         <:step label="A" />
         <:step label="B" marker="B" />
         <:step label="C" />
@@ -140,7 +140,7 @@ defmodule LineaUI.Components.StepsTest do
   test "a step's own state wins over current" do
     html =
       render(~H"""
-      <.stepper current={0}>
+      <.stepper variant="classic" current={0}>
         <:step label="A" />
         <:step label="B" state="done" />
       </.stepper>
@@ -150,7 +150,9 @@ defmodule LineaUI.Components.StepsTest do
   end
 
   test "without current every step is to do" do
-    html = render(~H|<.stepper><:step label="A" /><:step label="B" /></.stepper>|)
+    html =
+      render(~H|<.stepper variant="classic"><:step label="A" /><:step label="B" /></.stepper>|)
+
     assert states(html) == ["todo", "todo"]
     assert find(html, "li[aria-current]") |> Enum.count() == 0
   end
@@ -159,6 +161,7 @@ defmodule LineaUI.Components.StepsTest do
     html =
       render(~H"""
       <.stepper
+        variant="classic"
         current={1}
         state_names={
           %{"done" => "Concluído", "current" => "Atual", "error" => "Erro", "todo" => "Pendente"}
@@ -176,7 +179,7 @@ defmodule LineaUI.Components.StepsTest do
   test "horizontal draws a bar per step over a grid of the steps" do
     html =
       render(~H"""
-      <.stepper current={1}>
+      <.stepper variant="classic" current={1}>
         <:step label="A" />
         <:step label="B" />
         <:step label="C" />
@@ -196,7 +199,7 @@ defmodule LineaUI.Components.StepsTest do
   test "horizontal shows a step's content under its text" do
     html =
       render(~H"""
-      <.stepper current={0}>
+      <.stepper variant="classic" current={0}>
         <:step label="A"><a href="#more">More</a></:step>
         <:step label="B" />
       </.stepper>
@@ -209,7 +212,7 @@ defmodule LineaUI.Components.StepsTest do
   test "vertical joins the dots with a line and puts the content at the right end" do
     html =
       render(~H"""
-      <.stepper orientation="vertical" current={1}>
+      <.stepper variant="classic" orientation="vertical" current={1}>
         <:step label="A" />
         <:step label="B"><button type="button">Import</button></:step>
         <:step label="C" />
@@ -227,7 +230,11 @@ defmodule LineaUI.Components.StepsTest do
   end
 
   test "class and rest land on the list" do
-    html = render(~H|<.stepper id="s" class="mt-4" data-x="1"><:step label="A" /></.stepper>|)
+    html =
+      render(
+        ~H|<.stepper variant="classic" id="s" class="mt-4" data-x="1"><:step label="A" /></.stepper>|
+      )
+
     assert "mt-4" in classes(html, "#s")
     assert html |> find("#s") |> LazyHTML.attribute("data-x") == ["1"]
   end
@@ -268,7 +275,7 @@ defmodule LineaUI.Components.StepsTest do
   test "a step's icon replaces the number in the default stepper too" do
     html =
       render(~H"""
-      <.stepper current={0}>
+      <.stepper variant="classic" current={0}>
         <:step label="A" icon="huge-file-02" />
       </.stepper>
       """)

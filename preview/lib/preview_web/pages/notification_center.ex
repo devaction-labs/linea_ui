@@ -34,20 +34,20 @@ defmodule PreviewWeb.Pages.NotificationCenter do
     <.example title="Bell and panel" text="The dot says something is unread. Tabs filter in the browser; mark all as read and click an item to read it." class="mt-5">
       <div class="flex min-h-[40rem] items-start justify-end gap-3">
         <.button variant="flat" size="sm" phx-click="reset">Reset</.button>
-        <.notification_center id="nc-demo" items={@items} tabs={@tabs} on_read_all="read_all" on_read="read" all_href="#" preferences_href="#" open />
+        <.notification_center variant="classic" id="nc-demo" items={@items} tabs={@tabs} on_read_all="read_all" on_read="read" all_href="#" preferences_href="#" open />
       </div>
     </.example>
 
     <.example title="Bell states" text="Up to date, pending." class="mt-5">
       <div class="flex gap-6">
-        <.notification_center id="nc-clear" items={[]} tabs={[]} />
-        <.notification_center id="nc-pending" items={@items} />
+        <.notification_center variant="classic" id="nc-clear" items={[]} tabs={[]} />
+        <.notification_center variant="classic" id="nc-pending" items={@items} />
       </div>
     </.example>
 
     <.example title="Empty tab" text="Each tab has its own empty message." class="mt-5">
       <div class="flex min-h-[28rem] items-start justify-end">
-        <.notification_center id="nc-empty" items={[]} tabs={@tabs} on_read_all="read_all" open />
+        <.notification_center variant="classic" id="nc-empty" items={[]} tabs={@tabs} on_read_all="read_all" open />
       </div>
     </.example>
     """

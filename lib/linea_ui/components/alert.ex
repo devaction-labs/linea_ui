@@ -12,7 +12,7 @@ defmodule LineaUI.Components.Alert do
       </.alert>
       <.alert id="notice" color="info" variant="outline" dismissible>Closable</.alert>
 
-  The `canvas` variant is the design canvas's `sg-alert`: a soft block tinted by `color` (`primary`,
+  The `canvas` variant (the default; `variant="solid"`, `outline`, `soft` and `bordered` are the old LineOne alerts) is the design canvas's `sg-alert`: a soft block tinted by `color` (`primary`,
   `warning`, `error`, `info`, `success`; `neutral` is the sunken gray one), the icon at the top left, the
   content growing beside it (write it as `<b>` and `<p>`), the `:action` buttons in a row under the text
   and a muted round close button:
@@ -144,9 +144,10 @@ defmodule LineaUI.Components.Alert do
   )
 
   attr(:variant, :string,
-    default: "solid",
-    values: ~w(solid outline soft bordered canvas),
-    doc: "`canvas` is the canvas's `sg-alert` (see the module doc)."
+    default: "canvas",
+    values: ~w(canvas solid outline soft bordered),
+    doc:
+      "`canvas` (the default) is the canvas's `sg-alert` (see the module doc). The old LineOne look is `solid` (or `outline`, `soft`, `bordered`)."
   )
 
   attr(:shape, :string, default: "rounded", values: ~w(rounded pill))

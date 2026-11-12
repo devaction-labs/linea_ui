@@ -30,10 +30,10 @@ defmodule LineaUI.Components.Breadcrumb do
         <:item>Calendar</:item>
       </.breadcrumb>
 
-  `variant="canvas"` is the design canvas trail (`sg-crumb`): a 32px pill with an inset line, muted
+  `variant="canvas"` (the default; `variant="plain"` is the old LineOne trail) is the design canvas trail (`sg-crumb`): a 32px pill with an inset line, muted
   13px links, faint `/` separators and the current page in the ink.
 
-      <.breadcrumb variant="canvas">
+      <.breadcrumb>
         <:item navigate={~p"/customers"}>Customers</:item>
         <:item>Casa das Tintas</:item>
       </.breadcrumb>
@@ -74,10 +74,10 @@ defmodule LineaUI.Components.Breadcrumb do
       </.breadcrumb>
   """
   attr(:variant, :string,
-    default: "plain",
-    values: ~w(plain bordered canvas),
+    default: "canvas",
+    values: ~w(canvas plain bordered),
     doc:
-      "`bordered` draws a rounded border around each link; `canvas` is the design canvas pill trail with `/` separators."
+      "`canvas` (the default) is the design canvas pill trail with `/` separators; `plain` is the old LineOne trail. `bordered` draws a rounded border around each link; `canvas` is the design canvas pill trail with `/` separators."
   )
 
   attr(:label, :string, default: "Breadcrumb", doc: "The `aria-label` of the navigation.")

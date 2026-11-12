@@ -26,7 +26,7 @@ defmodule PreviewWeb.Pages.AccordionDemo do
 
     ~H"""
     <.narrow title={"Basic #{@word}"} text={@text} class="mt-5">
-      <.accordion id={"#{@prefix}_1"} multiple={@multiple}>
+      <.accordion variant="basic" id={"#{@prefix}_1"} multiple={@multiple}>
         <.accordion_item :for={n <- 1..3} id={"#{@prefix}_1_#{n}"} title={"#{@word} Item #{n}"}>
           <.tags lorem={@lorem} />
         </.accordion_item>
