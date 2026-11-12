@@ -2,9 +2,9 @@
    joined to a card with a title, tinted sections and a footer of metrics); `linea-flow-edge` a connection, drawn
    by the LineaUI.Flow hook as an SVG path with its condition label; `linea-flow-toolbar` the bar at the bottom
    and `linea-flow-panel` the inspector on the right. */
-.linea-flow{position:relative;display:flex;min-height:420px;border-radius:var(--r-lg);overflow:hidden;color:var(--fg);background-color:var(--canvas);background-image:radial-gradient(color-mix(in srgb,var(--ink) 13%,transparent) 1px,transparent 1px);background-size:18px 18px;box-shadow:inset 0 0 0 1px var(--ctl-line)}
-.linea-flow-main{position:relative;flex:1;min-width:0;display:flex}
-.linea-flow-scroll{flex:1;min-width:0;overflow:auto}
+.linea-flow{position:relative;display:flex;height:var(--linea-flow-height,clamp(420px,72vh,880px));min-height:420px;border-radius:var(--r-lg);overflow:hidden;color:var(--fg);background-color:var(--canvas);background-image:radial-gradient(color-mix(in srgb,var(--ink) 13%,transparent) 1px,transparent 1px);background-size:18px 18px;box-shadow:inset 0 0 0 1px var(--ctl-line)}
+.linea-flow-main{position:relative;flex:1;min-width:0;min-height:0;display:flex}
+.linea-flow-scroll{flex:1;min-width:0;min-height:0;overflow:auto}
 .linea-flow-stage{position:relative;min-width:100%;min-height:100%}
 .linea-flow-edges{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}
 .linea-flow-edges path{fill:none;stroke:var(--line-strong);stroke-width:1.5}

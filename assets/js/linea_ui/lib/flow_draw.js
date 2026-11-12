@@ -8,14 +8,22 @@ const svgEl = (name, attrs) => {
   return el
 }
 
-/* Down from (x1, y1), across at `ym` and down to (x2, y2), with rounded corners. */
+/* Where an edge leaving (·, y1) for (·, y2) turns sideways: a third of the way down, between 12 and 28px,
+   and never past the middle of a short gap. A target at or above the source still leaves 12px downwards. */
+export const bendY = (y1, y2) => {
+  const gap = y2 - y1
+  return gap > 0 ? y1 + Math.min(28, Math.max(12, gap / 3), gap / 2) : y1 + 12
+}
+
+/* Down from (x1, y1), across at `ym` and on to (x2, y2), down or back up, with rounded corners. */
 export const edgePath = (x1, y1, x2, y2, ym) => {
   if (Math.abs(x1 - x2) < 1) return `M${x1} ${y1}V${y2}`
-  const r = Math.min(R, Math.abs(x2 - x1) / 2, (ym - y1), (y2 - ym))
+  const r = Math.max(0, Math.min(R, Math.abs(x2 - x1) / 2, ym - y1, Math.abs(y2 - ym)))
   const s = x2 > x1 ? 1 : -1
+  const d = y2 >= ym ? 1 : -1
   return (
     `M${x1} ${y1}V${ym - r}Q${x1} ${ym} ${x1 + s * r} ${ym}` +
-    `H${x2 - s * r}Q${x2} ${ym} ${x2} ${ym + r}V${y2}`
+    `H${x2 - s * r}Q${x2} ${ym} ${x2} ${ym + d * r}V${y2}`
   )
 }
 
@@ -58,7 +66,7 @@ export const drawFlow = (root) => {
     const A = box(a)
     const B = box(b)
     const [x1, y1, x2, y2] = [A.x + A.w / 2, A.y + A.h, B.x + B.w / 2, B.y]
-    const ym = y1 + Math.min(28, Math.max(12, (y2 - y1) / 3))
+    const ym = bendY(y1, y2)
     const state = {"data-active": edge.hasAttribute("data-active"), "data-status": edge.dataset.status}
     parts.push(svgEl("path", {d: edgePath(x1, y1, x2, y2, ym), ...state}))
     ;[[x1, y1], [x2, y2]].forEach(([x, y]) =>

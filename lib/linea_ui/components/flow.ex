@@ -79,6 +79,10 @@ defmodule LineaUI.Components.Flow do
   attr :id, :string, required: true
   attr :edges, :list, default: [], doc: "Maps with `:from` and `:to`, and optionally `:label`, `:active`, `:status`."
   attr :padding, :integer, default: 96, doc: "The room after the last node, in pixels."
+
+  attr :height, :string,
+    default: nil,
+    doc: "A CSS height for the editor (`\"640px\"`, `\"calc(100dvh - 8rem)\"`). The default is `clamp(420px, 72vh, 880px)`; the stage scrolls inside it."
   attr :class, :any, default: nil
   attr :rest, :global
 
@@ -88,7 +92,7 @@ defmodule LineaUI.Components.Flow do
 
   def flow(assigns) do
     ~H"""
-    <div id={@id} class={merge(["linea-flow", @class])} role="group" phx-hook="LineaUI.Flow" data-padding={@padding} {@rest}>
+    <div id={@id} class={merge(["linea-flow", @class])} role="group" phx-hook="LineaUI.Flow" data-padding={@padding} style={@height && "--linea-flow-height:#{@height}"} {@rest}>
       <div class="linea-flow-main">
         <div class="linea-flow-scroll">
           <div class="linea-flow-stage">

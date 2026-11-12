@@ -106,4 +106,17 @@ defmodule LineaUI.Components.FlowTest do
     assert [_] = find(html, ".linea-flow-panel-body #body") |> Enum.to_list()
     assert [_] = find(html, ".linea-flow-panel-foot #save") |> Enum.to_list()
   end
+
+  test "height sets the bound the stage scrolls inside" do
+    assigns = %{}
+
+    html =
+      rendered_to_string(~H"""
+      <.flow id="f" height="640px">
+        <.flow_node id="a" x={0} y={0} title="A" />
+      </.flow>
+      """)
+
+    assert html =~ ~s(style="--linea-flow-height:640px")
+  end
 end
