@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- New `flow` (with `flow_node`, `flow_chip` and `flow_panel`): a workflow editor, the canvas Flow. Steps are cards on a dotted stage with a kind tab (trigger, agent, action, human step), a title, tinted sections, tool chips and a footer of metrics. `edges` connects them (`%{from:, to:, label:, active:, status:}`): the `LineaUI.Flow` hook measures the cards and draws each connection as an SVG path with ports and its condition label, and redraws when a node resizes. A node takes `selected` (accent outline plus the `:actions` beside it), `status` (`running`, `done`, `waiting`, `error`, `skipped`) and `on_add` (the + under it). The `:toolbar` slot is the bar at the bottom and `:panel` the inspector on the right (`flow_panel`: icon, title, close, tabs, body, footer). Nodes are placed by `x` and `y` and the stage scrolls; dragging nodes and zoom are not part of this version.
+
 ## 0.18.0 (2026-11-11)
 
 - New `glow_text`: text with a living gradient (the canvas GlowText). `tone` is `default` or `warm` and `as` is `span`, `h1`, `h2`, `h3` or `p`. The animation slows under `prefers-reduced-motion`.

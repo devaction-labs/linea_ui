@@ -23,6 +23,7 @@ import Dialog from "./hooks/dialog.js"
 import ActionMenu from "./hooks/action_menu.js"
 import Dropdown from "./hooks/dropdown.js"
 import Fab from "./hooks/fab.js"
+import Flow from "./hooks/flow.js"
 import InputMask from "./hooks/input_mask.js"
 import LandingNav from "./hooks/landing_nav.js"
 import Layout from "./hooks/layout.js"
@@ -67,6 +68,7 @@ export const Hooks = {
   ...ActionMenu,
   ...Dropdown,
   ...Fab,
+  ...Flow,
   ...InputMask,
   ...LandingNav,
   ...Layout,

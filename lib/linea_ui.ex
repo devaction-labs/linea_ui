@@ -58,6 +58,7 @@ defmodule LineaUI do
     sidebar: LineaUI.Components.Sidebar,
     theme_switch: LineaUI.Components.ThemeSwitch,
     error_page: LineaUI.Components.ErrorPage,
+    flow: LineaUI.Components.Flow,
     hero_card: LineaUI.Components.HeroCard,
     navbar: LineaUI.Components.Navbar,
     landing_nav: LineaUI.Components.LandingNav,
