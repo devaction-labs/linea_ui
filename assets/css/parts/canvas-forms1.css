@@ -164,3 +164,10 @@
 .lc-mini .sg-cal > .lc-tn-success{background:var(--pos-soft);color:var(--pos)}
 .lc-mini .sg-cal > .lc-tn-info{background:var(--info-soft);color:var(--info)}
 .lc-mini.sg-card:has(> .lc-mini-legend){padding:18px 20px}
+
+/* ---------- Textarea with `tokens`: the text is drawn by a mirror over a transparent-text textarea ---------- */
+.linea-tokens{position:relative;display:block;width:100%}
+.linea-tokens>textarea{display:block;color:transparent!important;caret-color:var(--ink)}
+.linea-tokens>textarea::selection{background:color-mix(in srgb,var(--accent) 28%,transparent)}
+.linea-tokens-mirror{position:absolute;inset:0;width:auto!important;overflow:hidden;pointer-events:none;white-space:pre-wrap;overflow-wrap:break-word;background:none!important;box-shadow:none!important;resize:none}
+.linea-token{font-family:var(--mono);font-size:.893em;line-height:1;font-feature-settings:"zero";color:var(--muted)}

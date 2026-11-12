@@ -116,4 +116,85 @@ defmodule LineaUI.Components.TextareaTest do
     assert html |> find("textarea") |> LazyHTML.attribute("data-format") == ["%{count} de %{max}"]
     assert "justify-start" in classes(html, "div:has(> #d-counter)")
   end
+
+  describe "tokens" do
+    test "off by default: no wrapper, no mirror, no hook" do
+      html = render(~H'<.textarea name="m" value="A {{x}}" />')
+      assert find(html, ".linea-tokens, [data-token-mirror], [phx-hook]") |> Enum.empty?()
+    end
+
+    test "a mirror with the same classes sits over the textarea, the {{tokens}} in code" do
+      html =
+        render(
+          ~H'<.textarea name="m" tokens value="A {{fatura.numero}} de {{fornecedor.nome}}." />'
+        )
+
+      assert [_] =
+               find(html, "div.linea-tokens[phx-hook='LineaUI.TextareaTokens'][id]")
+               |> Enum.to_list()
+
+      assert [_] = find(html, ".linea-tokens > textarea[name=m]") |> Enum.to_list()
+
+      assert [_] =
+               find(html, ".linea-tokens > [data-token-mirror][aria-hidden=true]")
+               |> Enum.to_list()
+
+      assert ["{{fatura.numero}}", "{{fornecedor.nome}}"] =
+               find(html, "[data-token-mirror] code.linea-token") |> Enum.map(&LazyHTML.text/1)
+
+      assert LazyHTML.text(find(html, "[data-token-mirror]")) =~
+               "A {{fatura.numero}} de {{fornecedor.nome}}."
+
+      mirror = classes(html, "[data-token-mirror]")
+      area = classes(html, "textarea")
+      assert Enum.all?(area, &(&1 in mirror))
+      assert "linea-tokens-mirror" in mirror
+    end
+
+    test "the wrapper id follows the textarea's id" do
+      html = render(~H'<.textarea id="msg" name="m" tokens />')
+      assert [_] = find(html, "#msg-tokens.linea-tokens > #msg") |> Enum.to_list()
+    end
+
+    test "the text is escaped, in the mirror and in the textarea" do
+      html = render(~H'<.textarea name="m" tokens value="<script>x</script> {{a<b}} {{ok}}" />')
+      assert find(html, "script") |> Enum.empty?()
+      assert find(html, "[data-token-mirror] b") |> Enum.empty?()
+      assert LazyHTML.text(find(html, "[data-token-mirror]")) =~ "<script>x</script> "
+
+      assert ["{{a<b}}", "{{ok}}"] =
+               find(html, "[data-token-mirror] code") |> Enum.map(&LazyHTML.text/1)
+
+      assert html =~ "{{a&lt;b}}"
+      assert html =~ "&lt;script&gt;"
+    end
+
+    test "braces that do not make a token stay text; no value draws an empty mirror" do
+      html = render(~H'<.textarea name="m" tokens value="{{abc {x} {{a}}" />')
+      assert ["{{a}}"] = find(html, "[data-token-mirror] code") |> Enum.map(&LazyHTML.text/1)
+      assert LazyHTML.text(find(html, "[data-token-mirror]")) =~ "{{abc {x} {{a}}"
+
+      html = render(~H'<.textarea name="m" tokens />')
+      assert find(html, "[data-token-mirror] code") |> Enum.empty?()
+    end
+
+    test "works with a label, a counter and a header, and keeps the other hooks" do
+      html = render(~H'<.textarea name="m" tokens counter label="Msg" value="{{a}}" />')
+
+      assert [_] =
+               find(html, "label .linea-tokens > textarea[phx-hook='LineaUI.Textarea']")
+               |> Enum.to_list()
+
+      assert [_] = find(html, ".linea-tokens > [data-token-mirror] code") |> Enum.to_list()
+
+      html =
+        render(~H"""
+        <.textarea name="m" tokens value="{{a}}">
+          <:header>head</:header>
+        </.textarea>
+        """)
+
+      assert [_] = find(html, ".linea-tokens > [data-token-mirror] code") |> Enum.to_list()
+    end
+  end
 end

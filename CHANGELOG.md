@@ -27,6 +27,7 @@
   The preview's LineOne pages pass the old value explicitly.
 - The `toast` loading spinner and the `table` skeleton rows (`table_skeleton`, the data table's loading rows) use the canvas look too, now that it is the default of `spinner` and `skeleton`.
 - `input`: a `:suffix` slot that holds text takes `text` (`<:suffix text>4 pessoas</:suffix>`). The box sizes to its content with the usual right inset and the input's right padding follows its width (new hook `LineaUI.InputSuffix`; 2.25rem until it runs). Icon suffixes render as before.
+- `textarea`: `tokens` draws the `{{name}}` placeholders of the text in the mono face, muted, as the canvas's message field does. A mirror with the same box draws the text (server-rendered, escaped) over a textarea with transparent text and a visible caret; new hook `LineaUI.TextareaTokens` rebuilds it on input, follows the scroll and matches each token's width to the textarea's. Off by default; a textarea without `tokens` renders exactly as before.
 - `flow`: a `:hint` slot, the floating note of an empty board (`<:hint title="Comece pelo gatilho">Depois use o +…</:hint>`), with `left`, `top` and `width` (372, 92 and 240 px by default, as in the canvas).
 
 ## 0.18.0 (2026-11-11)
