@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.19.0 (2026-11-12)
 
 - **Breaking visual change: the canvas (Signetum) look is now the default.** These attrs defaulted to the old LineOne look and the canvas was opt-in; the canvas is now the default value and the old look is reachable with an explicit value. Passing `variant="canvas"` (`shape="canvas"` on `pagination`) still works. Nothing in the canvas look changed. Where `default` was the old value it is now `classic`.
 
