@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.21.1 (2026-11-13)
+
+- `number_input` and `phone_input` with `field=` send about 70% less per keystroke (874 → 293 B and 1889 → 413 B): they render their input directly instead of spreading their rest into `input`, and derive their assigns.
+- A lone `checkbox` with `field=` keys its error border on `aria-invalid` (new `linea-invalid-check` utility) and no longer resends its classes when an error comes or goes (457 → 147 B).
+- `input` keeps an `aria-invalid` given by the caller instead of rendering the attribute twice.
+- `treeview`: a `tree_item` without an `id` no longer gets a new generated id on every render (which replaced the element and lost its open state). It renders no DOM id and the hook names it by its position in the tree; give an `id` to items whose state the server tracks or that move.
+- `card_table` rows stay unkeyed on purpose: with keys a deleted row would be cheap but a new page would cost twice as much. For lists that insert and delete rows, pass a stream.
+
 ## 0.21.0 (2026-11-13)
 
 Smaller LiveView diffs. Measured with `Phoenix.LiveView.Diff.render/4` (uncompressed JSON):
