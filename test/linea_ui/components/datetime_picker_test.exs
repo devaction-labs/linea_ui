@@ -417,4 +417,28 @@ defmodule LineaUI.Components.DatetimePickerTest do
 
     assert find(html, "#s-display") |> Enum.to_list() == []
   end
+
+  test "timezone is shown on the help line, after help when both are given" do
+    only = render(~H|<.datetime_picker id="d" name="at" label="At" timezone="BRT · UTC−3" />|)
+    assert only |> find("span.mt-1\\.5") |> LazyHTML.text() =~ "BRT · UTC−3"
+
+    both =
+      render(
+        ~H|<.datetime_picker id="d" name="at" label="At" help="Team time" timezone="BRT · UTC−3" />|
+      )
+
+    assert both |> LazyHTML.from_fragment() |> LazyHTML.text() =~ "Team time · BRT · UTC−3"
+
+    none = render(~H|<.datetime_picker id="d" name="at" label="At" />|)
+    refute none |> LazyHTML.from_fragment() |> LazyHTML.text() =~ "UTC"
+  end
+
+  test "timezone does not change the value or the wall-clock data" do
+    html =
+      render(
+        ~H|<.datetime_picker id="d" name="at" value={~N[2026-10-14 10:30:00]} timezone="UTC−3" />|
+      )
+
+    assert data(html, "#d", "data-value") == [~s(["2026-10-14T10:30"])]
+  end
 end

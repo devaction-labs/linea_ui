@@ -27,6 +27,17 @@ defmodule LineaUI.Components.Dropdown do
         …
       </.dropdown>
 
+  An `:action` slot makes a split button: the slot is the main action (a button, or a link with
+  `href` / `navigate` / `patch`) and a square arrow button beside it opens the menu. Only the
+  arrow is the trigger, so keys and focus work as in any dropdown (Enter, Space or ↓ on the arrow
+  opens it); the menu opens under the arrow (`placement="bottom-end"` aligns it to the end of the group).
+
+      <.dropdown id="save" color="mono" toggle_label="More options">
+        <:action phx-click="save">Save</:action>
+        <.dropdown_item phx-click="save_and_issue">Save and issue</.dropdown_item>
+        <.dropdown_item phx-click="save_draft">Save as draft</.dropdown_item>
+      </.dropdown>
+
   A `dropdown_submenu` nests a menu that opens to the side, on hover, on click, or with → (←
   or Esc goes back to its parent):
 
@@ -109,8 +120,9 @@ defmodule LineaUI.Components.Dropdown do
 
   attr :color, :string,
     default: "neutral",
-    values: ~w(neutral primary secondary info success warning error),
-    doc: "The color of the `label` button."
+    values: ~w(neutral primary secondary info success warning error mono),
+    doc:
+      "The color of the `label` button, and of both halves of a split button (`mono` is the canvas's dark solid button)."
 
   attr :toggle_icon, :string,
     default: nil,
@@ -139,7 +151,12 @@ defmodule LineaUI.Components.Dropdown do
     doc:
       "Opens when the pointer is over the trigger or the menu, and closes shortly after it leaves (a click still works)."
 
-  attr :placement, :string, default: "bottom-start", values: @placements
+  attr :placement, :string,
+    default: "bottom-start",
+    values: @placements,
+    doc:
+      "Where the menu opens, from the trigger. In a split button the trigger is the arrow, so `bottom-end` right-aligns the menu with the group."
+
   attr :offset, :integer, default: 4, doc: "Pixels between the trigger and the menu."
   attr :close_on_select, :boolean, default: true
 
@@ -158,6 +175,22 @@ defmodule LineaUI.Components.Dropdown do
 
   attr :rest, :global
   slot :toggle, doc: "A trigger of your own instead of the `label` button."
+
+  slot :action,
+    doc:
+      "The main action of a split button; the arrow beside it (named by `toggle_label`) opens the menu." do
+    attr :href, :string
+    attr :navigate, :string
+    attr :patch, :string
+    attr :type, :string
+    attr :disabled, :boolean
+    attr :class, :any
+    attr :id, :string
+    attr :"phx-click", :any
+    attr :"phx-target", :any
+    attr :"phx-value-id", :any
+  end
+
   slot :inner_block, required: true
 
   def dropdown(assigns) do
@@ -173,7 +206,7 @@ defmodule LineaUI.Components.Dropdown do
     ~H"""
     <div
       id={@id}
-      class="relative inline-flex"
+      class={["relative inline-flex", @action != [] && "gap-px"]}
       phx-hook="LineaUI.Dropdown"
       data-popup="menu"
       data-open={bool(@open)}
@@ -186,9 +219,28 @@ defmodule LineaUI.Components.Dropdown do
       data-on-close={@on_close_js}
       {@rest}
     >
+      <Button.button
+        :for={action <- @action}
+        color={@color}
+        shape={@shape || "rounded"}
+        class={merge(["rounded-l-full! rounded-r-[4px]!", action[:class]])}
+        {Map.drop(action, [:inner_block, :__slot__, :class])}
+      >
+        {render_slot(action)}
+      </Button.button>
       <div data-trigger class="inline-flex">
         <Button.button
-          :if={@toggle == [] and @toggle_icon == nil}
+          :if={@action != []}
+          color={@color}
+          shape="square"
+          class="rounded-l-[4px]! rounded-r-full!"
+          id={"#{@id}-button"}
+          aria-label={@toggle_label}
+        >
+          <Overlay.chevron_icon />
+        </Button.button>
+        <Button.button
+          :if={@action == [] and @toggle == [] and @toggle_icon == nil}
           color={@color}
           shape={@shape || "rounded"}
           class="space-x-2"
@@ -198,7 +250,7 @@ defmodule LineaUI.Components.Dropdown do
           <Overlay.chevron_icon />
         </Button.button>
         <Button.button
-          :if={@toggle == [] and @toggle_icon != nil}
+          :if={@action == [] and @toggle == [] and @toggle_icon != nil}
           icon
           variant="flat"
           color="current"

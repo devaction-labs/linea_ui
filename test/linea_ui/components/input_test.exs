@@ -254,4 +254,49 @@ defmodule LineaUI.Components.InputTest do
     assert find(icon, "[phx-hook]") |> Enum.to_list() == []
     assert find(icon, "[data-suffix-text]") |> Enum.to_list() == []
   end
+
+  test "layout inline puts the caption at the left, right-aligned, and the help in the second column" do
+    html =
+      render(~H"""
+      <.input name="u" layout="inline" label="Razão social" label_hint="opcional" help="Só números" />
+      """)
+
+    assert "grid" in classes(html, "div.grid")
+    assert "grid-cols-[180px_minmax(0,1fr)]" in classes(html, "div.grid")
+    assert "items-center" in classes(html, "div.grid")
+    assert "contents" in classes(html, "label")
+    assert "justify-end" in classes(html, "label > span:first-child")
+    assert "text-right" in classes(html, "label > span:first-child")
+    assert html |> find("label > span:first-child") |> LazyHTML.text() =~ "Razão social"
+    assert html |> find("label > span:first-child > span") |> LazyHTML.text() == "opcional"
+    assert [_] = find(html, "label input[name=u]") |> Enum.to_list()
+    assert "col-start-2" in classes(html, "div.grid > div")
+    assert html |> find("div.grid > div.col-start-2") |> LazyHTML.text() =~ "Só números"
+    refute "mt-1.5" in classes(html, "label > span:last-child")
+  end
+
+  test "layout stacked (the default) keeps the caption above the control" do
+    html = render(~H'<.input name="u" label="Name" />')
+    assert [] = find(html, "div.grid") |> Enum.to_list()
+    assert "block" in classes(html, "label")
+    assert "mt-1.5" in classes(html, "label > span:last-child")
+  end
+
+  test "Form.field inline with as=div and without a caption" do
+    html =
+      render(~H"""
+      <LineaUI.Components.Form.field as="div" layout="inline" label="Regime" errors={["is invalid"]}>
+        <select name="regime"></select>
+      </LineaUI.Components.Form.field>
+      <LineaUI.Components.Form.field layout="inline" help="Alone">
+        <input name="x" />
+      </LineaUI.Components.Form.field>
+      """)
+
+    assert [_, _] = find(html, "div.grid") |> Enum.to_list()
+    assert [_] = find(html, "span.justify-end") |> Enum.to_list()
+    assert html |> find("span.justify-end") |> LazyHTML.text() =~ "Regime"
+    assert html |> find("div.grid > div.col-start-2") |> LazyHTML.text() =~ "is invalid"
+    assert [_] = find(html, "label > span.col-start-2") |> Enum.to_list()
+  end
 end

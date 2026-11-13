@@ -116,6 +116,14 @@ defmodule LineaUI.Components.Form do
 
   attr(:state, :string, default: nil, values: [nil, "success", "error"])
   attr(:as, :string, default: "label", values: ~w(label div))
+
+  attr(:layout, :string,
+    default: "stacked",
+    values: ~w(stacked inline),
+    doc:
+      "`stacked` puts the caption above the control; `inline` puts it at the left, right-aligned in a 180px column (the canvas's \"Em linha\"), with the help and the errors under the control."
+  )
+
   attr(:class, :any, default: nil)
   attr(:rest, :global)
   slot(:inner_block, required: true)
@@ -129,6 +137,53 @@ defmodule LineaUI.Components.Form do
     assigns
     |> Control.assign_control()
     |> render_field()
+  end
+
+  defp render_field(%{layout: "inline", as: "label"} = assigns) do
+    ~H"""
+    <div class={merge(["grid grid-cols-[180px_minmax(0,1fr)] items-center gap-x-3", @class])} {@rest}>
+      <label class="contents" for={@id}>
+        <span
+          :if={@label}
+          class={
+            merge([
+              "flex justify-end gap-2 text-right text-[13px]/5 font-medium text-slate-950 dark:text-navy-50",
+              @label_class
+            ])
+          }
+        >
+          {@label}<span :if={@label_hint} class="font-normal text-slate-400 dark:text-navy-300">{@label_hint}</span>
+        </span>
+        <span class={merge(["flex", !@label && "col-start-2"])}>{render_slot(@inner_block)}</span>
+      </label>
+      <div class="col-start-2">
+        <.message_row help={@help} errors={@errors} state={@state} aside={@aside} />
+      </div>
+    </div>
+    """
+  end
+
+  defp render_field(%{layout: "inline", as: "div"} = assigns) do
+    ~H"""
+    <div class={merge(["grid grid-cols-[180px_minmax(0,1fr)] items-center gap-x-3", @class])} {@rest}>
+      <span
+        :if={@label}
+        class={
+          merge([
+            "flex justify-end gap-2 text-right text-[13px]/5 font-medium text-slate-950 dark:text-navy-50",
+            @label_class
+          ])
+        }
+        id={@id && "#{@id}-label"}
+      >
+        {@label}
+      </span>
+      <div class={!@label && "col-start-2"}>{render_slot(@inner_block)}</div>
+      <div class="col-start-2">
+        <.message_row help={@help} errors={@errors} state={@state} aside={@aside} />
+      </div>
+    </div>
+    """
   end
 
   defp render_field(%{as: "label"} = assigns) do
