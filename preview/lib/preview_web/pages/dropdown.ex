@@ -39,6 +39,23 @@ defmodule PreviewWeb.Pages.Dropdown do
       </.dropdown>
     </.narrow>
 
+    <.narrow
+      title="Botão dividido"
+      text="Ação padrão + alternativas: a seta abre o menu."
+      class="mt-5 inline-space flex flex-wrap items-start"
+    >
+      <.dropdown id="dropdown-split" color="mono" toggle_label="Mais opções">
+        <:action phx-click="noop">Salvar</:action>
+        <.dropdown_item phx-click="noop">Salvar e emitir NF-e</.dropdown_item>
+        <.dropdown_item phx-click="noop">Salvar como rascunho</.dropdown_item>
+      </.dropdown>
+      <.dropdown id="dropdown-split-link" color="primary" toggle_label="Mais opções">
+        <:action href="#">Novo pedido</:action>
+        <.dropdown_item href="#">Pedido em lote</.dropdown_item>
+        <.dropdown_item href="#">Importar planilha</.dropdown_item>
+      </.dropdown>
+    </.narrow>
+
     <.narrow title="Primary Actions" text={@text} class="mt-5">
       <.dropdown id="dropdown5" label="Dropdown" color="primary">
         <.dropdown_item href="#" color="primary">Action</.dropdown_item>

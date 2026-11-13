@@ -89,4 +89,65 @@ defmodule LineaUI.Components.BreadcrumbTest do
     assert html |> find("ul .sep") |> LazyHTML.text() == "/"
     assert "font-medium" in classes(html, "[aria-current=page]")
   end
+
+  defp collapsed(max) do
+    assigns = %{max: max}
+
+    rendered_to_string(~H"""
+    <.breadcrumb id="trail" max_items={@max}>
+      <:item href="/a">A</:item>
+      <:item href="/b">B</:item>
+      <:item phx-click="open" phx-value-id="c">C</:item>
+      <:item href="/d">D</:item>
+      <:item>E</:item>
+    </.breadcrumb>
+    """)
+  end
+
+  test "max_items keeps the first step and the last ones; the middle goes into a dropdown" do
+    html = collapsed(4)
+
+    assert [_] = find(html, "#trail-more[phx-hook='LineaUI.Dropdown']") |> Enum.to_list()
+
+    assert texts(html, "#trail > ul > li > a, #trail > ul > li > div[aria-current]") == [
+             "A",
+             "D",
+             "E"
+           ]
+
+    assert html |> find("[aria-current=page]") |> LazyHTML.text() =~ "E"
+
+    assert [_, _] = find(html, "#trail-more-menu [role=menuitem]") |> Enum.to_list()
+    assert [_] = find(html, "#trail-more-menu a[role=menuitem][href='/b']") |> Enum.to_list()
+
+    assert [_] =
+             find(html, "#trail-more-menu button[role=menuitem][phx-click=open][phx-value-id=c]")
+             |> Enum.to_list()
+
+    assert LazyHTML.attribute(find(html, "#trail-more [data-trigger] button"), "aria-label") == [
+             "Show hidden steps"
+           ]
+
+    assert [_] = find(html, "#trail-more [data-trigger] button svg") |> Enum.to_list()
+  end
+
+  test "max_items counts the dots as a step and never hides less than it has" do
+    three = collapsed(3)
+    assert [_, _, _] = find(three, "#trail-more-menu [role=menuitem]") |> Enum.to_list()
+
+    two = collapsed(1)
+    assert [_, _, _] = find(two, "#trail-more-menu [role=menuitem]") |> Enum.to_list()
+
+    fits = collapsed(5)
+    assert [] = find(fits, "#trail-more") |> Enum.to_list()
+    assert [_, _, _, _] = find(fits, "#trail li") |> Enum.to_list() |> Enum.take(4)
+
+    none = render(~H"<.breadcrumb>
+  <:item>Only</:item>
+</.breadcrumb>")
+    assert [] = find(none, "[data-trigger]") |> Enum.to_list()
+  end
+
+  defp texts(html, selector),
+    do: html |> find(selector) |> Enum.map(&(&1 |> LazyHTML.text() |> String.trim()))
 end

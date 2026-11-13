@@ -170,6 +170,12 @@ defmodule LineaUI.Components.Input do
     doc: "A dimmed note at the right of the caption, as the canvas's \"opcional\"."
   )
 
+  attr(:layout, :string,
+    default: "stacked",
+    values: ~w(stacked inline),
+    doc: "`inline` puts the caption at the left of the input instead of above it."
+  )
+
   attr(:help, :string, default: nil, doc: "The small line under the control.")
 
   attr(:errors, :list,
@@ -381,6 +387,7 @@ defmodule LineaUI.Components.Input do
       label={@label}
       label_class={@label_class}
       label_hint={@label_hint}
+      layout={@layout}
       help={@help}
       errors={@errors}
       state={@state}

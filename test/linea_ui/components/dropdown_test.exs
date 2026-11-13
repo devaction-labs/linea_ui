@@ -365,4 +365,54 @@ defmodule LineaUI.Components.DropdownTest do
     assert attr_of(html, "button[aria-current=true]", "class") |> hd() =~
              "aria-[current=true]:bg-slate-100"
   end
+
+  test "an :action slot makes a split button: the arrow alone is the trigger" do
+    html =
+      render(~H"""
+      <.dropdown id="sp" color="mono" toggle_label="More options">
+        <:action phx-click="save" phx-value-id="1">Save</:action>
+        <.dropdown_item phx-click="draft">Save as draft</.dropdown_item>
+      </.dropdown>
+      """)
+
+    assert "gap-px" in classes(html, "#sp")
+    assert [_] = find(html, "#sp > button[phx-click=save][phx-value-id='1']") |> Enum.to_list()
+    assert "solid" in classes(html, "#sp > button[phx-click=save]")
+    assert "rounded-l-full!" in classes(html, "#sp > button[phx-click=save]")
+    assert "rounded-r-[4px]!" in classes(html, "#sp > button[phx-click=save]")
+    assert find(html, "#sp > button[phx-click=save]") |> LazyHTML.text() =~ "Save"
+
+    assert [_] = find(html, "#sp [data-trigger] button") |> Enum.to_list()
+    assert [] = find(html, "#sp [data-trigger] button[phx-click]") |> Enum.to_list()
+    assert attr_of(html, "#sp-button", "aria-label") == ["More options"]
+    assert "sq" in classes(html, "#sp-button")
+    assert "rounded-l-[4px]!" in classes(html, "#sp-button")
+    assert "rounded-r-full!" in classes(html, "#sp-button")
+    assert [_] = find(html, "#sp-button svg") |> Enum.to_list()
+    assert attr_of(html, "#sp", "data-placement") == ["bottom-start"]
+    assert attr_of(html, "#sp-menu [role=menu]", "aria-labelledby") == ["sp-button"]
+    assert [_] = find(html, "#sp-menu button[role=menuitem][phx-click=draft]") |> Enum.to_list()
+  end
+
+  test "a split button's action can be a link, and placement still applies" do
+    html =
+      render(~H"""
+      <.dropdown id="sp" placement="bottom-end">
+        <:action navigate="/new">New</:action>
+        <.dropdown_item href="#">Bulk</.dropdown_item>
+      </.dropdown>
+      """)
+
+    assert [_] = find(html, "#sp > a[href='/new']") |> Enum.to_list()
+    assert attr_of(html, "#sp", "data-placement") == ["bottom-end"]
+    assert [] = find(html, "#sp > div[data-trigger] > button:not(#sp-button)") |> Enum.to_list()
+  end
+
+  test "without an :action the dropdown is not split" do
+    html = render(~H'<.dropdown id="plain" label="Open">
+  <.dropdown_item href="#">A</.dropdown_item>
+</.dropdown>')
+    refute "gap-px" in classes(html, "#plain")
+    assert [] = find(html, "#plain > button") |> Enum.to_list()
+  end
 end

@@ -134,6 +134,12 @@ defmodule LineaUI.Components.DatetimePicker do
   attr :field, Phoenix.HTML.FormField, default: nil
   attr :label, :string, default: nil
   attr :help, :string, default: nil
+
+  attr :timezone, :string,
+    default: nil,
+    doc:
+      "A time zone label shown on the help line (`\"Horário de Brasília (UTC−3)\"`, `\"BRT · UTC−3\"`), after `help` when both are given. Display only: the picker never converts dates."
+
   attr :errors, :list, default: []
 
   attr :placeholder, :string,
@@ -519,9 +525,13 @@ defmodule LineaUI.Components.DatetimePicker do
 
   defp entries(_other), do: []
 
+  defp help_line(help, nil), do: help
+  defp help_line(nil, timezone), do: timezone
+  defp help_line(help, timezone), do: "#{help} · #{timezone}"
+
   defp render_picker(assigns) do
     ~H"""
-    <Form.field as="div" id={@id} label={@label} help={@help} errors={@errors}>
+    <Form.field as="div" id={@id} label={@label} help={help_line(@help, @timezone)} errors={@errors}>
       <div
         id={@id}
         phx-hook="LineaUI.DatetimePicker"
