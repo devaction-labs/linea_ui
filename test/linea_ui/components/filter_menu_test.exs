@@ -1,6 +1,8 @@
 defmodule LineaUI.Components.FilterMenuTest do
   use LineaUI.ComponentCase, async: true
 
+  doctest LineaUI.Components.FilterMenu
+
   defp attr_of(html, selector, name), do: html |> find(selector) |> LazyHTML.attribute(name)
   defp text_of(html, selector), do: html |> find(selector) |> LazyHTML.text() |> String.trim()
 
@@ -290,5 +292,135 @@ defmodule LineaUI.Components.FilterMenuTest do
     assert_raise FunctionClauseError, fn ->
       render(~H|<.filter_menu id="f" groups={[%{label: "No name"}]} />|)
     end
+  end
+
+  defp date_groups(extra) do
+    [
+      Map.merge(
+        %{
+          name: "filter[period]",
+          label: "Period",
+          caption: "Period",
+          display: :section,
+          type: :single,
+          options: [{"Today", "today"}, {"7 days", "7d"}, {"This month", "month"}]
+        },
+        extra
+      )
+    ]
+  end
+
+  test "custom adds a row after a separator that opens an inline range calendar" do
+    html = render(~H|<.filter_menu id="f" groups={date_groups(%{custom: true, value: "7d"})} />|)
+
+    assert [_] = find(html, "[role=group] > [role=separator]") |> Enum.to_list()
+    assert attr_of(html, "[data-filter-custom]", "data-label") == ["Custom…"]
+    assert attr_of(html, "[data-filter-custom]", "data-locale") == ["en"]
+    assert attr_of(html, "[data-filter-custom]", "data-server-value") == [""]
+    assert attr_of(html, "[data-filter-custom]", "data-selected") == []
+    assert text_of(html, "[data-filter-custom] > [data-submenu-trigger]") == "Custom…"
+    assert find(html, "[data-filter-custom] > [data-submenu-trigger] svg") |> Enum.count() >= 1
+
+    assert [{"input", attrs, _}] = html |> find("input[data-custom-input]") |> LazyHTML.to_tree()
+    assert {"type", "radio"} in attrs
+    assert {"name", "filter[period]"} in attrs
+    assert {"value", ""} in attrs
+    refute List.keymember?(attrs, "checked", 0)
+    assert {"data-choice-input", ""} in attrs
+
+    assert attr_of(html, "[data-filter-custom] [data-kind]", "data-mode") == ["range"]
+    assert attr_of(html, "[data-filter-custom] [data-kind]", "data-inline") == ["true"]
+    assert attr_of(html, "[data-filter-custom] [data-kind]", "data-skin") == ["linea"]
+    assert attr_of(html, "[data-filter-custom] [data-kind]", "phx-hook") == ["LineaUI.DatePicker"]
+
+    assert attr_of(html, "[data-filter-custom] [data-kind]", "data-start-name") == [
+             "filter[period]--from"
+           ]
+
+    assert attr_of(html, "[data-filter-custom] [data-kind]", "data-end-name") == [
+             "filter[period]--to"
+           ]
+
+    assert attr_of(html, "[data-filter-custom] [data-kind]", "data-value") == ["[]"]
+  end
+
+  test "the presets stay radios and the row is the only submenu of a section" do
+    html = render(~H|<.filter_menu id="f" groups={date_groups(%{custom: true, value: "7d"})} />|)
+
+    assert LazyHTML.attribute(find(html, "[role=group] [role=menuitemradio]"), "aria-checked") ==
+             ["false", "true", "false"]
+
+    assert [_] = find(html, "[data-submenu]") |> Enum.to_list()
+    assert attr_of(html, "[role=group]", "data-filter-group") == ["filter[period]"]
+    assert text_of(html, "[data-filter-applied]") == "0"
+  end
+
+  test "a custom value shows the period on the row, checks the radio and unchecks the presets" do
+    html = render(~H|<.filter_menu
+  id="f"
+  groups={date_groups(%{custom: "Outro…", value: "custom:2026-11-03..2026-11-10"})}
+/>|)
+
+    assert text_of(html, "[data-filter-custom] > [data-submenu-trigger]") ==
+             "2026-11-03 – 2026-11-10"
+
+    assert attr_of(html, "[data-filter-custom]", "data-label") == ["Outro…"]
+    assert attr_of(html, "[data-filter-custom]", "data-selected") == ["true"]
+
+    assert attr_of(html, "[data-filter-custom]", "data-server-value") == [
+             "custom:2026-11-03..2026-11-10"
+           ]
+
+    assert LazyHTML.attribute(find(html, "[role=group] [role=menuitemradio]"), "aria-checked") ==
+             ["false", "false", "false"]
+
+    assert [{"input", attrs, _}] = html |> find("input[data-custom-input]") |> LazyHTML.to_tree()
+    assert {"value", "custom:2026-11-03..2026-11-10"} in attrs
+    assert List.keymember?(attrs, "checked", 0)
+
+    assert attr_of(html, "[data-filter-custom] [data-kind]", "data-value") == [
+             ~s(["2026-11-03","2026-11-10"])
+           ]
+  end
+
+  test "the period reads in the locale of the menu" do
+    html = render(~H|<.filter_menu
+  id="f"
+  locale="pt_BR"
+  groups={date_groups(%{custom: true, value: "custom:2026-11-03..2026-11-10"})}
+/>|)
+
+    assert text_of(html, "[data-filter-custom] > [data-submenu-trigger]") ==
+             "03/11/2026 – 10/11/2026"
+
+    assert attr_of(html, "[data-filter-custom]", "data-label") == ["Personalizado…"]
+    assert attr_of(html, "[data-filter-custom]", "data-locale") == ["pt_BR"]
+  end
+
+  test "a value that is not a period leaves the row as it is, and no custom means no row" do
+    html = render(~H|<.filter_menu
+  id="f"
+  groups={date_groups(%{custom: true, value: "custom:2026-11-10..2026-11-03"})}
+/>|)
+    assert attr_of(html, "[data-filter-custom]", "data-selected") == []
+    assert text_of(html, "[data-filter-custom] > [data-submenu-trigger]") == "Custom…"
+
+    html = render(~H|<.filter_menu id="f" groups={date_groups(%{value: "today"})} />|)
+    assert find(html, "[data-filter-custom]") |> Enum.to_list() == []
+    assert find(html, "input[data-custom-input]") |> Enum.to_list() == []
+  end
+
+  test "custom_range/1 reads the value of a period" do
+    alias LineaUI.Components.FilterMenu
+
+    assert FilterMenu.custom_range("custom:2026-11-13..2026-11-13") ==
+             {~D[2026-11-13], ~D[2026-11-13]}
+
+    assert FilterMenu.custom_range("custom:2026-11-13..2026-11-01") == nil
+    assert FilterMenu.custom_range("custom:2026-11-01") == nil
+    assert FilterMenu.custom_range("custom:2026-13-01..2026-13-02") == nil
+    assert FilterMenu.custom_range("custom:") == nil
+    assert FilterMenu.custom_range("today") == nil
+    assert FilterMenu.custom_range(nil) == nil
   end
 end

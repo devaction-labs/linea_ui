@@ -65,6 +65,37 @@ defmodule LineaUI.Components.FilterMenu do
   In `apply` mode the ticks do not reach the form's `phx-change`; the staged state is the browser's until Apply.
   `icon` takes a Hugeicons name; the default is the `:filter` glyph (`icon="huge-filter"` is the funnel).
 
+  ## A custom period
+
+  A single group takes `custom: true` (or the row's text, `custom: "Outro período…"`) and ends with a separator and a
+  row with a calendar icon, "Personalizado…" in pt_BR, that opens a panel to its side with an inline range
+  calendar (`date_picker/1`). Picking the second day stages the period: the row shows it (`13/11/2026 – 20/11/2026`
+  in pt_BR, `2026-11-13 – 2026-11-20` otherwise), the group's presets uncheck and the panel closes. A preset chosen
+  afterwards takes the period back. The group's value is then the text `custom:FROM..TO` with ISO days:
+
+      %{
+        name: "filter[period]",
+        label: "Período",
+        caption: "Período",
+        display: :section,
+        type: :single,
+        custom: true,
+        value: @filter["period"],
+        options: [{"Hoje", "today"}, {"7 dias", "7d"}, {"Este mês", "month"}]
+      }
+
+  The form posts `filter[period]=custom:2026-11-01..2026-11-13` and the events carry the same text under the group's
+  name; `custom_range/1` turns it into `{~D[2026-11-01], ~D[2026-11-13]}` (`nil` for a preset). Hand the text back
+  as the group's `value` to show the period as applied.
+
+      def handle_event("apply_filters", %{"filter" => %{"period" => "custom:" <> _ = period}}, socket) do
+        {from, to} = LineaUI.Components.FilterMenu.custom_range(period)
+        {:noreply, assign(socket, from: from, to: to)}
+      end
+
+  The calendar's own two inputs never reach the form or the events. In the panel the keys are the calendar's (arrows,
+  Page Up and Down, Enter picks); `Esc` closes the panel and gives the focus back to the row.
+
   `display: :submenu` (the default) is a row that opens a panel; `display: :section` is the options laid flat in the
   menu under a `caption`, for settings such as a sort order. Only submenu groups are filters: sections do not count in
   the trigger, in a group's pill or in Apply. `type: :multiple` (the default) is checkboxes, `type: :single` radios.
@@ -102,6 +133,7 @@ defmodule LineaUI.Components.FilterMenu do
   import LineaUI.Components.Icon, only: [glyph: 1, icon: 1]
 
   alias LineaUI.Components.Button
+  alias LineaUI.Components.DatePicker
   alias LineaUI.Components.Dropdown
   alias LineaUI.Components.Strings
 
@@ -112,9 +144,13 @@ defmodule LineaUI.Components.FilterMenu do
     caption: nil,
     options: [],
     value: nil,
+    custom: nil,
     entry: nil
   }
   @group_keys [:name, :label | Map.keys(@group_defaults)]
+
+  @custom_labels %{"en" => "Custom…", "pt_BR" => "Personalizado…"}
+  @range_separator " – "
 
   @menu_class "min-w-57.5 shadow-[0_10px_30px_-8px_rgb(48_46_56/0.18)] dark:border-navy-700 dark:shadow-soft-dark"
 
@@ -139,7 +175,7 @@ defmodule LineaUI.Components.FilterMenu do
   attr :groups, :list,
     default: [],
     doc:
-      "A list of maps: `name` (the input name, required), `label` (required), `icon` (`huge-...`), `display` (`:submenu` or `:section`), `type` (`:multiple` or `:single`), `caption` (over a section), `options` (`{label, value}` or `{label, value, count}`) and `value` (a list for a multiple group, the value for a single one)."
+      "A list of maps: `name` (the input name, required), `label` (required), `icon` (`huge-...`), `display` (`:submenu` or `:section`), `type` (`:multiple` or `:single`), `caption` (over a section), `custom` (`true` or a text: a last row that opens a calendar for a period, in a `:single` group), `options` (`{label, value}` or `{label, value, count}`) and `value` (a list for a multiple group, the value for a single one)."
 
   attr :mode, :string,
     default: "apply",
@@ -192,11 +228,17 @@ defmodule LineaUI.Components.FilterMenu do
     attr :display, :atom, values: [:submenu, :section]
     attr :type, :atom, values: [:multiple, :single]
     attr :caption, :string
+    attr :custom, :any
     attr :value, :any
   end
 
   def filter_menu(assigns) do
-    groups = Enum.map(assigns.groups, &group(&1, nil)) ++ Enum.map(assigns.group, &group(&1, &1))
+    locale = assigns.locale
+
+    groups =
+      Enum.map(assigns.groups, &group(&1, nil, locale)) ++
+        Enum.map(assigns.group, &group(&1, &1, locale))
+
     text = Strings.table(assigns.locale)
 
     assigns =
@@ -256,6 +298,7 @@ defmodule LineaUI.Components.FilterMenu do
           id={@id}
           group={group}
           first={index == 0}
+          locale={@locale}
         />
         <Dropdown.dropdown_footer
           locale={@locale}
@@ -272,6 +315,7 @@ defmodule LineaUI.Components.FilterMenu do
   attr :id, :string, required: true
   attr :group, :map, required: true
   attr :first, :boolean, required: true
+  attr :locale, :string, required: true
 
   defp group_block(%{group: %{display: :submenu}} = assigns) do
     ~H"""
@@ -285,7 +329,7 @@ defmodule LineaUI.Components.FilterMenu do
       data-count-radios="true"
     >
       <:icon :if={@group.icon}><.icon name={@group.icon} class="size-4 shrink-0" /></:icon>
-      <.group_items group={@group} />
+      <.group_items group={@group} id={@id} locale={@locale} />
     </Dropdown.dropdown_submenu>
     """
   end
@@ -300,12 +344,14 @@ defmodule LineaUI.Components.FilterMenu do
       data-filter-type={@group.type}
     >
       <Dropdown.dropdown_label :if={@group.caption}>{@group.caption}</Dropdown.dropdown_label>
-      <.group_items group={@group} />
+      <.group_items group={@group} id={@id} locale={@locale} />
     </div>
     """
   end
 
   attr :group, :map, required: true
+  attr :id, :string, required: true
+  attr :locale, :string, required: true
 
   defp group_items(%{group: %{entry: nil, type: :multiple}} = assigns) do
     ~H"""
@@ -334,6 +380,7 @@ defmodule LineaUI.Components.FilterMenu do
     >
       {option.label}
     </Dropdown.dropdown_radio>
+    <.custom_period :if={@group.custom} id={@id} group={@group} locale={@locale} />
     """
   end
 
@@ -343,11 +390,107 @@ defmodule LineaUI.Components.FilterMenu do
     """
   end
 
-  defp group(%{name: _, label: _} = source, entry) do
+  attr :id, :string, required: true
+  attr :group, :map, required: true
+  attr :locale, :string, required: true
+
+  defp custom_period(assigns) do
+    range = assigns.group.range
+    prefix = "#{assigns.id}-#{slug(assigns.group.name)}-custom"
+
+    assigns =
+      assign(assigns,
+        prefix: prefix,
+        label: assigns.group.custom,
+        shown: (range && range_label(range, assigns.locale)) || assigns.group.custom,
+        stored: (range && custom_value(range)) || ""
+      )
+
+    ~H"""
+    <Dropdown.dropdown_separator class="dark:bg-navy-700" />
+    <div class="contents" role="none">
+      <input
+        type="radio"
+        name={@group.name}
+        value={@stored}
+        checked={@stored != ""}
+        tabindex="-1"
+        aria-hidden="true"
+        class="sr-only"
+        data-choice-input
+        data-custom-input
+      />
+      <Dropdown.dropdown_submenu
+        id={@prefix}
+        label={@shown}
+        class="w-auto min-w-0 border-0 bg-transparent p-0 shadow-none dark:border-0 dark:bg-transparent dark:shadow-none"
+        trigger_class="dark:focus:text-navy-50 in-data-[selected]:font-medium in-data-[selected]:text-slate-800 dark:in-data-[selected]:text-navy-50"
+        data-filter-custom
+        data-selected={@stored != "" && "true"}
+        data-server-value={@stored}
+        data-label={@label}
+        data-locale={@locale}
+      >
+        <:icon><.icon name="huge-calendar-03" class="size-4 shrink-0" /></:icon>
+        <div class="[&_[id$=-field]]:hidden">
+          <DatePicker.date_picker
+            id={"#{@prefix}-range"}
+            start_name={"#{@group.name}--from"}
+            end_name={"#{@group.name}--to"}
+            value={@group.range}
+            locale={@locale}
+            inline
+            skin="linea"
+          />
+        </div>
+      </Dropdown.dropdown_submenu>
+    </div>
+    """
+  end
+
+  @doc """
+  The `{from, to}` days of a custom period value (`"custom:2026-11-01..2026-11-13"`), or `nil` for anything else
+  (a preset, `""`, a malformed text).
+
+      iex> LineaUI.Components.FilterMenu.custom_range("custom:2026-11-01..2026-11-13")
+      {~D[2026-11-01], ~D[2026-11-13]}
+
+      iex> LineaUI.Components.FilterMenu.custom_range("today")
+      nil
+  """
+  @spec custom_range(term()) :: {Date.t(), Date.t()} | nil
+  def custom_range("custom:" <> text) do
+    with [from, to] <- String.split(text, "..", parts: 2),
+         {:ok, from} <- Date.from_iso8601(from),
+         {:ok, to} <- Date.from_iso8601(to),
+         true <- Date.compare(from, to) != :gt do
+      {from, to}
+    else
+      _other -> nil
+    end
+  end
+
+  def custom_range(_value), do: nil
+
+  defp custom_value({from, to}), do: "custom:#{Date.to_iso8601(from)}..#{Date.to_iso8601(to)}"
+
+  defp range_label({from, to}, locale),
+    do: Enum.join([day_text(from, locale), day_text(to, locale)], @range_separator)
+
+  defp day_text(date, "pt_BR"), do: Calendar.strftime(date, "%d/%m/%Y")
+  defp day_text(date, _locale), do: Date.to_iso8601(date)
+
+  defp custom_label(true, locale), do: Map.fetch!(@custom_labels, locale)
+  defp custom_label(label, _locale) when is_binary(label), do: label
+  defp custom_label(_none, _locale), do: nil
+
+  defp group(%{name: _, label: _} = source, entry, locale) do
     base = Map.merge(@group_defaults, Map.take(source, @group_keys))
 
     Map.merge(base, %{
       entry: entry,
+      custom: custom_label(base.custom, locale),
+      range: custom_range(base.value),
       options: Enum.map(base.options, &option/1),
       selected: selected(base.value)
     })

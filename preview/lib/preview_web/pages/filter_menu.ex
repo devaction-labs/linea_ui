@@ -24,6 +24,9 @@ defmodule PreviewWeb.Pages.FilterMenu do
       },
       single: "Paid",
       last: nil,
+      period: "7d",
+      period_event: nil,
+      live_period: %{"range" => "custom:2026-11-03..2026-11-10"},
       live: %{"tags" => ["b"]},
       tags: [{"Priority", "a"}, {"Backlog", "b"}, {"Blocked", "c"}]
     )
@@ -38,6 +41,12 @@ defmodule PreviewWeb.Pages.FilterMenu do
 
   def handle_event("set_single", %{"values" => %{"status" => status}} = payload, socket),
     do: {:noreply, assign(socket, single: List.first(status, ""), last: payload)}
+
+  def handle_event("set_period", %{"values" => %{"period" => period}} = payload, socket),
+    do: {:noreply, assign(socket, period: period, period_event: payload)}
+
+  def handle_event("live_period", %{"range" => _} = params, socket),
+    do: {:noreply, assign(socket, live_period: params)}
 
   def handle_event("live", %{"tags" => tags}, socket),
     do: {:noreply, assign(socket, live: %{"tags" => tags})}
@@ -101,6 +110,13 @@ defmodule PreviewWeb.Pages.FilterMenu do
         ]
       }
     ]
+  end
+
+  defp period_text(period) do
+    case LineaUI.Components.FilterMenu.custom_range(period) do
+      {from, to} -> "#{Date.to_iso8601(from)} to #{Date.to_iso8601(to)}"
+      nil -> period
+    end
   end
 
   defp money(value), do: "R$ " <> :erlang.float_to_binary(value, decimals: 2)
@@ -182,6 +198,66 @@ defmodule PreviewWeb.Pages.FilterMenu do
       />
       <span class="text-sm text-slate-500">Applied: {@single}</span>
       <pre :if={@last} class="w-full text-xs text-slate-500">{inspect(@last)}</pre>
+    </.example>
+
+    <.example
+      title="Por data"
+      text="Atalhos e período personalizado: a single section with presets and a Personalizado… row that opens a range calendar to its side. The group's value is `custom:2026-11-01..2026-11-13`; the row shows the period."
+    >
+      <.filter_menu
+        id="period-filter"
+        label="Período"
+        locale="pt_BR"
+        variant="outline"
+        size="sm"
+        dashed
+        on_apply="set_period"
+        groups={[
+          %{
+            name: "period",
+            label: "Período",
+            caption: "Período",
+            display: :section,
+            type: :single,
+            custom: true,
+            value: @period,
+            options: [{"Hoje", "today"}, {"Últimos 7 dias", "7d"}, {"Este mês", "month"}]
+          }
+        ]}
+      />
+      <span id="period-applied" class="text-sm text-slate-500">
+        Applied: {period_text(@period)}
+      </span>
+      <pre :if={@period_event} id="period-event" class="w-full text-xs text-slate-500">{inspect(@period_event)}</pre>
+    </.example>
+
+    <.example
+      title="Por data, ao vivo"
+      text="The same group in live mode: the period reaches the form's phx-change as soon as the second day is picked, and the calendar's own inputs are not in the params."
+    >
+      <form id="live-period-form" phx-change="live_period" class="flex items-center gap-3">
+        <.filter_menu
+          id="live-period"
+          mode="live"
+          label="Período"
+          locale="pt_BR"
+          groups={[
+            %{
+              name: "range",
+              label: "Período",
+              caption: "Período",
+              display: :section,
+              type: :single,
+              custom: true,
+              value: @live_period["range"],
+              options: [{"Hoje", "today"}, {"Este mês", "month"}]
+            }
+          ]}
+        />
+        <span id="live-period-params" class="text-sm text-slate-500">
+          Server has: {inspect(@live_period)}
+        </span>
+      </form>
     </.example>
 
     <.example
