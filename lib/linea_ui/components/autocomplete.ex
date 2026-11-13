@@ -266,7 +266,12 @@ defmodule LineaUI.Components.Autocomplete do
             phx-mounted={JS.ignore_attributes(["aria-busy"])}
             data-listbox
           >
-            <.entry :for={entry <- @entries} entry={entry} id={@id} option_slot={@option} />
+            <.entry
+              :for={entry <- @entries}
+              :key={entry_key(entry)}
+              entry={entry}
+              option_slot={@option}
+            />
             <div id={@id <> "-status"} phx-update="ignore" data-status></div>
             <div :if={@create} id={@id <> "-create"} phx-update="ignore" hidden data-create-wrap>
               <hr class="ac-sep" />
@@ -301,14 +306,18 @@ defmodule LineaUI.Components.Autocomplete do
   defp size_class(size), do: @sizes[size]
 
   attr :entry, :map, required: true
-  attr :id, :string, required: true
   attr :option_slot, :list, required: true
 
   defp entry(%{entry: %{type: :group}} = assigns) do
     ~H"""
     <div class="optgroup" role="group" data-group>
       <div class="optgroup-header">{@entry.label}</div>
-      <.entry :for={option <- @entry.options} entry={option} id={@id} option_slot={@option_slot} />
+      <.entry
+        :for={option <- @entry.options}
+        :key={entry_key(option)}
+        entry={option}
+        option_slot={@option_slot}
+      />
     </div>
     """
   end
@@ -318,7 +327,6 @@ defmodule LineaUI.Components.Autocomplete do
     <div
       class="option"
       role="option"
-      id={option_id(@id, @entry.value)}
       data-value={@entry.value}
       data-label={@entry.label}
       data-selectable={not @entry.disabled && "true"}
@@ -335,5 +343,6 @@ defmodule LineaUI.Components.Autocomplete do
     """
   end
 
-  defp option_id(id, value), do: "#{id}-opt-#{Base.url_encode64(value, padding: false)}"
+  # A stable key per entry, so a changed list sends only the entries that are new.
+  defp entry_key(entry), do: {entry.type, Map.get(entry, :value, entry.label)}
 end

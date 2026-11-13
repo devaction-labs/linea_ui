@@ -131,8 +131,8 @@ defmodule LineaUI.Components.ChoiceTest do
       assert html |> find("#t-control [data-ts-item]") |> LazyHTML.text() =~ "Retail"
       assert html |> find(".ts-dropdown .option") |> LazyHTML.attribute("data-value") == ["t1"]
 
+      # only the chosen value that is not in the list needs a template
       assert html |> find("[data-templates] template") |> LazyHTML.attribute("data-value") == [
-               "t1",
                "t3"
              ]
 
