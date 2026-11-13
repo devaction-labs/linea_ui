@@ -1496,6 +1496,11 @@
     position: relative;
   }
 
+  /* A clickable row (table `row_click`): its cells run the row's data-row-click. */
+  tr[data-row-click] > td {
+    cursor: pointer;
+  }
+
   .linea-tbox tr[data-peek]:focus-visible {
     outline: 2px solid color-mix(in oklab, var(--color-primary) 55%, transparent);
     outline-offset: -2px;
