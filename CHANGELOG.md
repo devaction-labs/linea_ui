@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.20.1 (2026-11-13)
 
 - `select` with `search="panel"` and `pillbox`: Space types a space in the search field of the panel again (it was taken as the key that opens the list, so a search could not have two words); Space on the closed control still opens it.
 - `view_switcher`: the check of an added view is the accent colour again (the dropdown rule that mutes an item's icon reached it), also on hover and focus.
