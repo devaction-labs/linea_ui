@@ -219,6 +219,64 @@ defmodule LineaUI.Components.ShellTest do
     assert [_] = Enum.to_list(find(html, ".sg-sb-foot > #foot"))
   end
 
+  describe "the `:tab_bar` slot" do
+    defp with_tabs do
+      render(~H"""
+      <.shell id="app" nav={[]} current="/b">
+        <:tab_bar>
+          <.tab_bar label="Seções" current="/b">
+            <:tab navigate="/a" label="A"><i /></:tab>
+            <:tab navigate="/b" label="B"><i /></:tab>
+          </.tab_bar>
+        </:tab_bar>
+        page
+      </.shell>
+      """)
+    end
+
+    test "is fixed at the foot, only below 768px, with the safe area" do
+      html = with_tabs()
+      cls = classes(html, "#app > div.linea-shell-tabbar")
+
+      for c <- ["fixed", "bottom-0", "inset-x-0", "md:hidden", "pb-[env(safe-area-inset-bottom)]"],
+          do: assert(c in cls)
+
+      assert [_] = Enum.to_list(find(html, "#app > div.linea-shell-tabbar > nav.linea-tabbar"))
+    end
+
+    test "is a named nav and marks the active tab" do
+      html = with_tabs()
+
+      assert find(html, ".linea-shell-tabbar nav") |> LazyHTML.attribute("aria-label") == [
+               "Seções"
+             ]
+
+      assert find(html, ".linea-shell-tabbar a[aria-current=page]")
+             |> LazyHTML.attribute("aria-label") == ["B"]
+
+      assert find(html, ".linea-shell-tabbar a") |> Enum.count() == 2
+    end
+
+    test "the page keeps room under the bar" do
+      html = with_tabs()
+
+      assert "max-md:pb-[calc(4.25rem+env(safe-area-inset-bottom))]" in classes(
+               html,
+               "#app > main"
+             )
+    end
+
+    test "without the slot there is no bar and no extra padding" do
+      html = render(~H|<.shell id="app" nav={[]}>page</.shell>|)
+      assert find(html, ".linea-shell-tabbar") |> Enum.empty?()
+
+      refute "max-md:pb-[calc(4.25rem+env(safe-area-inset-bottom))]" in classes(
+               html,
+               "#app > main"
+             )
+    end
+  end
+
   test "the class goes on the frame" do
     html = render(~H|<.shell id="app" nav={[]} class="mine">page</.shell>|)
     assert "mine" in classes(html, "#app")
