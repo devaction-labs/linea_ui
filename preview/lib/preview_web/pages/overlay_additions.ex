@@ -133,7 +133,7 @@ defmodule PreviewWeb.Pages.OverlayAdditions do
       </.button>
       <.button id="toast-progress" color="primary" phx-click="progress">Progress</.button>
       <.button id="toast-batch" color="primary" phx-click="batch">Batch in steps</.button>
-      <.aura size="lg" class="w-72 rounded-xl">
+      <.aura class="w-72 rounded-xl">
         <div class="rounded-xl bg-white p-4 dark:bg-navy-700">Assistant checking the taxes…</div>
       </.aura>
     </.example>

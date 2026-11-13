@@ -31,7 +31,7 @@ defmodule PreviewWeb.Pages.BreadcrumbCanvas do
           </.line>
           <.line label="bordered · ícone no primeiro item">
             <.breadcrumb variant="bordered">
-              <:item href="#" aria-label="Início"><.home_icon d={@home} /></:item>
+              <:item href="#"><.home_icon d={@home} /><span class="sr-only">Início</span></:item>
               <:item href="#">Projetos</:item>
               <:item>Pedido #2481</:item>
             </.breadcrumb>

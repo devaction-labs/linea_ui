@@ -56,7 +56,7 @@ defmodule PreviewWeb.Pages.ExtensionClipboard do
           value="mix phx.new projetos --live"
           icon
           copied_label="Copiado"
-          disabled
+          {%{disabled: true}}
         >
           Copiar
         </.clipboard>

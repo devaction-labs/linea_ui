@@ -104,25 +104,19 @@ defmodule PreviewWeb.Pages.ChartsCanvas do
         <.kpi_card
           label="Receita"
           value="R$ 12.345"
-          hint="Últimos 30 dias"
           spark={[0, 9, 4.5, 22.5, 18, 36, 31.5, 49.5, 40.5, 63, 72, 67.5, 90]}
-          spark_type="area"
           color="info"
         />
         <.kpi_card
           label="Pedidos"
           value="1.284"
-          hint="Últimos 30 dias"
           spark={[11, 0, 22.5, 17, 39.5, 28, 34, 62, 50.5, 56, 79, 73, 90]}
-          spark_type="area"
           color="success"
         />
         <.kpi_card
           label="Cancelamentos"
           value="37"
-          hint="Últimos 30 dias"
           spark={[90, 90, 75, 75, 60, 60, 45, 30, 30, 15, 15, 0, 0]}
-          spark_type="area"
           color="error"
         />
       </div>
