@@ -64,7 +64,7 @@ defmodule LineaUI.Components.ThemeSwitch do
       aria-checked="false"
       aria-label={@label || "Dark mode"}
       phx-hook="LineaUI.ThemeSwitch"
-      phx-mounted={JS.ignore_attributes(["aria-checked"])}
+      phx-mounted='[["ignore_attrs",{"attrs":["aria-checked"]}]]'
       {@rest}
     >
       <span class="end"><.glyph name="sun" /></span>
@@ -103,7 +103,7 @@ defmodule LineaUI.Components.ThemeSwitch do
       data-value="light"
       data-system={!@system && "false"}
       phx-hook="LineaUI.ThemeSwitch"
-      phx-mounted={JS.ignore_attributes(["data-value"])}
+      phx-mounted='[["ignore_attrs",{"attrs":["data-value"]}]]'
       {@rest}
     >
       <button
@@ -114,7 +114,7 @@ defmodule LineaUI.Components.ThemeSwitch do
         tabindex={if index == 0, do: "0", else: "-1"}
         data-theme-value={value}
         title={@variant == "icons" && text}
-        phx-mounted={JS.ignore_attributes(["aria-checked", "tabindex"])}
+        phx-mounted='[["ignore_attrs",{"attrs":["aria-checked","tabindex"]}]]'
       >
         <.glyph name={icon_for(value)} /><span class="lbl">{text}</span>
       </button>

@@ -215,7 +215,7 @@ defmodule LineaUI.Components.Drawer do
       aria-hidden="true"
       aria-labelledby={@headed && "#{@id}-title"}
       phx-hook="LineaUI.Dialog"
-      phx-mounted={JS.ignore_attributes(["data-state", "aria-hidden", "style"])}
+      phx-mounted='[["ignore_attrs",{"attrs":["data-state","aria-hidden","style"]}]]'
       phx-remove={JS.add_class("drawer-leaving", to: "##{@id}") |> JS.hide(to: "##{@id}", time: 220)}
       data-state="closed"
       data-open={bool(@open)}
@@ -232,13 +232,13 @@ defmodule LineaUI.Components.Drawer do
       <div
         :if={@overlay}
         class="drawer-overlay fixed inset-0 hidden bg-[rgb(23_23_26/.28)] backdrop-blur-[2px]"
-        phx-mounted={JS.ignore_attributes(["class"])}
+        phx-mounted='[["ignore_attrs",{"attrs":["class"]}]]'
         data-backdrop
       >
       </div>
       <div
         class={merge(["drawer-content fixed hidden", @frame, @class])}
-        phx-mounted={JS.ignore_attributes(["class"])}
+        phx-mounted='[["ignore_attrs",{"attrs":["class"]}]]'
       >
         <div
           id={"#{@id}-panel"}

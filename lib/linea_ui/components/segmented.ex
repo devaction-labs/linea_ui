@@ -162,7 +162,7 @@ defmodule LineaUI.Components.Segmented do
           aria-pressed={bool(pressed)}
           disabled={@disabled || segment.disabled}
           class={merge([@full && "flex-1 justify-center"])}
-          phx-mounted={JS.ignore_attributes(["aria-pressed", "tabindex"])}
+          phx-mounted='[["ignore_attrs",{"attrs":["aria-pressed","tabindex"]}]]'
           data-value={segment.value}
         >
           <.icon :if={segment.icon} name={segment.icon} class="size-4 shrink-0" />

@@ -98,7 +98,7 @@ defmodule LineaUI.Components.Popover do
         aria-label={@title == [] && @label}
         data-panel
         aria-hidden="true"
-        phx-mounted={JS.ignore_attributes(["class", "style", "data-popper-placement", "aria-hidden"])}
+        phx-mounted='[["ignore_attrs",{"attrs":["class","style","data-popper-placement","aria-hidden"]}]]'
       >
         <div class="popper-box">
           <div class={

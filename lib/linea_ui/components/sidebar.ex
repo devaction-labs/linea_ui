@@ -233,7 +233,7 @@ defmodule LineaUI.Components.Sidebar do
       class={merge(["sg-sb", format_class(@fmt), @class])}
       aria-label={@label}
       phx-hook="LineaUI.ShellRail"
-      phx-mounted={JS.ignore_attributes(["data-collapsed", "data-mobile-open"])}
+      phx-mounted='[["ignore_attrs",{"attrs":["data-collapsed","data-mobile-open"]}]]'
       data-format={@fmt}
       data-collapsed={bool(@collapsed)}
       data-server-collapsed={bool(@collapsed)}
@@ -556,7 +556,7 @@ defmodule LineaUI.Components.Sidebar do
       class="sg-sb-gt"
       aria-expanded={if @entry.open, do: "true", else: "false"}
       aria-controls={@entry.id}
-      phx-mounted={JS.ignore_attributes(["aria-expanded"])}
+      phx-mounted='[["ignore_attrs",{"attrs":["aria-expanded"]}]]'
       phx-click={toggle(@entry.id)}
     >
       {@entry.label}
@@ -567,7 +567,7 @@ defmodule LineaUI.Components.Sidebar do
       id={@entry.id}
       class="sg-sb-grp"
       data-closed={!@entry.open && "true"}
-      phx-mounted={JS.ignore_attributes(["data-closed"])}
+      phx-mounted='[["ignore_attrs",{"attrs":["data-closed"]}]]'
     >
       <.row :for={item <- @entry.items} item={item} format="tree" />
     </div>
@@ -583,7 +583,7 @@ defmodule LineaUI.Components.Sidebar do
       class="sg-sb-gh"
       aria-expanded={if @entry.open, do: "true", else: "false"}
       aria-controls={@entry.id}
-      phx-mounted={JS.ignore_attributes(["aria-expanded"])}
+      phx-mounted='[["ignore_attrs",{"attrs":["aria-expanded"]}]]'
       phx-click={toggle(@entry.id)}
     >
       {@entry.label}
@@ -596,7 +596,7 @@ defmodule LineaUI.Components.Sidebar do
       id={@entry.id}
       class="sg-sb-grp"
       data-closed={!@entry.open && "true"}
-      phx-mounted={JS.ignore_attributes(["data-closed"])}
+      phx-mounted='[["ignore_attrs",{"attrs":["data-closed"]}]]'
     >
       <.row :for={item <- @entry.items} item={item} format="rail" />
     </div>
@@ -646,7 +646,7 @@ defmodule LineaUI.Components.Sidebar do
       aria-expanded={if @item.open, do: "true", else: "false"}
       aria-controls={@item.tree_id}
       data-rail-tip
-      phx-mounted={JS.ignore_attributes(["aria-expanded"])}
+      phx-mounted='[["ignore_attrs",{"attrs":["aria-expanded"]}]]'
       phx-click={toggle(@item.tree_id)}
     >
       <.row_body item={@item} chip={@chip} />
@@ -677,7 +677,7 @@ defmodule LineaUI.Components.Sidebar do
       aria-expanded={if @item.open, do: "true", else: "false"}
       aria-controls={@item.tree_id}
       aria-label={@item.label}
-      phx-mounted={JS.ignore_attributes(["aria-expanded"])}
+      phx-mounted='[["ignore_attrs",{"attrs":["aria-expanded"]}]]'
       phx-click={toggle(@item.tree_id)}
     >
       <svg class="i sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10l5 5 5-5" /></svg>

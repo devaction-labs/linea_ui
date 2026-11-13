@@ -259,7 +259,7 @@ defmodule LineaUI.Components.Chart do
       data-options={@json}
       data-formatters={@formatters_json}
       data-on-cursor={@on_cursor}
-      phx-mounted={JS.ignore_attributes(["data-view"])}
+      phx-mounted='[["ignore_attrs",{"attrs":["data-view"]}]]'
       {@rest}
     >
       <div :if={@toggle} data-chart-view class={merge(["mb-2 flex justify-end", @toggle.class])}>
