@@ -131,9 +131,31 @@ defmodule PreviewWeb.Pages.OverlayAdditions do
       >
         Glow
       </.button>
+      <.button
+        :for={size <- ~w(xs sm default lg)}
+        id={"toast-aura-#{size}"}
+        phx-click={
+          show_toast("Aura #{size}",
+            kind: :info,
+            aura: true,
+            aura_size: size,
+            description: "Ring thickness: #{size}."
+          )
+        }
+      >
+        Aura {size}
+      </.button>
+      <.button
+        id="toast-aura-unset"
+        phx-click={
+          show_toast("Aura without size", kind: :info, aura: true, description: "No aura_size given.")
+        }
+      >
+        Aura (no size)
+      </.button>
       <.button id="toast-progress" color="primary" phx-click="progress">Progress</.button>
       <.button id="toast-batch" color="primary" phx-click="batch">Batch in steps</.button>
-      <.aura class="w-72 rounded-xl">
+      <.aura width="lg" class="w-72 rounded-xl">
         <div class="rounded-xl bg-white p-4 dark:bg-navy-700">Assistant checking the taxes…</div>
       </.aura>
     </.example>

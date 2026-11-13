@@ -184,6 +184,11 @@ defmodule LineaUI.Components.ToastTest do
     assert %{"aura" => "glow", "aura_size" => "lg", "aura_color" => "error", "value" => 40} =
              Toast.payload("x", aura: :glow, aura_size: :lg, aura_color: :error, value: 40)
 
+    assert %{"aura_size" => "default"} = Toast.payload("x", aura: true, aura_size: :default)
+
+    for size <- ~w(xs sm default lg)a,
+        do: assert(%{"aura_size" => _} = Toast.payload("x", aura: true, aura_size: size))
+
     assert %{"aura" => nil} = Toast.payload("x", aura: false)
     assert_raise ArgumentError, ~r/aura/, fn -> Toast.payload("x", aura: :rainbow) end
     assert_raise ArgumentError, ~r/aura_size/, fn -> Toast.payload("x", aura_size: :xl) end

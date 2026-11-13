@@ -146,9 +146,9 @@ test("a progress toast stays until it is full, leaves after a moment and closes 
 test("an aura falls back to the rotating light of the assistant", () => {
   assert.equal(auraOf({}), null)
   assert.equal(auraOf({aura: null}), null)
-  assert.deepEqual(auraOf({aura: "default"}), {variant: "default", size: "sm", color: "assistant"})
+  assert.deepEqual(auraOf({aura: "default"}), {variant: "default", size: "default", color: "assistant"})
   assert.deepEqual(auraOf({aura: "glow", aura_size: "lg", aura_color: "error"}), {variant: "glow", size: "lg", color: "error"})
-  assert.deepEqual(auraOf({aura: "weird", aura_size: "xl", aura_color: "pink"}), {variant: "default", size: "sm", color: "assistant"})
+  assert.deepEqual(auraOf({aura: "weird", aura_size: "xl", aura_color: "pink"}), {variant: "default", size: "default", color: "assistant"})
 })
 
 test("a toast that waits for the person stays until closed, unless it was given a duration", () => {
@@ -233,6 +233,9 @@ test("the canvas aura maps the mode, the color and the size", () => {
   assert.deepEqual(canvasAuraOf({aura: "dual", aura_color: "success", aura_size: "lg"}), {mode: "dual", tone: "pos", width: "lg"})
   assert.deepEqual(canvasAuraOf({aura: "glow", aura_color: "warning", aura_size: "sm"}), {mode: "glow", tone: "warn", width: "sm"})
   assert.deepEqual(canvasAuraOf({aura: "default", aura_color: "primary"}), {mode: "", tone: "", width: ""})
+  assert.deepEqual(canvasAuraOf({aura: "default", aura_size: "default"}), {mode: "", tone: "ai", width: ""})
+  assert.equal(canvasAuraOf({aura: "default", aura_size: "xs"}).width, "xs")
+  assert.equal(canvasAuraOf({aura: "default", aura_size: "xl"}).width, "")
 })
 
 test("the tile of a canvas toast takes the tone of its kind", () => {

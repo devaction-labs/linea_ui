@@ -1042,7 +1042,7 @@
   }
 
   .linea-aura {
-    --linea-aura-w: 1.5px;
+    --linea-aura-w: 1.25px;
   }
 
   .linea-aura:not(.toastify) {
@@ -1050,11 +1050,15 @@
   }
 
   .linea-aura[data-aura-size="xs"] {
+    --linea-aura-w: 0.75px;
+  }
+
+  .linea-aura[data-aura-size="sm"] {
     --linea-aura-w: 1px;
   }
 
   .linea-aura[data-aura-size="lg"] {
-    --linea-aura-w: 2.5px;
+    --linea-aura-w: 2px;
   }
 
   .linea-aura[data-aura-color="primary"] {

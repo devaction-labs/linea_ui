@@ -95,13 +95,17 @@ defmodule LineaUI.Components.Toast do
   `aura` runs a ring of light around the toast while the assistant (or the SEFAZ) works. `true` or
   `:default` rotates it, `:dual` rotates two lights (the assistant's and green, for a result that is
   ready) and `:glow` pulses red instead of rotating (for something that needs the user). `aura_size`
-  (`xs sm lg`, `sm` by default) sets the thickness and `aura_color` (`assistant primary secondary
+  (`xs sm default lg`, `default` when not given) sets the thickness of the ring and `aura_color` (`assistant primary secondary
   info success warning error`, `assistant` by default) the light:
 
       send_toast(socket, "The assistant is reading NF 88.530",
         id: "ai-1", kind: :info, aura: true, description: "Suggesting product, CFOP and markup.")
 
       send_toast(socket, "Manifestation is due today", kind: :warning, aura: :glow, aura_size: :lg)
+
+  The sizes are the canvas's: `xs` 0.75px, `sm` 1px, `default` 1.25px (what a toast without `aura_size`
+  gets) and `lg` 2px. `xs sm lg` keep their names and now map to those thicknesses (before, the toast
+  ring was 1, 1.5 and 2.5px, with `sm` as the default). `Aura.aura/1`'s `width` takes the same four.
 
   The same ring goes around any element with `LineaUI.Components.Aura.aura/1` (the canvas look, used by
   `toast_card/1` below).
@@ -192,7 +196,7 @@ defmodule LineaUI.Components.Toast do
     "loading" => "neutral"
   }
   @aura_variants ~w(default dual glow)
-  @aura_sizes ~w(xs sm lg)
+  @aura_sizes ~w(xs sm default lg)
   @aura_colors ~w(assistant primary secondary info success warning error)
   @statuses ~w(run queue ok err)
   @action_variants ~w(outline solid soft ghost)
