@@ -208,11 +208,13 @@ export const Listbox = {
 
   key(event) {
     const rows = this.rows()
+    // Space opens a control that does not take text; in a text field (the panel search) it is just a space
+    const spaceOpens = !this.typesInControl() && !this.typesIn(event.target)
     const handlers = {
       ArrowDown: () => (this.isOpen ? this.setActive(moveIndex(this.active, "ArrowDown", rows.length)) : this.open()),
       ArrowUp: () => this.setActive(moveIndex(this.active, "ArrowUp", rows.length)),
       Enter: () => (!this.isOpen ? this.open() : rows[this.active] ? this.pickRow(rows[this.active]) : this.createTyped()),
-      " ": () => !this.typesInControl() && !this.isOpen && this.open(),
+      " ": () => spaceOpens && !this.isOpen && this.open(),
       Escape: () => this.close(),
       Tab: () => createsOnTab(this.el.dataset.mode, this.term) && this.createTyped(),
       Backspace: () => this.erases() && this.backspace(),
@@ -221,9 +223,13 @@ export const Listbox = {
     const prevents =
       ["ArrowDown", "ArrowUp", "Enter", "Escape"].includes(event.key) ||
       (event.key === "Backspace" && this.erases()) ||
-      (event.key === " " && !this.typesInControl())
+      (event.key === " " && spaceOpens)
     prevents && event.preventDefault()
     handler && handler()
+  },
+
+  typesIn(target) {
+    return target === this.q("[data-panel-search]")
   },
 
   erases() {
