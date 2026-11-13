@@ -34,6 +34,10 @@ defmodule LineaUI.Components.Checkbox do
 
   @colors ~w(neutral primary secondary info success warning error)
 
+  # The error border of a lone checkbox is part of its classes (`aria-invalid` turns it on, see `forms.css`), so
+  # the classes do not change when the error comes and goes and LiveView does not resend them.
+  @error_border "linea-invalid-check"
+
   @doc """
   Renders a checkbox with its label. Inside a form it sends `unchecked_value` when unchecked,
   through a hidden input, so the field is always present in the params.
@@ -81,7 +85,7 @@ defmodule LineaUI.Components.Checkbox do
       &assign_derived(
         &1,
         :classes,
-        [:variant, :filled, :color, :size, :shape, :errors, :class],
+        [:variant, :filled, :color, :size, :shape, :class],
         fn -> classes(&1) end
       )
     )
@@ -92,11 +96,12 @@ defmodule LineaUI.Components.Checkbox do
     merge([
       Choice.classes("form-checkbox", assigns),
       @shapes[assigns.shape],
-      invalid(assigns),
+      @error_border,
       assigns.class
     ])
   end
 
+  # The group's boxes carry no `aria-invalid`, so they still get the border class from the errors.
   defp invalid(%{errors: [_ | _], variant: variant}) when variant != "chip",
     do: "border-error dark:border-error"
 

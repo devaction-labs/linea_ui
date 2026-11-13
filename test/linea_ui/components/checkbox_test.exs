@@ -96,13 +96,17 @@ defmodule LineaUI.Components.CheckboxTest do
   end
 
   test "errors paint the checkboxes with the error border" do
+    # A lone checkbox paints the error from `aria-invalid` (its classes carry `linea-invalid-check` either way).
     html = render(~H'<.checkbox name="t" errors={["required"]} />')
-    assert "border-error" in classes(html, "input[type=checkbox]")
+    assert [_] = find(html, "input[type=checkbox][aria-invalid=true]") |> Enum.to_list()
+    assert "linea-invalid-check" in classes(html, "input[type=checkbox]")
 
     html = render(~H'<.checkbox name="t" variant="outline" errors={["required"]} />')
-    assert "border-error" in classes(html, "input[type=checkbox]")
+    assert [_] = find(html, "input[type=checkbox][aria-invalid=true]") |> Enum.to_list()
 
     html = render(~H'<.checkbox name="t" />')
+    assert find(html, "input[type=checkbox][aria-invalid]") |> Enum.to_list() == []
+    assert "linea-invalid-check" in classes(html, "input[type=checkbox]")
     refute "border-error" in classes(html, "input[type=checkbox]")
 
     html = render(~H'<.checkbox_group name="g[]" options={["a", "b"]} errors={["pick one"]} />')

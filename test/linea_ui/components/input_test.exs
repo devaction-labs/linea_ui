@@ -254,4 +254,46 @@ defmodule LineaUI.Components.InputTest do
     assert find(icon, "[phx-hook]") |> Enum.to_list() == []
     assert find(icon, "[data-suffix-text]") |> Enum.to_list() == []
   end
+
+  describe "an aria-invalid of the caller" do
+    defp count(html, text), do: html |> String.split(text) |> length() |> Kernel.-(1)
+
+    test "rules over the one the error sets, and the tag has it once" do
+      html = render(~H'<.input name="u" state="error" aria-invalid="false" />')
+      assert count(html, "aria-invalid") == 1
+      assert [_] = find(html, "input[aria-invalid=false]") |> Enum.to_list()
+
+      html = render(~H'<.input name="u" label="U" errors={["bad"]} aria-invalid="false" />')
+      assert count(html, "aria-invalid") == 1
+      assert [_] = find(html, "input[aria-invalid=false]") |> Enum.to_list()
+
+      html =
+        render(~H'<.input name="u" state="error" aria-invalid="spelling">
+  <:prefix>x</:prefix>
+</.input>')
+
+      assert count(html, "aria-invalid") == 1
+      assert [_] = find(html, "input[aria-invalid=spelling]") |> Enum.to_list()
+    end
+
+    test "is the only one when there is no error, and the error sets its own otherwise" do
+      html = render(~H'<.input name="u" aria-invalid="true" />')
+      assert count(html, "aria-invalid") == 1
+      assert [_] = find(html, "input[aria-invalid=true]") |> Enum.to_list()
+
+      html = render(~H'<.input name="u" state="error" />')
+      assert count(html, "aria-invalid") == 1
+      assert [_] = find(html, "input[aria-invalid=true]") |> Enum.to_list()
+    end
+
+    test "is kept by number_input and phone_input as well" do
+      html = render(~H'<.number_input name="n" errors={["bad"]} aria-invalid="false" />')
+      assert count(html, "aria-invalid") == 1
+      assert [_] = find(html, "input[data-display][aria-invalid=false]") |> Enum.to_list()
+
+      html = render(~H'<.phone_input name="p" errors={["bad"]} aria-invalid="false" />')
+      assert count(html, "aria-invalid") == 1
+      assert [_] = find(html, "input[data-display][aria-invalid=false]") |> Enum.to_list()
+    end
+  end
 end

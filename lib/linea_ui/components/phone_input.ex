@@ -70,6 +70,7 @@ defmodule LineaUI.Components.PhoneInput do
 
   import LineaUI.Components.Icon, only: [glyph: 1]
 
+  alias LineaUI.Components.Form
   alias LineaUI.Components.Input
   alias LineaUI.Components.PhoneInput.Countries
   alias LineaUI.Components.PhoneInput.Format
@@ -181,37 +182,80 @@ defmodule LineaUI.Components.PhoneInput do
   def phone_input(assigns) do
     assigns
     |> assign_field()
-    |> assign_new(:name, fn -> nil end)
-    |> then(&assign_new(&1, :id, fn -> &1.name || stable_id("phone", &1) end))
-    |> assign_new(:value, fn -> nil end)
+    |> put_default(:name, nil)
+    |> assign_phone_id()
+    |> put_default(:value, nil)
     |> prepare()
     |> render_phone()
   end
+
+  # The id defaults to the name; without one it is derived from the label (stable across renders).
+  defp assign_phone_id(assigns) when is_map_key(assigns, :id), do: assigns
+
+  defp assign_phone_id(%{name: nil} = assigns),
+    do: assign(assigns, :id, stable_id("phone", assigns))
+
+  defp assign_phone_id(assigns), do: assign_derived(assigns, :id, [:name], fn -> assigns.name end)
+
+  # Everything is derived (`assign_derived/4`) from the attrs it reads: a value put with `assign/3` is new on every
+  # render, so a keystroke would send every attribute built from it again, not only the `value`.
+  @state_deps [:value, :country, :countries, :except, :country_order]
 
   defp prepare(assigns) do
     pool = pool(assigns.countries, assigns.except)
     initial = initial(assigns.country, pool, codes(assigns.country_order))
     state = state(assigns.value, initial, pool)
 
-    assign(assigns,
-      selected: state.country,
-      display: state.display,
-      e164: state.e164,
-      only: codes(assigns.countries),
-      excluded: codes(assigns.except),
-      order: codes(assigns.country_order),
-      state: error_state(assigns.errors),
-      input_class: merge([@input_padding, assigns.clearable && "pe-9", assigns.class]),
-      open: @open,
-      code_class: @code,
-      picker_class: merge([@picker, @picker_sizes[assigns.size]]),
-      forwarded: Pickers.forwarded(assigns.rest),
-      input_rest:
-        Map.merge(
-          %{autocomplete: "tel", inputmode: "tel"},
-          Map.drop(assigns.rest, [:"phx-debounce", :"phx-throttle"])
-        )
-    )
+    assigns
+    |> assign_derived(:selected, @state_deps, fn -> state.country end)
+    |> assign_derived(:display, @state_deps, fn -> state.display end)
+    |> assign_derived(:e164, @state_deps, fn -> state.e164 end)
+    |> assign_derived(:only, [:countries], fn -> codes(assigns.countries) end)
+    |> assign_derived(:excluded, [:except], fn -> codes(assigns.except) end)
+    |> assign_derived(:order, [:country_order], fn -> codes(assigns.country_order) end)
+    |> assign_derived(:state, [:errors], fn -> error_state(assigns.errors) end)
+    |> assign_derived(:open, [], fn -> @open end)
+    |> assign_derived(:code_class, [], fn -> @code end)
+    |> assign_derived(:picker_class, [:size], fn ->
+      merge([@picker, @picker_sizes[assigns.size]])
+    end)
+    |> assign_derived(:forwarded, [:rest], fn -> Pickers.forwarded(assigns.rest) end)
+    |> assign_derived(:input_rest, [:rest], fn ->
+      Map.merge(
+        %{autocomplete: "tel", inputmode: "tel", "data-display": true},
+        Map.drop(assigns.rest, [:"phx-debounce", :"phx-throttle"])
+      )
+    end)
+    |> assign_derived(:prefix_class, [], fn ->
+      Input.adornment(
+        %{interactive: true, class: "pointer-events-none w-full justify-start"},
+        "left-0"
+      )
+    end)
+    |> assign_derived(:suffix_class, [], fn ->
+      Input.adornment(%{interactive: true}, "right-0")
+    end)
+    |> assign_derived(:input_class, [:variant, :size, :shape, :clearable, :class], fn ->
+      input_class(assigns)
+    end)
+    |> assign_derived(:invalid, [:state, :rest], fn ->
+      Input.invalid(error_state(assigns.errors), assigns.rest)
+    end)
+  end
+
+  # What `Input.input/1` gave the visible field: the box of the variant, with room for the picker at the left (and for
+  # the clear button at the right).
+  defp input_class(assigns) do
+    Input.classes(%{
+      variant: assigns.variant,
+      size: assigns.size,
+      shape: assigns.shape,
+      align: "left",
+      prefix: [%{}],
+      suffix: if(assigns.clearable, do: [%{}], else: []),
+      state: nil,
+      class: merge([@input_padding, assigns.clearable && "pe-9", assigns.class])
+    })
   end
 
   defp codes(list), do: Enum.map(list, &(&1 |> to_string() |> String.upcase()))
@@ -273,101 +317,55 @@ defmodule LineaUI.Components.PhoneInput do
       data-on-country-change={@on_country_change}
       data-picker-label={@picker_label}
     >
-      <Input.input
-        type="tel"
+      <Form.field
+        :if={@label || @help || @errors != []}
         id={@id}
-        value={@display}
         label={@label}
         label_class={@label_class}
         help={@help}
         errors={@errors}
-        variant={@variant}
-        size={@size}
-        shape={@shape}
         state={@state}
-        disabled={@disabled}
-        class={@input_class}
-        data-display
-        {@input_rest}
       >
-        <:prefix interactive class="pointer-events-none w-full justify-start">
-          <span
-            aria-hidden="true"
-            class="absolute top-1/2 left-[6.25rem] h-5 w-px -translate-x-px -translate-y-1/2 bg-slate-200 dark:bg-navy-450"
-          ></span>
-          <div
-            id={@id <> "-country"}
-            class="pointer-events-auto relative z-10 flex h-full w-[6.25rem] items-center"
-            phx-update="ignore"
-          >
-            <button
-              type="button"
-              id={@id <> "-picker"}
-              class={@picker_class}
-              aria-haspopup="listbox"
-              aria-expanded="false"
-              aria-controls={@id <> "-list"}
-              aria-label={"#{@picker_label}: +#{@selected.code}"}
-              disabled={@disabled}
-              data-picker
-            >
-              <span :if={@flags} class="text-base leading-none" aria-hidden="true" data-flag>
-                {Format.flag(@selected.iso)}
-              </span>
-              <span :if={!@flags} class="font-inter" data-iso-code>{@selected.iso}</span>
-              <span class={@code_class} data-code>+{@selected.code}</span>
-              <.glyph
-                name={:chevron_down}
-                class="size-3.5 shrink-0 text-slate-950 dark:text-navy-50"
-              />
-            </button>
-            <div
-              id={@id <> "-dropdown"}
-              class="ts-dropdown has-boxed-search w-full min-w-64 max-w-[calc(100vw-2rem)] text-left"
-              hidden
-              data-dropdown
-            >
-              <div class="ts-search">
-                <.glyph name={:search} class="size-4 shrink-0" />
-                <input
-                  type="text"
-                  id={@id <> "-search"}
-                  role="combobox"
-                  aria-expanded="true"
-                  aria-controls={@id <> "-list"}
-                  aria-label={@search_placeholder}
-                  autocomplete="off"
-                  placeholder={@search_placeholder}
-                  data-search
-                />
-              </div>
-              <div
-                id={@id <> "-list"}
-                class="ts-dropdown-content"
-                role="listbox"
-                aria-label={@picker_label}
-                data-list
-              >
-              </div>
-            </div>
-            <div hidden data-no-results>{@no_results}</div>
-          </div>
-        </:prefix>
-        <:suffix :if={@clearable} interactive>
-          <button
-            type="button"
-            class="flex size-6 items-center justify-center rounded-full outline-hidden hover:text-slate-600 focus-visible:text-primary dark:hover:text-navy-100 dark:focus-visible:text-accent"
-            tabindex="-1"
-            title={@clear_label}
-            aria-label={@clear_label}
-            hidden={@display == ""}
-            disabled={@disabled}
-            data-clear
-          >
-            <.glyph name={:close} class="size-3.5" />
-          </button>
-        </:suffix>
-      </Input.input>
+        <.field
+          id={@id}
+          display={@display}
+          disabled={@disabled}
+          invalid={@invalid}
+          input_class={@input_class}
+          input_rest={@input_rest}
+          prefix_class={@prefix_class}
+          suffix_class={@suffix_class}
+          selected={@selected}
+          flags={@flags}
+          picker_label={@picker_label}
+          picker_class={@picker_class}
+          code_class={@code_class}
+          search_placeholder={@search_placeholder}
+          no_results={@no_results}
+          clearable={@clearable}
+          clear_label={@clear_label}
+        />
+      </Form.field>
+      <.field
+        :if={!(@label || @help || @errors != [])}
+        id={@id}
+        display={@display}
+        disabled={@disabled}
+        invalid={@invalid}
+        input_class={@input_class}
+        input_rest={@input_rest}
+        prefix_class={@prefix_class}
+        suffix_class={@suffix_class}
+        selected={@selected}
+        flags={@flags}
+        picker_label={@picker_label}
+        picker_class={@picker_class}
+        code_class={@code_class}
+        search_placeholder={@search_placeholder}
+        no_results={@no_results}
+        clearable={@clearable}
+        clear_label={@clear_label}
+      />
       <input
         type="hidden"
         id={@id <> "-value"}
@@ -379,6 +377,102 @@ defmodule LineaUI.Components.PhoneInput do
         {@forwarded}
       />
     </div>
+    """
+  end
+
+  # The visible input with the picker at its left and the clear button at its right: what `Input.input/1` rendered with
+  # a `:prefix` and a `:suffix`, written out so that a keystroke changes only `value` (and `aria-invalid` when the error
+  # comes or goes). A call of `Input.input/1` with `{@input_rest}` and slots re-rendered the whole tag every time.
+  defp field(assigns) do
+    ~H"""
+    <span class="relative flex w-full">
+      <input
+        type="tel"
+        id={@id}
+        value={@display}
+        disabled={@disabled}
+        aria-invalid={@invalid}
+        class={@input_class}
+        {@input_rest}
+      />
+      <span class={@prefix_class} data-prefix>
+        <span
+          aria-hidden="true"
+          class="absolute top-1/2 left-[6.25rem] h-5 w-px -translate-x-px -translate-y-1/2 bg-slate-200 dark:bg-navy-450"
+        ></span>
+        <div
+          id={@id <> "-country"}
+          class="pointer-events-auto relative z-10 flex h-full w-[6.25rem] items-center"
+          phx-update="ignore"
+        >
+          <button
+            type="button"
+            id={@id <> "-picker"}
+            class={@picker_class}
+            aria-haspopup="listbox"
+            aria-expanded="false"
+            aria-controls={@id <> "-list"}
+            aria-label={"#{@picker_label}: +#{@selected.code}"}
+            disabled={@disabled}
+            data-picker
+          >
+            <span :if={@flags} class="text-base leading-none" aria-hidden="true" data-flag>
+              {Format.flag(@selected.iso)}
+            </span>
+            <span :if={!@flags} class="font-inter" data-iso-code>{@selected.iso}</span>
+            <span class={@code_class} data-code>+{@selected.code}</span>
+            <.glyph
+              name={:chevron_down}
+              class="size-3.5 shrink-0 text-slate-950 dark:text-navy-50"
+            />
+          </button>
+          <div
+            id={@id <> "-dropdown"}
+            class="ts-dropdown has-boxed-search w-full min-w-64 max-w-[calc(100vw-2rem)] text-left"
+            hidden
+            data-dropdown
+          >
+            <div class="ts-search">
+              <.glyph name={:search} class="size-4 shrink-0" />
+              <input
+                type="text"
+                id={@id <> "-search"}
+                role="combobox"
+                aria-expanded="true"
+                aria-controls={@id <> "-list"}
+                aria-label={@search_placeholder}
+                autocomplete="off"
+                placeholder={@search_placeholder}
+                data-search
+              />
+            </div>
+            <div
+              id={@id <> "-list"}
+              class="ts-dropdown-content"
+              role="listbox"
+              aria-label={@picker_label}
+              data-list
+            >
+            </div>
+          </div>
+          <div hidden data-no-results>{@no_results}</div>
+        </div>
+      </span>
+      <span :if={@clearable} class={@suffix_class} data-suffix>
+        <button
+          type="button"
+          class="flex size-6 items-center justify-center rounded-full outline-hidden hover:text-slate-600 focus-visible:text-primary dark:hover:text-navy-100 dark:focus-visible:text-accent"
+          tabindex="-1"
+          title={@clear_label}
+          aria-label={@clear_label}
+          hidden={@display == ""}
+          disabled={@disabled}
+          data-clear
+        >
+          <.glyph name={:close} class="size-3.5" />
+        </button>
+      </span>
+    </span>
     """
   end
 end

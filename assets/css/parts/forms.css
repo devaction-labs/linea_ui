@@ -214,3 +214,13 @@ input.form-range:focus-visible::-moz-range-thumb {
     }
   }
 }
+
+/*
+  The error border of a checkbox: what `border-error dark:border-error` gave, which replaced the resting border
+  but left the hover, focus, checked and disabled ones as they are.
+*/
+@utility linea-invalid-check {
+  &[aria-invalid="true"]:not(:hover, :focus, :checked, :disabled) {
+    border-color: var(--color-error);
+  }
+}

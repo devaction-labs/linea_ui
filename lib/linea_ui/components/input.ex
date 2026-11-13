@@ -400,13 +400,29 @@ defmodule LineaUI.Components.Input do
     """
   end
 
+  @doc false
+  # The `aria-invalid` the error paint reads: `"true"` while `state` is `error`, unless the caller set
+  # `aria-invalid` itself in `rest` (it then rules, as every other attr of `rest` does, and the tag does not get it twice).
+  @spec invalid(String.t() | nil, map()) :: String.t() | nil
+  def invalid(state, rest) do
+    if Map.has_key?(rest, :"aria-invalid"), do: nil, else: (state == "error" && "true") || nil
+  end
+
+  defp assign_invalid(assigns),
+    do:
+      assign_derived(assigns, :invalid, [:state, :attrs], fn ->
+        invalid(assigns.state, assigns.attrs)
+      end)
+
   defp control(%{prefix: [], suffix: [], raw: nil} = assigns) do
+    assigns = assign_invalid(assigns)
+
     ~H"""
     <input
       id={@id}
       name={@raw == nil && @name}
       value={Phoenix.HTML.Form.normalize_value(@type, @value)}
-      aria-invalid={@state == "error" && "true"}
+      aria-invalid={@invalid}
       data-value={@clear_on_submit && sync_value(@type, @value)}
       class={@classes}
       {@attrs}
@@ -415,6 +431,8 @@ defmodule LineaUI.Components.Input do
   end
 
   defp control(assigns) do
+    assigns = assign_invalid(assigns)
+
     ~H"""
     <span
       id={text_suffix?(@suffix) && "#{@id}-field"}
@@ -425,7 +443,7 @@ defmodule LineaUI.Components.Input do
         id={@id}
         name={@raw == nil && @name}
         value={Phoenix.HTML.Form.normalize_value(@type, @value)}
-        aria-invalid={@state == "error" && "true"}
+        aria-invalid={@invalid}
         data-value={@clear_on_submit && sync_value(@type, @value)}
         class={@classes}
         {@attrs}
@@ -446,7 +464,9 @@ defmodule LineaUI.Components.Input do
     """
   end
 
-  defp adornment(entry, side),
+  @doc false
+  # The classes of the box that holds a `:prefix` or `:suffix` entry (`side` is `left-0` or `right-0`).
+  def adornment(entry, side),
     do:
       merge([
         adornment_base(entry[:interactive] == true, entry[:text] == true),
