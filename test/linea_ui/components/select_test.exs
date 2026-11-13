@@ -105,7 +105,8 @@ defmodule LineaUI.Components.SelectTest do
                "AK"
              ]
 
-      assert find(html, "[data-templates] template[data-value=AL]") |> Enum.count() == 1
+      # the hook builds the default chip itself: no template per option
+      assert find(html, "[data-templates] template") |> Enum.count() == 0
     end
 
     test "a single select with a value is full and hides its input" do
@@ -211,9 +212,26 @@ defmodule LineaUI.Components.SelectTest do
       assert LazyHTML.attribute(find(single, "#s"), "data-overflow") == []
     end
 
-    test "every chosen chip has a template for the hook to rebuild it" do
+    test "the default chip has no template; a chip with an item slot has one per option" do
       html = render(~H|<.select id="s" name="m" options={~w(A B)} value={~w(A)} multiple />|)
-      assert find(html, "[data-templates] template") |> Enum.count() == 2
+      assert find(html, "[data-templates] template") |> Enum.count() == 0
+
+      html =
+        render(~H"""
+        <.select id="s" name="m" options={~w(A B)} value={~w(A)} multiple>
+          <:item :let={o}>{o.label}!</:item>
+        </.select>
+        """)
+
+      assert find(html, "[data-templates] template") |> LazyHTML.attribute("data-value") == [
+               "A",
+               "B"
+             ]
+    end
+
+    test "options carry no id (the hook gives one to the active row) and are keyed" do
+      html = render(~H|<.select id="s" name="m" options={~w(A B)} />|)
+      assert find(html, ".ts-dropdown .option") |> LazyHTML.attribute("id") == []
     end
   end
 
