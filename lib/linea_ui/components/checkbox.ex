@@ -77,7 +77,14 @@ defmodule LineaUI.Components.Checkbox do
     |> assign_new(:checked, fn %{value: value} ->
       Phoenix.HTML.Form.normalize_value("checkbox", value)
     end)
-    |> then(&assign(&1, :classes, classes(&1)))
+    |> then(
+      &assign_derived(
+        &1,
+        :classes,
+        [:variant, :filled, :color, :size, :shape, :errors, :class],
+        fn -> classes(&1) end
+      )
+    )
     |> render_checkbox()
   end
 

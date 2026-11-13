@@ -156,26 +156,30 @@ defmodule LineaUI.Components.Pillbox do
     |> put_default(:value, nil)
     |> then(&assign_new(&1, :id, fn -> &1.name || stable_id("pillbox", &1) end))
     |> then(&assign(&1, :name, &1.name || &1.id))
-    |> assign(:options, with_hints(assigns.options))
-    |> assign(
-      multiple: true,
-      look: "pillbox",
-      search: "panel",
-      create_position: "bottom",
-      removable: not (assigns.readonly or assigns.disabled),
-      clearable: assigns.clear and not assigns.readonly,
-      no_results: assigns.empty_label,
-      overflow: if(assigns.overflow == "wrap", do: "wrap", else: "count"),
-      persist: true,
-      restore_on_backspace: false,
-      max: nil,
-      prompt: nil,
-      size: "md",
-      footer: false,
-      compact: false,
-      option: [],
-      item: []
-    )
+    |> assign_derived(:options, [:options], fn -> with_hints(assigns.options) end)
+    |> assign_derived(:multiple, [], fn -> true end)
+    |> assign_derived(:look, [], fn -> "pillbox" end)
+    |> assign_derived(:search, [], fn -> "panel" end)
+    |> assign_derived(:create_position, [], fn -> "bottom" end)
+    |> assign_derived(:removable, [:readonly, :disabled], fn ->
+      not (assigns.readonly or assigns.disabled)
+    end)
+    |> assign_derived(:clearable, [:clear, :readonly], fn ->
+      assigns.clear and not assigns.readonly
+    end)
+    |> assign_derived(:no_results, [:empty_label], fn -> assigns.empty_label end)
+    |> assign_derived(:overflow, [:overflow], fn ->
+      if(assigns.overflow == "wrap", do: "wrap", else: "count")
+    end)
+    |> assign_derived(:persist, [], fn -> true end)
+    |> assign_derived(:restore_on_backspace, [], fn -> false end)
+    |> assign_derived(:max, [], fn -> nil end)
+    |> assign_derived(:prompt, [], fn -> nil end)
+    |> assign_derived(:size, [], fn -> "md" end)
+    |> assign_derived(:footer, [], fn -> false end)
+    |> assign_derived(:compact, [], fn -> false end)
+    |> assign_derived(:option, [], fn -> [] end)
+    |> assign_derived(:item, [], fn -> [] end)
     |> Listbox.prepare(:select)
     |> Listbox.listbox()
   end
