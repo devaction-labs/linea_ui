@@ -322,7 +322,7 @@ defmodule PreviewWeb.Pages.TableAdvanced do
             </:col>
             <:col :let={row} label="Job" priority={3}>{row.job}</:col>
             <:col :let={row} label="Owner" priority={2}>{row.color}</:col>
-            <:col :let={row} label="Status" priority={1}>Active</:col>
+            <:col label="Status" priority={1}>Active</:col>
             <:col :let={row} label="Id" align="right">{row.id}</:col>
           </.table>
         </.card>
@@ -340,7 +340,7 @@ defmodule PreviewWeb.Pages.TableAdvanced do
             <:col :let={row} label="Name">{row.name}</:col>
             <:col :let={row} label="Job" priority={3}>{row.job}</:col>
             <:col :let={row} label="Owner" priority={2}>{row.color}</:col>
-            <:col :let={row} label="Status" priority={1}>
+            <:col label="Status" priority={1}>
               <.badge color="success">Active</.badge>
             </:col>
             <:col :let={row} label="Id" align="right">{row.id}</:col>

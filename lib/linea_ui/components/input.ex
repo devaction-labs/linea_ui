@@ -23,6 +23,7 @@ defmodule LineaUI.Components.Input do
       <.input name="date" mask="date" mask_options={%{pattern: ~w(m d Y), delimiter: "-"}} />
       <.input name="time" mask="time" mask_options={%{pattern: ~w(h m s)}} />
       <.input name="phone" mask="phone" />
+      <.input name="document" mask="cpf_cnpj" label="CPF ou CNPJ" mask_submit="raw" />
       <.input name="amount" mask="numeral" mask_options={%{thousands: "lakh"}} />
       <.input name="code" mask="blocks" mask_options={%{blocks: [3, 2, 3, 3], delimiters: [".", "_", "-"], uppercase: true}} />
       <.input name="ref" mask="blocks" mask_options={%{prefix: "Prefix", delimiter: "-", blocks: [6, 4, 4, 7]}} />
@@ -34,6 +35,7 @@ defmodule LineaUI.Components.Input do
   | `date` | `pattern` of `d m y Y` (`~w(d m Y)`), `delimiter` (`"/"`) |
   | `time` | `pattern` of `h m s` (`~w(h m s)`), `delimiter` (`":"`) |
   | `phone` | `blocks` (`[3, 3, 4]`), `delimiter` (`" "`) |
+  | `cpf_cnpj` | none. Brazilian document: CPF (`000.000.000-00`) up to 11 digits, CNPJ (`00.000.000/0000-00`) beyond, switching by itself while typing, deleting and pasting; at most 14 digits. Sets `inputmode="numeric"` (override it with `inputmode`) |
   | `numeral` | `thousands` (`thousand lakh wan none`), `decimals` (`2`), `delimiter` (`","`), `decimal_mark` (`"."`), `positive`, `prefix` (`"R$ "`, shown before the figure and left out of the raw value) |
 
   The input submits the masked text. `mask_submit="raw"` submits the unmasked value instead
@@ -168,6 +170,12 @@ defmodule LineaUI.Components.Input do
     doc: "A dimmed note at the right of the caption, as the canvas's \"opcional\"."
   )
 
+  attr(:layout, :string,
+    default: "stacked",
+    values: ~w(stacked inline),
+    doc: "`inline` puts the caption at the left of the input instead of above it."
+  )
+
   attr(:help, :string, default: nil, doc: "The small line under the control.")
 
   attr(:errors, :list,
@@ -184,7 +192,7 @@ defmodule LineaUI.Components.Input do
 
   attr(:mask, :string,
     default: nil,
-    values: [nil, "blocks", "credit_card", "date", "time", "phone", "numeral"]
+    values: [nil, "blocks", "credit_card", "date", "time", "phone", "numeral", "cpf_cnpj"]
   )
 
   attr(:mask_options, :map, default: %{})
@@ -301,6 +309,7 @@ defmodule LineaUI.Components.Input do
         list: assigns.list_id,
         "phx-hook": hook(assigns),
         "data-clear-on-submit": assigns.clear_on_submit && "",
+        inputmode: mask_inputmode(assigns.mask),
         "data-mask": assigns.mask,
         "data-mask-submit": assigns.raw && "raw",
         "data-mask-options": assigns.mask && JSON.encode!(assigns.mask_options)
@@ -308,6 +317,9 @@ defmodule LineaUI.Components.Input do
       assigns.rest
     )
   end
+
+  defp mask_inputmode("cpf_cnpj"), do: "numeric"
+  defp mask_inputmode(_mask), do: nil
 
   defp hook(%{mask: mask}) when is_binary(mask), do: "LineaUI.InputMask"
   defp hook(%{clear_on_submit: true}), do: "LineaUI.InputSync"
@@ -375,6 +387,7 @@ defmodule LineaUI.Components.Input do
       label={@label}
       label_class={@label_class}
       label_hint={@label_hint}
+      layout={@layout}
       help={@help}
       errors={@errors}
       state={@state}
@@ -400,13 +413,29 @@ defmodule LineaUI.Components.Input do
     """
   end
 
+  @doc false
+  # The `aria-invalid` the error paint reads: `"true"` while `state` is `error`, unless the caller set
+  # `aria-invalid` itself in `rest` (it then rules, as every other attr of `rest` does, and the tag does not get it twice).
+  @spec invalid(String.t() | nil, map()) :: String.t() | nil
+  def invalid(state, rest) do
+    if Map.has_key?(rest, :"aria-invalid"), do: nil, else: (state == "error" && "true") || nil
+  end
+
+  defp assign_invalid(assigns),
+    do:
+      assign_derived(assigns, :invalid, [:state, :attrs], fn ->
+        invalid(assigns.state, assigns.attrs)
+      end)
+
   defp control(%{prefix: [], suffix: [], raw: nil} = assigns) do
+    assigns = assign_invalid(assigns)
+
     ~H"""
     <input
       id={@id}
       name={@raw == nil && @name}
       value={Phoenix.HTML.Form.normalize_value(@type, @value)}
-      aria-invalid={@state == "error" && "true"}
+      aria-invalid={@invalid}
       data-value={@clear_on_submit && sync_value(@type, @value)}
       class={@classes}
       {@attrs}
@@ -415,6 +444,8 @@ defmodule LineaUI.Components.Input do
   end
 
   defp control(assigns) do
+    assigns = assign_invalid(assigns)
+
     ~H"""
     <span
       id={text_suffix?(@suffix) && "#{@id}-field"}
@@ -425,7 +456,7 @@ defmodule LineaUI.Components.Input do
         id={@id}
         name={@raw == nil && @name}
         value={Phoenix.HTML.Form.normalize_value(@type, @value)}
-        aria-invalid={@state == "error" && "true"}
+        aria-invalid={@invalid}
         data-value={@clear_on_submit && sync_value(@type, @value)}
         class={@classes}
         {@attrs}
@@ -446,7 +477,9 @@ defmodule LineaUI.Components.Input do
     """
   end
 
-  defp adornment(entry, side),
+  @doc false
+  # The classes of the box that holds a `:prefix` or `:suffix` entry (`side` is `left-0` or `right-0`).
+  def adornment(entry, side),
     do:
       merge([
         adornment_base(entry[:interactive] == true, entry[:text] == true),

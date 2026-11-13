@@ -53,6 +53,42 @@ defmodule LineaUI.Components.ButtonTest do
     assert "sm" in classes(render(~H|<.button icon size="sm">+</.button>|), "button")
   end
 
+  test "icon button sizes follow the canvas: md 36, sm 32, xs 24, lg and xl as md" do
+    cls = &classes(&1, "button")
+    assert cls.(render(~H|<.button icon aria-label="a">+</.button>|)) == ["sg-ib"]
+    assert cls.(render(~H|<.button icon size="md" aria-label="a">+</.button>|)) == ["sg-ib"]
+    assert cls.(render(~H|<.button icon size="sm" aria-label="a">+</.button>|)) == ["sg-ib", "sm"]
+    assert cls.(render(~H|<.button icon size="xs" aria-label="a">+</.button>|)) == ["sg-ib", "xs"]
+    assert cls.(render(~H|<.button icon size="lg" aria-label="a">+</.button>|)) == ["sg-ib"]
+    assert cls.(render(~H|<.button icon size="xl" aria-label="a">+</.button>|)) == ["sg-ib"]
+  end
+
+  test "icon button variants: flat, ghost and dim are plain, the rest the bordered control" do
+    for variant <- ~w(flat ghost dim) do
+      assert ["sg-ib", "plain"] == icon_classes(variant, "neutral")
+    end
+
+    for variant <- ~w(solid glow outline soft bordered glass),
+        color <- ~w(neutral primary error mono) do
+      assert ["sg-ib"] == icon_classes(variant, color)
+    end
+  end
+
+  defp icon_classes(variant, color) do
+    assigns = %{variant: variant, color: color, __changed__: nil}
+
+    ~H|<.button icon variant={@variant} color={@color} aria-label="a">+</.button>|
+    |> rendered_to_string()
+    |> classes("button")
+  end
+
+  test "icon button combines plain, size and pill" do
+    html =
+      render(~H|<.button icon variant="ghost" size="xs" shape="pill" aria-label="a">+</.button>|)
+
+    assert ["sg-ib", "xs", "plain", "pill"] == classes(html, "button")
+  end
+
   test "navigate renders a link, and disabled marks it" do
     html = render(~H|<.button navigate="/x" disabled>Go</.button>|)
     assert [link] = find(html, "a") |> Enum.to_list()

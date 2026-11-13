@@ -98,6 +98,35 @@ defmodule PreviewWeb.Pages.DateTimeCanvas do
       </div>
     </.example>
 
+    <.example
+      id="tz-example"
+      title="Fuso visível"
+      text="Quando a equipe está em fusos diferentes: timezone mostra o fuso na linha de ajuda (só exibição, não converte)."
+      class="mt-5 block"
+    >
+      <div class="grid grid-cols-1 gap-x-6 gap-y-4 md:grid-cols-2">
+        <.datetime_picker
+          id="dt-tz"
+          name="tz"
+          locale="pt_BR"
+          label="Publicar em"
+          value="2026-11-10T08:00"
+          today={@today}
+          timezone="Horário de Brasília (UTC−3)"
+        />
+        <.datetime_picker
+          id="dt-tz-help"
+          name="tz2"
+          locale="pt_BR"
+          label="Reunião"
+          value="2026-11-10T08:00"
+          today={@today}
+          help="Local da equipe"
+          timezone="BRT · UTC−3"
+        />
+      </div>
+    </.example>
+
     <.example title="Data e hora e período" class="block">
       <div class="flex flex-wrap items-start gap-x-8 gap-y-7">
         <div class="w-[400px] max-w-full">

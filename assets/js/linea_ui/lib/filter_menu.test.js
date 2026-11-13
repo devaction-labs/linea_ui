@@ -1,6 +1,32 @@
 import assert from "node:assert/strict"
 import test from "node:test"
-import {applySuffix, onClose, payloadOf, pendingResults, stagedTotal} from "./filter_menu.js"
+import {applySuffix, customText, customValue, onClose, parseCustom, payloadOf, pendingResults, rangeLabel, stagedTotal} from "./filter_menu.js"
+
+test("a custom period is `custom:` and two ISO days in order", () => {
+  assert.equal(customValue("2026-11-01", "2026-11-13"), "custom:2026-11-01..2026-11-13")
+  assert.equal(customValue("2026-11-13", "2026-11-13"), "custom:2026-11-13..2026-11-13")
+  assert.equal(customValue("2026-11-13", "2026-11-01"), "")
+  assert.equal(customValue("2026-11-01", ""), "")
+  assert.equal(customValue("", ""), "")
+})
+
+test("a value is read back into its two days, and a preset is not a period", () => {
+  assert.deepEqual(parseCustom("custom:2026-11-01..2026-11-13"), {from: "2026-11-01", to: "2026-11-13"})
+  assert.equal(parseCustom("today"), null)
+  assert.equal(parseCustom(""), null)
+  assert.equal(parseCustom(null), null)
+  assert.equal(parseCustom("custom:2026-11-13..2026-11-01"), null)
+  assert.equal(parseCustom("custom:2026-11-01"), null)
+})
+
+test("the row shows the period in the locale of the menu, or its own text", () => {
+  const row = {label: "Personalizado…", locale: "pt_BR"}
+  assert.equal(rangeLabel({from: "2026-11-01", to: "2026-11-13"}, "pt_BR"), "01/11/2026 – 13/11/2026")
+  assert.equal(rangeLabel({from: "2026-11-01", to: "2026-11-13"}, "en"), "2026-11-01 – 2026-11-13")
+  assert.equal(customText("custom:2026-11-01..2026-11-13", row), "01/11/2026 – 13/11/2026")
+  assert.equal(customText("today", row), "Personalizado…")
+  assert.equal(customText("", row), "Personalizado…")
+})
 
 const options = (...pairs) => pairs.map(([on, count]) => ({on, count}))
 

@@ -105,6 +105,48 @@ defmodule LineaUI.Components.TreeviewTest do
       assert attr_of(html, "[data-tree-leaf=esmalte]", "aria-checked") == ["false"]
     end
   end
+
+  describe "items without an id" do
+    defp tree(assigns) do
+      ~H"""
+      <.treeview id="t">
+        <.tree_item label="Docs" checked={false}>
+          <.tree_item label="Docs"><.tree_item label="Docs" /><.tree_item label="Docs" /></.tree_item>
+          <.tree_item label="Docs" />
+        </.tree_item>
+        <.tree_item label="Docs">
+          <.tree_item label="Docs"><.tree_item label="Docs" /></.tree_item>
+        </.tree_item>
+      </.treeview>
+      """
+    end
+
+    test "render no DOM id, so the element is never replaced, and render the same twice" do
+      first = rendered_to_string(tree(%{__changed__: nil}))
+      assert first == rendered_to_string(tree(%{__changed__: nil}))
+      refute first =~ "tree-item-"
+      assert [] = find(first, "details[id]") |> Enum.to_list()
+      assert [_, _, _, _] = find(first, "details[data-tree-item='']") |> Enum.to_list()
+      assert [_, _, _, _] = find(first, "[data-tree-leaf='']") |> Enum.to_list()
+    end
+
+    test "an item with an id keeps it, and no id is duplicated in a three level tree" do
+      html =
+        render(~H"""
+        <.treeview id="t">
+          <.tree_item id="a" label="Docs">
+            <.tree_item id="b" label="Docs"><.tree_item id="c" label="Docs" /></.tree_item>
+          </.tree_item>
+          <.tree_item label="Docs"><.tree_item label="Docs" /></.tree_item>
+        </.treeview>
+        """)
+
+      ids = html |> find("[id]") |> LazyHTML.attribute("id")
+      assert ids == Enum.uniq(ids)
+      assert [_] = find(html, "details#a[data-tree-item=a]") |> Enum.to_list()
+      assert [_] = find(html, "[data-tree-leaf=c]") |> Enum.to_list()
+    end
+  end
 end
 
 defmodule LineaUI.Components.TreeviewLiveTest do

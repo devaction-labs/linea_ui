@@ -49,11 +49,12 @@ import Timer from "./hooks/timer.js"
 import Toast from "./hooks/toast.js"
 import Tooltip from "./hooks/tooltip.js"
 import Treeview from "./hooks/treeview.js"
+import Indeterminate from "./hooks/indeterminate.js"
 import Upload from "./hooks/upload.js"
 
 // Named exports, one per hook, for apps that bundle only the hooks they use (see the README):
 //   import {Tooltip, Dropdown} from "linea_ui"; new LiveSocket(..., {hooks: {...Tooltip, ...Dropdown}})
-export {ActionMenu, AiComposer, Autocomplete, BulkBar, Calendar, CardTable, Carousel, Chart, Clipboard, ColorPicker, CommandPalette, DataTable, DatePicker, DatetimePicker, Dialog, Dropdown, Fab, InputMask, InputSuffix, LandingNav, Layout, NumberInput, Otp, PhoneInput, Popover, Range, ScrollBottom, Segmented, Select, Sidebar, SignaturePad, Sortable, Tabs, TagsInput, Textarea, TextareaTokens, TextEditor, Theme, TimePicker, Timer, Toast, Tooltip, Treeview, Upload}
+export {ActionMenu, AiComposer, Autocomplete, BulkBar, Calendar, CardTable, Carousel, Chart, Clipboard, ColorPicker, CommandPalette, DataTable, DatePicker, DatetimePicker, Dialog, Dropdown, Fab, Indeterminate, InputMask, InputSuffix, LandingNav, Layout, NumberInput, Otp, PhoneInput, Popover, Range, ScrollBottom, Segmented, Select, Sidebar, SignaturePad, Sortable, Tabs, TagsInput, Textarea, TextareaTokens, TextEditor, Theme, TimePicker, Timer, Toast, Tooltip, Treeview, Upload}
 
 export const Hooks = /* @__PURE__ */ Object.assign(
   {},
@@ -100,6 +101,7 @@ export const Hooks = /* @__PURE__ */ Object.assign(
   Toast,
   Tooltip,
   Treeview,
+  Indeterminate,
   Upload,
 )
 

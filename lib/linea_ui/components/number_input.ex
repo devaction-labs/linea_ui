@@ -294,7 +294,9 @@ defmodule LineaUI.Components.NumberInput do
 
   defp control(%{steppers: true, stepper_style: style} = assigns) when style in ~w(inset round) do
     assigns =
-      assign_derived(assigns, :shown, [:display], fn -> String.length(assigns.display) end)
+      assigns
+      |> assign_derived(:shown, [:display], fn -> String.length(assigns.display) end)
+      |> assign_input(:stepper)
 
     ~H"""
     <div
@@ -334,23 +336,15 @@ defmodule LineaUI.Components.NumberInput do
           style={if(@suffix && @align == "center", do: "--nlen: #{@shown}")}
           data-field
         >
-          <Input.input
+          <input
             type="text"
             id={@id}
             value={@display}
-            variant="plain"
-            align={align(@align)}
             disabled={@disabled}
-            class={merge([@align == "center" && "text-center", @class])}
-            role="spinbutton"
-            inputmode={@inputmode}
-            autocomplete="off"
+            aria-invalid={@invalid}
             aria-valuenow={@machine}
-            aria-valuemin={@min}
-            aria-valuemax={@max}
-            aria-invalid={@state == "error" && "true"}
-            data-display
-            {@input_rest}
+            class={@input_class}
+            {@input_attrs}
           />
           <span
             :if={@suffix}
@@ -399,6 +393,7 @@ defmodule LineaUI.Components.NumberInput do
       |> assign_derived(:field_height, [:size], fn -> @stepper_sizes[assigns.size] end)
       |> assign_derived(:addon_class, [:size], fn -> @addon_sizes[assigns.size] end)
       |> assign_derived(:shown, [:display], fn -> String.length(assigns.display) end)
+      |> assign_input(:group)
 
     ~H"""
     <div
@@ -438,33 +433,15 @@ defmodule LineaUI.Components.NumberInput do
           style={if((@steppers and @suffix) && @align == "center", do: "--nlen: #{@shown}")}
           data-field
         >
-          <Input.input
+          <input
             type="text"
             id={@id}
             value={@display}
-            variant={@variant}
-            size={@size}
-            shape={@shape}
-            align={align(@align)}
-            state={@state}
             disabled={@disabled}
-            class={
-              merge([
-                @align == "center" && "text-center",
-                @steppers && @field_height,
-                @steppers && "font-mono text-sm-plus font-medium text-slate-800 dark:text-navy-50",
-                @steppers && @suffix && @align != "center" && "pe-9",
-                @class
-              ])
-            }
-            role="spinbutton"
-            inputmode={@inputmode}
-            autocomplete="off"
+            aria-invalid={@invalid}
             aria-valuenow={@machine}
-            aria-valuemin={@min}
-            aria-valuemax={@max}
-            data-display
-            {@input_rest}
+            class={@input_class}
+            {@input_attrs}
           />
           <span
             :if={@steppers && @suffix}
@@ -515,6 +492,68 @@ defmodule LineaUI.Components.NumberInput do
       />
     </div>
     """
+  end
+
+  # The visible `<input>` is written here instead of called as `Input.input/1`: `{@input_rest}` in a component call
+  # re-renders every attr of it on each change (`__changed__: nil`), so each keystroke sent the whole tag. Here
+  # `value`, `aria-invalid` and `aria-valuenow` are the only attrs that move on a keystroke; the classes and the
+  # rest are derived from what they read and stay out of the diff. The result is what `Input.input/1` rendered.
+  @input_class_deps ~w(variant size shape align steppers suffix class)a
+
+  defp assign_input(assigns, kind) do
+    assigns
+    |> assign_derived(:input_class, @input_class_deps, fn -> input_class(assigns, kind) end)
+    |> assign_derived(:input_attrs, [:inputmode, :min, :max, :input_rest], fn ->
+      input_attrs(assigns)
+    end)
+    |> assign_derived(:invalid, [:state, :input_rest], fn ->
+      Input.invalid(assigns.state, assigns.input_rest)
+    end)
+  end
+
+  defp input_class(assigns, :stepper) do
+    input_classes(%{
+      variant: "plain",
+      size: "md",
+      shape: "rounded",
+      align: align(assigns.align),
+      class: merge([assigns.align == "center" && "text-center", assigns.class])
+    })
+  end
+
+  defp input_class(assigns, :group) do
+    input_classes(%{
+      variant: assigns.variant,
+      size: assigns.size,
+      shape: assigns.shape,
+      align: align(assigns.align),
+      class:
+        merge([
+          assigns.align == "center" && "text-center",
+          assigns.steppers && @stepper_sizes[assigns.size],
+          assigns.steppers &&
+            "font-mono text-sm-plus font-medium text-slate-800 dark:text-navy-50",
+          assigns.steppers && assigns.suffix && assigns.align != "center" && "pe-9",
+          assigns.class
+        ])
+    })
+  end
+
+  defp input_classes(assigns),
+    do: Input.classes(Map.merge(assigns, %{prefix: [], suffix: [], state: nil}))
+
+  defp input_attrs(assigns) do
+    Map.merge(
+      %{
+        role: "spinbutton",
+        inputmode: assigns.inputmode,
+        autocomplete: "off",
+        "aria-valuemin": assigns.min,
+        "aria-valuemax": assigns.max,
+        "data-display": true
+      },
+      assigns.input_rest
+    )
   end
 
   defp align("right"), do: "right"

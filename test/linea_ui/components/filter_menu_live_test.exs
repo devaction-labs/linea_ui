@@ -52,6 +52,41 @@ defmodule LineaUI.Components.FilterMenuLiveTest do
     end
   end
 
+  defmodule PeriodLive do
+    use Phoenix.LiveView
+    use LineaUI
+
+    def mount(_params, session, socket),
+      do: {:ok, assign(socket, period: "7d", test: session["test"])}
+
+    def handle_event("apply", %{"filter" => %{"period" => period} = params}, socket) do
+      send(socket.assigns.test, {:apply, params})
+      {:noreply, assign(socket, period: period)}
+    end
+
+    def render(assigns) do
+      ~H"""
+      <form id="period" phx-submit="apply">
+        <.filter_menu
+          id="period-filter"
+          locale="pt_BR"
+          groups={[
+            %{
+              name: "filter[period]",
+              label: "Período",
+              display: :section,
+              type: :single,
+              custom: true,
+              value: @period,
+              options: [{"Hoje", "today"}, {"7 dias", "7d"}]
+            }
+          ]}
+        />
+      </form>
+      """
+    end
+  end
+
   defp checked(html, role),
     do:
       html
@@ -102,5 +137,41 @@ defmodule LineaUI.Components.FilterMenuLiveTest do
 
     assert_received {:change, %{"status" => ["draft"], "sort" => "recent"}}
     assert checked(render(view), "menuitemcheckbox") == ["Draft"]
+  end
+
+  test "a custom period the server applies is the row's text and the checked radio", %{conn: conn} do
+    {:ok, view, html} = live_isolated(conn, PeriodLive, session: %{"test" => self()})
+
+    assert checked(html, "menuitemradio") == ["7"]
+    assert find(html, "[data-filter-custom]") |> LazyHTML.attribute("data-selected") == []
+
+    view
+    |> element("#period")
+    |> render_submit(%{"filter" => %{"period" => "custom:2026-11-03..2026-11-10"}})
+
+    assert_received {:apply, %{"period" => "custom:2026-11-03..2026-11-10"}}
+
+    html = render(view)
+    assert checked(html, "menuitemradio") == []
+    assert find(html, "[data-filter-custom]") |> LazyHTML.attribute("data-selected") == ["true"]
+
+    assert find(html, "[data-filter-custom] > [data-submenu-trigger]")
+           |> LazyHTML.text()
+           |> String.trim() ==
+             "03/11/2026 – 10/11/2026"
+
+    assert find(html, "input[data-custom-input]") |> LazyHTML.attribute("value") == [
+             "custom:2026-11-03..2026-11-10"
+           ]
+
+    view |> element("#period") |> render_submit(%{"filter" => %{"period" => "today"}})
+    html = render(view)
+    assert checked(html, "menuitemradio") == ["Hoje"]
+    assert find(html, "[data-filter-custom]") |> LazyHTML.attribute("data-selected") == []
+
+    assert find(html, "[data-filter-custom] > [data-submenu-trigger]")
+           |> LazyHTML.text()
+           |> String.trim() ==
+             "Personalizado…"
   end
 end

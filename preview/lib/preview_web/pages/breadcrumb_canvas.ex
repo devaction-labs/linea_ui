@@ -31,7 +31,7 @@ defmodule PreviewWeb.Pages.BreadcrumbCanvas do
           </.line>
           <.line label="bordered · ícone no primeiro item">
             <.breadcrumb variant="bordered">
-              <:item href="#" aria-label="Início"><.home_icon d={@home} /></:item>
+              <:item href="#"><.home_icon d={@home} /><span class="sr-only">Início</span></:item>
               <:item href="#">Projetos</:item>
               <:item>Pedido #2481</:item>
             </.breadcrumb>
@@ -93,6 +93,36 @@ defmodule PreviewWeb.Pages.BreadcrumbCanvas do
               </div>
               <.button href="#" color="primary" size="sm">Editar cliente</.button>
             </div>
+          </.line>
+        </.panel>
+      </div>
+    </.example>
+
+    <.example
+      title="Recolhida"
+      text="Caminhos longos escondem o meio: max_items mantém o primeiro item e os últimos, e o … abre os escondidos."
+      class="mt-5 block"
+    >
+      <div class="grid grid-cols-1 gap-[18px] xl:grid-cols-2">
+        <.panel>
+          <.line label="max_items={4}: primeiro, … e os dois últimos">
+            <.breadcrumb id="crumb-collapsed" max_items={4} more_label="Mostrar itens escondidos">
+              <:item href="#">Financeiro</:item>
+              <:item href="#">Conciliação</:item>
+              <:item href="#">Bancos</:item>
+              <:item href="#">Extratos</:item>
+              <:item>Outubro</:item>
+            </.breadcrumb>
+          </.line>
+        </.panel>
+        <.panel>
+          <.line label="max_items={3} com phx-click nos escondidos">
+            <.breadcrumb id="crumb-collapsed-events" max_items={3}>
+              <:item phx-click="noop">Documentos</:item>
+              <:item phx-click="noop">Contratos</:item>
+              <:item phx-click="noop">2026</:item>
+              <:item>Proposta final.pdf</:item>
+            </.breadcrumb>
           </.line>
         </.panel>
       </div>

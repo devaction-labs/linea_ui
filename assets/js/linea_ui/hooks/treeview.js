@@ -15,6 +15,20 @@ const listen = (hook, element, type, handler, options) => {
 }
 
 /**
+ * The name of an item rendered without an `id`: its position in the tree (the index of each ancestor
+ * among its siblings, from the treeview down), so it is the same on every render and unique per item.
+ */
+export const pathName = (el, root) => {
+  const path = []
+  for (let node = el; node && node !== root; node = node.parentElement) {
+    path.unshift([...node.parentElement.children].indexOf(node))
+  }
+  return `tree-item-${path.join(".")}`
+}
+
+const nameOf = (el, root) => el.dataset.treeItem || el.dataset.treeLeaf || pathName(el, root)
+
+/**
  * The treeview's branches are native `<details>`; this hook keeps the person's choice across patches
  * (LiveView leaves `open` alone), applies the server's when it changes, and reports toggles and leaf picks.
  */
@@ -49,7 +63,7 @@ const Treeview = {
   sync() {
     const listed = this.listed()
     this.branches().forEach((item) => {
-      const id = item.dataset.treeItem
+      const id = nameOf(item, this.el)
       const server = item.dataset.serverOpen === "true" || listed.includes(id)
       const next = resolveBranch({chosen: this.chosen[id], lastServer: this.last[id], server})
       this.chosen[id] = next.chosen
@@ -66,7 +80,7 @@ const Treeview = {
 
   toggled(event) {
     const item = event.target
-    const id = item.dataset?.treeItem
+    const id = item.dataset?.treeItem === undefined ? undefined : nameOf(item, this.el)
     const byPerson = id !== undefined && item.open !== this.expected[id]
     id !== undefined && this.expose(item)
     byPerson && this.chose(item, id)
@@ -82,16 +96,17 @@ const Treeview = {
     const box = event.target.closest("[data-tree-check]")
     if (box && this.el.dataset.onCheck) {
       event.preventDefault()
-      emit(this, this.el.dataset.onCheck, {id: box.dataset.treeCheck, checked: box.dataset.checked !== "true"}, box)
+      const owner = box.closest("[data-tree-leaf], details[data-tree-item]")
+      emit(this, this.el.dataset.onCheck, {id: box.dataset.treeCheck || nameOf(owner, this.el), checked: box.dataset.checked !== "true"}, box)
       return
     }
     const leaf = event.target.closest("[data-tree-leaf]")
-    leaf && emit(this, this.el.dataset.onSelect, {id: leaf.dataset.treeLeaf}, leaf)
+    leaf && emit(this, this.el.dataset.onSelect, {id: nameOf(leaf, this.el)}, leaf)
   },
 
   keyed(event) {
     const leaf = event.key === "Enter" && event.target.closest("[data-tree-leaf]")
-    leaf && emit(this, this.el.dataset.onSelect, {id: leaf.dataset.treeLeaf}, leaf)
+    leaf && emit(this, this.el.dataset.onSelect, {id: nameOf(leaf, this.el)}, leaf)
   },
 }
 

@@ -24,3 +24,6 @@
 .linea-tabbar-tab > :is(svg, span, .icon, [class*="hero-"], [class*="huge-"]) { width: 18px; height: 18px; }
 .linea-tabbar-tab:hover { color: var(--ink, var(--color-slate-800)); }
 .linea-tabbar-tab[aria-current="page"] { color: var(--accent-ink, var(--color-primary)); }
+
+/* shell :tab_bar: the board draws the icons at 16px (app_shell's own tab bar keeps its 18px). */
+.linea-shell-tabbar .linea-tabbar-tab > :is(svg, span, .icon, [class*="hero-"], [class*="huge-"]) { width: 16px; height: 16px; }

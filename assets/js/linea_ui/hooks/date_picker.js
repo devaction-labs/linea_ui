@@ -12,7 +12,7 @@ import {iconSet} from "../lib/glyphs.js"
 import {sameValues} from "../lib/select_box.js"
 
 const DAY_LABEL = "%{weekday}, %{month} %{day}, %{year}"
-const COMMANDS = ["open", "close", "toggle", "clear"]
+const COMMANDS = ["open", "close", "toggle", "clear", "reset"]
 const GAP = 2
 
 const readValues = (el) => JSON.parse(el.dataset.value || "[]")
@@ -247,6 +247,16 @@ export const Picker = {
     this.time = null
     this.commit()
     this.isOpen && this.render()
+  },
+
+  // `linea:reset`: takes the value in `data-value` again (a parent that edited it, `filter_menu` putting a staged period back).
+  reset() {
+    this.server = this.el.dataset.value
+    this.load(readValues(this.el))
+    this.view = monthOf(this.dates[0] ?? this.el.dataset.today ?? "1970-01-01")
+    this.hover = null
+    this.write()
+    ;(this.isOpen || this.el.dataset.inline === "true") && this.render()
   },
 
   click(event) {

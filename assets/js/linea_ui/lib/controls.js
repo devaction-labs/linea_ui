@@ -7,21 +7,38 @@ import {notify} from "./dom.js"
 import {moveSegment, runKey, tabStop} from "./keys.js"
 import {clampPair, clampText, fillBox, fillStyle, fraction, keyDelta, NUMBER_KEYS, pairText, parseLimit, percent, scaled, valueText} from "./numbers.js"
 
+/** The `aria-checked` of a box: `"mixed"` while it is indeterminate, none otherwise (a native box says the rest). */
+export const mixedAria = (indeterminate) => (indeterminate ? "mixed" : null)
+
 /**
- * The partial state of a "select all" box. `indeterminate` is a property of the element, not an attribute, so
- * only script can set it; the server marks the box with `data-partial` and this keeps the property up with it.
+ * The partial state of a checkbox. `indeterminate` is a property of the element, not an attribute, so only
+ * script can set it; the server marks the box with `data-indeterminate` and this keeps the property up with it.
+ * The server wins when the mark changes; a click in the browser clears the dash (the box becomes checked) and
+ * that survives the patches that did not change the mark. `aria-checked` follows the property.
  */
 export const Indeterminate = {
   mounted() {
-    this.sync()
+    this.mark = this.el.dataset.indeterminate
+    this.el.indeterminate = this.mark === "true"
+    this.onChange = () => this.aria()
+    this.el.addEventListener("change", this.onChange)
+    this.aria()
   },
 
   updated() {
-    this.sync()
+    const mark = this.el.dataset.indeterminate
+    mark !== this.mark && (this.el.indeterminate = mark === "true")
+    this.mark = mark
+    this.aria()
   },
 
-  sync() {
-    this.el.indeterminate = this.el.dataset.partial === "true"
+  destroyed() {
+    this.el.removeEventListener("change", this.onChange)
+  },
+
+  aria() {
+    const value = mixedAria(this.el.indeterminate)
+    value === null ? this.el.removeAttribute("aria-checked") : this.el.setAttribute("aria-checked", value)
   },
 }
 

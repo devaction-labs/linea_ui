@@ -125,6 +125,23 @@ defmodule PreviewWeb.Pages.InputText do
         <.button type="submit" color="primary">Save</.button>
       </.form>
     </.example>
+    <.example
+      id="inline-layout"
+      title="Em linha"
+      text={~s(layout="inline" puts the caption at the left, in a 180px column, for settings forms.)}
+      class="mt-5 block"
+    >
+      <div class="max-w-[520px] space-y-3">
+        <.input layout="inline" label="Razão social" value="Teste MCP Ltda" />
+        <.input
+          layout="inline"
+          label="CNPJ"
+          label_hint="opcional"
+          placeholder="00.000.000/0000-00"
+          help="Só números"
+        />
+      </div>
+    </.example>
     """
   end
 end

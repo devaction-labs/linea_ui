@@ -54,3 +54,48 @@ export const payloadOf = (groups) =>
  * @returns {"keep" | "revert"}
  */
 export const onClose = ({mode, applying}) => (mode === "apply" && !applying ? "revert" : "keep")
+
+const CUSTOM = /^custom:(\d{4}-\d{2}-\d{2})\.\.(\d{4}-\d{2}-\d{2})$/
+
+/**
+ * The value of a custom period, as a single group carries it: `custom:2026-11-01..2026-11-13`, or `""` when a day is
+ * missing or the days are the wrong way round.
+ *
+ * @param {string} from ISO day
+ * @param {string} to ISO day
+ */
+export const customValue = (from, to) => (CUSTOM.test(`custom:${from}..${to}`) && from <= to ? `custom:${from}..${to}` : "")
+
+/**
+ * The two ISO days of a custom period value, or `null` for a preset, `""` or a malformed text.
+ *
+ * @param {string | null | undefined} value
+ * @returns {{from: string, to: string} | null}
+ */
+export const parseCustom = (value) => {
+  const [, from, to] = CUSTOM.exec(value ?? "") ?? []
+  return from && from <= to ? {from, to} : null
+}
+
+/**
+ * The text of the row of a custom period: `01/11/2026 – 13/11/2026` in pt_BR, the ISO days otherwise; the server
+ * writes the same text.
+ *
+ * @param {{from: string, to: string}} range
+ * @param {string} locale
+ */
+export const rangeLabel = ({from, to}, locale) => {
+  const day = (iso) => (locale === "pt_BR" ? iso.split("-").reverse().join("/") : iso)
+  return `${day(from)} – ${day(to)}`
+}
+
+/**
+ * What the row of a custom period shows for a value: the period, or the row's own text for a preset.
+ *
+ * @param {string} value
+ * @param {{label: string, locale: string}} row
+ */
+export const customText = (value, {label, locale}) => {
+  const range = parseCustom(value)
+  return range ? rangeLabel(range, locale) : label
+}

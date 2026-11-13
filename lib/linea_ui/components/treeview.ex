@@ -172,7 +172,12 @@ defmodule LineaUI.Components.Treeview do
   @doc """
   Renders one item: a branch when it has children, a leaf when it does not.
 
-  `id` names the item in events and in the treeview's `expanded` list. `tag="div"` renders it
+  `id` names the item in events and in the treeview's `expanded` list. Without one the item
+  renders no DOM id at all (a generated id would change on every render and the browser would
+  replace the element, losing what the person opened) and the hook names it by its position in
+  the tree, such as `tree-item-0.1.2`, in the events and for its own state. Items that appear,
+  disappear or move among their siblings change that name, so give an `id` to any item whose
+  state matters to the server (`expanded`, `on_toggle`, `on_check`). `tag="div"` renders it
   without its own `<li>`, for a treeview `:row` that already sits in one.
 
       <.tree_item id="design" label="Design" expanded>
@@ -209,7 +214,6 @@ defmodule LineaUI.Components.Treeview do
 
   def tree_item(assigns) do
     assigns
-    |> assign(:item_id, assigns.id || gen_id("tree-item"))
     |> assign(:layout, layout(assigns))
     |> assign(:branch?, assigns.branch or Enum.any?(assigns.inner_block, &filled?/1))
     |> render_item()
@@ -238,14 +242,14 @@ defmodule LineaUI.Components.Treeview do
         class={@classes}
         aria-selected={@selected && "true"}
         aria-checked={aria_checked(@checked)}
-        data-tree-leaf={@item_id}
+        data-tree-leaf={@id || ""}
       >
         <div class={[
           "tree-spacer flex size-5 items-center justify-center",
           @layout == :advanced && "mr-1"
         ]}>
         </div>
-        <.check :if={@checked != nil} id={@item_id} checked={@checked} />
+        <.check :if={@checked != nil} id={@id || ""} checked={@checked} />
         <span :for={icon <- @icon} class="tree-icon mr-3 flex">{render_slot(icon)}</span>
         <span class="tree-label truncate">{@label}</span>
       </div>
@@ -265,10 +269,10 @@ defmodule LineaUI.Components.Treeview do
     ~H"""
     <.dynamic_tag tag_name={@tag} role={@tag == "div" && "none"} class={@class} {@rest}>
       <details
-        id={@item_id}
+        id={@id}
         class="tree-item [&[open]>summary]:text-slate-800 [&[open]>summary_.tree-chevron]:rotate-90 dark:[&[open]>summary]:text-navy-100"
         open={@expanded}
-        data-tree-item={@item_id}
+        data-tree-item={@id || ""}
         data-server-open={bool(@expanded)}
         phx-mounted={JS.ignore_attributes(["open"])}
       >
@@ -285,7 +289,7 @@ defmodule LineaUI.Components.Treeview do
           ]}>
             <.glyph name={:chevron_right_solid} class="tree-chevron size-4 transition-transform" />
           </span>
-          <.check :if={@checked != nil} id={@item_id} checked={@checked} />
+          <.check :if={@checked != nil} id={@id || ""} checked={@checked} />
           <span :for={icon <- @icon} class="tree-icon mr-3 flex">{render_slot(icon)}</span>
           <span class="tree-label truncate">{@label}</span>
         </summary>

@@ -96,13 +96,17 @@ defmodule LineaUI.Components.CheckboxTest do
   end
 
   test "errors paint the checkboxes with the error border" do
+    # A lone checkbox paints the error from `aria-invalid` (its classes carry `linea-invalid-check` either way).
     html = render(~H'<.checkbox name="t" errors={["required"]} />')
-    assert "border-error" in classes(html, "input[type=checkbox]")
+    assert [_] = find(html, "input[type=checkbox][aria-invalid=true]") |> Enum.to_list()
+    assert "linea-invalid-check" in classes(html, "input[type=checkbox]")
 
     html = render(~H'<.checkbox name="t" variant="outline" errors={["required"]} />')
-    assert "border-error" in classes(html, "input[type=checkbox]")
+    assert [_] = find(html, "input[type=checkbox][aria-invalid=true]") |> Enum.to_list()
 
     html = render(~H'<.checkbox name="t" />')
+    assert find(html, "input[type=checkbox][aria-invalid]") |> Enum.to_list() == []
+    assert "linea-invalid-check" in classes(html, "input[type=checkbox]")
     refute "border-error" in classes(html, "input[type=checkbox]")
 
     html = render(~H'<.checkbox_group name="g[]" options={["a", "b"]} errors={["pick one"]} />')
@@ -110,5 +114,50 @@ defmodule LineaUI.Components.CheckboxTest do
 
     html = render(~H'<.checkbox_group name="g[]" options={["a", "b"]} />')
     refute "border-error" in classes(html, "input[type=checkbox]")
+  end
+
+  defp input_attr(html, name) do
+    html |> find("input[type=checkbox]") |> LazyHTML.attribute(name) |> List.first()
+  end
+
+  test "errors set aria-invalid on the box and on every box of a group" do
+    html = render(~H'<.checkbox name="t" errors={["required"]} />')
+    assert [_] = find(html, "input[type=checkbox][aria-invalid=true]") |> Enum.to_list()
+
+    html = render(~H'<.checkbox name="t" />')
+    assert [] = find(html, "input[aria-invalid]") |> Enum.to_list()
+
+    html = render(~H'<.checkbox_group name="g[]" options={["a", "b"]} errors={["pick one"]} />')
+    assert [_, _] = find(html, "input[type=checkbox][aria-invalid=true]") |> Enum.to_list()
+
+    html = render(~H'<.checkbox_group name="g[]" options={["a", "b"]} />')
+    assert [] = find(html, "input[aria-invalid]") |> Enum.to_list()
+  end
+
+  test "indeterminate is mixed for screen readers and wires the hook" do
+    html = render(~H'<.checkbox name="all" label="All" indeterminate />')
+    assert input_attr(html, "aria-checked") == "mixed"
+    assert input_attr(html, "phx-hook") == "LineaUI.Indeterminate"
+    assert input_attr(html, "data-indeterminate") == "true"
+    assert input_attr(html, "id") == "checkbox-all"
+  end
+
+  test "indeterminate wins over checked" do
+    html = render(~H'<.checkbox id="x" name="all" checked indeterminate />')
+    assert [] = find(html, "input[checked]") |> Enum.to_list()
+  end
+
+  test "indeterminate false keeps the hook but drops aria-checked" do
+    html = render(~H'<.checkbox id="x" name="all" indeterminate={false} />')
+    assert input_attr(html, "aria-checked") == nil
+    assert input_attr(html, "phx-hook") == "LineaUI.Indeterminate"
+    assert input_attr(html, "data-indeterminate") == "false"
+  end
+
+  test "without the attr there is no hook and no aria-checked" do
+    html = render(~H'<.checkbox name="all" />')
+    assert input_attr(html, "aria-checked") == nil
+    assert input_attr(html, "phx-hook") == nil
+    assert input_attr(html, "data-indeterminate") == nil
   end
 end

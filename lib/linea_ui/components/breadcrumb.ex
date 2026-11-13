@@ -22,6 +22,18 @@ defmodule LineaUI.Components.Breadcrumb do
   The current page is in the soft text color and a long label is cut with an ellipsis; give the
   item a `title` for the full label.
 
+  A long trail collapses with `max_items`: it keeps the first step and the last ones, and the steps
+  in between become a single "…" button that opens them in a dropdown (links and `phx-click`
+  steps keep working there). `max_items` counts the "…" as a step, so `max_items={4}` shows the
+  first step, "…" and the last two. Give the breadcrumb an `id`: the dropdown's is `"<id>-more"`.
+
+      <.breadcrumb id="path" max_items={4}>
+        <:item navigate={~p"/finance"}>Finance</:item>
+        <:item navigate={~p"/finance/reconciliation"}>Reconciliation</:item>
+        <:item navigate={~p"/finance/reconciliation/statements"}>Statements</:item>
+        <:item>October</:item>
+      </.breadcrumb>
+
   The separator is LineOne's chevron unless a `:separator` is given:
 
       <.breadcrumb variant="bordered">
@@ -41,6 +53,9 @@ defmodule LineaUI.Components.Breadcrumb do
 
   use LineaUI.Component
   import LineaUI.Components.Icon, only: [glyph: 1]
+
+  alias LineaUI.Components.Button
+  alias LineaUI.Components.Dropdown
 
   @focus "outline-hidden focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary/55 dark:focus-visible:outline-accent/55"
 
@@ -81,6 +96,24 @@ defmodule LineaUI.Components.Breadcrumb do
   )
 
   attr(:label, :string, default: "Breadcrumb", doc: "The `aria-label` of the navigation.")
+
+  attr(:max_items, :integer,
+    default: nil,
+    doc:
+      "With more steps than this, the middle ones collapse into a \"…\" dropdown, keeping the first step and the last `max_items - 2` (the \"…\" counts as a step; below 3 it is 3)."
+  )
+
+  attr(:more_label, :string,
+    default: "Show hidden steps",
+    doc: "The accessible name of the \"…\" button."
+  )
+
+  attr(:id, :string,
+    default: nil,
+    doc:
+      "The id of the `<nav>`; it prefixes the id of the \"…\" dropdown (`breadcrumb-more` without one), so set it when a page has several."
+  )
+
   attr(:class, :any, default: nil)
   attr(:rest, :global)
 
@@ -105,19 +138,27 @@ defmodule LineaUI.Components.Breadcrumb do
   def breadcrumb(assigns) do
     assigns =
       assigns
-      |> assign(:last, length(assigns.item) - 1)
+      |> assign(:crumbs, crumbs(assigns.item, assigns.max_items))
+      |> then(&assign(&1, :last, length(&1.crumbs) - 1))
       |> assign(:lists, @lists)
       |> assign(:current_class, @currents[assigns.variant])
 
     ~H"""
-    <nav aria-label={@label} {@rest}>
+    <nav id={@id} aria-label={@label} {@rest}>
       <ul class={merge([@lists[@variant], @class])}>
         <li
-          :for={{item, index} <- Enum.with_index(@item)}
+          :for={{crumb, index} <- Enum.with_index(@crumbs)}
           class={if index < @last, do: "flex items-center gap-2", else: "min-w-0 max-w-full"}
         >
+          <.more
+            :if={match?({:more, _}, crumb)}
+            id={"#{@id || "breadcrumb"}-more"}
+            label={@more_label}
+            hidden={elem(crumb, 1)}
+          />
           <.crumb
-            item={item}
+            :if={match?({:item, _}, crumb)}
+            item={elem(crumb, 1)}
             link_class={link_class(@variant)}
             current_class={@current_class}
             current={index == @last}
@@ -126,6 +167,37 @@ defmodule LineaUI.Components.Breadcrumb do
         </li>
       </ul>
     </nav>
+    """
+  end
+
+  defp crumbs(items, max) when is_integer(max) and length(items) > max do
+    keep = max(max, 3) - 2
+    [first | rest] = items
+    {hidden, tail} = Enum.split(rest, length(rest) - keep)
+    [{:item, first}, {:more, hidden} | Enum.map(tail, &{:item, &1})]
+  end
+
+  defp crumbs(items, _max), do: Enum.map(items, &{:item, &1})
+
+  attr(:id, :string, required: true)
+  attr(:label, :string, required: true)
+  attr(:hidden, :list, required: true)
+
+  defp more(assigns) do
+    ~H"""
+    <Dropdown.dropdown id={@id}>
+      <:toggle>
+        <Button.button icon size="sm" variant="flat" aria-label={@label}>
+          <.glyph name={:dots_horizontal} class="size-4" />
+        </Button.button>
+      </:toggle>
+      <Dropdown.dropdown_item
+        :for={item <- @hidden}
+        {Map.drop(item, [:inner_block, :__slot__, :class])}
+      >
+        {render_slot(item)}
+      </Dropdown.dropdown_item>
+    </Dropdown.dropdown>
     """
   end
 
