@@ -110,10 +110,10 @@ defmodule LineaUI.Components.Tooltip do
       id={@id}
       class={merge(["inline-flex", @class])}
       phx-hook="LineaUI.Tooltip"
-      data-placement={@placement}
-      data-trigger={@trigger}
-      data-delay={@delay}
-      data-duration={@duration}
+      data-placement={@placement != "top" && @placement}
+      data-trigger={@trigger != "hover" && @trigger}
+      data-delay={@delay != 0 && @delay}
+      data-duration={@duration != 300 && @duration}
       data-follow-cursor={@follow_cursor}
       data-interactive={bool(@interactive?)}
       data-open={bool(@open)}
@@ -129,7 +129,7 @@ defmodule LineaUI.Components.Tooltip do
         popover="manual"
         hidden
         class="linea-tip"
-        phx-mounted={JS.ignore_attributes(["hidden", "style"])}
+        phx-mounted='[["ignore_attrs",{"attrs":["hidden","style"]}]]'
       >
         <div
           class={merge(["tippy-box", @tip_class])}
@@ -138,13 +138,13 @@ defmodule LineaUI.Components.Tooltip do
           data-placement={@placement}
           data-theme={@theme}
           tabindex="-1"
-          phx-mounted={JS.ignore_attributes(["data-state", "data-placement", "style"])}
+          phx-mounted='[["ignore_attrs",{"attrs":["data-state","data-placement","style"]}]]'
         >
           <div class="tippy-content">{@text}{render_slot(@content)}</div>
           <div
             :if={@arrow}
             class="tippy-svg-arrow"
-            phx-mounted={JS.ignore_attributes(["style"])}
+            phx-mounted='[["ignore_attrs",{"attrs":["style"]}]]'
           >
             <svg width="16" height="6" xmlns="http://www.w3.org/2000/svg">
               <path d="M0 6s1.796-.013 4.67-3.615C5.851.9 6.93.006 8 0c1.07-.006 2.148.887 3.343 2.385C14.233 6.005 16 6 16 6H0z" />

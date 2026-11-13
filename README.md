@@ -63,6 +63,34 @@ const liveSocket = new LiveSocket("/live", Socket, {
 })
 ```
 
+`Hooks` brings every hook (about 330 KB minified, 105 KB gzipped, the chart alone is 67 KB). To ship only
+the ones your pages use, import them by name; each export is the hook's `{"LineaUI.<Name>": ...}` object, so spread it
+into `hooks` (the package declares `"sideEffects": ["*.css"]`, so esbuild, Rollup and webpack drop the rest):
+
+```js
+import {Tooltip, Dropdown, Toast} from "linea_ui"
+
+const liveSocket = new LiveSocket("/live", Socket, {
+  hooks: {...colocatedHooks, ...Tooltip, ...Dropdown, ...Toast},
+  params: {_csrf_token: csrfToken},
+})
+```
+
+The names are the component's: `Tooltip`, `Dropdown`, `ActionMenu`, `Popover`, `Select`, `Chart`, `PhoneInput`, `Toast`,
+`Dialog` (also modal, drawer and collapse), `Tabs`... An export can carry several hooks (`Sidebar` has `LineaUI.ShellRail`); find the file in
+`assets/js/linea_ui/hooks/` that defines the `phx-hook="LineaUI.X"` your component uses. A component whose hook is not
+registered renders but does not react, so import the hook of every component you use. That example (three hooks)
+bundles to 43 KB minified, 14 KB gzipped, against 336 KB and 105 KB for `Hooks`.
+
+Compress the LiveView socket. The diffs LineaUI sends repeat the same attribute names and values row after row,
+so they deflate very well (a 50-row table diff goes from 26 KB to 1.7 KB, 20 selects from 44 KB to 2.3 KB, 50 dropdowns from
+87 KB to 2.4 KB, measured with raw deflate). In the app's endpoint:
+
+```elixir
+socket "/live", Phoenix.LiveView.Socket,
+  websocket: [connect_info: [session: @session_options], compress: true]
+```
+
 ```elixir
 # lib/my_app_web/endpoint.ex — serves the Poppins and Inter fonts
 plug Plug.Static, at: "/linea_ui", from: {:linea_ui, "priv/static"}

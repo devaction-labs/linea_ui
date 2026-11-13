@@ -4,5 +4,6 @@
   "private": true,
   "type": "module",
   "module": "./assets/js/linea_ui/index.js",
-  "main": "./assets/js/linea_ui/index.js"
+  "main": "./assets/js/linea_ui/index.js",
+  "sideEffects": ["*.css"]
 }

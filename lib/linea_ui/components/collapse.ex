@@ -100,7 +100,7 @@ defmodule LineaUI.Components.Collapse do
       class={merge(["linea-collapse", @chevron && "group/collapse", @class])}
       open={@open}
       phx-hook="LineaUI.Collapse"
-      phx-mounted={JS.ignore_attributes(["open", "name"])}
+      phx-mounted='[["ignore_attrs",{"attrs":["open","name"]}]]'
       data-open={bool(@open)}
       data-variant={@variant not in [nil, "classic"] && @variant}
       data-on-open={@on_open_js}

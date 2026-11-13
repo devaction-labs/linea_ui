@@ -36,7 +36,7 @@ defmodule LineaUI.Components.Sticky do
     <div
       id={@id}
       phx-hook="LineaUI.Sticky"
-      phx-mounted={JS.ignore_attributes(["data-stuck", "class"])}
+      phx-mounted='[["ignore_attrs",{"attrs":["data-stuck","class"]}]]'
       data-offset={@offset}
       data-stuck-class={@stuck_class}
       class={merge(["sticky top-0 z-10 border-b border-transparent", @class])}

@@ -37,7 +37,7 @@ defmodule LineaUI.Components.Scrollspy do
       id={@id}
       aria-label={@label}
       phx-hook="LineaUI.Scrollspy"
-      phx-mounted={JS.ignore_attributes(["data-active"])}
+      phx-mounted='[["ignore_attrs",{"attrs":["data-active"]}]]'
       data-offset={@offset}
       class={merge(["flex flex-col gap-1", @class])}
       {@rest}

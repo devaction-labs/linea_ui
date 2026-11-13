@@ -100,7 +100,7 @@ defmodule LineaUI.Components.ActionMenu do
         popover="manual"
         data-panel
         aria-hidden="true"
-        phx-mounted={JS.ignore_attributes(["class", "style", "data-popper-placement", "aria-hidden"])}
+        phx-mounted='[["ignore_attrs",{"attrs":["class","style","data-popper-placement","aria-hidden"]}]]'
       >
         <div
           class={merge(["popper-box linea-am", @class])}

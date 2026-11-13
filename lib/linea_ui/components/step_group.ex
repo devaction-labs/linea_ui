@@ -84,7 +84,7 @@ defmodule LineaUI.Components.StepGroup do
     <section
       id={@id}
       class={merge(["sg-sgp", @collapsed && "is-collapsed", @class])}
-      phx-mounted={JS.ignore_attributes(["class"])}
+      phx-mounted='[["ignore_attrs",{"attrs":["class"]}]]'
       {@rest}
     >
       <button
@@ -93,7 +93,7 @@ defmodule LineaUI.Components.StepGroup do
         aria-expanded={bool(!@collapsed)}
         aria-controls={"#{@id}-body"}
         phx-click={toggle_group(@id)}
-        phx-mounted={JS.ignore_attributes(["aria-expanded"])}
+        phx-mounted='[["ignore_attrs",{"attrs":["aria-expanded"]}]]'
       >
         <.status_icon status={@status} class={@status_class} />
         <span class="t">{@title}</span>
@@ -104,7 +104,7 @@ defmodule LineaUI.Components.StepGroup do
         id={"#{@id}-body"}
         class="sg-sgp-b"
         hidden={@collapsed}
-        phx-mounted={JS.ignore_attributes(["hidden"])}
+        phx-mounted='[["ignore_attrs",{"attrs":["hidden"]}]]'
       >
         <%= for row <- @rows do %>
           <button
@@ -115,7 +115,7 @@ defmodule LineaUI.Components.StepGroup do
             aria-expanded={bool(row.open)}
             aria-controls={row.log_id}
             phx-click={toggle_row(row.id, row.log_id)}
-            phx-mounted={JS.ignore_attributes(["class", "aria-expanded"])}
+            phx-mounted='[["ignore_attrs",{"attrs":["class","aria-expanded"]}]]'
           >
             <.row_content row={row} />
           </button>
@@ -128,7 +128,7 @@ defmodule LineaUI.Components.StepGroup do
             class="sg-sgp-log"
             role="log"
             hidden={!row.open}
-            phx-mounted={JS.ignore_attributes(["hidden"])}
+            phx-mounted='[["ignore_attrs",{"attrs":["hidden"]}]]'
           >
             {render_slot(row.step)}
           </div>

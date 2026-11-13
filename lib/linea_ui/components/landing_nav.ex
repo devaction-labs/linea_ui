@@ -118,7 +118,7 @@ defmodule LineaUI.Components.LandingNav do
       data-sticky={@sticky && ""}
       data-stuck-after={@sticky && @stuck_after}
       phx-hook={@hook}
-      phx-mounted={JS.ignore_attributes(["data-stuck"])}
+      phx-mounted='[["ignore_attrs",{"attrs":["data-stuck"]}]]'
       phx-click-away={@close}
       phx-window-keydown={@close}
       phx-key="Escape"
