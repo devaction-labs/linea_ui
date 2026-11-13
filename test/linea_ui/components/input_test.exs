@@ -119,6 +119,30 @@ defmodule LineaUI.Components.InputTest do
     assert [_] = find(html, "input[name=card]") |> Enum.to_list()
   end
 
+  test "cpf_cnpj wires the hook, a numeric keyboard and the raw hidden input" do
+    html =
+      render(~H"""
+      <.input id="doc" name="doc" mask="cpf_cnpj" mask_submit="raw" />
+      """)
+
+    assert [_] =
+             find(
+               html,
+               "input#doc[phx-hook='LineaUI.InputMask'][data-mask=cpf_cnpj][data-mask-submit=raw][inputmode=numeric]:not([name])"
+             )
+             |> Enum.to_list()
+
+    assert [_] = find(html, "input#doc-raw[name=doc]") |> Enum.to_list()
+  end
+
+  test "inputmode is numeric for cpf_cnpj unless overridden, and absent for other masks" do
+    html = render(~H'<.input id="d" name="d" mask="cpf_cnpj" inputmode="text" />')
+    assert [_] = find(html, "input#d[inputmode=text]") |> Enum.to_list()
+
+    html = render(~H'<.input id="p" name="p" mask="phone" />')
+    assert [] = find(html, "input[inputmode]") |> Enum.to_list()
+  end
+
   test "a masked input gets an id and passes phx-debounce" do
     html = render(~H'<.input name="c" mask="credit_card" phx-debounce="300" />')
     assert [id] = find(html, "input[phx-hook]") |> LazyHTML.attribute("id")

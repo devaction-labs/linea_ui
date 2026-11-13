@@ -112,6 +112,14 @@ defmodule PreviewWeb.Pages.InputMask do
         mask="blocks"
         mask_options={%{blocks: [3, 3, 3, 2], delimiters: [".", ".", "-"], numeric: true}}
       />
+      <.input
+        id="br-document"
+        name="document"
+        label="CPF ou CNPJ (automático)"
+        placeholder="000.000.000-00"
+        mask="cpf_cnpj"
+        mask_submit="raw"
+      />
       <.input id="br-phone" name="phone" label="Telefone" value="11912345678" mask="phone" />
       <.input
         id="br-phone-blocks"
