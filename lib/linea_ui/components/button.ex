@@ -44,7 +44,12 @@ defmodule LineaUI.Components.Button do
       "`solid` is filled, `glow` adds the colored shadow, `ghost` is transparent until hovered and `dim` is muted text that darkens on hover (`kt-btn-ghost` and `kt-btn-dim`; `mono` is its black button), `bordered` is soft with a tinted border, `flat` has no background until hovered, `glass` is translucent white with white text for gradient and colored cards (it ignores `color`)."
   )
 
-  attr(:size, :string, default: "md", values: ~w(xs sm md lg xl))
+  attr(:size, :string,
+    default: "md",
+    values: ~w(xs sm md lg xl),
+    doc:
+      "With `icon`, the canvas defines three sizes: `md` 36px, `sm` 32px and `xs` 24px; `lg` and `xl` render as `md`."
+  )
 
   attr(:shape, :string,
     default: "rounded",
@@ -52,7 +57,12 @@ defmodule LineaUI.Components.Button do
     doc: "`rounded` (10px corners, the default), `pill` (fully round ends, opt-in) or `square`."
   )
 
-  attr(:icon, :boolean, default: false, doc: "A square button that holds only an icon.")
+  attr(:icon, :boolean,
+    default: false,
+    doc:
+      "A square button that holds only an icon (`sg-ib`). The canvas draws it in one look, a bordered control, or `plain` (no border or fill until hovered) for `flat`, `ghost` and `dim`; every other `variant` and `color` renders the bordered control. Always pass `aria-label`."
+  )
+
   attr(:type, :string, default: "button")
   attr(:disabled, :boolean, default: false)
 
