@@ -120,7 +120,21 @@ const formatNumeral = (value, options) => {
   return `${negative ? "-" : ""}${prefix}${number}`
 }
 
+const cpfBlocks = [3, 3, 3, 2]
+const cnpjBlocks = [2, 3, 3, 4, 2]
+
+/** The Brazilian document's digits (at most 14): up to 11 are a CPF, more are a CNPJ. */
+const documentDigits = (value) => digitsOf(value).slice(0, 14)
+
+const formatDocument = (value) => {
+  const digits = documentDigits(value)
+  return digits.length > 11
+    ? chunk(digits, cnpjBlocks, [".", ".", "/", "-"])
+    : chunk(digits, cpfBlocks, [".", ".", "-"])
+}
+
 const formatters = {
+  cpf_cnpj: formatDocument,
   blocks: formatBlocks,
   credit_card: formatCard,
   date: (value, options) => formatParts(value, options.pattern ?? ["d", "m", "Y"], options.delimiter ?? "/", dateLimits),
@@ -132,14 +146,14 @@ const formatters = {
 /** `value` with the mask `kind` applied. */
 export const format = (value, kind, options = {}) => (formatters[kind] ?? ((v) => String(v ?? "")))(value, options)
 
-/** The unmasked value of a masked text: digits for cards, phones, dates and times, a plain number for numerals. */
+/** The unmasked value of a masked text: digits for cards, phones, dates, times and CPF/CNPJ documents, a plain number for numerals. */
 export const raw = (value, kind, options = {}) => {
   if (kind === "blocks") return blocksRaw(value, options)
   if (kind === "numeral") {
     const {negative, integer, decimals} = numeralParts(value, options)
     return integer === "" && decimals === "" ? "" : `${negative ? "-" : ""}${integer || "0"}${decimals ? "." + decimals : ""}`
   }
-  return digitsOf(value)
+  return kind === "cpf_cnpj" ? documentDigits(value) : digitsOf(value)
 }
 
 /** How many letters and digits come before `position` in `text`. */

@@ -112,3 +112,40 @@ test("a backspace over a delimiter drops the character before it", () => {
   assert.deepEqual(dropBefore("41111", 4), {text: "4111", position: 3})
   assert.deepEqual(dropBefore("--", 2), {text: "--", position: 2})
 })
+
+test("cpf_cnpj formats a CPF up to 11 digits and a CNPJ above", () => {
+  assert.equal(format("", "cpf_cnpj"), "")
+  assert.equal(format("123", "cpf_cnpj"), "123")
+  assert.equal(format("1234", "cpf_cnpj"), "123.4")
+  assert.equal(format("123456789", "cpf_cnpj"), "123.456.789")
+  assert.equal(format("1234567890", "cpf_cnpj"), "123.456.789-0")
+  assert.equal(format("12345678909", "cpf_cnpj"), "123.456.789-09")
+  assert.equal(format("123456789091", "cpf_cnpj"), "12.345.678/9091")
+  assert.equal(format("11223344000186", "cpf_cnpj"), "11.223.344/0001-86")
+})
+
+test("cpf_cnpj drops non-digits, ignores digits past 14 and goes back to CPF", () => {
+  assert.equal(format("abc 123.456.789-09!", "cpf_cnpj"), "123.456.789-09")
+  assert.equal(format("112233440001869999", "cpf_cnpj"), "11.223.344/0001-86")
+  assert.equal(format("11.223.344/0001-8", "cpf_cnpj"), "11.223.344/0001-8")
+  assert.equal(format("11.223.344/", "cpf_cnpj"), "112.233.44")
+  assert.equal(format("11223344000", "cpf_cnpj"), "112.233.440-00")
+})
+
+test("cpf_cnpj raw is at most 14 digits and formatting is idempotent", () => {
+  assert.equal(raw("123.456.789-09", "cpf_cnpj"), "12345678909")
+  assert.equal(raw("11.223.344/0001-86", "cpf_cnpj"), "11223344000186")
+  assert.equal(raw("112233440001869999", "cpf_cnpj"), "11223344000186")
+  assert.equal(raw("", "cpf_cnpj"), "")
+  for (const text of ["1", "123456789", "12345678909", "123456789091", "11223344000186"]) {
+    const once = format(text, "cpf_cnpj")
+    assert.equal(format(once, "cpf_cnpj"), once)
+  }
+})
+
+test("cpf_cnpj keeps the caret after the same digit when the CPF becomes a CNPJ", () => {
+  const formatted = format("123.456.789-091", "cpf_cnpj")
+  assert.equal(formatted, "12.345.678/9091")
+  assert.equal(caretFor(formatted, significantBefore("123.4", 5)), 5)
+  assert.equal(caretFor(formatted, 11), 14)
+})
