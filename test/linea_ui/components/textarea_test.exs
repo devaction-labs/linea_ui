@@ -36,7 +36,7 @@ defmodule LineaUI.Components.TextareaTest do
 
   test "error and success paint the line and ring; error sets aria-invalid" do
     html = render(~H'<.textarea name="b" errors={["too short"]} />')
-    assert Enum.any?(classes(html, "textarea"), &(&1 =~ "var(--color-error)"))
+    assert "linea-invalid" in classes(html, "textarea")
     assert [_] = find(html, "textarea[aria-invalid=true]") |> Enum.to_list()
     assert LazyHTML.text(find(html, "span.text-error")) =~ "too short"
 

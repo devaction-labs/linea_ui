@@ -60,6 +60,9 @@ defmodule LineaUI.Components.Select do
 
   @native_shapes %{"rounded" => "rounded-[11px]", "pill" => "rounded-full px-4"}
 
+  # Painted by `aria-invalid`, so the classes do not change when errors come and go.
+  @native_error "aria-invalid:border-error"
+
   @native_disabled "disabled:pointer-events-none disabled:select-none disabled:border-none disabled:bg-zinc-100 dark:disabled:bg-navy-600"
 
   @doc """
@@ -275,7 +278,7 @@ defmodule LineaUI.Components.Select do
       assign_derived(
         assigns,
         :classes,
-        [:multiple, :variant, :size, :label, :shape, :inline, :errors, :class],
+        [:multiple, :variant, :size, :label, :shape, :inline, :class],
         fn ->
           merge([
             native_base(assigns.multiple),
@@ -285,7 +288,7 @@ defmodule LineaUI.Components.Select do
             @native_shapes[assigns.shape],
             inline_class(assigns.inline),
             @native_disabled,
-            error_class(assigns.errors),
+            @native_error,
             assigns.class
           ])
         end
@@ -330,9 +333,6 @@ defmodule LineaUI.Components.Select do
 
   defp native_base(true), do: "form-multiselect"
   defp native_base(false), do: "form-select"
-
-  defp error_class([]), do: nil
-  defp error_class(_errors), do: "border-error"
 
   attr :entry, :map, required: true
   attr :selected, :list, required: true

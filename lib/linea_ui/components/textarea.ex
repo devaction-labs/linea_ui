@@ -41,13 +41,17 @@ defmodule LineaUI.Components.Textarea do
     "lg" => "p-4 text-sm"
   }
 
+  # The error paint is part of the variant (`aria-invalid:` utilities) instead of a class swap, so the
+  # classes do not change when errors appear or go away on a keystroke.
+  @error_states %{
+    "outlined" => "linea-invalid",
+    "filled" => "aria-invalid:ring-1 aria-invalid:ring-error aria-invalid:dark:ring-error"
+  }
+
   @states %{
     {"outlined", "success"} =>
       "shadow-[inset_0_0_0_1px_var(--color-success),0_0_0_4px_color-mix(in_oklab,var(--color-success)_14%,transparent)] hover:shadow-[inset_0_0_0_1px_var(--color-success),0_0_0_4px_color-mix(in_oklab,var(--color-success)_14%,transparent)] focus:shadow-[inset_0_0_0_1px_var(--color-success),0_0_0_4px_color-mix(in_oklab,var(--color-success)_14%,transparent)] dark:shadow-[inset_0_0_0_1px_var(--color-success),0_0_0_4px_color-mix(in_oklab,var(--color-success)_16%,transparent)] dark:hover:shadow-[inset_0_0_0_1px_var(--color-success),0_0_0_4px_color-mix(in_oklab,var(--color-success)_16%,transparent)] dark:focus:shadow-[inset_0_0_0_1px_var(--color-success),0_0_0_4px_color-mix(in_oklab,var(--color-success)_16%,transparent)]",
-    {"outlined", "error"} =>
-      "shadow-[inset_0_0_0_1px_var(--color-error),0_0_0_4px_color-mix(in_oklab,var(--color-error)_14%,transparent)] hover:shadow-[inset_0_0_0_1px_var(--color-error),0_0_0_4px_color-mix(in_oklab,var(--color-error)_14%,transparent)] focus:shadow-[inset_0_0_0_1px_var(--color-error),0_0_0_4px_color-mix(in_oklab,var(--color-error)_14%,transparent)] dark:shadow-[inset_0_0_0_1px_var(--color-error),0_0_0_4px_color-mix(in_oklab,var(--color-error)_16%,transparent)] dark:hover:shadow-[inset_0_0_0_1px_var(--color-error),0_0_0_4px_color-mix(in_oklab,var(--color-error)_16%,transparent)] dark:focus:shadow-[inset_0_0_0_1px_var(--color-error),0_0_0_4px_color-mix(in_oklab,var(--color-error)_16%,transparent)]",
-    {"filled", "success"} => "ring-1 ring-success dark:ring-success",
-    {"filled", "error"} => "ring-1 ring-error dark:ring-error"
+    {"filled", "success"} => "ring-1 ring-success dark:ring-success"
   }
 
   @frame "rounded-md border border-slate-200 ring-primary/25 transition-colors duration-200 focus-within:!border-primary focus-within:ring-3 hover:border-slate-400 dark:border-navy-450 dark:ring-accent/30 dark:focus-within:!border-accent dark:hover:border-navy-400"
@@ -152,11 +156,12 @@ defmodule LineaUI.Components.Textarea do
   def textarea(assigns) do
     assigns
     |> Control.assign_control()
+    # `classes` reads the `state` given, before `errors` fold into it: errors paint through `aria-invalid:`.
+    |> then(&assign_derived(&1, :classes, @classes_deps, fn -> classes(&1) end))
     |> then(
       &assign_derived(&1, :state, [:state, :errors], fn -> Control.state(&1.state, &1.errors) end)
     )
     |> assign_id()
-    |> then(&assign_derived(&1, :classes, @classes_deps, fn -> classes(&1) end))
     |> then(&assign_derived(&1, :length, [:value], fn -> length_of(&1) end))
     |> then(&assign_derived(&1, :segments, [:value, :tokens], fn -> segments(&1) end))
     |> assign_derived(:frame, [], fn -> @frame end)
@@ -182,7 +187,8 @@ defmodule LineaUI.Components.Textarea do
       @sizes[assigns.size],
       resize(assigns.resizable and not assigns.autogrow),
       grow(assigns.autogrow),
-      @states[{assigns.variant, assigns.state}],
+      @error_states[assigns.variant],
+      @states[{assigns.variant, success(assigns.state)}],
       assigns.class
     ])
   end
@@ -196,6 +202,9 @@ defmodule LineaUI.Components.Textarea do
       assigns.class
     ])
   end
+
+  defp success("success"), do: "success"
+  defp success(_state), do: nil
 
   defp resize(true), do: nil
   defp resize(false), do: "resize-none"

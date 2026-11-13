@@ -181,8 +181,12 @@ defmodule LineaUI.Components.DatePicker do
     assigns
     |> time_defaults()
     |> range_fields()
-    |> then(&assign(&1, :today, &1.today || Date.utc_today()))
-    |> then(&assign(&1, :presets, Enum.map(&1.presets, fn preset -> preset(preset, &1) end)))
+    |> then(&assign_derived(&1, :today, [:today], fn -> &1.today || Date.utc_today() end))
+    |> then(
+      &assign_derived(&1, :presets, [:presets, :today, :week_start], fn ->
+        Enum.map(&1.presets, fn preset -> preset(preset, &1) end)
+      end)
+    )
     |> Shell.render_picker(:date, "LineaUI.DatePicker")
   end
 
@@ -282,13 +286,16 @@ defmodule LineaUI.Components.DatePicker do
     do: JS.dispatch(js, "linea:clear", to: LineaUI.selector(id))
 
   defp time_defaults(assigns) do
-    assign(assigns,
+    [
       time_24hr: false,
       min_time: nil,
       max_time: nil,
       minute_step: 5,
       hour_step: 1,
       default_hour: 12
-    )
+    ]
+    |> Enum.reduce(assigns, fn {key, value}, acc ->
+      assign_derived(acc, key, [], fn -> value end)
+    end)
   end
 end
