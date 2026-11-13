@@ -151,6 +151,7 @@ defmodule LineaUI.Components.OtpInput do
         %{number: number, cell: cell, separator: number in separators}
       end)
     end)
+    |> assign_derived(:success, [:state], fn -> success(assigns.state) end)
     |> assign_derived(:state, [:state, :errors], fn ->
       Control.state(assigns.state, assigns.errors)
     end)
@@ -187,6 +188,7 @@ defmodule LineaUI.Components.OtpInput do
         name={@name}
         size={@size}
         state={@state}
+        success={@success}
         class={@class}
         label={@label}
         aria_label={@aria_label}
@@ -222,6 +224,7 @@ defmodule LineaUI.Components.OtpInput do
         name={@name}
         size={@size}
         state={@state}
+        success={@success}
         class={@class}
         label={@label}
         aria_label={@aria_label}
@@ -243,8 +246,8 @@ defmodule LineaUI.Components.OtpInput do
   defp control(assigns) do
     assigns =
       assigns
-      |> assign_derived(:box_class, [:size, :state, :class], fn ->
-        merge([@box, @sizes[assigns.size], filled(assigns.state), assigns.class])
+      |> assign_derived(:box_class, [:size, :success, :class], fn ->
+        box_class(assigns)
       end)
       |> assign_derived(:labelledby, [:label, :id], fn ->
         assigns.label && assigns.id <> "-label"
@@ -272,11 +275,11 @@ defmodule LineaUI.Components.OtpInput do
       {@rest}
     >
       <div :for={box <- @boxes} class="contents">
-        <Input.input
+        <input
           type={mask_type(@mask)}
           id={"#{@id}-#{box.number}"}
           value={box.cell}
-          state={@state}
+          aria-invalid={@state == "error" && "true"}
           disabled={@disabled}
           class={@box_class}
           inputmode={inputmode(@mode)}
@@ -309,16 +312,40 @@ defmodule LineaUI.Components.OtpInput do
     """
   end
 
-  # The boxes draw their border as a shadow, so the state ring has to come after it to win.
-  defp filled("error"),
-    do:
-      "shadow-[inset_0_0_0_1px_var(--color-error),0_0_0_4px_color-mix(in_oklab,var(--color-error)_14%,transparent)] focus:shadow-[inset_0_0_0_1.5px_var(--color-error),0_0_0_4px_color-mix(in_oklab,var(--color-error)_14%,transparent)] dark:shadow-[inset_0_0_0_1px_var(--color-error),0_0_0_4px_color-mix(in_oklab,var(--color-error)_16%,transparent)] dark:focus:shadow-[inset_0_0_0_1.5px_var(--color-error),0_0_0_4px_color-mix(in_oklab,var(--color-error)_16%,transparent)]"
+  # The boxes draw their border as a shadow, so the state ring has to come after it to win. The error
+  # one is part of every box (`aria-invalid:`), so it does not change when errors come and go.
+  @error_box "linea-invalid-box"
 
   defp filled("success"),
     do:
       "shadow-[inset_0_0_0_1px_var(--color-success),0_0_0_4px_color-mix(in_oklab,var(--color-success)_14%,transparent)] focus:shadow-[inset_0_0_0_1.5px_var(--color-success),0_0_0_4px_color-mix(in_oklab,var(--color-success)_14%,transparent)] dark:shadow-[inset_0_0_0_1px_var(--color-success),0_0_0_4px_color-mix(in_oklab,var(--color-success)_16%,transparent)] dark:focus:shadow-[inset_0_0_0_1.5px_var(--color-success),0_0_0_4px_color-mix(in_oklab,var(--color-success)_16%,transparent)]"
 
   defp filled(_state), do: nil
+
+  defp success("success"), do: "success"
+  defp success(_state), do: nil
+
+  # What `input/1` would give a box of its defaults, with the box's own classes on top.
+  defp box_class(assigns) do
+    Input.classes(%{
+      variant: "outlined",
+      error_paint: false,
+      size: "md",
+      shape: "rounded",
+      align: "left",
+      prefix: [],
+      suffix: [],
+      state: assigns.success,
+      class:
+        merge([
+          @box,
+          @sizes[assigns.size],
+          filled(assigns.success),
+          @error_box,
+          assigns.class
+        ])
+    })
+  end
 
   defp mask_type(true), do: "password"
   defp mask_type(false), do: "text"

@@ -62,7 +62,8 @@ defmodule LineaUI.Components.SelectTest do
 
       assert find(html, "select[name='party[kind]'][id=party_kind]") |> Enum.count() == 1
       assert html |> find("option[selected]") |> LazyHTML.attribute("value") == ["b"]
-      assert "border-error" in classes(html, "select")
+      assert "aria-invalid:border-error" in classes(html, "select")
+      assert html |> find("select") |> LazyHTML.attribute("aria-invalid") == ["true"]
       assert html |> find(".text-error") |> LazyHTML.text() =~ "is bad"
       assert html |> find(".text-slate-400") |> LazyHTML.text() =~ "Pick"
     end

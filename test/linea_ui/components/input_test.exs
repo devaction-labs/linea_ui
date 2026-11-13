@@ -54,7 +54,7 @@ defmodule LineaUI.Components.InputTest do
     assigns = %{field: field}
     html = rendered_to_string(~H'<.input field={@field} type="email" />')
     assert [_] = find(html, "input#user_email[name='user[email]'][value='a@b']") |> Enum.to_list()
-    assert Enum.any?(classes(html, "input"), &(&1 =~ ~r/^shadow-.*--color-error/))
+    assert "linea-invalid" in classes(html, "input")
     assert LazyHTML.text(find(html, "span.text-error")) =~ "is invalid"
     assert [_] = find(html, "input[aria-invalid=true]") |> Enum.to_list()
 

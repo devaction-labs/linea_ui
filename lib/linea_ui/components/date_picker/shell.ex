@@ -31,7 +31,8 @@ defmodule LineaUI.Components.DatePicker.Shell do
   @input "form-input flatpickr-input peer w-full rounded-lg border border-slate-300 bg-transparent px-3 py-2 placeholder:text-slate-500 hover:border-slate-400 focus:border-primary focus:ring-3 focus:ring-primary/20 disabled:pointer-events-none disabled:select-none disabled:border-none disabled:bg-zinc-100 dark:border-navy-450 dark:hover:border-navy-400 dark:focus:border-accent dark:focus:ring-accent/20 dark:disabled:bg-navy-600 disabled:cursor-not-allowed disabled:opacity-60"
   @input_grouped "form-input flatpickr-input w-full rounded-l-lg border border-slate-300 bg-transparent px-3 py-2 placeholder:text-slate-500 hover:z-10 hover:border-slate-400 focus:z-10 focus:border-primary dark:border-navy-450 dark:hover:border-navy-400 dark:focus:border-accent disabled:cursor-not-allowed disabled:border-transparent disabled:bg-zinc-100 disabled:opacity-60 dark:disabled:bg-navy-600"
 
-  @error "border-error hover:border-error focus:border-error focus:ring-error/20 dark:border-error dark:hover:border-error dark:focus:border-error dark:focus:ring-error/20"
+  # Painted by `aria-invalid`, so the classes do not change when errors come and go.
+  @error "aria-invalid:border-error aria-invalid:hover:border-error aria-invalid:focus:border-error aria-invalid:focus:ring-error/20 aria-invalid:dark:border-error aria-invalid:dark:hover:border-error aria-invalid:dark:focus:border-error aria-invalid:dark:focus:ring-error/20"
 
   @doc false
   def months, do: @months
@@ -55,7 +56,7 @@ defmodule LineaUI.Components.DatePicker.Shell do
       |> then(&assign_new(&1, :id, fn -> stable_id("picker", &1) end))
       |> then(&assign_new(&1, :name, fn -> &1.id end))
       |> assign_new(:value, fn -> nil end)
-      |> assign(:kind, kind)
+      |> assign_derived(:kind, [], fn -> kind end)
 
     locale = @locales[Map.get(assigns, :locale, "en")]
     values = hidden_values(assigns.value, kind, assigns.mode)
@@ -69,20 +70,37 @@ defmodule LineaUI.Components.DatePicker.Shell do
 
     text = texts(Map.get(assigns, :locale, "en"), Map.get(assigns, :labels, %{}))
 
-    assign(assigns,
-      values: values,
-      format: format,
-      text: text,
-      dialog: dialog_label(text, kind, assigns.mode),
-      names: names,
-      separator: separator,
-      display: display(values, kind, assigns.mode, format, names, separator),
-      input_name: input_name(assigns.name, assigns.mode),
-      split: split(Map.get(assigns, :start_name), Map.get(assigns, :end_name), values),
-      presets: Map.get(assigns, :presets, []),
-      preset_class: @preset,
-      grouped: assigns.trailing != []
+    # Each one is marked changed only when what it reads changed: a keystroke in the form changes
+    # `value` and the errors, not the names, labels, calendar and the rest of the shell.
+    text_deps = [:locale, :labels]
+    names_deps = [:locale, :months, :weekdays]
+    format_deps = [:locale, :display_format, :time_24hr]
+    separator_deps = [:locale, :range_separator]
+    values_deps = [:value, :mode]
+
+    assigns
+    |> assign_derived(:values, values_deps, fn -> values end)
+    |> assign_derived(:format, format_deps, fn -> format end)
+    |> assign_derived(:text, text_deps, fn -> text end)
+    |> assign_derived(:dialog, [:mode | text_deps], fn ->
+      dialog_label(text, kind, assigns.mode)
+    end)
+    |> assign_derived(:names, names_deps, fn -> names end)
+    |> assign_derived(:separator, separator_deps, fn -> separator end)
+    |> assign_derived(
+      :display,
+      values_deps ++ format_deps ++ names_deps ++ separator_deps,
+      fn -> display(values, kind, assigns.mode, format, names, separator) end
     )
+    |> assign_derived(:input_name, [:name, :mode], fn ->
+      input_name(assigns.name, assigns.mode)
+    end)
+    |> assign_derived(:split, [:start_name, :end_name | values_deps], fn ->
+      split(Map.get(assigns, :start_name), Map.get(assigns, :end_name), values)
+    end)
+    |> assign_derived(:presets, [:presets], fn -> Map.get(assigns, :presets, []) end)
+    |> assign_derived(:preset_class, [], fn -> @preset end)
+    |> assign_derived(:grouped, [:trailing], fn -> assigns.trailing != [] end)
   end
 
   defp default_format(:time, %{time_24hr: false}, _locale), do: "h:i K"
@@ -250,9 +268,9 @@ defmodule LineaUI.Components.DatePicker.Shell do
   @doc false
   def render_picker(assigns, kind, hook) do
     assigns
-    |> assign(:hook, hook)
+    |> assign_derived(:hook, [], fn -> hook end)
     |> assign_new(:skin, fn -> nil end)
-    |> assign(:today, assigns.today || Date.utc_today())
+    |> assign_derived(:today, [:today], fn -> assigns.today || Date.utc_today() end)
     |> prepare(kind)
     |> shell()
   end
@@ -260,15 +278,14 @@ defmodule LineaUI.Components.DatePicker.Shell do
   @doc false
   def shell(assigns) do
     assigns =
-      assign(assigns,
-        input_class:
-          merge([
-            input_base(assigns.grouped),
-            icon_pad(assigns.grouped, assigns.show_icon or assigns.icon != []),
-            assigns.errors != [] && @error,
-            assigns.class
-          ])
-      )
+      assign_derived(assigns, :input_class, [:trailing, :show_icon, :icon, :class], fn ->
+        merge([
+          input_base(assigns.grouped),
+          icon_pad(assigns.grouped, assigns.show_icon or assigns.icon != []),
+          @error,
+          assigns.class
+        ])
+      end)
 
     ~H"""
     <Pickers.field label={@label} help={@help} errors={@errors} for={@id <> "-display"}>
