@@ -41,6 +41,17 @@ defmodule LineaUI.Components.Shell do
         <.navbar><.navbar_crumbs items={[%{label: "Início", navigate: ~p"/"}, %{label: "Projetos"}]} /><:end>…</:end></.navbar>
       </:topbar>
 
+  The `:tab_bar` slot is the phone's bottom bar of tabs, the same slot as `app_shell layout="framed"`: put a
+  `tab_bar/1` in it. It shows only below 768px, fixed at the foot of the screen (with the safe area of the
+  device) and the page gets room under it, so nothing hides behind the bar.
+
+      <:tab_bar>
+        <.tab_bar label="Sections" current={@current}>
+          <:tab navigate={~p"/"} label="Home"><.icon name="huge-home-01" /></:tab>
+          <:tab navigate={~p"/orders"} label="Orders"><.icon name="huge-shopping-cart-01" /></:tab>
+        </.tab_bar>
+      </:tab_bar>
+
   In the `sections` format, which has no collapse
   button of its own, the row starts with the button that collapses the menu (`collapsible`). Below 768px the
   menu is a top bar with a hamburger.
@@ -92,6 +103,11 @@ defmodule LineaUI.Components.Shell do
   slot :brand_mark, doc: "Replaces the logo and the name of the brand (see `sidebar/1`)."
   slot :sidebar_footer, doc: "At the end of the foot of the menu."
   slot :topbar, doc: "A row at the top of the page panel."
+
+  slot :tab_bar,
+    doc:
+      "A bottom bar of tabs for phones: a `tab_bar/1`. Fixed at the foot below 768px, hidden from there, and the page keeps room under it."
+
   slot :inner_block, required: true, doc: "The page."
 
   def shell(assigns) do
@@ -136,6 +152,7 @@ defmodule LineaUI.Components.Shell do
       <main class={
         merge([
           "flex min-w-0 flex-1 flex-col gap-6 overflow-y-auto bg-white px-4 pt-5 pb-10 shadow-[0_0_0_1px_var(--color-slate-150),0_1px_2px_rgb(23_23_26/.04),0_4px_16px_-6px_rgb(23_23_26/.08)] md:rounded-[22px] md:px-8 md:pt-5 md:pb-10 dark:bg-navy-900 dark:shadow-[0_0_0_1px_var(--color-navy-600)]",
+          @tab_bar != [] && "max-md:pb-[calc(4.25rem+env(safe-area-inset-bottom))]",
           @main_class
         ])
       }>
@@ -148,6 +165,12 @@ defmodule LineaUI.Components.Shell do
         </div>
         {render_slot(@inner_block)}
       </main>
+      <div
+        :if={@tab_bar != []}
+        class="linea-shell-tabbar fixed inset-x-0 bottom-0 z-30 bg-white pb-[env(safe-area-inset-bottom)] md:hidden dark:bg-navy-900"
+      >
+        {render_slot(@tab_bar)}
+      </div>
     </div>
     """
   end
