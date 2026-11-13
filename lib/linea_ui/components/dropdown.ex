@@ -466,7 +466,7 @@ defmodule LineaUI.Components.Dropdown do
         class={
           merge([
             @item_class,
-            "h-9 w-full gap-2.5 pr-3 font-inter text-sm font-normal tracking-normal text-slate-600 dark:text-navy-100",
+            "h-9 w-full gap-2.5 pr-3 font-inter text-sm font-normal tracking-normal text-slate-600 dark:text-navy-100 dark:hover:text-navy-50 dark:focus:text-navy-50",
             "text-left",
             @disabled && "pointer-events-none opacity-55",
             @trigger_class

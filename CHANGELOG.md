@@ -1,12 +1,32 @@
 # Changelog
 
-## 0.21.1 (2026-11-13)
+## 0.22.0 (2026-11-13)
+
+### New, from the Signetum canvas
+
+- `input` takes `mask="cpf_cnpj"`: a CPF (`000.000.000-00`) up to 11 digits that switches to a CNPJ (`00.000.000/0000-00`) beyond, while typing, deleting and pasting; it sets `inputmode="numeric"`, and `mask_submit="raw"` submits the digits.
+- `checkbox` takes `indeterminate`: the dash of a partial selection, `aria-checked="mixed"`, and the DOM property set by the new `LineaUI.Indeterminate` hook (it needs an `id`, taken from the name or label when missing). The inputs of `checkbox` and `checkbox_group` carry `aria-invalid`, and the canvas theme now paints the error ring of a checkbox (it was hidden).
+- `shell` takes a `:tab_bar` slot: the phone bottom tab bar of `app_shell`, fixed at the foot with the safe area, hidden from 768px, with bottom padding on the page so content never hides behind it.
+- `filter_menu`: a `single` group takes `custom: true` (or a label) for a "Custom…" row that opens an inline range calendar beside the menu. The group value is `custom:FROM..TO` (ISO days), the row shows the chosen period, and `FilterMenu.custom_range/1` parses it. The `date_picker` hook answers a new `linea:reset` command.
+- `Form.field` and `input` take `layout="inline"`: the label sits at the left in a 180px column, with help and errors under the control.
+- `breadcrumb` takes `max_items` (with `more_label` and `id`): a long trail keeps the first step and the last ones, and the middle steps open from a "…" dropdown.
+- `dropdown` takes an `:action` slot for a split button (main action plus an arrow that opens the menu, placed from the whole group) and `color="mono"`.
+- `datetime_picker` takes `timezone`: a display-only time zone label on the help line.
+- `toast`: `aura_size` follows the canvas: `xs` 0.75px, `sm` 1px, `default` 1.25px (new, and what a toast gets without `aura_size`; it was `sm` at 1.5px) and `lg` 2px. The old widths (1/1.5/2.5px) are gone, so existing auras are slightly thinner.
+- The icon button (`button icon`) documents and tests the canvas contract: `plain` for flat/ghost/dim, sizes md 36px, sm 32px and xs 24px (lg/xl render as md), every other color or variant as the bordered control. The canvas defines no colored icon buttons.
+
+### Fixes
+
+- A focused submenu row of a `dropdown` keeps light text in dark mode.
+
+### Performance
 
 - `number_input` and `phone_input` with `field=` send about 70% less per keystroke (874 → 293 B and 1889 → 413 B): they render their input directly instead of spreading their rest into `input`, and derive their assigns.
 - A lone `checkbox` with `field=` keys its error border on `aria-invalid` (new `linea-invalid-check` utility) and no longer resends its classes when an error comes or goes (457 → 147 B).
 - `input` keeps an `aria-invalid` given by the caller instead of rendering the attribute twice.
 - `treeview`: a `tree_item` without an `id` no longer gets a new generated id on every render (which replaced the element and lost its open state). It renders no DOM id and the hook names it by its position in the tree; give an `id` to items whose state the server tracks or that move.
 - `card_table` rows stay unkeyed on purpose: with keys a deleted row would be cheap but a new page would cost twice as much. For lists that insert and delete rows, pass a stream.
+- `preview` compiles with `--warnings-as-errors` again.
 
 ## 0.21.0 (2026-11-13)
 
