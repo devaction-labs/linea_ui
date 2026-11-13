@@ -150,8 +150,15 @@ defmodule LineaUI.Components.Switch do
     |> assign_new(:checked, fn %{value: value} ->
       Phoenix.HTML.Form.normalize_value("checkbox", value)
     end)
-    |> then(&assign(&1, :classes, classes(&1)))
-    |> then(&assign(&1, :text_class, @label_sizes[&1.size]))
+    |> then(
+      &assign_derived(
+        &1,
+        :classes,
+        [:variant, :filled, :color, :size, :shape, :thumb_inset, :class],
+        fn -> classes(&1) end
+      )
+    )
+    |> assign_derived(:text_class, [:size], fn -> @label_sizes[assigns.size] end)
     |> render_switch()
   end
 
