@@ -415,4 +415,21 @@ defmodule LineaUI.Components.DropdownTest do
     refute "gap-px" in classes(html, "#plain")
     assert [] = find(html, "#plain > button") |> Enum.to_list()
   end
+
+  test "a split button places its menu from the whole group" do
+    html =
+      render(~H"""
+      <.dropdown id="split" toggle_label="More">
+        <:action phx-click="save">Save</:action>
+        <.dropdown_item>Other</.dropdown_item>
+      </.dropdown>
+      """)
+
+    assert [_] = find(html, "#split[data-anchor=self]") |> Enum.to_list()
+
+    html = render(~H'<.dropdown id="plain" label="Menu">
+  <.dropdown_item>Other</.dropdown_item>
+</.dropdown>')
+    assert [] = find(html, "#plain[data-anchor]") |> Enum.to_list()
+  end
 end

@@ -155,7 +155,7 @@ defmodule LineaUI.Components.Dropdown do
     default: "bottom-start",
     values: @placements,
     doc:
-      "Where the menu opens, from the trigger. In a split button the trigger is the arrow, so `bottom-end` right-aligns the menu with the group."
+      "Where the menu opens, from the trigger. A split button places it from the whole group (main action and arrow), so `bottom-start` aligns it with the main action."
 
   attr :offset, :integer, default: 4, doc: "Pixels between the trigger and the menu."
   attr :close_on_select, :boolean, default: true
@@ -209,6 +209,7 @@ defmodule LineaUI.Components.Dropdown do
       class={["relative inline-flex", @action != [] && "gap-px"]}
       phx-hook="LineaUI.Dropdown"
       data-popup="menu"
+      data-anchor={@action != [] && "self"}
       data-open={bool(@open)}
       data-hover={bool(@hover)}
       data-placement={@placement}

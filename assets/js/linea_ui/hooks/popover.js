@@ -57,6 +57,11 @@ export const Floating = {
     return this.el.querySelector("[data-trigger]")
   },
 
+  /** What the panel is placed from: the control, or the hook's element itself with `data-anchor="self"` (a split button). */
+  anchor() {
+    return this.el.dataset.anchor === "self" ? this.el : this.control()
+  },
+
   control() {
     const trigger = this.trigger()
     return trigger.querySelector("button, a[href], input, [tabindex]") ?? trigger
@@ -144,7 +149,7 @@ export const Floating = {
     const arrow = panel.querySelector("[data-popper-arrow]")
     const box = anchorBox({
       placement: this.el.dataset.placement,
-      anchor: this.control().getBoundingClientRect(),
+      anchor: this.anchor().getBoundingClientRect(),
       panel: {width: panel.offsetWidth, height: panel.offsetHeight},
       screen: screenSize(),
       offset: Number(this.el.dataset.offset ?? 4),
