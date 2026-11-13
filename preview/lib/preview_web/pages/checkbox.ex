@@ -77,6 +77,28 @@ defmodule PreviewWeb.Pages.Checkbox do
       />
     </.example>
     <.example
+      title="Indeterminate Checkbox"
+      text="A partial selection draws a dash and reads as mixed to screen readers. A click clears it."
+      class="mt-5 flex max-w-2xl flex-col gap-3"
+    >
+      <.checkbox
+        id="cb-mixed"
+        name="cb-mixed"
+        label="Select all (3 of 8)"
+        color="primary"
+        indeterminate
+      />
+      <.checkbox
+        id="cb-mixed-error"
+        name="cb-mixed-error"
+        label="Select all, with an error"
+        color="primary"
+        indeterminate
+        errors={["Pick at least one."]}
+      />
+      <.checkbox name="cb-mixed-off" label="Unchecked" color="primary" indeterminate={false} />
+    </.example>
+    <.example
       title="Checkbox Size"
       text="The checkbox component can have various sizes. Check out code for detail of usage."
       class="inline-space mt-5 flex max-w-2xl flex-wrap items-center"

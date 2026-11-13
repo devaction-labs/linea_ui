@@ -7,6 +7,7 @@ defmodule LineaUI.Components.Checkbox do
       <.checkbox field={@form[:remember]} label="Remember me" color="primary" />
       <.checkbox name="news" color="success" variant="outline" shape="circle" filled />
       <.checkbox name="pro" label="Pro plan" description="Billed yearly" color="primary" checked />
+      <.checkbox name="all" label="Select all (3 of 8)" indeterminate />
 
   `checkbox_group` renders one checkbox per option for a list field:
 
@@ -47,6 +48,13 @@ defmodule LineaUI.Components.Checkbox do
   attr(:name, :string, doc: "Defaults to the field's name.")
   attr(:value, :any)
   attr(:checked, :boolean, doc: "Defaults to whether `value` (or the field's value) is true.")
+
+  attr(:indeterminate, :boolean,
+    default: nil,
+    doc:
+      "`true` draws the dash of a partial selection (`aria-checked=\"mixed\"`, the `indeterminate` property set by the `LineaUI.Indeterminate` hook, so it needs an `id`, taken from the name or label when missing). Pass `false` too when the box can leave that state, so the hook stays. A click clears the dash; leave `nil` to skip the hook."
+  )
+
   attr(:checked_value, :string, default: "true")
   attr(:unchecked_value, :string, default: "false")
   attr(:hidden_input, :boolean, default: true, doc: "Renders the hidden unchecked input.")
@@ -81,6 +89,7 @@ defmodule LineaUI.Components.Checkbox do
     |> assign_new(:checked, fn %{value: value} ->
       Phoenix.HTML.Form.normalize_value("checkbox", value)
     end)
+    |> then(&assign(&1, :id, hook_id(&1)))
     |> then(
       &assign_derived(
         &1,
@@ -91,6 +100,10 @@ defmodule LineaUI.Components.Checkbox do
     )
     |> render_checkbox()
   end
+
+  defp hook_id(%{indeterminate: nil, id: id}), do: id
+  defp hook_id(%{id: id}) when is_binary(id), do: id
+  defp hook_id(assigns), do: stable_id("checkbox", assigns)
 
   defp classes(assigns) do
     merge([
@@ -129,10 +142,13 @@ defmodule LineaUI.Components.Checkbox do
         id={@id}
         name={@name}
         value={@checked_value}
-        checked={@checked}
+        checked={@checked && !@indeterminate}
         disabled={@disabled}
         class={@classes}
         aria-invalid={@errors != [] && "true"}
+        aria-checked={@indeterminate && "mixed"}
+        phx-hook={@indeterminate != nil && "LineaUI.Indeterminate"}
+        data-indeterminate={@indeterminate != nil && bool(@indeterminate)}
         {@rest}
       />
     </Choice.label>
@@ -302,6 +318,7 @@ defmodule LineaUI.Components.Checkbox do
             checked={item.checked}
             disabled={@disabled || item.disabled}
             class={item.classes}
+            aria-invalid={@errors != [] && "true"}
           />
         </Choice.item>
       </div>

@@ -1,27 +1,83 @@
 import assert from "node:assert/strict"
 import test from "node:test"
-import {flip, Indeterminate, press, Range, RangePair, Segmented, Switch} from "./controls.js"
+import {flip, Indeterminate, mixedAria, press, Range, RangePair, Segmented, Switch} from "./controls.js"
 
-const hook = (dataset) => ({...Indeterminate, el: {dataset, indeterminate: false}})
+const hook = (dataset) => {
+  const el = {
+    dataset,
+    indeterminate: false,
+    attrs: {},
+    listeners: {},
+    setAttribute(name, value) {
+      this.attrs[name] = value
+    },
+    removeAttribute(name) {
+      delete this.attrs[name]
+    },
+    addEventListener(type, fn) {
+      this.listeners[type] = fn
+    },
+    removeEventListener(type) {
+      delete this.listeners[type]
+    },
+  }
+  return {...Indeterminate, el}
+}
 
-test("a box marked partial becomes indeterminate on mount", () => {
-  const box = hook({partial: "true"})
+test("mixedAria is mixed only while indeterminate", () => {
+  assert.equal(mixedAria(true), "mixed")
+  assert.equal(mixedAria(false), null)
+})
+
+test("a box marked indeterminate becomes indeterminate and mixed on mount", () => {
+  const box = hook({indeterminate: "true"})
   box.mounted()
   assert.equal(box.el.indeterminate, true)
+  assert.equal(box.el.attrs["aria-checked"], "mixed")
 })
 
-test("an update that drops the mark clears it", () => {
-  const box = hook({partial: "true"})
+test("a box marked false stays plain, without aria-checked", () => {
+  const box = hook({indeterminate: "false"})
   box.mounted()
-  delete box.el.dataset.partial
+  assert.equal(box.el.indeterminate, false)
+  assert.equal("aria-checked" in box.el.attrs, false)
+})
+
+test("the server clearing the mark clears the dash", () => {
+  const box = hook({indeterminate: "true"})
+  box.mounted()
+  box.el.dataset.indeterminate = "false"
   box.updated()
   assert.equal(box.el.indeterminate, false)
+  assert.equal("aria-checked" in box.el.attrs, false)
 })
 
-test("a box without the mark stays plain", () => {
-  const box = hook({})
+test("the server setting the mark draws the dash", () => {
+  const box = hook({indeterminate: "false"})
   box.mounted()
+  box.el.dataset.indeterminate = "true"
+  box.updated()
+  assert.equal(box.el.indeterminate, true)
+  assert.equal(box.el.attrs["aria-checked"], "mixed")
+})
+
+test("a click clears the dash and a patch that did not change the mark keeps it cleared", () => {
+  const box = hook({indeterminate: "true"})
+  box.mounted()
+  box.el.indeterminate = false
+  box.el.listeners.change()
+  assert.equal("aria-checked" in box.el.attrs, false)
+  box.el.attrs["aria-checked"] = "mixed"
+  box.updated()
   assert.equal(box.el.indeterminate, false)
+  assert.equal("aria-checked" in box.el.attrs, false)
+})
+
+test("destroyed removes the change listener", () => {
+  const box = hook({indeterminate: "true"})
+  box.mounted()
+  box.destroyed()
+  assert.equal("change" in box.el.listeners, false)
 })
 
 function buildSwitch(attributes) {
