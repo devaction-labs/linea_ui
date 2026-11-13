@@ -215,12 +215,12 @@ export const timerFor = (input, duration, fallback = true) =>
   Number.isFinite(duration) && statusOf(input) === null && progressOf(input) === null && stepsOf(input) === null && (unset(input.timer) ? fallback : Boolean(input.timer))
 
 export const AURA_VARIANTS = ["default", "dual", "glow"]
-export const AURA_SIZES = ["xs", "sm", "lg"]
+export const AURA_SIZES = ["xs", "sm", "default", "lg"]
 export const AURA_COLORS = ["assistant", "primary", "secondary", "info", "success", "warning", "error"]
 
 /**
  * The light that runs around a toast, or `null` for a toast without `aura`. Unknown values fall back to the
- * rotating `default`, the `sm` thickness and the assistant's color.
+ * rotating `default`, the `default` thickness (1.25px) and the assistant's color.
  *
  * @returns {{variant: string, size: string, color: string} | null}
  */
@@ -228,7 +228,7 @@ export const auraOf = ({aura, aura_size: size, aura_color: color}) =>
   aura
     ? {
         variant: AURA_VARIANTS.includes(aura) ? aura : "default",
-        size: AURA_SIZES.includes(size) ? size : "sm",
+        size: AURA_SIZES.includes(size) ? size : "default",
         color: AURA_COLORS.includes(color) ? color : "assistant",
       }
     : null
@@ -257,8 +257,8 @@ const CANVAS_AURA_TONES = {assistant: "ai", primary: "", secondary: "violet", in
 
 /**
  * The classes of the canvas aura (`sg-aura`) around a toast, or `null` without `aura`: the mode (`dual`, `glow`
- * or none for the rotating one), the tone (`aura_color` mapped to the canvas's) and the width (`aura_size`, none
- * for the canvas's 2px default when it is not given).
+ * or none for the rotating one), the tone (`aura_color` mapped to the canvas's) and the width (`aura_size`, `xs` .75px,
+ * `sm` 1px, `lg` 2px; none, the canvas's 1.25px, when it is not given or is `default`).
  *
  * @returns {{mode: string, tone: string, width: string} | null}
  */
@@ -267,7 +267,7 @@ export const canvasAuraOf = ({aura, aura_size: size, aura_color: color}) =>
     ? {
         mode: aura === "dual" || aura === "glow" ? aura : "",
         tone: CANVAS_AURA_TONES[color] ?? CANVAS_AURA_TONES.assistant,
-        width: AURA_SIZES.includes(size) ? size : "",
+        width: AURA_SIZES.includes(size) && size !== "default" ? size : "",
       }
     : null
 
