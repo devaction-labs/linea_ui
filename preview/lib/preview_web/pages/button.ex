@@ -39,9 +39,38 @@ defmodule PreviewWeb.Pages.Button do
     <.example title="Only Icons">
       <.button :for={color <- @colors} color={color} icon shape="pill" aria-label={color}>★</.button>
     </.example>
+    <.example
+      title="Icon Button"
+      text="Square, icon only, always with aria-label. The canvas defines the bordered control, plain (flat, ghost, dim), sizes md 36, sm 32 and xs 24, the pill shape and the pip."
+    >
+      <.button icon aria-label="New"><.ib_icon /></.button>
+      <.button icon pip aria-label="Notices"><.ib_icon /></.button>
+      <.button icon variant="flat" aria-label="More"><.ib_icon /></.button>
+      <.button icon size="sm" aria-label="Edit"><.ib_icon /></.button>
+      <.button icon size="sm" variant="ghost" aria-label="Close"><.ib_icon /></.button>
+      <.button icon size="xs" aria-label="Edit"><.ib_icon /></.button>
+      <.button icon size="xs" variant="dim" aria-label="Close"><.ib_icon /></.button>
+      <.button icon shape="pill" aria-label="Pill"><.ib_icon /></.button>
+      <.button icon disabled aria-label="Disabled"><.ib_icon /></.button>
+    </.example>
     <.example title="Disabled Button">
       <.button :for={color <- @colors} color={color} disabled>{color_label(color)}</.button>
     </.example>
+    """
+  end
+
+  defp ib_icon(assigns) do
+    ~H"""
+    <svg
+      class="i"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.5"
+      aria-hidden="true"
+    >
+      <path d="M12 4v16M20 12H4" />
+    </svg>
     """
   end
 
