@@ -279,9 +279,6 @@ defmodule LineaUI.Components.Tabs do
     |> assign_derived(:event, [:on_change], fn -> event_name(assigns.on_change) end)
     |> assign_derived(:on_change_js, [:on_change], fn -> on_change_js(assigns.on_change) end)
     |> assign_derived(:panel_names, [:panel], fn -> MapSet.new(assigns.panel, & &1.name) end)
-    |> assign_derived(:keep, [], fn ->
-      JS.ignore_attributes(["aria-selected", "aria-current", "tabindex", "hidden"])
-    end)
     |> render_tabs()
   end
 
@@ -339,7 +336,6 @@ defmodule LineaUI.Components.Tabs do
               id={"#{@id}-tab-#{tab.name}"}
               controls={MapSet.member?(@panel_names, tab.name) && "#{@id}-panel-#{tab.name}"}
               selected={selected}
-              keep={@keep}
               class={merge([@tab_class, tab[:class]])}
             />
           </div>
@@ -354,7 +350,7 @@ defmodule LineaUI.Components.Tabs do
           tabindex="0"
           data-value={panel.name}
           hidden={!selected}
-          phx-mounted={@keep}
+          phx-mounted='[["ignore_attrs",{"attrs":["aria-selected","aria-current","tabindex","hidden"]}]]'
           class={merge([@panel_class, "outline-hidden", panel[:class]])}
         >
           {render_slot(panel)}
@@ -368,7 +364,6 @@ defmodule LineaUI.Components.Tabs do
   attr(:id, :string, required: true)
   attr(:controls, :any, required: true)
   attr(:selected, :boolean, required: true)
-  attr(:keep, :any, required: true)
   attr(:class, :any, required: true)
 
   defp tab_control(%{tab: %{disabled: true}} = assigns), do: tab_button(assigns)
@@ -389,7 +384,7 @@ defmodule LineaUI.Components.Tabs do
       tabindex={tabindex(@selected)}
       data-value={@tab.name}
       data-link
-      phx-mounted={@keep}
+      phx-mounted='[["ignore_attrs",{"attrs":["aria-selected","aria-current","tabindex","hidden"]}]]'
       class={@class}
     >
       {render_slot(@tab)}<.count tab={@tab} />
@@ -410,7 +405,7 @@ defmodule LineaUI.Components.Tabs do
       tabindex={tabindex(@selected)}
       data-value={@tab.name}
       disabled={@tab[:disabled]}
-      phx-mounted={@keep}
+      phx-mounted='[["ignore_attrs",{"attrs":["aria-selected","aria-current","tabindex","hidden"]}]]'
       class={@class}
     >
       {render_slot(@tab)}<.count tab={@tab} />

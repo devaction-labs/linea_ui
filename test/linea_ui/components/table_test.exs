@@ -256,7 +256,62 @@ defmodule LineaUI.Components.TableTest do
 
     assert [_, _] = html |> find("tbody td") |> Enum.to_list()
     assert [_] = html |> find("td[phx-click]") |> Enum.to_list()
-    assert "cursor-pointer" in classes(html, "td")
+    assert [_] = html |> find("tr[data-row-click]") |> Enum.to_list()
+  end
+
+  describe "row_click" do
+    defp attr_of(html, selector, name) do
+      html |> find(selector) |> LazyHTML.attribute(name) |> List.first()
+    end
+
+    test "the cells run the data-row-click of the row, once per row" do
+      html =
+        render(~H"""
+        <.table id="t" rows={[%{id: 1}]} row_click={&Phoenix.LiveView.JS.navigate("/o/#{&1.id}")}>
+          <:col :let={row}>{row.id}</:col>
+          <:col :let={row}>{row.id}</:col>
+        </.table>
+        """)
+
+      assert [_, _] = html |> find("tbody td[phx-click]") |> Enum.to_list()
+
+      cell = attr_of(html, "tbody td", "phx-click")
+      exec = Phoenix.LiveView.JS.exec("data-row-click", to: {:closest, "tr"})
+
+      assert Phoenix.json_library().decode!(cell) ==
+               exec.ops |> Phoenix.json_library().encode!() |> Phoenix.json_library().decode!()
+
+      assert LineaUI.Components.Table.row_click_exec() == exec
+
+      row = attr_of(html, "tbody tr", "data-row-click")
+      assert [["navigate", %{"href" => "/o/1"}]] = Phoenix.json_library().decode!(row)
+    end
+
+    test "an event name is pushed" do
+      html =
+        render(~H"""
+        <.table id="t" rows={[%{id: 1}]} row_click={fn _ -> "open" end}>
+          <:col :let={row}>{row.id}</:col>
+        </.table>
+        """)
+
+      row = attr_of(html, "tbody tr", "data-row-click")
+      assert Phoenix.json_library().decode!(row) == [["push", %{"event" => "open"}]]
+    end
+
+    test "without row_click there is no attribute and no phx-click on the cells" do
+      html = render_table(%{})
+      assert [] = html |> find("[data-row-click], td[phx-click]") |> Enum.to_list()
+    end
+  end
+
+  test "the select-all checkbox of table_head keeps a stable id" do
+    html =
+      render(~H"""
+      <.table_head id="h" on_select_all="all"><:col label="A" /></.table_head>
+      """)
+
+    assert attr_of(html, "input", "id") == "h-select-all"
   end
 
   test "compact tightens the cells" do

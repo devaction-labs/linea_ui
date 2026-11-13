@@ -230,8 +230,8 @@ defmodule LineaUI.Components.Select.Listbox do
             </div>
             <.entry
               :for={entry <- @entries}
+              :key={entry_key(entry)}
               entry={entry}
-              id={@id}
               option_slot={@option}
               box={@look == "pillbox"}
             />
@@ -263,7 +263,10 @@ defmodule LineaUI.Components.Select.Listbox do
           </div>
         </div>
         <div hidden data-templates>
-          <template :for={option <- @known} data-value={option.value}>
+          <template
+            :for={option <- templates(@known, @options, @item, @look)}
+            data-value={option.value}
+          >
             <.chip
               option={option}
               item={@item}
@@ -289,6 +292,17 @@ defmodule LineaUI.Components.Select.Listbox do
     </Pickers.field>
     """
   end
+
+  # The chip templates the hook clones. Without an `:item` slot (and outside the pillbox, whose chips carry an
+  # avatar) the hook's own chip equals the server's, so only the chosen options that are not in the list
+  # (`known` is `options` followed by those) need one; it saves a template per option in the first render.
+  defp templates(known, options, [], look) when look != "pillbox",
+    do: Enum.drop(known, length(options))
+
+  defp templates(known, _options, _item, _look), do: known
+
+  # A stable key per entry, so a changed list sends only the entries that are new.
+  defp entry_key(entry), do: {entry.type, Map.get(entry, :value, entry.label)}
 
   # Only a tag input with a `max` shows its limit: the input goes off and a counter appears.
   defp limited?(:tags, max), do: max != nil
@@ -335,7 +349,6 @@ defmodule LineaUI.Components.Select.Listbox do
   end
 
   attr :entry, :map, required: true
-  attr :id, :string, required: true
   attr :option_slot, :list, required: true
   attr :box, :boolean, default: false
 
@@ -345,8 +358,8 @@ defmodule LineaUI.Components.Select.Listbox do
       <div class="optgroup-header">{@entry.label}</div>
       <.entry
         :for={option <- @entry.options}
+        :key={entry_key(option)}
         entry={option}
-        id={@id}
         option_slot={@option_slot}
         box={@box}
       />
@@ -359,7 +372,6 @@ defmodule LineaUI.Components.Select.Listbox do
     <div
       class="option"
       role="option"
-      id={option_id(@id, @entry.value)}
       data-value={@entry.value}
       data-label={@entry.label}
       data-keywords={Options.keywords(@entry) != "" && Options.keywords(@entry)}
@@ -380,7 +392,6 @@ defmodule LineaUI.Components.Select.Listbox do
     <div
       class="option"
       role="option"
-      id={option_id(@id, @entry.value)}
       data-value={@entry.value}
       data-label={@entry.label}
       data-keywords={Options.keywords(@entry) != "" && Options.keywords(@entry)}
@@ -413,6 +424,4 @@ defmodule LineaUI.Components.Select.Listbox do
     |> Enum.map_join(&String.first(&1 || ""))
     |> String.upcase()
   end
-
-  defp option_id(id, value), do: "#{id}-opt-#{Base.url_encode64(value, padding: false)}"
 end

@@ -217,7 +217,7 @@ defmodule LineaUI.Components.Dropdown do
         popover="manual"
         data-panel
         aria-hidden="true"
-        phx-mounted={JS.ignore_attributes(["class", "style", "data-popper-placement", "aria-hidden"])}
+        phx-mounted='[["ignore_attrs",{"attrs":["class","style","data-popper-placement","aria-hidden"]}]]'
       >
         <div
           class={
@@ -404,7 +404,7 @@ defmodule LineaUI.Components.Dropdown do
       data-open="false"
       data-placement={@placement}
       data-side={@placement}
-      phx-mounted={JS.ignore_attributes(["data-open", "data-side"])}
+      phx-mounted='[["ignore_attrs",{"attrs":["data-open","data-side"]}]]'
       {@rest}
     >
       <button
@@ -426,7 +426,7 @@ defmodule LineaUI.Components.Dropdown do
         aria-controls={"#{@id}-menu"}
         aria-disabled={@disabled && "true"}
         disabled={@disabled}
-        phx-mounted={JS.ignore_attributes(["aria-expanded"])}
+        phx-mounted='[["ignore_attrs",{"attrs":["aria-expanded"]}]]'
         data-submenu-trigger
       >
         {render_slot(@icon)}<span class="flex-1">{@label}</span>
@@ -642,7 +642,7 @@ defmodule LineaUI.Components.Dropdown do
         disabled={@disabled}
         data-server-checked={bool(@checked)}
         data-group={@name}
-        phx-mounted={JS.ignore_attributes(["aria-checked"])}
+        phx-mounted='[["ignore_attrs",{"attrs":["aria-checked"]}]]'
         {@rest}
       >
         <span class={@box}>

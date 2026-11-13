@@ -131,6 +131,7 @@ defmodule LineaUI.Components.Table do
   import LineaUI.Components.Icon, only: [glyph: 1]
   import LineaUI.Components.Skeleton, only: [skeleton: 1]
 
+  alias Phoenix.LiveView.JS
   alias Phoenix.LiveView.LiveStream
 
   # The look of `data_table/1`: 40px header and 48px rows of 13.5px Inter, 14px of padding at the sides.
@@ -719,6 +720,7 @@ defmodule LineaUI.Components.Table do
             class={merge(["border-y border-transparent", row_class(@row_class, @row_item, row)])}
             data-peek={@peek_at && ""}
             tabindex={@peek_at && "0"}
+            data-row-click={row_click_js(@row_click, row)}
             {row_attrs(@row_attrs, @row_item, row)}
           >
             <.slot_cells
@@ -834,6 +836,7 @@ defmodule LineaUI.Components.Table do
                 {row, key, selected} <-
                   list_rows(@rows, @row_id, {@selectable, @selected, @row_key, @row_item})
               }
+              :key={(@row_id && @row_id.(row)) || row}
               row={row}
               key={key}
               selected={selected}
@@ -878,6 +881,7 @@ defmodule LineaUI.Components.Table do
       data-selected={@selectable && bool(@selected)}
       data-peek={@peek_at && ""}
       tabindex={@peek_at && "0"}
+      data-row-click={row_click_js(@row_click, @row)}
       {row_attrs(@row_attrs, @row_item, @row)}
     >
       <.slot_cells
@@ -999,8 +1003,20 @@ defmodule LineaUI.Components.Table do
     <td :if={@selectable} class={@td_class}>
       <label class="flex">
         <input
+          :if={!data_checkbox?(@checkbox)}
           type="checkbox"
-          class={@checkbox}
+          class="form-checkbox is-basic size-5 rounded-sm border-slate-400/70 checked:border-primary checked:bg-primary hover:border-primary focus:border-primary dark:border-navy-400 dark:checked:border-accent dark:checked:bg-accent dark:hover:border-accent dark:focus:border-accent"
+          checked={@selected}
+          aria-label={row_label(@row_label, @select_label, @row_item, @row)}
+          phx-click={@on_select}
+          phx-value-id={@key}
+          phx-value-selected={bool(not @selected)}
+          phx-target={@target}
+        />
+        <input
+          :if={data_checkbox?(@checkbox)}
+          type="checkbox"
+          class="form-checkbox is-basic size-4 rounded-[4px] border-slate-400/70 checked:border-primary checked:bg-primary hover:border-primary focus:border-primary dark:border-navy-400 dark:checked:border-accent dark:checked:bg-accent dark:hover:border-accent dark:focus:border-accent"
           checked={@selected}
           aria-label={row_label(@row_label, @select_label, @row_item, @row)}
           phx-click={@on_select}
@@ -1010,25 +1026,61 @@ defmodule LineaUI.Components.Table do
         />
       </label>
     </td>
-    <td
-      :for={{col, index} <- Enum.with_index(@col)}
-      class={merge([@td_class, align(col[:align]), @row_click && "cursor-pointer", col[:class]])}
-      data-p={data_p(col)}
-      phx-click={@row_click && @row_click.(@row)}
-    >
-      {render_slot(col, @row_item.(@row))}
-      <div :if={index == @peek_at} class="linea-tpeek" role="group" aria-label={@peek_label}>
-        <div :for={hidden <- peek_cols(@col)} data-peek-p={priority(hidden)}>
-          <span>{hidden[:label]}</span>
-          <span>{render_slot(hidden, @row_item.(@row))}</span>
+    <%= if @row_click do %>
+      <%!-- The click runs the data-row-click of the tr, so the JS is sent once per row and not per cell.
+           The literal below has to equal row_click_exec/0 (a test checks it). --%>
+      <td
+        :for={{col, index} <- Enum.with_index(@col)}
+        class={merge([@td_class, align(col[:align]), col[:class]])}
+        data-p={data_p(col)}
+        phx-click='[["exec",{"attr":"data-row-click","to":{"closest":"tr"}}]]'
+      >
+        {render_slot(col, @row_item.(@row))}
+        <div :if={index == @peek_at} class="linea-tpeek" role="group" aria-label={@peek_label}>
+          <div :for={hidden <- peek_cols(@col)} data-peek-p={priority(hidden)}>
+            <span>{hidden[:label]}</span>
+            <span>{render_slot(hidden, @row_item.(@row))}</span>
+          </div>
         </div>
-      </div>
-    </td>
+      </td>
+    <% else %>
+      <td
+        :for={{col, index} <- Enum.with_index(@col)}
+        class={merge([@td_class, align(col[:align]), col[:class]])}
+        data-p={data_p(col)}
+      >
+        {render_slot(col, @row_item.(@row))}
+        <div :if={index == @peek_at} class="linea-tpeek" role="group" aria-label={@peek_label}>
+          <div :for={hidden <- peek_cols(@col)} data-peek-p={priority(hidden)}>
+            <span>{hidden[:label]}</span>
+            <span>{render_slot(hidden, @row_item.(@row))}</span>
+          </div>
+        </div>
+      </td>
+    <% end %>
     <td :if={@action != []} class={@td_class}>
       {render_slot(@action, @row_item.(@row))}
     </td>
     """
   end
+
+  defp data_checkbox?(checkbox), do: checkbox == @checkbox_data
+
+  # The value of the data-row-click of a tr: what `row_click` gives for the row. The cells run it
+  # with `JS.exec`. An event name is the same as `JS.push(event)`.
+  defp row_click_js(nil, _row), do: nil
+
+  defp row_click_js(fun, row) do
+    case fun.(row) do
+      %JS{} = js -> js
+      event -> JS.push(event)
+    end
+  end
+
+  @doc false
+  # The phx-click of a cell of a clickable row as `JS.exec` builds it. The template carries it as a
+  # literal, which stays static and out of the diff; a test keeps the two equal.
+  def row_click_exec, do: JS.exec("data-row-click", to: {:closest, "tr"})
 
   defp next_dir("asc"), do: "desc"
   defp next_dir(_dir), do: "asc"
@@ -1107,7 +1159,8 @@ defmodule LineaUI.Components.Table do
 
   attr(:select_all_id, :string,
     default: nil,
-    doc: "Id of the select-all checkbox (its hook needs one). Generated when not given."
+    doc:
+      "Id of the select-all checkbox (its hook needs one). Defaults to the `<thead>` `id` + `-select-all`; a random one is generated when neither is given (it then changes on every render, so give an `id`)."
   )
 
   attr(:select_all_label, :string, default: "Select all rows")
@@ -1183,7 +1236,11 @@ defmodule LineaUI.Components.Table do
     """
   end
 
-  # A generated id is new on every render, as it always was; a given one changes with it.
+  # Without `select_all_id`, the one of the `<thead>` (`id` + "-select-all") keeps the checkbox's
+  # id stable across renders. With neither, a generated id is new on every render.
+  defp assign_select_all_id(%{select_all_id: nil, rest: %{id: id}} = assigns),
+    do: assign(assigns, :select_all_id, id <> "-select-all")
+
   defp assign_select_all_id(%{select_all_id: nil} = assigns),
     do: assign(assigns, :select_all_id, gen_id("table-select-all"))
 

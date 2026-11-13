@@ -239,10 +239,19 @@ const Autocomplete = {
     this.paintActive()
   },
 
+  /**
+   * Marks the active row and points `aria-activedescendant` at it. The server renders the options without ids (an id
+   * per option made every value change resend all of them), so the active row takes the one id `<id>-active`, and loses
+   * it when another row becomes active. Rows that have an id of their own (created ones, the create row) keep it.
+   */
   paintActive() {
     const rows = this.rows()
-    rows.forEach((row, index) => row.classList.toggle("active", index === this.active))
+    const activeId = `${this.el.id}-active`
     const current = rows[this.active]
+    rows.forEach((row, index) => row.classList.toggle("active", index === this.active))
+    const stale = document.getElementById(activeId)
+    stale && stale !== current && stale.removeAttribute("id")
+    current && !current.id && (current.id = activeId)
     const input = this.input()
     current ? input.setAttribute("aria-activedescendant", current.id) : input.removeAttribute("aria-activedescendant")
     current && current.scrollIntoView({block: "nearest"})
@@ -256,7 +265,7 @@ const Autocomplete = {
       row.hidden = this.loading || !matches(row.dataset.label, term)
       row.classList.toggle("selected", chosen)
       row.setAttribute("aria-selected", String(chosen))
-      text && (text.innerHTML = this.marked(row.dataset.label))
+      text && this.mark(text, row.dataset.label)
     })
     this.el.querySelectorAll("[data-dropdown] [data-group]").forEach((group) => {
       group.hidden = ![...group.querySelectorAll(".option")].some((row) => !row.hidden)
@@ -269,10 +278,12 @@ const Autocomplete = {
     this.paintOpen(rows)
   },
 
-  marked(label) {
-    return highlight(label, this.term)
-      .map(({text, hit}) => (hit ? `<span class="highlight">${escapeHtml(text)}</span>` : escapeHtml(text)))
-      .join("")
+  /** Writes the label with the typed term highlighted, and leaves a row that already shows its plain label alone. */
+  mark(text, label) {
+    const parts = highlight(label, this.term)
+    const plain = parts.length === 1 && !parts[0].hit
+    if (plain && !text.firstElementChild && text.textContent === label) return
+    text.innerHTML = parts.map(({text: part, hit}) => (hit ? `<span class="highlight">${escapeHtml(part)}</span>` : escapeHtml(part))).join("")
   },
 
   paintCreate() {

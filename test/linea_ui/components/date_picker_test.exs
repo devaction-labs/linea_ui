@@ -114,9 +114,9 @@ defmodule LineaUI.Components.DatePickerTest do
     assert find(html, "#task_due input[type=hidden][name='task[due]'][value='2026-10-03']")
            |> Enum.count() == 1
 
-    assert "border-error" in classes(html, "#task_due-display")
-    assert "dark:border-error" in classes(html, "#task_due-display")
-    refute "dark:border-navy-450" in classes(html, "#task_due-display")
+    assert "aria-invalid:border-error" in classes(html, "#task_due-display")
+    assert "aria-invalid:dark:border-error" in classes(html, "#task_due-display")
+    assert html |> find("#task_due-display") |> LazyHTML.attribute("aria-invalid") == ["true"]
     assert html |> find(".text-error") |> LazyHTML.text() =~ "is late"
   end
 

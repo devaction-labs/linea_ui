@@ -42,10 +42,10 @@ defmodule LineaUI.Components.TimePickerTest do
     classes = classes(html, "#t-display")
     assert "disabled:bg-zinc-100" in classes
     assert "dark:disabled:bg-navy-600" in classes
-    assert "border-error" in classes
-    assert "dark:border-error" in classes
+    assert "aria-invalid:border-error" in classes
+    assert "aria-invalid:dark:border-error" in classes
     assert "focus:ring-3" in classes
-    assert "focus:ring-error/20" in classes
+    assert "aria-invalid:focus:ring-error/20" in classes
   end
 
   test "the popup opens six pixels under the input" do

@@ -273,7 +273,7 @@ defmodule LineaUI.Components.AppShell do
     <div
       id={@id}
       phx-hook="LineaUI.AppShell"
-      phx-mounted={JS.ignore_attributes(["class", "data-settling"])}
+      phx-mounted='[["ignore_attrs",{"attrs":["class","data-settling"]}]]'
       data-open={bool(@open)}
       data-persist={bool(@persist)}
       data-toggle-event={event_name(@on_toggle)}
@@ -296,7 +296,7 @@ defmodule LineaUI.Components.AppShell do
         :if={@preloader}
         data-app-preloader
         id={@id <> "-preloader"}
-        phx-mounted={JS.ignore_attributes(["class"])}
+        phx-mounted='[["ignore_attrs",{"attrs":["class"]}]]'
         class="app-preloader fixed z-50 grid h-full w-full place-content-center bg-slate-50 dark:bg-navy-900"
       >
         <div class="app-preloader-inner relative inline-block size-48"></div>
@@ -537,7 +537,7 @@ defmodule LineaUI.Components.AppShell do
         type="button"
         id={@id <> "-ref"}
         data-popper-ref
-        phx-mounted={JS.ignore_attributes(["class", "aria-expanded"])}
+        phx-mounted='[["ignore_attrs",{"attrs":["class","aria-expanded"]}]]'
         aria-haspopup="true"
         aria-expanded="false"
         aria-controls={@id <> "-box"}
@@ -557,7 +557,7 @@ defmodule LineaUI.Components.AppShell do
         id={@id <> "-box"}
         data-popper-box
         data-popper-placement="right"
-        phx-mounted={JS.ignore_attributes(["class", "style"])}
+        phx-mounted='[["ignore_attrs",{"attrs":["class","style"]}]]'
         class="popper-root fixed top-0 left-0"
       >
         <div class="popper-box w-64 rounded-lg border border-slate-150 bg-white shadow-soft dark:border-navy-600 dark:bg-navy-700">
@@ -775,7 +775,7 @@ defmodule LineaUI.Components.AppShell do
         open={@open}
         data-open={bool(@open)}
         phx-hook="LineaUI.SidebarGroup"
-        phx-mounted={JS.ignore_attributes(["open"])}
+        phx-mounted='[["ignore_attrs",{"attrs":["open"]}]]'
         class="sidebar-group nav-parent [&[open]>summary]:font-semibold [&[open]>summary]:text-slate-800 dark:[&[open]>summary]:text-navy-50 [&[open]>summary_svg]:rotate-90"
       >
         <summary class="ac-trigger flex w-full cursor-pointer list-none items-center justify-between py-2 text-xs-plus tracking-wide text-slate-600 outline-hidden transition-[color,padding-left] duration-300 ease-in-out hover:text-slate-800 dark:text-navy-200 dark:hover:text-navy-50">
@@ -1121,7 +1121,7 @@ defmodule LineaUI.Components.AppShell do
                   data-popper-ref
                   data-open-class="w-80"
                   data-closed-class="w-60"
-                  phx-mounted={JS.ignore_attributes(["class", "aria-expanded"])}
+                  phx-mounted='[["ignore_attrs",{"attrs":["class","aria-expanded"]}]]'
                   placeholder={@search_placeholder}
                   aria-label={@search_placeholder}
                   class="form-input peer h-full w-60 rounded-(--pill) bg-slate-150 px-4 pl-9 text-xs-plus text-slate-800 ring-primary/50 hover:bg-slate-200 focus:ring-3 dark:bg-navy-900/90 dark:text-navy-100 dark:placeholder-navy-300 dark:ring-accent/50 dark:hover:bg-navy-900 dark:focus:bg-navy-900"
@@ -1136,7 +1136,7 @@ defmodule LineaUI.Components.AppShell do
                 id={@id <> "-search-box"}
                 data-popper-box
                 data-popper-placement="bottom"
-                phx-mounted={JS.ignore_attributes(["class", "style"])}
+                phx-mounted='[["ignore_attrs",{"attrs":["class","style"]}]]'
                 class="popper-root fixed top-0 left-0"
               >
                 <div class="popper-box flex max-h-[calc(100vh-6rem)] w-80 flex-col rounded-lg border border-slate-150 bg-white shadow-soft dark:border-navy-800 dark:bg-navy-700 dark:shadow-soft-dark">
@@ -1159,7 +1159,7 @@ defmodule LineaUI.Components.AppShell do
                 type="button"
                 id={@id <> "-notifications-ref"}
                 data-popper-ref
-                phx-mounted={JS.ignore_attributes(["class", "aria-expanded"])}
+                phx-mounted='[["ignore_attrs",{"attrs":["class","aria-expanded"]}]]'
                 aria-haspopup="true"
                 aria-expanded="false"
                 aria-label={notifications[:label] || "Notifications"}
@@ -1182,7 +1182,7 @@ defmodule LineaUI.Components.AppShell do
                 id={@id <> "-notifications-box"}
                 data-popper-box
                 data-popper-placement="bottom"
-                phx-mounted={JS.ignore_attributes(["class", "style"])}
+                phx-mounted='[["ignore_attrs",{"attrs":["class","style"]}]]'
                 class="popper-root fixed top-0 left-0"
               >
                 <div class="popper-box mx-4 mt-1 flex max-h-[calc(100vh-6rem)] w-[calc(100vw-2rem)] flex-col rounded-lg border border-slate-150 bg-white shadow-soft dark:border-navy-800 dark:bg-navy-700 dark:shadow-soft-dark sm:m-0 sm:w-80">
@@ -1340,7 +1340,7 @@ defmodule LineaUI.Components.AppShell do
         id={@id <> "-box"}
         data-popper-box
         data-popper-placement="bottom"
-        phx-mounted={JS.ignore_attributes(["class", "style"])}
+        phx-mounted='[["ignore_attrs",{"attrs":["class","style"]}]]'
         class="popper-root fixed top-0 left-0"
       >
         <div class="popper-box max-h-[calc(100vh-120px)] overflow-y-auto rounded-md border border-slate-150 bg-white py-1.5 font-inter dark:border-navy-500 dark:bg-navy-700">
@@ -1484,7 +1484,7 @@ defmodule LineaUI.Components.AppShell do
       <div
         id={@id <> "-overlay"}
         data-drawer-overlay
-        phx-mounted={JS.ignore_attributes(["class"])}
+        phx-mounted='[["ignore_attrs",{"attrs":["class"]}]]'
         class="drawer-overlay right-sidebar-overlay fixed inset-0 z-[150] hidden bg-slate-900/60"
       >
       </div>
@@ -1495,7 +1495,7 @@ defmodule LineaUI.Components.AppShell do
         aria-modal="true"
         aria-label={@label}
         aria-hidden="true"
-        phx-mounted={JS.ignore_attributes(["class", "aria-hidden"])}
+        phx-mounted='[["ignore_attrs",{"attrs":["class","aria-hidden"]}]]'
         class="drawer-content right-sidebar-content fixed right-0 top-0 z-[151] hidden h-full w-full sm:w-80"
       >
         <div class="relative flex h-full w-full flex-col bg-white dark:bg-navy-750">
@@ -1609,7 +1609,7 @@ defmodule LineaUI.Components.AppShell do
       class={merge(["linea-rail", @class])}
       aria-label={@label}
       phx-hook="LineaUI.ShellRail"
-      phx-mounted={JS.ignore_attributes(["data-collapsed", "data-mobile-open"])}
+      phx-mounted='[["ignore_attrs",{"attrs":["data-collapsed","data-mobile-open"]}]]'
       data-collapsed={bool(@collapsed)}
       data-server-collapsed={bool(@collapsed)}
       data-mobile-open="false"
@@ -1837,7 +1837,7 @@ defmodule LineaUI.Components.AppShell do
       id={@id}
       class={merge(["rail-module", @class])}
       data-open={bool(@module_open)}
-      phx-mounted={JS.ignore_attributes(["data-open"])}
+      phx-mounted='[["ignore_attrs",{"attrs":["data-open"]}]]'
       {@rest}
     >
       <button
@@ -1847,7 +1847,7 @@ defmodule LineaUI.Components.AppShell do
         aria-expanded={bool(@module_open)}
         aria-controls={@id <> "-pages"}
         aria-current={@module_active && "true"}
-        phx-mounted={JS.ignore_attributes(["aria-expanded"])}
+        phx-mounted='[["ignore_attrs",{"attrs":["aria-expanded"]}]]'
         phx-click={
           JS.toggle_attribute({"data-open", "true", "false"}, to: "##{@id}")
           |> JS.toggle_attribute({"aria-expanded", "true", "false"})
@@ -2229,7 +2229,7 @@ defmodule LineaUI.Components.AppShell do
       type="button"
       id={@id}
       phx-hook="LineaUI.ThemeToggle"
-      phx-mounted={JS.ignore_attributes(["aria-pressed"])}
+      phx-mounted='[["ignore_attrs",{"attrs":["aria-pressed"]}]]'
       aria-label="Toggle dark mode"
       data-change-event={event_name(@on_change)}
       data-on-change={js_command(@on_change)}
@@ -2286,7 +2286,7 @@ defmodule LineaUI.Components.AppShell do
       type="button"
       id={@id}
       phx-hook="LineaUI.MonochromeToggle"
-      phx-mounted={JS.ignore_attributes(["aria-pressed"])}
+      phx-mounted='[["ignore_attrs",{"attrs":["aria-pressed"]}]]'
       aria-label="Toggle monochrome mode"
       data-change-event={event_name(@on_change)}
       data-on-change={js_command(@on_change)}

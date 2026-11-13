@@ -22,18 +22,81 @@ defmodule LineaUI.Components.PasswordInput do
   attr :show_label, :string, default: "Show the password"
   attr :hide_label, :string, default: "Hide the password"
   attr :class, :any, default: nil
-
-  attr :rest, :global,
-    include:
-      ~w(field name value label help errors placeholder disabled size variant state autocomplete required minlength maxlength form)
+  attr :field, Phoenix.HTML.FormField, default: nil, doc: "A form field, as for `input/1`."
+  attr :name, :string, default: nil
+  attr :value, :any, default: nil
+  attr :label, :string, default: nil
+  attr :help, :string, default: nil
+  attr :errors, :list, default: []
+  attr :placeholder, :string, default: nil
+  attr :disabled, :boolean, default: false
+  attr :size, :string, default: "md", values: ~w(sm md lg)
+  attr :variant, :string, default: "outlined", values: ~w(outlined filled plain)
+  attr :state, :string, default: nil, values: [nil, "success", "error"]
+  attr :autocomplete, :string, default: nil
+  attr :required, :boolean, default: nil
+  attr :minlength, :integer, default: nil
+  attr :maxlength, :integer, default: nil
+  attr :form, :string, default: nil
+  attr :rest, :global, doc: "Any other attribute goes to the `<input>`."
 
   def password_input(assigns) do
     assigns =
-      assign(assigns, :id, assigns.id || assigns.rest[:id] || stable_id("password", assigns))
+      assign_derived(assigns, :id, [:id, :rest], fn ->
+        assigns.id || assigns.rest[:id] || stable_id("password", assigns)
+      end)
 
     ~H"""
     <div class={merge(["group/pw relative", @class])}>
-      <.input type="password" id={@id} class="pe-10" {@rest} />
+      <%!--
+        A call with `{@rest}` re-renders every attr of the input on each change. One that passes
+        `errors` or `state` hides a change from the input: what `field` derives from them (the
+        error going away) equals the value passed, so it is not marked as changed and the DOM keeps
+        the old paint. So the short form below, which passes neither, is the one for a plain field.
+      --%>
+      <.input
+        :if={@rest == %{} and @errors == [] and @state == nil}
+        type="password"
+        id={@id}
+        class="pe-10"
+        field={@field}
+        name={@name}
+        value={@value}
+        label={@label}
+        help={@help}
+        placeholder={@placeholder}
+        disabled={@disabled}
+        size={@size}
+        variant={@variant}
+        autocomplete={@autocomplete}
+        required={@required}
+        minlength={@minlength}
+        maxlength={@maxlength}
+        form={@form}
+      />
+      <.input
+        :if={@rest != %{} or @errors != [] or @state != nil}
+        type="password"
+        id={@id}
+        class="pe-10"
+        field={@field}
+        name={@name}
+        value={@value}
+        label={@label}
+        help={@help}
+        errors={@errors}
+        placeholder={@placeholder}
+        disabled={@disabled}
+        size={@size}
+        variant={@variant}
+        state={@state}
+        autocomplete={@autocomplete}
+        required={@required}
+        minlength={@minlength}
+        maxlength={@maxlength}
+        form={@form}
+        {@rest}
+      />
       <button
         type="button"
         aria-label={@show_label}

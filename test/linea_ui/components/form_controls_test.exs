@@ -133,7 +133,7 @@ defmodule LineaUI.Components.FormControlsTest do
       assert [_] =
                find(html, "textarea#u_bio[name='u[bio]'][aria-invalid=true]") |> Enum.to_list()
 
-      assert Enum.any?(classes(html, "textarea"), &(&1 =~ ~r/^shadow-.*--color-error/))
+      assert "linea-invalid" in classes(html, "textarea")
     end
   end
 

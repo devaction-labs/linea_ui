@@ -312,7 +312,7 @@ defmodule LineaUI.Components.Fab do
       data-state={@state}
       data-side={if String.starts_with?(@position, "top"), do: "down", else: "up"}
       phx-hook="LineaUI.FabDial"
-      phx-mounted={JS.ignore_attributes(["data-state"])}
+      phx-mounted='[["ignore_attrs",{"attrs":["data-state"]}]]'
       {@rest}
     >
       <div
@@ -359,7 +359,7 @@ defmodule LineaUI.Components.Fab do
         aria-haspopup="menu"
         aria-expanded={to_string(@open)}
         aria-controls={"#{@id}-menu"}
-        phx-mounted={JS.ignore_attributes(["aria-expanded"])}
+        phx-mounted='[["ignore_attrs",{"attrs":["aria-expanded"]}]]'
         class="sg-m-fab"
       >
         <span class="linea-fab-dial-icon flex" aria-hidden="true">
@@ -375,7 +375,7 @@ defmodule LineaUI.Components.Fab do
         aria-haspopup="menu"
         aria-expanded={to_string(@open)}
         aria-controls={"#{@id}-menu"}
-        phx-mounted={JS.ignore_attributes(["aria-expanded"])}
+        phx-mounted='[["ignore_attrs",{"attrs":["aria-expanded"]}]]'
         class={
           merge([
             "inline-flex items-center rounded-full p-2 shadow-[0_12px_32px_-6px_rgba(25,33,50,.45),0_4px_10px_rgba(25,33,50,.18)] outline-none transition-shadow duration-200 hover:shadow-[0_16px_40px_-6px_rgba(25,33,50,.5),0_6px_14px_rgba(25,33,50,.2)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:shadow-[0_14px_36px_-6px_rgba(0,0,0,.6),0_4px_10px_rgba(0,0,0,.3)] dark:focus-visible:outline-accent-light",

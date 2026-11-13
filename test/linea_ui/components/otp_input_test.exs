@@ -156,7 +156,7 @@ defmodule LineaUI.Components.OtpInputTest do
     assert html =~ "Sent by SMS"
     assert html =~ "is invalid"
     assert attr_of(html, "#code-1", "aria-invalid") == ["true"]
-    assert Enum.any?(classes(html, "#code-1"), &(&1 =~ ~r/^shadow-.*--color-error/))
+    assert "linea-invalid-box" in classes(html, "#code-1")
     refute "data-filled:border-primary" in classes(html, "#code-1")
   end
 

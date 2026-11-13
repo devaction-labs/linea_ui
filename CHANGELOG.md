@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.21.0 (2026-11-13)
+
+Smaller LiveView diffs. Measured with `Phoenix.LiveView.Diff.render/4` (uncompressed JSON):
+
+- `pillbox` and `tags_input` keep their fixed assigns unchanged, so a value change no longer resends a part of every option: 11.5 KB → 0.6 KB with 500 options (32 KB → 1 KB with `field=`).
+- `select` and `autocomplete`: options are keyed, chip templates are rendered only when the hook's default chip would not do (an `:item` slot, the pillbox, a chosen value not in the list), and **options no longer carry an id**: the active option gets `<id>-active` from the hook and `aria-activedescendant` points at it. With `field=`, a value change drops from 21 KB to 0.5 KB (500 options) and from 85 KB to 0.6 KB (2000); the first render of a 500-option select from 167 KB to 96 KB; a search that narrows 50 results to 17 from 3.8 KB to 0.2 KB. Tests or CSS that targeted the old `-opt-` ids need to change.
+- `table`: rows are keyed, `row_click` is sent once per `<tr>` as `data-row-click` and the cells run it with a static `JS.exec` (`cursor-pointer` on the cells is now CSS), the row checkboxes have static classes, and the select-all checkbox gets a stable id from the `<thead>` id. 50 rows: first render 85 KB → 42 KB, deleting a row 52 KB → 0.5 KB.
+- Form controls given a `field` (`input`, `password_input`, `textarea`, native `select`, `otp_input`, `date_picker`, and the time and datetime pickers through the shared shell) resend 100–400 B per keystroke instead of 0.6–5.8 KB: the error paint is keyed on `aria-invalid` (new `linea-invalid`, `linea-invalid-filled` and `linea-invalid-box` utilities) instead of swapping classes. The look is unchanged.
+- `checkbox`, `switch` and `range` stop resending their classes on every toggle (344 B → 34 B).
+- The `phx-mounted` ignore-attributes commands of tooltip, dropdown, popover, modal, drawer, tabs, sidebar, app_shell and others are static literals, and `tooltip` omits `data-placement`, `data-trigger`, `data-delay` and `data-duration` at their defaults (768 B → 336 B per tooltip in a list).
+- JS: every hook is also a named export (`import {Tooltip, Dropdown} from "linea_ui"`) and `package.json` declares `sideEffects`, so a bundler can drop the hooks an app does not use (3 hooks: 336 KB → 43 KB minified). `Hooks` works as before.
+- README: recommend `compress: true` on the LiveView socket; these diffs deflate to 3–6% of their size.
+
 ## 0.20.1 (2026-11-13)
 
 - `select` with `search="panel"` and `pillbox`: Space types a space in the search field of the panel again (it was taken as the key that opens the list, so a search could not have two words); Space on the closed control still opens it.

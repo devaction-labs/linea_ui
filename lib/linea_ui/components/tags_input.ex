@@ -134,13 +134,19 @@ defmodule LineaUI.Components.TagsInput do
 
   def tags_input(assigns) do
     assigns
-    |> assign(:multiple, true)
+    |> assign_derived(:multiple, [], fn -> true end)
     |> assign_field()
     |> then(&assign_new(&1, :id, fn -> stable_id("tags", &1) end))
     |> then(&assign_new(&1, :name, fn -> &1.id end))
     |> assign_new(:value, fn -> nil end)
-    |> assign(:options, assigns.options || assigns.suggestions)
-    |> then(&assign(&1, :debounce, debounce(&1.on_search, &1.debounce)))
+    |> assign_derived(:options, [:options, :suggestions], fn ->
+      assigns.options || assigns.suggestions
+    end)
+    |> then(
+      &assign_derived(&1, :debounce, [:on_search, :debounce], fn ->
+        debounce(&1.on_search, &1.debounce)
+      end)
+    )
     |> LineaUI.Components.Select.Listbox.prepare(:tags)
     |> LineaUI.Components.Select.Listbox.listbox()
   end

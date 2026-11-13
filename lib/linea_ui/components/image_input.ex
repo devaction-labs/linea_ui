@@ -49,7 +49,7 @@ defmodule LineaUI.Components.ImageInput do
     <div
       id={@id}
       phx-hook="LineaUI.ImageInput"
-      phx-mounted={JS.ignore_attributes(["data-state", "data-initial"])}
+      phx-mounted='[["ignore_attrs",{"attrs":["data-state","data-initial"]}]]'
       data-state={(@value && "filled") || "empty"}
       data-initial={@value}
       class={merge(["group/img relative inline-block", @size_class, @class])}

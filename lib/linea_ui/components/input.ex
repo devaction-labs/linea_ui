@@ -91,15 +91,18 @@ defmodule LineaUI.Components.Input do
     "plain" => "form-input w-full bg-transparent px-3 py-2 placeholder:text-(--faint)"
   }
 
+  # The error paint is part of the variant (`aria-invalid:` utilities) instead of a class swap, so the
+  # classes do not change when errors appear or go away on a keystroke.
+  @error_states %{
+    "outlined" => "linea-invalid",
+    "filled" => "linea-invalid-filled"
+  }
+
   @states %{
     {"outlined", "success"} =>
       "shadow-[inset_0_0_0_1px_var(--color-success),0_0_0_4px_color-mix(in_oklab,var(--color-success)_14%,transparent)] hover:shadow-[inset_0_0_0_1px_var(--color-success),0_0_0_4px_color-mix(in_oklab,var(--color-success)_14%,transparent)] focus:shadow-[inset_0_0_0_1px_var(--color-success),0_0_0_4px_color-mix(in_oklab,var(--color-success)_14%,transparent)] dark:shadow-[inset_0_0_0_1px_var(--color-success),0_0_0_4px_color-mix(in_oklab,var(--color-success)_16%,transparent)] dark:hover:shadow-[inset_0_0_0_1px_var(--color-success),0_0_0_4px_color-mix(in_oklab,var(--color-success)_16%,transparent)] dark:focus:shadow-[inset_0_0_0_1px_var(--color-success),0_0_0_4px_color-mix(in_oklab,var(--color-success)_16%,transparent)]",
-    {"outlined", "error"} =>
-      "shadow-[inset_0_0_0_1px_var(--color-error),0_0_0_4px_color-mix(in_oklab,var(--color-error)_14%,transparent)] hover:shadow-[inset_0_0_0_1px_var(--color-error),0_0_0_4px_color-mix(in_oklab,var(--color-error)_14%,transparent)] focus:shadow-[inset_0_0_0_1px_var(--color-error),0_0_0_4px_color-mix(in_oklab,var(--color-error)_14%,transparent)] dark:shadow-[inset_0_0_0_1px_var(--color-error),0_0_0_4px_color-mix(in_oklab,var(--color-error)_16%,transparent)] dark:hover:shadow-[inset_0_0_0_1px_var(--color-error),0_0_0_4px_color-mix(in_oklab,var(--color-error)_16%,transparent)] dark:focus:shadow-[inset_0_0_0_1px_var(--color-error),0_0_0_4px_color-mix(in_oklab,var(--color-error)_16%,transparent)]",
     {"filled", "success"} =>
-      "shadow-[inset_0_0_0_1px_var(--color-success)] focus:shadow-[inset_0_0_0_1px_var(--color-success),0_0_0_3px_color-mix(in_srgb,var(--color-success)_18%,transparent)]",
-    {"filled", "error"} =>
-      "shadow-[inset_0_0_0_1px_var(--color-error)] focus:shadow-[inset_0_0_0_1px_var(--color-error),0_0_0_3px_color-mix(in_srgb,var(--color-error)_18%,transparent)]"
+      "shadow-[inset_0_0_0_1px_var(--color-success)] focus:shadow-[inset_0_0_0_1px_var(--color-success),0_0_0_3px_color-mix(in_srgb,var(--color-success)_18%,transparent)]"
   }
 
   @sizes %{
@@ -231,14 +234,17 @@ defmodule LineaUI.Components.Input do
     attr(:class, :any, doc: "Merged into the box around the content.")
   end
 
-  # What `attrs/1` reads (`raw`, `list_id` and `state` are derived before it).
-  @attrs_deps ~w(type id name raw value variant size shape align prefix suffix state class disabled
-                 list_id clear_on_submit mask mask_options rest)a
+  # What `attrs/1` reads (`raw` and `list_id` are derived before it; `raw` itself follows `mask` and `mask_submit`). Nothing that changes on a
+  # keystroke (`id`, `name`, `value`, `state`) is here: those are rendered apart from the blob.
+  @attrs_deps ~w(type mask mask_submit disabled list_id clear_on_submit mask_options rest)a
+
+  @classes_deps ~w(variant size shape align prefix suffix state class)a
 
   def input(assigns) do
     assigns
     |> Control.assign_control()
     |> assign_mask_id()
+    |> then(&assign_derived(&1, :classes, @classes_deps, fn -> classes(&1) end))
     |> then(
       &assign_derived(&1, :state, [:state, :errors], fn -> Control.state(&1.state, &1.errors) end)
     )
@@ -291,16 +297,10 @@ defmodule LineaUI.Components.Input do
     Map.merge(
       %{
         type: assigns.type,
-        id: assigns.id,
-        name: assigns.raw == nil && assigns.name,
-        value: Phoenix.HTML.Form.normalize_value(assigns.type, assigns.value),
-        class: classes(assigns),
         disabled: assigns.disabled,
         list: assigns.list_id,
-        "aria-invalid": assigns.state == "error" && "true",
         "phx-hook": hook(assigns),
         "data-clear-on-submit": assigns.clear_on_submit && "",
-        "data-value": assigns.clear_on_submit && sync_value(assigns),
         "data-mask": assigns.mask,
         "data-mask-submit": assigns.raw && "raw",
         "data-mask-options": assigns.mask && JSON.encode!(assigns.mask_options)
@@ -313,20 +313,24 @@ defmodule LineaUI.Components.Input do
   defp hook(%{clear_on_submit: true}), do: "LineaUI.InputSync"
   defp hook(_assigns), do: nil
 
-  defp sync_value(assigns),
-    do: Phoenix.HTML.Form.normalize_value(assigns.type, assigns.value) || ""
+  defp sync_value(type, value), do: Phoenix.HTML.Form.normalize_value(type, value) || ""
 
-  defp classes(assigns) do
+  @doc false
+  def classes(assigns) do
     merge([
       @variants[assigns.variant],
+      Map.get(assigns, :error_paint, true) && @error_states[assigns.variant],
       @sizes[assigns.size],
       @shapes[assigns.shape],
       @aligns[assigns.align],
       icon_padding(assigns),
-      @states[{assigns.variant, assigns.state}],
+      @states[{assigns.variant, success(assigns.state)}],
       assigns.class
     ])
   end
+
+  defp success("success"), do: "success"
+  defp success(_state), do: nil
 
   defp icon_padding(%{prefix: [], suffix: []}), do: nil
 
@@ -348,7 +352,19 @@ defmodule LineaUI.Components.Input do
 
   defp render_input(%{label: nil, help: nil, errors: [], options: []} = assigns) do
     ~H"""
-    <.control id={@id} attrs={@attrs} raw={@raw} prefix={@prefix} suffix={@suffix} />
+    <.control
+      id={@id}
+      name={@name}
+      value={@value}
+      type={@type}
+      state={@state}
+      classes={@classes}
+      clear_on_submit={@clear_on_submit}
+      attrs={@attrs}
+      raw={@raw}
+      prefix={@prefix}
+      suffix={@suffix}
+    />
     """
   end
 
@@ -364,7 +380,19 @@ defmodule LineaUI.Components.Input do
       state={@state}
       class={@wrapper_class}
     >
-      <.control id={@id} attrs={@attrs} raw={@raw} prefix={@prefix} suffix={@suffix} />
+      <.control
+        id={@id}
+        name={@name}
+        value={@value}
+        type={@type}
+        state={@state}
+        classes={@classes}
+        clear_on_submit={@clear_on_submit}
+        attrs={@attrs}
+        raw={@raw}
+        prefix={@prefix}
+        suffix={@suffix}
+      />
       <datalist :if={@list_id} id={@list_id}>
         <option :for={option <- @options} value={option}></option>
       </datalist>
@@ -374,7 +402,15 @@ defmodule LineaUI.Components.Input do
 
   defp control(%{prefix: [], suffix: [], raw: nil} = assigns) do
     ~H"""
-    <input {@attrs} />
+    <input
+      id={@id}
+      name={@raw == nil && @name}
+      value={Phoenix.HTML.Form.normalize_value(@type, @value)}
+      aria-invalid={@state == "error" && "true"}
+      data-value={@clear_on_submit && sync_value(@type, @value)}
+      class={@classes}
+      {@attrs}
+    />
     """
   end
 
@@ -385,7 +421,15 @@ defmodule LineaUI.Components.Input do
       class="relative flex w-full"
       phx-hook={text_suffix?(@suffix) && "LineaUI.InputSuffix"}
     >
-      <input {@attrs} />
+      <input
+        id={@id}
+        name={@raw == nil && @name}
+        value={Phoenix.HTML.Form.normalize_value(@type, @value)}
+        aria-invalid={@state == "error" && "true"}
+        data-value={@clear_on_submit && sync_value(@type, @value)}
+        class={@classes}
+        {@attrs}
+      />
       <input :if={@raw} type="hidden" {@raw} />
       <span :for={prefix <- @prefix} class={adornment(prefix, "left-0")} data-prefix>
         {render_slot(prefix)}

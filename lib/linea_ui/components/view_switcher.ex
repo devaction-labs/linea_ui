@@ -56,21 +56,35 @@ defmodule LineaUI.Components.ViewSwitcher do
   """
   attr :id, :string, required: true
   attr :value, :any, default: nil, doc: "The value of the chosen view."
-  attr :views, :list, default: [], doc: "The tabs: maps with `:label` and `:value` (see the module doc)."
+
+  attr :views, :list,
+    default: [],
+    doc: "The tabs: maps with `:label` and `:value` (see the module doc)."
+
   attr :options, :list, default: [], doc: "The views the menu offers (see the module doc)."
   attr :on_change, :any, default: nil, doc: "An event name or a `%JS{}`, run by a tab."
-  attr :on_add, :any, default: nil, doc: "An event name or a `%JS{}`, run by an option of the menu."
+
+  attr :on_add, :any,
+    default: nil,
+    doc: "An event name or a `%JS{}`, run by an option of the menu."
+
   attr :target, :any, default: nil, doc: "The `phx-target` of both events."
   attr :add_label, :string, default: "View"
   attr :menu_title, :string, default: "Add a new view"
   attr :columns, :integer, default: 2, values: [1, 2]
-  attr :placement, :string, default: "bottom-start", doc: "Where the menu opens (as in `dropdown/1`)."
+
+  attr :placement, :string,
+    default: "bottom-start",
+    doc: "Where the menu opens (as in `dropdown/1`)."
+
   attr :class, :any, default: nil
   attr :rest, :global
 
   def view_switcher(assigns) do
     assigns =
-      assign_derived(assigns, :chosen, [:value], fn -> assigns.value && to_string(assigns.value) end)
+      assign_derived(assigns, :chosen, [:value], fn ->
+        assigns.value && to_string(assigns.value)
+      end)
 
     ~H"""
     <div id={@id} class={merge(["linea-views", @class])} role="group" {@rest}>

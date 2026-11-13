@@ -228,8 +228,17 @@ defmodule LineaUI.Components.Range do
         not (assigns.show_value or assigns.filled or assigns.marks != [] or pair? or
                assigns.steppers or assigns.orientation == "vertical")
     )
-    |> then(&assign(&1, :classes, classes(&1)))
-    |> then(&assign(&1, :wrapper_class, wrapper_class(&1.variant, &1.wrapper_class)))
+    |> then(
+      &assign_derived(
+        &1,
+        :classes,
+        [:color, :size, :filled, :orientation, :start_name, :end_name, :class],
+        fn -> classes(&1) end
+      )
+    )
+    |> assign_derived(:wrapper_class, [:variant, :wrapper_class], fn ->
+      wrapper_class(assigns.variant, assigns.wrapper_class)
+    end)
   end
 
   defp pair_values({low, high}, _pair?), do: {number(low), number(high)}

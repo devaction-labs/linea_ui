@@ -148,3 +148,69 @@ input.form-range:focus-visible::-moz-range-thumb {
 .linea-range-pair > input.form-range::-moz-range-thumb {
   pointer-events: auto;
 }
+
+/*
+  The error paint of input, textarea, otp_input and native select boxes, keyed on `aria-invalid`
+  instead of a class the server swaps: the classes then do not change when errors come and go, so
+  LiveView does not resend them on every keystroke.
+*/
+@utility linea-invalid {
+  &[aria-invalid="true"] {
+    &,
+    &:hover,
+    &:focus {
+      box-shadow:
+        inset 0 0 0 1px var(--color-error),
+        0 0 0 4px color-mix(in oklab, var(--color-error) 14%, transparent);
+    }
+    @variant dark {
+      &,
+      &:hover,
+      &:focus {
+        box-shadow:
+          inset 0 0 0 1px var(--color-error),
+          0 0 0 4px color-mix(in oklab, var(--color-error) 16%, transparent);
+      }
+    }
+  }
+}
+
+@utility linea-invalid-filled {
+  &[aria-invalid="true"] {
+    box-shadow: inset 0 0 0 1px var(--color-error);
+    &:focus {
+      box-shadow:
+        inset 0 0 0 1px var(--color-error),
+        0 0 0 3px color-mix(in srgb, var(--color-error) 18%, transparent);
+    }
+  }
+}
+
+@utility linea-invalid-box {
+  &[aria-invalid="true"] {
+    &,
+    &:hover {
+      box-shadow:
+        inset 0 0 0 1px var(--color-error),
+        0 0 0 4px color-mix(in oklab, var(--color-error) 14%, transparent);
+    }
+    &:focus {
+      box-shadow:
+        inset 0 0 0 1.5px var(--color-error),
+        0 0 0 4px color-mix(in oklab, var(--color-error) 14%, transparent);
+    }
+    @variant dark {
+      &,
+      &:hover {
+        box-shadow:
+          inset 0 0 0 1px var(--color-error),
+          0 0 0 4px color-mix(in oklab, var(--color-error) 16%, transparent);
+      }
+      &:focus {
+        box-shadow:
+          inset 0 0 0 1.5px var(--color-error),
+          0 0 0 4px color-mix(in oklab, var(--color-error) 16%, transparent);
+      }
+    }
+  }
+}

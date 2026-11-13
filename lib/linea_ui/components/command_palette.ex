@@ -265,7 +265,7 @@ defmodule LineaUI.Components.CommandPalette do
             autocomplete="off"
             autofocus
             placeholder={@placeholder}
-            phx-mounted={JS.ignore_attributes(["value"])}
+            phx-mounted='[["ignore_attrs",{"attrs":["value"]}]]'
             class={["min-w-0 flex-1 bg-transparent outline-hidden", @look.input]}
             data-query
           />
@@ -282,7 +282,7 @@ defmodule LineaUI.Components.CommandPalette do
             type="button"
             aria-pressed="false"
             class="h-6.5 rounded-(--pill-in) px-2.5 text-xs font-medium text-slate-500 outline-hidden ring-1 ring-inset ring-slate-300 transition-colors hover:text-slate-700 focus-visible:outline-2 focus-visible:outline-primary/50 aria-pressed:bg-primary aria-pressed:text-white aria-pressed:ring-0 dark:text-navy-200 dark:ring-navy-450 dark:hover:text-navy-50 dark:focus-visible:outline-accent/50 dark:aria-pressed:bg-accent"
-            phx-mounted={JS.ignore_attributes(["aria-pressed"])}
+            phx-mounted='[["ignore_attrs",{"attrs":["aria-pressed"]}]]'
             data-scope-chip
             data-scope={chip.value}
           >
