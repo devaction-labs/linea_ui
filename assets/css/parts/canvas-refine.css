@@ -3,15 +3,14 @@
   36px controls with 8px corners and a neutral focus ring (3px), thin card borders with a short shadow, segmented
   tabs as a gray track with the chosen one in white, table headers in ink, and danger as solid red.
 */
-:is(.sg, :root){
+:where(:root, .sg:not(:is(.dark, [data-theme]) *)){
   --ring:rgb(10 10 10/.32);--ring-line:#a3a3a3;--danger:#dc2626;--on-danger:#ffffff;--neg:#dc2626;--neg-soft:#fef2f2;--seg-on:var(--panel);--seg-on-shadow:0 1px 2px rgb(0 0 0/.06),0 0 0 1px rgb(0 0 0/.03);--control-on:var(--solid);--on-control:var(--on-solid);--track:rgb(10 10 10/.12);--pop:var(--panel);--pop-shadow:0 0 0 1px var(--line),0 4px 6px -1px rgb(0 0 0/.07),0 2px 4px -2px rgb(0 0 0/.05);--scrim:rgb(0 0 0/.4);--tip:#171717;--on-tip:#fafafa;--tint:var(--hover);
 }
-:is(.dark, .dark .sg, .sg[data-theme="dark"], [data-theme="dark"], [data-theme="dark"] .sg){
+[data-theme="light"]{
+  --ring:rgb(10 10 10/.32);--ring-line:#a3a3a3;--danger:#dc2626;--on-danger:#ffffff;--neg:#dc2626;--neg-soft:#fef2f2;--seg-on:var(--panel);--seg-on-shadow:0 1px 2px rgb(0 0 0/.06),0 0 0 1px rgb(0 0 0/.03);--control-on:var(--solid);--on-control:var(--on-solid);--track:rgb(10 10 10/.12);--pop:var(--panel);--pop-shadow:0 0 0 1px var(--line),0 4px 6px -1px rgb(0 0 0/.07),0 2px 4px -2px rgb(0 0 0/.05);--scrim:rgb(0 0 0/.4);--tip:#171717;--on-tip:#fafafa;--tint:var(--hover);
+}
+:is(.dark, [data-theme="dark"]){
   --ring:rgb(255 255 255/.22);--ring-line:#737373;--danger:#b4363a;--on-danger:#ffffff;--neg:#f87171;--neg-soft:rgb(248 113 113/.12);--seg-on:rgb(255 255 255/.08);--seg-on-shadow:inset 0 0 0 1px var(--ctl-line);--control-on:var(--solid);--on-control:var(--on-solid);--track:rgb(255 255 255/.15);--pop:var(--panel);--pop-shadow:0 0 0 1px var(--line),0 10px 24px -8px rgb(0 0 0/.6);--scrim:rgb(0 0 0/.6);--tip:#e5e5e5;--on-tip:#171717;--tint:var(--hover);
-}
-/* a light scope inside a dark page keeps the light tokens, also on the .sg blocks inside it */
-:is([data-theme="light"], [data-theme="light"] .sg:not([data-theme="dark"])){
-  --ring:rgb(10 10 10/.32);--ring-line:#a3a3a3;--danger:#dc2626;--on-danger:#ffffff;--neg:#dc2626;--neg-soft:#fef2f2;--seg-on:var(--panel);--seg-on-shadow:0 1px 2px rgb(0 0 0/.06),0 0 0 1px rgb(0 0 0/.03);--control-on:var(--solid);--on-control:var(--on-solid);--track:rgb(10 10 10/.12);--pop:var(--panel);--pop-shadow:0 0 0 1px var(--line),0 4px 6px -1px rgb(0 0 0/.07),0 2px 4px -2px rgb(0 0 0/.05);--scrim:rgb(0 0 0/.4);--tip:#171717;--on-tip:#fafafa;--tint:var(--hover);
 }
 
 /* buttons */
@@ -282,3 +281,52 @@ span.flatpickr-weekday{font-size:12.5px;font-weight:400;color:var(--muted)}
 .sg-ct-copy{width:28px;height:28px;border-radius:6px;box-shadow:none}
 .sg-ct-copy:hover{background:var(--tint);color:var(--ink)}
 .sg-ct-foot{font-size:13px}
+
+/* ---------- navbars, landing, hero, pixel card, toasts with aura, error page and auth, in the same finish ---------- */
+
+/* app navbar: 36px search with the field line, 8px links and toggles, menus as the popover surface */
+.sg-nb-search{height:36px;border-radius:var(--pill);box-shadow:inset 0 0 0 1px var(--ctl-line),var(--shadow-xs)}
+.sg-nb-search.wide{border-radius:var(--pill);box-shadow:inset 0 0 0 1px var(--ctl-line),var(--shadow-xs)}
+.sg-nb-search kbd{border-radius:4px;box-shadow:none;background:var(--sunken)}
+.sg-nb-lang,.sg-nb-links{border-radius:var(--pill)}
+.sg-nb-lang a,.sg-nb-links a,.sg-nb-sq,.sg-nb-txt,.sg-nb-logo{border-radius:6px}
+.sg-nb-me{border-radius:50%}
+.sg-nb-me.named,.sg-nb-ws,.sg-nb-chip,.sg-nb-mstatus{border-radius:var(--pill)}
+.sg-nb.float{border-radius:var(--r-lg);box-shadow:0 0 0 1px var(--line),var(--shadow-sm)}
+.sg-am{border-radius:var(--r);box-shadow:var(--pop-shadow);background:var(--pop)}
+.sg-am a{border-radius:6px}
+
+/* landing navbar: 8px links and buttons, the mega menu as a 14px popover */
+.sg-lp-links :is(a,button),.sg-lp-login,.sg-lp-cta,.sg-lp-cta.lg,.sg-lp-nb.float .sg-lp-cta,.sg-lp-mmenu-end :is(.sg-lp-cta,.sg-lp-login){border-radius:var(--pill)}
+.sg-lp-cta{box-shadow:var(--shadow-xs)}
+.sg-lp-nb.float{border-radius:var(--r-lg);box-shadow:0 0 0 1px var(--line),var(--shadow-sm)}
+.sg-lp-mega{border-radius:var(--r-lg);box-shadow:var(--pop-shadow),var(--shadow-lg)}
+.sg-lp-feat,.sg-lp-thumb{border-radius:var(--r)}
+.sg-lp-feat .ic{border-radius:var(--pill)}
+.sg-lp-megaside{border-radius:var(--r)}
+.sg-lp-ann button{border-radius:6px}
+
+/* hero and pixel cards: the card corners and the thin line */
+.linea-hero{border-radius:var(--r-xl);box-shadow:0 0 0 1px var(--line)}
+.sg-px{border-radius:var(--r-lg);box-shadow:0 0 0 1px var(--line),var(--shadow-xs)}
+
+/* toasts with an aura and the status toast */
+.toastify.rich.canvas[data-behind]{border-radius:var(--r);box-shadow:var(--pop-shadow)}
+.sg-toast.st{border-radius:var(--r)}
+.sg-toast.st .act{border-radius:6px}
+
+/* error page */
+.sg-err-status{border-radius:var(--pill);box-shadow:inset 0 0 0 1px var(--line)}
+.sg-err-code{border-radius:6px}
+.sg-err-art{border-radius:var(--r-xl)}
+.sg-err-card{border-radius:var(--r-lg);box-shadow:0 0 0 1px var(--line),var(--shadow-sm)}
+.sg-err-links>a{border-radius:var(--pill)}
+.sg-err-links .ic{border-radius:6px}
+.sg-err-state .tile{border-radius:var(--r-lg)}
+
+/* auth: the card at 16px, the form and the aside at 14px, OAuth buttons as outline buttons */
+.linea-auth-card{border-radius:var(--r-xl);box-shadow:0 0 0 1px var(--line),var(--shadow-lg)}
+.linea-auth-form,.linea-auth-aside{border-radius:var(--r-lg)}
+.linea-oauth{height:36px;border-radius:var(--pill);box-shadow:inset 0 0 0 1px var(--ctl-line),var(--shadow-xs)}
+.linea-auth-sent,.linea-auth-alert{border-radius:var(--r)}
+.linea-auth-sent .tile{border-radius:var(--pill)}
