@@ -19,6 +19,9 @@ defmodule LineaUI.Components.Breadcrumb do
         </:item>
       </.breadcrumb>
 
+  `href`, `navigate` and `patch` that are `nil` or `false` count as absent, so a step built with
+  `<:item :for={step <- @steps} navigate={step.to}>` is plain text when it has no destination.
+
   The current page is in the soft text color and a long label is cut with an ellipsis; give the
   item a `title` for the full label.
 
@@ -43,7 +46,8 @@ defmodule LineaUI.Components.Breadcrumb do
       </.breadcrumb>
 
   `variant="canvas"` (the default; `variant="plain"` is the old LineOne trail) is the design canvas trail (`sg-crumb`): a 32px pill with an inset line, muted
-  13px links, faint `/` separators and the current page in the ink.
+  13px links, faint `/` separators and the current page in the ink, inside a `<b>` (the canvas
+  `.sg-crumb b`) with `aria-current="page"` on its wrapper.
 
       <.breadcrumb>
         <:item navigate={~p"/customers"}>Customers</:item>
@@ -162,6 +166,7 @@ defmodule LineaUI.Components.Breadcrumb do
             link_class={link_class(@variant)}
             current_class={@current_class}
             current={index == @last}
+            variant={@variant}
           />
           <.separator :if={index < @last} separator={@separator} variant={@variant} />
         </li>
@@ -170,14 +175,21 @@ defmodule LineaUI.Components.Breadcrumb do
     """
   end
 
-  defp crumbs(items, max) when is_integer(max) and length(items) > max do
+  defp crumbs(items, max), do: items |> Enum.map(&clean/1) |> collapse(max)
+
+  @routes [:href, :navigate, :patch]
+
+  defp clean(item),
+    do: Map.reject(item, fn {key, value} -> key in @routes and value in [nil, false] end)
+
+  defp collapse(items, max) when is_integer(max) and length(items) > max do
     keep = max(max, 3) - 2
     [first | rest] = items
     {hidden, tail} = Enum.split(rest, length(rest) - keep)
     [{:item, first}, {:more, hidden} | Enum.map(tail, &{:item, &1})]
   end
 
-  defp crumbs(items, _max), do: Enum.map(items, &{:item, &1})
+  defp collapse(items, _max), do: Enum.map(items, &{:item, &1})
 
   attr(:id, :string, required: true)
   attr(:label, :string, required: true)
@@ -207,6 +219,7 @@ defmodule LineaUI.Components.Breadcrumb do
   attr(:link_class, :any, required: true)
   attr(:current_class, :any, default: nil)
   attr(:current, :boolean, required: true)
+  attr(:variant, :string, default: "plain")
 
   defp crumb(%{item: item} = assigns) when is_map_key(item, :"phx-click") do
     assigns = assign(assigns, :extra, extra(item))
@@ -256,7 +269,10 @@ defmodule LineaUI.Components.Breadcrumb do
       aria-current={@current && "page"}
       {@extra}
     >
-      <span class="min-w-0 truncate">{render_slot(@item)}</span>
+      <b :if={@current && @variant == "canvas"} class="min-w-0 truncate">{render_slot(@item)}</b>
+      <span :if={!@current || @variant != "canvas"} class="min-w-0 truncate">
+        {render_slot(@item)}
+      </span>
     </div>
     """
   end
