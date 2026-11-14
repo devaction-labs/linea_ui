@@ -227,4 +227,54 @@ defmodule LineaUI.Components.PaginationTest do
     html = render(~H|<.pagination shape="rounded" page={1} on_change="go" />|)
     assert [_] = html |> find("[aria-current=page]") |> Enum.to_list()
   end
+
+  test "%{shown} is the rows on the current page" do
+    html =
+      render(~H|<.pagination
+  page={2}
+  page_size={10}
+  total_entries={14}
+  on_change="go"
+  summary="%{shown} de %{total} cobranças"
+/>|)
+
+    assert "4 de 14 cobranças" = html |> find("[role=status]") |> LazyHTML.text() |> String.trim()
+
+    html =
+      render(~H|<.pagination
+  page={1}
+  page_size={10}
+  total_entries={14}
+  on_change="go"
+  summary="%{shown} de %{total}"
+/>|)
+
+    assert "10 de 14" = html |> find("[role=status]") |> LazyHTML.text() |> String.trim()
+  end
+
+  test "the aside slot sits beside the pages, and replaces them with a single page" do
+    html =
+      render(~H"""
+      <.pagination class="sg-pager" page={1} page_size={10} total_entries={25} on_change="go">
+        <:aside><i id="a">Webhook</i></:aside>
+      </.pagination>
+      """)
+
+    assert "sg-pager" in classes(html, "div")
+    assert [_] = find(html, "#a") |> Enum.to_list()
+    assert [_] = find(html, "nav") |> Enum.to_list()
+
+    html =
+      render(~H"""
+      <.pagination page={1} page_size={10} total_entries={6} on_change="go">
+        <:aside><i id="a">Webhook</i></:aside>
+      </.pagination>
+      """)
+
+    assert [_] = find(html, "#a") |> Enum.to_list()
+    assert [] = find(html, "nav") |> Enum.to_list()
+
+    html = render(~H|<.pagination page={1} total_pages={1} on_change="go" />|)
+    assert [_] = find(html, "nav") |> Enum.to_list()
+  end
 end
