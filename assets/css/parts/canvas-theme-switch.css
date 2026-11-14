@@ -15,7 +15,7 @@
 .sg-theme.icons>button{width:30px;height:28px;padding:0}
 .sg-theme.icons>button>.lbl{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 .sg-theme.sm>button{height:24px;padding:0 10px;font-size:12px}.sg-theme.sm.icons>button{width:26px;padding:0}
-:is(.dark,[data-theme="dark"]) .sg-theme:not(:where([data-theme="light"] *))::before{background:var(--raised);box-shadow:0 0 0 1px var(--line-strong),0 1px 3px rgb(0 0 0/.35)}
+:is(.dark,[data-theme="dark"]) .sg-theme:not(:where(:is(.dark, [data-theme="dark"]) [data-theme="light"] *):not(:where(:is(.dark, [data-theme="dark"]) [data-theme="light"] :is(.dark, [data-theme="dark"]), :is(.dark, [data-theme="dark"]) [data-theme="light"] :is(.dark, [data-theme="dark"]) *)))::before{background:var(--raised);box-shadow:0 0 0 1px var(--line-strong),0 1px 3px rgb(0 0 0/.35)}
 @media (prefers-reduced-motion:reduce){.sg-theme::before{transition:none}}
 
 .sg-theme-sw{all:unset;box-sizing:border-box;position:relative;display:inline-flex;align-items:center;justify-content:space-between;width:58px;height:30px;padding:0 8px;border-radius:999px;background:var(--sunken);box-shadow:inset 0 0 0 1px var(--line);color:var(--faint);cursor:pointer;vertical-align:middle;transition:background .3s}

@@ -53,7 +53,7 @@ tr[data-am-open] > td {
   text-align: left;
 }
 
-.linea-am:where(.dark *, [data-theme="dark"] *):not(:where([data-theme="light"], [data-theme="light"] *)) {
+.linea-am:where(.dark *, [data-theme="dark"] *):not(:where(:is(.dark, [data-theme="dark"]) [data-theme="light"], :is(.dark, [data-theme="dark"]) [data-theme="light"] *):not(:where(:is(.dark, [data-theme="dark"]) [data-theme="light"] :is(.dark, [data-theme="dark"]), :is(.dark, [data-theme="dark"]) [data-theme="light"] :is(.dark, [data-theme="dark"]) *))) {
   background: #26262b;
   box-shadow:
     0 0 0 1px #3b3b42,
@@ -106,15 +106,15 @@ tr[data-am-open] > td {
   color: var(--ink);
 }
 
-.linea-am:where(.dark *, [data-theme="dark"] *):not(:where([data-theme="light"], [data-theme="light"] *)) .linea-am-i:is(:hover, :focus-visible) {
+.linea-am:where(.dark *, [data-theme="dark"] *):not(:where(:is(.dark, [data-theme="dark"]) [data-theme="light"], :is(.dark, [data-theme="dark"]) [data-theme="light"] *):not(:where(:is(.dark, [data-theme="dark"]) [data-theme="light"] :is(.dark, [data-theme="dark"]), :is(.dark, [data-theme="dark"]) [data-theme="light"] :is(.dark, [data-theme="dark"]) *))) .linea-am-i:is(:hover, :focus-visible) {
   background: #313137;
 }
 
-.linea-am:where(.dark *, [data-theme="dark"] *):not(:where([data-theme="light"], [data-theme="light"] *)) .linea-am-h {
+.linea-am:where(.dark *, [data-theme="dark"] *):not(:where(:is(.dark, [data-theme="dark"]) [data-theme="light"], :is(.dark, [data-theme="dark"]) [data-theme="light"] *):not(:where(:is(.dark, [data-theme="dark"]) [data-theme="light"] :is(.dark, [data-theme="dark"]), :is(.dark, [data-theme="dark"]) [data-theme="light"] :is(.dark, [data-theme="dark"]) *))) .linea-am-h {
   border-color: #34343a;
 }
 
-.linea-am:where(.dark *, [data-theme="dark"] *):not(:where([data-theme="light"], [data-theme="light"] *)) .linea-am-i[data-disabled]:is(:hover, :focus-visible) > [class*="huge-"] {
+.linea-am:where(.dark *, [data-theme="dark"] *):not(:where(:is(.dark, [data-theme="dark"]) [data-theme="light"], :is(.dark, [data-theme="dark"]) [data-theme="light"] *):not(:where(:is(.dark, [data-theme="dark"]) [data-theme="light"] :is(.dark, [data-theme="dark"]), :is(.dark, [data-theme="dark"]) [data-theme="light"] :is(.dark, [data-theme="dark"]) *))) .linea-am-i[data-disabled]:is(:hover, :focus-visible) > [class*="huge-"] {
   color: var(--muted);
 }
 

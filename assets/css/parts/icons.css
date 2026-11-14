@@ -63,7 +63,7 @@
   right: 0;
   margin-top: -9px;
 }
-.ql-snow.ql-toolbar:where(.dark *, [data-theme="dark"] *):not(:where([data-theme="light"] *)) [class*="huge-"] {
+.ql-snow.ql-toolbar:where(.dark *, [data-theme="dark"] *):not(:where(:is(.dark, [data-theme="dark"]) [data-theme="light"] *):not(:where(:is(.dark, [data-theme="dark"]) [data-theme="light"] :is(.dark, [data-theme="dark"]), :is(.dark, [data-theme="dark"]) [data-theme="light"] :is(.dark, [data-theme="dark"]) *))) [class*="huge-"] {
   color: var(--color-navy-200);
 }
 .ql-snow.ql-toolbar :is(button:hover, button:focus, button.ql-active, .ql-picker-label:hover, .ql-picker-label.ql-active, .ql-picker-item:hover, .ql-picker-item.ql-selected) [class*="huge-"] {
