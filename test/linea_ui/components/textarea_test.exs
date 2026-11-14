@@ -197,4 +197,10 @@ defmodule LineaUI.Components.TextareaTest do
       assert [_] = find(html, ".linea-tokens > [data-token-mirror] code") |> Enum.to_list()
     end
   end
+
+  test "label_hint puts a dimmed note at the right of the caption" do
+    html = render(~H'<.textarea name="n" label="Notas" label_hint="opcional" />')
+    assert "justify-between" in classes(html, "label > span")
+    assert LazyHTML.text(find(html, "label > span > span")) =~ "opcional"
+  end
 end

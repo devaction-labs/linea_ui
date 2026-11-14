@@ -39,6 +39,7 @@ defmodule LineaUI.Components.Select do
 
   use LineaUI.Component
 
+  alias LineaUI.Components.Form
   alias LineaUI.Components.Pickers
   alias LineaUI.Components.Select.Options
 
@@ -133,6 +134,11 @@ defmodule LineaUI.Components.Select do
     doc: "A form field: fills `id`, `name`, `value` and `errors`."
 
   attr :label, :string, default: nil
+
+  attr :label_hint, :string,
+    default: nil,
+    doc: "Native only: a dimmed note at the right of the caption, as the canvas's \"opcional\"."
+
   attr :help, :string, default: nil
   attr :errors, :list, default: []
   attr :options, :list, default: [], doc: "Options and groups, see the module doc."
@@ -242,6 +248,15 @@ defmodule LineaUI.Components.Select do
 
   slot :item, doc: "How a chosen option shows in the control; gets the option map."
 
+  slot :label_aside,
+    doc: "Native only: content at the right of the caption (a link, a status word)."
+
+  slot :below, doc: "Native only: content between the control and the help line."
+
+  slot :suffix,
+    doc:
+      "Native only: a chip inside the control, at the right and before the arrow. It lets clicks through; add right padding with `class` when the text is long."
+
   def select(%{native: true} = assigns) do
     assigns
     |> assign_field()
@@ -294,25 +309,141 @@ defmodule LineaUI.Components.Select do
         end
       )
 
+    render_native_field(assigns)
+  end
+
+  defp render_native_field(%{label_hint: nil, label_aside: [], below: []} = assigns) do
     ~H"""
     <Pickers.field label={@label} help={@help} errors={@errors}>
-      <select
+      <.native_control
         id={@id}
         name={@name}
         multiple={@multiple}
         disabled={@disabled}
-        class={@classes}
-        aria-invalid={@errors != [] && "true"}
-        {@rest}
-      >
-        <option :if={@prompt} value="">{@prompt}</option>
-        <.native_entry
-          :for={{entry, selected} <- with_selected(@entries, @selected)}
-          entry={entry}
-          selected={selected}
-        />
-      </select>
+        classes={@classes}
+        errors={@errors}
+        attrs={@rest}
+        prompt={@prompt}
+        entries={@entries}
+        selected={@selected}
+        suffix={@suffix}
+      />
     </Pickers.field>
+    """
+  end
+
+  defp render_native_field(assigns) do
+    ~H"""
+    <Form.field
+      id={@id}
+      label={@label}
+      label_hint={@label_hint}
+      help={@help}
+      errors={@errors}
+    >
+      <:label_aside :if={@label_aside != []}>{render_slot(@label_aside)}</:label_aside>
+      <:below :if={@below != []}>{render_slot(@below)}</:below>
+      <.native_control
+        id={@id}
+        name={@name}
+        multiple={@multiple}
+        disabled={@disabled}
+        classes={@classes}
+        errors={@errors}
+        attrs={@rest}
+        prompt={@prompt}
+        entries={@entries}
+        selected={@selected}
+        suffix={@suffix}
+      />
+    </Form.field>
+    """
+  end
+
+  attr :id, :any, required: true
+  attr :name, :any, required: true
+  attr :multiple, :boolean, required: true
+  attr :disabled, :boolean, required: true
+  attr :classes, :any, required: true
+  attr :errors, :list, required: true
+  attr :attrs, :map, default: %{}
+  attr :prompt, :string, default: nil
+  attr :entries, :list, required: true
+  attr :selected, :list, required: true
+  attr :suffix, :list, default: []
+
+  defp native_control(%{suffix: []} = assigns) do
+    ~H"""
+    <.native_select
+      id={@id}
+      name={@name}
+      multiple={@multiple}
+      disabled={@disabled}
+      classes={@classes}
+      errors={@errors}
+      attrs={@attrs}
+      prompt={@prompt}
+      entries={@entries}
+      selected={@selected}
+    />
+    """
+  end
+
+  defp native_control(assigns) do
+    ~H"""
+    <span class="relative flex w-full">
+      <.native_select
+        id={@id}
+        name={@name}
+        multiple={@multiple}
+        disabled={@disabled}
+        classes={@classes}
+        errors={@errors}
+        attrs={@attrs}
+        prompt={@prompt}
+        entries={@entries}
+        selected={@selected}
+      />
+      <span
+        :for={suffix <- @suffix}
+        class="pointer-events-none absolute inset-y-0 right-9 flex items-center"
+        data-suffix
+      >
+        {render_slot(suffix)}
+      </span>
+    </span>
+    """
+  end
+
+  attr :id, :any, required: true
+  attr :name, :any, required: true
+  attr :multiple, :boolean, required: true
+  attr :disabled, :boolean, required: true
+  attr :classes, :any, required: true
+  attr :errors, :list, required: true
+  attr :attrs, :map, default: %{}
+  attr :prompt, :string, default: nil
+  attr :entries, :list, required: true
+  attr :selected, :list, required: true
+
+  defp native_select(assigns) do
+    ~H"""
+    <select
+      id={@id}
+      name={@name}
+      multiple={@multiple}
+      disabled={@disabled}
+      class={@classes}
+      aria-invalid={@errors != [] && "true"}
+      {@attrs}
+    >
+      <option :if={@prompt} value="">{@prompt}</option>
+      <.native_entry
+        :for={{entry, selected} <- with_selected(@entries, @selected)}
+        entry={entry}
+        selected={selected}
+      />
+    </select>
     """
   end
 
