@@ -69,10 +69,39 @@ defmodule LineaUI.Components.CardTable do
   Below 520px (the last of `breakpoints`) the table is one card with a compact two-line grid per row, a hairline
   between rows, and the `role` of a column says where it goes: `head` (first line, left; drawn in mono), `status`
   (first line, right), `title` (second line, left, up to two lines: a name and a sub line) and `value` (second
-  line, right). The checkbox, if any, sits at the left of both lines. A column with no `role`, `meta` and the
-  action column are not drawn in the card (the board has no third line). The header row and the panel are not
+  line, right). The checkbox, if any, sits at the left of both lines. A column with no `role` and `meta`
+  are not drawn in the card (the board has no third line) unless it asks to stay (`card`, see below). The action
+  column stays: it is drawn at the right of both lines, spanning them, so a row can still be edited or deleted on a
+  phone (`<:action card={false}>` hides it). The header row and the panel are not
   drawn; "select all" is kept for screen readers and the keyboard only (a visually hidden checkbox that shows when
   it has focus).
+
+  ## Staying in the card
+
+  `card` on a column keeps it in the card when it has no role (or has `meta`): it is drawn in a line of its own under
+  the two lines, so a copyable address does not vanish. `<:action card={false}>` removes the action column from the card.
+
+      <:col :let={a} label="Address" role="meta" card copy={& &1.address}>{a.address}</:col>
+
+  ## Expanded and edited rows
+
+  `<:expand :let={row}>` is a full-width line under a row (lots of an item, the items of a contract), drawn inside the
+  row's `<li>` under the cells. `row_expanded` is a function of the row that says which rows show it (default: all,
+  when the slot is given). A click inside it also toggles the details panel of the row, so a table that uses
+  `expand` usually has no hidden columns (no `priority`) and no `detail`.
+
+  `row_editing` is a function of the row; when it returns true the row carries `data-editing="true"` and the `<:edit :let={row}>`
+  slot (an inline form) takes the place of its cells, across the full width. The checkbox stays; the action cell and the
+  panel are not drawn.
+
+      <.card_table id="tasks" rows={@tasks} row_editing={&(&1.id == @editing)} row_expanded={&(&1.id in @open)}>
+        <:col :let={t} label="Task" role="title">{t.name}</:col>
+        <:edit :let={t}><.form for={@form} phx-submit="save">...</.form></:edit>
+        <:expand :let={t}>{t.notes}</:expand>
+      </.card_table>
+
+  `row_action` is a function of the row; a row for which it returns false has no action cell at all (the track stays
+  empty, the layout does not move).
 
   ## The details panel
 
@@ -126,11 +155,20 @@ defmodule LineaUI.Components.CardTable do
         <.ctable_sub priority={1}>saldo {o.balance} · {o.pending} pend.</.ctable_sub>
       </:col>
 
+  `when_hidden="p2"` is the inverse: the sub line shows only once the columns of priority 2 have left, so the data is not
+  shown twice on a wide screen (`p1` to `p4`). A `ctable_sub` inside a `role="head"` column is not drawn in mono in the card.
+
+      <:col :let={o} label="Cliente" role="title">
+        {o.client}
+        <.ctable_sub when_hidden="p2">{o.issuer}</.ctable_sub>
+      </:col>
+      <:col :let={o} label="Emissor" priority={2}>{o.issuer}</:col>
+
   ## Columns
 
   `width` is the CSS track of the column (`max-content` by default; `minmax(120px,1.3fr)` to let it take what is
   left). `align` is `start` (default) or `end` (numbers). Text is cut with an ellipsis; `truncate={false}` lets
-  it wrap. `sort_key` with the table's `on_sort` makes the header a button, as in `table/1`.
+  it wrap (in the card too: a `role="title"` is not cut at two lines then; with the default, even a `sg-cellx` of avatar and text ends in an ellipsis). `sort_key` with the table's `on_sort` makes the header a button, as in `table/1`.
 
   ## Rows
 
@@ -139,13 +177,22 @@ defmodule LineaUI.Components.CardTable do
   adds a checkbox column (the events and keys work as in `table/1`: `selected`, `row_key`, `on_select_all`).
   `row_attrs` gives extra attributes of a row (`phx-click`, `data-*`).
 
+  `<:foot>` and `<:empty>` receive a map (`:let={ctx}`) with `id`, `rows`, `selected` and `title` of the table, so
+  they can show a total or a message that depends on it: `<:foot :let={ctx}>{length(ctx.rows)} rows</:foot>` (the rows of
+  a stream are not enumerable; use your own assign there). Without `:let` the argument is ignored.
+
+  `bordered={false}` draws the table with no border, shadow or background of its own, to nest it in a card that has
+  other blocks (a chart and a table) without a double border.
+
   ## Flat
 
   `variant="flat"` is the canvas card table: a plain table in a card (`sg-card flush` and `sg-table`), for
   short lists on a dashboard ("Últimos pedidos", "Maiores clientes"). The `title` and `<:actions>` (a "Ver
   todos" link, drawn quiet) head the card; `<:top>` takes the place of the heading (tabs that filter the
-  table). Columns keep `label`, `align` and `class`; the priorities, the panel, the selection and the cards
-  below 520px belong to the default variant. `description` goes under the title and `<:foot>` under the table
+  table). Columns keep `label`, `align` and `class`, and also take `priority`, `role` and `card`: a column leaves
+  at the default widths (1180, 960 and 720px, `breakpoints` is not read), and under 520px, when some column has a `role`,
+  each row becomes a card as in the default variant (`meta` too, and the action cell stays). The panel, the selection,
+  `expand` and `edit` belong to the default variant. `description` goes under the title and `<:foot>` under the table
   (a "Total" line), as in the default variant.
 
       <.card_table id="last" variant="flat" title="Últimos pedidos" rows={@orders}>
@@ -220,6 +267,26 @@ defmodule LineaUI.Components.CardTable do
     doc:
       "A small muted text on the same line as the `title`, right after it (\"128 no período\"). Default variant only."
 
+  attr :bordered, :boolean,
+    default: true,
+    doc:
+      "`false` draws the table with no border, shadow or background of its own, to nest it in a card that has other blocks."
+
+  attr :row_expanded, :any,
+    default: nil,
+    doc:
+      "A function of the row that says whether its `<:expand>` slot shows. Default: every row. Default variant only."
+
+  attr :row_editing, :any,
+    default: nil,
+    doc:
+      "A function of the row; true shows the `<:edit>` slot in place of the cells and sets `data-editing`. Default variant only."
+
+  attr :row_action, :any,
+    default: nil,
+    doc:
+      "A function of the row; false leaves the action cell of that row out. Default: every row has it."
+
   attr :breakpoints, :list,
     default: [1180, 960, 720, 520],
     doc:
@@ -238,7 +305,15 @@ defmodule LineaUI.Components.CardTable do
 
   slot :foot,
     doc:
-      "A line inside the card, under the rows, set off by a hairline (pagination, a total). Wraps, with its parts spread to both ends."
+      "A line inside the card, under the rows, set off by a hairline (pagination, a total). Wraps, with its parts spread to both ends. Receives a map with `id`, `rows`, `selected` and `title`."
+
+  slot :expand,
+    doc:
+      "A full-width line under a row (see `row_expanded`); receives the row. Default variant only."
+
+  slot :edit,
+    doc:
+      "An inline form in place of the cells of a row for which `row_editing` is true; receives the row. Default variant only."
 
   slot :top, doc: "With `variant=\"flat\"`, what heads the card instead of the title (tabs)."
 
@@ -272,6 +347,10 @@ defmodule LineaUI.Components.CardTable do
       doc:
         "`card` (default): the column's own content shows only in the card layout. `inline`: it shows before the button at every width (`ORD-2041 [copy]`)."
 
+    attr :card, :boolean,
+      doc:
+        "Keeps the column in the card layout (a line under the two lines) when it has no role or is `meta`."
+
     attr :copy_tip, :string,
       values: ~w(value value_label),
       doc:
@@ -287,24 +366,42 @@ defmodule LineaUI.Components.CardTable do
   slot :action, doc: "The last cell of every row (a menu button); receives the row." do
     attr :priority, :integer,
       doc: "Like a column's: the action column leaves at that level (e.g. 3). Default 0."
+
+    attr :card, :boolean,
+      doc: "`false` hides the action column in the card layout. Default: shown."
   end
 
-  slot :empty, doc: "Shown when there are no rows."
+  slot :empty,
+    doc: "Shown when there are no rows. Receives a map with `id`, `rows`, `selected` and `title`."
 
   def card_table(%{variant: "flat"} = assigns) do
-    assigns = assign_row_id(assigns)
+    assigns =
+      assigns
+      |> assign_row_id()
+      |> assign_derived(:slot_ctx, [:id, :rows, :selected, :title], fn -> slot_ctx(assigns) end)
+      |> assign_derived(:resp, [:col, :action], fn -> flat_resp(assigns) end)
+      |> assign_derived(:cards, [:col], fn -> Enum.any?(assigns.col, &(&1[:role] != nil)) end)
 
     ~H"""
-    <div class={merge(["sg-card flush linea-ctable-flat", @class])} id={@id <> "-box"}>
+    <div
+      class={merge(["sg-card flush linea-ctable-flat", !@bordered && "is-plain", @class])}
+      id={@id <> "-box"}
+      data-resp={@resp && ""}
+      data-cards={@cards && @resp && ""}
+    >
       <div :if={@top != []} class="linea-ctable-flat-top">{render_slot(@top)}</div>
       <div
         :if={@top == [] and (@title || @actions != [])}
         class="sg-card-h linea-ctable-flat-h"
       >
-        <h3 :if={@title && !@description}>{@title}</h3>
-        <div :if={@title && @description} class="linea-ctable-flat-text">
-          <h3>{@title}</h3>
-          <p>{@description}</p>
+        <h3 :if={@title && !@description && !@meta}>{@title}</h3>
+        <div :if={@title && (@description || @meta)} class="linea-ctable-flat-text">
+          <div :if={@meta} class="linea-ctable-title-row">
+            <h3>{@title}</h3>
+            <span class="linea-ctable-meta">{@meta}</span>
+          </div>
+          <h3 :if={!@meta}>{@title}</h3>
+          <p :if={@description}>{@description}</p>
         </div>
         <div :if={@actions != []} class="meta ml-auto flex items-center gap-2">
           {render_slot(@actions)}
@@ -313,8 +410,12 @@ defmodule LineaUI.Components.CardTable do
       <table class="sg-table">
         <thead>
           <tr>
-            <th :for={col <- @col} class={col[:align] == "end" && "r"}>{col[:label]}</th>
-            <th :if={@action != []}><span class="sr-only">{@panel_label}</span></th>
+            <th :for={col <- @col} class={col[:align] == "end" && "r"} data-p={flat_p(col)}>
+              {col[:label]}
+            </th>
+            <th :if={@action != []} data-p={flat_p(List.first(@action))}>
+              <span class="sr-only">{@panel_label}</span>
+            </th>
           </tr>
         </thead>
         <tbody id={@id} phx-update={match?(%LiveStream{}, @rows) && "stream"} {@rest}>
@@ -323,17 +424,37 @@ defmodule LineaUI.Components.CardTable do
             id={@row_id && @row_id.(row)}
             {row_attrs(@row_attrs, @row_item, row)}
           >
-            <td :for={col <- @col} class={merge([col[:align] == "end" && "r", col[:class]])}>
+            <td
+              :for={col <- @col}
+              class={merge([col[:align] == "end" && "r", col[:class]])}
+              data-p={flat_p(col)}
+              data-role={col[:role]}
+              data-card={col[:card] && "true"}
+            >
               {render_slot(col, @row_item.(row))}
             </td>
-            <td :if={@action != []} class="r">{render_slot(@action, @row_item.(row))}</td>
+            <td
+              :if={@action != []}
+              class="r"
+              data-act
+              data-p={flat_p(List.first(@action))}
+              data-card={action_card(@action)}
+            >
+              {show_action?(@row_action, @row_item, row) && render_slot(@action, @row_item.(row))}
+            </td>
           </tr>
-          <tr :if={@empty != [] and @rows == []} id={@id <> "-empty"}>
-            <td colspan={length(@col) + if(@action != [], do: 1, else: 0)}>{render_slot(@empty)}</td>
+          <tr
+            :if={@empty != [] and @rows == []}
+            id={@id <> "-empty"}
+            class="linea-ctable-flat-empty"
+          >
+            <td colspan={length(@col) + if(@action != [], do: 1, else: 0)}>
+              {render_slot(@empty, @slot_ctx)}
+            </td>
           </tr>
         </tbody>
       </table>
-      <div :if={@foot != []} class="linea-ctable-foot">{render_slot(@foot)}</div>
+      <div :if={@foot != []} class="linea-ctable-foot">{render_slot(@foot, @slot_ctx)}</div>
     </div>
     """
   end
@@ -346,6 +467,7 @@ defmodule LineaUI.Components.CardTable do
       |> assign_derived(:hidable, [:col], fn -> Enum.any?(assigns.col, &(priority(&1) > 0)) end)
       |> assign_derived(:tracks, [:on_select, :action, :col], fn -> tracks(assigns) end)
       |> assign_derived(:checkbox, [], fn -> @checkbox end)
+      |> assign_derived(:slot_ctx, [:id, :rows, :selected, :title], fn -> slot_ctx(assigns) end)
       |> assign_derived(:bp_css, [:breakpoints, :id], fn ->
         breakpoints_css(assigns.id, assigns.breakpoints)
       end)
@@ -361,7 +483,7 @@ defmodule LineaUI.Components.CardTable do
     ~H"""
     <div
       id={@id <> "-box"}
-      class={merge(["linea-ctable", @class])}
+      class={merge(["linea-ctable", !@bordered && "is-plain", @class])}
       style={@tracks}
     >
       <style :if={@bp_css}>
@@ -462,6 +584,11 @@ defmodule LineaUI.Components.CardTable do
               col={@col}
               action={@action}
               panel_label={@panel_label}
+              expand={@expand}
+              edit={@edit}
+              row_expanded={@row_expanded}
+              row_editing={@row_editing}
+              row_action={@row_action}
             />
           <% else %>
             <.card_row
@@ -486,6 +613,11 @@ defmodule LineaUI.Components.CardTable do
               col={@col}
               action={@action}
               panel_label={@panel_label}
+              expand={@expand}
+              edit={@edit}
+              row_expanded={@row_expanded}
+              row_editing={@row_editing}
+              row_action={@row_action}
             />
           <% end %>
           <li
@@ -493,11 +625,11 @@ defmodule LineaUI.Components.CardTable do
             id={@id <> "-empty"}
             class={["linea-ctable-empty", stream?(@rows) && "hidden only:block"]}
           >
-            {render_slot(@empty)}
+            {render_slot(@empty, @slot_ctx)}
           </li>
         </ul>
       </div>
-      <div :if={@foot != []} class="linea-ctable-foot">{render_slot(@foot)}</div>
+      <div :if={@foot != []} class="linea-ctable-foot">{render_slot(@foot, @slot_ctx)}</div>
     </div>
     """
   end
@@ -506,6 +638,12 @@ defmodule LineaUI.Components.CardTable do
     default: nil,
     doc: "1 to 4: the sub line leaves at the width where the columns of that priority leave."
 
+  attr :when_hidden, :string,
+    default: nil,
+    values: [nil | ~w(p1 p2 p3 p4)],
+    doc:
+      "The inverse of `priority`: the sub line shows only once the columns of that priority have left (`p2`: under 960px by default)."
+
   attr :class, :any, default: nil
   attr :rest, :global
   slot :inner_block, required: true
@@ -513,7 +651,12 @@ defmodule LineaUI.Components.CardTable do
   @doc "A second line inside a `card_table` cell that leaves by `priority`. See the moduledoc."
   def ctable_sub(assigns) do
     ~H"""
-    <span class={merge(["linea-ctable-sub", @class])} data-p={@priority} {@rest}>
+    <span
+      class={merge(["linea-ctable-sub", @class])}
+      data-p={@priority}
+      data-w={when_level(@when_hidden)}
+      {@rest}
+    >
       {render_slot(@inner_block)}
     </span>
     """
@@ -533,6 +676,7 @@ defmodule LineaUI.Components.CardTable do
       }
       data-status={status_of(@status, @row_item, @row)}
       data-selected={@selectable && bool(@selected)}
+      data-editing={editing?(@row_editing, @row_item, @row) && "true"}
       {row_attrs(@row_attrs, @row_item, @row)}
     >
       <span :if={@selectable} class="linea-ctable-sel">
@@ -549,9 +693,11 @@ defmodule LineaUI.Components.CardTable do
       </span>
       <div
         :for={col <- @col}
+        :if={!editing?(@row_editing, @row_item, @row)}
         class={cell_class(col, "linea-ctable-cell")}
         data-p={priority(col)}
         data-role={col[:role]}
+        data-card={col[:card] && "true"}
       >
         <%= if col[:copy] do %>
           <span class="linea-ctable-nn" data-show={col[:copy_show] == "inline" && "inline"}>{render_slot(
@@ -591,11 +737,34 @@ defmodule LineaUI.Components.CardTable do
           {render_slot(col, @row_item.(@row))}
         <% end %>
       </div>
-      <div :if={@action != []} class="linea-ctable-act" data-p={action_priority(@action)}>
+      <div
+        :if={
+          @action != [] and !editing?(@row_editing, @row_item, @row) and
+            show_action?(@row_action, @row_item, @row)
+        }
+        class="linea-ctable-act"
+        data-p={action_priority(@action)}
+        data-card={action_card(@action)}
+      >
         {render_slot(@action, @row_item.(@row))}
       </div>
+      <div
+        :if={@edit != [] and editing?(@row_editing, @row_item, @row)}
+        class="linea-ctable-edit"
+      >
+        {render_slot(@edit, @row_item.(@row))}
+      </div>
+      <div
+        :if={
+          @expand != [] and !editing?(@row_editing, @row_item, @row) and
+            expanded?(@row_expanded, @row_item, @row)
+        }
+        class="linea-ctable-expand"
+      >
+        {render_slot(@expand, @row_item.(@row))}
+      </div>
       <dl
-        :if={@hidable or @detail != []}
+        :if={(@hidable or @detail != []) and !editing?(@row_editing, @row_item, @row)}
         class="linea-ctable-pop"
         data-detail={@detail != [] && ""}
         aria-label={@panel_label}
@@ -614,6 +783,31 @@ defmodule LineaUI.Components.CardTable do
   end
 
   defp priority(col), do: col[:priority] || 0
+
+  defp flat_p(col), do: priority(col) > 0 && priority(col)
+
+  defp flat_resp(assigns) do
+    Enum.any?(assigns.col, &(priority(&1) > 0 or &1[:role] != nil)) or
+      (assigns.action != [] and action_priority(assigns.action) > 0)
+  end
+
+  defp slot_ctx(assigns),
+    do: %{id: assigns.id, rows: assigns.rows, selected: assigns.selected, title: assigns.title}
+
+  defp when_level("p" <> level), do: level
+  defp when_level(_none), do: nil
+
+  defp action_card([%{card: false} | _]), do: "false"
+  defp action_card(_action), do: nil
+
+  defp editing?(nil, _row_item, _row), do: false
+  defp editing?(fun, row_item, row), do: fun.(row_item.(row)) == true
+
+  defp expanded?(nil, _row_item, _row), do: true
+  defp expanded?(fun, row_item, row), do: fun.(row_item.(row)) == true
+
+  defp show_action?(nil, _row_item, _row), do: true
+  defp show_action?(fun, row_item, row), do: fun.(row_item.(row)) != false
 
   defp action_priority([action | _]), do: priority(action)
 
@@ -694,6 +888,7 @@ defmodule LineaUI.Components.CardTable do
         @container #{name} (max-width: #{width - 0.02}px) {
         & .linea-ctable-grid { grid-template-columns: var(--ct-c#{k}); }
         & [data-p="#{k}"].linea-ctable-cell, & [data-p="#{k}"].linea-ctable-h, & [data-p="#{k}"].linea-ctable-act, & .linea-ctable-cell [data-p="#{k}"].linea-ctable-sub { display: none; }
+        & .linea-ctable-cell .linea-ctable-sub[data-w="#{k}"] { display: block; }
         & .linea-ctable-pop:has(> [data-p="#{k}"]) { display: flex; }
         & .linea-ctable-pop > [data-p="#{k}"] { display: flex; }
         & .linea-ctable-row:has(> .linea-ctable-pop > [data-p="#{k}"]) { cursor: pointer; }
@@ -708,18 +903,29 @@ defmodule LineaUI.Components.CardTable do
     & .linea-ctable-head { display: none; }
     & .linea-ctable-top { border-bottom: 1px solid var(--line); }
     & .linea-ctable-top-text { flex-basis: 100%; }
-    & .linea-ctable-top-act { flex: 1 1 100%; justify-content: stretch; }
+    & .linea-ctable-top-act { flex: 1 1 100%; justify-content: flex-end; }
     & .linea-ctable-top-act > :not(.sg-btn):not(a) { flex: 1 1 100%; width: auto !important; max-width: 100%; }
-    & .linea-ctable-top-act > .sg-btn { flex: 1 1 auto !important; }
-    & .linea-ctable-grid { grid-template-columns: auto minmax(0, 1fr) max-content; column-gap: 0; }
-    & .linea-ctable-row { grid-template-areas: "sel head status" "sel title value"; row-gap: 4px; min-height: 0; padding: 12px 14px 12px 16px; }
+    & .linea-ctable-top-act > .sg-btn { flex: 0 0 auto !important; width: auto !important; }
+    & .linea-ctable-grid { grid-template-columns: auto minmax(0, 1fr) max-content max-content; column-gap: 0; }
+    & .linea-ctable-row { grid-template-areas: "sel head status act" "sel title value act"; row-gap: 4px; min-height: 0; padding: 12px 14px 12px 16px; }
     & .linea-ctable-row > .linea-ctable-cell { display: none; }
-    & .linea-ctable-row > .linea-ctable-act { display: none; }
+    & .linea-ctable-row > .linea-ctable-act { display: flex; grid-area: act; align-self: center; margin-left: 8px; }
+    & .linea-ctable-row > .linea-ctable-act[data-card="false"] { display: none; }
+    & .linea-ctable-row[data-editing] { grid-template-areas: none; }
+    & .linea-ctable-row[data-editing] > .linea-ctable-sel { grid-area: auto; }
+    & .linea-ctable-row > .linea-ctable-cell[data-card="true"] { display: block; grid-column: 2 / 4; }
+    & .linea-ctable-row > .linea-ctable-cell[data-role="head"] .linea-ctable-sub { font: 400 12px/1.35 var(--sans); color: var(--faint); }
     & .linea-ctable-row > .linea-ctable-sel { grid-area: sel; align-self: start; margin: 2px 10px 0 0; }
     & .linea-ctable-row > .linea-ctable-cell[data-role="head"] { display: block; grid-area: head; font: 500 12.5px var(--mono); color: var(--ink); }
     & .linea-ctable-row > .linea-ctable-cell[data-role="status"] { display: block; grid-area: status; justify-self: end; padding-left: 10px; }
     & .linea-ctable-row > .linea-ctable-cell[data-role="value"] { display: block; grid-area: value; justify-self: end; align-self: end; padding-left: 10px; }
     & .linea-ctable-row > .linea-ctable-cell[data-role="title"] { display: -webkit-box; grid-area: title; white-space: normal; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+    & .linea-ctable-row > .linea-ctable-cell[data-role="title"]:has(> .sg-cellx) { display: block; white-space: nowrap; }
+    & .linea-ctable-row > .linea-ctable-cell[data-role="title"] > .sg-cellx { min-width: 0; }
+    & .linea-ctable-row > .linea-ctable-cell[data-role="title"] .sg-cellx > * { min-width: 0; }
+    & .linea-ctable-row > .linea-ctable-cell[data-role="title"] .sg-cellx > :last-child, & .linea-ctable-row > .linea-ctable-cell[data-role="title"] .sg-cellx > :last-child > * { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    & .linea-ctable-row > .linea-ctable-cell[data-role="title"].is-wrap { display: block; overflow: visible; text-overflow: clip; white-space: normal; -webkit-line-clamp: unset; }
+    & .linea-ctable-row > .linea-ctable-cell[data-role="title"].is-wrap .sg-cellx > :last-child, & .linea-ctable-row > .linea-ctable-cell[data-role="title"].is-wrap .sg-cellx > :last-child > * { overflow: visible; text-overflow: clip; white-space: normal; }
     & .linea-ctable-pop { display: none !important; }
     & .linea-ctable-row { cursor: auto !important; }
     & .linea-ctable-nn { display: inline; }

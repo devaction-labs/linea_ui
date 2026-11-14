@@ -488,4 +488,236 @@ defmodule LineaUI.Components.CardTableTest do
       assert style =~ "--ct-c3:max-content;"
     end
   end
+
+  describe "gaps of real apps" do
+    defp attrs(html, sel, name), do: html |> find(sel) |> LazyHTML.attribute(name)
+
+    test "the action and a card column are marked for the card layout" do
+      assigns = %{rows: @rows}
+
+      html =
+        rendered_to_string(~H"""
+        <.card_table id="a" rows={@rows} row_id={&"r#{&1.id}"}>
+          <:col :let={o} label="N" role="head">{o.number}</:col>
+          <:col :let={o} label="Addr" role="meta" card>{o.issuer}</:col>
+          <:col :let={o} label="Other">{o.client}</:col>
+          <:action :let={o} card={false}><button>{o.id}</button></:action>
+        </.card_table>
+        """)
+
+      assert attrs(html, "#r1 > .linea-ctable-cell", "data-card") == ["true"]
+      assert attrs(html, "#r1 > .linea-ctable-act", "data-card") == ["false"]
+
+      plain = orders()
+      assert attrs(plain, "#order-1 > .linea-ctable-act", "data-card") == []
+    end
+
+    test "expand renders a full-width line, per row when row_expanded says so" do
+      assigns = %{rows: @rows}
+
+      html =
+        rendered_to_string(~H"""
+        <.card_table id="a" rows={@rows} row_id={&"r#{&1.id}"} row_expanded={&(&1.id == 1)}>
+          <:col :let={o} label="N">{o.number}</:col>
+          <:expand :let={o}>Lots of {o.number}</:expand>
+        </.card_table>
+        """)
+
+      assert find(html, "#r1 > .linea-ctable-expand") |> LazyHTML.text() =~ "Lots of PED-1"
+      assert find(html, "#r2 > .linea-ctable-expand") |> Enum.count() == 0
+
+      all =
+        rendered_to_string(~H"""
+        <.card_table id="a" rows={@rows} row_id={&"r#{&1.id}"}>
+          <:col :let={o} label="N">{o.number}</:col>
+          <:expand :let={o}>x{o.id}</:expand>
+        </.card_table>
+        """)
+
+      assert find(all, ".linea-ctable-expand") |> Enum.count() == 2
+    end
+
+    test "an editing row shows the edit slot in place of its cells" do
+      assigns = %{rows: @rows}
+
+      html =
+        rendered_to_string(~H"""
+        <.card_table id="a" rows={@rows} row_id={&"r#{&1.id}"} row_editing={&(&1.id == 2)}>
+          <:col :let={o} label="N" priority={1}>{o.number}</:col>
+          <:edit :let={o}>
+            <form id={"f#{o.id}"}></form>
+          </:edit>
+          <:action :let={o}><button>{o.id}</button></:action>
+        </.card_table>
+        """)
+
+      assert attrs(html, "#r2", "data-editing") == ["true"]
+      assert attrs(html, "#r1", "data-editing") == []
+      assert find(html, "#r2 > .linea-ctable-edit #f2") |> Enum.count() == 1
+      assert find(html, "#r2 > .linea-ctable-cell") |> Enum.count() == 0
+      assert find(html, "#r2 > .linea-ctable-act") |> Enum.count() == 0
+      assert find(html, "#r2 > .linea-ctable-pop") |> Enum.count() == 0
+      assert find(html, "#r1 > .linea-ctable-cell") |> Enum.count() == 1
+      assert find(html, "#r1 > .linea-ctable-edit") |> Enum.count() == 0
+    end
+
+    test "ctable_sub when_hidden maps to the inverse breakpoint attribute" do
+      assigns = %{rows: @rows}
+
+      html =
+        rendered_to_string(~H"""
+        <.card_table id="a" rows={@rows}>
+          <:col :let={o} label="C" role="title">
+            {o.client}
+            <.ctable_sub when_hidden="p2">{o.issuer}</.ctable_sub>
+            <.ctable_sub priority={1}>x</.ctable_sub>
+          </:col>
+          <:col :let={o} label="I" priority={2}>{o.issuer}</:col>
+        </.card_table>
+        """)
+
+      assert attrs(html, "#a-box li:first-child .linea-ctable-sub", "data-w") == ["2"]
+      assert attrs(html, "#a-box li:first-child .linea-ctable-sub", "data-p") == ["1"]
+    end
+
+    test "custom breakpoints ship the inverse sub rule, the action area and the plain button rule" do
+      assigns = %{rows: @rows}
+
+      html =
+        rendered_to_string(~H"""
+        <.card_table id="a" breakpoints={[1000, 800, 500]} rows={@rows}>
+          <:col :let={o} label="N">{o.number}</:col>
+          <:action :let={o}>{o.id}</:action>
+        </.card_table>
+        """)
+
+      assert html =~ ~s(.linea-ctable-sub[data-w="2"] { display: block; })
+      assert html =~ ~s("sel head status act" "sel title value act")
+      assert html =~ ".sg-btn { flex: 0 0 auto !important; width: auto !important; }"
+      assert html =~ ~s(.linea-ctable-cell[data-role="title"].is-wrap { display: block;)
+      assert html =~ ~s(.linea-ctable-cell[data-card="true"] { display: block;)
+    end
+
+    test "a truncate={false} title is marked as wrapping" do
+      assigns = %{rows: @rows}
+
+      html =
+        rendered_to_string(~H"""
+        <.card_table id="a" rows={@rows} row_id={&"r#{&1.id}"}>
+          <:col :let={o} label="C" role="title" truncate={false}>{o.client}</:col>
+        </.card_table>
+        """)
+
+      assert "is-wrap" in classes(html, "#r1 > .linea-ctable-cell")
+    end
+
+    test "row_action leaves the action cell out of the rows it rejects" do
+      assigns = %{rows: @rows}
+
+      html =
+        rendered_to_string(~H"""
+        <.card_table id="a" rows={@rows} row_id={&"r#{&1.id}"} row_action={&(&1.id == 1)}>
+          <:col :let={o} label="N">{o.number}</:col>
+          <:action :let={o}><button>{o.id}</button></:action>
+        </.card_table>
+        """)
+
+      assert find(html, "#r1 > .linea-ctable-act") |> Enum.count() == 1
+      assert find(html, "#r2 > .linea-ctable-act") |> Enum.count() == 0
+      assert find(html, ".linea-ctable-head > .linea-ctable-act") |> Enum.count() == 1
+    end
+
+    test "foot and empty receive the context of the table" do
+      assigns = %{rows: @rows}
+
+      html =
+        rendered_to_string(~H"""
+        <.card_table id="a" title="T" rows={@rows} selected={[1]}>
+          <:col :let={o} label="N">{o.number}</:col>
+          <:foot :let={ctx}>{ctx.id}:{length(ctx.rows)}:{inspect(ctx.selected)}:{ctx.title}</:foot>
+        </.card_table>
+        """)
+
+      assert find(html, ".linea-ctable-foot") |> LazyHTML.text() =~ "a:2:[1]:T"
+
+      assigns = %{rows: []}
+
+      empty =
+        rendered_to_string(~H"""
+        <.card_table id="a" rows={@rows}>
+          <:col :let={o} label="N">{o.number}</:col>
+          <:empty :let={ctx}>none in {ctx.id}</:empty>
+        </.card_table>
+        """)
+
+      assert find(empty, "#a-empty") |> LazyHTML.text() =~ "none in a"
+
+      flat =
+        rendered_to_string(~H"""
+        <.card_table id="f" variant="flat" rows={@rows}>
+          <:col :let={o} label="N">{o.number}</:col>
+          <:empty :let={ctx}>flat {ctx.id}</:empty>
+          <:foot :let={ctx}>foot {ctx.id}</:foot>
+        </.card_table>
+        """)
+
+      assert find(flat, "#f-empty") |> LazyHTML.text() =~ "flat f"
+      assert find(flat, ".linea-ctable-foot") |> LazyHTML.text() =~ "foot f"
+    end
+
+    test "bordered={false} adds the plain class to both variants" do
+      assigns = %{rows: @rows}
+
+      html =
+        rendered_to_string(~H"""
+        <.card_table id="a" rows={@rows} bordered={false}>
+          <:col :let={o} label="N">{o.number}</:col>
+        </.card_table>
+        <.card_table id="f" variant="flat" rows={@rows} bordered={false}>
+          <:col :let={o} label="N">{o.number}</:col>
+        </.card_table>
+        """)
+
+      assert "is-plain" in classes(html, "#a-box")
+      assert "is-plain" in classes(html, "#f-box")
+      refute "is-plain" in classes(orders(), ".linea-ctable")
+    end
+
+    test "flat supports priority, roles, card, action card and meta" do
+      assigns = %{rows: @rows}
+
+      html =
+        rendered_to_string(~H"""
+        <.card_table id="f" variant="flat" title="Fila" meta="2 itens" rows={@rows}>
+          <:col :let={o} label="N" role="head">{o.number}</:col>
+          <:col :let={o} label="I" priority={2}>{o.issuer}</:col>
+          <:col :let={o} label="A" role="meta" card>{o.client}</:col>
+          <:action :let={o} priority={3}><button>{o.id}</button></:action>
+        </.card_table>
+        """)
+
+      assert find(html, "#f-box .linea-ctable-title-row h3") |> LazyHTML.text() == "Fila"
+      assert find(html, "#f-box .linea-ctable-meta") |> LazyHTML.text() == "2 itens"
+      assert attrs(html, "#f-box", "data-resp") == [""]
+      assert attrs(html, "#f-box", "data-cards") == [""]
+      assert attrs(html, "#f-box tbody tr:first-child td", "data-p") == ["2", "3"]
+      assert attrs(html, "#f-box tbody tr:first-child td", "data-role") == ["head", "meta"]
+      assert attrs(html, "#f-box tbody tr:first-child td", "data-card") == ["true"]
+      assert attrs(html, "#f-box th", "data-p") == ["2", "3"]
+    end
+
+    test "flat with no priority or role is not a container" do
+      assigns = %{rows: @rows}
+
+      html =
+        rendered_to_string(~H"""
+        <.card_table id="f" variant="flat" rows={@rows}>
+          <:col :let={o} label="N">{o.number}</:col>
+        </.card_table>
+        """)
+
+      assert attrs(html, "#f-box", "data-resp") == []
+      assert attrs(html, "#f-box", "data-cards") == []
+    end
+  end
 end
