@@ -51,12 +51,12 @@ defmodule LineaUI.Components.Select do
   }
 
   @native_sizes %{
-    {"sm", true} => "mt-1 h-7 px-2.5 text-xs",
+    {"sm", true} => "mt-1 h-8 px-2.5 text-xs",
     {"md", true} => "mt-1.5 h-10 px-3 py-0 text-[14px]",
-    {"lg", true} => "mt-1 h-10 px-4 text-sm",
-    {"sm", false} => "h-7 px-2.5 text-xs",
+    {"lg", true} => "mt-1 h-12 px-4 text-sm",
+    {"sm", false} => "h-8 px-2.5 text-xs",
     {"md", false} => "h-10 px-3 py-0 text-sm",
-    {"lg", false} => "h-10 px-4 text-sm"
+    {"lg", false} => "h-12 px-4 text-sm"
   }
 
   @native_shapes %{"rounded" => "rounded-[11px]", "pill" => "rounded-full px-4"}
@@ -102,6 +102,17 @@ defmodule LineaUI.Components.Select do
 
       <.select field={@form[:state]} options={@states} search="panel" search_placeholder="Find a state" />
       <.select field={@form[:status]} options={@statuses} search="none" placeholder="Any status" />
+
+  A narrow field makes a narrow list. `panel_min_width` gives the list a width of its own, aligned to the
+  field's left edge, and `panel_class` merges classes into it:
+
+      <.select name="customer" options={@customers} class="w-56" search="panel" panel_min_width="26rem" />
+
+  ## Size
+
+  The same `size` is the same height for every control: `sm` 32px, `md` 40px, `lg` 48px, for the native
+  select, the listbox and `multiple` pillbox, the input, the date picker and, with `control`, the button.
+  The tokens are `--ctl-h-sm`, `--ctl-h-md` and `--ctl-h-lg`.
 
   Events: with `on_search` the listbox stops filtering on its own and pushes
   `on_search` with `%{"id" => id, "query" => text}` as the person types (after `debounce`
@@ -223,6 +234,13 @@ defmodule LineaUI.Components.Select do
   attr :search_placeholder, :string,
     default: "Search…",
     doc: "Listbox only: the placeholder of the `panel` search field."
+
+  attr :panel_min_width, :string,
+    default: nil,
+    doc:
+      "Listbox only: a CSS length (`\"24rem\"`), the minimum width of the open list, for a narrow field; it stays aligned to the field's left edge."
+
+  attr :panel_class, :any, default: nil, doc: "Listbox only: classes merged into the open list."
 
   attr :on_search, :string, default: nil
   attr :debounce, :integer, default: 300

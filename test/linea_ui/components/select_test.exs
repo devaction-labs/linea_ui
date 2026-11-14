@@ -21,8 +21,8 @@ defmodule LineaUI.Components.SelectTest do
                "select"
              )
 
-      assert "h-7" in classes(render(~H|<.select native size="sm" options={[]} />|), "select")
-      assert "h-10" in classes(render(~H|<.select native size="lg" options={[]} />|), "select")
+      assert "h-8" in classes(render(~H|<.select native size="sm" options={[]} />|), "select")
+      assert "h-12" in classes(render(~H|<.select native size="lg" options={[]} />|), "select")
 
       assert "rounded-full" in classes(
                render(~H|<.select native shape="pill" options={[]} />|),
@@ -405,6 +405,37 @@ defmodule LineaUI.Components.SelectTest do
       html = render(~H|<.select native name="c" label="Cliente" options={~w(A B)} />|)
       assert find(html, "span[data-suffix]") |> Enum.to_list() == []
       assert [_] = find(html, "label > select[name=c]") |> Enum.to_list()
+    end
+  end
+
+  describe "panel width" do
+    test "panel_min_width and panel_class go on the open list, none by default" do
+      plain = render(~H|<.select name="c" options={~w(A B)} />|)
+      assert find(plain, "#c-dropdown") |> LazyHTML.attribute("style") == []
+      assert classes(plain, "#c-dropdown") == ["ts-dropdown", "single"]
+
+      html =
+        render(~H|<.select
+  name="c"
+  options={~w(A B)}
+  search="panel"
+  panel_min_width="26rem"
+  panel_class="max-w-[90vw]"
+/>|)
+
+      assert find(html, "#c-dropdown") |> LazyHTML.attribute("style") == ["min-width:26rem"]
+      assert "max-w-[90vw]" in classes(html, "#c-dropdown")
+      assert "ts-dropdown" in classes(html, "#c-dropdown")
+    end
+  end
+
+  describe "size" do
+    test "the listbox carries its size for the control height" do
+      html = render(~H|<.select name="c" options={~w(A B)} size="lg" />|)
+      assert find(html, "#c") |> LazyHTML.attribute("data-size") == ["lg"]
+
+      assert find(render(~H|<.select name="c" options={~w(A B)} />|), "#c")
+             |> LazyHTML.attribute("data-size") == []
     end
   end
 end

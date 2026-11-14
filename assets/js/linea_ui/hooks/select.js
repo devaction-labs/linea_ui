@@ -285,7 +285,7 @@ export const Listbox = {
     this.remember(value)
     this.setTerm("")
     const options = {multiple: this.multiple(), max: this.max()}
-    this.change(this.toggles() ? toggleValue(this.values, value, options) : choose(this.values, value, options))
+    this.change(this.toggles() && this.multiple() ? toggleValue(this.values, value, options) : choose(this.values, value, options))
     !this.multiple() && this.close()
     isFull(this.values.length, this.multiple(), this.max()) && this.multiple() && this.close()
   },

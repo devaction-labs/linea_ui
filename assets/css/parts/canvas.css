@@ -135,6 +135,8 @@
 .sg-tag.on{background:var(--accent-soft);color:var(--accent-ink);font-weight:500}
 
 /* ---------- Buttons ---------- */
+/* In a layer, so the Tailwind width, shape and color utilities of an app win over them. */
+@layer components{
 .sg-btn{all:unset;box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;gap:8px;height:36px;padding:0 14px;border-radius:var(--pill);font:500 14px/20px var(--sans);letter-spacing:-.006em;cursor:pointer;white-space:nowrap;color:var(--ink);background:var(--ctl);box-shadow:inset 0 0 0 1px var(--ctl-line),var(--shadow-xs);transition:background-color .12s,box-shadow .12s,color .12s}
 .sg-btn>svg,.sg-btn>.i,.sg-btn>[class*="huge-"]{width:16px;height:16px;flex:none}
 .sg-btn:has(>svg:first-child,>.i:first-child,>[class*="huge-"]:first-child){padding-left:12px}
@@ -164,6 +166,13 @@
 .sg-btn.danger:hover{background:color-mix(in srgb,var(--neg-soft) 100%,var(--neg) 12%);color:color-mix(in srgb,var(--neg) 80%,var(--ink))}
 .sg-btn:focus-visible{box-shadow:0 0 0 2px var(--panel),0 0 0 4px color-mix(in srgb,var(--accent) 55%,transparent)}
 .sg-btn:is(:disabled,[aria-disabled="true"]){opacity:.5;pointer-events:none;cursor:not-allowed}
+/* A button that takes the height of the form controls of its size (`control` on the component): a filter bar row lines up. */
+.sg-btn.ctl{height:var(--ctl-h-md)}
+.sg-btn.ctl.sm{height:var(--ctl-h-sm)}
+.sg-btn.ctl.lg{height:var(--ctl-h-lg)}
+.sg-btn.ctl.xs{height:24px}
+.sg-btn.ctl.xl{height:var(--ctl-h-lg)}
+}
 .sg-ib{all:unset;box-sizing:border-box;width:36px;height:36px;border-radius:var(--pill);display:inline-grid;place-items:center;color:var(--fg);background:var(--ctl);box-shadow:inset 0 0 0 1px var(--ctl-line),var(--shadow-xs);cursor:pointer;position:relative;flex:none;transition:background-color .12s,color .12s}
 .sg-ib>svg,.sg-ib>.i,.sg-ib>[class*="huge-"]{width:16px;height:16px}
 .sg-ib:hover{background:linear-gradient(var(--ctl-hover),var(--ctl-hover)),var(--ctl);color:var(--ink)}
@@ -528,7 +537,9 @@ input.form-switch:checked::before{left:15px;transform:none;translate:none !impor
 .sg-seg button.on .n,.sg-seg button[aria-pressed="true"]>span.font-mono,.sg-seg button.on>span.font-mono{background:var(--sunken);color:var(--ink)}
 .sg-seg.sm button .n,.sg-seg.sm button>span.font-mono{min-width:16px;height:16px;padding:0 4px;font-size:10.5px}
 .sg-sw,input.form-switch,.sg-theme-sw{border-radius:999px}
+@layer components{
 .sg-btn.pill{border-radius:999px}
+}
 /* Pílula de volta, como opção: data-shape="pill" num ancestral (no <html> vale para o app inteiro) troca os
    tokens; os componentes com `shape` aceitam shape="pill" um a um. */
 [data-shape="pill"],[data-shape="pill"] .sg,[data-shape="pill"] .sg[data-theme],.sg[data-theme][data-shape="pill"]{--pill:999px;--pill-in:999px;--pill-xs:999px}
