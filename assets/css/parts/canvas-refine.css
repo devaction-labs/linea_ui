@@ -272,3 +272,13 @@ span.flatpickr-weekday{font-size:12.5px;font-weight:400;color:var(--muted)}
 /* charts: legend at 13px, bar list tracks at 4px */
 .sg-legend{font-size:13px}
 .linea-bar-list-track{border-radius:4px}
+
+/* card table (the canvas sg-ct): a thin-line card, the header in ink on the panel, 48px rows, the chosen row on the gray tint */
+.sg-ct{box-shadow:0 0 0 1px var(--line),var(--shadow-xs)}
+.sg-ct-row{min-height:48px;font-size:14px}
+.sg-ct-row.h{min-height:40px;font-size:13px;font-weight:500;color:var(--ink);background:transparent}
+.sg-ct-row:not(.h):hover{background:color-mix(in srgb,var(--sunken) 60%,transparent)}
+.sg-ct-row.sel{background:var(--tint);box-shadow:none}
+.sg-ct-copy{width:28px;height:28px;border-radius:6px;box-shadow:none}
+.sg-ct-copy:hover{background:var(--tint);color:var(--ink)}
+.sg-ct-foot{font-size:13px}
