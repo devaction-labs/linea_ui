@@ -74,6 +74,17 @@ defmodule LineaUI.Components.Input do
         <:suffix text>4 pessoas</:suffix>
       </.input>
 
+  ## Beside the caption and under the box
+
+  `:label_aside` puts content at the right of the caption (a "Forgot?" link, the word of a strength meter) and
+  `:below` puts it between the box and the help line (the meter's bars). Both need the caption block, so they
+  go with `label` (`below` also works without one).
+
+      <.input field={@form[:password]} type="password" label="Senha" help="Mínimo de 8 caracteres">
+        <:label_aside><.link navigate={~p"/forgot"}>Esqueci</.link></:label_aside>
+        <:below><div class="sg-meter">…</div></:below>
+      </.input>
+
   The mask runs in the `LineaUI.InputMask` hook, so a masked input needs a stable `id` (it gets
   one from `field`; pass one otherwise when the input re-renders).
   """
@@ -216,6 +227,13 @@ defmodule LineaUI.Components.Input do
     include:
       ~w(accept autocomplete autofocus form list max maxlength min minlength multiple pattern placeholder readonly required size step inputmode)
   )
+
+  slot(:label_aside,
+    doc:
+      "Content at the right of the caption (a \"Esqueci\" link, a strength word), on the caption's row."
+  )
+
+  slot(:below, doc: "Content between the input and the help line (strength bars).")
 
   slot :prefix, doc: "An icon inside the input, on the left." do
     attr(:interactive, :boolean,
@@ -362,7 +380,16 @@ defmodule LineaUI.Components.Input do
     """
   end
 
-  defp render_input(%{label: nil, help: nil, errors: [], options: []} = assigns) do
+  defp render_input(
+         %{
+           label: nil,
+           help: nil,
+           errors: [],
+           options: [],
+           label_aside: [],
+           below: []
+         } = assigns
+       ) do
     ~H"""
     <.control
       id={@id}
@@ -393,6 +420,8 @@ defmodule LineaUI.Components.Input do
       state={@state}
       class={@wrapper_class}
     >
+      <:label_aside :if={@label_aside != []}>{render_slot(@label_aside)}</:label_aside>
+      <:below :if={@below != []}>{render_slot(@below)}</:below>
       <.control
         id={@id}
         name={@name}

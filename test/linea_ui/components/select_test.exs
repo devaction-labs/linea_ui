@@ -370,4 +370,41 @@ defmodule LineaUI.Components.SelectTest do
     assert silent |> find("#s") |> LazyHTML.attribute("data-has-more") == []
     assert find(silent, "[data-loading-row]") |> Enum.count() == 0
   end
+
+  describe "native caption and suffix" do
+    test "label_hint, label_aside and below" do
+      html =
+        render(~H"""
+        <.select native name="c" label="Cliente" label_hint="vinculado" options={~w(A B)} help="Ajuda">
+          <:label_aside><a id="aside" href="/x">ver</a></:label_aside>
+          <:below><i id="bars"></i></:below>
+        </.select>
+        """)
+
+      assert "justify-between" in classes(html, "label > span")
+      assert LazyHTML.text(find(html, "label > span > span")) =~ "vinculado"
+      assert [_] = find(html, "a#aside") |> Enum.to_list()
+      assert [_] = find(html, "#bars") |> Enum.to_list()
+      assert [_] = find(html, "select[name=c]") |> Enum.to_list()
+    end
+
+    test "a suffix chip sits inside the control, clicks fall through" do
+      html =
+        render(~H"""
+        <.select native name="c" label="Cliente" options={~w(A B)}>
+          <:suffix><code id="chip">cus_1</code></:suffix>
+        </.select>
+        """)
+
+      assert [_] = find(html, "span.relative > select[name=c]") |> Enum.to_list()
+      assert "pointer-events-none" in classes(html, "span[data-suffix]")
+      assert [_] = find(html, "span[data-suffix] code#chip") |> Enum.to_list()
+    end
+
+    test "without the new attrs the caption is the plain one" do
+      html = render(~H|<.select native name="c" label="Cliente" options={~w(A B)} />|)
+      assert find(html, "span[data-suffix]") |> Enum.to_list() == []
+      assert [_] = find(html, "label > select[name=c]") |> Enum.to_list()
+    end
+  end
 end

@@ -26,6 +26,15 @@ defmodule LineaUI.Components.Radio do
         %{label: "Month", value: "month", disabled: true}
       ]} />
 
+  `variant="tile"` draws each option as a 52px square with a 1px border that turns to a 2px ink border when chosen,
+  dimmed to 35% when `disabled`; the content of the option is free (an SVG, an emoji) and, having no text, each
+  option takes an `aria_label`.
+
+      <.radio_group field={@form[:mark]} variant="tile" label="Mark" label_hint="optional">
+        <:radio value="a" aria_label="Segment A"><svg viewBox="0 0 24 24">…</svg></:radio>
+        <:radio value="b" aria_label="Segment B" disabled><svg viewBox="0 0 24 24">…</svg></:radio>
+      </.radio_group>
+
   `variant="card"` lays each option out as the canvas card (`sg-choice`): white, 14px of padding, a 1px line
   that turns to a 1.5px ink line when chosen (or the `color`, when not `neutral`), the title, the description,
   an optional icon in a 36px square that takes the accent tint when chosen, and `count` as a big figure between
@@ -82,7 +91,7 @@ defmodule LineaUI.Components.Radio do
     default: "basic",
     values: Choice.radio_variants(),
     doc:
-      "`basic`/`outline` radios, `card` cards, `chip` pill chips, `segmented` a segmented control."
+      "`basic`/`outline` radios, `card` cards, `chip` pill chips, `segmented` a segmented control, `tile` a 52px square holding the option's own content."
   )
 
   attr(:control, :string,
@@ -97,6 +106,12 @@ defmodule LineaUI.Components.Radio do
   attr(:size, :string, default: "md", values: Choice.sizes())
   attr(:label, :string, default: nil, doc: "The caption.")
   attr(:label_class, :any, default: nil, doc: "Classes of the caption text.")
+
+  attr(:label_hint, :string,
+    default: nil,
+    doc: "A dimmed note at the right of the caption, as the canvas's \"opcional\"."
+  )
+
   attr(:help, :string, default: nil, doc: "The small line under the control.")
 
   attr(:errors, :list,
@@ -120,6 +135,11 @@ defmodule LineaUI.Components.Radio do
     attr(:label, :string)
     attr(:color, :string)
     attr(:disabled, :boolean)
+
+    attr(:aria_label, :string,
+      doc: "The `aria-label` of the radio (`tile`, whose option has no text)."
+    )
+
     attr(:description, :string)
     attr(:count, :any, doc: "A number shown in a small badge (chip and card).")
     attr(:icon, :string, doc: "A `huge-*` icon name, shown in a card or a chip.")
@@ -157,7 +177,7 @@ defmodule LineaUI.Components.Radio do
     end)
   end
 
-  defp invalid(%{errors: [_ | _], variant: variant}) when variant not in ~w(chip segmented),
+  defp invalid(%{errors: [_ | _], variant: variant}) when variant not in ~w(chip segmented tile),
     do: "border-error dark:border-error"
 
   defp invalid(_assigns), do: nil
@@ -169,6 +189,7 @@ defmodule LineaUI.Components.Radio do
         label: Map.get(slot, :label),
         color: Map.get(slot, :color),
         disabled: Map.get(slot, :disabled),
+        aria_label: Map.get(slot, :aria_label),
         description: Map.get(slot, :description),
         count: Map.get(slot, :count),
         icon: Map.get(slot, :icon),
@@ -186,6 +207,7 @@ defmodule LineaUI.Components.Radio do
       label: option |> Map.get(:label, value) |> to_string(),
       color: Map.get(option, :color),
       disabled: Map.get(option, :disabled),
+      aria_label: Map.get(option, :aria_label),
       description: Map.get(option, :description),
       count: Map.get(option, :count),
       icon: Map.get(option, :icon),
@@ -204,6 +226,7 @@ defmodule LineaUI.Components.Radio do
       id={@id}
       label={@label}
       label_class={@label_class}
+      label_hint={@label_hint}
       help={@help}
       errors={@errors}
       as="div"
@@ -264,6 +287,7 @@ defmodule LineaUI.Components.Radio do
             disabled={@disabled || item.disabled}
             class={item.classes}
             aria-invalid={@errors != [] && "true"}
+            aria-label={item.aria_label}
             {@rest}
           />
         </Choice.item>

@@ -365,4 +365,21 @@ defmodule LineaUI.Components.InputTest do
     assert html |> find("div.grid > div.col-start-2") |> LazyHTML.text() =~ "is invalid"
     assert [_] = find(html, "label > span.col-start-2") |> Enum.to_list()
   end
+
+  test "label_aside sits on the caption row and below between the box and the help" do
+    html =
+      render(~H"""
+      <.input name="p" type="password" label="Senha" help="Mínimo 8">
+        <:label_aside><a href="/forgot" id="forgot">Esqueci</a></:label_aside>
+        <:below><i id="bars"></i></:below>
+      </.input>
+      """)
+
+    assert "justify-between" in classes(html, "label > span")
+    assert [_] = find(html, "label > span > span a#forgot") |> Enum.to_list()
+    assert [_] = find(html, "#bars") |> Enum.to_list()
+    assert String.contains?(html, "<input")
+    assert :binary.match(html, "bars") |> elem(0) > :binary.match(html, "<input") |> elem(0)
+    assert :binary.match(html, "bars") |> elem(0) < :binary.match(html, "Mínimo 8") |> elem(0)
+  end
 end
