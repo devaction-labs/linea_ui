@@ -13,7 +13,7 @@
   --c1:#0d8f91;--c2:#2f5fd0;--c3:#8a5cd6;--c4:#d97a1e;--c5:#a3a3a3;
   --heat0:#f0f0f0;--heat1:#cfe9e6;--heat2:#93d1cc;--heat3:#4fb3ae;--heat4:#0d8f91;
   --shadow-sm:0 1px 2px 0 rgb(0 0 0/.05);--shadow:0 1px 3px 0 rgb(0 0 0/.06),0 1px 2px -1px rgb(0 0 0/.06);--shadow-lg:0 10px 15px -3px rgb(0 0 0/.08),0 4px 6px -4px rgb(0 0 0/.06);
-  --r-sm:8px;--r:12px;--r-lg:16px;--r-xl:22px;--pill:10px;--pill-in:8px;--pill-xs:6px;--ctl:#ffffff;--ctl-line:rgb(10 10 10/.1);--ctl-line-strong:rgb(10 10 10/.18);--ctl-hover:rgb(10 10 10/.035);--ctl-fill:rgb(10 10 10/.04);--ctl-fill-hover:rgb(10 10 10/.075);--ctl-track:rgb(10 10 10/.12);--shadow-xs:0 1px 2px 0 rgb(0 0 0/.05);
+  --r-sm:8px;--r:10px;--r-lg:14px;--r-xl:16px;--pill:8px;--pill-in:6px;--pill-xs:6px;--ctl:#ffffff;--ctl-line:rgb(10 10 10/.1);--ctl-line-strong:rgb(10 10 10/.18);--ctl-hover:rgb(10 10 10/.035);--ctl-fill:rgb(10 10 10/.04);--ctl-fill-hover:rgb(10 10 10/.075);--ctl-track:rgb(10 10 10/.12);--shadow-xs:0 1px 2px 0 rgb(0 0 0/.05);
   --sans:"Geist",ui-sans-serif,system-ui,sans-serif;--mono:"Geist Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
 }
 :is(.sg, :root)[data-theme="light"], [data-theme="dark"] [data-theme="light"]{
@@ -25,7 +25,7 @@
   --c1:#0d8f91;--c2:#2f5fd0;--c3:#8a5cd6;--c4:#d97a1e;--c5:#a3a3a3;
   --heat0:#f0f0f0;--heat1:#cfe9e6;--heat2:#93d1cc;--heat3:#4fb3ae;--heat4:#0d8f91;
   --shadow-sm:0 1px 2px 0 rgb(0 0 0/.05);--shadow:0 1px 3px 0 rgb(0 0 0/.06),0 1px 2px -1px rgb(0 0 0/.06);--shadow-lg:0 10px 15px -3px rgb(0 0 0/.08),0 4px 6px -4px rgb(0 0 0/.06);
-  --r-sm:8px;--r:12px;--r-lg:16px;--r-xl:22px;--pill:10px;--pill-in:8px;--pill-xs:6px;--ctl:#ffffff;--ctl-line:rgb(10 10 10/.1);--ctl-line-strong:rgb(10 10 10/.18);--ctl-hover:rgb(10 10 10/.035);--ctl-fill:rgb(10 10 10/.04);--ctl-fill-hover:rgb(10 10 10/.075);--ctl-track:rgb(10 10 10/.12);--shadow-xs:0 1px 2px 0 rgb(0 0 0/.05);
+  --r-sm:8px;--r:10px;--r-lg:14px;--r-xl:16px;--pill:8px;--pill-in:6px;--pill-xs:6px;--ctl:#ffffff;--ctl-line:rgb(10 10 10/.1);--ctl-line-strong:rgb(10 10 10/.18);--ctl-hover:rgb(10 10 10/.035);--ctl-fill:rgb(10 10 10/.04);--ctl-fill-hover:rgb(10 10 10/.075);--ctl-track:rgb(10 10 10/.12);--shadow-xs:0 1px 2px 0 rgb(0 0 0/.05);
   --sans:"Geist",ui-sans-serif,system-ui,sans-serif;--mono:"Geist Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
 }
 .sg{

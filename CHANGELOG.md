@@ -3,6 +3,7 @@
 ## Unreleased
 
 - The theme is neutral now, in the spirit of shadcn/ui: pure grays instead of warm ones, a near-white app background with white cards in light, and in dark a black main area (`--main`, #0a0a0a) with #171717 cards, translucent white borders (10% for lines, 15% for controls) and translucent control fills, so surfaces sit together in both themes. The teal accent is unchanged. The `slate`/`navy` Tailwind colors follow the new grays.
+- New `canvas-refine.css`, the component finish in the same spirit: 8px corners on 36px controls (fields went from 40px to 36px), a neutral 3px focus ring instead of the teal one, cards with a thin line border, 14px corners and 24px padding, segmented tabs as a borderless gray track, table headers in ink, 4px checkbox corners, and `danger` buttons as solid red (`--danger`); `--neg` is red now (#dc2626 / #f87171).
 
 ## 0.22.0 (2026-11-13)
 
