@@ -520,7 +520,13 @@ defmodule LineaUI.Components.Sidebar do
     <div class="sg-sb-mm">
       <Dropdown.dropdown id={@id} placement="right-end" offset={8}>
         <:toggle>
-          <button type="button" class="sg-sb-mb" aria-label={@label} aria-haspopup="menu" data-rail-tip>
+          <button
+            type="button"
+            class="sg-sb-mb"
+            aria-label={@label}
+            aria-haspopup="menu"
+            data-rail-tip
+          >
             {render_slot(@inner_block)}
             <svg class="i sm ud" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 9.5l4-4 4 4M8 14.5l4 4 4-4" /></svg>
             <span class="rail-tip" role="tooltip">{@label}</span>
