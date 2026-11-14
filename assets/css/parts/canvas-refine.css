@@ -4,14 +4,14 @@
   tabs as a gray track with the chosen one in white, table headers in ink, and danger as solid red.
 */
 :is(.sg, :root){
-  --ring:rgb(10 10 10/.32);--ring-line:#a3a3a3;--danger:#dc2626;--on-danger:#ffffff;--neg:#dc2626;--neg-soft:#fef2f2;--seg-on:var(--panel);--seg-on-shadow:0 1px 2px rgb(0 0 0/.06),0 0 0 1px rgb(0 0 0/.03);
+  --ring:rgb(10 10 10/.32);--ring-line:#a3a3a3;--danger:#dc2626;--on-danger:#ffffff;--neg:#dc2626;--neg-soft:#fef2f2;--seg-on:var(--panel);--seg-on-shadow:0 1px 2px rgb(0 0 0/.06),0 0 0 1px rgb(0 0 0/.03);--control-on:var(--solid);--on-control:var(--on-solid);--track:rgb(10 10 10/.12);--pop:var(--panel);--pop-shadow:0 0 0 1px var(--line),0 4px 6px -1px rgb(0 0 0/.07),0 2px 4px -2px rgb(0 0 0/.05);--scrim:rgb(0 0 0/.4);--tip:#171717;--on-tip:#fafafa;--tint:var(--hover);
 }
 :is(.dark, .dark .sg, .sg[data-theme="dark"], [data-theme="dark"], [data-theme="dark"] .sg){
-  --ring:rgb(255 255 255/.22);--ring-line:#737373;--danger:#b4363a;--on-danger:#ffffff;--neg:#f87171;--neg-soft:rgb(248 113 113/.12);--seg-on:rgb(255 255 255/.08);--seg-on-shadow:inset 0 0 0 1px var(--ctl-line);
+  --ring:rgb(255 255 255/.22);--ring-line:#737373;--danger:#b4363a;--on-danger:#ffffff;--neg:#f87171;--neg-soft:rgb(248 113 113/.12);--seg-on:rgb(255 255 255/.08);--seg-on-shadow:inset 0 0 0 1px var(--ctl-line);--control-on:var(--solid);--on-control:var(--on-solid);--track:rgb(255 255 255/.15);--pop:var(--panel);--pop-shadow:0 0 0 1px var(--line),0 10px 24px -8px rgb(0 0 0/.6);--scrim:rgb(0 0 0/.6);--tip:#e5e5e5;--on-tip:#171717;--tint:var(--hover);
 }
 /* a light scope inside a dark page keeps the light tokens, also on the .sg blocks inside it */
 :is([data-theme="light"], [data-theme="light"] .sg:not([data-theme="dark"])){
-  --ring:rgb(10 10 10/.32);--ring-line:#a3a3a3;--danger:#dc2626;--on-danger:#ffffff;--neg:#dc2626;--neg-soft:#fef2f2;--seg-on:var(--panel);--seg-on-shadow:0 1px 2px rgb(0 0 0/.06),0 0 0 1px rgb(0 0 0/.03);
+  --ring:rgb(10 10 10/.32);--ring-line:#a3a3a3;--danger:#dc2626;--on-danger:#ffffff;--neg:#dc2626;--neg-soft:#fef2f2;--seg-on:var(--panel);--seg-on-shadow:0 1px 2px rgb(0 0 0/.06),0 0 0 1px rgb(0 0 0/.03);--control-on:var(--solid);--on-control:var(--on-solid);--track:rgb(10 10 10/.12);--pop:var(--panel);--pop-shadow:0 0 0 1px var(--line),0 4px 6px -1px rgb(0 0 0/.07),0 2px 4px -2px rgb(0 0 0/.05);--scrim:rgb(0 0 0/.4);--tip:#171717;--on-tip:#fafafa;--tint:var(--hover);
 }
 
 /* buttons */
@@ -61,3 +61,137 @@
 /* checkbox */
 .sg-box{border-radius:4px;box-shadow:inset 0 0 0 1px var(--ctl-line-strong),var(--shadow-xs)}
 .sg-box.on,.sg-box.mixed{box-shadow:none}
+
+/* ---------- the rest of the kit, in the same finish ---------- */
+
+/* form labels and hints */
+.sg-label{font-size:14px;font-weight:500}
+.sg-kbd,.sg-input .kbd{height:20px;padding:0 5px;border-radius:4px;font:500 11.5px/20px var(--sans);box-shadow:none;background:var(--sunken);color:var(--muted)}
+
+/* checkbox, radio and switch: ink when on (`--control-on`), the neutral ring on focus */
+.sg-box,input.form-checkbox{border-radius:4px}
+.sg-box.on,.sg-box.mixed,input.form-checkbox:checked,input.form-checkbox:indeterminate{background-color:var(--control-on);color:var(--on-control);box-shadow:inset 0 0 0 1px var(--control-on)}
+.sg-radio.on{background:radial-gradient(circle,var(--control-on) 0 3.5px,transparent 4px),var(--ctl);box-shadow:inset 0 0 0 1px var(--control-on),var(--shadow-xs)}
+input.form-radio:checked{background-color:var(--ctl);box-shadow:inset 0 0 0 1px var(--control-on),var(--shadow-xs)}
+input.form-radio:checked::after{width:8px;height:8px;background:var(--control-on)}
+.sg-sw,input.form-switch{width:32px;height:18px;background:var(--track);box-shadow:inset 0 0 0 1px transparent}
+.sg-sw::after,input.form-switch::before{top:1px;left:1px;width:16px;height:16px;background:#fff;box-shadow:0 1px 2px rgb(0 0 0/.12)}
+.sg-sw.on,input.form-switch:checked{background:var(--control-on)}
+.sg-sw.on::after,input.form-switch:checked::before{left:15px;background:var(--on-control)}
+input.form-checkbox:focus-visible,input.form-radio:focus-visible,input.form-switch:focus-visible{outline:0;box-shadow:inset 0 0 0 1px var(--ring-line),0 0 0 3px var(--ring)}
+.sg-choice{border-radius:var(--r)}
+.sg-choice.on{box-shadow:inset 0 0 0 1px var(--control-on);background:color-mix(in srgb,var(--sunken) 50%,var(--panel))}
+
+/* slider and meters: a thin track, the range in ink, a white thumb ringed in ink */
+.sg-slider::before{top:7px;height:6px;border-radius:3px;background:var(--track);box-shadow:none}
+.sg-slider i{top:7px;height:6px;border-radius:3px;background:var(--control-on)}
+.sg-slider b{width:16px;height:16px;background:#fff;box-shadow:inset 0 0 0 1px var(--control-on),var(--shadow-xs)}
+.sg-meter{height:8px;border-radius:4px;background:color-mix(in srgb,var(--control-on) 14%,transparent);box-shadow:none}
+.sg-meter i{border-radius:4px;background:var(--control-on)}
+.sg-meter.acc{background:color-mix(in srgb,var(--accent) 16%,transparent)}
+
+/* one-time code: 40x44 slots, the active one with the neutral ring */
+.sg-otp{gap:6px}
+.sg-otp span{width:40px;height:44px;border-radius:var(--pill);font:500 18px var(--mono);background:var(--ctl);box-shadow:inset 0 0 0 1px var(--ctl-line),var(--shadow-xs)}
+.sg-otp span.on{box-shadow:inset 0 0 0 1px var(--ring-line),0 0 0 3px var(--ring)}
+
+/* menus, dropdowns, select lists and popovers: one surface, 10px corners, a thin line and a short shadow */
+.sg-menu,
+.popper-root[data-panel] > .popper-box[role="menu"],
+.popper-root[role="dialog"][data-panel] > .popper-box > div,
+.ts-wrapper[phx-hook="LineaUI.Select"] .ts-dropdown,
+.palette-canvas{border-radius:var(--r);background:var(--pop);box-shadow:var(--pop-shadow);padding:4px}
+:is(.dark .sg:not([data-theme="light"]), .sg[data-theme="dark"]) .sg-menu,
+:is(.dark .sg:not([data-theme="light"]), .sg[data-theme="dark"], .dark) .ts-wrapper[phx-hook="LineaUI.Select"] .ts-dropdown{background:var(--pop)}
+.popper-root[role="dialog"][data-panel] > .popper-box > div{padding:16px}
+.popper-root[role="dialog"][data-panel] > .popper-box > div > h3{font-size:14px;font-weight:500;letter-spacing:0;color:var(--ink)}
+.ts-wrapper[phx-hook="LineaUI.Select"] .ts-dropdown .ts-dropdown-content{padding:0}
+.sg-menu a,
+.popper-root[data-panel] > .popper-box[role="menu"] [role="menuitem"],
+.ts-wrapper[phx-hook="LineaUI.Select"] .ts-dropdown .option{min-height:32px;height:auto;padding:0 8px;gap:8px;border-radius:6px;font-size:14px;font-weight:400;color:var(--fg)}
+.sg-menu a:hover,.sg-menu a.on,
+.popper-root[data-panel] > .popper-box[role="menu"] [role="menuitem"]:is(:hover,:focus-visible),
+.ts-wrapper[phx-hook="LineaUI.Select"] .ts-dropdown .option:is(.active,:hover),
+.ts-wrapper[phx-hook="LineaUI.Select"] .ts-dropdown .option.selected{background:var(--tint);color:var(--ink)}
+.sg-menu a.neg:hover,
+.popper-root[data-panel] > .popper-box[role="menu"] [role="menuitem"].text-error:is(:hover,:focus-visible){background:color-mix(in srgb,var(--neg) 10%,transparent);color:var(--neg)}
+.sg-menu hr{margin:4px -4px}
+.ts-wrapper[phx-hook="LineaUI.Select"] .ts-dropdown .optgroup-header{padding:6px 8px;font-size:12px;font-weight:500;letter-spacing:0;color:var(--muted)}
+.ts-wrapper[phx-hook="LineaUI.Select"] .ts-dropdown .ts-search{height:36px;margin:0 0 4px;border-radius:6px}
+.ts-wrapper[phx-hook="LineaUI.Select"] .ts-control{min-height:36px;box-shadow:inset 0 0 0 1px var(--ctl-line),var(--shadow-xs)}
+
+/* tooltips: ink in light, light in dark, 12px text, 6px corners */
+.sg-tooltip,.tippy-box[data-theme~="dark"],.linea-tip{border-radius:6px;background:var(--tip);color:var(--on-tip);font-size:12px;line-height:16px}
+.sg-tooltip{padding:6px 12px}
+.tippy-box[data-theme~="dark"] > .tippy-content{padding:6px 12px}
+.tippy-box[data-theme~="dark"] > .tippy-svg-arrow svg{color:var(--tip)}
+.sg-tip{border-radius:var(--r);box-shadow:var(--pop-shadow)}
+
+/* modals and sheets: the scrim, a 14px card with a thin line, 18px titles, a muted description, a plain footer */
+.sg-scrim,:is(.dark .sg:not([data-theme="light"]), .sg[data-theme="dark"]) .sg-scrim{background:var(--scrim);backdrop-filter:none}
+.sg-modal,.modal-content[data-panel]{border-radius:var(--r-lg);background:var(--panel);box-shadow:0 0 0 1px var(--line),var(--shadow-lg)}
+.sg-drawer{border-radius:var(--r-lg);box-shadow:0 0 0 1px var(--line),var(--shadow-lg)}
+.sg-drawer-h,[data-drawer-header]{padding:24px 24px 16px}
+.sg-drawer-h h3,[data-drawer-header] h2{font-size:18px;line-height:24px;font-weight:600;letter-spacing:-.01em;color:var(--ink)}
+.sg-drawer-h p,[data-drawer-header] h2 + p{font-size:14px;line-height:20px;color:var(--muted);margin-top:4px}
+.sg-drawer-b{padding:0 24px 24px}
+.sg-drawer-f,[data-drawer-footer]{padding:16px 24px 24px;border-top:0;background:transparent;gap:8px}
+
+/* toasts: a 10px card with a thin line, the title 14/500, the description muted */
+.sg-toast{width:356px;padding:16px;gap:10px;border-radius:var(--r);background:var(--pop);box-shadow:var(--pop-shadow),0 10px 15px -3px rgb(0 0 0/.06)}
+.sg-toast .t{font-size:14px;font-weight:500;color:var(--ink)}
+.sg-toast-desc{font-size:13px;color:var(--muted)}
+.sg-toast .sg-toast-ic{width:20px;height:20px;background:none;box-shadow:none}
+
+/* alerts: a 10px card with a thin line on the panel, the title 14/500, the text muted; tones tint the text only */
+.sg-alert{padding:12px 16px;border-radius:var(--r);background:var(--panel);box-shadow:inset 0 0 0 1px var(--line);font-size:14px;line-height:20px}
+.sg-alert b{font-weight:500}
+.sg-alert p{color:var(--muted)}
+.sg-alert:is(.acc,.warn,.neg){background:var(--panel);box-shadow:inset 0 0 0 1px var(--line)}
+.sg-alert:is(.acc,.warn,.neg) p{color:color-mix(in srgb,currentColor 80%,var(--panel))}
+
+/* tabs with a line: 14px, the chosen one ink with a 2px underline */
+.sg-tabs{gap:24px}
+.sg-tabs a,.sg-tabs > .sg-tab{font-size:14px;font-weight:500}
+
+/* breadcrumbs: plain text, muted links, the current page ink */
+.sg-crumb{height:auto;padding:0;gap:6px;border-radius:0;background:none;box-shadow:none;font-size:14px}
+:is(.dark .sg:not([data-theme="light"]), .sg[data-theme="dark"]) .sg-crumb{background:none}
+.sg-crumb b{font-weight:400}
+.sg-crumb .sep{color:var(--faint)}
+
+/* pagination: 32px ghost buttons, the current page outlined */
+.sg-pages span{min-width:32px;height:32px;border-radius:var(--pill);font:500 14px var(--sans);color:var(--fg)}
+.sg-pages span:hover{background:var(--tint)}
+.sg-pages span.on{background:var(--panel);color:var(--ink);box-shadow:inset 0 0 0 1px var(--ctl-line),var(--shadow-xs)}
+
+/* accordion: no outer box, items split by a line, 14/500 triggers */
+.sg-acc{border-radius:0;box-shadow:none;overflow:visible}
+.sg-acc-h{padding:16px 0;font-size:14px;font-weight:500}
+.sg-acc-h:hover{text-decoration:underline;text-underline-offset:4px}
+.sg-acc-b{padding:0 0 16px;font-size:14px;line-height:20px}
+
+/* calendar: 32px days with 6px corners, today and the range on the gray tint, the chosen day ink */
+.sg-cal span{height:32px;border-radius:6px;font-size:14px}
+.sg-cal span.t{box-shadow:none;background:var(--tint);color:var(--ink)}
+.sg-cal span.on{background:var(--control-on);color:var(--on-control);font-weight:500}
+.sg-cal span.rg{background:var(--tint);color:var(--ink)}
+.sg-cal b{font-size:12.5px;font-weight:400;color:var(--muted)}
+.flatpickr-calendar{min-width:0;padding:12px;border-radius:var(--r);background:var(--pop);box-shadow:var(--pop-shadow)}
+.flatpickr-current-month{font-size:14px;font-weight:500}
+.flatpickr-prev-month,.flatpickr-next-month{width:28px;height:28px;border-radius:6px;box-shadow:inset 0 0 0 1px var(--ctl-line)}
+span.flatpickr-weekday{font-size:12.5px;font-weight:400;color:var(--muted)}
+.flatpickr-day{height:32px;line-height:32px;border-radius:6px;font-size:14px}
+.flatpickr-day:hover,.flatpickr-day.today{background:var(--tint);box-shadow:none;color:var(--ink)}
+.flatpickr-day.selected,.flatpickr-day.startRange,.flatpickr-day.endRange,.flatpickr-day.selected:hover{background:var(--control-on);color:var(--on-control);font-weight:500}
+.flatpickr-day.inRange{background:var(--tint);color:var(--ink)}
+.flatpickr-day.startRange{border-radius:6px 0 0 6px}.flatpickr-day.endRange{border-radius:0 6px 6px 0}
+
+/* empty state, skeleton, kanban and avatars */
+.sg-empty .art{width:40px;height:40px;border-radius:var(--pill);background:var(--sunken);box-shadow:none;color:var(--fg)}
+.sg-empty-title{font-size:18px;font-weight:500;letter-spacing:-.01em}
+.sg-empty-text{font-size:14px}
+.sg-skel{border-radius:6px;background:var(--tint)}
+.sg-kb-col{border-radius:var(--r-lg);box-shadow:none}
+.sg-kb-card{border-radius:var(--r);box-shadow:0 0 0 1px var(--line),var(--shadow-xs)}
+.sg-avs .sg-av{box-shadow:0 0 0 2px var(--canvas)}
