@@ -173,6 +173,25 @@ defmodule LineaUI.Components.Calendar do
     default: true,
     doc: "The toolbar with the title, arrows and view switch."
 
+  attr :outside_days, :boolean,
+    default: false,
+    doc:
+      "`mini` only: fills the first and the last week with the days of the neighbour months (class `o`, faint)."
+
+  attr :day_id, :any,
+    default: nil,
+    doc:
+      "`mini` only: an id for each day, a `fn date -> id end` or a prefix string (`\"day\"` gives `day-2026-11-14`). With `months_shown` above 1 only the days of the month itself get one."
+
+  attr :interactive_marked_only, :boolean,
+    default: false,
+    doc: "`mini` only: with `on_select`, only the days that have events are buttons."
+
+  attr :card, :boolean,
+    default: true,
+    doc:
+      "`mini` only: `false` renders just the `sg-cal` grid, with no card, title, arrows or legend, for an app card that has its own."
+
   attr :on_navigate, :string, default: nil
   attr :on_view, :string, default: nil
   attr :on_select, :string, default: nil
@@ -402,7 +421,8 @@ defmodule LineaUI.Components.Calendar do
       from: from,
       to: to,
       by_date: by_date,
-      week_start: assigns.week_start
+      week_start: assigns.week_start,
+      day_id: assigns.day_id
     }
 
     first = Date.beginning_of_month(date)
@@ -411,13 +431,21 @@ defmodule LineaUI.Components.Calendar do
     pages =
       for offset <- 0..(count - 1) do
         month = Date.shift(first, month: offset)
+        blanks = rem(rem(Date.day_of_week(month), 7) - assigns.week_start + 7, 7)
+        last = Date.end_of_month(month)
+        trail = rem(7 - rem(blanks + Date.days_in_month(month), 7), 7)
+        outside? = assigns.outside_days
 
         %{
           id: "#{assigns.id}-m#{offset}",
           name: Enum.at(months, month.month - 1),
           title: (count == 1 && "#{Enum.at(months, month.month - 1)} #{month.year}") || nil,
-          blanks: rem(rem(Date.day_of_week(month), 7) - assigns.week_start + 7, 7),
-          days: Enum.map(0..(Date.days_in_month(month) - 1), &mini_day(Date.add(month, &1), ctx))
+          blanks: (outside? && 0) || blanks,
+          days:
+            Enum.map(
+              mini_span(month, last, blanks, trail, outside?),
+              &mini_day(&1, month, count, ctx)
+            )
         }
       end
 
@@ -430,10 +458,22 @@ defmodule LineaUI.Components.Calendar do
     )
   end
 
-  defp mini_day(day, ctx) do
+  defp mini_span(month, last, blanks, trail, true),
+    do: Date.range(Date.add(month, -blanks), Date.add(last, trail))
+
+  defp mini_span(month, last, _blanks, _trail, false), do: Date.range(month, last)
+
+  defp mini_id(nil, _day), do: nil
+  defp mini_id(fun, day) when is_function(fun, 1), do: fun.(day)
+  defp mini_id(prefix, day), do: "#{prefix}-#{Date.to_iso8601(day)}"
+
+  defp mini_day(day, month, count, ctx) do
     events = Map.get(ctx.by_date, day, [])
+    outside? = day.month != month.month or day.year != month.year
 
     %{
+      id: (!(outside? and count > 1) && mini_id(ctx.day_id, day)) || nil,
+      outside?: outside?,
       date: day,
       iso: Date.to_iso8601(day),
       day: day.day,
@@ -449,11 +489,11 @@ defmodule LineaUI.Components.Calendar do
   defp render_mini(assigns) do
     ~H"""
     <div id={@id} class={merge(["lc-mini-wrap", @count > 1 && "multi", @class])} {@rest}>
-      <div :for={page <- @pages} class={["sg-card lc-mini", @count > 1 && "two"]}>
-        <div :if={@legend != []} class="lc-mini-legend">
+      <div :for={page <- @pages} class={["lc-mini", @card && "sg-card", @count > 1 && "two"]}>
+        <div :if={@card && @legend != []} class="lc-mini-legend">
           <span :for={{label, color} <- @legend}><i class={"lc-key-#{color}"}></i>{label}</span>
         </div>
-        <div :if={@header && page.title} class="lc-mini-h">
+        <div :if={@card && @header && page.title} class="lc-mini-h">
           <b id={page.id <> "-title"}>{page.title}</b>
           <button
             type="button"
@@ -484,7 +524,7 @@ defmodule LineaUI.Components.Calendar do
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 7l5 5-5 5" /></svg>
           </button>
         </div>
-        <b :if={@header && !page.title} id={page.id <> "-title"} class="lc-mini-name">
+        <b :if={@card && @header && !page.title} id={page.id <> "-title"} class="lc-mini-name">
           {page.name}
         </b>
         <div class="sg-cal" role="group" aria-label={page.title || page.name}>
@@ -494,6 +534,7 @@ defmodule LineaUI.Components.Calendar do
             :for={day <- page.days}
             day={day}
             tint={@marks == "tint"}
+            only_marked={@interactive_marked_only}
             js={push_js(@on_select, @id, @target, %{date: day.iso})}
           />
         </div>
@@ -505,10 +546,13 @@ defmodule LineaUI.Components.Calendar do
   attr :day, :map, required: true
   attr :js, :any, default: nil
   attr :tint, :boolean, default: false
+  attr :only_marked, :boolean, default: false
 
-  defp mini_cell(%{js: nil} = assigns) do
+  defp mini_cell(assigns)
+       when assigns.js == nil or (assigns.only_marked and not assigns.day.mark) do
     ~H"""
     <span
+      id={@day.id}
       class={[mini_class(@day), @tint && @day.mark && "lc-tn lc-tn-#{@day.mark}"]}
       aria-current={@day.today? && "date"}
     >
@@ -520,6 +564,7 @@ defmodule LineaUI.Components.Calendar do
   defp mini_cell(assigns) do
     ~H"""
     <button
+      id={@day.id}
       type="button"
       class={[mini_class(@day), @tint && @day.mark && "lc-tn lc-tn-#{@day.mark}"]}
       aria-pressed={to_string(@day.selected?)}
@@ -533,6 +578,7 @@ defmodule LineaUI.Components.Calendar do
 
   defp mini_class(day) do
     [
+      day.outside? && "o",
       day.selected? && "on",
       !day.selected? && day.range? && "rg",
       day.today? && !day.selected? && !day.range? && "t"

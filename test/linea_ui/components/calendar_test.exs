@@ -468,5 +468,89 @@ defmodule LineaUI.Components.CalendarTest do
       assert html |> find("#t .lc-tn-primary") |> LazyHTML.text() |> String.trim() == "5"
       assert html |> find("#t .lc-mini-legend span") |> Enum.count() == 2
     end
+
+    test "outside_days fills the first and last week with faint neighbour days" do
+      html =
+        render(~H"""
+        <.calendar id="o" variant="mini" date={~D[2026-11-01]} week_start={1} outside_days />
+        """)
+
+      assert html |> find("#o .sg-cal > span") |> Enum.count() == 42
+      assert html |> find("#o .sg-cal > span.o") |> Enum.count() == 12
+      assert html |> find("#o .sg-cal > .lc-blank") |> Enum.count() == 0
+    end
+
+    test "outside_days stays off by default" do
+      html =
+        render(~H"""
+        <.calendar id="o" variant="mini" date={~D[2026-11-01]} week_start={1} />
+        """)
+
+      assert html |> find("#o .sg-cal > span.o") |> Enum.count() == 0
+      assert html |> find("#o .sg-cal > .lc-blank") |> Enum.count() == 6
+    end
+
+    test "day_id takes a prefix or a function" do
+      html =
+        render(~H"""
+        <.calendar id="p" variant="mini" date={~D[2026-11-01]} day_id="day" />
+        <.calendar
+          id="f"
+          variant="mini"
+          date={~D[2026-11-01]}
+          day_id={fn d -> "d#{d.day}" end}
+          on_select="pick"
+        />
+        """)
+
+      assert html |> find("#day-2026-11-14") |> Enum.count() == 1
+      assert html |> find("button#d14") |> Enum.count() == 1
+    end
+
+    test "day_id also reaches the outside days of a single month" do
+      html =
+        render(~H"""
+        <.calendar id="o" variant="mini" date={~D[2026-11-01]} outside_days day_id="day" week_start={1} />
+        """)
+
+      assert html |> find("#day-2026-10-26.o") |> Enum.count() == 1
+      assert html |> find("#day-2026-12-06.o") |> Enum.count() == 1
+    end
+
+    test "interactive_marked_only makes buttons of the days with events only" do
+      html =
+        render(~H"""
+        <.calendar
+          id="i"
+          variant="mini"
+          date={~D[2026-11-01]}
+          on_select="pick"
+          interactive_marked_only
+          events={[%{title: "x", date: ~D[2026-11-10]}]}
+        />
+        """)
+
+      assert [_] = find(html, "#i .sg-cal > button") |> Enum.to_list()
+      assert html |> find("#i .sg-cal > span") |> Enum.count() == 29
+    end
+
+    test "card={false} renders only the sg-cal grid" do
+      html =
+        render(~H"""
+        <.calendar
+          id="c"
+          variant="mini"
+          date={~D[2026-11-01]}
+          card={false}
+          on_navigate="nav"
+          legend={[{"Due", "primary"}]}
+        />
+        """)
+
+      assert html |> find("#c .sg-card") |> Enum.count() == 0
+      assert html |> find("#c .lc-mini-h") |> Enum.count() == 0
+      assert html |> find("#c .lc-mini-legend") |> Enum.count() == 0
+      assert html |> find("#c .lc-mini .sg-cal") |> Enum.count() == 1
+    end
   end
 end
