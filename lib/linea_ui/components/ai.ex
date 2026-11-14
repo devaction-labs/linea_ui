@@ -142,13 +142,22 @@ defmodule LineaUI.Components.Ai do
   # ai_message
 
   @doc """
-  A message of the conversation. The user's is a bubble on the right with the avatar; the assistant's is a card
-  with the spark, the queries it made (`trace` slot) and the content.
+  A message of the conversation. The user's is the dark bubble on the right with the avatar; the assistant's is
+  a card with the spark, the queries it made (`trace` slot) and the content. `variant="plain"` drops the card:
+  loose text beside the spark.
 
       <.ai_message role="user" name="Marina Costa">Quanto tenho para receber até sexta?</.ai_message>
       <.ai_message streaming><p>Os pedidos vencidos somam <b class="ink">R$ 12.300</b></p></.ai_message>
+      <.ai_message variant="plain"><p>Os pedidos vencidos somam <b class="ink">R$ 12.300</b></p></.ai_message>
   """
   attr :role, :string, default: "assistant", values: ~w(user assistant)
+
+  attr :variant, :string,
+    default: "card",
+    values: ~w(card plain),
+    doc:
+      "`card` frames the assistant's content (560px, border, padding); `plain` is loose text beside the spark. Not used by `user`."
+
   attr :streaming, :boolean, default: false, doc: "Shows the cursor after the last paragraph."
 
   attr :status, :string,
@@ -170,7 +179,7 @@ defmodule LineaUI.Components.Ai do
   def ai_message(%{role: "user"} = assigns) do
     ~H"""
     <div class={merge(["ai-msg me", @class])} {@rest}>
-      <div class="sg-bubble">{render_slot(@inner_block)}</div>
+      <div class="sg-bubble me">{render_slot(@inner_block)}</div>
       <.avatar :if={@name} name={@name} size="24" tint="#8a5cd6" />
     </div>
     """
@@ -179,7 +188,7 @@ defmodule LineaUI.Components.Ai do
   def ai_message(assigns) do
     ~H"""
     <div
-      class={merge(["ai-msg", @class])}
+      class={merge(["ai-msg", @variant == "plain" && "plain", @class])}
       data-streaming={@streaming && "true"}
       data-status={@status}
       {@rest}
@@ -206,6 +215,11 @@ defmodule LineaUI.Components.Ai do
         <:change label="Linha 3" from="Cimento CP2 50" to="40011 · Cimento CP-II 50kg" />
       </.ai_proposal>
 
+      <.ai_proposal id="p2" title="Atualizar o pedido" layout="definition" pending_label="Pendente"
+        pending_note="Cada ação aprovada entra no rastreamento do pedido" on_approve="approve" on_reject="reject">
+        <:change label="Status" from="Aberto" to="Faturado" />
+      </.ai_proposal>
+
   The events carry the proposal's `id` (`%{"id" => "p1"}`).
   """
   attr :id, :string, required: true
@@ -215,6 +229,20 @@ defmodule LineaUI.Components.Ai do
     default: "pending",
     doc:
       "`pending` (Aprovar and Recusar), `applying`, `approved`, `rejected` or `failed`, as an atom or a string."
+
+  attr :pending_label, :string,
+    default: "Aguardando você",
+    doc: "The text of the badge while the proposal is `pending`."
+
+  attr :pending_note, :string,
+    default: nil,
+    doc: "A line in the footer of a `pending` proposal, beside the buttons. None unless given."
+
+  attr :layout, :string,
+    default: "list",
+    values: ~w(list definition),
+    doc:
+      "How `change` rows with `from` and `to` read: `list` (old struck through, an arrow, the new in green) or `definition` (old struck through and a badge with the new value)."
 
   attr :editable, :boolean, default: false, doc: "Shows Editar."
   attr :note, :string, default: nil, doc: "The line under the rows once decided."
@@ -251,7 +279,7 @@ defmodule LineaUI.Components.Ai do
         <span class="ai-proposal-spark"><.icon name="huge-sparkles" class="i sm" /></span>
         <b class="ink">{@title}</b>
         <span class="ai-proposal-state">
-          <.badge :if={@state == "pending"} color="warning" dot>Aguardando você</.badge>
+          <.badge :if={@state == "pending"} color="warning" dot>{@pending_label}</.badge>
           <.badge :if={@state == "applying"} color="info" dot>Aplicando…</.badge>
           <.badge :if={@state == "approved"} color="success" dot>Aprovado</.badge>
           <.badge :if={@state == "rejected"}>Recusado</.badge>
@@ -262,12 +290,17 @@ defmodule LineaUI.Components.Ai do
         <%= for row <- @change do %>
           <span class="faint">{row.label}</span>
           <span class="ai-proposal-value">
-            <%= if row[:from] || row[:to] do %>
-              <s class="mono faint ai-from">{row[:from]}</s>
-              <.icon name="huge-arrow-right-01" class="i sm" />
-              <span class="mono ai-to">{row[:to]}</span>
+            <%= if (row[:from] || row[:to]) && @layout == "definition" do %>
+              <s class="faint ai-from">{row[:from]}</s>
+              <.badge color="success">{row[:to]}</.badge>
             <% else %>
-              {render_slot(row)}
+              <%= if row[:from] || row[:to] do %>
+                <s class="mono faint ai-from">{row[:from]}</s>
+                <.icon name="huge-arrow-right-01" class="i sm" />
+                <span class="mono ai-to">{row[:to]}</span>
+              <% else %>
+                {render_slot(row)}
+              <% end %>
             <% end %>
           </span>
         <% end %>
@@ -283,6 +316,7 @@ defmodule LineaUI.Components.Ai do
         <% end %>
       </div>
       <div :if={@state == "pending"} class="ai-proposal-foot actions">
+        <span :if={@pending_note} class="ai-proposal-note">{@pending_note}</span>
         <.button
           :if={@editable}
           variant="ghost"
@@ -340,8 +374,26 @@ defmodule LineaUI.Components.Ai do
       <.ai_composer field={@form[:pergunta]} context={[:pedidos]} phx-submit="send" phx-change="draft" />
 
   Enter sends, Shift+Enter breaks the line.
+
+  `variant="canvas"` is the board's layout: the clip on the left, the text, the chips after it, the microphone
+  (`mic`) and a black send button with its label.
+
+      <.ai_composer variant="canvas" mic context={[:pedidos]} send_label="Enviar" phx-submit="send" />
   """
   attr :id, :string, default: nil
+
+  attr :variant, :string,
+    default: "default",
+    values: ~w(default canvas),
+    doc:
+      "`default` has the chips first, the clip on the right and a round send; `canvas` has the clip first, the chips after the text, the microphone and a black send with its label."
+
+  attr :send_label, :string,
+    default: "Enviar",
+    doc: "The text of the send button of the `canvas` variant (also its accessible name)."
+
+  attr :mic, :boolean, default: false, doc: "Shows the microphone button in the `canvas` variant."
+  attr :on_mic, :any, default: nil, doc: "The event (or `JS`) of the microphone."
 
   attr :field, Phoenix.HTML.FormField,
     default: nil,
@@ -374,14 +426,70 @@ defmodule LineaUI.Components.Ai do
     doc:
       "A custom chip, after the context ones (a slot cannot share the name of the `context` attr)."
 
+  def ai_composer(%{variant: "canvas"} = assigns) do
+    assigns = composer_assigns(assigns)
+
+    ~H"""
+    <form
+      id={@id}
+      class={merge(["ai-composer canvas", @class])}
+      data-streaming={@streaming && "true"}
+      {@rest}
+    >
+      <div :if={@files != []} class="ai-composer-files">
+        <.chip :for={file <- @files} icon="huge-file-01">{file}</.chip>
+      </div>
+      <div class="ai-composer-row">
+        <label :if={@upload} class="sg-ib plain" aria-label="Anexar">
+          <.icon name="huge-attachment" class="i" /><.live_file_input
+            upload={@upload}
+            class="sr-only"
+          />
+        </label>
+        <.button :if={!@upload} icon variant="flat" aria-label="Anexar">
+          <.icon name="huge-attachment" class="i" />
+        </.button>
+        <textarea
+          id={@id && "#{@id}-text"}
+          name={@name || "message"}
+          rows="1"
+          class="ai-input"
+          placeholder={@placeholder}
+          autocomplete="off"
+          phx-hook="LineaUI.AiComposer"
+        >{@value}</textarea>
+        <.chip :for={{label, icon} <- @contexts} icon={icon}>
+          {(length(@contexts) == 1 && "Contexto: ") || ""}{label}
+        </.chip>
+        {render_slot(@chip)}
+        <.button
+          :if={@mic}
+          icon
+          variant="flat"
+          aria-label="Falar"
+          phx-click={click(@on_mic, nil, @target)}
+        >
+          <.icon name="huge-mic-01" class="i" />
+        </.button>
+        <button
+          :if={@streaming}
+          type="button"
+          class="ai-send text stop"
+          aria-label="Parar"
+          phx-click={click(@on_stop, @id, @target)}
+        >
+          <i></i>Parar
+        </button>
+        <button :if={!@streaming} type="submit" class="ai-send text" aria-label={@send_label}>
+          {@send_label}
+        </button>
+      </div>
+    </form>
+    """
+  end
+
   def ai_composer(assigns) do
-    assigns =
-      assigns
-      |> assign_field()
-      |> assign_derived(:contexts, [:context], fn -> Enum.map(assigns.context, &context/1) end)
-      |> assign_derived(:files, [:attachments, :upload], fn ->
-        files(assigns.attachments, assigns.upload)
-      end)
+    assigns = composer_assigns(assigns)
 
     ~H"""
     <form
@@ -433,6 +541,15 @@ defmodule LineaUI.Components.Ai do
     """
   end
 
+  defp composer_assigns(assigns) do
+    assigns
+    |> assign_field()
+    |> assign_derived(:contexts, [:context], fn -> Enum.map(assigns.context, &context/1) end)
+    |> assign_derived(:files, [:attachments, :upload], fn ->
+      files(assigns.attachments, assigns.upload)
+    end)
+  end
+
   defp context({label, icon}), do: {label, icon}
   defp context(%{label: label} = ctx), do: {label, ctx[:icon]}
   defp context(key) when is_atom(key), do: Map.get(@contexts, key, {to_string(key), nil})
@@ -456,11 +573,12 @@ defmodule LineaUI.Components.Ai do
   # prompt_suggestions
 
   @doc """
-  The starting suggestions: cards (slightly tilted) or pills. Choosing one sends `on_pick` with the text as
+  The starting suggestions: cards (slightly tilted), pills or a grey 2x2 grid (`grid`, the title in mono capitals). Choosing one sends `on_pick` with the text as
   `value` (and the `title`), for the app to fill the composer or ask.
 
       <.prompt_suggestions items={[%{title: "Resumo do dia", text: "Faça um resumo do dia."}]} on_pick="ask" />
       <.prompt_suggestions variant="pill" items={@next} on_pick="ask" />
+      <.prompt_suggestions variant="grid" items={@next} on_pick="ask" />
   """
   attr :items, :list, required: true, doc: "Maps `%{title, text}`; a pill shows the `text`."
 
@@ -468,7 +586,7 @@ defmodule LineaUI.Components.Ai do
     default: true,
     doc: "Tilts the cards (decorative; turn it off in dense screens)."
 
-  attr :variant, :string, default: "card", values: ~w(card pill)
+  attr :variant, :string, default: "card", values: ~w(card pill grid)
 
   attr :on_pick, :any,
     default: nil,
@@ -488,6 +606,22 @@ defmodule LineaUI.Components.Ai do
         phx-click={pick(@on_pick, item.title, item.text, @target)}
       >
         <.icon name="huge-sparkles" class="i sm" />{item.text}
+      </button>
+    </div>
+    """
+  end
+
+  def prompt_suggestions(%{variant: "grid"} = assigns) do
+    ~H"""
+    <div class={merge(["ai-suggestions grid", @class])} {@rest}>
+      <button
+        :for={item <- @items}
+        type="button"
+        class="ai-cell"
+        phx-click={pick(@on_pick, item.title, item.text, @target)}
+      >
+        <span class="mono ai-cell-title">{item.title}</span>
+        <span class="ai-cell-text">{item.text}</span>
       </button>
     </div>
     """
