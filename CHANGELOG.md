@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- New `trace` (with `trace_line` and `trace_step`), in the spirit of the shadcn/ui Trace: what an agent did, one line per step with an icon, a title that truncates, an optional description and a status (`running` shimmers, `error` turns red with an alert icon, `pending` fades). A line can be a link (`href`/`navigate`/`patch`, `end_icon`); `trace_step` is a native `<details>` whose block shows under the line behind a thin rule (output in `linea-trace-code`, or nested steps).
+
 ## 0.22.0 (2026-11-13)
 
 ### New, from the Signetum canvas

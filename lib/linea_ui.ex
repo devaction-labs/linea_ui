@@ -132,6 +132,7 @@ defmodule LineaUI do
     toast: LineaUI.Components.Toast,
     tooltip: LineaUI.Components.Tooltip,
     treeview: LineaUI.Components.Treeview,
+    trace: LineaUI.Components.Trace,
     typography: LineaUI.Components.Typography,
     view_switcher: LineaUI.Components.ViewSwitcher,
     upload: LineaUI.Components.Upload

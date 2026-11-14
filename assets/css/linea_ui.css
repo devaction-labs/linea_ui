@@ -48,6 +48,7 @@
 @import "./parts/canvas-flow.css";
 @import "./parts/canvas-glow-text.css";
 @import "./parts/canvas-view-switcher.css";
+@import "./parts/canvas-trace.css";
 
 @source "../../lib";
 @source "../js";
