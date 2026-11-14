@@ -272,4 +272,32 @@ defmodule LineaUI.Components.UploadTest do
 
     assert find(html, "input[type=file][disabled]") |> Enum.count() == 1
   end
+
+  describe "upload_button canvas variant" do
+    test "a size draws sg-btn like <.button> and takes an id" do
+      html =
+        render(
+          ~H|<.upload_button id="attach-button" size="sm" variant="ghost">Anexar</.upload_button>|
+        )
+
+      assert ["attach-button"] == html |> find("label") |> LazyHTML.attribute("id")
+      assert "sg-btn" in classes(html, "label")
+      assert "ghost" in classes(html, "label")
+      assert "sm" in classes(html, "label")
+      refute "btn" in classes(html, "label")
+    end
+
+    test "colors map as in <.button>" do
+      html = render(~H|<.upload_button size="md" color="primary">A</.upload_button>|)
+      assert "accent" in classes(html, "label")
+      html = render(~H|<.upload_button color="error" variant="soft">A</.upload_button>|)
+      assert "danger" in classes(html, "label")
+    end
+
+    test "without size, LineOne's classes stay" do
+      html = render(~H|<.upload_button>A</.upload_button>|)
+      assert "btn" in classes(html, "label")
+      refute "sg-btn" in classes(html, "label")
+    end
+  end
 end

@@ -148,6 +148,77 @@ defmodule LineaUI.Components.BreadcrumbTest do
     assert [] = find(none, "[data-trigger]") |> Enum.to_list()
   end
 
+  test "navigate, patch and href that are nil or false make the step plain text" do
+    html =
+      render(~H"""
+      <.breadcrumb>
+        <:item navigate="/">Home</:item>
+        <:item navigate={nil}>Admin</:item>
+        <:item patch={false}>Group</:item>
+        <:item href={nil} navigate={false} patch={nil}>Area</:item>
+        <:item navigate={nil}>Now</:item>
+      </.breadcrumb>
+      """)
+
+    assert [_] = find(html, "li a") |> Enum.to_list()
+    assert texts(html, "li > div > span") == ["Admin", "Group", "Area"]
+    assert texts(html, "nav.sg-crumb b, ul.sg-crumb b") == ["Now"]
+  end
+
+  test "steps built with :for and a nil navigate" do
+    assigns = %{
+      steps: [%{name: "Home", to: "/"}, %{name: "Mgmt", to: nil}, %{name: "Now", to: nil}]
+    }
+
+    html =
+      rendered_to_string(~H"""
+      <.breadcrumb>
+        <:item :for={step <- @steps} navigate={step.to}>{step.name}</:item>
+      </.breadcrumb>
+      """)
+
+    assert [_] = find(html, "li a[href='/']") |> Enum.to_list()
+    assert texts(html, "li > div > span") == ["Mgmt"]
+    assert texts(html, "b[class]") == ["Now"]
+  end
+
+  test "nil routes also work inside the collapsed dropdown" do
+    html =
+      render(~H"""
+      <.breadcrumb id="p" max_items={3}>
+        <:item navigate="/">A</:item>
+        <:item navigate={nil}>B</:item>
+        <:item navigate={nil}>C</:item>
+        <:item>D</:item>
+      </.breadcrumb>
+      """)
+
+    assert [_] = find(html, "#p-more") |> Enum.to_list()
+  end
+
+  test "the canvas current step is a <b> inside aria-current=page; plain keeps the span" do
+    canvas =
+      render(~H"""
+      <.breadcrumb>
+        <:item navigate="/">Home</:item>
+        <:item>Now</:item>
+      </.breadcrumb>
+      """)
+
+    assert texts(canvas, "[aria-current=page] > b") == ["Now"]
+    assert [] = find(canvas, "li > a b") |> Enum.to_list()
+
+    plain =
+      render(~H"""
+      <.breadcrumb variant="plain">
+        <:item>Now</:item>
+      </.breadcrumb>
+      """)
+
+    assert [] = find(plain, "b") |> Enum.to_list()
+    assert texts(plain, "[aria-current=page] > span") == ["Now"]
+  end
+
   defp texts(html, selector),
     do: html |> find(selector) |> Enum.map(&(&1 |> LazyHTML.text() |> String.trim()))
 end

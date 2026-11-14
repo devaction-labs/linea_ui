@@ -506,7 +506,14 @@ defmodule LineaUI.Components.Toast do
 
   `state` is `run` (the circle fills while it works), `queue` (dashed), `ok` (green dot) or `err` (red dot);
   `percent` (0 to 100) makes a running circle show that real percentage. An action takes `ghost` (plain text) and
-  `on_click` (a `%JS{}` or an event name); put `href` or other attributes on it as needed.
+  `on_click` (a `%JS{}` or an event name). With `href`, `navigate` or `patch` the action is a link (`<.link>`,
+  so it keeps its semantics and opens in a new tab) instead of a button; `id` goes on it either way.
+
+      <.status_toast state="run">
+        Deploy building
+        <:action id="toast-logs" patch={~p"/deploys/1/logs"} ghost>Logs</:action>
+        <:action id="toast-hide" on_click="hide">Hide</:action>
+      </.status_toast>
   """
   attr :state, :string, default: "run", values: @statuses
   attr :percent, :integer, default: nil, doc: "0 to 100: the circle of a running toast shows it."
@@ -517,6 +524,10 @@ defmodule LineaUI.Components.Toast do
   slot :action, doc: "A button at the right." do
     attr :ghost, :boolean
     attr :on_click, :any
+    attr :id, :string
+    attr :href, :string
+    attr :navigate, :string
+    attr :patch, :string
   end
 
   def status_toast(assigns) do
@@ -530,17 +541,34 @@ defmodule LineaUI.Components.Toast do
         <i></i>
       </span>
       <span class="msg">{render_slot(@inner_block)}</span>
-      <button
-        :for={action <- @action}
-        type="button"
-        class={["act", action[:ghost] && "ghost"]}
-        phx-click={action[:on_click]}
-      >
-        {render_slot(action)}
-      </button>
+      <%= for action <- @action do %>
+        <.link
+          :if={action_link?(action)}
+          id={action[:id]}
+          class={["act", action[:ghost] && "ghost"]}
+          href={action[:href]}
+          navigate={action[:navigate]}
+          patch={action[:patch]}
+          phx-click={action[:on_click]}
+        >
+          {render_slot(action)}
+        </.link>
+        <button
+          :if={!action_link?(action)}
+          id={action[:id]}
+          type="button"
+          class={["act", action[:ghost] && "ghost"]}
+          phx-click={action[:on_click]}
+        >
+          {render_slot(action)}
+        </button>
+      <% end %>
     </div>
     """
   end
+
+  defp action_link?(action),
+    do: Enum.any?([:href, :navigate, :patch], &Map.has_key?(action, &1))
 
   @doc """
   Leaves a toast in the flash of a `Plug.Conn` (after `fetch_flash`) or a LiveView socket. The

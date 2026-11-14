@@ -198,4 +198,89 @@ defmodule LineaUI.Components.TabsTest do
     assert count(html, "#o-tab-b .sg-nav-n") == 1
     assert count(html, "#o-tab-b .sg-nav-n.st-over") == 0
   end
+
+  describe "variant nav" do
+    test "renders nav.sg-tabs with a.on for the current tab, no hook and no roles" do
+      html =
+        render(~H"""
+        <.tabs id="sys" variant="nav" selected="tasks" class="mb-4">
+          <:tab name="overview" navigate="/system">Overview</:tab>
+          <:tab name="tasks" patch="/system/tasks" count={12}>Tasks</:tab>
+          <:tab name="docs" href="/docs">Docs</:tab>
+        </.tabs>
+        """)
+
+      assert count(html, "nav#sys.sg-tabs.mb-4") == 1
+      assert count(html, "[phx-hook]") == 0
+      assert count(html, "[role=tab], [role=tablist]") == 0
+      assert count(html, "nav > a") == 3
+      assert count(html, "a.on[aria-current=page][data-phx-link=patch]") == 1
+      assert html =~ ~r/Tasks<span class="sg-nav-n[^"]*">12<\/span>/
+      assert count(html, "a.on .sg-nav-n") == 1
+      assert count(html, "a[href='/system'][data-phx-link=redirect]:not(.on)") == 1
+      assert count(html, "a[href='/docs']:not(.on)") == 1
+    end
+
+    test "selected nil leaves none current" do
+      html =
+        render(~H"""
+        <.tabs id="sys" variant="nav">
+          <:tab name="a" navigate="/a">A</:tab>
+          <:tab name="b" navigate="/b">B</:tab>
+        </.tabs>
+        """)
+
+      assert count(html, "a.on") == 0
+      assert count(html, "[aria-current]") == 0
+    end
+
+    test "a tab without a route keeps phx-click and never selects itself" do
+      html =
+        render(~H"""
+        <.tabs id="sys" variant="nav" selected="money">
+          <:tab name="money" phx-click="soon" phx-value-id="money" phx-target="#x">Money</:tab>
+          <:tab name="nilroute" navigate={nil} href={false} phx-click="soon">Nil</:tab>
+        </.tabs>
+        """)
+
+      assert count(html, "a[role=button][phx-click=soon][phx-value-id=money][phx-target='#x']") ==
+               1
+
+      assert count(html, "a[role=button][phx-click=soon]") == 2
+      assert count(html, "a.on, [aria-current], [href]") == 0
+    end
+
+    test "soon and disabled tabs are not clickable and carry a title" do
+      html =
+        render(~H"""
+        <.tabs id="sys" variant="nav" selected="a" soon_label="Soon">
+          <:tab name="a" soon>A</:tab>
+          <:tab name="b" disabled title="Locked" navigate="/b">B</:tab>
+        </.tabs>
+        """)
+
+      assert count(html, "a[aria-disabled=true][title=Soon]:not([href]):not(.on)") == 1
+      assert count(html, "a[aria-disabled=true][title=Locked]:not([href])") == 1
+      assert count(html, "[phx-click]") == 0
+    end
+
+    test "tabs built with :for and a nil navigate render as buttons" do
+      assigns = %{items: [%{name: "a", to: "/a"}, %{name: "b", to: nil}]}
+
+      html =
+        rendered_to_string(~H"""
+        <.tabs id="sys" variant="nav" selected="a">
+          <:tab :for={item <- @items} name={item.name} navigate={item.to}>{item.name}</:tab>
+        </.tabs>
+        """)
+
+      assert count(html, "a.on[href='/a']") == 1
+      assert count(html, "a[role=button]:not([href])") == 1
+    end
+  end
+
+  test "a link tab of the regular variants does not push on_change from the hook" do
+    source = File.read!("assets/js/linea_ui/hooks/tabs.js")
+    assert source =~ ~S{"link" in tab.dataset || this.notify(value)}
+  end
 end

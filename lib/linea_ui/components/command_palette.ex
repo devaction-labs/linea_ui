@@ -48,6 +48,30 @@ defmodule LineaUI.Components.CommandPalette do
         items={[%{group: "Clientes", label: "Casa das Tintas", avatar: %{initials: "CD", tint: "#d97a1e"}}]}
       />
 
+  ## Your own icons
+
+  An item that has neither `icon` nor `avatar` can draw its own icon (an SVG of the design) through the
+  `:item_icon` slot, which receives each item's map as you gave it (so it can branch on a `kind` key of yours):
+
+      <.command_palette id="search" items={@entries}>
+        <:item_icon :let={item}>
+          <.design_icon name={item.kind} />
+        </:item_icon>
+      </.command_palette>
+
+  ## Filtering on the server
+
+  By default the palette filters its `items` in the browser. With `on_search` it does not filter at all: the
+  query (and the scope) is pushed to the server after `debounce` milliseconds, the server answers by assigning
+  its own entries to `items`, and the palette only narrows them by scope. This is the mode for a registry of
+  entries that lives in the app:
+
+      <.command_palette id="search" items={@results} on_search="search" on_select="go" />
+
+      def handle_event("search", %{"query" => query}, socket) do
+        {:noreply, assign(socket, :results, Registry.search(query))}
+      end
+
   Choosing an item closes the palette and runs `on_select`. An item with `navigate`, `patch` or `href` is a real link
   (so Ctrl Enter opens its address in a new window) and the navigation happens as for any link.
   """
@@ -207,6 +231,10 @@ defmodule LineaUI.Components.CommandPalette do
   attr :class, :any, default: nil, doc: "Merged into the dialog card."
   attr :rest, :global
 
+  slot :item_icon,
+    doc:
+      "Your own icon (an SVG) for the items without `icon` and `avatar`; receives each item's map with `:let`."
+
   slot :footer, doc: "Content at the right end of the footer, e.g. a status line."
 
   def command_palette(assigns) do
@@ -304,7 +332,12 @@ defmodule LineaUI.Components.CommandPalette do
             <div :if={group.label} id={group.id} class={@look.heading}>
               {group.label}
             </div>
-            <.palette_item :for={item <- group.items} item={item} look={@look} />
+            <.palette_item
+              :for={item <- group.items}
+              item={item}
+              look={@look}
+              icon_slot={@item_icon}
+            />
           </div>
           <button
             :if={@assistant_row}
@@ -383,6 +416,7 @@ defmodule LineaUI.Components.CommandPalette do
 
   attr :item, :map, required: true
   attr :look, :map, required: true
+  attr :icon_slot, :list, default: []
 
   defp palette_item(%{item: %{link: nil}} = assigns) do
     ~H"""
@@ -397,7 +431,7 @@ defmodule LineaUI.Components.CommandPalette do
       data-scope={@item.scope}
       data-text={@item.text}
     >
-      <.palette_item_body item={@item} look={@look} />
+      <.palette_item_body item={@item} look={@look} icon_slot={@icon_slot} />
     </button>
     """
   end
@@ -417,19 +451,21 @@ defmodule LineaUI.Components.CommandPalette do
       data-text={@item.text}
       {@link}
     >
-      <.palette_item_body item={@item} look={@look} />
+      <.palette_item_body item={@item} look={@look} icon_slot={@icon_slot} />
     </.link>
     """
   end
 
   attr :item, :map, required: true
   attr :look, :map, required: true
+  attr :icon_slot, :list, default: []
 
   defp palette_item_body(assigns) do
     ~H"""
     <.avatar :if={@item.avatar} size="24" shape="square" {@item.avatar} />
     <span :if={!@item.avatar} class={@look.icon}>
       <.icon :if={@item.icon} name={@item.icon} class="size-4" />
+      {!@item.icon && render_slot(@icon_slot, @item.entry)}
     </span>
     <span class="min-w-0">
       <span class={["block truncate", @look.label]}>{@item.label}</span>
@@ -450,6 +486,7 @@ defmodule LineaUI.Components.CommandPalette do
 
     %{
       id: "#{id}-item-#{index}",
+      entry: entry,
       label: label,
       sub: sub,
       value: to_string(Map.get(entry, :value, label)),

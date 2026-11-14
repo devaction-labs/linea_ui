@@ -156,8 +156,10 @@ defmodule LineaUI.Components.Sidebar.Nav do
   # ---------------------------------------------------------------- the menu data
 
   @doc false
-  @spec build([map()], String.t() | nil, String.t(), String.t()) :: map()
-  def build(nav, current, format, id) do
+  @spec build([map()], String.t() | nil, String.t(), String.t(), term()) :: map()
+  def build(nav, current, format, id, match \\ "exact") do
+    current = {current, to_string(match || "exact")}
+
     entries =
       nav
       |> Enum.filter(&shown?(&1, format))
@@ -226,7 +228,8 @@ defmodule LineaUI.Components.Sidebar.Nav do
     deep = active or Enum.any?(children, &(&1.active or &1.deep))
 
     collapsible =
-      format == "tree" and children != [] and Map.get(item, :collapsible, true) != false
+      format == "tree" and children != [] and not disabled?(item) and
+        Map.get(item, :collapsible, true) != false
 
     %{
       kind: :item,
@@ -237,6 +240,8 @@ defmodule LineaUI.Components.Sidebar.Nav do
       label: item[:label],
       icon: icon(item[:icon]),
       link: link_attrs(item),
+      disabled: disabled?(item),
+      hint: hint(item),
       count: item[:count],
       badge: item[:badge],
       color: color,
@@ -314,15 +319,42 @@ defmodule LineaUI.Components.Sidebar.Nav do
   defp color(name) when name in @palette, do: {name, nil}
   defp color(css) when is_binary(css), do: {nil, "background:" <> css}
 
-  defp active?(%{active: true}, _current), do: true
-  defp active?(_entry, nil), do: false
+  defp disabled?(%{disabled: disabled}) when disabled in [nil, false], do: false
+  defp disabled?(%{disabled: _disabled}), do: true
+  defp disabled?(_item), do: false
 
-  defp active?(entry, current) do
-    case entry[:navigate] || entry[:patch] || entry[:href] do
-      url when is_binary(url) -> key(url) == key(current)
-      _none -> false
+  defp hint(%{title: title}) when is_binary(title), do: title
+  defp hint(%{disabled: disabled}) when is_binary(disabled), do: disabled
+  defp hint(_item), do: nil
+
+  defp active?(%{disabled: disabled}, _current) when disabled not in [nil, false], do: false
+  defp active?(%{active: true}, _current), do: true
+  defp active?(_entry, {nil, _match}), do: false
+
+  defp active?(entry, {current, match}) do
+    url = entry[:navigate] || entry[:patch] || entry[:href]
+
+    case to_string(Map.get(entry, :match) || match) do
+      "prefix" when is_binary(url) -> path_prefix?(url, current)
+      _exact when is_binary(url) -> key(url) == key(current)
+      _other -> false
     end
   end
+
+  @doc false
+  @spec path_prefix?(term(), term()) :: boolean()
+  def path_prefix?(url, current) when is_binary(url) and is_binary(current) do
+    path = URI.parse(url).path
+    now = URI.parse(current).path
+
+    cond do
+      not is_binary(path) or not is_binary(now) -> false
+      path == "/" -> now == "/"
+      true -> now == path or String.starts_with?(now, String.trim_trailing(path, "/") <> "/")
+    end
+  end
+
+  def path_prefix?(_url, _current), do: false
 
   defp key(url) do
     uri = URI.parse(url)

@@ -97,6 +97,8 @@ defmodule LineaUI.Components.Kanban do
 
   @board "flex items-start gap-3.5 overflow-x-auto px-0.5 pb-3"
 
+  @fluid "flex items-start gap-3.5 px-0.5 pb-3 [&>section]:w-auto [&>section]:min-w-0 [&>section]:flex-1"
+
   @column "flex w-[272px] flex-none flex-col gap-2.5 rounded-[18px] bg-[var(--sunken)] p-3 ring-1 ring-[var(--line)] ring-inset data-[over]:bg-primary/10 data-[disabled=true]:opacity-60 dark:data-[over]:bg-accent/[.18]"
 
   @colors %{
@@ -168,6 +170,16 @@ defmodule LineaUI.Components.Kanban do
     default: false,
     doc: "`true` stops the cards from being dragged or dropped, e.g. for a read-only viewer."
 
+  attr :fluid, :boolean,
+    default: false,
+    doc:
+      "`true` makes the columns share the width of the page (each `flex-1`, no fixed 272px, no sideways scroll) like the canvas `sg-kb`. The `kanban_lost` aside keeps its 52px."
+
+  attr :active, :string,
+    default: nil,
+    doc:
+      "The phone mode: sets `data-phone` on the board; below 640px only the column with `active` set shows (no header, no well), the others are hidden. Mark that column with `active` too."
+
   attr :class, :any,
     default: nil,
     doc: "Merged into the scrolling row, e.g. `min-h-[600px]` for a board that fills the screen."
@@ -177,7 +189,9 @@ defmodule LineaUI.Components.Kanban do
 
   def kanban(assigns) do
     assigns
-    |> assign_derived(:classes, [:class], fn -> merge([@board, assigns.class]) end)
+    |> assign_derived(:classes, [:class], fn ->
+      merge([board_class(assigns.fluid), assigns.class])
+    end)
     |> render_board()
   end
 
@@ -191,6 +205,7 @@ defmodule LineaUI.Components.Kanban do
       data-event={@event}
       data-target={@target}
       data-disabled={@disabled && "true"}
+      data-phone={@active}
       class={@classes}
       {@rest}
     >
@@ -198,6 +213,9 @@ defmodule LineaUI.Components.Kanban do
     </div>
     """
   end
+
+  defp board_class(true), do: @fluid
+  defp board_class(false), do: @board
 
   @doc """
   Renders a column: a tinted well, 272px wide, that is the drop list of its cards.
@@ -227,10 +245,31 @@ defmodule LineaUI.Components.Kanban do
 
   attr :label, :string, required: true, doc: "The column's name, also its `aria-label`."
 
-  attr :count, :integer,
+  attr :count, :any,
     default: nil,
     doc:
-      "The number of cards, in the pill by the label; `nil` shows no pill. `empty` needs it to be `0`."
+      "The number of cards (an integer or a text), in the pill by the label; `nil` shows no pill. `empty` needs it to be `0`."
+
+  attr :count_label, :string,
+    default: nil,
+    doc:
+      "The text of the pill instead of `count`, e.g. `\"5 / 3\"` for a work in progress counter."
+
+  attr :over_limit, :boolean,
+    default: false,
+    doc:
+      "`true` turns the pill and the bar red (`data-wip=\"exceeded\"`) whatever `count` and `limit` say, for a `count_label` the kit cannot compare."
+
+  attr :hint, :string,
+    default: "empty",
+    values: ~w(empty always),
+    doc:
+      "When the `empty` slot shows: `empty` only when `count` is `0`, `always` also under the cards of the column."
+
+  attr :active, :boolean,
+    default: false,
+    doc:
+      "The column the phone mode of the board (`active` of `kanban`) shows; sets `data-phone-active`."
 
   attr :color, :string,
     default: "neutral",
@@ -280,12 +319,15 @@ defmodule LineaUI.Components.Kanban do
     assigns
     |> assign_derived(:look, [:color], fn -> Map.fetch!(@colors, assigns.color) end)
     |> assign_derived(:width, [:progress], fn -> bar_width(assigns.progress) end)
-    |> assign_derived(:exceeded, [:count, :limit], fn ->
-      exceeded?(assigns.count, assigns.limit)
+    |> assign_derived(:exceeded, [:count, :limit, :over_limit], fn ->
+      assigns.over_limit || exceeded?(assigns.count, assigns.limit)
+    end)
+    |> assign_derived(:shown, [:count, :count_label], fn ->
+      assigns.count_label || assigns.count
     end)
     |> assign_derived(:classes, [:class], fn -> merge([@column, assigns.class]) end)
     |> assign_derived(:pill, [], fn -> @pill end)
-    |> assign_derived(:over_limit, [], fn -> @over_limit end)
+    |> assign_derived(:over_limit_class, [], fn -> @over_limit end)
     |> render_column()
   end
 
@@ -296,11 +338,12 @@ defmodule LineaUI.Components.Kanban do
       data-list={@list || @id}
       data-disabled={@disabled && "true"}
       data-wip={@exceeded && "exceeded"}
+      data-phone-active={@active && "true"}
       aria-label={@label}
       class={@classes}
       {@rest}
     >
-      <div class="flex items-center gap-2 px-1 pt-0.5 pb-1">
+      <div data-head class="flex items-center gap-2 px-1 pt-0.5 pb-1">
         <span
           :if={@icon != []}
           class={["flex size-[26px] items-center justify-center rounded-lg", @look.tile]}
@@ -308,9 +351,9 @@ defmodule LineaUI.Components.Kanban do
           {render_slot(@icon)}
         </span>
         <span class="text-[13.5px] font-[550] text-slate-900 dark:text-navy-50">{@label}</span>
-        <span :if={@count && !@exceeded} class="sg-nav-n">{@count}</span>
-        <span :if={@count && @exceeded} class={merge([@pill, "ml-auto", @over_limit])}>
-          {@count}
+        <span :if={@shown && !@exceeded} class="sg-nav-n">{@shown}</span>
+        <span :if={@shown && @exceeded} class={merge([@pill, "ml-auto", @over_limit_class])}>
+          {@shown}
         </span>
         <span :if={@actions != []} class="ml-auto flex">{render_slot(@actions)}</span>
       </div>
@@ -334,7 +377,7 @@ defmodule LineaUI.Components.Kanban do
       {render_slot(@inner_block)}
       <div
         :for={empty <- @empty}
-        :if={@count == 0 && !empty[:title]}
+        :if={(@count == 0 || @hint == "always") && !empty[:title]}
         data-empty
         class="sg-drop sg-kb-empty"
       >
@@ -342,7 +385,7 @@ defmodule LineaUI.Components.Kanban do
       </div>
       <div
         :for={empty <- @empty}
-        :if={@count == 0 && empty[:title]}
+        :if={(@count == 0 || @hint == "always") && empty[:title]}
         data-empty
         class="flex flex-col items-center gap-1 px-2 pt-5 pb-6 text-center"
       >
@@ -394,6 +437,10 @@ defmodule LineaUI.Components.Kanban do
 
   attr :risk, :boolean, default: false, doc: "The warning ring of a card that needs attention."
 
+  attr :dense, :boolean,
+    default: false,
+    doc: "`true` tightens the card to 12px of padding and an 8px gap, for a long board."
+
   attr :grip, :boolean,
     default: false,
     doc:
@@ -403,10 +450,14 @@ defmodule LineaUI.Components.Kanban do
   attr :rest, :global
   slot :inner_block, required: true
 
+  slot :actions,
+    doc:
+      "A menu button in the top right corner, shown only while the card is hovered or has the focus (always on a touch screen)."
+
   def kanban_card(assigns) do
     assigns
-    |> assign_derived(:classes, [:risk, :class], fn ->
-      merge([@card, assigns.risk && @risk, assigns.class])
+    |> assign_derived(:classes, [:risk, :dense, :class], fn ->
+      merge([@card, assigns.risk && @risk, assigns.dense && "p-3 gap-2", assigns.class])
     end)
     |> render_card()
   end
@@ -427,6 +478,13 @@ defmodule LineaUI.Components.Kanban do
       >
         <i :for={_ <- 1..6} class="block size-[3px] rounded-full bg-current"></i>
       </span>
+      <div
+        :if={@actions != []}
+        data-actions
+        class="absolute top-2.5 right-2.5 z-[1] flex opacity-0 transition-opacity group-focus-within:opacity-100 group-hover:opacity-100 motion-reduce:transition-none [@media(hover:none)]:opacity-100"
+      >
+        {render_slot(@actions)}
+      </div>
       {render_slot(@inner_block)}
     </article>
     """

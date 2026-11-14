@@ -133,6 +133,15 @@ defmodule LineaUI.Components.Form do
       "A small piece (a character counter) on the same row as the help and the errors, at the right."
   )
 
+  slot(:label_aside,
+    doc:
+      "Content at the right of the caption (a \"Forgot?\" link, a strength word), on the caption's row."
+  )
+
+  slot(:below,
+    doc: "Content between the control and the help line (strength bars)."
+  )
+
   def field(assigns) do
     assigns
     |> Control.assign_control()
@@ -157,6 +166,7 @@ defmodule LineaUI.Components.Form do
         <span class={merge(["flex", !@label && "col-start-2"])}>{render_slot(@inner_block)}</span>
       </label>
       <div class="col-start-2">
+        {render_slot(@below)}
         <.message_row help={@help} errors={@errors} state={@state} aside={@aside} />
       </div>
     </div>
@@ -176,10 +186,11 @@ defmodule LineaUI.Components.Form do
         }
         id={@id && "#{@id}-label"}
       >
-        {@label}
+        {@label}<span :if={@label_hint} class="font-normal text-slate-400 dark:text-navy-300">{@label_hint}</span>
       </span>
       <div class={!@label && "col-start-2"}>{render_slot(@inner_block)}</div>
       <div class="col-start-2">
+        {render_slot(@below)}
         <.message_row help={@help} errors={@errors} state={@state} aside={@aside} />
       </div>
     </div>
@@ -195,15 +206,19 @@ defmodule LineaUI.Components.Form do
           class={
             merge([
               "block text-[13px]/5 font-medium text-slate-950 dark:text-navy-50",
-              @label_hint && "flex justify-between gap-2",
+              (@label_hint || @label_aside != []) && "flex justify-between gap-2",
               @label_class
             ])
           }
         >
-          {@label}<span :if={@label_hint} class="font-normal text-slate-400 dark:text-navy-300">{@label_hint}</span>
+          {@label}<span :if={@label_hint} class="font-normal text-slate-400 dark:text-navy-300">{@label_hint}</span><span
+            :if={@label_aside != []}
+            class="ml-auto flex items-center gap-2 font-normal"
+          >{render_slot(@label_aside)}</span>
         </span>
         <span class={control_class(@label)}>{render_slot(@inner_block)}</span>
       </label>
+      {render_slot(@below)}
       <.message_row help={@help} errors={@errors} state={@state} aside={@aside} />
     </div>
     """
@@ -215,13 +230,21 @@ defmodule LineaUI.Components.Form do
       <span
         :if={@label}
         class={
-          merge(["block text-[13px]/5 font-medium text-slate-950 dark:text-navy-50", @label_class])
+          merge([
+            "block text-[13px]/5 font-medium text-slate-950 dark:text-navy-50",
+            (@label_hint || @label_aside != []) && "flex justify-between gap-2",
+            @label_class
+          ])
         }
         id={@id && "#{@id}-label"}
       >
-        {@label}
+        {@label}<span :if={@label_hint} class="font-normal text-slate-400 dark:text-navy-300">{@label_hint}</span><span
+          :if={@label_aside != []}
+          class="ml-auto flex items-center gap-2 font-normal"
+        >{render_slot(@label_aside)}</span>
       </span>
       {render_slot(@inner_block)}
+      {render_slot(@below)}
       <.message_row help={@help} errors={@errors} state={@state} aside={@aside} />
     </div>
     """

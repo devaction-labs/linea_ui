@@ -165,6 +165,11 @@ defmodule LineaUI.Components.DatePicker do
     doc:
       "`\"linea\"` draws the calendar as LineaUI's own: a compact 300px panel with the month and year as buttons, 36px rounded days, a dot under today, a continuous band for a range and pill presets. Without it the calendar is LineOne's flatpickr."
 
+  attr :size, :string,
+    default: "md",
+    values: ~w(sm md lg),
+    doc: "The height of the input, as an input of that size: `sm` 32px, `md` 40px, `lg` 48px."
+
   attr :disabled, :boolean, default: false
   attr :on_change, :string, default: nil
   attr :target, :any, default: nil
@@ -181,6 +186,7 @@ defmodule LineaUI.Components.DatePicker do
     assigns
     |> time_defaults()
     |> range_fields()
+    |> assign_derived(:rest, [:rest, :size], fn -> sized(assigns.rest, assigns.size) end)
     |> then(&assign_derived(&1, :today, [:today], fn -> &1.today || Date.utc_today() end))
     |> then(
       &assign_derived(&1, :presets, [:presets, :today, :week_start], fn ->
@@ -189,6 +195,9 @@ defmodule LineaUI.Components.DatePicker do
     )
     |> Shell.render_picker(:date, "LineaUI.DatePicker")
   end
+
+  defp sized(rest, "md"), do: rest
+  defp sized(rest, size), do: Map.put(rest, :"data-size", size)
 
   @preset_keys ~w(today yesterday last_7_days last_30_days this_week last_week this_month last_month this_year last_year)
 

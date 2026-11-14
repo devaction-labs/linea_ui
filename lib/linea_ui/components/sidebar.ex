@@ -43,7 +43,12 @@ defmodule LineaUI.Components.Sidebar do
       active item (itself or a child), closed otherwise.
     * `open`: `true` or `false` forces a collapsible item open or closed at first, whatever the route.
     * `active`: marks it active; `current` marks the item whose `navigate`/`patch`/`href` is the current
-      path (path and query are compared).
+      path (path and query are compared). The active item has `aria-current="page"`.
+    * `match`: `"exact"` (the default, or the `match` of the component) or `"prefix"`: the item is also active
+      on a path under its own (`navigate: "/app/tasks"` lights up on `/app/tasks/NXP-1`; only the path is
+      compared, and `/` is always exact).
+    * `disabled`: a "coming soon" item: a `span` (not a link) with `aria-disabled="true"` and `class="sg-sb-a dis"`,
+      never active and never toggling. `title` is its tooltip (a string `disabled` works as the title too).
     * `formats`: a list of formats that show it (`["rail"]`: only the rail); every format when left out.
 
   Group keys:
@@ -112,6 +117,35 @@ defmodule LineaUI.Components.Sidebar do
 
       <.shell footer="version" version={%{version: "v" <> to_string(Application.spec(:my_app, :vsn)),
         build: "2a9f1c3", navigate: ~p"/changelog", label: "Novidades"}} …>
+
+  ## The canvas "Painel" menu
+
+  The `tree` format reproduces the canvas `sg-sb treex` menu: collapsible groups with a chevron
+  (`aria-expanded`, `aria-controls`), items with `children` joined by a line (`.sg-sb-tree.line`), `disabled`
+  "soon" items and the mono `count` (`sg-sb-n`). Groups open and close in the browser; `persist_groups` keeps
+  which ones are open in `localStorage` (`linea-sidebar-groups:<id>`), so the next visit restores them.
+
+      <.sidebar id="menu" format="tree" persist_groups match="prefix" current={@current_path}
+        nav={[
+          %{group: "Gestão", items: [
+            %{label: "Tarefas", icon: "kanban", navigate: ~p"/app/tasks", count: 12,
+              children: [%{label: "Minhas", navigate: ~p"/app/tasks/mine"}]},
+            %{label: "Relatórios", icon: "chart", disabled: true, title: "Em breve"}
+          ]}
+        ]}>
+        <:sidebar_footer>
+          <button type="button" class="sg-sb-a" data-rail-toggle="menu">Recolher menu</button>
+        </:sidebar_footer>
+        <:mobile_drawer>
+          <.link navigate={~p"/settings"} class="sg-sb-a">Configurações</.link>
+          <.link href={~p"/sair"} method="delete" class="sg-sb-a">Sair</.link>
+        </:mobile_drawer>
+      </.sidebar>
+
+  The `:sidebar_footer` slot is in the foot of the menu, above the version line (`footer="version"`), so a
+  "Recolher menu" button (any element with `data-rail-toggle="<id of the menu>"`) and the version live together.
+  The `:mobile_drawer` slot (`.sg-sb-drawer`) is in the menu body and shows only below 768px, when the menu is
+  the top bar with a hamburger: put the search, settings, theme and logout there.
 
   ## Collapsing
 
@@ -182,6 +216,17 @@ defmodule LineaUI.Components.Sidebar do
     default: true,
     doc: "Shows the collapse button of the `tree` and of the `rail` panel."
 
+  attr :match, :string,
+    default: "exact",
+    values: ~w(exact prefix),
+    doc:
+      "How `current` is compared with the items: `exact` (path and query) or `prefix` (the path or what is under it). An item's own `match` wins."
+
+  attr :persist_groups, :boolean,
+    default: false,
+    doc:
+      "Keeps which groups and items with children are open in `localStorage[\"linea-sidebar-groups:<id>\"]` and restores them on the next visit."
+
   attr :collapsed, :boolean, default: false, doc: "Whether the menu starts collapsed to icons."
 
   attr :persist, :boolean,
@@ -207,6 +252,10 @@ defmodule LineaUI.Components.Sidebar do
   slot :sidebar_footer,
     doc: "At the end of the foot of the menu (the end of the panel in the `rail`)."
 
+  slot :mobile_drawer,
+    doc:
+      "Content of the menu body shown only below 768px (`.sg-sb-drawer`): search, settings, theme, logout."
+
   def sidebar(assigns) do
     assigns =
       assigns
@@ -222,9 +271,9 @@ defmodule LineaUI.Components.Sidebar do
           ver: foot == "version" && ver
         }
       end)
-      |> assign_derived(:menu, [:nav, :current, :format, :id, :rest], fn ->
+      |> assign_derived(:menu, [:nav, :current, :format, :id, :match, :rest], fn ->
         nav = Nav.nav(assigns.nav, assigns)
-        Nav.build(nav, assigns.current, Nav.format(assigns.format), assigns.id)
+        Nav.build(nav, assigns.current, Nav.format(assigns.format), assigns.id, assigns.match)
       end)
 
     ~H"""
@@ -239,6 +288,7 @@ defmodule LineaUI.Components.Sidebar do
       data-server-collapsed={bool(@collapsed)}
       data-mobile-open="false"
       data-persist={bool(@persist)}
+      data-persist-groups={@persist_groups && "true"}
       data-on-collapse={@on_collapse}
       data-target={@target}
       {@rest}
@@ -255,6 +305,7 @@ defmodule LineaUI.Components.Sidebar do
       >
         <:mark :if={@brand_mark != []}>{render_slot(@brand_mark)}</:mark>
         <:footer :if={@sidebar_footer != []}>{render_slot(@sidebar_footer)}</:footer>
+        <:drawer :if={@mobile_drawer != []}>{render_slot(@mobile_drawer)}</:drawer>
       </.sections>
       <.tree
         :if={@fmt == "tree"}
@@ -269,6 +320,7 @@ defmodule LineaUI.Components.Sidebar do
       >
         <:mark :if={@brand_mark != []}>{render_slot(@brand_mark)}</:mark>
         <:footer :if={@sidebar_footer != []}>{render_slot(@sidebar_footer)}</:footer>
+        <:drawer :if={@mobile_drawer != []}>{render_slot(@mobile_drawer)}</:drawer>
       </.tree>
       <.rail
         :if={@fmt == "rail"}
@@ -285,6 +337,7 @@ defmodule LineaUI.Components.Sidebar do
       >
         <:mark :if={@brand_mark != []}>{render_slot(@brand_mark)}</:mark>
         <:footer :if={@sidebar_footer != []}>{render_slot(@sidebar_footer)}</:footer>
+        <:drawer :if={@mobile_drawer != []}>{render_slot(@mobile_drawer)}</:drawer>
       </.rail>
     </nav>
     """
@@ -305,6 +358,7 @@ defmodule LineaUI.Components.Sidebar do
   attr :mobile_label, :string, required: true
   slot :mark
   slot :footer
+  slot :drawer
 
   defp sections(assigns) do
     ~H"""
@@ -329,6 +383,7 @@ defmodule LineaUI.Components.Sidebar do
       </div>
       <.user_card :if={@user} user={@user} />
       <.version :if={@version} version={@version} />
+      <div :if={@drawer != []} class="sg-sb-drawer">{render_slot(@drawer)}</div>
     </div>
     """
   end
@@ -365,6 +420,7 @@ defmodule LineaUI.Components.Sidebar do
   attr :mobile_label, :string, required: true
   slot :mark
   slot :footer
+  slot :drawer
 
   defp tree(assigns) do
     ~H"""
@@ -393,6 +449,7 @@ defmodule LineaUI.Components.Sidebar do
       </div>
       <.user_card :if={@user} user={@user} />
       <.version :if={@version} version={@version} />
+      <div :if={@drawer != []} class="sg-sb-drawer">{render_slot(@drawer)}</div>
     </div>
     """
   end
@@ -411,6 +468,7 @@ defmodule LineaUI.Components.Sidebar do
   attr :mobile_label, :string, required: true
   slot :mark
   slot :footer
+  slot :drawer
 
   defp rail(assigns) do
     ~H"""
@@ -486,6 +544,7 @@ defmodule LineaUI.Components.Sidebar do
         {render_slot(@footer)}
         <.version :if={@version} version={@version} />
       </div>
+      <div :if={@drawer != []} class="sg-sb-drawer">{render_slot(@drawer)}</div>
     </div>
     """
   end
@@ -632,6 +691,16 @@ defmodule LineaUI.Components.Sidebar do
       end)
 
     ~H"""
+    <span
+      :if={@item.disabled}
+      class={["sg-sb-a", "dis", @child && @format == "rail" && "t", @chip == "sqi" && "sq"]}
+      aria-disabled="true"
+      title={@item.hint || @item.label}
+      data-disabled
+      data-rail-tip
+    >
+      <.row_body item={@item} chip={@chip} />
+    </span>
     <button
       :if={@item.toggle_row}
       type="button"
@@ -655,7 +724,7 @@ defmodule LineaUI.Components.Sidebar do
       </span>
     </button>
     <.link
-      :if={!@item.toggle_row}
+      :if={!@item.toggle_row and !@item.disabled}
       class={[
         "sg-sb-a",
         @item.active && "on",

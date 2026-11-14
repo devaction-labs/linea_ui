@@ -1662,12 +1662,38 @@ defmodule LineaUI.Components.AppShell do
         <:tab navigate={~p"/today"} label="Today" active><.icon name="huge-home-01" /></:tab>
         <:tab navigate={~p"/orders"} label="Orders"><.icon name="huge-shopping-cart-01" /></:tab>
       </.tab_bar>
+
+  `variant="canvas"` is the bar of the canvas "Celular" board (`sg-m-tab`): a pill with the icon and the label
+  visible under it, the current tab highlighted (`<nav class="sg-m-tab"><a class="on">…</a></nav>`). The `class`
+  of a tab is added to its link, so the app can mark its own states.
+
+      <.tab_bar variant="canvas" current={@current_path} match="prefix">
+        <:tab navigate={~p"/app"} label="Início" match="exact"><.icon name="huge-home-01" /></:tab>
+        <:tab navigate={~p"/app/tasks"} label="Tarefas" class="tasks"><.icon name="huge-task-01" /></:tab>
+      </.tab_bar>
+
+  The current tab is the one whose link is `current` (`match="exact"`, the default, compares the path). With
+  `match="prefix"` (on the bar for every tab, or on a tab to override it) `/app/tasks/NXP-1` also lights the tab
+  of `/app/tasks`: the tab path or any path under it. The home path `/` is always compared exactly. `active` on a
+  tab forces it.
   """
   attr :label, :string, default: "Sections", doc: "The accessible name of the bar."
 
   attr :current, :string,
     default: nil,
     doc: "The current path; the tab whose link matches it is active."
+
+  attr :variant, :string,
+    default: "default",
+    values: ~w(default canvas),
+    doc:
+      "`canvas` draws the `sg-m-tab` pill with the label visible under each icon; `default` keeps the icon-only `linea-tabbar`."
+
+  attr :match, :string,
+    default: "exact",
+    values: ~w(exact prefix),
+    doc:
+      "How `current` is compared with the tabs: `exact` (the path) or `prefix` (the path or what is under it). A tab can override it."
 
   attr :class, :any, default: nil
   attr :rest, :global
@@ -1678,6 +1704,23 @@ defmodule LineaUI.Components.AppShell do
     attr :patch, :string
     attr :label, :string, required: true
     attr :active, :boolean
+    attr :class, :any, doc: "More classes of the tab's link."
+    attr :match, :string, values: ~w(exact prefix), doc: "Overrides the `match` of the bar."
+  end
+
+  def tab_bar(%{variant: "canvas"} = assigns) do
+    ~H"""
+    <nav aria-label={@label} class={merge(["sg-m-tab", @class])} {@rest}>
+      <.link
+        :for={tab <- @tab}
+        class={merge([tab_active?(tab, @current, @match) && "on", tab[:class]])}
+        aria-current={tab_active?(tab, @current, @match) && "page"}
+        {link_attrs(tab)}
+      >
+        {render_slot(tab)}{tab.label}
+      </.link>
+    </nav>
+    """
   end
 
   def tab_bar(assigns) do
@@ -1685,15 +1728,31 @@ defmodule LineaUI.Components.AppShell do
     <nav aria-label={@label} class={merge(["linea-tabbar", @class])} {@rest}>
       <.link
         :for={tab <- @tab}
-        class="linea-tabbar-tab"
+        class={merge(["linea-tabbar-tab", tab[:class]])}
         aria-label={tab.label}
-        aria-current={active?(tab, @current) && "page"}
+        aria-current={tab_active?(tab, @current, @match) && "page"}
         {link_attrs(tab)}
       >
         {render_slot(tab)}
       </.link>
     </nav>
     """
+  end
+
+  defp tab_active?(%{active: true}, _current, _match), do: true
+  defp tab_active?(_tab, nil, _match), do: false
+
+  defp tab_active?(tab, current, match) do
+    case to_string(Map.get(tab, :match, match)) do
+      "prefix" ->
+        LineaUI.Components.Sidebar.Nav.path_prefix?(
+          tab[:navigate] || tab[:patch] || tab[:href],
+          current
+        )
+
+      _exact ->
+        active?(tab, current)
+    end
   end
 
   @doc """

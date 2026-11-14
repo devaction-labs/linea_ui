@@ -171,4 +171,45 @@ defmodule LineaUI.Components.RadioTest do
     assert css =~
              ~r/\.form-radio \{\s*@apply focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary\/50/
   end
+
+  test "label_hint sits beside the caption of the group" do
+    html =
+      render(~H"""
+      <.radio_group name="b" label="Forma" label_hint="billingType" options={~w(a b)} />
+      """)
+
+    assert LazyHTML.text(find(html, "span[id$=-label] > span")) =~ "billingType"
+  end
+
+  test "variant tile renders free content with aria-label and disabled per option" do
+    html =
+      render(~H"""
+      <.radio_group id="mk" name="mk" value="a" variant="tile">
+        <:radio value="a" aria_label="Segmento A"><svg id="svg-a"></svg></:radio>
+        <:radio value="b" aria_label="Segmento B" disabled><svg id="svg-b"></svg></:radio>
+      </.radio_group>
+      """)
+
+    assert [_, _] = find(html, "label.lu-tile") |> Enum.to_list()
+    assert [_] = find(html, "label.lu-tile > svg#svg-a") |> Enum.to_list()
+    assert attr_of(html, "input#mk-0", "aria-label") == ["Segmento A"]
+    assert [_] = find(html, "input#mk-0[checked]") |> Enum.to_list()
+    assert [_] = find(html, "input#mk-1[disabled]") |> Enum.to_list()
+    assert "sr-only" in classes(html, "input#mk-0")
+    assert "flex" in classes(html, "[role=radiogroup]")
+  end
+
+  test "variant tile with options reads aria_label from the map" do
+    html =
+      render(~H"""
+      <.radio_group
+        id="t"
+        name="t"
+        variant="tile"
+        options={[%{value: "x", aria_label: "Xis", label: "X"}]}
+      />
+      """)
+
+    assert attr_of(html, "input#t-0", "aria-label") == ["Xis"]
+  end
 end

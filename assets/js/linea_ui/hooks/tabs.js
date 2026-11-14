@@ -61,7 +61,7 @@ export default {
     choose(tab) {
       const value = tab.dataset.value
       const current = this.tabs().find((item) => item.getAttribute("aria-selected") === "true")?.dataset.value
-      value === current || (this.chosen = value, this.apply(value), this.notify(value))
+      value === current || (this.chosen = value, this.apply(value), "link" in tab.dataset || this.notify(value))
     },
 
     notify(value) {

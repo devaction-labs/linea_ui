@@ -1,6 +1,6 @@
 defmodule LineaUI.Components.Pillbox do
   @moduledoc """
-  A multiple choice from a list, drawn as the design canvas's Pillbox: the chosen options become pills inside
+  A multiple (or, with `multiple={false}`, single) choice from a list, drawn as the design canvas's Pillbox: the chosen options become pills inside
   the field, and the list opens under it with a search on top and a check box on every option.
 
       <.pillbox field={@form[:categories]} label="Categories" options={@categories} />
@@ -27,6 +27,26 @@ defmodule LineaUI.Components.Pillbox do
     * `:count`: a faint mono number on the right of its row;
     * `:color` and `:initials`: a person. Its pill gets a 22px avatar with that background; the initials
       default to the first letters of the first and last word of the label.
+
+  ## Single choice
+
+  `multiple={false}` is a searchable single choice with the same look: the chosen option is one pill in the field,
+  the list opens with the search on top, choosing a row replaces the pill and closes the list (no check boxes),
+  and the value is submitted as `name` (not `name[]`). `clear` and `readonly` work as in the multiple one.
+
+      <.pillbox name="product_id" value={@product_id} options={@products} multiple={false} label="Product" />
+
+  ## Size
+
+  `size` (`sm` 32px, `md` 40px, `lg` 48px) is the height of an input of that size, so a row of fields lines up.
+
+  ## Panel width
+
+  The list is as wide as the field. In a narrow field, `panel_min_width` (a CSS length: `"22rem"`, `"360px"`)
+  gives it a minimum width of its own, still aligned to the field's left edge, and `panel_class` merges classes into
+  the list.
+
+      <.pillbox name="customer" options={@customers} multiple={false} class="w-56" panel_min_width="26rem" />
 
   ## Overflow
 
@@ -100,6 +120,23 @@ defmodule LineaUI.Components.Pillbox do
   attr :label, :string, default: nil
   attr :help, :string, default: nil
   attr :errors, :list, default: []
+
+  attr :multiple, :boolean,
+    default: true,
+    doc:
+      "`false` is a single choice (see the module doc): one pill, the list closes on choosing and `value` is one value."
+
+  attr :size, :string,
+    default: "md",
+    values: ~w(sm md lg),
+    doc: "The height of the field: `sm` 32px, `md` 40px, `lg` 48px, as an input of that size."
+
+  attr :panel_min_width, :string,
+    default: nil,
+    doc:
+      "A CSS length, the minimum width of the open list (`\"24rem\"`), for a narrow field; it stays aligned to the field's left edge."
+
+  attr :panel_class, :any, default: nil, doc: "Classes merged into the open list."
   attr :placeholder, :string, default: nil, doc: "Shown in the empty field."
   attr :search_placeholder, :string, default: "Search…"
 
@@ -157,7 +194,6 @@ defmodule LineaUI.Components.Pillbox do
     |> then(&assign_new(&1, :id, fn -> &1.name || stable_id("pillbox", &1) end))
     |> then(&assign(&1, :name, &1.name || &1.id))
     |> assign_derived(:options, [:options], fn -> with_hints(assigns.options) end)
-    |> assign_derived(:multiple, [], fn -> true end)
     |> assign_derived(:look, [], fn -> "pillbox" end)
     |> assign_derived(:search, [], fn -> "panel" end)
     |> assign_derived(:create_position, [], fn -> "bottom" end)
@@ -175,7 +211,6 @@ defmodule LineaUI.Components.Pillbox do
     |> assign_derived(:restore_on_backspace, [], fn -> false end)
     |> assign_derived(:max, [], fn -> nil end)
     |> assign_derived(:prompt, [], fn -> nil end)
-    |> assign_derived(:size, [], fn -> "md" end)
     |> assign_derived(:footer, [], fn -> false end)
     |> assign_derived(:compact, [], fn -> false end)
     |> assign_derived(:option, [], fn -> [] end)

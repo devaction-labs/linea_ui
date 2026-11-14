@@ -11,6 +11,9 @@
 /* ---------- Stat ---------- */
 .sg-stat-group{display:flex;padding:16px 20px}
 .sg-stat-group:not(.sg-card){padding:0}
+.sg-stat-group.sg-stat-sunken{background:var(--sunken);border-radius:12px}
+.sg-stat-group.sg-stat-sunken.sg-card{box-shadow:none}
+.sg-stat .v.sm{font-size:18px}
 
 /* ---------- Mini card ---------- */
 .sg-mini{display:flex;flex-direction:column;gap:10px;padding:14px}
@@ -26,10 +29,17 @@
 .sg-kpi-goal > .sg-kpi-v{margin-top:8px}
 .sg-kpi-goal > .sg-meter{margin-top:12px}
 .sg-kpi-c{display:block;margin-top:6px;font-size:12px;color:var(--faint)}
+.sg-kpi:not(.sg-kpi-tight) > .sg-kpi-c{margin-top:-8px}
 
 /* ---------- Kanban ---------- */
 /* The compact empty hint of a column (an `empty` slot with no title): the canvas `sg-drop`, 18px, 12.5px text. */
 .sg-drop.sg-kb-empty{padding:18px;font-size:12.5px}
+/* The phone mode (`active` on the board): one column at a time, no header, no well. */
+@media (max-width:639px){
+  [data-phone] > section:not([data-phone-active]),[data-phone] > aside{display:none !important}
+  [data-phone] > section[data-phone-active]{width:100% !important;flex:1 1 100% !important;padding:0 !important;background:none !important;box-shadow:none !important}
+  [data-phone] > section > [data-head]{display:none !important}
+}
 
 /* ---------- Table ---------- */
 /* The canvas marks a selected row by its tint alone: no accent bar on its first cell. */
