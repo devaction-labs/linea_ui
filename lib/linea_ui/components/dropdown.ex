@@ -144,6 +144,11 @@ defmodule LineaUI.Components.Dropdown do
     doc:
       "The shape of the trigger button. `nil` is `rounded` (10px corners) for both the `label` and the `toggle_icon` button; `pill` is opt-in."
 
+  attr :control, :boolean,
+    default: false,
+    doc:
+      "Opt-in: the `label` button, or both halves of a split button, take the height of the form controls (40px, as an `md` input) instead of the canvas button's 36px, so a filter bar row lines up. See `button/1`."
+
   attr :open, :boolean, default: false
 
   attr :hover, :boolean,
@@ -223,6 +228,7 @@ defmodule LineaUI.Components.Dropdown do
       <Button.button
         :for={action <- @action}
         color={@color}
+        control={@control}
         shape={@shape || "rounded"}
         class={merge(["rounded-l-full! rounded-r-[4px]!", action[:class]])}
         {Map.drop(action, [:inner_block, :__slot__, :class])}
@@ -233,6 +239,7 @@ defmodule LineaUI.Components.Dropdown do
         <Button.button
           :if={@action != []}
           color={@color}
+          control={@control}
           shape="square"
           class="rounded-l-[4px]! rounded-r-full!"
           id={"#{@id}-button"}
@@ -243,6 +250,7 @@ defmodule LineaUI.Components.Dropdown do
         <Button.button
           :if={@action == [] and @toggle == [] and @toggle_icon == nil}
           color={@color}
+          control={@control}
           shape={@shape || "rounded"}
           class="space-x-2"
           id={"#{@id}-button"}
@@ -743,7 +751,10 @@ defmodule LineaUI.Components.Dropdown do
 
       <.dropdown_footer locale="pt_BR" apply_count={@pending} on_apply="apply_filters" />
 
-  The buttons are menu items, so the arrow keys reach them.
+  The buttons are menu items, so the arrow keys reach them. `apply_color="mono"` makes Apply the solid black
+  button of the canvas's filter menus.
+
+      <.dropdown_footer apply_color="mono" on_apply="apply_filters" />
   """
   attr :locale, :string, default: "en", values: ~w(en pt_BR)
   attr :clear_label, :string, default: nil, doc: "\"Clear\" (\"Limpar\" in pt_BR) by default."
@@ -759,6 +770,12 @@ defmodule LineaUI.Components.Dropdown do
     doc: "An event name or a `%JS{}`; without it Apply submits the form."
 
   attr :close_on_apply, :boolean, default: true
+
+  attr :apply_color, :string,
+    default: "primary",
+    values: ~w(neutral primary secondary info success warning error mono),
+    doc:
+      "The color of the Apply button; `mono` is the canvas's solid black (ink) button. Primary (teal) by default."
 
   attr :show_apply, :boolean,
     default: true,
@@ -819,7 +836,7 @@ defmodule LineaUI.Components.Dropdown do
       <Button.button
         :if={@show_apply}
         size="sm"
-        color="primary"
+        color={@apply_color}
         type={@apply_type}
         role="menuitem"
         tabindex="-1"

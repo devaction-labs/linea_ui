@@ -12,54 +12,58 @@
 :root { --pill-h: 30px; --pill-r: 7px; --pill-max: 170px; }
 
 /* the field */
-:is(.sg-chipin, .ts-wrapper[phx-hook="LineaUI.Select"].multi .ts-control) {
+:is(.sg-chipin, .ts-wrapper[phx-hook="LineaUI.Select"]:is(.multi, .pillbox) .ts-control) {
   display: flex; flex-wrap: wrap; gap: 6px; align-items: center; box-sizing: border-box;
-  height: auto; min-height: 40px; padding: 5px 12px 5px 5px; border: 0; border-radius: 11px;
+  height: auto; min-height: var(--ctl-h-md, 40px); padding: 5px 12px 5px 5px; border: 0; border-radius: 11px;
   background-color: var(--panel); box-shadow: inset 0 0 0 1px var(--ctl-line), var(--shadow-xs);
   font-size: 14px; line-height: 20px; color: var(--ink);
 }
 .sg-chipin > .faint { color: var(--faint); }
 .sg-chipin > :not(.sg-chip) { font-size: 14px !important; padding-left: 5px; }
-.ts-wrapper[phx-hook="LineaUI.Select"].multi .ts-control > input { padding: 0 0 0 5px !important; font-size: 14px; color: var(--ink); }
-.ts-wrapper[phx-hook="LineaUI.Select"].multi:is(.focus, .input-active, .dropdown-active) .ts-control { box-shadow: inset 0 0 0 1px var(--accent), 0 0 0 3px color-mix(in srgb,var(--accent) 22%,transparent); }
-.ts-wrapper[phx-hook="LineaUI.Select"].multi.is-invalid .ts-control { box-shadow: inset 0 0 0 1px var(--neg), 0 0 0 4px color-mix(in srgb, var(--neg) 14%, transparent); }
-:is(.dark .sg:not([data-theme="light"]), .sg[data-theme="dark"], .dark) .ts-wrapper[phx-hook="LineaUI.Select"].multi .ts-control { background-color: var(--panel); }
+.ts-wrapper[phx-hook="LineaUI.Select"]:is(.multi, .pillbox) .ts-control > input { padding: 0 0 0 5px !important; font-size: 14px; color: var(--ink); }
+.ts-wrapper[phx-hook="LineaUI.Select"]:is(.multi, .pillbox):is(.focus, .input-active, .dropdown-active) .ts-control { box-shadow: inset 0 0 0 1px var(--accent), 0 0 0 3px color-mix(in srgb,var(--accent) 22%,transparent); }
+.ts-wrapper[phx-hook="LineaUI.Select"]:is(.multi, .pillbox).is-invalid .ts-control { box-shadow: inset 0 0 0 1px var(--neg), 0 0 0 4px color-mix(in srgb, var(--neg) 14%, transparent); }
+:is(.dark .sg:not([data-theme="light"]), .sg[data-theme="dark"], .dark) .ts-wrapper[phx-hook="LineaUI.Select"]:is(.multi, .pillbox) .ts-control { background-color: var(--panel); }
 /* a select that keeps one line (`overflow="count"`) is as tall as the field and never grows */
 .ts-wrapper[phx-hook="LineaUI.Select"][data-overflow="count"].multi .ts-control { flex-wrap: nowrap; overflow: hidden; height: auto; padding-block: 5px; }
 .ts-wrapper[phx-hook="LineaUI.Select"][data-overflow="count"] { --ts-chip-max: var(--pill-max); }
 .sg-chipin.one { flex-wrap: nowrap; overflow: hidden; }
-.ts-wrapper[phx-hook="LineaUI.Select"][data-size="sm"].multi { --pill-h: 22px; --pill-r: 6px; }
-.ts-wrapper[phx-hook="LineaUI.Select"][data-size="sm"].multi .ts-control { min-height: 32px; padding: 4px 10px 4px 4px; }
-.ts-wrapper[phx-hook="LineaUI.Select"][data-size="lg"].multi .ts-control { min-height: 48px; }
+.ts-wrapper[phx-hook="LineaUI.Select"][data-size="sm"]:is(.multi, .pillbox) { --pill-h: 22px; --pill-r: 6px; }
+.ts-wrapper[phx-hook="LineaUI.Select"][data-size="sm"]:is(.multi, .pillbox) .ts-control { min-height: var(--ctl-h-sm, 32px); padding: 4px 10px 4px 4px; }
+.ts-wrapper[phx-hook="LineaUI.Select"][data-size="lg"]:is(.multi, .pillbox) .ts-control { min-height: var(--ctl-h-lg, 48px); }
+/* a single choice is as tall as an input of its size too (`--ctl-h-sm|md|lg`, 32 / 40 / 48px) */
+.ts-wrapper[phx-hook="LineaUI.Select"].single .ts-control { align-items: center; min-height: var(--ctl-h-md, 40px); }
+.ts-wrapper[phx-hook="LineaUI.Select"][data-size="sm"].single .ts-control { min-height: var(--ctl-h-sm, 32px); }
+.ts-wrapper[phx-hook="LineaUI.Select"][data-size="lg"].single .ts-control { min-height: var(--ctl-h-lg, 48px); }
 
 /* the pill */
-:is(.sg-chipin .sg-chip, .ts-wrapper[phx-hook="LineaUI.Select"].multi .ts-control > div.item) {
+:is(.sg-chipin .sg-chip, .ts-wrapper[phx-hook="LineaUI.Select"]:is(.multi, .pillbox) .ts-control > div.item) {
   display: inline-flex; align-items: center; gap: 6px; box-sizing: border-box; height: var(--pill-h); margin: 0; padding: 0 6px 0 10px;
   border: 0; border-radius: var(--pill-r); background-color: var(--sunken); box-shadow: inset 0 0 0 1px var(--line);
   font-size: 13.5px; font-weight: 400; line-height: 20px; color: var(--ink); white-space: nowrap;
 }
 .sg-chipin.one .sg-chip { flex: none; max-width: var(--pill-max); overflow: hidden; text-overflow: ellipsis; }
-:is(.dark, [data-theme="dark"]) .ts-wrapper[phx-hook="LineaUI.Select"].multi .ts-control > div.item:not(:where([data-theme="light"], [data-theme="light"] *)) { color: var(--ink); }
+:is(.dark, [data-theme="dark"]) .ts-wrapper[phx-hook="LineaUI.Select"]:is(.multi, .pillbox) .ts-control > div.item:not(:where([data-theme="light"], [data-theme="light"] *)) { color: var(--ink); }
 
 /* the x */
 .sg-chipin .sg-chip .i { width: 15px; height: 15px; color: var(--faint); border-radius: 4px; }
-.ts-wrapper[phx-hook="LineaUI.Select"].multi .ts-control .item .remove {
+.ts-wrapper[phx-hook="LineaUI.Select"]:is(.multi, .pillbox) .ts-control .item .remove {
   width: 15px; height: 15px; margin: 0; border-radius: 4px; color: var(--faint); opacity: 1; background: none;
 }
-.ts-wrapper[phx-hook="LineaUI.Select"].multi .ts-control .item .remove::before {
+.ts-wrapper[phx-hook="LineaUI.Select"]:is(.multi, .pillbox) .ts-control .item .remove::before {
   width: 15px; height: 15px;
   mask: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.7' stroke-linecap='round'%3E%3Cpath d='M18.9991 19L5 5.00098M19 5L5.00092 18.999'/%3E%3C/svg%3E") center/contain no-repeat;
 }
-.ts-wrapper[phx-hook="LineaUI.Select"].multi .ts-control .item .remove:is(:hover, :focus-visible) { color: var(--ink); background: none; }
+.ts-wrapper[phx-hook="LineaUI.Select"]:is(.multi, .pillbox) .ts-control .item .remove:is(:hover, :focus-visible) { color: var(--ink); background: none; }
 
 /* the avatar of a pill */
-:is(.sg-chipin .sg-chip, .ts-wrapper[phx-hook="LineaUI.Select"].multi .ts-control .item) .sg-av {
+:is(.sg-chipin .sg-chip, .ts-wrapper[phx-hook="LineaUI.Select"]:is(.multi, .pillbox) .ts-control .item) .sg-av {
   display: grid; place-items: center; flex: none; width: 22px; height: 22px; border-radius: 5px; font-size: 9.5px; font-weight: 600; color: #fff;
 }
-:is(.sg-chipin .sg-chip, .ts-wrapper[phx-hook="LineaUI.Select"].multi .ts-control .item):has(.sg-av) { padding-left: 4px; }
+:is(.sg-chipin .sg-chip, .ts-wrapper[phx-hook="LineaUI.Select"]:is(.multi, .pillbox) .ts-control .item):has(.sg-av) { padding-left: 4px; }
 
 /* the +N pill */
-:is(.sg-chipin .sg-chip.more, .ts-wrapper[phx-hook="LineaUI.Select"].multi .ts-control > .ts-more) {
+:is(.sg-chipin .sg-chip.more, .ts-wrapper[phx-hook="LineaUI.Select"]:is(.multi, .pillbox) .ts-control > .ts-more) {
   min-width: 0; margin: 0; padding: 0 10px; justify-content: center; font-weight: 600; font-variant-numeric: tabular-nums;
   color: var(--ink); background-color: var(--hover); box-shadow: inset 0 0 0 1px var(--line);
 }
@@ -68,20 +72,23 @@
 /* ---------- pillbox: the canvas `sg-pbox` ---------- */
 .ts-wrapper[phx-hook="LineaUI.Select"].pillbox { position: relative; margin-top: 0 !important; }
 /* the right padding of a tom-select control is `max(--ts-pr-min, clear + caret) !important` (pickers.css): the room of the chevron and the clear button goes in those */
-.ts-wrapper[phx-hook="LineaUI.Select"].multi { --ts-pr-min: 12px; --ts-pr-caret: 0px; --ts-pr-clear-button: 0px; }
+.ts-wrapper[phx-hook="LineaUI.Select"]:is(.multi, .pillbox) { --ts-pr-min: 12px; --ts-pr-caret: 0px; --ts-pr-clear-button: 0px; }
 .ts-wrapper[phx-hook="LineaUI.Select"].pillbox { --ts-pr-min: 40px; }
 .ts-wrapper[phx-hook="LineaUI.Select"].pillbox.plugin-clear_button { --ts-pr-min: 62px; }
 .ts-wrapper[phx-hook="LineaUI.Select"].pillbox .ts-control { cursor: pointer; }
 /* the field to type in lives in the list: the one in the control only takes the focus */
 .ts-wrapper[phx-hook="LineaUI.Select"].pillbox .ts-control > input { position: absolute !important; width: 1px !important; height: 1px; min-width: 0; flex: none; padding: 0 !important; opacity: 0; pointer-events: none; }
 .ts-wrapper[phx-hook="LineaUI.Select"].pillbox::after {
-  content: ""; position: absolute; z-index: 2; right: 12px; top: 20px; width: 14px; height: 14px; transform: translateY(-50%); background-color: var(--faint);
+  content: ""; position: absolute; z-index: 2; right: 12px; top: calc(var(--ctl-h-md, 40px) / 2); width: 14px; height: 14px; transform: translateY(-50%); background-color: var(--faint);
   mask: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 9.00005C18 9.00005 13.5811 15 12 15C10.4188 15 6 9 6 9'/%3E%3C/svg%3E") center/contain no-repeat;
   pointer-events: none;
 }
+.ts-wrapper[phx-hook="LineaUI.Select"].pillbox[data-size="sm"] .clear-button { top: calc(var(--ctl-h-sm, 32px) / 2); }
+.ts-wrapper[phx-hook="LineaUI.Select"].pillbox[data-size="sm"]::after { top: calc(var(--ctl-h-sm, 32px) / 2); }
+.ts-wrapper[phx-hook="LineaUI.Select"].pillbox[data-size="lg"] .clear-button, .ts-wrapper[phx-hook="LineaUI.Select"].pillbox[data-size="lg"]::after { top: calc(var(--ctl-h-lg, 48px) / 2); }
 .ts-wrapper[phx-hook="LineaUI.Select"].pillbox.dropdown-active::after { transform: translateY(-50%); }
 .ts-wrapper[phx-hook="LineaUI.Select"].pillbox .clear-button {
-  position: absolute; z-index: 3; right: 34px; top: 20px; transform: translateY(-50%); width: 20px; height: 20px; border-radius: 6px; color: var(--faint);
+  position: absolute; z-index: 3; right: 34px; top: calc(var(--ctl-h-md, 40px) / 2); transform: translateY(-50%); width: 20px; height: 20px; border-radius: 6px; color: var(--faint);
 }
 .ts-wrapper[phx-hook="LineaUI.Select"].pillbox .clear-button::before {
   width: 14px; height: 14px;
@@ -103,9 +110,9 @@ label:has(> .pillbox:is(.readonly, .disabled)) > span:first-child { color: var(-
 }
 .ts-wrapper[phx-hook="LineaUI.Select"].pillbox .ts-search :is(svg, [class*="huge-"]) { width: 14px; height: 14px; }
 .ts-wrapper[phx-hook="LineaUI.Select"].pillbox .ts-search input { font-size: 13.5px; color: var(--ink); }
-.ts-wrapper[phx-hook="LineaUI.Select"].pillbox .ts-dropdown .option.selected { background: none; }
-.ts-wrapper[phx-hook="LineaUI.Select"].pillbox .ts-dropdown .option.selected.active { background: var(--hover); }
-.ts-wrapper[phx-hook="LineaUI.Select"].pillbox .ts-dropdown .option.selected::before { content: none; }
+.ts-wrapper[phx-hook="LineaUI.Select"].pillbox.multi .ts-dropdown .option.selected { background: none; }
+.ts-wrapper[phx-hook="LineaUI.Select"].pillbox.multi .ts-dropdown .option.selected.active { background: var(--hover); }
+.ts-wrapper[phx-hook="LineaUI.Select"].pillbox.multi .ts-dropdown .option.selected::before { content: none; }
 .ts-wrapper[phx-hook="LineaUI.Select"].pillbox .option .sg-box { width: 16px; height: 16px; border-radius: 5px; }
 .ts-wrapper[phx-hook="LineaUI.Select"].pillbox .option.selected .sg-box { background: var(--solid); box-shadow: none; }
 .ts-wrapper[phx-hook="LineaUI.Select"].pillbox .option.selected .sg-box::after { content: ""; width: 8px; height: 4px; border: 2px solid currentColor; border-top: 0; border-right: 0; transform: rotate(-45deg) translate(1px, -1px); }

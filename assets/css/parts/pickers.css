@@ -1,6 +1,6 @@
 /* LineaUI — pickers: the looks of tom-select, flatpickr, quill and filepond as LineOne skins them, without the libraries. */
 @layer components {
-:root { --ts-pr-clear-button: 0px; --ts-pr-caret: 0px; --ts-pr-min: .75rem; }
+:root { --ts-pr-clear-button: 0px; --ts-pr-caret: 0px; --ts-pr-min: .75rem; --ctl-h-sm: 2rem; --ctl-h-md: 2.5rem; --ctl-h-lg: 3rem; }
 @keyframes lds-dual-ring { 0% { transform: rotate(0) } to { transform: rotate(1turn) } }
 @keyframes fpFadeInDown { 0% { opacity: 0; transform: translateY(-20px) } to { opacity: 1; transform: translate(0) } }
 
@@ -16,16 +16,16 @@
 .ts-wrapper[data-overflow="count"].multi.has-items .ts-control {
   align-items: center;
   box-sizing: border-box;
-  height: 2.375rem;
+  height: var(--ctl-h-md);
   min-height: 0;
   padding-block: 0;
   padding-right: 2rem;
 }
 .ts-wrapper[data-overflow="count"].multi .ts-control > div { margin: 0 4px 0 0; }
 .ts-wrapper[data-overflow="count"][data-size="sm"] .ts-control,
-.ts-wrapper[data-overflow="count"][data-size="sm"].multi.has-items .ts-control { height: 2rem; }
+.ts-wrapper[data-overflow="count"][data-size="sm"].multi.has-items .ts-control { height: var(--ctl-h-sm); }
 .ts-wrapper[data-overflow="count"][data-size="lg"] .ts-control,
-.ts-wrapper[data-overflow="count"][data-size="lg"].multi.has-items .ts-control { height: 3rem; }
+.ts-wrapper[data-overflow="count"][data-size="lg"].multi.has-items .ts-control { height: var(--ctl-h-lg); }
 .ts-wrapper[data-overflow="count"]::after {
   background-color: var(--color-slate-400);
   content: "";
@@ -3120,7 +3120,7 @@ span.flatpickr-day.selected {
 }
 .dark .ts-wrapper.multi .ts-control > div.item:not([data-theme="light"] *),
 [data-theme="dark"] .ts-wrapper.multi .ts-control > div.item{ background-color: var(--color-navy-600); color: var(--color-navy-50); }
-.ts-wrapper.multi .ts-control { align-items: center; min-height: 2.125rem; padding: .1875rem .5rem; }
+.ts-wrapper.multi .ts-control { align-items: center; min-height: var(--ctl-h-md); padding: .1875rem .5rem; }
 .ts-wrapper.multi .ts-control > input { flex: 1 1 4rem; font-size: .8125rem; min-width: 4rem; padding: 0; }
 
 /* The calendar of the date picker: a 12px popover with a plain header (the month and the year as one bold

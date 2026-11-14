@@ -39,6 +39,8 @@ defmodule LineaUI.Components.Select.Listbox do
     |> put_default(:search, "control")
     |> put_default(:search_placeholder, "Search…")
     |> put_default(:look, nil)
+    |> put_default(:panel_min_width, nil)
+    |> put_default(:panel_class, nil)
     |> put_default(:readonly, false)
     |> put_default(:hidden_label, nil)
     |> put_default(:on_load_more, nil)
@@ -60,8 +62,16 @@ defmodule LineaUI.Components.Select.Listbox do
     |> assign_derived(:removable, [:removable, :disabled], fn ->
       assigns.removable and not assigns.disabled
     end)
+    |> then(
+      &assign_derived(&1, :panel_attrs, [:panel_min_width], fn ->
+        panel_attrs(&1.panel_min_width)
+      end)
+    )
     |> assign_derived(:forwarded, [:rest], fn -> Pickers.forwarded(assigns.rest) end)
   end
+
+  defp panel_attrs(nil), do: %{}
+  defp panel_attrs(width), do: %{style: "min-width:#{width}"}
 
   defp known(options, []), do: options
 
@@ -196,10 +206,11 @@ defmodule LineaUI.Components.Select.Listbox do
         </div>
         <div
           id={@id <> "-dropdown"}
-          class={["ts-dropdown", mode_class(@multiple)]}
+          class={merge(["ts-dropdown", mode_class(@multiple), @panel_class])}
           phx-mounted={JS.ignore_attributes(["hidden"])}
           hidden
           data-dropdown
+          {@panel_attrs}
         >
           <div :if={@search == "panel"} class="ts-search" phx-update="ignore" id={@id <> "-panel"}>
             <.glyph name={:search} class="size-4 shrink-0" />
@@ -233,7 +244,7 @@ defmodule LineaUI.Components.Select.Listbox do
               :key={entry_key(entry)}
               entry={entry}
               option_slot={@option}
-              box={@look == "pillbox"}
+              box={@look == "pillbox" and @multiple}
             />
             <div
               :if={@on_load_more && @has_more}

@@ -18,6 +18,13 @@ defmodule LineaUI.Components.Button do
 
       <.button color="primary" loading={@saving}>{if @saving, do: "Saving…", else: "Save"}</.button>
 
+  The canvas button is 36px high (`md`). In a row with inputs, selects, pillboxes and date pickers, which
+  are 40px, pass `control` and every control of the same `size` gets the same height (`sm` 32px, `md` 40px,
+  `lg` 48px):
+
+      <.button control>Filter</.button>
+      <.input name="q" /> <.button control color="primary">Search</.button>
+
   A `disabled` button is faded (the canvas's 45% opacity). An icon button takes `pip`, the accent
   dot on its corner that tells there is something new:
 
@@ -63,6 +70,12 @@ defmodule LineaUI.Components.Button do
       "A square button that holds only an icon (`sg-ib`). The canvas draws it in one look, a bordered control, or `plain` (no border or fill until hovered) for `flat`, `ghost` and `dim`; every other `variant` and `color` renders the bordered control. Always pass `aria-label`."
   )
 
+  attr(:control, :boolean,
+    default: false,
+    doc:
+      "Opt-in: the button takes the height of the form controls of its `size` (`sm` 32px, `md` 40px, `lg` 48px, tokens `--ctl-h-sm|md|lg`) instead of the canvas button's 36px, so it lines up with an input, select, pillbox or date picker of the same `size` in a filter bar. Not for `icon` buttons."
+  )
+
   attr(:type, :string, default: "button")
   attr(:disabled, :boolean, default: false)
 
@@ -91,7 +104,7 @@ defmodule LineaUI.Components.Button do
 
   def button(assigns) do
     assigns
-    |> assign_derived(:classes, [:icon, :size, :variant, :color, :shape, :class], fn ->
+    |> assign_derived(:classes, [:icon, :size, :variant, :color, :shape, :control, :class], fn ->
       classes(assigns)
     end)
     |> assign_derived(:inactive, [:disabled, :loading], fn ->
@@ -118,11 +131,12 @@ defmodule LineaUI.Components.Button do
     ]
   end
 
-  defp button_class(%{color: color, variant: variant, size: size, shape: shape}) do
+  defp button_class(%{color: color, variant: variant, size: size, shape: shape, control: control}) do
     [
       "sg-btn",
       tone(color, variant),
       size_class(size),
+      control && "ctl",
       shape == "square" && "sq",
       shape == "pill" && "pill"
     ]
