@@ -28,5 +28,6 @@ jobs:
       - run: mix deps.get
       - run: mix compile --warnings-as-errors
       - run: mix format --check-formatted
-      - run: mix test
+      # the Hugeicons check reads preview/deps/hugeicons, a local checkout of the free set
+      - run: mix test --exclude hugeicons
       - run: mix js.test

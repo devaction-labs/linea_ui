@@ -36,12 +36,10 @@ defmodule LineaUI.Components.CodeBlockTest do
       />
       """)
 
-    assert attr_of(html, "#d .linea-code-line", "data-variant") == [
-             nil,
-             "removed",
-             "added",
-             "highlighted"
-           ]
+    assert find(html, "#d .linea-code-line") |> Enum.count() == 4
+
+    assert attr_of(html, "#d .linea-code-line[data-variant]", "data-variant") ==
+             ["removed", "added", "highlighted"]
 
     assert find(html, "#d .linea-code-h") |> Enum.count() == 0
   end

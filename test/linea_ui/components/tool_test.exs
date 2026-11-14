@@ -40,7 +40,8 @@ defmodule LineaUI.Components.ToolTest do
              "Denied the deploy"
            ]
 
-    assert attr_of(html, ".linea-trace-line", "data-status") == [nil, "pending", nil]
+    assert find(html, ".linea-trace-line") |> Enum.count() == 3
+    assert attr_of(html, ".linea-trace-line[data-status]", "data-status") == ["pending"]
   end
 
   test "the approval card asks and sends both events with the value" do
