@@ -47,7 +47,10 @@ defmodule LineaUI.Components.CodeBlockTest do
   end
 
   test "copy without a header floats; start_line sets the counter and the gutter width" do
-    html = render(~H|<.code_block id="f" code={Enum.join(~w(x y), "\n")} copy line_numbers start_line={99} />|)
+    html =
+      render(
+        ~H|<.code_block id="f" code={Enum.join(~w(x y), "\n")} copy line_numbers start_line={99} />|
+      )
 
     assert find(html, "#f .linea-code-float #f-copy") |> Enum.count() == 1
     [style] = attr_of(html, "#f-code", "style")
