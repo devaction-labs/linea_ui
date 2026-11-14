@@ -47,6 +47,20 @@ defmodule LineaUI.Components.Tabs do
         <:tab name="history" navigate={~p"/customers/\#{@customer}/history"}>History</:tab>
       </.tabs>
 
+  `variant="nav"` renders the canvas navigation tabs, exactly `<nav class="sg-tabs"><a class="on">…</a></nav>`
+  (14px links, a 2px underline on the current one). It is for routes only: no hook, no roles, no
+  panels, and `on_change` is never pushed. `selected` may be `nil` (none is current). A `:tab`
+  without `patch`, `navigate` or `href` (or with them `nil`/`false`) is never current: with
+  `phx-click` (and `phx-target`, `phx-value-*`) it is a clickable `<a role="button">`, with `soon`
+  or `disabled` it is a dimmed, non-clickable `<a aria-disabled="true">` titled with `soon_label`.
+
+      <.tabs id="system-tabs" variant="nav" selected={@section}>
+        <:tab name="overview" navigate={~p"/system"}>Overview</:tab>
+        <:tab name="tasks" navigate={~p"/system/tasks"} count={12}>Tasks</:tab>
+        <:tab name="finance" phx-click="soon">Finance</:tab>
+        <:tab name="contracts" soon>Contracts</:tab>
+      </.tabs>
+
   A tab only points at a panel (`aria-controls`) when a `:panel` with its `name` exists, so
   navigation tabs carry no dangling references. The arrow keys move the focus between link
   tabs; Enter follows the focused one.
@@ -171,9 +185,9 @@ defmodule LineaUI.Components.Tabs do
 
   attr(:variant, :string,
     default: "line",
-    values: ~w(line boxed pill text segmented),
+    values: ~w(line boxed pill text segmented nav),
     doc:
-      "`line` underlines the selected tab, `boxed` lifts it off a gray track, `pill` fills a rounded tab, `text` is plain text that only changes color (no border or background; spacing comes from `list_class`, `space-x-4` by default), `segmented` is the design canvas segmented control (a sunken pill track, the selected tab raised on the panel color)."
+      "`line` underlines the selected tab, `boxed` lifts it off a gray track, `pill` fills a rounded tab, `text` is plain text that only changes color (no border or background; spacing comes from `list_class`, `space-x-4` by default), `segmented` is the design canvas segmented control (a sunken pill track, the selected tab raised on the panel color), `nav` is the canvas `nav.sg-tabs` of links (see Navigation tabs)."
   )
 
   attr(:size, :string,
@@ -218,6 +232,11 @@ defmodule LineaUI.Components.Tabs do
     """
   )
 
+  attr(:soon_label, :string,
+    default: "Em breve",
+    doc: "For `nav`: the `title` of a `soon` tab that has none of its own."
+  )
+
   attr(:target, :any, default: nil, doc: "The `phx-target` of `on_change`.")
   attr(:list_class, :any, default: nil, doc: "Extra classes for the tab list.")
   attr(:panels_class, :any, default: nil, doc: "Extra classes for the wrapper of the panels.")
@@ -245,12 +264,25 @@ defmodule LineaUI.Components.Tabs do
     attr(:navigate, :string, doc: "Renders the tab as a `<.link navigate>` (navigation tabs).")
     attr(:href, :string, doc: "Renders the tab as a `<.link href>` (navigation tabs).")
     attr(:replace, :boolean, doc: "With `patch` or `navigate`: replaces the history entry.")
+    attr(:soon, :boolean, doc: "For `nav`: not available yet, dimmed, not clickable, titled.")
+    attr(:"phx-click", :any, doc: "For `nav` without a route: the event or `JS` of the click.")
+    attr(:"phx-target", :any)
+    attr(:"phx-value-id", :any)
+    attr(:"phx-value-name", :any)
+    attr(:title, :string)
+    attr(:id, :string)
     attr(:class, :any)
   end
 
   slot :panel, doc: "The content shown while the tab with the same `name` is selected." do
     attr(:name, :string, required: true, doc: "The `name` of its tab.")
     attr(:class, :any)
+  end
+
+  def tabs(%{variant: "nav"} = assigns) do
+    assigns
+    |> assign_derived(:nav_class, [:class], fn -> merge(["sg-tabs", assigns.class]) end)
+    |> render_nav()
   end
 
   def tabs(assigns) do
@@ -313,6 +345,81 @@ defmodule LineaUI.Components.Tabs do
 
   defp on_change_js(%JS{} = js), do: js
   defp on_change_js(_on_change), do: nil
+
+  defp render_nav(assigns) do
+    ~H"""
+    <nav id={@id} class={@nav_class} {@rest}>
+      <.nav_tab
+        :for={{tab, selected} <- by_name(@tab, @selected)}
+        tab={tab}
+        selected={selected}
+        soon_label={@soon_label}
+      />
+    </nav>
+    """
+  end
+
+  attr(:tab, :map, required: true)
+  attr(:selected, :boolean, required: true)
+  attr(:soon_label, :string, required: true)
+
+  defp nav_tab(%{tab: tab} = assigns) do
+    assigns = assign(assigns, :extra, nav_extra(tab))
+
+    ~H"""
+    <a
+      :if={nav_off?(@tab)}
+      aria-disabled="true"
+      title={@tab[:title] || @soon_label}
+      class={merge(["cursor-not-allowed opacity-50", @tab[:class]])}
+    >
+      {render_slot(@tab)}<.count tab={@tab} />
+    </a>
+    <.link
+      :if={!nav_off?(@tab) && nav_route?(@tab)}
+      href={@tab[:href]}
+      navigate={@tab[:navigate]}
+      patch={@tab[:patch]}
+      replace={@tab[:replace] || false}
+      aria-current={@selected && "page"}
+      class={merge([@selected && "on", @tab[:class]])}
+      {@extra}
+    >
+      {render_slot(@tab)}<.count tab={@tab} />
+    </.link>
+    <a
+      :if={!nav_off?(@tab) && !nav_route?(@tab)}
+      role="button"
+      tabindex="0"
+      class={merge(["cursor-pointer", @tab[:class]])}
+      {@extra}
+    >
+      {render_slot(@tab)}<.count tab={@tab} />
+    </a>
+    """
+  end
+
+  defp nav_route?(tab), do: Enum.any?([:href, :navigate, :patch], &Map.get(tab, &1, nil))
+
+  defp nav_off?(tab),
+    do: Map.get(tab, :soon, false) == true or Map.get(tab, :disabled, false) == true
+
+  defp nav_extra(tab),
+    do:
+      Map.drop(tab, [
+        :inner_block,
+        :__slot__,
+        :name,
+        :count,
+        :overdue,
+        :disabled,
+        :soon,
+        :replace,
+        :class,
+        :href,
+        :navigate,
+        :patch
+      ])
 
   defp render_tabs(assigns) do
     ~H"""
