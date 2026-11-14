@@ -48,6 +48,7 @@
 @import "./parts/canvas-flow.css";
 @import "./parts/canvas-glow-text.css";
 @import "./parts/canvas-view-switcher.css";
+@import "./parts/canvas-refine.css";
 
 @source "../../lib";
 @source "../js";
@@ -60,31 +61,31 @@
   --font-inter: "Geist", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
 
-  --color-slate-50: #f4f3f0; /* canvas */
-  --color-slate-100: #efeeea; /* sunken */
-  --color-slate-150: #e8e6e1; /* line */
-  --color-slate-200: #e2e0da;
-  --color-slate-300: #d9d6cf; /* line-strong */
-  --color-slate-400: #9d9ba1; /* faint */
-  --color-slate-500: #6c6b70; /* muted */
-  --color-slate-600: #4a4a50;
-  --color-slate-700: #2e2e33; /* fg */
-  --color-slate-800: #232327;
-  --color-slate-900: #17171a; /* ink */
-  --color-slate-950: #0f0f11;
+  --color-slate-50: #fafafa; /* canvas */
+  --color-slate-100: #f5f5f5; /* sunken */
+  --color-slate-150: #ebebeb; /* line */
+  --color-slate-200: #e5e5e5;
+  --color-slate-300: #d9d9d9; /* line-strong */
+  --color-slate-400: #a3a3a3; /* faint */
+  --color-slate-500: #737373; /* muted */
+  --color-slate-600: #525252;
+  --color-slate-700: #262626;
+  --color-slate-800: #171717; /* fg */
+  --color-slate-900: #0a0a0a; /* ink */
+  --color-slate-950: #050505;
 
-  --color-navy-50: #f3f3f4; /* ink */
-  --color-navy-100: #e6e6e8;
-  --color-navy-200: #d9d9dd; /* fg */
-  --color-navy-300: #a3a3ab; /* muted */
-  --color-navy-400: #74747c; /* faint */
-  --color-navy-450: #36363c; /* line-strong */
-  --color-navy-500: #2b2b30;
-  --color-navy-600: #232327; /* hover */
-  --color-navy-700: #1f1f23; /* raised */
-  --color-navy-750: #19191c; /* panel */
-  --color-navy-800: #151517; /* sunken */
-  --color-navy-900: #111113; /* canvas */
+  --color-navy-50: #fafafa; /* ink */
+  --color-navy-100: #f0f0f0;
+  --color-navy-200: #e5e5e5; /* fg */
+  --color-navy-300: #a1a1a1; /* muted */
+  --color-navy-400: #737373; /* faint */
+  --color-navy-450: #3a3a3a; /* line-strong */
+  --color-navy-500: #2e2e2e;
+  --color-navy-600: #262626; /* hover */
+  --color-navy-700: #1c1c1c; /* raised */
+  --color-navy-750: #171717; /* panel */
+  --color-navy-800: #212121; /* sunken */
+  --color-navy-900: #141414; /* canvas */
 
   --color-primary: #0d8f91; /* accent */
   --color-primary-focus: #08686b; /* accent-ink */

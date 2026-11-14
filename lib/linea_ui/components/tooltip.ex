@@ -62,7 +62,7 @@ defmodule LineaUI.Components.Tooltip do
     default: "neutral",
     values: ~w(neutral light dark primary secondary info success warning error),
     doc:
-      "The hint's color. `dark` is the design canvas tooltip: `#17171a` with white 12px text and 8px corners."
+      "The hint's color. `dark` is the design canvas tooltip: `#171717` with white 12px text and 8px corners."
   )
 
   attr(:placement, :string, default: "top", values: @placements)

@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased
+
+- The theme is neutral now, in the spirit of shadcn/ui: pure grays instead of warm ones, a near-white app background with white cards in light, and in dark a black main area (`--main`, #0a0a0a) with #171717 cards, translucent white borders (10% for lines, 15% for controls) and translucent control fills, so surfaces sit together in both themes. The teal accent is unchanged. The `slate`/`navy` Tailwind colors follow the new grays.
+- New `canvas-refine.css`, the component finish in the same spirit: 8px corners on 36px controls (fields went from 40px to 36px), a neutral 3px focus ring instead of the teal one, cards with a thin line border, 14px corners and 24px padding, segmented tabs as a borderless gray track, table headers in ink, 4px checkbox corners, and `danger` buttons as solid red (`--danger`); `--neg` is red now (#dc2626 / #f87171).
+- `canvas-refine.css` covers the rest of the kit: menus, dropdowns, select lists, popovers, the command palette and the date picker share one surface (10px corners, a thin line, a short shadow, 32px rows with 6px corners on a gray hover); tooltips are ink in light and light in dark; modals and sheets have 18px titles, a muted description and a footer without a border over a plain scrim; toasts and alerts are 10px cards with a thin line; checkboxes, radios, switches, sliders, meters and the chosen calendar day are ink (`--control-on`, set it to `var(--accent)` for the teal); breadcrumbs are plain text, pagination outlines the current page, the accordion drops its outer box, and the calendar has 32px days with today and ranges on the gray tint.
+- The chosen segment of a segmented control uses `--seg-on` in dark too (the dark `--raised` rules that outranked it are gone).
+- `sidebar` in the same finish: 32px rows with 6px corners and 16px icons, the active row on the gray tint, group labels in 12px sans; and the app shell menu too. New `variant` (`floating`, the default card; `sidebar`, flush with a line at its edge; `inset`, on the page background) and `shortcut` (Ctrl/⌘+B collapses and expands the menu, or opens it on a phone; any key, or `nil` to turn it off; fields and editors keep the key), also on `framed_sidebar`.
+
 ## 0.22.0 (2026-11-13)
 
 ### New, from the Signetum canvas
