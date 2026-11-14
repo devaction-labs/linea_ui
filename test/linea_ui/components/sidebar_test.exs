@@ -964,8 +964,9 @@ defmodule LineaUI.Components.SidebarTest do
         },
         extra
       )
+      |> Map.put(:__changed__, nil)
 
-    render(~H"""
+    rendered_to_string(~H"""
     <.sidebar id="ns" format="nested" nav={@nav} brand={@brand} user={@user} current={@current} />
     """)
   end

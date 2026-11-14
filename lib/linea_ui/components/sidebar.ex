@@ -517,36 +517,38 @@ defmodule LineaUI.Components.Sidebar do
   # a row of the header or the foot that opens a menu to the right (under it on a phone)
   defp menu_button(assigns) do
     ~H"""
-    <Dropdown.dropdown id={@id} placement="right-end" offset={8} class="sg-sb-mm">
-      <:toggle>
-        <button type="button" class="sg-sb-mb" aria-label={@label} aria-haspopup="menu" data-rail-tip>
-          {render_slot(@inner_block)}
-          <svg class="i sm ud" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 9.5l4-4 4 4M8 14.5l4 4 4-4" /></svg>
-          <span class="rail-tip" role="tooltip">{@label}</span>
-        </button>
-      </:toggle>
-      <div :if={@user} class="sg-sb-mm-h">
-        <.avatar user={@user} />
-        <span class="who"><b>{@user[:name]}</b><span :if={@user[:email]}>{@user[:email]}</span></span>
-      </div>
-      <Dropdown.dropdown_separator :if={@user} />
-      <%= for item <- @items do %>
-        <Dropdown.dropdown_separator :if={item == :separator} />
-        <div :if={is_map(item) && item[:label] && item[:heading]} class="sg-sb-mm-l">
-          {item.label}
+    <div class="sg-sb-mm">
+      <Dropdown.dropdown id={@id} placement="right-end" offset={8}>
+        <:toggle>
+          <button type="button" class="sg-sb-mb" aria-label={@label} aria-haspopup="menu" data-rail-tip>
+            {render_slot(@inner_block)}
+            <svg class="i sm ud" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 9.5l4-4 4 4M8 14.5l4 4 4-4" /></svg>
+            <span class="rail-tip" role="tooltip">{@label}</span>
+          </button>
+        </:toggle>
+        <div :if={@user} class="sg-sb-mm-h">
+          <.avatar user={@user} />
+          <span class="who"><b>{@user[:name]}</b><span :if={@user[:email]}>{@user[:email]}</span></span>
         </div>
-        <Dropdown.dropdown_item
-          :if={is_map(item) && !item[:heading]}
-          color={if(item[:danger], do: "error", else: "neutral")}
-          phx-click={item[:click]}
-          {Nav.menu_link(item)}
-        >
-          <:icon :if={item[:icon]}><Icon.icon name={Nav.icon(item[:icon])} class="size-4" /></:icon>
-          {item.label}
-          <span :if={item[:hint]} class="sg-sb-mm-k">{item.hint}</span>
-        </Dropdown.dropdown_item>
-      <% end %>
-    </Dropdown.dropdown>
+        <Dropdown.dropdown_separator :if={@user} />
+        <%= for item <- @items do %>
+          <Dropdown.dropdown_separator :if={item == :separator} />
+          <div :if={is_map(item) && item[:label] && item[:heading]} class="sg-sb-mm-l">
+            {item.label}
+          </div>
+          <Dropdown.dropdown_item
+            :if={is_map(item) && !item[:heading]}
+            color={if(item[:danger], do: "error", else: "neutral")}
+            phx-click={item[:click]}
+            {Nav.menu_link(item)}
+          >
+            <:icon :if={item[:icon]}><Icon.icon name={Nav.icon(item[:icon])} class="size-4" /></:icon>
+            {item.label}
+            <span :if={item[:hint]} class="sg-sb-mm-k">{item.hint}</span>
+          </Dropdown.dropdown_item>
+        <% end %>
+      </Dropdown.dropdown>
+    </div>
     """
   end
 
