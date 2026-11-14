@@ -1,6 +1,7 @@
 defmodule LineaUI.Components.Sidebar do
   use LineaUI.Component
 
+  alias LineaUI.Components.Dropdown
   alias LineaUI.Components.Icon
   alias LineaUI.Components.Sidebar.Nav
 
@@ -22,6 +23,28 @@ defmodule LineaUI.Components.Sidebar do
 
   Put it inside a `.sg` root (the framed `shell/1` is one). Changing `format` changes how the menu is drawn,
   never the items.
+
+  ## The nested format
+
+  `format="nested"` is the shadcn/ui sidebar: the brand as a team switcher (logo tile, `brand.name` and
+  `brand.plan`, ↕), groups under a quiet label, items whose `children` open under a thin line with a chevron that
+  turns, and the user at the foot (avatar, name, e-mail, ↕). With `brand.menu` and `user.menu` both rows open a
+  menu beside the sidebar (`dropdown/1`, ids `"\#{id}-team"` and `"\#{id}-user"`); the user menu starts with the
+  avatar, name and e-mail. A menu is a list of maps (`label`, `icon`, `navigate` / `patch` / `href` with an
+  optional `method`, `click` for a `phx-click`, `hint` at the end, `danger: true` in red, `heading: true` for a
+  label) and `:separator` for a line:
+
+      user={%{name: "Marina Costa", email: "marina@linea.com", menu: [
+        %{label: "Upgrade to Pro", icon: "spark", navigate: ~p"/billing/upgrade"},
+        :separator,
+        %{label: "Account", icon: "user", navigate: ~p"/account"},
+        %{label: "Billing", icon: "card", navigate: ~p"/billing"},
+        :separator,
+        %{label: "Log out", icon: "huge-logout-03", href: ~p"/users/log-out", method: "delete"}
+      ]}}
+
+  Put `<.rail_toggle for="sidebar" />` at the top of the main area for the panel button of the shadcn layout;
+  collapsed, the menu keeps its icons, the switcher's logo and the avatar, with tooltips.
 
   ## Variants
 
@@ -136,7 +159,7 @@ defmodule LineaUI.Components.Sidebar do
   attr :format, :any,
     default: nil,
     doc:
-      "`sections`, `rail` or `tree` (an atom works too). The `:shell` config `sidebar` when left out, else `sections`."
+      "`sections`, `rail`, `tree` or `nested` (an atom works too). The `:shell` config `sidebar` when left out, else `sections`."
 
   attr :nav, :list,
     default: nil,
@@ -150,12 +173,12 @@ defmodule LineaUI.Components.Sidebar do
   attr :brand, :map,
     default: nil,
     doc:
-      "`%{name, logo}` (`logo` is a letter, or `src` is an image URL); `switch: false` takes the company switcher out of `sections`, `switch: %{label, click}` gives it a label and a `phx-click`."
+      "`%{name, logo}` (`logo` is a letter, or `src` is an image URL); `switch: false` takes the company switcher out of `sections`, `switch: %{label, click}` gives it a label and a `phx-click`. In `nested`, `plan` is the line under the name and `menu` (a list, see \"The nested format\") makes the header open a team menu."
 
   attr :user, :map,
     default: nil,
     doc:
-      "`%{name, email, initials, avatar, color}`: the avatar of the rail and the user card of the `tree`. `avatar` is an image URL, `color` the background of the initials."
+      "`%{name, email, initials, avatar, color}`: the avatar of the rail and the user card of the `tree`. `avatar` is an image URL, `color` the background of the initials. In `nested`, `menu` makes the user row at the foot open a menu."
 
   attr :footer, :any,
     default: nil,
@@ -290,6 +313,18 @@ defmodule LineaUI.Components.Sidebar do
         <:mark :if={@brand_mark != []}>{render_slot(@brand_mark)}</:mark>
         <:footer :if={@sidebar_footer != []}>{render_slot(@sidebar_footer)}</:footer>
       </.tree>
+      <.nested
+        :if={@fmt == "nested"}
+        id={@id}
+        menu={@menu}
+        brand={@brand}
+        user={@foot.user}
+        version={@foot.ver}
+        mobile_label={@mobile_label}
+      >
+        <:mark :if={@brand_mark != []}>{render_slot(@brand_mark)}</:mark>
+        <:footer :if={@sidebar_footer != []}>{render_slot(@sidebar_footer)}</:footer>
+      </.nested>
       <.rail
         :if={@fmt == "rail"}
         id={@id}
@@ -313,6 +348,7 @@ defmodule LineaUI.Components.Sidebar do
   defp format_class("sections"), do: "sec"
   defp format_class("rail"), do: "railx"
   defp format_class("tree"), do: "treex"
+  defp format_class("nested"), do: "nestx"
 
   # ---------------------------------------------------------------- sections
 
@@ -414,6 +450,101 @@ defmodule LineaUI.Components.Sidebar do
       <.user_card :if={@user} user={@user} />
       <.version :if={@version} version={@version} />
     </div>
+    """
+  end
+
+  # ---------------------------------------------------------------- nested
+
+  attr :id, :string, required: true
+  attr :menu, :map, required: true
+  attr :brand, :map, default: nil
+  attr :user, :map, default: nil
+  attr :version, :map, default: nil
+  attr :mobile_label, :string, required: true
+  slot :mark
+  slot :footer
+
+  # the shadcn/ui sidebar: a team switcher, groups with a quiet label, items whose children open under a line,
+  # and the user at the foot opening a menu
+  defp nested(assigns) do
+    ~H"""
+    <div class="sg-sb-brand">
+      <.menu_button
+        :if={@brand && @brand[:menu]}
+        id={@id <> "-team"}
+        items={@brand[:menu]}
+        label={@brand[:menu_label] || "Switch team"}
+      >
+        <.brand_mark brand={@brand} mark={@mark} />
+        <span :if={@brand[:plan]} class="sub">{@brand[:plan]}</span>
+      </.menu_button>
+      <div :if={!(@brand && @brand[:menu])} class="sg-sb-team">
+        <.brand_mark brand={@brand} mark={@mark} />
+        <span :if={@brand && @brand[:plan]} class="sub">{@brand[:plan]}</span>
+      </div>
+      <.burger id={@id} label={@mobile_label} />
+    </div>
+    <div id={@id <> "-body"} class="sg-sb-body">
+      <div class="sg-sb-scroll">
+        <.entry :for={entry <- @menu.body} entry={entry} format="nested" />
+      </div>
+      <div class="sg-sb-foot">
+        <.row :for={item <- @menu.footer_items} item={item} format="nested" />
+        {render_slot(@footer)}
+      </div>
+      <.menu_button
+        :if={@user && @user[:menu]}
+        id={@id <> "-user"}
+        items={@user[:menu]}
+        label={@user[:menu_label] || @user[:name]}
+        user={@user}
+      >
+        <.avatar user={@user} />
+        <span class="who"><b>{@user[:name]}</b><span :if={@user[:email]}>{@user[:email]}</span></span>
+      </.menu_button>
+      <.user_card :if={@user && !@user[:menu]} user={@user} />
+      <.version :if={@version} version={@version} />
+    </div>
+    """
+  end
+
+  attr :id, :string, required: true
+  attr :items, :list, required: true
+  attr :label, :string, required: true
+  attr :user, :map, default: nil
+  slot :inner_block, required: true
+
+  # a row of the header or the foot that opens a menu to the right (under it on a phone)
+  defp menu_button(assigns) do
+    ~H"""
+    <Dropdown.dropdown id={@id} placement="right-end" offset={8} class="sg-sb-mm">
+      <:toggle>
+        <button type="button" class="sg-sb-mb" aria-label={@label} aria-haspopup="menu" data-rail-tip>
+          {render_slot(@inner_block)}
+          <svg class="i sm ud" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 9.5l4-4 4 4M8 14.5l4 4 4-4" /></svg>
+          <span class="rail-tip" role="tooltip">{@label}</span>
+        </button>
+      </:toggle>
+      <div :if={@user} class="sg-sb-mm-h">
+        <.avatar user={@user} />
+        <span class="who"><b>{@user[:name]}</b><span :if={@user[:email]}>{@user[:email]}</span></span>
+      </div>
+      <Dropdown.dropdown_separator :if={@user} />
+      <%= for item <- @items do %>
+        <Dropdown.dropdown_separator :if={item == :separator} />
+        <div :if={is_map(item) && item[:label] && item[:heading]} class="sg-sb-mm-l">{item.label}</div>
+        <Dropdown.dropdown_item
+          :if={is_map(item) && !item[:heading]}
+          color={if(item[:danger], do: "error", else: "neutral")}
+          phx-click={item[:click]}
+          {Nav.menu_link(item)}
+        >
+          <:icon :if={item[:icon]}><Icon.icon name={Nav.icon(item[:icon])} class="size-4" /></:icon>
+          {item.label}
+          <span :if={item[:hint]} class="sg-sb-mm-k">{item.hint}</span>
+        </Dropdown.dropdown_item>
+      <% end %>
+    </Dropdown.dropdown>
     """
   end
 
@@ -591,6 +722,13 @@ defmodule LineaUI.Components.Sidebar do
     >
       <.row :for={item <- @entry.items} item={item} format="tree" />
     </div>
+    """
+  end
+
+  defp entry(%{entry: %{kind: :group}, format: "nested"} = assigns) do
+    ~H"""
+    <div class="sg-sb-h">{@entry.label}</div>
+    <.row :for={item <- @entry.items} item={item} format="nested" />
     """
   end
 

@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- `sidebar` takes `format="nested"`, the shadcn/ui sidebar: the brand as a team switcher (logo tile, name, `brand.plan`, ↕) and the user at the foot (avatar, name, e-mail, ↕), each opening a menu beside the sidebar from `brand.menu` / `user.menu` (items with `label`, `icon`, a link and `method`, `click`, `hint`, `danger`, `heading`, and `:separator`); groups under a quiet label; items whose children open under a thin line with a chevron at the end that turns. Collapsed it keeps the icons, the logo and the avatar.
 - The theme scopes follow the nearest themed block: the light tokens sit on the page and on each `.sg` outside a `.dark` or `[data-theme]` block, and a `.sg` inside one inherits from it, so a light block inside a dark page (and a dark one inside a light page) gets its own tokens, focus ring and segmented tabs at any depth.
 - The `dark:` variant and the hand-written dark rules of the kit follow the nearest themed block too: a dark block inside a light page gets its `dark:` utilities (it got the light ones), and a light block inside a dark page keeps the light ones; checked up to three levels (dark, light, dark).
 - The navbars, the landing mega menu, `hero_card`, `pixel_card`, the aura and status toasts, `error_page` and `auth_split` get the same finish: 8px links and buttons, 14px cards with a thin line and a short shadow, popovers on the popover surface, 36px OAuth buttons as outline buttons, and the avatar button of the navbar as a circle instead of a pill.

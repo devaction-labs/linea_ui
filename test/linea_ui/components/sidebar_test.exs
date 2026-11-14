@@ -923,5 +923,83 @@ defmodule LineaUI.Components.SidebarTest do
     end
   end
 
+  @nested_nav [
+    %{
+      group: "Platform",
+      items: [
+        %{
+          label: "Playground",
+          icon: "doc",
+          children: [
+            %{label: "History", navigate: "/history"},
+            %{label: "Starred", navigate: "/starred"}
+          ]
+        },
+        %{label: "Models", icon: "box", navigate: "/models"}
+      ]
+    }
+  ]
+
+  defp nested_html(extra \\ %{}) do
+    assigns =
+      Map.merge(
+        %{
+          nav: @nested_nav,
+          brand: %{
+            name: "Acme Inc",
+            logo: "A",
+            plan: "Enterprise",
+            menu: [%{label: "Acme Corp.", navigate: "/teams/2", hint: "⌘2"}]
+          },
+          user: %{
+            name: "Marina Costa",
+            email: "marina@linea.com",
+            menu: [
+              %{label: "Account", icon: "user", navigate: "/account"},
+              :separator,
+              %{label: "Log out", href: "/users/log-out", method: "delete", danger: true}
+            ]
+          },
+          current: "/history"
+        },
+        extra
+      )
+
+    render(~H"""
+    <.sidebar id="ns" format="nested" nav={@nav} brand={@brand} user={@user} current={@current} />
+    """)
+  end
+
+  describe "nested" do
+    test "the team switcher and the user row open their menus" do
+      html = nested_html()
+
+      assert "nestx" in classes(html, "nav#ns")
+      assert texts(html, "#ns-team .sg-sb-mb > b") == ["Acme Inc"]
+      assert texts(html, "#ns-team .sg-sb-mb > .sub") == ["Enterprise"]
+      assert attrs(html, "#ns-team-menu [role=menuitem]", "href") == ["/teams/2"]
+      assert texts(html, "#ns-user .sg-sb-mm-h .who b") == ["Marina Costa"]
+      assert attrs(html, "#ns-user-menu a[role=menuitem]", "data-method") == ["delete"]
+      assert find(html, "#ns-user-menu [role=separator]") |> Enum.count() == 2
+    end
+
+    test "groups have a label; an item with children toggles them and opens on the active child" do
+      html = nested_html()
+
+      assert texts(html, "#ns .sg-sb-h") == ["Platform"]
+      assert attrs(html, "#ns button.sg-sb-a.rw", "aria-expanded") == ["true"]
+      assert texts(html, "#ns .sg-sb-tree .sg-sb-a .lbl") == ["History", "Starred"]
+      assert attrs(html, "#ns .sg-sb-tree a.on", "aria-current") == ["page"]
+    end
+
+    test "without menus the header and the foot are plain rows" do
+      html = nested_html(%{brand: %{name: "Acme Inc", logo: "A"}, user: %{name: "Marina Costa"}})
+
+      assert find(html, "#ns-team") |> Enum.empty?()
+      assert texts(html, "#ns .sg-sb-team > b") == ["Acme Inc"]
+      assert texts(html, "#ns .sg-sb-user b") == ["Marina Costa"]
+    end
+  end
+
   def current_nav(assigns), do: [%{label: assigns.current, href: assigns.current}]
 end
