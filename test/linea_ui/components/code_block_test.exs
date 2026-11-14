@@ -7,7 +7,15 @@ defmodule LineaUI.Components.CodeBlockTest do
   test "a code string becomes one line per row, with a header and a copy button" do
     html =
       render(~H"""
-      <.code_block id="cb" title="Terminal" icon="huge-command-line" code={"$ node --version\nv24.18.0"} copy line_numbers wrap />
+      <.code_block
+        id="cb"
+        title="Terminal"
+        icon="huge-command-line"
+        code={Enum.join(["$ node --version", "v24.18.0"], "\n")}
+        copy
+        line_numbers
+        wrap
+      />
       """)
 
     assert texts(html, "#cb .linea-code-line") == ["$ node --version", "v24.18.0"]
@@ -21,15 +29,25 @@ defmodule LineaUI.Components.CodeBlockTest do
   test "lines carry their variant and highlight marks lines by number" do
     html =
       render(~H"""
-      <.code_block id="d" lines={["a", %{text: "b", variant: "removed"}, %{text: "c", variant: "added"}, "d"]} highlight={[4]} />
+      <.code_block
+        id="d"
+        lines={["a", %{text: "b", variant: "removed"}, %{text: "c", variant: "added"}, "d"]}
+        highlight={[4]}
+      />
       """)
 
-    assert attr_of(html, "#d .linea-code-line", "data-variant") == [nil, "removed", "added", "highlighted"]
+    assert attr_of(html, "#d .linea-code-line", "data-variant") == [
+             nil,
+             "removed",
+             "added",
+             "highlighted"
+           ]
+
     assert find(html, "#d .linea-code-h") |> Enum.count() == 0
   end
 
   test "copy without a header floats; start_line sets the counter and the gutter width" do
-    html = render(~H|<.code_block id="f" code={"x\ny"} copy line_numbers start_line={99} />|)
+    html = render(~H|<.code_block id="f" code={Enum.join(~w(x y), "\n")} copy line_numbers start_line={99} />|)
 
     assert find(html, "#f .linea-code-float #f-copy") |> Enum.count() == 1
     [style] = attr_of(html, "#f-code", "style")
@@ -40,7 +58,9 @@ defmodule LineaUI.Components.CodeBlockTest do
   test "size and variant are data attributes; a safe block is drawn as is" do
     html =
       render(~H"""
-      <.code_block id="s" size="sm" variant="destructive">{Phoenix.HTML.raw("<span class=\"k\">def</span>")}</.code_block>
+      <.code_block id="s" size="sm" variant="destructive">
+        {Phoenix.HTML.raw("<span class=\"k\">def</span>")}
+      </.code_block>
       """)
 
     assert attr_of(html, "#s", "data-size") == ["sm"]

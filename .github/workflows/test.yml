@@ -27,8 +27,6 @@ jobs:
           key: mix-${{ runner.os }}-${{ hashFiles('mix.lock') }}
       - run: mix deps.get
       - run: mix compile --warnings-as-errors
-      - name: format diff (temporary)
-        run: mix format && git diff --no-color > fmt.patch; base64 -w0 fmt.patch; echo
       - run: mix format --check-formatted
       - run: mix test
       - run: mix js.test

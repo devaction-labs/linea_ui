@@ -1577,7 +1577,8 @@ defmodule LineaUI.Components.AppShell do
 
   attr :shortcut, :string,
     default: "b",
-    doc: "Ctrl/⌘ + this key collapses and expands the menu (opens it on a phone); `nil` turns it off."
+    doc:
+      "Ctrl/⌘ + this key collapses and expands the menu (opens it on a phone); `nil` turns it off."
 
   attr :target, :any, default: nil, doc: "The `phx-target` of `on_collapse`."
   attr :label, :string, default: "Main menu", doc: "The accessible name of the menu."

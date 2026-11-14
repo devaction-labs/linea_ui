@@ -203,7 +203,8 @@ defmodule LineaUI.Components.Sidebar do
 
   attr :shortcut, :string,
     default: "b",
-    doc: "Ctrl/⌘ + this key collapses and expands the menu (opens it on a phone); `nil` turns it off."
+    doc:
+      "Ctrl/⌘ + this key collapses and expands the menu (opens it on a phone); `nil` turns it off."
 
   attr :variant, :string,
     default: "floating",
