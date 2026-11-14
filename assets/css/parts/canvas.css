@@ -137,12 +137,13 @@
 /* ---------- Buttons ---------- */
 /* In a layer, so the Tailwind width, shape and color utilities of an app win over them. */
 @layer components{
-.sg-btn{all:unset;box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;gap:8px;height:36px;padding:0 14px;border-radius:var(--pill);font:500 14px/20px var(--sans);letter-spacing:-.006em;cursor:pointer;white-space:nowrap;color:var(--ink);background:var(--ctl);box-shadow:inset 0 0 0 1px var(--ctl-line),var(--shadow-xs);transition:background-color .12s,box-shadow .12s,color .12s}
+.sg-btn{all:unset;box-sizing:border-box;border:0 solid var(--ctl-line);display:inline-flex;align-items:center;justify-content:center;gap:8px;height:36px;padding:0 14px;border-radius:var(--pill);font:500 14px/20px var(--sans);letter-spacing:-.006em;cursor:pointer;white-space:nowrap;color:var(--ink);background:var(--ctl);box-shadow:inset 0 0 0 1px var(--ctl-line),var(--shadow-xs);transition:background-color .12s,box-shadow .12s,color .12s}
 .sg-btn>svg,.sg-btn>.i,.sg-btn>[class*="huge-"]{width:16px;height:16px;flex:none}
 .sg-btn:has(>svg:first-child,>.i:first-child,>[class*="huge-"]:first-child){padding-left:12px}
 .sg-btn:hover{background:linear-gradient(var(--ctl-hover),var(--ctl-hover)),var(--ctl)}
 .sg-btn.solid{background:var(--solid);color:var(--on-solid);box-shadow:inset 0 0 0 1px rgb(0 0 0/.1),var(--shadow-xs)}
 .sg-btn.accent{background:var(--accent);color:var(--on-accent);box-shadow:inset 0 0 0 1px rgb(0 0 0/.1),inset 0 1px 0 rgb(255 255 255/.14),var(--shadow-xs)}
+.sg-btn.border-dashed{border-width:1px;box-shadow:var(--shadow-xs)}
 .sg-btn.filled{background:var(--ctl-fill);box-shadow:none}
 .sg-btn.soft{background:var(--accent-soft);color:var(--accent-ink);box-shadow:none}
 .sg-btn.ghost{background:transparent;box-shadow:none}
