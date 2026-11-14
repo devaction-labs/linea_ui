@@ -356,4 +356,22 @@ defmodule LineaUI.Components.ToastTest do
       assert Toast.payload("x", value: 10)["status"] == nil
     end
   end
+
+  describe "status_toast/1 actions as links" do
+    test "href, navigate and patch render links; id goes on both" do
+      html =
+        render(~H"""
+        <.status_toast id="s">
+          Building
+          <:action id="toast-logs" patch="/logs" ghost>Logs</:action>
+          <:action id="toast-open" href="/app">Open</:action>
+          <:action id="toast-hide" on_click="hide">Hide</:action>
+        </.status_toast>
+        """)
+
+      assert ["/logs"] == html |> find("a#toast-logs.act.ghost") |> LazyHTML.attribute("href")
+      assert ["/app"] == html |> find("a#toast-open") |> LazyHTML.attribute("href")
+      assert [_] = find(html, "button#toast-hide.act") |> Enum.to_list()
+    end
+  end
 end

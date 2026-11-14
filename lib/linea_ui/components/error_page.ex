@@ -42,6 +42,8 @@ defmodule LineaUI.Components.ErrorPage do
 
   use LineaUI.Component
 
+  @copy_js "var b=this,t=document.getElementById(b.dataset.from);navigator.clipboard&&t&&navigator.clipboard.writeText(t.textContent.trim()).then(function(){b.setAttribute('data-copied','');setTimeout(function(){b.removeAttribute('data-copied')},2000)})"
+
   import LineaUI.Components.Icon, only: [icon: 1]
 
   @defaults %{
@@ -97,6 +99,8 @@ defmodule LineaUI.Components.ErrorPage do
     Map.get(@defaults, key) || fallback(key)
   end
 
+  defp copy_js, do: @copy_js
+
   defp fallback("5" <> _), do: @defaults["500"]
   defp fallback(_key), do: @defaults["400"]
 
@@ -129,7 +133,12 @@ defmodule LineaUI.Components.ErrorPage do
   attr :copy, :boolean,
     default: true,
     doc:
-      "A copy button by the request id. It is a `LineaUI.Clipboard` hook, so it copies inside a LiveView; on a plain `ErrorHTML` page a click on the id selects it whole."
+      "A copy button by the request id. It copies with an inline `onclick` (`navigator.clipboard`) and sets `data-copied` for two seconds, so it works on a plain `ErrorHTML` page with no LiveView or hook; a CSP that forbids inline handlers needs `unsafe-inline` for it, and the click on the id still selects it whole."
+
+  attr :back_label, :string,
+    default: nil,
+    doc:
+      "Adds a \"previous page\" button (`history.back()`, no LiveView needed) after the `actions`, with this text."
 
   attr :timestamp, :string, default: nil, doc: "When it happened, as text, after the request id."
   attr :id, :string, default: "error-page"
@@ -176,7 +185,12 @@ defmodule LineaUI.Components.ErrorPage do
           <span class="sg-err-label"><span class="sg-err-code">{@code}</span>{@label}</span>
           <h1 class="sg-err-title">{@title}</h1>
           <p :if={@description} class="sg-err-desc">{@description}</p>
-          <div :if={@actions != []} class="sg-err-actions">{render_slot(@actions)}</div>
+          <div :if={@actions != [] or @back_label} class="sg-err-actions">
+            {render_slot(@actions)}
+            <button :if={@back_label} type="button" class="sg-btn lg" onclick="history.back()">
+              {@back_label}
+            </button>
+          </div>
           {render_slot(@inner_block)}
         </div>
         <div class="sg-err-art" aria-hidden={@card == [] && "true"}>
@@ -191,16 +205,18 @@ defmodule LineaUI.Components.ErrorPage do
       <footer :if={@request_id || @timestamp || @footer != []} class="sg-err-foot">
         <span :if={@request_id} class="rid">
           {@request_id_label} <code id={"#{@id}-rid"}>{@request_id}</code>
-          <LineaUI.Components.Clipboard.clipboard
+          <button
             :if={@copy}
+            type="button"
             id={"#{@id}-copy"}
-            from={"##{@id}-rid"}
-            icon_only
-            variant="flat"
-            size="xs"
-            toast={nil}
+            class="sg-ib xs plain group/clip"
+            data-from={"#{@id}-rid"}
             aria-label={@copy_label}
-          />
+            onclick={copy_js()}
+          >
+            <.icon name="huge-copy-01" class="group-data-copied/clip:hidden" />
+            <.icon name="huge-tick-02" class="hidden group-data-copied/clip:inline" />
+          </button>
         </span>
         <span :if={@timestamp}>{@timestamp}</span>
         <span :if={@footer != []} class="end">{render_slot(@footer)}</span>

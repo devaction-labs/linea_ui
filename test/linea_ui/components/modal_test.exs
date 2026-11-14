@@ -138,4 +138,13 @@ defmodule LineaUI.Components.ModalTest do
     assert html |> find("#m [data-drawer-footer] button") |> LazyHTML.text() =~ "Ok"
     assert [] = html |> find("#m .btn.absolute") |> Enum.to_list()
   end
+
+  test "role is dialog by default and alertdialog on request" do
+    html = render(~H|<.modal id="m" role="alertdialog" aria-describedby="msg">
+  <p id="msg">Sure?</p>
+</.modal>|)
+    assert attr_of(html, "#m", "role") == ["alertdialog"]
+    assert attr_of(html, "#m", "aria-describedby") == ["msg"]
+    assert attr_of(render(~H|<.modal id="m">x</.modal>|), "#m", "role") == ["dialog"]
+  end
 end

@@ -37,6 +37,14 @@ defmodule LineaUI.Components.ActionMenu do
   is no room below, follows scrolling, and closes with Esc (the focus goes back to the button), Tab or a click
   outside; ↑ ↓ Home End and letters move among the items. `LineaUI.open/close/toggle` work with its `id`.
 
+  ## One action only
+
+  A menu for a single item is heavy: use `action_button/1`, a direct button (or link) that sits where the
+  "⋯" would be.
+
+      <.action_button label={"Delete " <> c.name} icon="huge-delete-02" danger phx-click="delete" phx-value-id={c.id} />
+      <.action_button label="Open" icon="huge-view" navigate={~p"/companies/\#{c.id}"} />
+
   ## What is marked while it is open
 
   The hook sets `data-am-open` on the nearest `[data-am-row]`, `tr` or card-table row (`.linea-ctable-row`) above the
@@ -59,6 +67,7 @@ defmodule LineaUI.Components.ActionMenu do
 
   use LineaUI.Component
 
+  alias LineaUI.Components.Button
   alias LineaUI.Components.Icon
 
   @doc """
@@ -198,6 +207,43 @@ defmodule LineaUI.Components.ActionMenu do
   def action_menu_separator(assigns) do
     ~H"""
     <div class={merge(["linea-am-sep", @class])} role="separator" {@rest}></div>
+    """
+  end
+
+  @doc """
+  A direct button for an item that has a single action, in place of an `action_menu/1`. It is a
+  `LineaUI.Components.Button` (a link with `href`, `navigate` or `patch`) at the "⋯" button's size: an icon
+  button by default, or a text button when it has an inner block.
+  """
+  attr :label, :string, required: true, doc: "The accessible name (`aria-label`)."
+  attr :icon, :string, default: nil, doc: "A Hugeicons name (`huge-delete-02`)."
+  attr :danger, :boolean, default: false, doc: "Paints it in the error color."
+
+  attr :variant, :string,
+    default: "outline",
+    values: ~w(solid glow outline soft bordered flat glass ghost dim)
+
+  attr :size, :string, default: "sm", values: ~w(xs sm md lg xl)
+  attr :class, :any, default: nil
+
+  attr :rest, :global,
+    include: ~w(href navigate patch method download target rel form name value disabled)
+
+  slot :inner_block, doc: "A text for the button; without it the button holds only the `icon`."
+
+  def action_button(assigns) do
+    ~H"""
+    <Button.button
+      icon={@inner_block == []}
+      variant={@variant}
+      size={@size}
+      color={(@danger && "error") || "neutral"}
+      aria-label={@label}
+      class={@class}
+      {@rest}
+    >
+      <Icon.icon :if={@icon} name={@icon} class="size-4" />{render_slot(@inner_block)}
+    </Button.button>
     """
   end
 end
