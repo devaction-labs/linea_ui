@@ -225,3 +225,50 @@ span.flatpickr-weekday{font-size:12.5px;font-weight:400;color:var(--muted)}
 /* variants: flush with a line at its edge, or on the page with the main area as the card */
 .sg-sb[data-variant="sidebar"]{border-radius:0;background:var(--canvas);box-shadow:inset -1px 0 0 var(--line)}
 .sg-sb[data-variant="inset"]{border-radius:0;background:transparent;box-shadow:none}
+
+/* ---------- data, structure and AI components, in the same finish ---------- */
+
+/* chips and pills inside fields: 6px corners, a thin line, no shadow */
+.sg-chip{height:26px;border-radius:6px;box-shadow:inset 0 0 0 1px var(--line);background:var(--panel);font-size:13px}
+.sg-tag{border-radius:6px}
+.sg-delta{border-radius:6px;font-family:var(--sans)}
+
+/* KPI and stats: muted 14px labels, 28/600 values */
+.sg-kpi-l,.sg-stat .l{font-size:14px;color:var(--muted)}
+.sg-kpi-v{font-size:28px;line-height:32px;font-weight:600;letter-spacing:-.025em}
+.sg-stat .v{font-weight:600}
+
+/* kanban: the column a muted track, cards as cards */
+.sg-kb-col{padding:8px;gap:8px;border-radius:var(--r-lg);background:var(--sunken);box-shadow:none}
+.sg-kb-h{padding:6px 6px 4px;font-size:14px;font-weight:500}
+.sg-kb-card{padding:12px;gap:8px;border-radius:var(--r);background:var(--panel);box-shadow:0 0 0 1px var(--line),var(--shadow-xs)}
+
+/* flow: nodes as 10px cards, chips at 6px */
+.linea-flow-card{border-color:var(--line);border-radius:0 var(--r) var(--r) var(--r);box-shadow:var(--shadow-sm)}
+.linea-flow-chip{border-radius:6px;box-shadow:inset 0 0 0 1px var(--line)}
+
+/* step group and timeline */
+.sg-sgp{border-radius:var(--r-lg);box-shadow:0 0 0 1px var(--line)}
+.sg-tl-i .sg-ic{border-radius:var(--pill);box-shadow:inset 0 0 0 1px var(--line);background:var(--panel)}
+.sg-step.cur i{background:var(--control-on);color:var(--on-control)}
+.sg-step.done i{background:var(--tint);color:var(--ink)}
+
+/* upload: a dashed 10px area on the panel */
+.sg-drop{border-radius:var(--r);border:1px dashed var(--line-strong);background:transparent;padding:24px}
+
+/* tables of the kit: the same header and rows as .sg-table */
+:is(.linea-ctable,.linea-dt) :is(th,.linea-ctable-h){font-size:13px;font-weight:500;color:var(--ink)}
+.linea-ctable{border-radius:var(--r-lg)}
+
+/* chat: bubbles at 14px corners, the composer as a 14px card with a square send button */
+.sg-bubble{border-radius:var(--r-lg);padding:8px 12px}
+.sg-bubble.me{border-bottom-right-radius:var(--r-lg);background:var(--sunken);color:var(--ink)}
+.sg-bubble.them{border-bottom-left-radius:var(--r-lg)}
+.ai-composer{border-radius:var(--r-lg);padding:8px;box-shadow:0 0 0 1px var(--line),var(--shadow-sm)}
+.ai-chip{height:24px;border-radius:6px;box-shadow:inset 0 0 0 1px var(--line)}
+.ai-send{width:32px;height:32px;border-radius:var(--pill);background:var(--control-on);color:var(--on-control)}
+.ai-send:focus-visible{outline:0;box-shadow:0 0 0 3px var(--ring)}
+
+/* charts: legend at 13px, bar list tracks at 4px */
+.sg-legend{font-size:13px}
+.linea-bar-list-track{border-radius:4px}

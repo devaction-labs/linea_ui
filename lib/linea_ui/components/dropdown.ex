@@ -224,7 +224,7 @@ defmodule LineaUI.Components.Dropdown do
         :for={action <- @action}
         color={@color}
         shape={@shape || "rounded"}
-        class={merge(["rounded-l-full! rounded-r-[4px]!", action[:class]])}
+        class={merge(["rounded-r-none!", action[:class]])}
         {Map.drop(action, [:inner_block, :__slot__, :class])}
       >
         {render_slot(action)}
@@ -234,7 +234,7 @@ defmodule LineaUI.Components.Dropdown do
           :if={@action != []}
           color={@color}
           shape="square"
-          class="rounded-l-[4px]! rounded-r-full!"
+          class={["rounded-l-none!", @shape == "pill" && "rounded-r-full!"]}
           id={"#{@id}-button"}
           aria-label={@toggle_label}
         >
