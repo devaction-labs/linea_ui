@@ -1,0 +1,50 @@
+/* CodeBlock (canvas "CodeBlock"): code, output, logs and diffs in a quiet card with an optional header, line
+   numbers drawn by CSS (so a selection copies the code alone), and added, removed and highlighted lines. */
+.linea-code{position:relative;display:flex;flex-direction:column;min-width:0;border-radius:var(--r,10px);background:var(--sunken);box-shadow:inset 0 0 0 1px var(--line);overflow:hidden;font:400 13px/20px var(--mono);color:var(--fg);--linea-code-px:16px}
+.linea-code-h{display:flex;align-items:center;gap:8px;min-height:40px;padding:0 6px 0 var(--linea-code-px);border-bottom:1px solid var(--line);font-family:var(--sans)}
+.linea-code-title{display:flex;align-items:center;gap:8px;min-width:0;flex:1;font-size:13px;color:var(--muted)}
+.linea-code-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.linea-code-title > [class*="huge-"]{flex:none;color:var(--faint)}
+.linea-code-title a{color:inherit;text-decoration:none}.linea-code-title a:hover{color:var(--ink)}
+.linea-code-actions{display:flex;align-items:center;gap:2px;margin-left:auto;flex:none}
+.linea-code-float{position:absolute;top:6px;right:6px;z-index:1;opacity:0;transition:opacity .15s}
+.linea-code:is(:hover,:focus-within) .linea-code-float{opacity:1}
+@media (hover:none){.linea-code-float{opacity:1}}
+.linea-code-copy.linea-code-copy{width:28px;height:28px;color:var(--muted)}
+.linea-code-copy:hover{color:var(--ink)}
+.linea-code-pre{margin:0;padding:12px 0;overflow:auto;direction:ltr;text-align:left;font:inherit;tab-size:2;counter-reset:linea-line;outline:none;scrollbar-width:thin}
+.linea-code-pre[data-wrap]{white-space:pre-wrap;overflow-wrap:anywhere}
+.linea-code-pre:focus-visible{box-shadow:inset 0 0 0 1px var(--ring-line,var(--line-strong)),inset 0 0 0 3px var(--ring,transparent)}
+.linea-code-pre > code{display:block;min-width:max-content;font:inherit}
+.linea-code-pre[data-wrap] > code{min-width:0}
+.linea-code-line{display:block;min-height:20px;padding:0 var(--linea-code-px);counter-increment:linea-line}
+.linea-code-pre[data-numbers] .linea-code-line::before{content:counter(linea-line);display:inline-block;width:var(--linea-code-gutter,1ch);margin-right:16px;text-align:right;color:var(--faint);user-select:none}
+.linea-code-line[data-variant="added"]{--m:"+";background:color-mix(in srgb,var(--pos) 12%,transparent)}
+.linea-code-line[data-variant="removed"]{--m:"−";background:color-mix(in srgb,var(--neg) 10%,transparent)}
+.linea-code-line[data-variant="highlighted"]{background:color-mix(in srgb,var(--ink) 6%,transparent);box-shadow:inset 2px 0 0 var(--ink)}
+/* the + and − markers sit in front of the text (in the gap after the number), outside the copied text */
+.linea-code-line:is([data-variant="added"],[data-variant="removed"]){position:relative}
+.linea-code-pre:not([data-numbers]) .linea-code-line:is([data-variant="added"],[data-variant="removed"]){padding-left:calc(var(--linea-code-px) + 16px)}
+.linea-code-line:is([data-variant="added"],[data-variant="removed"])::after{content:var(--m);position:absolute;top:0;left:var(--linea-code-px);user-select:none}
+.linea-code-pre[data-numbers] .linea-code-line:is([data-variant="added"],[data-variant="removed"])::after{left:calc(var(--linea-code-px) + var(--linea-code-gutter,1ch) + 5px)}
+.linea-code-line[data-variant="added"]::after{color:var(--pos)}
+.linea-code-line[data-variant="removed"]::after{color:var(--neg)}
+.linea-code-f{display:flex;justify-content:center;padding:6px;border-top:1px solid var(--line);font-family:var(--sans)}
+/* small: tool output inside a trace */
+.linea-code[data-size="sm"]{font-size:12px;line-height:18px;--linea-code-px:12px;border-radius:8px}
+.linea-code[data-size="sm"] .linea-code-pre{padding:8px 0}
+.linea-code[data-size="sm"] .linea-code-line{min-height:18px}
+.linea-code[data-size="sm"] .linea-code-h{min-height:32px;padding-left:12px}
+/* destructive: errors and failed output */
+.linea-code[data-variant="destructive"]{background:color-mix(in srgb,var(--neg) 6%,var(--panel));box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--neg) 25%,transparent);color:var(--neg)}
+.linea-code[data-variant="destructive"] .linea-code-h{border-color:color-mix(in srgb,var(--neg) 20%,transparent)}
+
+/* Tool (canvas "Tool"): a tool call as a trace line; its input and output stack in the step's body. */
+.linea-tool-io{display:flex;flex-direction:column;gap:6px;padding:4px 0 6px}
+.linea-tool-ask{display:flex;align-items:flex-start;gap:12px;padding:12px 12px 12px 14px;border-radius:var(--r,10px);background:var(--panel);box-shadow:inset 0 0 0 1px var(--line),var(--shadow-xs,none);font:400 14px/20px var(--sans);color:var(--fg)}
+.linea-tool-ask-icon{display:grid;place-items:center;width:28px;height:28px;flex:none;border-radius:6px;background:var(--sunken);color:var(--muted)}
+.linea-tool-ask-body{display:flex;flex-direction:column;gap:6px;flex:1;min-width:0;padding-top:4px}
+.linea-tool-ask-q{margin:0;font-weight:500;color:var(--ink)}
+.linea-tool-ask-q code,.linea-trace-title code{font:500 12.5px/1 var(--mono)}
+.linea-tool-ask-d{margin:0;font-size:13px;color:var(--muted)}
+.linea-tool-ask-actions{display:flex;align-items:center;gap:6px;flex:none}
