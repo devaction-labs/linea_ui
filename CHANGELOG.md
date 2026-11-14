@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- The theme is neutral now, in the spirit of shadcn/ui: pure grays instead of warm ones, a near-white app background with white cards in light, and in dark a black main area (`--main`, #0a0a0a) with #171717 cards, translucent white borders (10% for lines, 15% for controls) and translucent control fills, so surfaces sit together in both themes. The teal accent is unchanged. The `slate`/`navy` Tailwind colors follow the new grays.
+
 ## 0.22.0 (2026-11-13)
 
 ### New, from the Signetum canvas

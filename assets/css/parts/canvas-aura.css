@@ -46,10 +46,10 @@
 .toastify.rich.canvas[data-behind] .sg-toast{box-sizing:border-box;width:100%;height:100%;overflow:hidden}
 .toastify.rich.canvas[data-behind] .sg-toast>*{visibility:hidden}
 .toastify.rich.canvas[data-behind] .sg-toast.prog{background:var(--panel)}
-.toastify.rich.canvas[data-behind] .sg-toast.dark{background:#17171a}
+.toastify.rich.canvas[data-behind] .sg-toast.dark{background:#171717}
 
 /* Status toast (`status_toast/1`, and `status:` in the toaster): compact and inverse in both themes, for long processes */
-.sg-toast.st{width:auto;max-width:440px;align-items:center;gap:12px;padding:10px 10px 10px 14px;border-radius:12px;background:#111113;color:#9d9da3;font-size:14px;line-height:20px;box-shadow:0 0 0 1px rgb(255 255 255/.06),0 12px 28px -6px rgb(0 0 0/.35),0 2px 6px rgb(0 0 0/.18)}
+.sg-toast.st{width:auto;max-width:440px;align-items:center;gap:12px;padding:10px 10px 10px 14px;border-radius:12px;background:#0a0a0a;color:#9d9da3;font-size:14px;line-height:20px;box-shadow:0 0 0 1px rgb(255 255 255/.06),0 12px 28px -6px rgb(0 0 0/.35),0 2px 6px rgb(0 0 0/.18)}
 :is(.dark, [data-theme="dark"]) .sg-toast.st:not(:where([data-theme="light"] *)){background:#1b1b1f;box-shadow:0 0 0 1px #2f2f35,inset 0 1px 0 rgb(255 255 255/.04),0 16px 36px -6px rgb(0 0 0/.7)}
 .sg-toast.st b{font-weight:550;color:#f4f4f5}
 .sg-toast.st .msg{flex:1;min-width:0}

@@ -228,11 +228,11 @@
   color: var(--faint);
 }
 
-/* tooltip, `color="dark"`: the canvas `sg-tooltip` (#17171a, white 12px text, 6px 9px, 8px corners),
+/* tooltip, `color="dark"`: the canvas `sg-tooltip` (#171717, white 12px text, 6px 9px, 8px corners),
    the same on a dark page */
 .tippy-box[data-theme~="dark"] {
   border-radius: 8px;
-  background: #17171a;
+  background: #171717;
   color: #fff;
   font-size: 12px;
   line-height: 20px;
@@ -242,7 +242,7 @@
   padding: 6px 9px;
 }
 .tippy-box[data-theme~="dark"] > .tippy-svg-arrow svg {
-  color: #17171a;
+  color: #171717;
 }
 
 /* tabs, `segmented`: the canvas `sg-seg` with tab buttons (`aria-selected` instead of `.on`) */
@@ -275,7 +275,7 @@
   background: var(--panel);
   color: var(--ink);
   font-weight: 500;
-  box-shadow: 0 0 0 1px var(--ctl-line), 0 1px 3px rgb(23 23 26 / .08);
+  box-shadow: 0 0 0 1px var(--ctl-line), 0 1px 3px rgb(10 10 10 / .08);
 }
 .sg-seg > .sg-seg-tab[aria-selected="true"]:where(.dark *, [data-theme="dark"] *):not(:where([data-theme="light"], [data-theme="light"] *)) {
   background: var(--raised);
