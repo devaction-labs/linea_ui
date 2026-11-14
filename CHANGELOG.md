@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- New `trace` (with `trace_line` and `trace_step`), in the spirit of the shadcn/ui Trace: what an agent did, one line per step with an icon, a title that truncates, an optional description and a status (`running` shimmers, `error` turns red with an alert icon, `pending` fades). A line can be a link (`href`/`navigate`/`patch`, `end_icon`); `trace_step` is a native `<details>` whose block shows under the line behind a thin rule (output in `linea-trace-code`, or nested steps).
+- New `code_block`, in the spirit of the shadcn/ui Code Block: code, terminal output, logs and diffs in a quiet card with an optional header (title, icon, copy button, `:actions`), line numbers that grow with the largest one (`start_line`), wrapping, added, removed and highlighted lines (`lines` maps or `highlight`), a `:footer`, `max_height`, `size="sm"` for tool output and `variant="destructive"` for failures. Numbers and the +/− markers are drawn by CSS, so a selection copies the code alone; a safe HTML block (Makeup output, say) is drawn as is.
+- New `tool` and `tool_approval`, in the spirit of the shadcn/ui AI Elements Tool: a tool call as a `trace` line (`state` running, waiting, done, error or denied picks the status and the verb, in English or `locale="pt_BR"`, overridable with `verbs`), opening on its `input` and `output` in small code blocks; `tool_approval` is the card that asks before a call runs, with Deny and Approve events carrying `value`.
+
 ## 0.22.0 (2026-11-13)
 
 ### New, from the Signetum canvas
