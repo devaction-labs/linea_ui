@@ -195,3 +195,33 @@ span.flatpickr-weekday{font-size:12.5px;font-weight:400;color:var(--muted)}
 .sg-kb-col{border-radius:var(--r-lg);box-shadow:none}
 .sg-kb-card{border-radius:var(--r);box-shadow:0 0 0 1px var(--line),var(--shadow-xs)}
 .sg-avs .sg-av{box-shadow:0 0 0 2px var(--canvas)}
+
+/* sidebar: 32px rows with 6px corners, 16px icons, the active row on the gray tint, quiet group labels */
+.sg-sb{--sbw:256px;padding:12px 8px 8px}
+.sg-sb-brand{height:48px;padding:0 8px;margin-bottom:4px}
+.sg-sb-brand b{font-size:14px;font-weight:600;letter-spacing:-.01em}
+.sg-sb-logo{width:32px;height:32px;border-radius:var(--pill)}
+.sg-sb-a,.sg-sb-tree .sg-sb-a,.sg-sb-tree.line>.sg-sb-a{min-height:32px;height:auto;gap:8px;padding:0 8px;border-radius:6px;font-size:14px;font-weight:400;color:var(--fg)}
+.sg-sb button.sg-sb-a.rw{font-size:14px}
+.sg-sb-a .i{width:16px;height:16px}
+.sg-sb-a:hover,.sg-sb button.sg-sb-a.rw:hover{background:var(--tint);color:var(--ink)}
+.sg-sb-a.on,.sg-sb button.sg-sb-a.rw.on{background:var(--tint);color:var(--ink);font-weight:500}
+.sg-sb-n{font:500 12px/1 var(--sans);color:var(--muted)}
+.sg-sb-h,.sg-sb-gh{display:flex;align-items:center;height:32px;padding:0 8px;margin-top:8px;font:500 12px/16px var(--sans);letter-spacing:0;text-transform:none;color:var(--muted)}
+.sg-sb-gt{padding:16px 8px 6px;font-size:12px;font-weight:500}
+.sg-sb :is(.sg-sb-a,.r,.dot,.sg-sb-new,button):focus-visible{outline:0;box-shadow:inset 0 0 0 1px var(--ring-line),0 0 0 2px var(--ring)}
+.sg-sb-user .me,.sg-sb-plan{border-radius:var(--pill);box-shadow:none}
+.sg-sb-user .me:hover,.sg-sb-plan:hover{background:var(--tint)}
+.sg-sb-user{border-top:0}
+/* the app shell's side menu, in the same rows */
+.sg-nav-a{height:32px;gap:8px;padding:0 8px;border-radius:6px;font-size:14px;font-weight:400}
+.sg-nav-a .i{width:16px;height:16px}
+.sg-nav-a:hover{background:var(--tint)}
+.sg-nav-a.on,:is(.dark .sg:not([data-theme="light"]), .sg[data-theme="dark"]) .sg-nav-a.on{background:var(--tint);color:var(--ink);font-weight:500;box-shadow:none}
+.sg-nav-a.on .i{color:var(--ink)}
+.sg-nav-h{padding:16px 8px 6px;font:500 12px/16px var(--sans);letter-spacing:0;text-transform:none;color:var(--muted)}
+.sg-nav-sub a{height:28px;padding:0 8px;border-radius:6px;font-size:13.5px}
+.sg-nav-sub a.on{background:var(--tint)}
+/* variants: flush with a line at its edge, or on the page with the main area as the card */
+.sg-sb[data-variant="sidebar"]{border-radius:0;background:var(--canvas);box-shadow:inset -1px 0 0 var(--line)}
+.sg-sb[data-variant="inset"]{border-radius:0;background:transparent;box-shadow:none}

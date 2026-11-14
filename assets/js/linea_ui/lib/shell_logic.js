@@ -129,3 +129,10 @@ export const clockText = (date, locale) => {
   const time = new Intl.DateTimeFormat(locale, {hour: "2-digit", minute: "2-digit", hour12: false}).format(date)
   return `${label(parts.weekday)}, ${parts.day} ${parts.month} ${parts.year} · ${time}`
 }
+
+/**
+ * Whether a keydown is the menu shortcut: `key` (`"b"`, case-insensitive) with Ctrl or ⌘, without Shift or Alt,
+ * and not typed into a field or an editor (`editable`). No `key` turns the shortcut off.
+ */
+export const menuShortcut = ({key: pressed, metaKey, ctrlKey, shiftKey, altKey}, key, editable) =>
+  !!key && (metaKey || ctrlKey) && !shiftKey && !altKey && !editable && pressed?.toLowerCase() === key.toLowerCase()
