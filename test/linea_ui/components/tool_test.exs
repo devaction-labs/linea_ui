@@ -4,7 +4,10 @@ defmodule LineaUI.Components.ToolTest do
   defp attr_of(html, selector, name), do: html |> find(selector) |> LazyHTML.attribute(name)
 
   defp texts(html, selector),
-    do: html |> find(selector) |> Enum.map(&(&1 |> LazyHTML.text() |> String.split() |> Enum.join(" ")))
+    do:
+      html
+      |> find(selector)
+      |> Enum.map(&(&1 |> LazyHTML.text() |> String.split() |> Enum.join(" ")))
 
   test "a running call is a plain line with the running status and its verb" do
     html = render(~H|<.tool id="t" state="running" subject="pnpm install" />|)
@@ -31,14 +34,27 @@ defmodule LineaUI.Components.ToolTest do
       <.tool id="c" state="denied" title="Denied the deploy" />
       """)
 
-    assert texts(html, ".linea-trace-title") == ["Read docs.ex", "Aguardando para rodar ls", "Denied the deploy"]
-    assert attr_of(html, ".linea-trace-line", "data-status") == [nil, "pending", nil]
+    assert texts(html, ".linea-trace-title") == [
+             "Read docs.ex",
+             "Aguardando para rodar ls",
+             "Denied the deploy"
+           ]
+
+    assert find(html, ".linea-trace-line") |> Enum.count() == 3
+    assert attr_of(html, ".linea-trace-line[data-status]", "data-status") == ["pending"]
   end
 
   test "the approval card asks and sends both events with the value" do
     html =
       render(~H"""
-      <.tool_approval id="ap" subject="rm -rf tmp" input="rm -rf tmp" on_approve="approve" on_deny="deny" value="call-1" />
+      <.tool_approval
+        id="ap"
+        subject="rm -rf tmp"
+        input="rm -rf tmp"
+        on_approve="approve"
+        on_deny="deny"
+        value="call-1"
+      />
       """)
 
     assert texts(html, "#ap-q") == ["Run rm -rf tmp?"]

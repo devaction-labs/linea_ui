@@ -62,7 +62,11 @@ defmodule LineaUI.Components.CodeBlock do
   attr :line_numbers, :boolean, default: false
   attr :start_line, :integer, default: 1, doc: "The number of the first line."
   attr :wrap, :boolean, default: false, doc: "Wraps long lines instead of scrolling."
-  attr :max_height, :integer, default: nil, doc: "Caps the height of the code, in px; it scrolls past it."
+
+  attr :max_height, :integer,
+    default: nil,
+    doc: "Caps the height of the code, in px; it scrolls past it."
+
   attr :size, :string, default: "default", values: ~w(default sm)
   attr :variant, :string, default: "default", values: ~w(default destructive)
   attr :class, :any, default: nil
@@ -78,7 +82,8 @@ defmodule LineaUI.Components.CodeBlock do
         rows(assigns.code, assigns.lines, assigns.highlight)
       end)
 
-    assigns = assign(assigns, :text, assigns.rows && Enum.map_join(assigns.rows, "\n", &plain(&1.text)))
+    assigns =
+      assign(assigns, :text, assigns.rows && Enum.map_join(assigns.rows, "\n", &plain(&1.text)))
 
     ~H"""
     <div
@@ -139,7 +144,9 @@ defmodule LineaUI.Components.CodeBlock do
   end
 
   defp rows(nil, nil, _highlight), do: nil
-  defp rows(code, nil, highlight) when is_binary(code), do: rows(nil, String.split(code, ~r/\r?\n/), highlight)
+
+  defp rows(code, nil, highlight) when is_binary(code),
+    do: rows(nil, String.split(code, ~r/\r?\n/), highlight)
 
   defp rows(_code, lines, highlight) when is_list(lines) do
     lines
@@ -160,7 +167,10 @@ defmodule LineaUI.Components.CodeBlock do
   defp plain(text), do: to_string(text)
 
   defp strip_tags(html),
-    do: html |> String.replace(~r/<[^>]*>/, "") |> String.replace(~w(&lt; &gt; &quot; &#39; &amp;), &unescape/1)
+    do:
+      html
+      |> String.replace(~r/<[^>]*>/, "")
+      |> String.replace(~w(&lt; &gt; &quot; &#39; &amp;), &unescape/1)
 
   defp unescape("&lt;"), do: "<"
   defp unescape("&gt;"), do: ">"
@@ -169,7 +179,8 @@ defmodule LineaUI.Components.CodeBlock do
   defp unescape("&amp;"), do: "&"
 
   defp code_style(start, max_height, rows) do
-    digits = if rows, do: (start + length(rows) - 1) |> Integer.to_string() |> String.length(), else: 1
+    digits =
+      if rows, do: (start + length(rows) - 1) |> Integer.to_string() |> String.length(), else: 1
 
     [
       start != 1 && "counter-reset:linea-line #{start - 1}",

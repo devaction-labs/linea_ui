@@ -10,7 +10,7 @@
 .sg-aura.xs{--w:.75px}.sg-aura.sm{--w:1px}.sg-aura.lg{--w:2px}
 .sg-aura.pill{--r:999px}.sg-aura.r12{--r:12px}
 .sg-aura.ai{--a:#0d8f91;--a2:#8a5cd6}.sg-aura.info{--a:var(--info)}.sg-aura.pos{--a:var(--pos)}.sg-aura.warn{--a:var(--warn)}.sg-aura.neg{--a:var(--neg)}.sg-aura.violet{--a:#8a5cd6}
-:is(.dark, [data-theme="dark"]) .sg-aura.ai:not(:where([data-theme="light"], [data-theme="light"] *)){--a:#2bbfbd;--a2:#a98bf0}
+:is(.dark, [data-theme="dark"]) .sg-aura.ai:not(:where(:is(.dark, [data-theme="dark"]) [data-theme="light"], :is(.dark, [data-theme="dark"]) [data-theme="light"] *):not(:where(:is(.dark, [data-theme="dark"]) [data-theme="light"] :is(.dark, [data-theme="dark"]), :is(.dark, [data-theme="dark"]) [data-theme="light"] :is(.dark, [data-theme="dark"]) *))){--a:#2bbfbd;--a2:#a98bf0}
 .sg-aura-shadow{filter:drop-shadow(0 10px 22px rgb(15 15 20/.10)) drop-shadow(0 1px 2px rgb(15 15 20/.06))}
 @keyframes sg-aura-spin{to{transform:translate(-50%,-50%) rotate(360deg)}}
 @keyframes sg-aura-glow{0%,100%{box-shadow:0 0 0 0 color-mix(in srgb,var(--a) 0%,transparent),0 0 10px -2px var(--a)}50%{box-shadow:0 0 0 4px color-mix(in srgb,var(--a) 18%,transparent),0 0 28px 2px var(--a)}}
@@ -50,7 +50,7 @@
 
 /* Status toast (`status_toast/1`, and `status:` in the toaster): compact and inverse in both themes, for long processes */
 .sg-toast.st{width:auto;max-width:440px;align-items:center;gap:12px;padding:10px 10px 10px 14px;border-radius:12px;background:#0a0a0a;color:#9d9da3;font-size:14px;line-height:20px;box-shadow:0 0 0 1px rgb(255 255 255/.06),0 12px 28px -6px rgb(0 0 0/.35),0 2px 6px rgb(0 0 0/.18)}
-:is(.dark, [data-theme="dark"]) .sg-toast.st:not(:where([data-theme="light"] *)){background:#1b1b1f;box-shadow:0 0 0 1px #2f2f35,inset 0 1px 0 rgb(255 255 255/.04),0 16px 36px -6px rgb(0 0 0/.7)}
+:is(.dark, [data-theme="dark"]) .sg-toast.st:not(:where(:is(.dark, [data-theme="dark"]) [data-theme="light"] *):not(:where(:is(.dark, [data-theme="dark"]) [data-theme="light"] :is(.dark, [data-theme="dark"]), :is(.dark, [data-theme="dark"]) [data-theme="light"] :is(.dark, [data-theme="dark"]) *))){background:#1b1b1f;box-shadow:0 0 0 1px #2f2f35,inset 0 1px 0 rgb(255 255 255/.04),0 16px 36px -6px rgb(0 0 0/.7)}
 .sg-toast.st b{font-weight:550;color:#f4f4f5}
 .sg-toast.st .msg{flex:1;min-width:0}
 .sg-toast.st .act{all:unset;box-sizing:border-box;flex:none;height:32px;padding:0 14px;border-radius:8px;display:inline-flex;align-items:center;font-size:14px;font-weight:500;color:#f4f4f5;background:#26262b;box-shadow:inset 0 0 0 1px #34343a;cursor:pointer}

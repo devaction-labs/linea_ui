@@ -46,9 +46,17 @@ defmodule LineaUI.Components.Trace do
   @doc "One step: icon, title, description and status; a link with `href`, `navigate` or `patch`."
   attr :icon, :string, default: nil, doc: "A `huge-*` icon name."
   attr :title, :string, default: nil, doc: "The title; or pass it as the block."
-  attr :description, :any, default: nil, doc: "Secondary text after the title: a count, a duration, a diff."
+
+  attr :description, :any,
+    default: nil,
+    doc: "Secondary text after the title: a count, a duration, a diff."
+
   attr :status, :string, default: nil, values: [nil | @statuses]
-  attr :end_icon, :string, default: nil, doc: "An icon after the line, such as an arrow on a link."
+
+  attr :end_icon, :string,
+    default: nil,
+    doc: "An icon after the line, such as an arrow on a link."
+
   attr :href, :string, default: nil
   attr :navigate, :string, default: nil
   attr :patch, :string, default: nil
@@ -59,7 +67,14 @@ defmodule LineaUI.Components.Trace do
   def trace_line(%{href: nil, navigate: nil, patch: nil} = assigns) do
     ~H"""
     <div class={merge(["linea-trace-line", @class])} data-status={@status} {@rest}>
-      <.line_body icon={@icon} title={@title} description={@description} status={@status} end_icon={@end_icon} body={@inner_block} />
+      <.line_body
+        icon={@icon}
+        title={@title}
+        description={@description}
+        status={@status}
+        end_icon={@end_icon}
+        body={@inner_block}
+      />
     </div>
     """
   end
@@ -74,7 +89,14 @@ defmodule LineaUI.Components.Trace do
       patch={@patch}
       {@rest}
     >
-      <.line_body icon={@icon} title={@title} description={@description} status={@status} end_icon={@end_icon} body={@inner_block} />
+      <.line_body
+        icon={@icon}
+        title={@title}
+        description={@description}
+        status={@status}
+        end_icon={@end_icon}
+        body={@inner_block}
+      />
     </.link>
     """
   end
@@ -95,7 +117,14 @@ defmodule LineaUI.Components.Trace do
     <details class={merge(["linea-trace-step", @class])} open={@open} {@rest}>
       <summary>
         <span class="linea-trace-line" data-status={@status}>
-          <.line_body icon={@icon} title={@title} description={@description} status={@status} body={@summary} chevron />
+          <.line_body
+            icon={@icon}
+            title={@title}
+            description={@description}
+            status={@status}
+            body={@summary}
+            chevron
+          />
         </span>
       </summary>
       <div class="linea-trace-body">{render_slot(@inner_block)}</div>

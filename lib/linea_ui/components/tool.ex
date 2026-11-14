@@ -48,8 +48,20 @@ defmodule LineaUI.Components.Tool do
   alias LineaUI.Components.{Button, CodeBlock, Trace}
 
   @verbs %{
-    "en" => %{running: "Running", waiting: "Waiting to run", done: "Ran", error: "Failed to run", denied: "Denied"},
-    "pt_BR" => %{running: "Rodando", waiting: "Aguardando para rodar", done: "Rodou", error: "Falhou ao rodar", denied: "Negado"}
+    "en" => %{
+      running: "Running",
+      waiting: "Waiting to run",
+      done: "Ran",
+      error: "Failed to run",
+      denied: "Denied"
+    },
+    "pt_BR" => %{
+      running: "Rodando",
+      waiting: "Aguardando para rodar",
+      done: "Rodou",
+      error: "Falhou ao rodar",
+      denied: "Negado"
+    }
   }
 
   @approval %{
@@ -62,7 +74,11 @@ defmodule LineaUI.Components.Tool do
   @doc "One tool call, as a line of a `trace/1`."
   attr :id, :string, required: true, doc: "Names the output block."
   attr :state, :string, default: "done", values: ~w(running waiting done error denied)
-  attr :subject, :string, default: nil, doc: "What the tool acted on (a command, a file), drawn as code."
+
+  attr :subject, :string,
+    default: nil,
+    doc: "What the tool acted on (a command, a file), drawn as code."
+
   attr :title, :string, default: nil, doc: "The whole title, in place of verb and subject."
   attr :verbs, :map, default: %{}, doc: "Verbs per state (atom keys), over the `locale` ones."
   attr :locale, :string, default: "en", values: ~w(en pt_BR)
@@ -95,7 +111,14 @@ defmodule LineaUI.Components.Tool do
     >
       <:summary><.tool_title title={@title} verb={@verb} subject={@subject} /></:summary>
       <div class="linea-tool-io">
-        <CodeBlock.code_block :if={@input} id={"#{@id}-input"} code={@input} size="sm" wrap max_height={256} />
+        <CodeBlock.code_block
+          :if={@input}
+          id={"#{@id}-input"}
+          code={@input}
+          size="sm"
+          wrap
+          max_height={256}
+        />
         <CodeBlock.code_block
           :if={@output}
           id={"#{@id}-output"}
@@ -156,14 +179,31 @@ defmodule LineaUI.Components.Tool do
     assigns = assign(assigns, :t, @approval[assigns.locale])
 
     ~H"""
-    <div id={@id} class={merge(["linea-tool-ask", @class])} role="group" aria-labelledby={"#{@id}-q"} {@rest}>
+    <div
+      id={@id}
+      class={merge(["linea-tool-ask", @class])}
+      role="group"
+      aria-labelledby={"#{@id}-q"}
+      {@rest}
+    >
       <span class="linea-tool-ask-icon"><.icon name={@icon} class="size-4" /></span>
       <div class="linea-tool-ask-body">
         <p id={"#{@id}-q"} class="linea-tool-ask-q">
-          <%= if @title do %>{@title}<% else %>{@t.ask} <code :if={@subject}>{@subject}</code>?<% end %>
+          <%= if @title do %>
+            {@title}
+          <% else %>
+            {@t.ask} <code :if={@subject}>{@subject}</code>?
+          <% end %>
         </p>
         <p :if={@description} class="linea-tool-ask-d">{@description}</p>
-        <CodeBlock.code_block :if={@input} id={"#{@id}-input"} code={@input} size="sm" wrap max_height={160} />
+        <CodeBlock.code_block
+          :if={@input}
+          id={"#{@id}-input"}
+          code={@input}
+          size="sm"
+          wrap
+          max_height={160}
+        />
       </div>
       <div class="linea-tool-ask-actions">
         <Button.button

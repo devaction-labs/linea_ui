@@ -907,7 +907,7 @@ defmodule LineaUI.Components.SidebarTest do
   describe "variant and shortcut" do
     test "the floating card has no variant attribute; sidebar and inset do, and Ctrl/⌘+B is on by default" do
       html = html()
-      assert attrs(html, "nav#sb", "data-variant") == [nil]
+      assert attrs(html, "nav#sb", "data-variant") == []
       assert attrs(html, "nav#sb", "data-shortcut") == ["b"]
 
       html =
@@ -917,7 +917,7 @@ defmodule LineaUI.Components.SidebarTest do
         """)
 
       assert attrs(html, "nav#flush", "data-variant") == ["sidebar"]
-      assert attrs(html, "nav#flush", "data-shortcut") == [nil]
+      assert attrs(html, "nav#flush", "data-shortcut") == []
       assert attrs(html, "nav#ins", "data-variant") == ["inset"]
       assert attrs(html, "nav#ins", "data-shortcut") == ["m"]
     end

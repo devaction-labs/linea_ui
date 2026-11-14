@@ -4,14 +4,19 @@ defmodule LineaUI.Components.TraceTest do
   defp attr_of(html, selector, name), do: html |> find(selector) |> LazyHTML.attribute(name)
 
   defp texts(html, selector),
-    do: html |> find(selector) |> Enum.map(&(&1 |> LazyHTML.text() |> String.split() |> Enum.join(" ")))
+    do:
+      html
+      |> find(selector)
+      |> Enum.map(&(&1 |> LazyHTML.text() |> String.split() |> Enum.join(" ")))
 
   test "a line: icon, title, description and status" do
     html =
       render(~H"""
       <.trace id="t">
         <.trace_line icon="huge-command-line" title="Ran pnpm --version" description="0.4s" />
-        <.trace_line icon="huge-command-line" status="running">Running <code>pnpm build</code></.trace_line>
+        <.trace_line icon="huge-command-line" status="running">
+          Running <code>pnpm build</code>
+        </.trace_line>
       </.trace>
       """)
 
@@ -23,7 +28,10 @@ defmodule LineaUI.Components.TraceTest do
   end
 
   test "an error line shows the alert icon" do
-    html = render(~H|<.trace_line icon="huge-command-line" status="error" title="Failed to run pnpm install" />|)
+    html =
+      render(
+        ~H|<.trace_line icon="huge-command-line" status="error" title="Failed to run pnpm install" />|
+      )
 
     assert attr_of(html, ".linea-trace-line", "data-status") == ["error"]
     assert html =~ "huge-alert-02"
@@ -31,7 +39,12 @@ defmodule LineaUI.Components.TraceTest do
   end
 
   test "a line with navigate is a link with its end icon" do
-    html = render(~H|<.trace_line icon="huge-file-02" navigate="/docs" end_icon="huge-arrow-right-01" title="Read docs.ex" />|)
+    html = render(~H|<.trace_line
+  icon="huge-file-02"
+  navigate="/docs"
+  end_icon="huge-arrow-right-01"
+  title="Read docs.ex"
+/>|)
 
     assert attr_of(html, "a.linea-trace-line", "href") == ["/docs"]
     assert find(html, ".linea-trace-end") |> Enum.count() == 1
