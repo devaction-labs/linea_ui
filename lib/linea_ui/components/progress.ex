@@ -10,6 +10,7 @@ defmodule LineaUI.Components.Progress do
       <.progress indeterminate shine color="primary" />
       <.progress value={30} color="warning" variant="soft" height="1.5" />
       <.progress value={60} color="white" />
+      <.progress value={72} variant="gradient" />
 
   `value` is read against `max` (100 by default) and updates with the assign.
 
@@ -43,9 +44,9 @@ defmodule LineaUI.Components.Progress do
 
   attr(:variant, :string,
     default: "solid",
-    values: ~w(solid soft),
+    values: ~w(solid soft gradient),
     doc:
-      "`soft` tints the track with the bar's color (`bg-{color}/15`); `solid` uses the gray track."
+      "`soft` tints the track with the bar's color (`bg-{color}/15`); `solid` uses the gray track; `gradient` fills the bar with the app gradient (`--grad`, the accent to info one when unset) and ignores `color`: the thin hours bar of the design (`dh-meter`, 6px)."
   )
 
   attr(:size, :string, default: "md", values: ~w(sm md lg xl))
@@ -85,7 +86,7 @@ defmodule LineaUI.Components.Progress do
       aria-valuemin="0"
       aria-valuemax={@max}
       aria-valuenow={!@indeterminate && @value}
-      class={merge(["sg-meter", tone(@color), @class])}
+      class={merge(["sg-meter", tone(@variant, @color), @class])}
       {@rest}
     >
       <i
@@ -95,6 +96,9 @@ defmodule LineaUI.Components.Progress do
     </div>
     """
   end
+
+  defp tone("gradient", _color), do: "grad"
+  defp tone(_variant, color), do: tone(color)
 
   defp tone("primary"), do: "acc"
   defp tone("success"), do: "pos"

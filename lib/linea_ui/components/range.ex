@@ -102,6 +102,12 @@ defmodule LineaUI.Components.Range do
 
   attr(:size, :string, default: "md", values: ~w(sm md lg))
 
+  attr(:fill, :string,
+    default: nil,
+    doc:
+      "Any CSS colour (`\"#0d8f91\"`, `\"var(--c2)\"`) for the filled part of the track, with `filled` or in a pair: a slider that takes the colour of what it sets, like the canvas `sg-slider` with `--c`. Without it the fill is the accent."
+  )
+
   attr(:variant, :string,
     default: "canvas",
     values: ~w(canvas classic),
@@ -328,6 +334,7 @@ defmodule LineaUI.Components.Range do
         step={@step}
         disabled={@disabled}
         class={@classes}
+        style={@fill && "color: #{@fill}"}
         {@rest}
       />
     </Form.field>
@@ -374,6 +381,7 @@ defmodule LineaUI.Components.Range do
         role="group"
         aria-labelledby={@label && @id <> "-label"}
         class={@pair_class}
+        style={@fill && "color: #{@fill}"}
       >
         <span class="linea-range-track" aria-hidden="true"></span>
         <span data-fill class="linea-range-fill" style={@fill_style} aria-hidden="true"></span>
@@ -476,7 +484,7 @@ defmodule LineaUI.Components.Range do
             step={@step}
             disabled={@disabled}
             aria-orientation={@vertical? && "vertical"}
-            style={"--p: #{@percent}%"}
+            style={"--p: #{@percent}%" <> ((@fill && "; color: #{@fill}") || "")}
             class={@classes}
             data-input
             {@rest}

@@ -11,6 +11,13 @@ defmodule LineaUI.Components.Icon do
       <.icon name="huge-tick-02" boxed tone="success" />
       <.icon name="huge-file-01" boxed box_size="sm" />
 
+  A box can hold an SVG of its own (the inner block replaces `name`), in any size in pixels and with the
+  canvas tone names (`acc`, `pos`, `neg`, `warn`, `info`):
+
+      <.icon boxed tone="acc" box_size="30">
+        <svg viewBox="0 0 24 24" class="size-4"><path d="M5 12l5 5 9-10" /></svg>
+      </.icon>
+
   `icon/1` draws `huge-*` classes from Hugeicons (the free Stroke Rounded set, which the app vendors with
   `mix linea_ui.icons sync` (or `get NAME`, `search TERM`, `update`; `--dir`, `--ref`) and
   `assets/css/hugeicons.cjs` turns into classes; see the README) and passes any other class name through, so
@@ -462,8 +469,9 @@ defmodule LineaUI.Components.Icon do
 
   @doc "A Hugeicons icon by class name, or any other icon font class."
   attr :name, :string,
-    required: true,
-    doc: "`huge-search-01`, or any class such as `fa-solid fa-house`."
+    default: nil,
+    doc:
+      "`huge-search-01`, or any class such as `fa-solid fa-house`. Not needed when the inner block draws the icon."
 
   attr :class, :any,
     default: nil,
@@ -476,18 +484,18 @@ defmodule LineaUI.Components.Icon do
 
   attr :tone, :string,
     default: nil,
-    values: [nil | ~w(neutral accent success warning error info)],
+    values: [nil | ~w(neutral accent success warning error info acc pos neg warn)],
     doc:
-      "Colours the box (and boxes the icon): the tint of that state with the icon in its colour."
+      "Colours the box (and boxes the icon): the tint of that state with the icon in its colour. `acc`, `pos`, `neg` and `warn` are the canvas names of `accent`, `success`, `error` and `warning`."
 
-  attr :box_size, :string,
+  attr :box_size, :any,
     default: "lg",
-    values: ~w(sm md lg),
     doc:
-      "The box: `lg` 36px (11px corners), `md` 28px (9px corners, a timeline point), `sm` 24px (a tree row)."
+      "The box: `lg` 36px (11px corners), `md` 28px (9px corners, a timeline point), `sm` 24px (a tree row), or any size in pixels (`\"30\"`, `32`) with corners of 30% of it."
 
   attr :box_class, :any, default: nil, doc: "More classes of the box."
   attr :rest, :global
+  slot :inner_block, doc: "Your own icon (an SVG) inside the box, instead of `name`."
 
   @tones %{
     "neutral" => nil,
@@ -495,25 +503,46 @@ defmodule LineaUI.Components.Icon do
     "success" => "pos",
     "warning" => "warn",
     "error" => "neg",
-    "info" => "info"
+    "info" => "info",
+    "acc" => "acc",
+    "pos" => "pos",
+    "neg" => "neg",
+    "warn" => "warn"
   }
 
-  def icon(%{boxed: false, tone: nil} = assigns) do
+  def icon(%{boxed: false, tone: nil, inner_block: []} = assigns) do
     assigns |> assign(:class, assigns.class || "size-5") |> bare_icon()
   end
 
   def icon(assigns) do
-    assigns = assign(assigns, class: assigns.class || "size-4", tone_class: @tones[assigns.tone])
+    assigns =
+      assign(assigns,
+        class: assigns.class || "size-4",
+        tone_class: @tones[assigns.tone],
+        box_style: box_style(assigns.box_size)
+      )
 
     ~H"""
     <span
       class={merge(["sg-ic", @tone_class, box_size(@box_size), @box_class])}
+      style={@box_style}
       aria-hidden="true"
       {@rest}
     >
-      <.bare_icon name={@name} class={@class} rest={%{}} />
+      {render_slot(@inner_block)}
+      <.bare_icon :if={@inner_block == []} name={@name} class={@class} rest={%{}} />
     </span>
     """
+  end
+
+  defp box_style(size) do
+    case Integer.parse(to_string(size)) do
+      {px, ""} when px > 0 ->
+        "width:#{px}px;height:#{px}px;border-radius:#{round(px * 0.3)}px"
+
+      _named ->
+        nil
+    end
   end
 
   defp box_size("sm"), do: "sg-ic-sm"

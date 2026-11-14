@@ -105,4 +105,20 @@ defmodule LineaUI.Components.TagTest do
     assert "sg-tag" in classes(html, "#t")
     assert attr_of(html, "#t", "style") == ["--tag-tint:#8a5cd6"]
   end
+
+  test "as=span and static render a non-interactive span with the same classes" do
+    html =
+      render(~H"""
+      <.tag id="a" as="span" variant="flat" href="#">teste</.tag>
+      <.tag id="b" static variant="flat" count={2}>teste</.tag>
+      <.tag id="c" variant="flat">teste</.tag>
+      """)
+
+    assert [_] = find(html, "span#a.sg-tag") |> Enum.to_list()
+    assert [_] = find(html, "span#b.sg-tag") |> Enum.to_list()
+    assert [_] = find(html, "button#c.sg-tag") |> Enum.to_list()
+    assert attr_of(html, "#a", "href") == []
+    assert attr_of(html, "#a", "type") == []
+    assert find(html, "#b .tag-count") |> Enum.count() == 1
+  end
 end

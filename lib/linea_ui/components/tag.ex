@@ -29,6 +29,11 @@ defmodule LineaUI.Components.Tag do
   `count` puts a small pill with a number inside the tag.
 
   With `href`, `navigate` or `patch` a tag is a link; otherwise it is a button.
+
+  A tag that only labels (inside a link or a table row) is not interactive: `as="span"` or `static`
+  renders a `<span>` with the same classes, so no button is nested in a link:
+
+      <a href="/runs/1">Run 1 <.tag variant="flat" as="span">test</.tag></a>
   """
 
   use LineaUI.Component
@@ -149,6 +154,19 @@ defmodule LineaUI.Components.Tag do
   )
 
   attr(:shape, :string, default: "rounded", values: ~w(rounded pill square))
+
+  attr(:as, :string,
+    default: nil,
+    values: [nil, "span"],
+    doc:
+      "`span` renders a non-interactive `<span>` instead of a button or link (it ignores `type`, `href`, `navigate` and `patch`)."
+  )
+
+  attr(:static, :boolean,
+    default: false,
+    doc: "The same as `as=\"span\"`: a plain label with no button, for use inside links."
+  )
+
   attr(:type, :string, default: "button")
   attr(:class, :any, default: nil)
   attr(:rest, :global, include: ~w(href navigate patch method download name value disabled))
@@ -176,6 +194,9 @@ defmodule LineaUI.Components.Tag do
   defp variant_classes(%{active: true}), do: @active
   defp variant_classes(%{variant: variant, color: color}), do: @variants[variant][color]
 
+  defp render_tag(%{as: "span"} = assigns), do: render_span(assigns)
+  defp render_tag(%{static: true} = assigns), do: render_span(assigns)
+
   defp render_tag(%{rest: rest} = assigns)
        when is_map_key(rest, :href) or is_map_key(rest, :navigate) or is_map_key(rest, :patch) do
     ~H"""
@@ -190,6 +211,21 @@ defmodule LineaUI.Components.Tag do
     <button type={@type} class={@classes} style={@style} aria-pressed={@active && "true"} {@rest}>
       {render_slot(@inner_block)}<.tag_count :if={@count} count={@count} />
     </button>
+    """
+  end
+
+  defp render_span(assigns) do
+    assigns =
+      assign(
+        assigns,
+        :rest,
+        Map.drop(assigns.rest, [:href, :navigate, :patch, :method, :download])
+      )
+
+    ~H"""
+    <span class={@classes} style={@style} {@rest}>
+      {render_slot(@inner_block)}<.tag_count :if={@count} count={@count} />
+    </span>
     """
   end
 
