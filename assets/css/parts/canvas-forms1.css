@@ -46,6 +46,7 @@
 .lc-mini .sg-cal > button{all:unset;box-sizing:border-box;height:36px;display:grid;place-items:center;border-radius:10px;color:var(--fg);font-variant-numeric:tabular-nums;cursor:pointer}
 .lc-mini .sg-cal > button:hover:not(.on){background:var(--ctl-fill)}
 .lc-mini .sg-cal > button:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.lc-mini .sg-cal > :is(span,button).o{color:var(--faint)}
 .lc-mini .sg-cal > button.t{box-shadow:inset 0 0 0 1px var(--ctl-line)}
 .lc-mini .sg-cal > button.on{background:var(--solid);color:var(--on-solid);font-weight:600}
 .lc-mini .sg-cal > button.rg{background:var(--accent-soft);border-radius:0;color:var(--accent-ink)}
