@@ -122,4 +122,31 @@ defmodule LineaUI.Components.TimelineTest do
 
     assert "timeline-item-title" in classes(html, "#a p.timeline-item-title")
   end
+
+  test "the canvas variant is an sg-tl of timeline_event rows" do
+    html =
+      render(~H"""
+      <.timeline variant="canvas" id="t" rows={[%{n: "a"}, %{n: "b"}]} row_id={&"r-#{&1.n}"}>
+        <:item :let={{id, e}}>
+          <.timeline_event id={id} tone="warn" title={e.n} subtitle="by me" time="10:42">
+            <:icon><i>x</i></:icon>
+          </.timeline_event>
+        </:item>
+      </.timeline>
+      """)
+
+    assert "sg-tl" in classes(html, "div#t")
+    assert [_, _] = find(html, "#t > .sg-tl-i") |> Enum.to_list()
+    assert ["sg-ic", "warn"] -- classes(html, "#r-a > span") == []
+    assert find(html, "#r-a .grow > div") |> Enum.map(&LazyHTML.text/1) == ["a", "by me"]
+    assert [_] = find(html, "#r-a .faint:not(.mono)") |> Enum.to_list()
+    assert find(html, "#r-a span.mono.faint") |> LazyHTML.text() == "10:42"
+    assert [] = find(html, "ol") |> Enum.to_list()
+  end
+
+  test "a timeline_event without a subtitle or time drops those tags" do
+    html = render(~H|<.timeline_event title="T" />|)
+    assert [] = find(html, ".faint") |> Enum.to_list()
+    assert ["sg-ic"] = classes(html, "span")
+  end
 end
