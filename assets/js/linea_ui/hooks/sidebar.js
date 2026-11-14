@@ -6,6 +6,7 @@ import {execWithPayload} from "../lib/js_payload.js"
  * State the server renders (`data-open`) wins when it changes; a choice made in the browser survives patches that
  * did not change it, and live navigation (the choice is remembered per shell id for the life of the page).
  */
+import {groupsKey, parseGroups, serializeGroups} from "../lib/sidebar_groups.js"
 import {RAIL_KEY, breakpointName, clockText, initialCollapsed, initialOpen, isMobile, place, railValue, smAndUp, storedValue, tabChoice, tabKey, tipSpot} from "../lib/shell_logic.js"
 
 const SIDEBAR_KEY = "linea-sidebar"
@@ -452,6 +453,7 @@ const ShellRail = {
     window.addEventListener("resize", this.onResize, {passive: true})
     this.el.addEventListener("mouseover", this.onTip)
     this.el.addEventListener("focusin", this.onTip)
+    this.persistGroups() && this.restoreGroups()
   },
 
   updated() {
@@ -472,6 +474,35 @@ const ShellRail = {
 
   collapsed() {
     return this.el.dataset.collapsed === "true"
+  },
+
+  persistGroups() {
+    return this.el.dataset.persistGroups === "true"
+  },
+
+  toggles() {
+    return [...this.el.querySelectorAll("button[aria-controls][aria-expanded], a[aria-controls][aria-expanded]")].filter(
+      (button) => document.getElementById(button.getAttribute("aria-controls"))?.matches(".sg-sb-grp, .sg-sb-tree"),
+    )
+  },
+
+  restoreGroups() {
+    const stored = parseGroups(read(groupsKey(this.el.id)))
+    this.toggles().forEach((button) => {
+      const id = button.getAttribute("aria-controls")
+      const open = stored[id]
+      typeof open === "boolean" &&
+        (button.setAttribute("aria-expanded", String(open)),
+        document.getElementById(id).toggleAttribute("data-closed", !open))
+    })
+  },
+
+  saveGroups() {
+    const toggles = this.toggles().map((button) => ({
+      id: button.getAttribute("aria-controls"),
+      open: button.getAttribute("aria-expanded") === "true",
+    }))
+    write(groupsKey(this.el.id), serializeGroups(toggles))
   },
 
   apply(collapsed) {
@@ -511,6 +542,7 @@ const ShellRail = {
       [inside && event.target.closest("a[href]") && this.el.dataset.mobileOpen === "true", () => this.mobile(false)],
     ]
     actions.filter(([applies]) => applies).forEach(([, action]) => action())
+    inside && this.persistGroups() && setTimeout(() => this.saveGroups(), 0)
   },
 }
 
