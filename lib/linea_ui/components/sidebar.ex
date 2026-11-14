@@ -532,7 +532,9 @@ defmodule LineaUI.Components.Sidebar do
       <Dropdown.dropdown_separator :if={@user} />
       <%= for item <- @items do %>
         <Dropdown.dropdown_separator :if={item == :separator} />
-        <div :if={is_map(item) && item[:label] && item[:heading]} class="sg-sb-mm-l">{item.label}</div>
+        <div :if={is_map(item) && item[:label] && item[:heading]} class="sg-sb-mm-l">
+          {item.label}
+        </div>
         <Dropdown.dropdown_item
           :if={is_map(item) && !item[:heading]}
           color={if(item[:danger], do: "error", else: "neutral")}
