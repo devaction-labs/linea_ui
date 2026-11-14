@@ -1,5 +1,33 @@
 # Changelog
 
+## 0.23.0 (2026-11-14)
+
+Closes the 28 open issues raised while porting DevAction Hub and nexus_pro screens to the canvas. Everything is opt-in unless listed under "Changes to the default look".
+
+### Changes to the default look
+
+- The canvas `.sg-btn` rules live in `@layer components`, so Tailwind utilities on a `<.button>` now apply (`shape="rounded"` on a dropdown trigger, `w-*`, `px-*`, `mt-*`, colors, joined `button_group` corners). Utilities that were silently ignored before will now show: review buttons that carry extra classes. A `border-dashed` button draws a 1px dash in the line color.
+- One height per size for form controls (#18): tokens `--ctl-h-sm/md/lg` (32/40/48px) drive input, native and searchable `select`, `pillbox` and `date_picker`. Native `select` `sm` grows 28 → 32px and `lg` 40 → 48px. Buttons keep the canvas 36px; `<.button control>` (and `dropdown control`) takes the control height of its size to line up in a filter bar.
+- `ai_message role="user"` renders the dark canvas bubble.
+- `card_table`: the compact card keeps the `<:action>` column (hide it with `<:action card={false}>`), and a `<.button>` in `<:actions>` no longer stretches to the card width.
+- `stat_item` without `unit` renders no empty `<small>` (#61).
+
+### New
+
+- `card_table` (#4): `<:expand>` + `row_expanded` (full-width sub-row), `row_editing` + `<:edit>` (inline form row), `row_action` (no action cell on a row), `<:col card>`, `ctable_sub when_hidden="p1".."p4"`, `bordered={false}`, `<:foot>`/`<:empty>` receive `%{id, rows, selected, title}`; `role="title"` honours `truncate={false}` and ellipsizes `sg-cellx`; `variant="flat"` takes `priority`, `role`, `card` and `meta`.
+- AI (#4): `ai_message variant="plain"`; `ai_composer variant="canvas"` with `send_label`, `mic`, `on_mic`; `prompt_suggestions variant="grid"`; `ai_proposal` `pending_label`, `pending_note`, `layout="definition"`. The `.ai-*` rules moved into `@layer components`.
+- `action_button` (#4): one action without a menu. `drawer size="wide"` (800px). `dropdown_footer apply_color`. `pillbox multiple={false}` (searchable single choice with a pill) and `size`. `select`/`pillbox` `panel_min_width` and `panel_class`.
+- `kpi_card` (#38): `<:icon>` + `icon_tone`, `value_id`, `caption` without `progress`. `stat_item size="sm"`, `stat_group variant="sunken"`.
+- `kanban` (#36): `fluid`, `active` (phone mode, with `kanban_column active`), column `count_label`, `over_limit`, `hint="always"`, `kanban_card dense` and `<:actions>` (shown on hover/focus).
+- `calendar variant="mini"` (#41): `outside_days`, `day_id`, `interactive_marked_only`, `card={false}`.
+- `tabs variant="nav"` (#46) renders the canvas `nav.sg-tabs`; tabs without a route take `phx-click` and never select, `soon`/`disabled` tabs with `soon_label` (#44); clicking a link tab no longer pushes `on_change`.
+- `breadcrumb` (#55): `navigate`/`patch`/`href` set to nil or false render text; the canvas current step is a `<b>`.
+- `tag as="span"`/`static` (#39); `avatar` sizes `"30"`/`"26"` and `background` (#42); `chip` as a link and `remove_patch`, `range fill`, `progress variant="gradient"` (#45); `icon boxed` with an own SVG, free `box_size` and canvas tones (#49); `command_palette` `<:item_icon>` and documented server filtering via `on_search` (#51).
+- `timeline variant="canvas"` + `timeline_event` (#52); `menu_list variant="static"` + `menu_row` (#40); `pagination` `<:aside>` and `%{shown}` (#48); `description_list` item `id`, `class`, `style`, `wrapper_id`, `wrapper_class` (#58).
+- `modal role="alertdialog"` (#54); `status_toast` action with `href`/`patch`/`navigate` and `id` (#37); `error_page` copy button without a hook (works on a dead render) and `back_label` (#50); `upload_button` `size`, `variant`, `color` with the `<.button>` classes (#60).
+- `tab_bar variant="canvas"` (`sg-m-tab` with labels), `class` per tab, `match="prefix"` (#56). `sidebar`/`shell` (#57): `match="prefix"`, `disabled` items ("em breve"), `persist_groups` (localStorage), `:mobile_drawer` slot; the moduledocs show the canvas menu with the collapse button and how to put LiveComponents in the navbar.
+- Forms: `field as="div"` and `textarea` take `label_hint` (#59); `input` and native `select` take `:label_aside` and `:below` (#47); native `select` takes `label_hint` and `:suffix`, `radio_group` takes `label_hint` (#43); `radio_group variant="tile"` (52px squares with free content, #53); `date_picker size`.
+
 ## 0.22.0 (2026-11-13)
 
 ### New, from the Signetum canvas
