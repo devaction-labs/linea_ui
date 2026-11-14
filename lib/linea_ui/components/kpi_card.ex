@@ -15,6 +15,13 @@ defmodule LineaUI.Components.KpiCard do
       <.kpi_card label="Vendas do mês" value="R$ 248,6" unit="mil" delta="12,4%" progress={78}
         caption="78% da meta de R$ 320 mil" />
 
+  `<:icon>` puts a canvas icon chip (`sg-ic`) before the label, `icon_tone` colors it. `caption` is a faint line under
+  the figure, with or without `progress`. `value_id` is the id of the figure:
+
+      <.kpi_card label="Automações" value="12" value_id="kpi-auto" caption="3 pausadas" icon_tone="pos">
+        <:icon><.icon name="bolt" /></:icon>
+      </.kpi_card>
+
   `gap={false}` drops the 14px space between the top line and the figure (the canvas's single cards).
   """
 
@@ -64,8 +71,16 @@ defmodule LineaUI.Components.KpiCard do
 
   attr(:caption, :string,
     default: nil,
-    doc: "A faint line under the meter (`78% da meta de R$ 320 mil`)."
+    doc: "A faint line under the figure or the meter (`78% da meta de R$ 320 mil`)."
   )
+
+  attr(:icon_tone, :string,
+    default: "acc",
+    values: ~w(acc pos neg warn info),
+    doc: "Colors the `<:icon>` chip."
+  )
+
+  attr(:value_id, :string, default: nil, doc: "The `id` of the figure element (`sg-kpi-v`).")
 
   attr(:gap, :boolean,
     default: true,
@@ -76,6 +91,7 @@ defmodule LineaUI.Components.KpiCard do
   attr(:loading, :boolean, default: false, doc: "Placeholder blocks in place of the content.")
   attr(:class, :any, default: nil)
   attr(:rest, :global)
+  slot(:icon, doc: "An icon shown in a `sg-ic` chip before the label.")
 
   def kpi_card(%{loading: true} = assigns) do
     ~H"""
@@ -106,6 +122,7 @@ defmodule LineaUI.Components.KpiCard do
       {@rest}
     >
       <div class="row" style="justify-content:space-between">
+        <span :if={@icon != []} class={["sg-ic", @icon_tone]}>{render_slot(@icon)}</span>
         <span class="sg-kpi-l">{@label}</span>
         <span :if={@delta} class={["sg-delta", @tone]}>
           <svg class="i" viewBox="0 0 24 24" aria-hidden="true">
@@ -116,7 +133,7 @@ defmodule LineaUI.Components.KpiCard do
           {@delta}
         </span>
       </div>
-      <div :if={@progress} class="sg-kpi-v">{@value}<small>{@unit}</small></div>
+      <div :if={@progress} id={@value_id} class="sg-kpi-v">{@value}<small>{@unit}</small></div>
       <div
         :if={@progress}
         class="sg-meter acc"
@@ -128,9 +145,8 @@ defmodule LineaUI.Components.KpiCard do
       >
         <i style={"width:#{min(max(@progress, 0), 100)}%"}></i>
       </div>
-      <span :if={@progress && @caption} class="sg-kpi-c">{@caption}</span>
       <div :if={!@progress} class="sg-kpi-row">
-        <span class="sg-kpi-v">{@value}<small>{@unit}</small></span>
+        <span id={@value_id} class="sg-kpi-v">{@value}<small>{@unit}</small></span>
         <svg
           :if={@paths}
           class="sg-spark"
@@ -155,6 +171,7 @@ defmodule LineaUI.Components.KpiCard do
           />
         </svg>
       </div>
+      <span :if={@caption} class="sg-kpi-c">{@caption}</span>
     </div>
     """
   end
