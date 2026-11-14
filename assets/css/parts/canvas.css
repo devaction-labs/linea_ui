@@ -394,6 +394,9 @@
 .sg-m-tab a{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;border-radius:18px;font-size:10.5px;font-weight:500;color:var(--faint)}
 .sg-m-tab a.on{color:var(--ink);background:var(--sunken)}
 .sg-m-tab a.on .i{color:var(--accent)}
+.sg-m-tab a>:is(svg,[class*="huge-"]){width:20px;height:20px;flex:none}
+.sg-m-tab a.on>:is(svg,[class*="huge-"]){color:var(--accent)}
+.linea-shell-tabbar .sg-m-tab{position:static;margin:8px 14px}
 .sg-m-home{position:absolute;left:50%;bottom:8px;width:134px;height:5px;margin-left:-67px;border-radius:5px;background:var(--ink);opacity:.85}
 .sg-m-fab{position:absolute;right:22px;bottom:106px;width:56px;height:56px;border-radius:20px;background:var(--solid);color:var(--on-solid);display:grid;place-items:center;box-shadow:var(--shadow-lg)}
 
