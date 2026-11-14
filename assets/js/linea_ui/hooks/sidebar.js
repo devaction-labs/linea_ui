@@ -6,7 +6,7 @@ import {execWithPayload} from "../lib/js_payload.js"
  * State the server renders (`data-open`) wins when it changes; a choice made in the browser survives patches that
  * did not change it, and live navigation (the choice is remembered per shell id for the life of the page).
  */
-import {RAIL_KEY, breakpointName, clockText, initialCollapsed, initialOpen, isMobile, place, railValue, smAndUp, storedValue, tabChoice, tabKey, tipSpot} from "../lib/shell_logic.js"
+import {RAIL_KEY, breakpointName, menuShortcut, clockText, initialCollapsed, initialOpen, isMobile, place, railValue, smAndUp, storedValue, tabChoice, tabKey, tipSpot} from "../lib/shell_logic.js"
 
 const SIDEBAR_KEY = "linea-sidebar"
 const OPEN_CLASS = "is-sidebar-open"
@@ -429,6 +429,10 @@ const pinTip = (item) => {
   spot && (tip.style.top = `${spot.top}px`, tip.style.left = `${spot.left}px`)
 }
 
+// Ctrl/⌘ + the shortcut key, outside fields and editors, which keep it (Ctrl+B is bold in a text editor)
+const EDITABLE = "input, textarea, select, [contenteditable]:not([contenteditable='false'])"
+const shortcut = (event, key) => menuShortcut(event, key, !!event.target.closest?.(EDITABLE))
+
 const ShellRail = {
   mounted() {
     this.server = this.el.dataset.serverCollapsed === "true"
@@ -441,7 +445,10 @@ const ShellRail = {
     collapsed !== this.server && this.push(collapsed)
 
     this.onClick = (event) => this.click(event)
-    this.onKey = (event) => event.key === "Escape" && this.el.dataset.mobileOpen === "true" && this.mobile(false)
+    this.onKey = (event) =>
+      shortcut(event, this.el.dataset.shortcut)
+        ? (event.preventDefault(), this.toggle())
+        : event.key === "Escape" && this.el.dataset.mobileOpen === "true" && this.mobile(false)
     this.onResize = () => !isMobile(window.innerWidth) && this.mobile(false)
     this.onTip = (event) => {
       const host = event.target.closest?.(".rail-item, [data-rail-tip]")
@@ -494,6 +501,11 @@ const ShellRail = {
   push(collapsed) {
     const event = this.el.dataset.onCollapse
     event && this.pushEventTo(this.el.dataset.target || this.el, event, {id: this.el.id, collapsed})
+  },
+
+  // Ctrl/⌘ + the shortcut key: collapses or expands the menu, or opens and closes it on a phone
+  toggle() {
+    isMobile(window.innerWidth) ? this.mobile(this.el.dataset.mobileOpen !== "true") : this.choose(!this.collapsed())
   },
 
   mobile(open) {

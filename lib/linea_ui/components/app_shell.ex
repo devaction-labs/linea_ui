@@ -1575,6 +1575,10 @@ defmodule LineaUI.Components.AppShell do
     doc:
       "An event pushed with `%{\"id\" => id, \"collapsed\" => boolean}` when the choice changes."
 
+  attr :shortcut, :string,
+    default: "b",
+    doc: "Ctrl/⌘ + this key collapses and expands the menu (opens it on a phone); `nil` turns it off."
+
   attr :target, :any, default: nil, doc: "The `phx-target` of `on_collapse`."
   attr :label, :string, default: "Main menu", doc: "The accessible name of the menu."
   attr :mobile_label, :string, default: "Menu", doc: "The accessible name of the hamburger."
@@ -1616,6 +1620,7 @@ defmodule LineaUI.Components.AppShell do
       data-persist={bool(@persist)}
       data-on-collapse={@on_collapse}
       data-target={@target}
+      data-shortcut={@shortcut}
       {@rest}
     >
       <div class={["rail-bar", (@brand == [] and @wordmark == []) && "rail-bar-bare"]}>

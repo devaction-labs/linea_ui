@@ -23,6 +23,11 @@ defmodule LineaUI.Components.Sidebar do
   Put it inside a `.sg` root (the framed `shell/1` is one). Changing `format` changes how the menu is drawn,
   never the items.
 
+  ## Variants
+
+  `variant="floating"` (the default) is the card with corners and a shadow; `"sidebar"` sits flush, on the page
+  background with a line at its edge; `"inset"` drops the card too, for a main area drawn as a card beside it.
+
   ## The menu data
 
   `nav` is a list of maps, in the order of the menu. A map with `group` is a group, any other is an item.
@@ -118,7 +123,8 @@ defmodule LineaUI.Components.Sidebar do
   In every format the menu collapses to icons (tooltips with the label, counts turn into dots). It uses the
   `LineaUI.ShellRail` hook of the framed menu: `collapsed` is the start, `on_collapse` is pushed with
   `%{"id" => id, "collapsed" => boolean}`, the choice is kept in `localStorage` (`persist`) and
-  `<.rail_toggle for="sidebar" />` collapses it from anywhere. The `tree` button, the panel button of the `rail`
+  `<.rail_toggle for="sidebar" />` collapses it from anywhere, and so does Ctrl/⌘+B (`shortcut`, any key, or
+  `nil` to turn it off; it is left to fields and editors, where Ctrl+B is bold). The `tree` button, the panel button of the `rail`
   (and a click on a module icon of a collapsed rail) do it by themselves; `sections` has no button of its own.
   Below 768px the menu is a top bar with a hamburger that opens it under the bar.
   """
@@ -194,6 +200,17 @@ defmodule LineaUI.Components.Sidebar do
       "An event pushed with `%{\"id\" => id, \"collapsed\" => boolean}` when the choice changes."
 
   attr :target, :any, default: nil, doc: "The `phx-target` of `on_collapse`."
+
+  attr :shortcut, :string,
+    default: "b",
+    doc: "Ctrl/⌘ + this key collapses and expands the menu (opens it on a phone); `nil` turns it off."
+
+  attr :variant, :string,
+    default: "floating",
+    values: ~w(floating sidebar inset),
+    doc:
+      "`floating` is the card with corners and a shadow; `sidebar` sits flush with a line at its edge; `inset` sits on the page background, for a main area drawn as a card."
+
   attr :label, :string, default: "Main menu", doc: "The accessible name of the menu."
   attr :collapse_label, :string, default: "Collapse menu"
   attr :mobile_label, :string, default: "Menu", doc: "The accessible name of the hamburger."
@@ -241,6 +258,8 @@ defmodule LineaUI.Components.Sidebar do
       data-persist={bool(@persist)}
       data-on-collapse={@on_collapse}
       data-target={@target}
+      data-shortcut={@shortcut}
+      data-variant={@variant != "floating" && @variant}
       {@rest}
     >
       <.sections

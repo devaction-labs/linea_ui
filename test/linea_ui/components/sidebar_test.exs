@@ -904,5 +904,24 @@ defmodule LineaUI.Components.SidebarTest do
     ]
   end
 
+  describe "variant and shortcut" do
+    test "the floating card has no variant attribute; sidebar and inset do, and Ctrl/⌘+B is on by default" do
+      html = html()
+      assert attrs(html, "nav#sb", "data-variant") == [nil]
+      assert attrs(html, "nav#sb", "data-shortcut") == ["b"]
+
+      html =
+        render(~H"""
+        <.sidebar id="flush" nav={[%{label: "Início", navigate: "/"}]} variant="sidebar" shortcut={nil} />
+        <.sidebar id="ins" nav={[%{label: "Início", navigate: "/"}]} variant="inset" shortcut="m" />
+        """)
+
+      assert attrs(html, "nav#flush", "data-variant") == ["sidebar"]
+      assert attrs(html, "nav#flush", "data-shortcut") == [nil]
+      assert attrs(html, "nav#ins", "data-variant") == ["inset"]
+      assert attrs(html, "nav#ins", "data-shortcut") == ["m"]
+    end
+  end
+
   def current_nav(assigns), do: [%{label: assigns.current, href: assigns.current}]
 end

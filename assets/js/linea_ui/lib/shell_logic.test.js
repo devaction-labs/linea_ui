@@ -1,6 +1,6 @@
 import test from "node:test"
 import assert from "node:assert/strict"
-import {arrowTarget, breakpointName, choiceIsDark, shownChoice, themeChoice, clockText, initialCollapsed, initialOpen, isMobile, modeOn, modeValue, place, railValue, side, smAndUp, storedCollapsed, storedValue, tabChoice, tabKey, tipSpot, xlAndUp} from "./shell_logic.js"
+import {arrowTarget, breakpointName, choiceIsDark, menuShortcut, shownChoice, themeChoice, clockText, initialCollapsed, initialOpen, isMobile, modeOn, modeValue, place, railValue, side, smAndUp, storedCollapsed, storedValue, tabChoice, tabKey, tipSpot, xlAndUp} from "./shell_logic.js"
 
 test("a right sidebar keeps its chosen panel under a key of its id", () => {
   assert.equal(tabKey("right-sidebar"), "linea-right-tab:right-sidebar")
@@ -130,4 +130,17 @@ test("arrow keys move among the options and wrap", () => {
   assert.equal(arrowTarget("Home", 2, 3), 0)
   assert.equal(arrowTarget("End", 0, 3), 2)
   assert.equal(arrowTarget("a", 0, 3), null)
+})
+
+test("the menu shortcut is Ctrl or ⌘ with the key, outside fields, and off without a key", () => {
+  const ev = (over) => ({key: "b", metaKey: false, ctrlKey: true, shiftKey: false, altKey: false, ...over})
+  assert.equal(menuShortcut(ev({}), "b", false), true)
+  assert.equal(menuShortcut(ev({ctrlKey: false, metaKey: true, key: "B"}), "b", false), true)
+  assert.equal(menuShortcut(ev({ctrlKey: false}), "b", false), false)
+  assert.equal(menuShortcut(ev({shiftKey: true}), "b", false), false)
+  assert.equal(menuShortcut(ev({altKey: true}), "b", false), false)
+  assert.equal(menuShortcut(ev({}), "b", true), false)
+  assert.equal(menuShortcut(ev({key: "k"}), "b", false), false)
+  assert.equal(menuShortcut(ev({}), null, false), false)
+  assert.equal(menuShortcut(ev({}), "", false), false)
 })

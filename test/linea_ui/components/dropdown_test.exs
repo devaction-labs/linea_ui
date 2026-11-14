@@ -378,16 +378,16 @@ defmodule LineaUI.Components.DropdownTest do
     assert "gap-px" in classes(html, "#sp")
     assert [_] = find(html, "#sp > button[phx-click=save][phx-value-id='1']") |> Enum.to_list()
     assert "solid" in classes(html, "#sp > button[phx-click=save]")
-    assert "rounded-l-full!" in classes(html, "#sp > button[phx-click=save]")
-    assert "rounded-r-[4px]!" in classes(html, "#sp > button[phx-click=save]")
+    assert "rounded-r-none!" in classes(html, "#sp > button[phx-click=save]")
+    refute "rounded-l-full!" in classes(html, "#sp > button[phx-click=save]")
     assert find(html, "#sp > button[phx-click=save]") |> LazyHTML.text() =~ "Save"
 
     assert [_] = find(html, "#sp [data-trigger] button") |> Enum.to_list()
     assert [] = find(html, "#sp [data-trigger] button[phx-click]") |> Enum.to_list()
     assert attr_of(html, "#sp-button", "aria-label") == ["More options"]
     assert "sq" in classes(html, "#sp-button")
-    assert "rounded-l-[4px]!" in classes(html, "#sp-button")
-    assert "rounded-r-full!" in classes(html, "#sp-button")
+    assert "rounded-l-none!" in classes(html, "#sp-button")
+    refute "rounded-r-full!" in classes(html, "#sp-button")
     assert [_] = find(html, "#sp-button svg") |> Enum.to_list()
     assert attr_of(html, "#sp", "data-placement") == ["bottom-start"]
     assert attr_of(html, "#sp-menu [role=menu]", "aria-labelledby") == ["sp-button"]

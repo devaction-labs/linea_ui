@@ -79,7 +79,7 @@
   .linea-rail {
     --rail-pill: #fff;
     --rail-panel: #fff;
-    --rail-shadow: 0 0 0 1px var(--color-slate-150), 0 1px 2px rgb(23 23 26 / 0.04);
+    --rail-shadow: 0 0 0 1px var(--color-slate-150), 0 1px 2px rgb(10 10 10 / 0.04);
     display: flex;
     flex: none;
     flex-direction: column;
