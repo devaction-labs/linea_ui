@@ -121,4 +121,18 @@ defmodule LineaUI.Components.ErrorPageTest do
     html = render(~H|<.error_page code={404} />|)
     assert text(html, ".sg-err-label") == ["404Page not found"]
   end
+
+  test "the copy button works without a hook and back_label adds history.back" do
+    html = render(~H|<.error_page code={500} request_id="req_9" back_label="Página anterior" />|)
+
+    assert attr_of(html, "#error-page-copy", "phx-hook") == []
+    assert [js] = attr_of(html, "#error-page-copy", "onclick")
+    assert js =~ "navigator.clipboard.writeText"
+    assert attr_of(html, "#error-page-copy", "data-from") == ["error-page-rid"]
+    assert attr_of(html, ".sg-err-actions button", "onclick") == ["history.back()"]
+    assert text(html, ".sg-err-actions button") == ["Página anterior"]
+
+    plain = render(~H|<.error_page code={500} />|)
+    assert find(plain, ".sg-err-actions") |> Enum.to_list() == []
+  end
 end

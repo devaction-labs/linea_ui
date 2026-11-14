@@ -67,4 +67,20 @@ defmodule LineaUI.Components.ActionMenuTest do
 
     assert [] = find(html, ".linea-am-h") |> Enum.to_list()
   end
+
+  test "action_button is a direct button for a single action" do
+    html =
+      render(
+        ~H|<.action_button label="Delete" icon="huge-delete-02" danger phx-click="delete" id="d" />|
+      )
+
+    assert attr_of(html, "button#d", "aria-label") == ["Delete"]
+    assert attr_of(html, "button#d", "phx-click") == ["delete"]
+    assert "sg-ib" in classes(html, "button#d")
+    assert find(html, "[phx-hook]") |> Enum.to_list() == []
+
+    html = render(~H|<.action_button label="Open" navigate="/c/1">Open</.action_button>|)
+    assert attr_of(html, "a", "href") == ["/c/1"]
+    assert "sg-btn" in classes(html, "a")
+  end
 end
