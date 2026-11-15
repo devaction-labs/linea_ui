@@ -167,8 +167,21 @@ defmodule LineaUI.Components.LandingNavTest do
       html =
         render(~H"""
         <.landing_mega variant="cards">
-          <.landing_product name="Cloud" logo="huge-cloud" title="Publique rápido" link_label="Publicar" href="/cloud" mock />
-          <.landing_product name="Forge" title="Servidores" link_label="Gerenciar" navigate="/forge" tone="tint">
+          <.landing_product
+            name="Cloud"
+            logo="huge-cloud"
+            title="Publique rápido"
+            link_label="Publicar"
+            href="/cloud"
+            mock
+          />
+          <.landing_product
+            name="Forge"
+            title="Servidores"
+            link_label="Gerenciar"
+            navigate="/forge"
+            tone="tint"
+          >
             <:preview><img src="/forge.png" alt="" /></:preview>
           </.landing_product>
           <.landing_product title="Observe tudo" href="/watch" tone="dark">
