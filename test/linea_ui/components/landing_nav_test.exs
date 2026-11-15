@@ -9,11 +9,11 @@ defmodule LineaUI.Components.LandingNavTest do
   defp text(html, selector),
     do: html |> find(selector) |> Enum.map(&(&1 |> LazyHTML.text() |> String.trim()))
 
-  defp nav(variant) do
-    assigns = %{variant: variant}
+  defp nav(variant, open_on \\ "hover") do
+    assigns = %{variant: variant, open_on: open_on}
 
     rendered_to_string(~H"""
-    <.landing_nav id="nav" variant={@variant} brand={%{name: "Linea", logo: "L", href: "/"}}>
+    <.landing_nav id="nav" variant={@variant} open_on={@open_on} brand={%{name: "Linea", logo: "L", href: "/"}}>
       <:link label="Produto">
         <.landing_mega>
           <.landing_feature
@@ -62,7 +62,7 @@ defmodule LineaUI.Components.LandingNavTest do
     assert count(nav("mobile"), "header.sg-lp-nb.mob") == 1
   end
 
-  test "sticky mounts the scroll hook; otherwise there is none" do
+  test "sticky or a mega trigger mounts the hook; a plain bar has none" do
     sticky =
       render(~H"""
       <.landing_nav id="s" sticky stuck_after={24} variant="clear" />
@@ -72,7 +72,27 @@ defmodule LineaUI.Components.LandingNavTest do
     assert attr_of(sticky, "#s", "data-stuck-after") == ["24"]
     assert count(sticky, "#s[data-sticky]") == 1
     assert count(sticky, "#s[data-stuck]") == 0
-    assert attr_of(nav("default"), "#nav", "phx-hook") == []
+    assert attr_of(nav("default"), "#nav", "phx-hook") == ["LineaUI.LandingNav"]
+    assert count(nav("default"), "#nav[data-sticky]") == 0
+
+    plain =
+      render(~H"""
+      <.landing_nav id="p"><:link label="Docs" href="/docs" /></.landing_nav>
+      """)
+
+    assert attr_of(plain, "#p", "phx-hook") == []
+  end
+
+  test "hover is the default and only opens; click toggles" do
+    [hover] = attr_of(nav("default"), "#nav-trigger-1", "phx-click")
+    assert attr_of(nav("default"), "#nav", "data-open-on") == ["hover"]
+    assert hover =~ ~s(["show",)
+    refute hover =~ ~s(["toggle",)
+
+    [click] = attr_of(nav("default", "click"), "#nav-trigger-1", "phx-click")
+    assert attr_of(nav("default", "click"), "#nav", "data-open-on") == ["click"]
+    assert click =~ ~s(["toggle",)
+    refute click =~ ~s(["show",)
   end
 
   test "a link with content is a closed mega trigger with a hidden panel" do

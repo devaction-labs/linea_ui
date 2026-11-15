@@ -42,6 +42,14 @@ defmodule LineaUI.Components.LandingNav do
   content as the mega menu under the bar, built with `Phoenix.LiveView.JS` (no round trip). A click outside the
   bar, or Escape, closes it. Fill it with `landing_mega/1`, `landing_feature/1` and `landing_mega_side/1`.
 
+  With `open_on="hover"` (the default) it opens like laravel.com's: a mouse resting on the trigger opens the
+  panel, the panel stays open while the pointer goes down into it, so its cards and links can be reached, and it
+  closes once the pointer has left both (switching to another trigger swaps panels at once). A click or a tap
+  opens it too; outside, Escape or leaving closes it. `open_on="click"` keeps it to clicks (a second click closes).
+  In both, ArrowDown on a trigger opens the panel and focuses its first item, the arrows walk the items, Escape
+  gives the focus back to the trigger and tabbing out of the bar closes it. Hover and keys come from the
+  `LineaUI.LandingNav` hook, mounted when there is a trigger or `sticky` (register the kit's hooks).
+
   ## Phone
 
   Below 768px (or with `variant="mobile"`) the links and the primary button leave the bar and a menu button
@@ -65,6 +73,11 @@ defmodule LineaUI.Components.LandingNav do
 
   attr :id, :string, required: true, doc: "The root id; the menu toggles and the hook use it."
   attr :variant, :string, default: "default", values: ~w(default float clear mobile)
+
+  attr :open_on, :string,
+    default: "hover",
+    values: ~w(hover click),
+    doc: "How a mega menu opens: on hover (and click), like laravel.com, or on click only."
 
   attr :sticky, :boolean,
     default: false,
@@ -108,7 +121,9 @@ defmodule LineaUI.Components.LandingNav do
       |> assign_derived(:close, [:id], fn -> close_js(assigns.id) end)
       |> assign_derived(:mmenu, [:id], fn -> "#{assigns.id}-mmenu" end)
       |> assign_derived(:menu_toggle, [:id], fn -> menu_toggle_js(assigns.id) end)
-      |> assign_derived(:hook, [:sticky], fn -> assigns.sticky && "LineaUI.LandingNav" end)
+      |> assign_derived(:hook, [:sticky, :link], fn ->
+        (assigns.sticky || Enum.any?(assigns.link, & &1.inner_block)) && "LineaUI.LandingNav"
+      end)
 
     ~H"""
     <div
@@ -116,6 +131,7 @@ defmodule LineaUI.Components.LandingNav do
       class={@bar_class}
       data-variant={@variant}
       data-sticky={@sticky && ""}
+      data-open-on={@open_on}
       data-stuck-after={@sticky && @stuck_after}
       phx-hook={@hook}
       phx-mounted='[["ignore_attrs",{"attrs":["data-stuck"]}]]'
@@ -137,7 +153,7 @@ defmodule LineaUI.Components.LandingNav do
                 aria-haspopup="true"
                 aria-expanded="false"
                 aria-controls={"#{@id}-mega-#{i}"}
-                phx-click={mega_toggle_js(@id, i)}
+                phx-click={mega_js(@id, i, @open_on)}
               >
                 {link.label}<.glyph name={:chevron_down} class="sg-lp-i" />
               </button>
@@ -212,17 +228,28 @@ defmodule LineaUI.Components.LandingNav do
     |> JS.set_attribute({"aria-expanded", "false"}, to: "##{id} .sg-lp-menubtn")
   end
 
-  # Opens (or closes) one mega menu and closes the others.
-  defp mega_toggle_js(id, i) do
+  # Opens one mega menu and closes the others: on hover the trigger only opens (a click right after the hover
+  # opened it must not close it), on click it toggles.
+  defp mega_js(id, i, open_on) do
     trigger = "##{id}-trigger-#{i}"
     others = "##{id} .sg-lp-links button:not(#{trigger})"
 
-    JS.hide(to: "##{id} .sg-lp-mega:not(##{id}-mega-#{i})")
-    |> JS.remove_class("open", to: others)
-    |> JS.set_attribute({"aria-expanded", "false"}, to: others)
-    |> JS.toggle(to: "##{id}-mega-#{i}", display: "flex")
-    |> JS.toggle_class("open", to: trigger)
-    |> JS.toggle_attribute({"aria-expanded", "true", "false"}, to: trigger)
+    js =
+      JS.hide(to: "##{id} .sg-lp-mega:not(##{id}-mega-#{i})")
+      |> JS.remove_class("open", to: others)
+      |> JS.set_attribute({"aria-expanded", "false"}, to: others)
+
+    if open_on == "hover" do
+      js
+      |> JS.show(to: "##{id}-mega-#{i}", display: "flex")
+      |> JS.add_class("open", to: trigger)
+      |> JS.set_attribute({"aria-expanded", "true"}, to: trigger)
+    else
+      js
+      |> JS.toggle(to: "##{id}-mega-#{i}", display: "flex")
+      |> JS.toggle_class("open", to: trigger)
+      |> JS.toggle_attribute({"aria-expanded", "true", "false"}, to: trigger)
+    end
   end
 
   defp menu_toggle_js(id) do

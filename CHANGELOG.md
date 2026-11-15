@@ -3,6 +3,7 @@
 ## Unreleased
 
 - `landing_mega` takes `variant="cards"`, the "Products" menu of laravel.com: large product cards side by side with the new `landing_product` (the product's logo and name, a large title, a link with an arrow and a preview that runs off the bottom, `:preview` or a drawn `mock`), in three tones (`default`, `tint`, `dark`); `columns` sets how many fit in a row.
+- `landing_nav` opens its mega menu on hover, like laravel.com's (`open_on`, default `"hover"`; `"click"` keeps the old toggle): the panel stays open while the pointer goes down into it, so its cards can be reached, swaps at once to another trigger and closes once the pointer has left. ArrowDown on a trigger opens it and focuses the first card, the arrows walk the cards, Escape gives the focus back and tabbing out closes it. The `LineaUI.LandingNav` hook now mounts whenever the bar has a trigger.
 
 ## 0.24.0 (2026-11-15)
 
