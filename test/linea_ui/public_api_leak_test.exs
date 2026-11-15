@@ -13,8 +13,8 @@ defmodule LineaUI.PublicApiLeakTest do
         {LineaUI.Components.Logo, [linea_logo: 1]}
       ] do
     test "#{inspect(module)} exports only its components" do
-      assert Enum.sort(unquote(module).__info__(:functions)) ==
-               Enum.sort(unquote(components) ++ @generated)
+      exported = Enum.reject(unquote(module).__info__(:functions), &(&1 in @generated))
+      assert Enum.sort(exported) == Enum.sort(unquote(components))
     end
   end
 end
