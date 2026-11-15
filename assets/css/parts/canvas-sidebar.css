@@ -206,7 +206,7 @@
 @media (min-width:768px){
   .sg-sb.nestx[data-collapsed="true"] .sg-sb-mb,.sg-sb.nestx[data-collapsed="true"] .sg-sb-team{grid-template-columns:auto;justify-content:center;padding:8px 0}
   .sg-sb.nestx[data-collapsed="true"] :is(.sg-sb-mb,.sg-sb-team)>:is(b,.sub,.who,.ud){display:none}
-  .sg-sb.nestx[data-collapsed="true"] .sg-sb-tree{display:none}
+  .sg-sb.nestx[data-collapsed="true"] .sg-sb-tree,.sg-sb.nestx[data-collapsed="true"]:not(.railx) .sg-sb-tree[data-closed]{display:none}
   .sg-sb.nestx[data-collapsed="true"] button.sg-sb-a.rw>.cv{display:none}
 }
 @media (max-width:767.98px){
