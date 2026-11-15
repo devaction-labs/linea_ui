@@ -161,4 +161,47 @@ defmodule LineaUI.Components.LandingNavTest do
     assert click =~ "hide"
     assert count(html, "#fixed button") == 0
   end
+
+  describe "landing_mega variant=cards" do
+    test "product cards side by side, each one a link with its logo, title, link label and preview" do
+      html =
+        render(~H"""
+        <.landing_mega variant="cards">
+          <.landing_product name="Cloud" logo="huge-cloud" title="Publique rápido" link_label="Publicar" href="/cloud" mock />
+          <.landing_product name="Forge" title="Servidores" link_label="Gerenciar" navigate="/forge" tone="tint">
+            <:preview><img src="/forge.png" alt="" /></:preview>
+          </.landing_product>
+          <.landing_product title="Observe tudo" href="/watch" tone="dark">
+            <:mark><svg viewBox="0 0 24 24"></svg></:mark>
+          </.landing_product>
+        </.landing_mega>
+        """)
+
+      assert count(html, ".sg-lp-cards > a.sg-lp-prod") == 3
+      assert count(html, ".sg-lp-grid") == 0
+      assert attr_of(html, ".sg-lp-prod", "href") == ["/cloud", "/forge", "/watch"]
+      assert text(html, ".sg-lp-prod .t") == ["Publique rápido", "Servidores", "Observe tudo"]
+      assert text(html, ".sg-lp-prod .go") == ["Publicar", "Gerenciar"]
+      assert text(html, ".sg-lp-prod .hd > span:not(.lg):not(.mk)") == ["Cloud", "Forge"]
+      assert count(html, ".sg-lp-prod .lg") == 1
+      assert count(html, ".sg-lp-prod .mk svg") == 1
+      assert count(html, ".sg-lp-prod .pv.mock[aria-hidden=true]") == 1
+      assert attr_of(html, ".sg-lp-prod .pv img", "src") == ["/forge.png"]
+      assert "tint" in classes(html, ".sg-lp-prod[href='/forge']")
+      assert "dark" in classes(html, ".sg-lp-prod[href='/watch']")
+      refute "dark" in classes(html, ".sg-lp-prod[href='/cloud']")
+    end
+
+    test "columns sets how many cards fit in a row" do
+      html =
+        render(~H"""
+        <.landing_mega variant="cards" columns={2}>
+          <.landing_product title="A" />
+        </.landing_mega>
+        """)
+
+      assert attr_of(html, ".sg-lp-cards", "style") == ["--n:2"]
+      assert count(html, ".sg-lp-prod .pv") == 0
+    end
+  end
 end

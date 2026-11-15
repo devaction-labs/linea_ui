@@ -350,9 +350,33 @@ defmodule LineaUI.Components.LandingNav do
         <.landing_feature icon="huge-kanban" title="Projetos" description="Kanban" navigate={~p"/projetos"} />
         <:side><.landing_mega_side title="Novidade" /></:side>
       </.landing_mega>
+
+  `variant="cards"` lays out large product cards side by side instead (`landing_product/1`), one per product, as
+  the "Products" menu of laravel.com does; `columns` sets how many fit in a row (default: one per card, up to 3).
+
+      <.landing_mega variant="cards">
+        <.landing_product name="Linea Cloud" logo="huge-cloud" title="O jeito mais rápido de publicar" link_label="Publicar agora" navigate={~p"/cloud"} mock />
+        <.landing_product name="Linea Forge" logo="huge-server-stack-01" title="Servidores sob controle" link_label="Gerenciar servidores" navigate={~p"/forge"} tone="tint" mock />
+        <.landing_product name="Linea Watch" logo="huge-activity-01" title="Observe o app inteiro" link_label="Plano grátis" navigate={~p"/watch"} tone="dark" mock />
+      </.landing_mega>
   """
-  slot :inner_block, required: true, doc: "The `landing_feature/1` items."
-  slot :side, doc: "A `landing_mega_side/1`."
+  attr :variant, :string, default: "default", values: ~w(default cards)
+
+  attr :columns, :integer,
+    default: nil,
+    doc: "Cards per row in the `cards` variant (default: the card count, up to 3)."
+
+  slot :inner_block,
+    required: true,
+    doc: "The `landing_feature/1` items, or `landing_product/1` cards."
+
+  slot :side, doc: "A `landing_mega_side/1` (the default variant)."
+
+  def landing_mega(%{variant: "cards"} = assigns) do
+    ~H"""
+    <div class="sg-lp-cards" style={@columns && "--n:#{@columns}"}>{render_slot(@inner_block)}</div>
+    """
+  end
 
   def landing_mega(assigns) do
     ~H"""
@@ -362,27 +386,51 @@ defmodule LineaUI.Components.LandingNav do
   end
 
   @doc """
-  One feature of the mega menu: an icon in a box, the title and a line of description.
+  A product card of `landing_mega variant="cards"`: the product's logo and name, a large title, a link with an
+  arrow and a preview of the product that runs off the bottom of the card. The whole card is the link.
+
+  `tone` is `default` (the sunken surface), `tint` (a soft wash of the accent) or `dark` (a near-black card, the
+  same in light and dark pages). The preview is the `:preview` slot (an `<img>` of the product, say) or, with
+  `mock`, a drawn placeholder of an app screen. The logo is a Hugeicons name (`logo`) or the `:logo` slot.
   """
-  attr :icon, :string, default: nil, doc: "A Hugeicons name."
   attr :title, :string, required: true
-  attr :description, :string, default: nil
+  attr :name, :string, default: nil, doc: "The product name beside the logo."
+  attr :logo, :string, default: nil, doc: "A Hugeicons name for the logo tile."
+  attr :link_label, :string, default: nil
+  attr :tone, :string, default: "default", values: ~w(default tint dark)
+
+  attr :mock, :boolean,
+    default: false,
+    doc: "Draw a placeholder app screen when there is no `:preview`."
+
   attr :href, :string, default: "#"
   attr :navigate, :string, default: nil
   attr :patch, :string, default: nil
   attr :class, :any, default: nil
   attr :rest, :global
+  slot :mark, doc: "The logo, instead of `logo` (an `<img>` or an `<svg>`)."
+  slot :preview, doc: "The picture of the product under the link."
 
-  def landing_feature(assigns) do
+  def landing_product(assigns) do
     assigns =
-      assign_derived(assigns, :classes, [:class], fn -> merge(["sg-lp-feat", assigns.class]) end)
+      assign_derived(assigns, :classes, [:tone, :class], fn ->
+        merge(["sg-lp-prod", assigns.tone != "default" && assigns.tone, assigns.class])
+      end)
 
     ~H"""
     <.item_link href={@href} navigate={@navigate} patch={@patch} class={@classes} {@rest}>
-      <span :if={@icon} class="ic"><.icon name={@icon} class="sg-lp-i" /></span>
-      <span class="col">
-        <b>{@title}</b>
-        <span :if={@description}>{@description}</span>
+      <span :if={@name || @logo || @mark != []} class="hd">
+        <span :if={@mark != []} class="mk">{render_slot(@mark)}</span>
+        <span :if={@mark == [] && @logo} class="lg"><.icon name={@logo} class="sg-lp-i" /></span>
+        <span :if={@name}>{@name}</span>
+      </span>
+      <span class="t">{@title}</span>
+      <span :if={@link_label} class="go">
+        {@link_label}<.icon name="huge-arrow-right-01" class="sg-lp-i" />
+      </span>
+      <span :if={@preview != []} class="pv">{render_slot(@preview)}</span>
+      <span :if={@preview == [] && @mock} class="pv mock" aria-hidden="true">
+        <i class="bar"></i><i class="side"></i><i class="r1"></i><i class="r2"></i><i class="r3"></i>
       </span>
     </.item_link>
     """
