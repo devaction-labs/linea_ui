@@ -24,7 +24,7 @@ A neutral, shadcn/ui-like finish for the whole kit (with the nested sidebar, `tr
 ### Changes to the default look (issues)
 
 - The canvas `.sg-btn` rules live in `@layer components`, so Tailwind utilities on a `<.button>` now apply (`shape="rounded"` on a dropdown trigger, `w-*`, `px-*`, `mt-*`, colors, joined `button_group` corners). Utilities that were silently ignored before will now show: review buttons that carry extra classes. A `border-dashed` button draws a 1px dash in the line color.
-- One height per size for form controls (#18): tokens `--ctl-h-sm/md/lg` (32/36/48px) drive input, native and searchable `select`, `pillbox` and `date_picker`. Native `select` `sm` grows 28 → 32px and `lg` 40 → 48px. An `md` button already matches (36px); `<.button control>` (and `dropdown control`) also lines up `sm` and `lg` buttons with the fields in a filter bar.
+- One height per size for form controls (#18): tokens `--ctl-h-sm/md/lg` (32/36/48px) drive input, native and searchable `select`, `pillbox` and `date_picker`. The `md` kit fields follow the 36px fields of the neutral theme (`input`, native `select`, `number_input`, `password_input`, `datetime_picker`, `autocomplete` were 40px), native `select` `sm` grows 28 → 32px and `lg` 40 → 48px, and a pillbox with chosen items keeps its height (28px pills). An `md` button already matches (36px); `<.button control>` (and `dropdown control`) lines up `sm` and `lg` buttons with the fields in a filter bar.
 - `ai_message role="user"` renders the dark canvas bubble.
 - `card_table`: the compact card keeps the `<:action>` column (hide it with `<:action card={false}>`), and a `<.button>` in `<:actions>` no longer stretches to the card width.
 - `stat_item` without `unit` renders no empty `<small>` (#61).

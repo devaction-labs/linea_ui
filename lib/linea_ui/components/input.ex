@@ -120,7 +120,7 @@ defmodule LineaUI.Components.Input do
 
   @sizes %{
     "sm" => "h-8 rounded-(--pill-in) px-2.5 text-[13px]",
-    "md" => "h-10 text-sm",
+    "md" => "h-9 text-sm",
     "lg" => "h-12 px-4 text-[15px]"
   }
 
