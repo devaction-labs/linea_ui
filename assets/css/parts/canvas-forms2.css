@@ -43,7 +43,7 @@ input.form-radio::before{content:none}
 .lu-range-canvas output[data-output]{font:700 14px/20px var(--mono);font-feature-settings:"zero";color:var(--ink)}
 .lu-range-canvas input.form-range{--range-track-h:4px;--range-thumb-size:16px;--track-color:var(--sunken);color:var(--accent);height:20px}
 .lu-range-canvas input.form-range::-webkit-slider-runnable-track{box-shadow:inset 0 0 0 1px var(--line);border-radius:4px}
-.lu-range-canvas input.form-range.linea-range-filled::-webkit-slider-runnable-track{box-shadow:none;background:linear-gradient(to right,var(--accent) var(--p,0%),var(--track-color) var(--p,0%))}
+.lu-range-canvas input.form-range.linea-range-filled::-webkit-slider-runnable-track{box-shadow:none;background:linear-gradient(to right,currentColor var(--p,0%),var(--track-color) var(--p,0%))}
 .lu-range-canvas input.form-range::-moz-range-track{box-shadow:inset 0 0 0 1px var(--line);border-radius:4px}
 .lu-range-canvas input.form-range::-webkit-slider-thumb{background:#fff;box-shadow:0 0 0 1px var(--line-strong),0 2px 4px rgb(0 0 0/.15)}
 .lu-range-canvas input.form-range::-moz-range-thumb{background:#fff;box-shadow:0 0 0 1px var(--line-strong),0 2px 4px rgb(0 0 0/.15)}
@@ -138,3 +138,13 @@ label:has(input.form-switch:disabled) input.form-switch:disabled{opacity:1}
 .lu-upload-thumb-meter i{display:block;height:100%;background:var(--accent)}
 .lu-upload-add{width:96px;height:96px;padding:0;justify-content:center;cursor:pointer}
 .lu-upload-thumb-error{flex-basis:100%;margin:0;font-size:12px;color:var(--neg)}
+
+/* ---------- radio_group variant="tile": a 52px square holding the option's own content ---------- */
+@layer components {
+  .lu-tile{position:relative;display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box;width:52px;height:52px;border-radius:12px;background:var(--panel);box-shadow:inset 0 0 0 1px var(--line);cursor:pointer;transition:box-shadow .15s,opacity .15s}
+  .lu-tile:hover{box-shadow:inset 0 0 0 1px var(--ctl-line)}
+  .lu-tile:has(input:checked){box-shadow:inset 0 0 0 2px var(--ink)}
+  .lu-tile:has(input:focus-visible){outline:2px solid var(--accent);outline-offset:2px}
+  .lu-tile:has(input:disabled){opacity:.35;cursor:default;pointer-events:none}
+  .lu-tile > svg{max-width:100%;max-height:100%}
+}

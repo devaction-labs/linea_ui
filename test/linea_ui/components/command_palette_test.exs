@@ -243,4 +243,34 @@ defmodule LineaUI.Components.CommandPaletteTest do
     assert attr_of(html, "#palette-palette", "data-highlight") == ["always"]
     assert html |> find("#palette-palette") |> LazyHTML.text() =~ "Navigate"
   end
+
+  test "the item_icon slot draws an item's own icon, unless it has icon or avatar" do
+    html =
+      render(~H"""
+      <.command_palette
+        id="palette"
+        items={[
+          %{label: "Mine", kind: "doc"},
+          %{label: "Named", kind: "doc", icon: "huge-file-01"},
+          %{label: "Pic", kind: "doc", avatar: %{initials: "CD"}}
+        ]}
+      >
+        <:item_icon :let={item}><svg data-kind={item.kind}></svg></:item_icon>
+      </.command_palette>
+      """)
+
+    assert LazyHTML.attribute(find(html, "#palette-item-0 svg"), "data-kind") == ["doc"]
+    assert find(html, "#palette-item-1 svg") |> Enum.to_list() == []
+    assert find(html, "#palette-item-2 svg") |> Enum.to_list() == []
+  end
+
+  test "on_search leaves the filtering to the server" do
+    html =
+      render(~H"""
+      <.command_palette id="palette" on_search="search" items={[%{label: "Ours"}]} />
+      """)
+
+    assert attr_of(html, "#palette-palette", "data-on-search") == ["search"]
+    assert html |> find("#palette-item-0") |> LazyHTML.text() =~ "Ours"
+  end
 end

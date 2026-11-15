@@ -91,4 +91,30 @@ defmodule LineaUI.Components.IconTest do
     assert ["sg-ic", "pos"] == classes(html, "#ok")
     assert ["sg-ic", "acc", "sg-ic-md"] == classes(html, "#md")
   end
+
+  test "an inner block draws its own icon in a box of free size and a canvas tone" do
+    html =
+      render(~H"""
+      <.icon id="a" boxed tone="acc" box_size="30"><svg id="own"></svg></.icon>
+      <.icon id="b" tone="warn" box_size={32}><svg></svg></.icon>
+      <.icon id="c" tone="neg" name="huge-flash" box_size="md" />
+      """)
+
+    assert ["sg-ic", "acc"] == classes(html, "#a")
+
+    assert LazyHTML.attribute(find(html, "#a"), "style") == [
+             "width:30px;height:30px;border-radius:9px"
+           ]
+
+    assert [_] = find(html, "#a > svg#own") |> Enum.to_list()
+    assert find(html, "#a > span") |> Enum.to_list() == []
+    assert ["sg-ic", "warn"] == classes(html, "#b")
+
+    assert LazyHTML.attribute(find(html, "#b"), "style") == [
+             "width:32px;height:32px;border-radius:10px"
+           ]
+
+    assert ["sg-ic", "neg", "sg-ic-md"] == classes(html, "#c")
+    assert LazyHTML.attribute(find(html, "#c"), "style") in [[], [""]]
+  end
 end

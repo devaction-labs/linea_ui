@@ -216,4 +216,24 @@ defmodule LineaUI.Components.RangeTest do
       assert attr_of(html, "[data-mark='0']", "style") == ["bottom: calc(0.0% + 0px)"]
     end
   end
+
+  describe "fill" do
+    test "paints the filled part of a single slider in its own colour" do
+      html = render(~H|<.range id="r" name="r" value={30} filled fill="#8a5cd6" />|)
+      assert [style] = attr_of(html, "input[type=range]", "style")
+      assert style =~ "--p: 30"
+      assert style =~ "color: #8a5cd6"
+
+      html = render(~H|<.range name="p" value={30} fill="var(--c2)" />|)
+      assert attr_of(html, "input[type=range]", "style") == ["color: var(--c2)"]
+    end
+
+    test "paints a pair and leaves the default alone without it" do
+      html = render(~H|<.range start_name="a" end_name="b" value={{10, 40}} fill="#0d8f91" />|)
+      assert attr_of(html, "[role=group]", "style") == ["color: #0d8f91"]
+
+      html = render(~H|<.range name="p" value={30} filled />|)
+      refute hd(attr_of(html, "input[type=range]", "style")) =~ "color"
+    end
+  end
 end

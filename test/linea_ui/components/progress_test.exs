@@ -58,4 +58,11 @@ defmodule LineaUI.Components.ProgressTest do
 
     assert LazyHTML.attribute(find(html, "#s i"), "title") == ["Balcão"]
   end
+
+  test "variant gradient draws the thin app-gradient meter" do
+    html = render(~H|<.progress id="p" value={72} variant="gradient" color="success" />|)
+
+    assert ["sg-meter", "grad"] == classes(html, "#p")
+    assert LazyHTML.attribute(find(html, "#p i"), "style") == ["width: 72.0%"]
+  end
 end

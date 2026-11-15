@@ -26,4 +26,23 @@ defmodule LineaUI.Components.StatTest do
 
     assert ["sg-stat-group"] == classes(html, "#g")
   end
+
+  test "no empty small without a unit" do
+    html = render(~H|<.stat_item label="a" value="1" />|)
+    assert [] == find(html, ".v small") |> Enum.to_list()
+  end
+
+  test "size sm adds the sm class to the figure" do
+    html = render(~H|<.stat_item label="a" value="Boleto" size="sm" />|)
+    assert ["v", "sm"] == classes(html, ".v")
+  end
+
+  test "sunken variant" do
+    html =
+      render(
+        ~H|<.stat_group id="g" variant="sunken"><.stat_item label="a" value="1" /></.stat_group>|
+      )
+
+    assert ["sg-card", "sg-stat-group", "sg-stat-sunken"] == classes(html, "#g")
+  end
 end

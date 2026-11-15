@@ -26,6 +26,15 @@ defmodule LineaUI.Components.Pagination do
         summary="Mostrando %{first}–%{last} de %{total}"
         page_size_label="%{size} / página"
       />
+
+  `%{shown}` is the rows on the current page (`6 of 14 charges`), and an `:aside` slot puts
+  content at the right of the pages, or in place of them when there is a single page. With
+  `class="sg-pager"` the footer takes the canvas pager look:
+
+      <.pagination class="sg-pager" page={@page} page_size={10} total_entries={14}
+        summary="%{shown} de %{total} cobranças" on_change="paginate">
+        <:aside>Webhook recebido há 2 min</:aside>
+      </.pagination>
   """
 
   use LineaUI.Component
@@ -119,7 +128,8 @@ defmodule LineaUI.Components.Pagination do
 
   attr(:summary, :string,
     default: "Showing %{first}–%{last} of %{total}",
-    doc: "The summary text; `%{first}`, `%{last}` and `%{total}` are replaced."
+    doc:
+      "The summary text; `%{first}`, `%{last}`, `%{shown}` (the rows on the current page) and `%{total}` are replaced."
   )
 
   attr(:page_size_label, :string,
@@ -170,6 +180,11 @@ defmodule LineaUI.Components.Pagination do
   attr(:class, :any, default: nil)
   attr(:rest, :global, default: %{"aria-label": "Pagination"})
 
+  slot(:aside,
+    doc:
+      "Content at the right of the pages (before them); with a single page it takes the place of the pages."
+  )
+
   # What an entry of the bar reads; the entries are comprehension variables, so a new page
   # sends the entries that changed, not the bar.
   @item_deps ~w(siblings boundaries arrows shape size divided prev_label next_label page_label
@@ -195,7 +210,8 @@ defmodule LineaUI.Components.Pagination do
       |> assign_derived(:page, page_deps, fn -> page end)
       |> assign_derived(:icon, [], fn -> @icon end)
       |> assign_derived(:last, page_deps ++ [:siblings, :boundaries, :arrows], fn -> last end)
-      |> assign_derived(:footer, [:total_entries, :page_sizes], fn -> footer?(assigns) end)
+      |> assign_derived(:footer, [:total_entries, :page_sizes, :aside], fn -> footer?(assigns) end)
+      |> assign_derived(:single, [:total_pages, :total_entries, :page_size], fn -> total == 1 end)
 
     assigns
     |> assign_derived(:items, page_deps ++ @item_deps, fn ->
@@ -230,7 +246,7 @@ defmodule LineaUI.Components.Pagination do
 
   defp total_pages(_assigns), do: 1
 
-  defp footer?(%{total_entries: nil, page_sizes: []}), do: false
+  defp footer?(%{total_entries: nil, page_sizes: [], aside: []}), do: false
   defp footer?(_assigns), do: true
 
   # `%{first}`, `%{last}` and `%{total}` of the summary are semibold and in the text color,
@@ -239,16 +255,22 @@ defmodule LineaUI.Components.Pagination do
     summary_html(text, %{
       "%{first}" => first_entry(total, page, size),
       "%{last}" => min(page * size, total),
+      "%{shown}" => max(min(page * size, total) - (page - 1) * size, 0),
       "%{total}" => total
     })
   end
 
   defp summary(total, _size, _page, text) do
-    summary_html(text, %{"%{first}" => min(total, 1), "%{last}" => total, "%{total}" => total})
+    summary_html(text, %{
+      "%{first}" => min(total, 1),
+      "%{last}" => total,
+      "%{shown}" => total,
+      "%{total}" => total
+    })
   end
 
   defp summary_html(text, numbers) do
-    ~r/%\{(?:first|last|total)\}/
+    ~r/%\{(?:first|last|shown|total)\}/
     |> then(&String.split(text, &1, include_captures: true))
     |> Enum.map(fn part ->
       case numbers do
@@ -329,7 +351,9 @@ defmodule LineaUI.Components.Pagination do
             </option>
           </select>
         </form>
+        {render_slot(@aside)}
         <.pager_nav
+          :if={!(@single && @aside != [])}
           class={nil}
           rest={@rest}
           divided={@divided}

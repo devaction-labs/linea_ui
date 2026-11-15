@@ -123,4 +123,17 @@ defmodule LineaUI.Components.ButtonTest do
   defp attr_of(html, selector, name) do
     html |> find(selector) |> LazyHTML.attribute(name)
   end
+
+  test "control is opt-in and takes the form control height of the size" do
+    refute "ctl" in classes(render(~H"<.button>Go</.button>"), "button")
+    assert "ctl" in classes(render(~H"<.button control>Go</.button>"), "button")
+    html = render(~H|<.button control size="sm">Go</.button>|)
+    assert "ctl" in classes(html, "button")
+    assert "sm" in classes(html, "button")
+
+    refute "ctl" in classes(
+             render(~H|<.button control icon aria-label="x">i</.button>|),
+             "button"
+           )
+  end
 end

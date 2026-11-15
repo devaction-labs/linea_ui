@@ -9,6 +9,12 @@ defmodule LineaUI.Components.Chip do
       </.chip>
       <.chip label="Matriz" />
 
+  With `href`, `navigate` or `patch` the chip itself is a link (`<.link class="sg-chip">`), for filters that
+  live in the URL; a link chip has no x. A removable chip whose x is a patch takes `remove_patch`:
+
+      <.chip patch={~p"/extract?account=1"} label="Conta 1" />
+      <.chip label="Aberta" remove_patch={~p"/tasks"} />
+
   Without `on_remove` it is read only (no x). An event name in `on_remove` is pushed with
   `%{"id" => id}`; a `JS` command runs as is.
   """
@@ -44,6 +50,12 @@ defmodule LineaUI.Components.Chip do
       "An event name or a `JS` command: adds the x button. The event's payload is `%{\"id\" => id}`."
   )
 
+  attr(:remove_patch, :string,
+    default: nil,
+    doc:
+      "A path: the x becomes a `<.link patch>` to it (the filter's URL without this chip) instead of a button; `on_remove` is then not used."
+  )
+
   attr(:id, :string, default: nil)
 
   attr(:target, :any,
@@ -53,48 +65,91 @@ defmodule LineaUI.Components.Chip do
 
   attr(:remove_label, :string, default: "Remove")
   attr(:class, :any, default: nil)
-  attr(:rest, :global)
+  attr(:rest, :global, include: ~w(href navigate patch method download))
   slot(:inner_block)
 
   def chip(assigns) do
+    assigns
+    |> assign_derived(:classes, [:avatar, :avatar_src, :on_remove, :remove_patch, :class], fn ->
+      merge([
+        "sg-chip",
+        (assigns.avatar || assigns.avatar_src) && "has-av",
+        is_nil(assigns.on_remove) && is_nil(assigns.remove_patch) && "static",
+        assigns.class
+      ])
+    end)
+    |> render_chip()
+  end
+
+  defp render_chip(%{rest: rest} = assigns)
+       when is_map_key(rest, :href) or is_map_key(rest, :navigate) or is_map_key(rest, :patch) do
     ~H"""
-    <span
-      id={@id}
-      class={
-        merge([
-          "sg-chip",
-          (@avatar || @avatar_src) && "has-av",
-          is_nil(@on_remove) && "static",
-          @class
-        ])
-      }
-      {@rest}
-    >
-      <.avatar
-        :if={@avatar || @avatar_src}
-        name={@avatar}
-        alt={@avatar || "avatar"}
-        src={@avatar_src}
-        tint={@avatar_color}
-        color={if @avatar_color, do: "neutral", else: "auto"}
-        size="24"
-        class="sg-chip-av"
+    <.link id={@id} class={@classes} {@rest}>
+      <.chip_content
+        avatar={@avatar}
+        avatar_color={@avatar_color}
+        avatar_src={@avatar_src}
+        label={@label}
+        inner_block={@inner_block}
       />
-      <%= if @inner_block != [] do %>
-        {render_slot(@inner_block)}
-      <% else %>
-        {@label}
-      <% end %>
+    </.link>
+    """
+  end
+
+  defp render_chip(assigns) do
+    ~H"""
+    <span id={@id} class={@classes} {@rest}>
+      <.chip_content
+        avatar={@avatar}
+        avatar_color={@avatar_color}
+        avatar_src={@avatar_src}
+        label={@label}
+        inner_block={@inner_block}
+      />
+      <.link
+        :if={@remove_patch}
+        patch={@remove_patch}
+        class="sg-chip-x"
+        aria-label={@remove_label}
+      >
+        <.chip_x />
+      </.link>
       <button
-        :if={@on_remove}
+        :if={@on_remove && !@remove_patch}
         type="button"
         class="sg-chip-x"
         aria-label={@remove_label}
         phx-click={remove_js(@on_remove, @target, @id)}
       >
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg>
+        <.chip_x />
       </button>
     </span>
+    """
+  end
+
+  defp chip_x(assigns) do
+    ~H"""
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg>
+    """
+  end
+
+  defp chip_content(assigns) do
+    ~H"""
+    <.avatar
+      :if={@avatar || @avatar_src}
+      name={@avatar}
+      alt={@avatar || "avatar"}
+      src={@avatar_src}
+      tint={@avatar_color}
+      color={if @avatar_color, do: "neutral", else: "auto"}
+      size="24"
+      class="sg-chip-av"
+    />
+    <%= if @inner_block != [] do %>
+      {render_slot(@inner_block)}
+    <% else %>
+      {@label}
+    <% end %>
     """
   end
 

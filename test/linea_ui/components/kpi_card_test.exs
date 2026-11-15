@@ -80,4 +80,46 @@ defmodule LineaUI.Components.KpiCardTest do
     html = render(~H|<.kpi_card id="k" label="a" value="1" />|)
     refute "sg-kpi-tight" in classes(html, "#k")
   end
+
+  test "icon slot renders an sg-ic chip before the label" do
+    html =
+      render(~H"""
+      <.kpi_card id="k" label="Ativas" value="12" icon_tone="pos">
+        <:icon><i class="x"></i></:icon>
+      </.kpi_card>
+      """)
+
+    assert ["sg-ic", "pos"] == classes(html, ".row > span:first-child")
+    assert [_] = find(html, ".row > .sg-ic + .sg-kpi-l") |> Enum.to_list()
+    assert [_] = find(html, ".sg-ic .x") |> Enum.to_list()
+  end
+
+  test "no icon chip without the slot and acc is the default tone" do
+    html = render(~H|<.kpi_card id="k" label="a" value="1" />|)
+    assert [] == find(html, ".sg-ic") |> Enum.to_list()
+
+    html = render(~H|<.kpi_card id="k" label="a" value="1">
+  <:icon>i</:icon>
+</.kpi_card>|)
+    assert ["sg-ic", "acc"] == classes(html, ".sg-ic")
+  end
+
+  test "value_id sets the id of the figure, with and without progress" do
+    html = render(~H|<.kpi_card label="a" value="1" value_id="kv" />|)
+    assert ["sg-kpi-v"] == classes(html, "#kv")
+
+    html = render(~H|<.kpi_card label="a" value="1" value_id="kv" progress={50} />|)
+    assert ["sg-kpi-v"] == classes(html, "#kv")
+  end
+
+  test "caption shows without progress and once with it" do
+    html = render(~H|<.kpi_card label="a" value="1" caption="3 pausadas" />|)
+    assert LazyHTML.text(find(html, ".sg-kpi-c")) == "3 pausadas"
+
+    html = render(~H|<.kpi_card label="a" value="1" progress={50} caption="meta" />|)
+    assert [_] = find(html, ".sg-kpi-c") |> Enum.to_list()
+
+    html = render(~H|<.kpi_card label="a" value="1" />|)
+    assert [] == find(html, ".sg-kpi-c") |> Enum.to_list()
+  end
 end

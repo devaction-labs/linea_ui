@@ -182,4 +182,70 @@ defmodule LineaUI.Components.PillboxTest do
       %{label: "Rafael Augusto Costa", value: "2", color: "#1a7f4b", initials: "RA"}
     ]
   end
+
+  describe "single choice" do
+    test "multiple={false} is one pill, submitted as name, with no check boxes" do
+      html =
+        render(~H"""
+        <.pillbox name="product" value="tintas" options={options()} multiple={false} />
+        """)
+
+      assert "pillbox" in classes(html, "#product")
+      assert "single" in classes(html, "#product")
+      refute "multi" in classes(html, "#product")
+      assert attr_of(html, "#product", "data-multiple") == ["false"]
+      assert attr_of(html, "#product", "data-look") == ["pillbox"]
+      assert attr_of(html, "#product", "data-search-mode") == ["panel"]
+      assert attr_of(html, "#product .ts-control [data-ts-item]", "data-value") == ["tintas"]
+      assert attr_of(html, "select[data-input]", "name") == ["product"]
+      assert find(html, "select[data-input][multiple]") |> Enum.count() == 0
+      assert find(html, "#product .option .sg-box") |> Enum.count() == 0
+      assert find(html, "#product [data-panel-search]") |> Enum.count() == 1
+    end
+
+    test "the multiple pillbox keeps its check boxes and name[]" do
+      html = render(~H|<.pillbox name="cats" options={options()} />|)
+      assert find(html, "#cats .option .sg-box") |> Enum.count() == 3
+      assert attr_of(html, "select[data-input]", "name") == ["cats[]"]
+    end
+  end
+
+  describe "size" do
+    test "md by default, sm and lg set data-size for the 32 / 48px field" do
+      assert attr_of(render(~H|<.pillbox name="a" options={options()} />|), "#a", "data-size") ==
+               []
+
+      assert attr_of(
+               render(~H|<.pillbox name="a" options={options()} size="sm" />|),
+               "#a",
+               "data-size"
+             ) ==
+               ["sm"]
+
+      assert attr_of(
+               render(~H|<.pillbox name="a" options={options()} size="lg" />|),
+               "#a",
+               "data-size"
+             ) ==
+               ["lg"]
+    end
+  end
+
+  describe "panel width" do
+    test "panel_min_width and panel_class reach the list" do
+      html =
+        render(
+          ~H|<.pillbox name="a" options={options()} panel_min_width="24rem" panel_class="shadow-xl" />|
+        )
+
+      assert attr_of(html, "#a-dropdown", "style") == ["min-width:24rem"]
+      assert "shadow-xl" in classes(html, "#a-dropdown")
+
+      assert attr_of(
+               render(~H|<.pillbox name="a" options={options()} />|),
+               "#a-dropdown",
+               "style"
+             ) == []
+    end
+  end
 end

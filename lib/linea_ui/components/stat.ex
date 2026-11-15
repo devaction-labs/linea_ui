@@ -30,6 +30,12 @@ defmodule LineaUI.Components.Stat do
     doc: "`accent` paints the figure in the accent (the total of a strip)."
   )
 
+  attr(:size, :string,
+    default: "default",
+    values: ~w(default sm),
+    doc: "`sm` sets the figure at 18px (a word such as `Boleto`)."
+  )
+
   attr(:class, :any, default: nil)
   attr(:rest, :global)
 
@@ -37,7 +43,9 @@ defmodule LineaUI.Components.Stat do
     ~H"""
     <div class={merge(["sg-stat", @class])} {@rest}>
       <span class="l">{@label}</span>
-      <span class={["v", @tone == "accent" && "acc"]}>{@value}<small>{@unit}</small></span>
+      <span class={["v", @tone == "accent" && "acc", @size == "sm" && "sm"]}>
+        {@value}<small :if={@unit}>{@unit}</small>
+      </span>
     </div>
     """
   end
@@ -46,13 +54,25 @@ defmodule LineaUI.Components.Stat do
   A row of `stat_item/1`: a card (16px 20px) with the figures side by side.
   """
   attr(:card, :boolean, default: true, doc: "Draws the card around the row.")
+
+  attr(:variant, :string,
+    default: "default",
+    values: ~w(default sunken),
+    doc: "`sunken` fills the row with the grey sunken background."
+  )
+
   attr(:class, :any, default: nil)
   attr(:rest, :global)
   slot(:inner_block, required: true)
 
   def stat_group(assigns) do
     ~H"""
-    <div class={merge([@card && "sg-card", "sg-stat-group", @class])} {@rest}>
+    <div
+      class={
+        merge([@card && "sg-card", "sg-stat-group", @variant == "sunken" && "sg-stat-sunken", @class])
+      }
+      {@rest}
+    >
       {render_slot(@inner_block)}
     </div>
     """

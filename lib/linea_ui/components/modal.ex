@@ -127,6 +127,12 @@ defmodule LineaUI.Components.Modal do
   attr :target, :any, default: nil, doc: "The `phx-target` of `on_open` / `on_close` events."
   attr :close_label, :string, default: "Close"
 
+  attr :role, :string,
+    default: "dialog",
+    values: ~w(dialog alertdialog),
+    doc:
+      "`alertdialog` for confirmations that interrupt the user (a destructive action); point `aria-describedby` at the message."
+
   attr :title, :string,
     default: nil,
     doc:
@@ -171,7 +177,7 @@ defmodule LineaUI.Components.Modal do
         animation_class(@animation),
         placement_class(@placement)
       ]}
-      role="dialog"
+      role={@role}
       aria-modal="true"
       aria-hidden="true"
       aria-labelledby={(@header != [] or @title != nil) && "#{@id}-title"}

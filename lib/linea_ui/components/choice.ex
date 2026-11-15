@@ -154,7 +154,8 @@ defmodule LineaUI.Components.Choice do
     "outline" => "inline-space flex flex-wrap",
     "card" => "grid gap-3",
     "chip" => "flex flex-wrap gap-2",
-    "segmented" => nil
+    "segmented" => nil,
+    "tile" => "flex flex-wrap gap-2"
   }
 
   @doc false
@@ -163,7 +164,7 @@ defmodule LineaUI.Components.Choice do
 
   @doc false
   @spec radio_variants() :: [String.t()]
-  def radio_variants, do: variants() ++ ["segmented"]
+  def radio_variants, do: variants() ++ ["segmented", "tile"]
 
   @doc false
   @spec layout(String.t()) :: String.t()
@@ -172,7 +173,7 @@ defmodule LineaUI.Components.Choice do
 
   @doc false
   @spec input_classes(String.t(), map()) :: [String.t()] | String.t()
-  def input_classes(_base, %{variant: variant}) when variant in ~w(chip segmented),
+  def input_classes(_base, %{variant: variant}) when variant in ~w(chip segmented tile),
     do: "peer sr-only"
 
   def input_classes(base, %{variant: "card"} = assigns),
@@ -245,6 +246,14 @@ defmodule LineaUI.Components.Choice do
       {render_slot(@inner_block)}
       <span>{@label}{render_slot(@content)}</span>
       <span :if={@count != nil} class={@count_class}>{@count}</span>
+    </label>
+    """
+  end
+
+  def item(%{variant: "tile"} = assigns) do
+    ~H"""
+    <label class={merge(["lu-tile", @class])}>
+      {render_slot(@inner_block)}{@label}{render_slot(@content)}
     </label>
     """
   end

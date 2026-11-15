@@ -365,4 +365,29 @@ defmodule LineaUI.Components.AvatarTest do
 
     refute html =~ "+0"
   end
+
+  test "sizes 30 and 26 are the canvas sg-av with their initials" do
+    html =
+      render(~H"""
+      <.avatar id="a" initials="jd" size="30" />
+      <.avatar id="b" initials="jd" size="26" />
+      """)
+
+    assert "size-[30px]" in classes(html, "#a")
+    assert "size-[26px]" in classes(html, "#b")
+    assert "text-xs" in classes(html, "#a > div")
+    assert "text-[10px]" in classes(html, "#b > div")
+    assert "font-semibold" in classes(html, "#a > div")
+  end
+
+  test "background paints the face with white text and no variant colors" do
+    html =
+      render(~H"""
+      <.avatar id="a" initials="jd" size="30" background="var(--grad)" color="primary" />
+      """)
+
+    assert LazyHTML.attribute(find(html, "#a > div"), "style") == ["background: var(--grad)"]
+    assert "text-white" in classes(html, "#a > div")
+    refute "bg-primary" in classes(html, "#a > div")
+  end
 end

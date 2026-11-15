@@ -50,6 +50,7 @@ export default {
       const row = e.target.closest?.(ROW)
       if (!row || !this.el.contains(row)) return
       if (endsSelection(window.getSelection?.(), row)) return
+      if (e.target.closest?.(".linea-ctable-expand, .linea-ctable-edit")) return
       const pop = popOf(row)
       const action = clickAction({
         inPop: !!pop && pop.contains(e.target),

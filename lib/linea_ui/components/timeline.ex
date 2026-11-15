@@ -47,6 +47,18 @@ defmodule LineaUI.Components.Timeline do
       </.timeline>
 
   Given a stream, the list renders with `phx-update="stream"` (and needs an `id`).
+
+  `variant="canvas"` is the canvas `sg-tl`: a `<div>` of `timeline_event`s, each with a boxed icon
+  tile, a title over a subtitle and the time at the right. It takes `rows` and the `:item` slot
+  the same way:
+
+      <.timeline variant="canvas" id="events" rows={@streams.events}>
+        <:item :let={{id, event}}>
+          <.timeline_event id={id} tone="pos" title={event.title} subtitle={event.by} time={event.at}>
+            <:icon><.icon name="hero-check" class="size-4" /></:icon>
+          </.timeline_event>
+        </:item>
+      </.timeline>
   """
 
   use LineaUI.Component
@@ -140,6 +152,13 @@ defmodule LineaUI.Components.Timeline do
       "`compact` is the tighter LineOne look of the canvas: 22px between items, 14px between the point and the text, a 13px semibold title, a 13px muted description and a 4px gap between a point and the line (as with `line_space`)."
   )
 
+  attr(:variant, :string,
+    default: "line",
+    values: ~w(line canvas),
+    doc:
+      "`line` is the LineOne vertical line of points; `canvas` the `sg-tl` of `timeline_event`s with icon tiles."
+  )
+
   attr(:id, :string, default: nil, doc: "Required with a stream.")
   attr(:rows, :any, default: nil, doc: "A list or a stream of rows rendered by the `:item` slot.")
 
@@ -160,6 +179,21 @@ defmodule LineaUI.Components.Timeline do
       |> assign(:stream, stream_update(assigns.rows))
       |> assign(:entries, entries(assigns.rows, assigns.row_id))
 
+    render_timeline(assigns)
+  end
+
+  defp render_timeline(%{variant: "canvas"} = assigns) do
+    ~H"""
+    <div id={@id} class={merge(["sg-tl", @class])} phx-update={@stream} {@rest}>
+      {render_slot(@inner_block)}
+      <%= for entry <- @entries do %>
+        {render_slot(@item, entry)}
+      <% end %>
+    </div>
+    """
+  end
+
+  defp render_timeline(assigns) do
     ~H"""
     <ol
       id={@id}
@@ -270,6 +304,54 @@ defmodule LineaUI.Components.Timeline do
         {render_slot(@inner_block)}
       </div>
     </li>
+    """
+  end
+
+  @tones %{
+    "default" => nil,
+    "acc" => "acc",
+    "pos" => "pos",
+    "neg" => "neg",
+    "warn" => "warn",
+    "info" => "info"
+  }
+
+  @doc """
+  Renders one event of a `variant="canvas"` timeline: an icon tile, a title over a subtitle and
+  the time at the right.
+
+      <.timeline_event tone="warn" title="Fatura vencida" subtitle="Cliente Acme" time="10:42">
+        <:icon><.icon name="hero-exclamation-triangle" class="size-4" /></:icon>
+      </.timeline_event>
+  """
+  attr(:title, :string, default: nil, doc: "The first line.")
+  attr(:subtitle, :string, default: nil, doc: "The faint line under the title.")
+  attr(:time, :string, default: nil, doc: "Mono and faint, at the right.")
+
+  attr(:tone, :string,
+    default: "default",
+    values: ~w(default acc pos neg warn info),
+    doc: "Tints the icon tile (`sg-ic acc|pos|neg|warn|info`)."
+  )
+
+  attr(:class, :any, default: nil)
+  attr(:rest, :global)
+  slot(:icon, doc: "The icon inside the tile.")
+  slot(:inner_block, doc: "Free content after the title and the subtitle.")
+
+  def timeline_event(assigns) do
+    assigns = assign(assigns, :tone_class, @tones[assigns.tone])
+
+    ~H"""
+    <div class={merge(["sg-tl-i", @class])} {@rest}>
+      <span class={merge(["sg-ic", @tone_class])}>{render_slot(@icon)}</span>
+      <div class="grow">
+        <div :if={@title}>{@title}</div>
+        <div :if={@subtitle} class="faint">{@subtitle}</div>
+        {render_slot(@inner_block)}
+      </div>
+      <span :if={@time} class="mono faint">{@time}</span>
+    </div>
     """
   end
 

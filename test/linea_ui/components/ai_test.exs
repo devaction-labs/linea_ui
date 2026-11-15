@@ -195,4 +195,100 @@ defmodule LineaUI.Components.AiTest do
 
     assert [_] = find(render(~H|<.ai_greeting size="sm" />|), ".ai-greeting.sm") |> Enum.to_list()
   end
+
+  test "the user's message is the dark bubble (.sg-bubble.me)" do
+    html = render(~H|<.ai_message role="user" name="Marina Costa">Oi</.ai_message>|)
+    assert [_] = find(html, ".ai-msg.me .sg-bubble.me") |> Enum.to_list()
+  end
+
+  test "the plain assistant message has the plain class and the card is the default" do
+    card = render(~H|<.ai_message>
+  <p>x</p>
+</.ai_message>|)
+    assert find(card, ".ai-msg.plain") |> Enum.to_list() == []
+
+    plain = render(~H|<.ai_message variant="plain">
+  <p>x</p>
+</.ai_message>|)
+    assert [_] = find(plain, ".ai-msg.plain .ai-body p") |> Enum.to_list()
+  end
+
+  test "the canvas composer has the clip first, the chips after the text, the mic and a labelled send" do
+    html =
+      render(~H"""
+      <.ai_composer variant="canvas" mic context={[:pedidos]} send_label="Enviar" phx-submit="send" />
+      """)
+
+    assert [_] = find(html, "form.ai-composer.canvas") |> Enum.to_list()
+    assert [_] = find(html, "button[aria-label=Falar]") |> Enum.to_list()
+    assert [send] = find(html, "button.ai-send.text[type=submit]") |> Enum.to_list()
+    assert String.trim(LazyHTML.text(send)) == "Enviar"
+
+    row = html |> find(".ai-composer-row") |> LazyHTML.to_html()
+    {clip, _} = :binary.match(row, "Anexar")
+    {input, _} = :binary.match(row, "<textarea")
+    {chip, _} = :binary.match(row, "ai-chip")
+    assert clip < input and input < chip
+
+    custom = render(~H|<.ai_composer variant="canvas" send_label="Mandar" />|)
+    assert find(custom, "button[aria-label=Falar]") |> Enum.to_list() == []
+    assert LazyHTML.attribute(find(custom, "button.ai-send"), "aria-label") == ["Mandar"]
+
+    stop = render(~H|<.ai_composer variant="canvas" streaming />|)
+    assert [_] = find(stop, "button.ai-send.stop[aria-label=Parar]") |> Enum.to_list()
+  end
+
+  test "the default composer keeps the round send without text" do
+    html = render(~H|<.ai_composer />|)
+    assert find(html, ".ai-composer.canvas, button.ai-send.text") |> Enum.to_list() == []
+  end
+
+  test "the grid suggestions are grey cells with the title in mono" do
+    html =
+      render(~H"""
+      <.prompt_suggestions
+        variant="grid"
+        items={[%{title: "Resumo", text: "Faça um resumo"}, %{title: "Fiscal", text: "Notas"}]}
+        on_pick="ask"
+      />
+      """)
+
+    assert [_] = find(html, ".ai-suggestions.grid") |> Enum.to_list()
+    assert texts(html, ".ai-cell .mono.ai-cell-title") == ["Resumo", "Fiscal"]
+    assert [click | _] = LazyHTML.attribute(find(html, "button.ai-cell"), "phx-click")
+    assert String.contains?(click, "Faça um resumo")
+    assert find(html, ".ai-suggestion") |> Enum.to_list() == []
+  end
+
+  test "the pending label and note of a proposal" do
+    html =
+      render(~H"""
+      <.ai_proposal id="p" title="T" pending_label="Pendente" pending_note="Entra no rastreamento" />
+      """)
+
+    assert "Pendente" in texts(html, ".sg-badge")
+    assert texts(html, ".ai-proposal-note") == ["Entra no rastreamento"]
+
+    default = render(~H|<.ai_proposal id="p" title="T" />|)
+    assert "Aguardando você" in texts(default, ".sg-badge")
+    assert find(default, ".ai-proposal-note") |> Enum.to_list() == []
+
+    approved = render(~H|<.ai_proposal id="p" title="T" status="approved" pending_note="Nota" />|)
+    assert find(approved, ".ai-proposal-note") |> Enum.to_list() == []
+  end
+
+  test "the definition layout shows the old value struck through and a badge with the new" do
+    html =
+      render(~H"""
+      <.ai_proposal id="p" title="T" layout="definition">
+        <:change label="Status" from="Aberto" to="Faturado" />
+        <:change label="Pedido">#2491</:change>
+      </.ai_proposal>
+      """)
+
+    assert texts(html, "s") == ["Aberto"]
+    assert "Faturado" in texts(html, ".ai-proposal-value .sg-badge")
+    assert find(html, ".ai-to") |> Enum.to_list() == []
+    assert "#2491" in texts(html, ".ai-proposal-value")
+  end
 end

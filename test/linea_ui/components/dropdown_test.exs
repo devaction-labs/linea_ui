@@ -432,4 +432,29 @@ defmodule LineaUI.Components.DropdownTest do
 </.dropdown>')
     assert [] = find(html, "#plain[data-anchor]") |> Enum.to_list()
   end
+
+  describe "apply_color and control" do
+    test "Apply is primary (teal) by default and mono (solid black) on request" do
+      assert "accent" in classes(render(~H|<.dropdown_footer />|), "[data-menu-action=apply]")
+
+      refute "accent" in classes(
+               render(~H|<.dropdown_footer apply_color="mono" />|),
+               "[data-menu-action=apply]"
+             )
+
+      assert "solid" in classes(
+               render(~H|<.dropdown_footer apply_color="mono" />|),
+               "[data-menu-action=apply]"
+             )
+    end
+
+    test "control makes the trigger take the control height, and shape rounded stays" do
+      plain = render(~H|<.dropdown id="d" label="Filters">x</.dropdown>|)
+      refute "ctl" in classes(plain, "#d-button")
+
+      html = render(~H|<.dropdown id="d" label="Filters" control shape="rounded">x</.dropdown>|)
+      assert "ctl" in classes(html, "#d-button")
+      refute "pill" in classes(html, "#d-button")
+    end
+  end
 end

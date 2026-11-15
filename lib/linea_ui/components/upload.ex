@@ -433,6 +433,11 @@ defmodule LineaUI.Components.Upload do
   With `upload` it renders `live_file_input`; otherwise a plain `<input type="file" name>`. The
   button shows a 2px primary outline (half opaque, as the other focus rings) while its input has
   keyboard focus.
+
+  With a `size` (or a `variant` or `color` that LineOne's button does not have) it draws the canvas button
+  instead (`sg-btn`), with the same `size`, `variant`, `color` and `shape` classes as `LineaUI.Components.Button`:
+
+      <.upload_button upload={@uploads.files} id="attach-button" size="sm" variant="ghost">Attach</.upload_button>
   """
   attr :upload, Phoenix.LiveView.UploadConfig, default: nil
   attr :name, :string, default: nil, doc: "Name of the plain file input, without `upload`."
@@ -443,9 +448,23 @@ defmodule LineaUI.Components.Upload do
     default: false,
     doc: "Disables the input and dims the button (no pointer events)."
 
-  attr :color, :string, default: "neutral", values: ~w(neutral primary info)
-  attr :variant, :string, default: "solid", values: ~w(solid outline glow)
-  attr :shape, :string, default: "rounded", values: ~w(rounded pill)
+  attr :color, :string,
+    default: "neutral",
+    values: ~w(neutral primary secondary info success warning error white current mono),
+    doc: "LineOne's button has `neutral`, `primary` and `info`; the rest draw the canvas button."
+
+  attr :variant, :string,
+    default: "solid",
+    values: ~w(solid glow outline soft bordered flat glass ghost dim),
+    doc: "LineOne's button has `solid`, `outline` and `glow`; the rest draw the canvas button."
+
+  attr :size, :string,
+    default: nil,
+    values: [nil, "xs", "sm", "md", "lg", "xl"],
+    doc:
+      "Any size draws the canvas button (`sg-btn`), as `<.button size>`; `nil` is LineOne's `btn`."
+
+  attr :shape, :string, default: "rounded", values: ~w(rounded pill square)
   attr :icon, :boolean, default: false, doc: "A square button that holds only an icon."
   attr :class, :any, default: nil
   attr :rest, :global
@@ -457,12 +476,9 @@ defmodule LineaUI.Components.Upload do
         assigns,
         :classes,
         merge([
-          "btn relative font-medium",
-          @button_styles[{assigns.variant, assigns.color}],
+          button_classes(assigns),
           "has-[input:focus-visible]:outline-2 has-[input:focus-visible]:outline-solid has-[input:focus-visible]:outline-offset-2 has-[input:focus-visible]:outline-primary/50",
-          assigns.icon && "size-9 p-0",
           assigns.disabled && "pointer-events-none opacity-55",
-          assigns.shape == "pill" && "rounded-full",
           assigns.class
         ])
       )
@@ -490,4 +506,48 @@ defmodule LineaUI.Components.Upload do
     </label>
     """
   end
+
+  defp button_classes(%{size: nil, variant: variant, color: color} = assigns)
+       when variant in ~w(solid outline glow) and color in ~w(neutral primary info) do
+    [
+      "btn relative font-medium",
+      @button_styles[{variant, color}],
+      assigns.icon && "size-9 p-0",
+      assigns.shape == "pill" && "rounded-full"
+    ]
+  end
+
+  defp button_classes(%{icon: true} = assigns) do
+    [
+      "sg-ib relative",
+      assigns.size == "sm" && "sm",
+      assigns.size == "xs" && "xs",
+      assigns.variant in ~w(flat ghost dim) && "plain",
+      assigns.shape == "pill" && "pill"
+    ]
+  end
+
+  defp button_classes(assigns) do
+    [
+      "sg-btn relative",
+      tone(assigns.color, assigns.variant),
+      canvas_size(assigns.size),
+      assigns.shape == "square" && "sq",
+      assigns.shape == "pill" && "pill"
+    ]
+  end
+
+  defp canvas_size(nil), do: nil
+  defp canvas_size("md"), do: nil
+  defp canvas_size(size), do: size
+
+  defp tone("mono", _variant), do: "solid"
+  defp tone("error", _variant), do: "danger"
+  defp tone("primary", "solid"), do: "accent"
+  defp tone("primary", "glow"), do: "accent"
+  defp tone(color, "soft") when color in ~w(neutral secondary current white), do: "filled"
+  defp tone(_color, variant) when variant in ~w(soft bordered), do: "soft"
+  defp tone(_color, "dim"), do: "subtle"
+  defp tone(_color, variant) when variant in ~w(flat ghost), do: "ghost"
+  defp tone(_color, _variant), do: nil
 end

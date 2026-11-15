@@ -21,8 +21,8 @@ defmodule LineaUI.Components.SelectTest do
                "select"
              )
 
-      assert "h-7" in classes(render(~H|<.select native size="sm" options={[]} />|), "select")
-      assert "h-10" in classes(render(~H|<.select native size="lg" options={[]} />|), "select")
+      assert "h-8" in classes(render(~H|<.select native size="sm" options={[]} />|), "select")
+      assert "h-12" in classes(render(~H|<.select native size="lg" options={[]} />|), "select")
 
       assert "rounded-full" in classes(
                render(~H|<.select native shape="pill" options={[]} />|),
@@ -369,5 +369,73 @@ defmodule LineaUI.Components.SelectTest do
     assert silent |> find("#s") |> LazyHTML.attribute("data-on-load-more") == []
     assert silent |> find("#s") |> LazyHTML.attribute("data-has-more") == []
     assert find(silent, "[data-loading-row]") |> Enum.count() == 0
+  end
+
+  describe "native caption and suffix" do
+    test "label_hint, label_aside and below" do
+      html =
+        render(~H"""
+        <.select native name="c" label="Cliente" label_hint="vinculado" options={~w(A B)} help="Ajuda">
+          <:label_aside><a id="aside" href="/x">ver</a></:label_aside>
+          <:below><i id="bars"></i></:below>
+        </.select>
+        """)
+
+      assert "justify-between" in classes(html, "label > span")
+      assert LazyHTML.text(find(html, "label > span > span")) =~ "vinculado"
+      assert [_] = find(html, "a#aside") |> Enum.to_list()
+      assert [_] = find(html, "#bars") |> Enum.to_list()
+      assert [_] = find(html, "select[name=c]") |> Enum.to_list()
+    end
+
+    test "a suffix chip sits inside the control, clicks fall through" do
+      html =
+        render(~H"""
+        <.select native name="c" label="Cliente" options={~w(A B)}>
+          <:suffix><code id="chip">cus_1</code></:suffix>
+        </.select>
+        """)
+
+      assert [_] = find(html, "span.relative > select[name=c]") |> Enum.to_list()
+      assert "pointer-events-none" in classes(html, "span[data-suffix]")
+      assert [_] = find(html, "span[data-suffix] code#chip") |> Enum.to_list()
+    end
+
+    test "without the new attrs the caption is the plain one" do
+      html = render(~H|<.select native name="c" label="Cliente" options={~w(A B)} />|)
+      assert find(html, "span[data-suffix]") |> Enum.to_list() == []
+      assert [_] = find(html, "label > select[name=c]") |> Enum.to_list()
+    end
+  end
+
+  describe "panel width" do
+    test "panel_min_width and panel_class go on the open list, none by default" do
+      plain = render(~H|<.select name="c" options={~w(A B)} />|)
+      assert find(plain, "#c-dropdown") |> LazyHTML.attribute("style") == []
+      assert classes(plain, "#c-dropdown") == ["ts-dropdown", "single"]
+
+      html =
+        render(~H|<.select
+  name="c"
+  options={~w(A B)}
+  search="panel"
+  panel_min_width="26rem"
+  panel_class="max-w-[90vw]"
+/>|)
+
+      assert find(html, "#c-dropdown") |> LazyHTML.attribute("style") == ["min-width:26rem"]
+      assert "max-w-[90vw]" in classes(html, "#c-dropdown")
+      assert "ts-dropdown" in classes(html, "#c-dropdown")
+    end
+  end
+
+  describe "size" do
+    test "the listbox carries its size for the control height" do
+      html = render(~H|<.select name="c" options={~w(A B)} size="lg" />|)
+      assert find(html, "#c") |> LazyHTML.attribute("data-size") == ["lg"]
+
+      assert find(render(~H|<.select name="c" options={~w(A B)} />|), "#c")
+             |> LazyHTML.attribute("data-size") == []
+    end
   end
 end

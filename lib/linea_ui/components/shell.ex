@@ -52,6 +52,12 @@ defmodule LineaUI.Components.Shell do
         </.tab_bar>
       </:tab_bar>
 
+  `match="prefix"` lights an item on the paths under its own (`/app/tasks/NXP-1` lights `/app/tasks`; an item can
+  set its own `match`), `persist_groups` remembers the open groups in the browser, the `:sidebar_footer` slot takes
+  a "Recolher menu" button (`data-rail-toggle`) above the version line and the `:mobile_drawer` slot is what the
+  menu shows only below 768px (search, settings, theme, logout). `sidebar/1` documents the canvas "Painel" menu
+  (`sidebar="tree"`) with disabled "soon" items, counts and children.
+
   In the `sections` format, which has no collapse
   button of its own, the row starts with the button that collapses the menu (`collapsible`). Below 768px the
   menu is a top bar with a hamburger.
@@ -91,6 +97,15 @@ defmodule LineaUI.Components.Shell do
     doc:
       "The version of the system: a string or `%{version, build, href | navigate | patch, label, title, status}` (see `sidebar/1`). The `:shell` config `version` when left out."
 
+  attr :match, :string,
+    default: "exact",
+    values: ~w(exact prefix),
+    doc: "`exact` or `prefix`: how `current` marks the active item (see `sidebar/1`)."
+
+  attr :persist_groups, :boolean,
+    default: false,
+    doc: "Keeps the open groups of the menu in `localStorage` (see `sidebar/1`)."
+
   attr :plan, :map, default: nil, doc: "`%{name, badge}`, the plan card of `sections`."
   attr :trial, :map, default: nil, doc: "The trial card of the `rail` (see `sidebar/1`)."
   attr :rail_extra, :list, default: [], doc: "The extra apps of the `rail` (see `sidebar/1`)."
@@ -101,7 +116,12 @@ defmodule LineaUI.Components.Shell do
   attr :rest, :global
 
   slot :brand_mark, doc: "Replaces the logo and the name of the brand (see `sidebar/1`)."
-  slot :sidebar_footer, doc: "At the end of the foot of the menu."
+  slot :sidebar_footer, doc: "At the end of the foot of the menu, above the version line."
+
+  slot :mobile_drawer,
+    doc:
+      "What the menu shows only below 768px: search, settings, theme, logout (see `sidebar/1`)."
+
   slot :topbar, doc: "A row at the top of the page panel."
 
   slot :tab_bar,
@@ -135,6 +155,8 @@ defmodule LineaUI.Components.Shell do
         format={@fmt}
         nav={@items}
         current={@current}
+        match={@match}
+        persist_groups={@persist_groups}
         brand={@brand}
         user={@user}
         footer={@footer}
@@ -148,6 +170,7 @@ defmodule LineaUI.Components.Shell do
       >
         <:brand_mark :if={@brand_mark != []}>{render_slot(@brand_mark)}</:brand_mark>
         <:sidebar_footer :if={@sidebar_footer != []}>{render_slot(@sidebar_footer)}</:sidebar_footer>
+        <:mobile_drawer :if={@mobile_drawer != []}>{render_slot(@mobile_drawer)}</:mobile_drawer>
       </Sidebar.sidebar>
       <main class={
         merge([

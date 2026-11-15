@@ -230,4 +230,12 @@ defmodule LineaUI.Components.DrawerTest do
 
     assert [_] = find(html, "#sheet #confirm-delete[phx-hook='LineaUI.Dialog']") |> Enum.to_list()
   end
+
+  test "wide is 800px, between lg and xl" do
+    html = render(~H|<.drawer id="s" title="T" size="wide" variant="flush">x</.drawer>|)
+    assert "max-w-[800px]" in classes(html, ".drawer-content")
+
+    html = render(~H|<.drawer id="s" title="T" size="wide">x</.drawer>|)
+    assert "max-w-[min(800px,calc(100%-1.5rem))]" in classes(html, ".drawer-content")
+  end
 end

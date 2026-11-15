@@ -30,6 +30,7 @@
 .sg-meter.warn i{background:var(--warn)}
 .sg-meter.neg i{background:var(--neg)}
 .sg-meter.info i{background:var(--info)}
+.sg-meter.grad i{background:var(--grad,linear-gradient(90deg,var(--accent),var(--info)))}
 
 /* ---------- Skeleton (variant="canvas"): sg-skel shapes ---------- */
 .sg-skel.circle,.sg-skel.pill{border-radius:999px}

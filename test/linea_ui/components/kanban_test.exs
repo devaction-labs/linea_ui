@@ -1,6 +1,7 @@
 defmodule LineaUI.Components.KanbanTest do
   use LineaUI.ComponentCase, async: true
 
+  defp text(html, selector), do: html |> find(selector) |> LazyHTML.text()
   defp attr_of(html, selector, name), do: html |> find(selector) |> LazyHTML.attribute(name)
 
   test "the board is the sortable hook, with its group, event and target" do
@@ -267,5 +268,102 @@ defmodule LineaUI.Components.KanbanTest do
     assert find(html, "article [data-grip] i") |> Enum.count() == 6
     assert "group-hover:opacity-90" in classes(html, "[data-grip]")
     assert "opacity-0" in classes(html, "[data-grip]")
+  end
+
+  test "a fluid board shares the page width between its columns" do
+    html =
+      render(~H"""
+      <.kanban id="funnel" fluid>
+        <p>x</p>
+      </.kanban>
+      """)
+
+    assert "[&>section]:flex-1" in classes(html, "#funnel")
+    refute "overflow-x-auto" in classes(html, "#funnel")
+
+    assert "overflow-x-auto" in classes(
+             render(~H|<.kanban id="b">
+  <p>x</p>
+</.kanban>|),
+             "#b"
+           )
+  end
+
+  test "the count can be a text and over_limit turns the pill red" do
+    html =
+      render(~H"""
+      <.kanban_column id="c" label="Doing" count={5} count_label="5 / 3" over_limit />
+      """)
+
+    assert attr_of(html, "#c", "data-wip") == ["exceeded"]
+    assert text(html, "#c") =~ "5 / 3"
+    assert "text-error-focus" in classes(html, "#c > div > span.ml-auto")
+
+    plain =
+      render(~H"""
+      <.kanban_column id="c" label="Doing" count="2 of 3" />
+      """)
+
+    assert text(plain, "#c") =~ "2 of 3"
+    assert attr_of(plain, "#c", "data-wip") == []
+  end
+
+  test "hint always shows the empty hint under the cards too" do
+    always =
+      render(~H"""
+      <.kanban_column id="c" label="Done" count={2} hint="always">
+        <p>card</p>
+        <:empty>Drop here</:empty>
+      </.kanban_column>
+      """)
+
+    assert text(always, "#c [data-empty]") =~ "Drop here"
+
+    default =
+      render(~H"""
+      <.kanban_column id="c" label="Done" count={2}>
+        <p>card</p>
+        <:empty>Drop here</:empty>
+      </.kanban_column>
+      """)
+
+    assert find(default, "#c [data-empty]") |> LazyHTML.to_tree() == []
+  end
+
+  test "the phone mode marks the board and the active column" do
+    html =
+      render(~H"""
+      <.kanban id="b" active="doing">
+        <.kanban_column id="c1" list="todo" label="To do" />
+        <.kanban_column id="c2" list="doing" label="Doing" active />
+      </.kanban>
+      """)
+
+    assert attr_of(html, "#b", "data-phone") == ["doing"]
+    assert attr_of(html, "#c2", "data-phone-active") == ["true"]
+    assert attr_of(html, "#c1", "data-phone-active") == []
+    assert attr_of(html, "#c1 [data-head]", "data-head") == [""]
+  end
+
+  test "a dense card and the hover actions of a card" do
+    html =
+      render(~H"""
+      <.kanban_card id="k" dense>
+        body
+        <:actions><button aria-label="More">...</button></:actions>
+      </.kanban_card>
+      """)
+
+    assert "p-3" in classes(html, "#k")
+    assert "group-hover:opacity-100" in classes(html, "#k [data-actions]")
+    assert "opacity-0" in classes(html, "#k [data-actions]")
+
+    plain =
+      render(~H"""
+      <.kanban_card id="k">body</.kanban_card>
+      """)
+
+    assert "p-3.5" in classes(plain, "#k")
+    assert find(plain, "#k [data-actions]") |> LazyHTML.to_tree() == []
   end
 end

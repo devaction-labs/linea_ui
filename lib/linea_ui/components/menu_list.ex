@@ -31,6 +31,9 @@ defmodule LineaUI.Components.MenuList do
         <:item value="shipping">Shipping</:item>
       </.menu_list>
 
+  `variant="static"` is the canvas `sg-list`: plain rows (`menu_row`) with an icon, a title over a
+  sub line, a value at the right and an unread dot; see `menu_row`.
+
   Streams render one `menu_item` per row:
 
       <.menu_list id="pages" rows={@streams.pages}>
@@ -114,9 +117,9 @@ defmodule LineaUI.Components.MenuList do
 
   attr(:variant, :string,
     default: "link",
-    values: ~w(link solid pill gradient bordered),
+    values: ~w(link solid pill gradient bordered static),
     doc:
-      "LineOne's menu list examples 1–2 (`link`), 3–4/7–8 (`solid`), 5–6 (`pill`), 9–10 (`gradient`), 11–12 (`bordered`)."
+      "LineOne's menu list examples 1–2 (`link`), 3–4/7–8 (`solid`), 5–6 (`pill`), 9–10 (`gradient`), 11–12 (`bordered`). `static` is the canvas `sg-list` of `menu_row`s: a `<div>` (no `<ul>`), rows given by `rows` and `:row`, which render the `menu_row` themselves (with its `id`, for a stream) and `:item` slots become rows."
   )
 
   attr(:color, :string,
@@ -161,6 +164,22 @@ defmodule LineaUI.Components.MenuList do
   defp row_id(%{row_id: nil, rows: %Phoenix.LiveView.LiveStream{}}), do: fn {id, _row} -> id end
   defp row_id(%{row_id: row_id}), do: row_id
 
+  defp render_list(%{variant: "static"} = assigns) do
+    ~H"""
+    <div id={@id} class={merge(["sg-list", @class])} phx-update={@stream? && "stream"} {@rest}>
+      <.menu_row
+        :for={item <- @item}
+        {Map.drop(item, [:__slot__, :inner_block, :active, :value, :count])}
+      >
+        {render_slot(item)}
+      </.menu_row>
+      <%= for row <- @rows || [] do %>
+        {render_slot(@row, row)}
+      <% end %>
+    </div>
+    """
+  end
+
   defp render_list(assigns) do
     ~H"""
     <ul
@@ -187,6 +206,85 @@ defmodule LineaUI.Components.MenuList do
         {render_slot(@row, row)}
       </li>
     </ul>
+    """
+  end
+
+  @doc """
+  Renders one static row of the canvas `sg-list` (`<.menu_list variant="static">`): an optional
+  icon or avatar, a title over a sub line, a value at the right and an unread dot. The row is a
+  `<div>`, or a link with `href`, `navigate` or `patch`; `phx-click` and any other attribute go
+  through `rest`. `id` is what a stream needs on each row.
+
+      <.menu_row title="Fatura 1042" sub="Acme Ltda" unread>
+        <:icon><.icon name="hero-document" class="size-4" /></:icon>
+        <:value><span class="mono">R$ 480,00</span></:value>
+      </.menu_row>
+
+      <.menu_row navigate={~p"/clients/1"}><div class="t">Acme</div><div class="s">12 users</div></.menu_row>
+  """
+  attr(:title, :string, default: nil, doc: "The `.t` line.")
+  attr(:sub, :string, default: nil, doc: "The `.s` line under the title.")
+  attr(:unread, :boolean, default: false, doc: "Shows the unread dot after the value.")
+  attr(:unread_label, :string, default: "Unread", doc: "Screen reader text of the dot.")
+  attr(:class, :any, default: nil)
+  attr(:rest, :global, include: ~w(href navigate patch method download replace))
+  slot(:icon, doc: "Before the text: an `sg-ic` tile, an avatar.")
+  slot(:value, doc: "At the right.")
+  slot(:inner_block, doc: "Free content after `title` and `sub` (or alone).")
+
+  def menu_row(assigns) do
+    assigns
+    |> assign(:class, merge(["sg-li", assigns.class]))
+    |> render_row()
+  end
+
+  defp render_row(%{rest: rest} = assigns)
+       when is_map_key(rest, :href) or is_map_key(rest, :navigate) or is_map_key(rest, :patch) do
+    ~H"""
+    <.link class={@class} {@rest}>
+      <.row_body
+        title={@title}
+        sub={@sub}
+        unread={@unread}
+        unread_label={@unread_label}
+        icon={@icon}
+        value={@value}
+        inner_block={@inner_block}
+      />
+    </.link>
+    """
+  end
+
+  defp render_row(assigns) do
+    ~H"""
+    <div class={@class} {@rest}>
+      <.row_body
+        title={@title}
+        sub={@sub}
+        unread={@unread}
+        unread_label={@unread_label}
+        icon={@icon}
+        value={@value}
+        inner_block={@inner_block}
+      />
+    </div>
+    """
+  end
+
+  defp row_body(assigns) do
+    ~H"""
+    {render_slot(@icon)}
+    <div class="grow min-w-0">
+      <div :if={@title} class="t">{@title}</div>
+      <div :if={@sub} class="s">{@sub}</div>
+      {render_slot(@inner_block)}
+    </div>
+    {render_slot(@value)}<span
+      :if={@unread}
+      class="size-2 shrink-0 rounded-full bg-[var(--accent)]"
+      role="img"
+      aria-label={@unread_label}
+    ></span>
     """
   end
 

@@ -56,7 +56,9 @@ defmodule LineaUI.Components.Avatar do
     "md" => "size-12",
     "lg" => "size-16",
     "xl" => "size-20",
-    "2xl" => "size-24"
+    "2xl" => "size-24",
+    "26" => "size-[26px]",
+    "30" => "size-[30px]"
   }
 
   @text_sizes %{
@@ -69,7 +71,9 @@ defmodule LineaUI.Components.Avatar do
     "md" => "text-[17px]",
     "lg" => "text-[23px]",
     "xl" => "text-[29px]",
-    "2xl" => "text-[35px]"
+    "2xl" => "text-[35px]",
+    "26" => "text-[10px]",
+    "30" => "text-xs"
   }
 
   @shapes %{
@@ -160,7 +164,9 @@ defmodule LineaUI.Components.Avatar do
       "md" => "size-3.5 border-2",
       "lg" => "m-0.5 size-3.5 border-2",
       "xl" => "m-1 size-4 border-2",
-      "2xl" => "m-1.5 size-4 border-2"
+      "2xl" => "m-1.5 size-4 border-2",
+      "26" => "size-2.5 border",
+      "30" => "size-2.5 border"
     },
     "mask" => %{
       "3xs" => "-m-px size-2 border",
@@ -172,7 +178,9 @@ defmodule LineaUI.Components.Avatar do
       "md" => "-m-0.5 size-3.5 border-2",
       "lg" => "-m-px size-3.5 border-2",
       "xl" => "size-4 border-2",
-      "2xl" => "size-4 border-2"
+      "2xl" => "size-4 border-2",
+      "26" => "-m-px size-2.5 border",
+      "30" => "-m-px size-2.5 border"
     }
   }
 
@@ -224,6 +232,8 @@ defmodule LineaUI.Components.Avatar do
   # The canvas initials for the pixel sizes (24, 32, 44 and 64 are the canvas `sm`, default, `lg`, `xl`).
   @px_text_sizes %{
     "24" => "text-[10px]",
+    "26" => "text-[10px]",
+    "30" => "text-xs",
     "32" => "text-xs",
     "40" => "text-sm",
     "44" => "text-[15px]",
@@ -273,6 +283,8 @@ defmodule LineaUI.Components.Avatar do
     "xl" => "-space-x-[16px]",
     "2xl" => "-space-x-[19px]",
     "24" => "-space-x-[5px]",
+    "26" => "-space-x-[5px]",
+    "30" => "-space-x-[6px]",
     "32" => "-space-x-[6px]",
     "40" => "-space-x-[8px]",
     "44" => "-space-x-[9px]",
@@ -306,9 +318,9 @@ defmodule LineaUI.Components.Avatar do
 
   attr(:size, :string,
     default: "sm",
-    values: ~w(3xs 2xs xs xs-plus sm sm-plus md lg xl 2xl 24 32 40 44 48 64),
+    values: ~w(3xs 2xs xs xs-plus sm sm-plus md lg xl 2xl 24 26 30 32 40 44 48 64),
     doc:
-      "`3xs` is size-6, `2xs` size-7, `xs` size-8, `xs-plus` size-9, `sm` size-10 (default), `md` size-12, `lg` size-16, `xl` size-20, `2xl` size-24. The pixel sizes are aliases: `24` is `3xs`, `32` is `xs`, `40` is `sm`, `48` is `md`, `64` is `lg`."
+      "`3xs` is size-6, `2xs` size-7, `xs` size-8, `xs-plus` size-9, `sm` size-10 (default), `md` size-12, `lg` size-16, `xl` size-20, `2xl` size-24. The pixel sizes are aliases: `24` is `3xs`, `32` is `xs`, `40` is `sm`, `48` is `md`, `64` is `lg`. `30` and `26` are the canvas `sg-av` (30px, 12px initials) and `sg-av sm` (26px, 10px initials), both semibold."
   )
 
   attr(:shape, :string,
@@ -322,6 +334,12 @@ defmodule LineaUI.Components.Avatar do
     default: nil,
     doc:
       "A CSS color for the initials' background (white text), for a person or company that keeps its own color; it wins over `color`."
+  )
+
+  attr(:background, :string,
+    default: nil,
+    doc:
+      "Any CSS `background` for the initials' face (a gradient such as `\"var(--grad)\"`, or a colour), with white text like the canvas `sg-av`; it wins over `tint` and `color`. Put another text colour in `face_class`."
   )
 
   attr(:color, :string,
@@ -449,6 +467,7 @@ defmodule LineaUI.Components.Avatar do
           face_class={@face_class}
           inner_block={@inner_block}
           tint={@tint}
+          background={@background}
           text_size={@text_size}
           variant={@variant}
           color={@color}
@@ -482,6 +501,7 @@ defmodule LineaUI.Components.Avatar do
         face_class={@face_class}
         inner_block={@inner_block}
         tint={@tint}
+        background={@background}
         text_size={@text_size}
         variant={@variant}
         color={@color}
@@ -549,6 +569,25 @@ defmodule LineaUI.Components.Avatar do
       ])
     }>
       {render_slot(@inner_block)}<.plus :if={@inner_block == []} />
+    </div>
+    """
+  end
+
+  defp face(%{background: background} = assigns) when is_binary(background) do
+    ~H"""
+    <div
+      style={"background: #{@background}"}
+      class={
+        merge([
+          "is-initial font-inter font-semibold uppercase text-white",
+          shape(@shape),
+          @text_size,
+          ring(@ring, @ring_color),
+          @face_class
+        ])
+      }
+    >
+      {render_slot(@inner_block) || @initials}
     </div>
     """
   end

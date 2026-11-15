@@ -29,6 +29,21 @@ defmodule LineaUI.Components.Navbar do
   two, such as `navbar_links/1` or a wide `navbar_search/1`), `:end` (the right side) and `:tabs`, which makes the bar two
   rows: the content on top and the tabs (`navbar_tabs/1`) under it.
 
+  ## Your own components in the bar
+
+  The pieces are optional: `:center` and `:end` take any markup, in the same `.sg-nb-end` wrapper, so an app can
+  put a `live_component` (the ⌘K palette, the notifications bell, the account menu) in place of `navbar_search/1`,
+  `navbar_bell/1` and `navbar_user/1` and the bar keeps the same markup around it:
+
+      <.navbar>
+        <.navbar_crumbs items={@crumbs} />
+        <:center><.live_component module={MyAppWeb.PaletteTrigger} id="palette" /></:center>
+        <:end>
+          <.live_component module={MyAppWeb.BellLive} id="bell" user={@user} />
+          <.live_component module={MyAppWeb.AccountMenu} id="me" user={@user} />
+        </:end>
+      </.navbar>
+
   Inside the `:topbar` slot of `shell/1` it is the top of the page:
 
       <.shell nav={...} user={@user} footer="version">

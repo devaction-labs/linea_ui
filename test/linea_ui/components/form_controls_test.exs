@@ -262,4 +262,38 @@ defmodule LineaUI.Components.FormControlsTest do
              )
     end
   end
+
+  test "field as div draws label_hint and label_aside beside the caption" do
+    html =
+      render(~H"""
+      <.field as="div" label="Anexos" label_hint="opcional">
+        <:label_aside><a href="/x" id="aside">Esqueci</a></:label_aside>
+        <p>controls</p>
+      </.field>
+      """)
+
+    assert "justify-between" in classes(html, "span.font-medium")
+    assert LazyHTML.text(find(html, "span.font-medium > span")) =~ "opcional"
+    assert [_] = find(html, "span.font-medium a#aside") |> Enum.to_list()
+  end
+
+  test "field as div without a hint keeps the plain caption" do
+    html = render(~H'<.field as="div" label="Anexos">
+  <p>x</p>
+</.field>')
+    refute "justify-between" in classes(html, "span.font-medium")
+  end
+
+  test "field below sits between the control and the help line" do
+    html =
+      render(~H"""
+      <.field label="Senha" help="Mínimo 8">
+        <:below><i id="bars"></i></:below>
+        <input />
+      </.field>
+      """)
+
+    assert [_] = find(html, "#bars") |> Enum.to_list()
+    assert elem(:binary.match(html, "bars"), 0) < elem(:binary.match(html, "Mínimo 8"), 0)
+  end
 end

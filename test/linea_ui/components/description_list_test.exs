@@ -28,4 +28,25 @@ defmodule LineaUI.Components.DescriptionListTest do
 
     assert LazyHTML.attribute(find(html, "#d"), "data-layout") == ["inline"]
   end
+
+  test "an item takes id, class and style for its dd, and wrapper attrs" do
+    html =
+      render(~H"""
+      <.description_list id="d" cols={1}>
+        <:item label="E-mail" id="mail" class="row" style="overflow-wrap:anywhere" wrapper_id="w">
+          ana@example.com
+        </:item>
+        <:item label="Chave" mono id="key" class="x" wrapper_class="wide">abc</:item>
+        <:item label="Plain">v</:item>
+      </.description_list>
+      """)
+
+    assert LazyHTML.attribute(find(html, "dd#mail"), "style") == ["overflow-wrap:anywhere"]
+    assert classes(html, "dd#mail") == ["row"]
+    assert [_] = find(html, "div#w > dd#mail") |> Enum.to_list()
+    assert "font-mono" in classes(html, "dd#key")
+    assert "x" in classes(html, "dd#key")
+    assert "wide" in classes(html, "#d > div:nth-child(2)")
+    assert LazyHTML.attribute(find(html, "#d > div:nth-child(3)"), "id") == []
+  end
 end

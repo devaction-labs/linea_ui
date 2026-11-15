@@ -213,4 +213,15 @@ defmodule LineaUI.Components.DatePickerTest do
     assert "disabled:opacity-60" in classes(html, "#p-display")
     assert "disabled:cursor-not-allowed" in classes(html, "#p-display")
   end
+
+  test "size sets data-size on the picker, none for md" do
+    assert find(render(~H|<.date_picker id="d" name="a" />|), "#d")
+           |> LazyHTML.attribute("data-size") == []
+
+    assert find(render(~H|<.date_picker id="d" name="a" size="sm" />|), "#d")
+           |> LazyHTML.attribute("data-size") == ["sm"]
+
+    assert find(render(~H|<.date_picker id="d" name="a" size="lg" />|), "#d")
+           |> LazyHTML.attribute("data-size") == ["lg"]
+  end
 end
