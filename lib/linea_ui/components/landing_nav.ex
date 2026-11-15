@@ -437,6 +437,33 @@ defmodule LineaUI.Components.LandingNav do
   end
 
   @doc """
+  One feature of the mega menu: an icon in a box, the title and a line of description.
+  """
+  attr :icon, :string, default: nil, doc: "A Hugeicons name."
+  attr :title, :string, required: true
+  attr :description, :string, default: nil
+  attr :href, :string, default: "#"
+  attr :navigate, :string, default: nil
+  attr :patch, :string, default: nil
+  attr :class, :any, default: nil
+  attr :rest, :global
+
+  def landing_feature(assigns) do
+    assigns =
+      assign_derived(assigns, :classes, [:class], fn -> merge(["sg-lp-feat", assigns.class]) end)
+
+    ~H"""
+    <.item_link href={@href} navigate={@navigate} patch={@patch} class={@classes} {@rest}>
+      <span :if={@icon} class="ic"><.icon name={@icon} class="sg-lp-i" /></span>
+      <span class="col">
+        <b>{@title}</b>
+        <span :if={@description}>{@description}</span>
+      </span>
+    </.item_link>
+    """
+  end
+
+  @doc """
   The highlighted panel beside the features: an eyebrow, the title, the text (inner content), an optional thumbnail
   and a link.
   """
