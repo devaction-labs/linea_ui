@@ -60,11 +60,17 @@ export const shownChoice = (choice, system, prefersDark) => (choice !== "system"
 /** Where the named theme (`data-theme`, the palette) is kept: apart from `theme`, the light / dark choice. */
 export const PALETTE_KEY = "linea-theme"
 
-/** A palette id is a `data-theme` value other than the light and dark the mode uses. */
-export const paletteId = (value) => (typeof value === "string" && /^[a-z][a-z0-9-]*$/.test(value) && !THEMES.includes(value) ? value : null)
+/** A palette id is a `data-theme` value other than the light and dark the mode uses (as `LineaUI.Theme.seed/2`). */
+export const paletteId = (value) => (typeof value === "string" && /^[a-z][a-z0-9-]*$/.test(value) && value !== "light" && value !== "dark" ? value : null)
 
 /** The palette to show: the stored one, else the app's default, else none (the kit's own colors). */
 export const paletteChoice = (stored, fallback) => paletteId(stored) ?? paletteId(fallback)
+
+/** The palette in use: the one on `<html>` (it holds even when storage fails), else the stored one, else the default. */
+export const paletteNow = (applied, stored, fallback) => paletteId(applied) ?? paletteChoice(stored, fallback)
+
+/** The option of a radio group that takes Tab: the chosen one, else the first, so the group is always reachable. */
+export const tabStop = (values, current) => Math.max(values.indexOf(current), 0)
 
 /** The next option for an arrow key among `count` options (wraps), or `null` for any other key. */
 export const arrowTarget = (key, index, count) =>

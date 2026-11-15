@@ -65,7 +65,10 @@ defmodule LineaUI.Components.ThemePicker do
         assigns.default || Application.get_env(:linea_ui, :theme) || "linea"
       end)
 
-    assigns = assign(assigns, :current_label, label_of(assigns.options, assigns.current))
+    assigns =
+      assigns
+      |> assign(:current_label, label_of(assigns.options, assigns.current))
+      |> assign(:tab_stop, tab_stop(assigns.options, assigns.current))
 
     ~H"""
     <div
@@ -116,7 +119,7 @@ defmodule LineaUI.Components.ThemePicker do
           role="radio"
           class="sg-tp-card"
           aria-checked={bool(option.id == @current)}
-          tabindex={if option.id == @current, do: "0", else: "-1"}
+          tabindex={if option.id == @tab_stop, do: "0", else: "-1"}
           data-theme-value={option.id}
           data-label={option.label}
           phx-mounted='[["ignore_attrs",{"attrs":["aria-checked","tabindex"]}]]'
@@ -162,6 +165,13 @@ defmodule LineaUI.Components.ThemePicker do
         id = to_string(id)
         %{id: id, label: (Theme.get(id) || %{label: label(id)}).label}
     end)
+  end
+
+  # the chosen option takes Tab, else the first, so the group is always reachable
+  defp tab_stop(options, current) do
+    if Enum.any?(options, &(&1.id == current)),
+      do: current,
+      else: options |> List.first(%{}) |> Map.get(:id)
   end
 
   defp label(id), do: id |> String.replace("-", " ") |> String.capitalize()

@@ -1,6 +1,6 @@
 import test from "node:test"
 import assert from "node:assert/strict"
-import {PALETTE_KEY, paletteChoice, paletteId, arrowTarget, breakpointName, choiceIsDark, menuShortcut, shownChoice, themeChoice, clockText, initialCollapsed, initialOpen, isMobile, modeOn, modeValue, place, railValue, side, smAndUp, storedCollapsed, storedValue, tabChoice, tabKey, tipSpot, xlAndUp} from "./shell_logic.js"
+import {PALETTE_KEY, paletteChoice, paletteId, paletteNow, tabStop, arrowTarget, breakpointName, choiceIsDark, menuShortcut, shownChoice, themeChoice, clockText, initialCollapsed, initialOpen, isMobile, modeOn, modeValue, place, railValue, side, smAndUp, storedCollapsed, storedValue, tabChoice, tabKey, tipSpot, xlAndUp} from "./shell_logic.js"
 
 test("a right sidebar keeps its chosen panel under a key of its id", () => {
   assert.equal(tabKey("right-sidebar"), "linea-right-tab:right-sidebar")
@@ -158,4 +158,18 @@ test("the named theme is kept apart from the light / dark choice and falls back 
   assert.equal(paletteChoice(null, "sand"), "sand")
   assert.equal(paletteChoice("dark", "sand"), "sand")
   assert.equal(paletteChoice(null, ""), null)
+  assert.equal(paletteId("system"), "system")
+})
+
+test("the palette in use is the one on <html>, so a failed write does not undo a choice", () => {
+  assert.equal(paletteNow("forest", "ocean", "sand"), "forest")
+  assert.equal(paletteNow(undefined, "ocean", "sand"), "ocean")
+  assert.equal(paletteNow("dark", null, "sand"), "sand")
+  assert.equal(paletteNow(null, null, null), null)
+})
+
+test("a radio group always keeps one option in the tab order", () => {
+  assert.equal(tabStop(["ocean", "forest"], "forest"), 1)
+  assert.equal(tabStop(["ocean", "forest"], "linea"), 0)
+  assert.equal(tabStop(["ocean", "forest"], null), 0)
 })

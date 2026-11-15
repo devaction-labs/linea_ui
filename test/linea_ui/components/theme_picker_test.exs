@@ -80,6 +80,13 @@ defmodule LineaUI.Components.ThemePickerTest do
       assert attr_of(html, "#g [role=radio][tabindex='0']", "data-theme-value") == ["forest"]
       assert attr_of(html, "#g .sg-tp-prev", "data-theme") |> Enum.take(2) == ~w(linea graphite)
     end
+
+    test "the first option takes Tab when the current theme is not among them" do
+      html = render(~H|<.theme_picker id="g" variant="grid" themes={~w(ocean forest)} />|)
+
+      assert attr_of(html, "#g [role=radio]", "tabindex") == ["0", "-1"]
+      assert attr_of(html, "#g [role=radio]", "aria-checked") == ["false", "false"]
+    end
   end
 
   describe "linea_logo" do
@@ -90,7 +97,11 @@ defmodule LineaUI.Components.ThemePickerTest do
       assert attr_of(html, "svg.sg-logo-mark", "width") == ["32"]
       assert find(html, "svg path") |> Enum.count() == 3
       assert "accent" in classes(html, "path.drop")
-      assert attr_of(html, "path.ring", "stroke") == ["url(#linea-logo-r)"]
+      assert [ring] = attr_of(html, "path.ring", "stroke")
+      assert ring =~ ~r/^url\(#linea-logo-\d+-r\)$/
+
+      ids = render(~H"<.linea_logo /><.linea_logo />") |> attr_of("linearGradient", "id")
+      assert length(Enum.uniq(ids)) == 4
       assert find(html, ".sg-logo-word") |> Enum.empty?()
     end
 

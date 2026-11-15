@@ -8,13 +8,16 @@ defmodule LineaUI.Components.Logo do
       <.linea_logo size={24} wordmark />
       <.linea_logo id="hero-logo" size={96} tone="mono" />
 
-  Each logo's gradients are named after its `id`; give one when the page has more than one logo with different
-  tones.
+  Each logo's gradients are named after its `id`, or a number of its own when it has none, so logos in different
+  light and dark blocks never borrow each other's gradient.
   """
 
   use LineaUI.Component
 
-  attr :id, :string, default: "linea-logo", doc: "Names the gradients."
+  attr :id, :string,
+    default: nil,
+    doc: "Names the gradients; without one each logo gets its own (`linea-logo-<n>`)."
+
   attr :size, :integer, default: 32, doc: "The side of the mark, in px."
 
   attr :tone, :string,
@@ -28,6 +31,11 @@ defmodule LineaUI.Components.Logo do
   attr :rest, :global
 
   def linea_logo(assigns) do
+    assigns =
+      assign_new(assigns, :gid, fn ->
+        assigns.id || "linea-logo-#{System.unique_integer([:positive])}"
+      end)
+
     ~H"""
     <span class={merge(["sg-logo", @class])} {@rest}>
       <svg
@@ -40,7 +48,7 @@ defmodule LineaUI.Components.Logo do
       >
         <defs>
           <linearGradient
-            id={"#{@id}-r"}
+            id={"#{@gid}-r"}
             x1="10"
             y1="6"
             x2="56"
@@ -51,7 +59,7 @@ defmodule LineaUI.Components.Logo do
             <stop offset="1" style="stop-color:var(--logo-ring-1,var(--faint))" />
           </linearGradient>
           <linearGradient
-            id={"#{@id}-b"}
+            id={"#{@gid}-b"}
             x1="14"
             y1="12"
             x2="50"
@@ -66,11 +74,11 @@ defmodule LineaUI.Components.Logo do
           class="ring"
           d="M27.24 5.15Q32 2.4 36.76 5.15L52.87 14.45Q57.63 17.2 57.63 22.7L57.63 41.3Q57.63 46.8 52.87 49.55L36.76 58.85Q32 61.6 27.24 58.85L11.13 49.55Q6.37 46.8 6.37 41.3L6.37 22.7Q6.37 17.2 11.13 14.45Z"
           fill="none"
-          stroke={"url(##{@id}-r)"}
+          stroke={"url(##{@gid}-r)"}
         />
         <path
           d="M27.67 11.9Q32 9.4 36.33 11.9L47.24 18.2Q51.57 20.7 51.57 25.7L51.57 38.3Q51.57 43.3 47.24 45.8L36.33 52.1Q32 54.6 27.67 52.1L16.76 45.8Q12.43 43.3 12.43 38.3L12.43 25.7Q12.43 20.7 16.76 18.2Z"
-          fill={"url(##{@id}-b)"}
+          fill={"url(##{@gid}-b)"}
         />
         <path
           class={["drop", @tone]}

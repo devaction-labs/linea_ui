@@ -423,11 +423,15 @@ defmodule LineaUI.Theme do
     {_l, c, h} = Color.oklch(accent)
     dark = Color.to_hex({0.2, min(c, 0.06), h})
 
-    cond do
-      Color.contrast("#ffffff", accent) >= 4.5 -> "#ffffff"
-      Color.contrast(dark, accent) >= Color.contrast("#ffffff", accent) -> dark
-      true -> "#ffffff"
-    end
+    if Color.contrast("#ffffff", accent) >= 4.5,
+      do: "#ffffff",
+      # white or black always reaches 4.5:1 on any color; the accent's own dark goes first when it does too
+      else: Enum.max_by([dark, "#000000", "#ffffff"], &on_score(&1, accent))
+  end
+
+  defp on_score(text, accent) do
+    ratio = Color.contrast(text, accent)
+    if ratio >= 4.5 and text != "#000000", do: ratio + 100, else: ratio
   end
 
   # a text color moved in lightness until it reads on `surface` (4.5:1)
@@ -556,10 +560,14 @@ defmodule LineaUI.Theme do
     [
       ".dark#{theme}",
       "#{@dark} #{theme}:not(#{@dark} #{light} #{theme}:not(#{@dark} #{light} #{@dark} #{theme}))",
-      "#{theme} #{@dark}"
+      # a dark block of this theme, not one inside another palette nested in it
+      "#{theme} #{@dark}:not(#{theme} #{other(id)} *)"
     ]
     |> Enum.join(",")
   end
+
+  defp other(id),
+    do: ~s|[data-theme]:not([data-theme="#{id}"],[data-theme="light"],[data-theme="dark"])|
 
   defp declarations(tokens),
     do: Enum.map_join(tokens, fn {name, value} -> "--#{name}:#{value};" end)

@@ -75,6 +75,18 @@ defmodule LineaUI.ThemeTest do
       end
     end
 
+    test "the text on any accent reaches 4.5:1" do
+      for accent <- ~w(#777777 #808080 #0d8f91 #ff0000 #ffff00 #00ff00 #1e90ff #ff69b4),
+          scheme <- [:light, :dark] do
+        t =
+          Theme.seed("x", accent: accent, dark_accent: accent)
+          |> Theme.tokens()
+          |> Map.fetch!(scheme)
+
+        assert Color.contrast(get(t, "on-accent"), get(t, "accent")) >= 4.5, accent
+      end
+    end
+
     test "linea reproduces the kit's own colors" do
       %{light: light, dark: dark} = Theme.tokens(hd(Theme.themes()))
 
@@ -111,7 +123,7 @@ defmodule LineaUI.ThemeTest do
       assert light =~ ~r/^\[data-theme="acme"\]\{color-scheme:light;--canvas:#/
 
       assert dark =~
-               ~S|.dark[data-theme="acme"],:is(.dark,[data-theme="dark"]) [data-theme="acme"]:not(:is(.dark,[data-theme="dark"]) [data-theme="light"] [data-theme="acme"]:not(:is(.dark,[data-theme="dark"]) [data-theme="light"] :is(.dark,[data-theme="dark"]) [data-theme="acme"])),[data-theme="acme"] :is(.dark,[data-theme="dark"]){color-scheme:dark;|
+               ~S|.dark[data-theme="acme"],:is(.dark,[data-theme="dark"]) [data-theme="acme"]:not(:is(.dark,[data-theme="dark"]) [data-theme="light"] [data-theme="acme"]:not(:is(.dark,[data-theme="dark"]) [data-theme="light"] :is(.dark,[data-theme="dark"]) [data-theme="acme"])),[data-theme="acme"] :is(.dark,[data-theme="dark"]):not([data-theme="acme"] [data-theme]:not([data-theme="acme"],[data-theme="light"],[data-theme="dark"]) *){color-scheme:dark;|
 
       assert light =~ "--accent:#7c3aed;"
       assert light =~ "--color-primary:#7c3aed;"

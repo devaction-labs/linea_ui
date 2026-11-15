@@ -20,7 +20,9 @@ import {
   modeOn,
   modeValue,
   paletteChoice,
+  paletteNow,
   shownChoice,
+  tabStop,
   themeChoice,
 } from "../lib/shell_logic.js"
 
@@ -196,8 +198,8 @@ const themeSwitch = {
 
 const PALETTE_OPTIONS = "[data-theme-value]"
 
-/** The palette on `<html>`: `data-theme`, unless it holds the light / dark of the mode. */
-const palette = (fallback) => paletteChoice(read(PALETTE_KEY), fallback)
+/** The palette in use: `<html data-theme>` (unless it holds the light / dark of the mode), else stored, else `fallback`. */
+const palette = (fallback) => paletteNow(root().dataset.theme, read(PALETTE_KEY), fallback)
 
 /** Applies a palette to `<html>` (none removes it), stores it and tells every picker. */
 const choosePalette = (value) => {
@@ -232,6 +234,9 @@ const themePicker = {
     this.el.addEventListener("click", this.onClick)
     this.el.addEventListener("keydown", this.onKey)
     window.addEventListener("change:theme", this.onChange)
+    // without theme_script (or with another default there), the picker's default is still put on the page
+    const start = paletteChoice(read(PALETTE_KEY), this.el.dataset.default)
+    if (!paletteNow(root().dataset.theme, null, null) && start) root().dataset.theme = start
     this.sync()
   },
 
@@ -248,10 +253,12 @@ const themePicker = {
   sync() {
     const current = palette(this.el.dataset.default) || this.el.dataset.base
     let label = null
-    this.el.querySelectorAll(PALETTE_OPTIONS).forEach((option) => {
+    const options = [...this.el.querySelectorAll(PALETTE_OPTIONS)]
+    const stop = tabStop(options.map((option) => option.dataset.themeValue), current)
+    options.forEach((option, index) => {
       const on = option.dataset.themeValue === current
       option.setAttribute("aria-checked", String(on))
-      if (option.getAttribute("role") === "radio") option.tabIndex = on ? 0 : -1
+      if (option.getAttribute("role") === "radio") option.tabIndex = index === stop ? 0 : -1
       if (on) label = option.dataset.label
     })
     label && this.el.querySelectorAll("[data-theme-current]").forEach((el) => (el.textContent = label))
