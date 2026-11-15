@@ -168,7 +168,7 @@ defmodule LineaUI.Components.DatePicker do
   attr :size, :string,
     default: "md",
     values: ~w(sm md lg),
-    doc: "The height of the input, as an input of that size: `sm` 32px, `md` 40px, `lg` 48px."
+    doc: "The height of the input, as an input of that size: `sm` 32px, `md` 36px, `lg` 48px."
 
   attr :disabled, :boolean, default: false
   attr :on_change, :string, default: nil

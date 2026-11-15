@@ -3,7 +3,7 @@ defmodule LineaUI.Components.Sidebar.Nav do
   # The menu data of the sidebar. Kept apart from `LineaUI.Components.Sidebar` because `use LineaUI`
   # imports that module into the host app, and these helpers must not leak into it.
 
-  @formats ~w(sections rail tree)
+  @formats ~w(sections rail tree nested)
   @palette ~w(blue green rose violet orange ink)
 
   @icons %{
@@ -228,7 +228,7 @@ defmodule LineaUI.Components.Sidebar.Nav do
     deep = active or Enum.any?(children, &(&1.active or &1.deep))
 
     collapsible =
-      format == "tree" and children != [] and not disabled?(item) and
+      format in ~w(tree nested) and children != [] and not disabled?(item) and
         Map.get(item, :collapsible, true) != false
 
     %{
@@ -312,8 +312,20 @@ defmodule LineaUI.Components.Sidebar.Nav do
   def link_attrs(%{href: to}) when is_binary(to), do: %{href: to}
   def link_attrs(_entry), do: %{href: "#"}
 
-  defp icon(nil), do: nil
-  defp icon(name) when is_binary(name), do: Map.get(@icons, name, name)
+  @doc false
+  def icon(nil), do: nil
+  def icon(name) when is_binary(name), do: Map.get(@icons, name, name)
+
+  @doc """
+  The link of an item of the team or user menu: `navigate`, `patch` or `href`, with `method` for a non-GET
+  link (log out); `nil` when it has none (the item is a button, `click` is its event).
+  """
+  def menu_link(item) do
+    case link_attrs(item) do
+      %{href: "#"} -> %{}
+      link -> if item[:method], do: Map.put(link, :method, item[:method]), else: link
+    end
+  end
 
   defp color(nil), do: {nil, nil}
   defp color(name) when name in @palette, do: {name, nil}

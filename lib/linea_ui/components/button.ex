@@ -18,9 +18,9 @@ defmodule LineaUI.Components.Button do
 
       <.button color="primary" loading={@saving}>{if @saving, do: "Saving…", else: "Save"}</.button>
 
-  The canvas button is 36px high (`md`). In a row with inputs, selects, pillboxes and date pickers, which
-  are 40px, pass `control` and every control of the same `size` gets the same height (`sm` 32px, `md` 40px,
-  `lg` 48px):
+  The canvas button matches an `md` input (36px), but its `lg` is 40px while an `lg` field is 48px. In a row
+  with inputs, selects, pillboxes and date pickers, pass `control` and every control of the same `size` gets
+  the same height (`sm` 32px, `md` 36px, `lg` 48px):
 
       <.button control>Filter</.button>
       <.input name="q" /> <.button control color="primary">Search</.button>
@@ -73,7 +73,7 @@ defmodule LineaUI.Components.Button do
   attr(:control, :boolean,
     default: false,
     doc:
-      "Opt-in: the button takes the height of the form controls of its `size` (`sm` 32px, `md` 40px, `lg` 48px, tokens `--ctl-h-sm|md|lg`) instead of the canvas button's 36px, so it lines up with an input, select, pillbox or date picker of the same `size` in a filter bar. Not for `icon` buttons."
+      "Opt-in: the button takes the height of the form controls of its `size` (`sm` 32px, `md` 36px, `lg` 48px, tokens `--ctl-h-sm|md|lg`) so it lines up with an input, select, pillbox or date picker of the same `size` in a filter bar. Not for `icon` buttons."
   )
 
   attr(:type, :string, default: "button")

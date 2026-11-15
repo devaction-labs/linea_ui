@@ -38,7 +38,7 @@ defmodule LineaUI.Components.Pillbox do
 
   ## Size
 
-  `size` (`sm` 32px, `md` 40px, `lg` 48px) is the height of an input of that size, so a row of fields lines up.
+  `size` (`sm` 32px, `md` 36px, `lg` 48px) is the height of an input of that size, so a row of fields lines up.
 
   ## Panel width
 
@@ -129,7 +129,7 @@ defmodule LineaUI.Components.Pillbox do
   attr :size, :string,
     default: "md",
     values: ~w(sm md lg),
-    doc: "The height of the field: `sm` 32px, `md` 40px, `lg` 48px, as an input of that size."
+    doc: "The height of the field: `sm` 32px, `md` 36px, `lg` 48px, as an input of that size."
 
   attr :panel_min_width, :string,
     default: nil,

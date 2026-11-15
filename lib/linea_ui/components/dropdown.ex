@@ -147,7 +147,7 @@ defmodule LineaUI.Components.Dropdown do
   attr :control, :boolean,
     default: false,
     doc:
-      "Opt-in: the `label` button, or both halves of a split button, take the height of the form controls (40px, as an `md` input) instead of the canvas button's 36px, so a filter bar row lines up. See `button/1`."
+      "Opt-in: the `label` button, or both halves of a split button, take the height of the form controls of their size (`sm` 32px, `md` 36px, `lg` 48px), so a filter bar row lines up. See `button/1`."
 
   attr :open, :boolean, default: false
 
@@ -230,7 +230,7 @@ defmodule LineaUI.Components.Dropdown do
         color={@color}
         control={@control}
         shape={@shape || "rounded"}
-        class={merge(["rounded-l-full! rounded-r-[4px]!", action[:class]])}
+        class={merge(["rounded-r-none!", action[:class]])}
         {Map.drop(action, [:inner_block, :__slot__, :class])}
       >
         {render_slot(action)}
@@ -241,7 +241,7 @@ defmodule LineaUI.Components.Dropdown do
           color={@color}
           control={@control}
           shape="square"
-          class="rounded-l-[4px]! rounded-r-full!"
+          class={["rounded-l-none!", @shape == "pill" && "rounded-r-full!"]}
           id={"#{@id}-button"}
           aria-label={@toggle_label}
         >
