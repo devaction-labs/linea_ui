@@ -560,8 +560,10 @@ defmodule LineaUI.Theme do
     [
       ".dark#{theme}",
       "#{@dark} #{theme}:not(#{@dark} #{light} #{theme}:not(#{@dark} #{light} #{@dark} #{theme}))",
-      # a dark block of this theme, not one inside another palette nested in it
-      "#{theme} #{@dark}:not(#{theme} #{other(id)} *)"
+      # a dark block of this theme: not another palette itself, nor inside one nested in it (one more level
+      # back: this theme again inside another palette)
+      "#{theme} #{@dark}:not(#{other(id)}):not(#{theme} #{other(id)} *)",
+      "#{other(id)} #{theme} #{@dark}:not(#{other(id)}):not(#{other(id)} #{theme} #{other(id)} *)"
     ]
     |> Enum.join(",")
   end
