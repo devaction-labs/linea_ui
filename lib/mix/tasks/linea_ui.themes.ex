@@ -19,9 +19,15 @@ defmodule Mix.Tasks.LineaUi.Themes do
     css = LineaUI.Theme.stylesheet()
 
     cond do
-      opts[:check] && File.read(@path) == {:ok, css} -> Mix.shell().info("#{@path} is up to date")
-      opts[:check] -> Mix.raise("#{@path} is out of date: run mix linea_ui.themes")
-      true -> File.write!(@path, css) && Mix.shell().info("wrote #{@path}")
+      opts[:check] && File.read(@path) == {:ok, css} ->
+        Mix.shell().info("#{@path} is up to date")
+
+      opts[:check] ->
+        Mix.raise("#{@path} is out of date: run mix linea_ui.themes")
+
+      true ->
+        File.write!(@path, css)
+        Mix.shell().info("wrote #{@path}")
     end
   end
 end

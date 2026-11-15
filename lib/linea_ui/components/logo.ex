@@ -5,7 +5,7 @@ defmodule LineaUI.Components.Logo do
   `theme_picker/1`. `tone="mono"` draws the drop in light silver instead, as the Hub does on black.
 
       <.linea_logo />
-      <.linea_logo size={24} wordmark />
+      <.linea_logo size={28} wordmark />
       <.linea_logo id="hero-logo" size={96} tone="mono" />
 
   Each logo's gradients are named after its `id`, or a number of its own when it has none, so logos in different
@@ -26,6 +26,12 @@ defmodule LineaUI.Components.Logo do
     doc: "The drop: the theme's accent or silver."
 
   attr :wordmark, :boolean, default: false, doc: "Adds \"LineaUI\" after the mark."
+
+  attr :word_size, :integer,
+    default: nil,
+    doc:
+      "The size of the word, in px. Without it the word follows the mark: 0.6 × `size`, at most 30px (17px beside a 28px mark, 24px beside 40px, 30px beside 56px)."
+
   attr :label, :string, default: "LineaUI", doc: "The accessible name."
   attr :class, :any, default: nil
   attr :rest, :global
@@ -34,6 +40,9 @@ defmodule LineaUI.Components.Logo do
     assigns =
       assign_new(assigns, :gid, fn ->
         assigns.id || "linea-logo-#{System.unique_integer([:positive])}"
+      end)
+      |> assign_derived(:word_px, [:size, :word_size], fn ->
+        word_px(assigns.word_size, assigns.size)
       end)
 
     ~H"""
@@ -85,8 +94,16 @@ defmodule LineaUI.Components.Logo do
           d="M34.2 15.2C33.4 21.6 21.4 27.2 21.4 37.6A11 11 0 0 0 43.4 37.6C43.4 31.4 36.4 28.6 34.7 23.4C33.9 20.9 33.9 18 34.2 15.2Z"
         />
       </svg>
-      <span :if={@wordmark} class="sg-logo-word" aria-hidden="true">Linea<b>UI</b></span>
+      <span
+        :if={@wordmark}
+        class="sg-logo-word"
+        style={"font-size:#{@word_px}px"}
+        aria-hidden="true"
+      >Linea<b>UI</b></span>
     </span>
     """
   end
+
+  defp word_px(nil, size), do: min(round(size * 0.6), 30)
+  defp word_px(word_size, _size), do: word_size
 end

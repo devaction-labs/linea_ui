@@ -113,6 +113,17 @@ defmodule LineaUI.Components.ThemePickerTest do
       assert attr_of(html, "linearGradient", "id") == ["hero-r", "hero-b"]
       assert texts(html, ".sg-logo-word") == ["LineaUI"]
     end
+
+    test "the word follows the mark like the canvas, or takes word_size" do
+      word = fn html -> attr_of(html, ".sg-logo-word", "style") end
+      assert word.(render(~H|<.linea_logo size={28} wordmark />|)) == ["font-size:17px"]
+      assert word.(render(~H|<.linea_logo size={40} wordmark />|)) == ["font-size:24px"]
+      assert word.(render(~H|<.linea_logo size={56} wordmark />|)) == ["font-size:30px"]
+      assert word.(render(~H|<.linea_logo size={96} wordmark />|)) == ["font-size:30px"]
+
+      html = render(~H|<.linea_logo size={28} word_size={20} wordmark />|)
+      assert attr_of(html, ".sg-logo-word", "style") == ["font-size:20px"]
+    end
   end
 
   describe "theme_script" do
