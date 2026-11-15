@@ -142,7 +142,11 @@ defmodule LineaUI.Components.ThemePicker do
 
   defp palette_glyph(assigns) do
     ~H"""
-    <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21.5a9.5 9.5 0 1 1 9.5-9.5c0 2.2-1.8 3.4-3.6 3.4h-2.1a1.9 1.9 0 0 0-1.4 3.2c.5.6.3 2.9-2.4 2.9z" /><circle cx="7.6" cy="11.3" r="1.2" /><circle cx="10.4" cy="7.4" r="1.2" /><circle cx="15.2" cy="7.6" r="1.2" /></svg>
+    <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21.5a9.5 9.5 0 1 1 9.5-9.5c0 2.2-1.8 3.4-3.6 3.4h-2.1a1.9 1.9 0 0 0-1.4 3.2c.5.6.3 2.9-2.4 2.9z" /><circle
+      cx="7.6"
+      cy="11.3"
+      r="1.2"
+    /><circle cx="10.4" cy="7.4" r="1.2" /><circle cx="15.2" cy="7.6" r="1.2" /></svg>
     """
   end
 

@@ -2396,7 +2396,10 @@ defmodule LineaUI.Components.AppShell do
   attr :rest, :global
 
   def theme_script(assigns) do
-    assigns = assign_new(assigns, :palette, fn -> assigns.theme || Application.get_env(:linea_ui, :theme) end)
+    assigns =
+      assign_new(assigns, :palette, fn ->
+        assigns.theme || Application.get_env(:linea_ui, :theme)
+      end)
 
     ~H"""
     <script phx-no-curly-interpolation data-theme-default={@palette} {@rest}>

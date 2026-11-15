@@ -532,7 +532,7 @@ defmodule LineaUI.Theme do
 
   @doc """
   The CSS of a theme: its light version on `[data-theme="id"]` and its dark one where that meets the `dark` class
-  (on the same element, above it or under it).
+  (on the same element, above it or under it) or a `data-theme="dark"` block (above or under it).
   """
   @spec css(map()) :: String.t()
   def css(seed) do
@@ -541,7 +541,7 @@ defmodule LineaUI.Theme do
 
     """
     [data-theme="#{id}"]{color-scheme:light;#{declarations(light)}}
-    .dark[data-theme="#{id}"],.dark [data-theme="#{id}"],[data-theme="#{id}"] .dark{color-scheme:dark;#{declarations(dark)}}
+    .dark[data-theme="#{id}"],:is(.dark,[data-theme="dark"]) [data-theme="#{id}"],[data-theme="#{id}"] :is(.dark,[data-theme="dark"]){color-scheme:dark;#{declarations(dark)}}
     """
   end
 

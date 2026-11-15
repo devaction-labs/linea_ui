@@ -39,11 +39,25 @@ defmodule LineaUI.Components.Logo do
         class={["sg-logo-mark", @size < 24 && "small"]}
       >
         <defs>
-          <linearGradient id={"#{@id}-r"} x1="10" y1="6" x2="56" y2="58" gradientUnits="userSpaceOnUse">
+          <linearGradient
+            id={"#{@id}-r"}
+            x1="10"
+            y1="6"
+            x2="56"
+            y2="58"
+            gradientUnits="userSpaceOnUse"
+          >
             <stop style="stop-color:var(--logo-ring-0,var(--ink))" />
             <stop offset="1" style="stop-color:var(--logo-ring-1,var(--faint))" />
           </linearGradient>
-          <linearGradient id={"#{@id}-b"} x1="14" y1="12" x2="50" y2="54" gradientUnits="userSpaceOnUse">
+          <linearGradient
+            id={"#{@id}-b"}
+            x1="14"
+            y1="12"
+            x2="50"
+            y2="54"
+            gradientUnits="userSpaceOnUse"
+          >
             <stop style="stop-color:var(--logo-body-0,#262a36)" />
             <stop offset="1" style="stop-color:var(--logo-body-1,#020209)" />
           </linearGradient>

@@ -111,7 +111,7 @@ defmodule LineaUI.ThemeTest do
       assert light =~ ~r/^\[data-theme="acme"\]\{color-scheme:light;--canvas:#/
 
       assert dark =~
-               ~s(.dark[data-theme="acme"],.dark [data-theme="acme"],[data-theme="acme"] .dark{color-scheme:dark;)
+               ~S|.dark[data-theme="acme"],:is(.dark,[data-theme="dark"]) [data-theme="acme"],[data-theme="acme"] :is(.dark,[data-theme="dark"]){color-scheme:dark;|
 
       assert light =~ "--accent:#7c3aed;"
       assert light =~ "--color-primary:#7c3aed;"
