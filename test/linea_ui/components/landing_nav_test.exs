@@ -216,5 +216,14 @@ defmodule LineaUI.Components.LandingNavTest do
       assert attr_of(html, ".sg-lp-cards", "style") == ["--n:2"]
       assert count(html, ".sg-lp-prod .pv") == 0
     end
+
+    test "accent gives a card its own color, and mock draws an app screen" do
+      html = render(~H|<.landing_product title="A" accent="#2563eb" mock />|)
+
+      assert attr_of(html, ".sg-lp-prod", "style") == ["--accent:#2563eb;--accent-ink:#2563eb"]
+      assert count(html, ".pv.mock .top") == 1
+      assert count(html, ".pv.mock .row") == 4
+      assert render(~H|<.landing_product title="A" />|) |> attr_of(".sg-lp-prod", "style") == []
+    end
   end
 end

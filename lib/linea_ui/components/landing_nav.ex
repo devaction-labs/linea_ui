@@ -389,8 +389,9 @@ defmodule LineaUI.Components.LandingNav do
   A product card of `landing_mega variant="cards"`: the product's logo and name, a large title, a link with an
   arrow and a preview of the product that runs off the bottom of the card. The whole card is the link.
 
-  `tone` is `default` (the sunken surface), `tint` (a soft wash of the accent) or `dark` (a near-black card, the
-  same in light and dark pages). The preview is the `:preview` slot (an `<img>` of the product, say) or, with
+  `tone` is `default` (a soft glow of the accent from a corner), `tint` (a wash of the accent under thin diagonal
+  lines) or `dark` (a near-black card, the same in light and dark pages); `accent` gives the card a color of its own
+  (each product its brand color, as laravel.com does). The preview is the `:preview` slot (an `<img>` of the product, say) or, with
   `mock`, a drawn placeholder of an app screen. The logo is a Hugeicons name (`logo`) or the `:logo` slot.
   """
   attr :title, :string, required: true
@@ -398,6 +399,10 @@ defmodule LineaUI.Components.LandingNav do
   attr :logo, :string, default: nil, doc: "A Hugeicons name for the logo tile."
   attr :link_label, :string, default: nil
   attr :tone, :string, default: "default", values: ~w(default tint dark)
+
+  attr :accent, :string,
+    default: nil,
+    doc: "The card's own accent (a CSS color): the link, the logo and the wash take it."
 
   attr :mock, :boolean,
     default: false,
@@ -418,7 +423,14 @@ defmodule LineaUI.Components.LandingNav do
       end)
 
     ~H"""
-    <.item_link href={@href} navigate={@navigate} patch={@patch} class={@classes} {@rest}>
+    <.item_link
+      href={@href}
+      navigate={@navigate}
+      patch={@patch}
+      class={@classes}
+      style={@accent && "--accent:#{@accent};--accent-ink:#{@accent}"}
+      {@rest}
+    >
       <span :if={@name || @logo || @mark != []} class="hd">
         <span :if={@mark != []} class="mk">{render_slot(@mark)}</span>
         <span :if={@mark == [] && @logo} class="lg"><.icon name={@logo} class="sg-lp-i" /></span>
@@ -430,7 +442,12 @@ defmodule LineaUI.Components.LandingNav do
       </span>
       <span :if={@preview != []} class="pv">{render_slot(@preview)}</span>
       <span :if={@preview == [] && @mock} class="pv mock" aria-hidden="true">
-        <i class="bar"></i><i class="side"></i><i class="r1"></i><i class="r2"></i><i class="r3"></i>
+        <span class="top"><i class="logo"></i><i class="crumb"></i><i class="crumb s"></i><i class="chip"></i></span>
+        <span class="tabs"><i class="on"></i><i></i><i></i><i></i><i></i></span>
+        <span class="row hi"><i class="av"></i><i class="ln"></i><i class="tag"></i></span>
+        <span class="row"><i class="dot"></i><i class="ln"></i><i class="ln s"></i></span>
+        <span class="row"><i class="dot"></i><i class="ln"></i><i class="ln s"></i></span>
+        <span class="row"><i class="dot"></i><i class="ln"></i><i class="ln s"></i></span>
       </span>
     </.item_link>
     """

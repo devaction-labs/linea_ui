@@ -79,18 +79,33 @@
 .sg-lp-prod .mk :is(img,svg){width:24px;height:24px}
 .sg-lp-prod .lg :is(svg,[class*="huge-"]){width:14px;height:14px}
 .sg-lp-prod .t{max-width:24ch;font:500 20px/26px var(--sans);letter-spacing:-.02em;color:var(--ink)}
-.sg-lp-prod .go{display:inline-flex;align-items:center;gap:4px;font:500 13.5px/20px var(--sans);color:var(--accent-ink,var(--accent))}
+.sg-lp-prod .go{display:inline-flex;align-items:center;gap:4px;font:500 13.5px/20px var(--sans);color:color-mix(in oklab,var(--accent-ink,var(--accent)) 78%,var(--ink))}
 .sg-lp-prod .go :is(svg,[class*="huge-"]){width:14px;height:14px;transition:transform .15s}
 .sg-lp-prod:hover .go :is(svg,[class*="huge-"]){transform:translateX(2px)}
-.sg-lp-prod .pv{position:relative;display:block;margin-top:auto;height:124px;border-radius:10px 10px 0 0;overflow:hidden;background:var(--panel);box-shadow:0 0 0 1px var(--line),0 10px 24px -14px rgb(0 0 0/.25);transition:transform .2s}
+.sg-lp-prod .pv{position:relative;display:block;margin:auto -20px 0 0;height:136px;border-radius:10px 0 0 0;overflow:hidden;background:var(--panel);box-shadow:0 0 0 1px var(--line),0 12px 28px -14px rgb(0 0 0/.28);transition:transform .2s}
 .sg-lp-prod:hover .pv{transform:translateY(-3px)}
 .sg-lp-prod .pv :is(img,video){display:block;width:100%;height:100%;object-fit:cover;object-position:top left}
-.sg-lp-prod .pv.mock i{position:absolute;display:block;border-radius:3px;background:var(--line)}
-.sg-lp-prod .pv.mock .bar{left:0;right:0;top:0;height:18px;border-radius:0;background:var(--sunken);box-shadow:inset 0 -1px 0 var(--line)}
-.sg-lp-prod .pv.mock .side{left:10px;top:30px;width:22%;height:76px;background:var(--sunken)}
-.sg-lp-prod .pv.mock .r1{left:calc(22% + 22px);right:12px;top:30px;height:8px;background:var(--line-strong)}
-.sg-lp-prod .pv.mock .r2{left:calc(22% + 22px);right:30%;top:46px;height:6px}
-.sg-lp-prod .pv.mock .r3{left:calc(22% + 22px);right:12px;top:62px;height:44px;background:color-mix(in srgb,var(--accent) 14%,var(--panel))}
-.sg-lp-prod.tint{background:linear-gradient(165deg,color-mix(in srgb,var(--accent) 10%,var(--panel)),var(--panel) 62%)}
-.sg-lp-prod.dark{--ink:#fafafa;--fg:#e5e5e5;--muted:#a1a1a1;--line:rgb(255 255 255/.1);--line-strong:rgb(255 255 255/.18);--panel:#141414;--sunken:#1c1c1c;--accent-ink:color-mix(in oklab,var(--accent) 55%,#fff);color-scheme:dark;background:radial-gradient(120% 80% at 100% 0,color-mix(in srgb,var(--accent) 16%,#0a0a0a),#0a0a0a 60%);box-shadow:inset 0 0 0 1px rgb(255 255 255/.08)}
+.sg-lp-prod .pv.mock{display:flex;flex-direction:column}
+.sg-lp-prod .pv.mock i{display:block;flex:none;border-radius:3px;background:var(--line)}
+.sg-lp-prod .pv.mock :is(.top,.tabs,.row){display:flex;align-items:center;gap:6px;padding:0 10px}
+.sg-lp-prod .pv.mock .top{height:24px;box-shadow:inset 0 -1px 0 var(--line)}
+.sg-lp-prod .pv.mock .logo{width:10px;height:10px;border-radius:3px;background:var(--ink)}
+.sg-lp-prod .pv.mock .crumb{width:46px;height:5px;background:var(--line-strong)}
+.sg-lp-prod .pv.mock .crumb.s{width:30px}
+.sg-lp-prod .pv.mock .chip{width:34px;height:8px;margin-left:auto;border-radius:3px;background:color-mix(in srgb,var(--accent) 22%,var(--panel))}
+.sg-lp-prod .pv.mock .tabs{height:20px;gap:10px;box-shadow:inset 0 -1px 0 var(--line)}
+.sg-lp-prod .pv.mock .tabs i{width:26px;height:4px}
+.sg-lp-prod .pv.mock .tabs i.on{width:30px;background:var(--ink)}
+.sg-lp-prod .pv.mock .row{height:22px;margin:0 8px;padding:0 6px;border-radius:5px}
+.sg-lp-prod .pv.mock .row:first-of-type{margin-top:6px}
+.sg-lp-prod .pv.mock .row.hi{background:var(--sunken)}
+.sg-lp-prod .pv.mock .av{width:10px;height:10px;border-radius:50%;background:var(--accent)}
+.sg-lp-prod .pv.mock .dot{width:6px;height:6px;border-radius:50%;background:var(--line-strong)}
+.sg-lp-prod .pv.mock .ln{flex:1;max-width:96px;height:4px}
+.sg-lp-prod .pv.mock .ln.s{flex:none;width:28px;margin-left:auto}
+.sg-lp-prod .pv.mock .tag{width:28px;height:8px;margin-left:auto;background:color-mix(in srgb,var(--pos,#1a7f4b) 26%,var(--panel))}
+.sg-lp-prod{background:radial-gradient(120% 90% at 0 100%,color-mix(in srgb,var(--accent) 12%,var(--sunken)),var(--sunken) 58%)}
+.sg-lp-prod.tint{background:repeating-linear-gradient(135deg,transparent 0 26px,color-mix(in srgb,var(--accent) 16%,transparent) 26px 27px),linear-gradient(165deg,color-mix(in srgb,var(--accent) 9%,var(--panel)),var(--panel) 65%)}
+.sg-lp-prod.dark{--ink:#fafafa;--fg:#e5e5e5;--muted:#a1a1a1;--line:rgb(255 255 255/.1);--line-strong:rgb(255 255 255/.18);--panel:#121212;--sunken:#1a1a1a;--accent-ink:color-mix(in oklab,var(--accent) 60%,#fff);color-scheme:dark;background:radial-gradient(120% 80% at 100% 0,color-mix(in srgb,var(--accent) 14%,#0a0a0a),#0a0a0a 60%);box-shadow:inset 0 0 0 1px rgb(255 255 255/.08)}
 .sg-lp-prod.dark:hover{box-shadow:inset 0 0 0 1px rgb(255 255 255/.16)}
+:is(.dark,[data-theme="dark"]) .sg-lp-prod .go,.sg-lp-prod.dark .go{color:color-mix(in oklab,var(--accent-ink,var(--accent)) 62%,#fff)}
