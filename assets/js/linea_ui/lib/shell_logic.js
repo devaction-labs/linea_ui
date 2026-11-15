@@ -57,6 +57,15 @@ export const choiceIsDark = (choice, prefersDark) => (choice === "system" ? Bool
 /** The option a switch without a "system" button shows for a choice: the one the system resolves to. */
 export const shownChoice = (choice, system, prefersDark) => (choice !== "system" || system ? choice : prefersDark ? "dark" : "light")
 
+/** Where the named theme (`data-theme`, the palette) is kept: apart from `theme`, the light / dark choice. */
+export const PALETTE_KEY = "linea-theme"
+
+/** A palette id is a `data-theme` value other than the light and dark the mode uses. */
+export const paletteId = (value) => (typeof value === "string" && /^[a-z][a-z0-9-]*$/.test(value) && !THEMES.includes(value) ? value : null)
+
+/** The palette to show: the stored one, else the app's default, else none (the kit's own colors). */
+export const paletteChoice = (stored, fallback) => paletteId(stored) ?? paletteId(fallback)
+
 /** The next option for an arrow key among `count` options (wraps), or `null` for any other key. */
 export const arrowTarget = (key, index, count) =>
   ({ArrowRight: (index + 1) % count, ArrowDown: (index + 1) % count, ArrowLeft: (index + count - 1) % count, ArrowUp: (index + count - 1) % count, Home: 0, End: count - 1})[key] ?? null

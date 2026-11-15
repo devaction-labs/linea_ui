@@ -13,11 +13,13 @@ import {
   DARK_VALUE,
   MONOCHROME_KEY,
   MONOCHROME_VALUE,
+  PALETTE_KEY,
   THEME_KEY,
   arrowTarget,
   choiceIsDark,
   modeOn,
   modeValue,
+  paletteChoice,
   shownChoice,
   themeChoice,
 } from "../lib/shell_logic.js"
@@ -192,8 +194,74 @@ const themeSwitch = {
   },
 }
 
+const PALETTE_OPTIONS = "[data-theme-value]"
+
+/** The palette on `<html>`: `data-theme`, unless it holds the light / dark of the mode. */
+const palette = (fallback) => paletteChoice(read(PALETTE_KEY), fallback)
+
+/** Applies a palette to `<html>` (none removes it), stores it and tells every picker. */
+const choosePalette = (value) => {
+  value ? (root().dataset.theme = value) : root().removeAttribute("data-theme")
+  write(PALETTE_KEY, value || "")
+  window.dispatchEvent(new CustomEvent("change:theme", {detail: {theme: value || null}}))
+}
+
+/**
+ * The named theme of `theme_picker/1`: options carry `data-theme-value` (and `data-label`), the chosen one gets
+ * `aria-checked="true"`, and the elements with `data-theme-current` show its name. The choice lives in
+ * `localStorage["linea-theme"]`; `data-default` is the app's default when nothing is stored.
+ */
+const themePicker = {
+  mounted() {
+    this.onClick = (event) => {
+      const option = event.target.closest(PALETTE_OPTIONS)
+      if (!option || !this.el.contains(option)) return
+      choosePalette(option.dataset.themeValue)
+      notify(this, {theme: option.dataset.themeValue})
+    }
+    this.onKey = (event) => {
+      if (this.el.dataset.variant !== "grid") return
+      const options = [...this.el.querySelectorAll(PALETTE_OPTIONS)]
+      const target = arrowTarget(event.key, options.indexOf(document.activeElement), options.length)
+      if (target === null) return
+      event.preventDefault()
+      options[target].focus()
+      options[target].click()
+    }
+    this.onChange = () => this.sync()
+    this.el.addEventListener("click", this.onClick)
+    this.el.addEventListener("keydown", this.onKey)
+    window.addEventListener("change:theme", this.onChange)
+    this.sync()
+  },
+
+  updated() {
+    this.sync()
+  },
+
+  destroyed() {
+    this.el.removeEventListener("click", this.onClick)
+    this.el.removeEventListener("keydown", this.onKey)
+    window.removeEventListener("change:theme", this.onChange)
+  },
+
+  sync() {
+    const current = palette(this.el.dataset.default) || this.el.dataset.base
+    let label = null
+    this.el.querySelectorAll(PALETTE_OPTIONS).forEach((option) => {
+      const on = option.dataset.themeValue === current
+      option.setAttribute("aria-checked", String(on))
+      if (option.getAttribute("role") === "radio") option.tabIndex = on ? 0 : -1
+      if (on) label = option.dataset.label
+    })
+    label && this.el.querySelectorAll("[data-theme-current]").forEach((el) => (el.textContent = label))
+    this.el.dataset.value = current || ""
+  },
+}
+
 export default {
   "LineaUI.ThemeToggle": toggleHook(dark),
   "LineaUI.ThemeSwitch": themeSwitch,
+  "LineaUI.ThemePicker": themePicker,
   "LineaUI.MonochromeToggle": toggleHook(monochrome),
 }

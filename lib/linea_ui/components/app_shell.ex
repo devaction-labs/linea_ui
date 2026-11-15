@@ -2385,14 +2385,26 @@ defmodule LineaUI.Components.AppShell do
       <head>
         <.theme_script />
       </head>
+
+  It also puts the named theme `theme_picker/1` keeps (`localStorage["linea-theme"]`) on `<html data-theme>`, or
+  `theme` (default `config :linea_ui, :theme`) when nothing is stored, so the palette is on before the first paint.
   """
+  attr :theme, :string,
+    default: nil,
+    doc: "The named theme when the user chose none (default `config :linea_ui, :theme`)."
+
   attr :rest, :global
 
   def theme_script(assigns) do
+    assigns = assign_new(assigns, :palette, fn -> assigns.theme || Application.get_env(:linea_ui, :theme) end)
+
     ~H"""
-    <script phx-no-curly-interpolation {@rest}>
+    <script phx-no-curly-interpolation data-theme-default={@palette} {@rest}>
       (() => {
         try {
+          const id = (value) => (/^[a-z][a-z0-9-]*$/.test(value || "") && value !== "light" && value !== "dark" ? value : null);
+          const palette = id(localStorage.getItem("linea-theme")) || id(document.currentScript.dataset.themeDefault);
+          palette && (document.documentElement.dataset.theme = palette);
           const theme = localStorage.getItem("theme");
           (theme === "system"
             ? matchMedia("(prefers-color-scheme: dark)").matches

@@ -8,7 +8,9 @@ defmodule LineaUI.PublicApiLeakTest do
   for {module, components} <- [
         {LineaUI.Components.Sidebar, [sidebar: 1]},
         {LineaUI.Components.Shell, [shell: 1]},
-        {LineaUI.Components.ThemeSwitch, [theme_switch: 1]}
+        {LineaUI.Components.ThemeSwitch, [theme_switch: 1]},
+        {LineaUI.Components.ThemePicker, [theme_picker: 1]},
+        {LineaUI.Components.Logo, [linea_logo: 1]}
       ] do
     test "#{inspect(module)} exports only its components" do
       assert Enum.sort(unquote(module).__info__(:functions)) ==
