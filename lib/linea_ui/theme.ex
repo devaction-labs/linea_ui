@@ -532,17 +532,33 @@ defmodule LineaUI.Theme do
 
   @doc """
   The CSS of a theme: its light version on `[data-theme="id"]` and its dark one where that meets the `dark` class
-  (on the same element, above it or under it) or a `data-theme="dark"` block (above or under it).
+  (on the same element, above it or under it) or a `data-theme="dark"` block, the nearest mode around it winning
+  (a `data-theme="light"` block inside a dark page keeps the theme light).
   """
   @spec css(map()) :: String.t()
   def css(seed) do
     %{light: light, dark: dark} = tokens(seed)
-    id = seed.id
 
     """
-    [data-theme="#{id}"]{color-scheme:light;#{declarations(light)}}
-    .dark[data-theme="#{id}"],:is(.dark,[data-theme="dark"]) [data-theme="#{id}"],[data-theme="#{id}"] :is(.dark,[data-theme="dark"]){color-scheme:dark;#{declarations(dark)}}
+    [data-theme="#{seed.id}"]{color-scheme:light;#{declarations(light)}}
+    #{dark_selector(seed.id)}{color-scheme:dark;#{declarations(dark)}}
     """
+  end
+
+  @dark ~S|:is(.dark,[data-theme="dark"])|
+
+  # Dark where the nearest mode around the theme is dark: a `light` block between a dark page and the theme keeps
+  # it light, unless another dark block sits under that one (the same three levels the kit's own scopes handle).
+  defp dark_selector(id) do
+    theme = ~s([data-theme="#{id}"])
+    light = ~s([data-theme="light"])
+
+    [
+      ".dark#{theme}",
+      "#{@dark} #{theme}:not(#{@dark} #{light} #{theme}:not(#{@dark} #{light} #{@dark} #{theme}))",
+      "#{theme} #{@dark}"
+    ]
+    |> Enum.join(",")
   end
 
   defp declarations(tokens),
