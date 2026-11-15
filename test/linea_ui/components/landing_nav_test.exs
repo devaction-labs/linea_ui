@@ -214,6 +214,11 @@ defmodule LineaUI.Components.LandingNavTest do
         """)
 
       assert attr_of(html, ".sg-lp-cards", "style") == ["--n:2"]
+
+      css = File.read!("assets/css/parts/canvas-landing-nav.css")
+      assert css =~ ".sg-lp-cards:has(>:only-child){--n:1}"
+      assert css =~ ".sg-lp-cards:has(>:nth-child(2):last-child){--n:2}"
+      assert css =~ ".sg-lp-prod.dark:focus-visible{"
       assert count(html, ".sg-lp-prod .pv") == 0
     end
 
