@@ -19,6 +19,8 @@ defmodule LineaUI.MixProject do
       source_url: @source_url,
       docs: [
         main: "LineaUI",
+        logo: "guides/images/linea-logo.svg",
+        assets: %{"guides/images" => "guides/images"},
         extras: ["README.md", "CHANGELOG.md", "LICENSE"],
         source_ref: "v#{@version}"
       ]

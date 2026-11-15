@@ -32,6 +32,7 @@
 @import "./parts/canvas-ai.css";
 @import "./parts/canvas-pixel-card.css";
 @import "./parts/canvas-theme-switch.css";
+@import "./parts/canvas-theme-picker.css";
 @import "./parts/canvas-sidebar.css";
 @import "./parts/canvas-error-page.css";
 @import "./parts/canvas-hero-card.css";
@@ -51,6 +52,7 @@
 @import "./parts/canvas-trace.css";
 @import "./parts/canvas-code-block.css";
 @import "./parts/canvas-refine.css";
+@import "./parts/themes.css";
 
 @source "../../lib";
 @source "../js";

@@ -1,3 +1,10 @@
+<p>
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="guides/images/linea-wordmark-dark.svg">
+    <img src="guides/images/linea-wordmark.svg" alt="LineaUI" height="48">
+  </picture>
+</p>
+
 # LineaUI
 
 Phoenix LiveView components with the LineOne design (Tailwind CSS v4), used the way Fluxon is
@@ -158,6 +165,61 @@ its CSS (native select, tom-select, checkbox, radio, switch, table sorting) stay
 For your own icons use `<.icon name="huge-search-01" class="size-5" />` (any other class name, such as
 `fa-solid fa-house`, passes through). Write the name in full in the source, never interpolated: Tailwind
 only sees what is written, and a name that is not in the set renders nothing.
+
+## Themes
+
+Besides light and dark, the kit has named themes in the spirit of daisyUI's: twelve palettes, each with its own
+grays, accent and corners, in a light and a dark version. A theme is the `data-theme` of `<html>`; the light / dark
+/ system choice stays `theme_switch/1`'s, so "ocean" in the dark mode is ocean's dark version.
+
+| id | accent | grays | corners |
+|---|---|---|---|
+| `linea` (default) | teal | neutral | md |
+| `graphite` | ink (black / white) | cool | sm |
+| `ocean` | blue | slate | md |
+| `indigo` | indigo | cool | lg |
+| `violet` | violet | cool | lg |
+| `plum` | magenta | cool | md |
+| `rose` | rose | warm | lg |
+| `sunset` | orange | warm | lg |
+| `amber` | amber (dark text) | stone | md |
+| `sand` | clay, on cream paper | warm | sm |
+| `forest` | green | green | md |
+| `nord` | steel blue, slate dark | blue-gray | none |
+
+Let the user choose with the picker (a menu for the top bar, or a grid of previews for a settings page), and put
+the script in the root layout so the choice is on before the first paint:
+
+```heex
+<head>
+  <.theme_script theme="ocean" />  <!-- the default when the user chose none; or config :linea_ui, :theme -->
+</head>
+
+<.theme_picker id="palette" />
+<.theme_picker id="palette" variant="grid" on_change="save_theme" />
+<.theme_switch id="mode" />
+```
+
+The choice is kept in `localStorage["linea-theme"]`; `on_change` also sends `%{"theme" => id}` to the LiveView,
+to keep it on the user's profile.
+
+Your own theme comes from an accent, as with daisyUI's theme generator: the task derives the grays, lines, text,
+the accent's soft and ink versions, charts, focus ring and corners, and picks the text on the accent by contrast.
+
+```sh
+mix linea_ui.gen.theme acme --accent "#7c3aed" --dark-accent "#a78bfa" --neutral cool --radius lg
+```
+
+```css
+/* app.css, after linea_ui.css */
+@import "./themes/acme.css";
+```
+
+```elixir
+config :linea_ui, :themes, extra: [%{id: "acme", label: "Acme"}]   # only: ~w(linea ocean) trims the kit's
+```
+
+The mark of the kit is `<.linea_logo />` (a drop in a hexagon; the drop takes the theme's accent).
 
 ## Claude Code skill
 
