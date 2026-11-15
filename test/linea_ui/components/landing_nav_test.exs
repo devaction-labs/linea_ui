@@ -9,11 +9,16 @@ defmodule LineaUI.Components.LandingNavTest do
   defp text(html, selector),
     do: html |> find(selector) |> Enum.map(&(&1 |> LazyHTML.text() |> String.trim()))
 
-  defp nav(variant) do
-    assigns = %{variant: variant}
+  defp nav(variant, open_on \\ "hover") do
+    assigns = %{variant: variant, open_on: open_on}
 
     rendered_to_string(~H"""
-    <.landing_nav id="nav" variant={@variant} brand={%{name: "Linea", logo: "L", href: "/"}}>
+    <.landing_nav
+      id="nav"
+      variant={@variant}
+      open_on={@open_on}
+      brand={%{name: "Linea", logo: "L", href: "/"}}
+    >
       <:link label="Produto">
         <.landing_mega>
           <.landing_feature
@@ -62,7 +67,7 @@ defmodule LineaUI.Components.LandingNavTest do
     assert count(nav("mobile"), "header.sg-lp-nb.mob") == 1
   end
 
-  test "sticky mounts the scroll hook; otherwise there is none" do
+  test "sticky or a mega trigger mounts the hook; a plain bar has none" do
     sticky =
       render(~H"""
       <.landing_nav id="s" sticky stuck_after={24} variant="clear" />
@@ -72,7 +77,27 @@ defmodule LineaUI.Components.LandingNavTest do
     assert attr_of(sticky, "#s", "data-stuck-after") == ["24"]
     assert count(sticky, "#s[data-sticky]") == 1
     assert count(sticky, "#s[data-stuck]") == 0
-    assert attr_of(nav("default"), "#nav", "phx-hook") == []
+    assert attr_of(nav("default"), "#nav", "phx-hook") == ["LineaUI.LandingNav"]
+    assert count(nav("default"), "#nav[data-sticky]") == 0
+
+    plain =
+      render(~H"""
+      <.landing_nav id="p"><:link label="Docs" href="/docs" /></.landing_nav>
+      """)
+
+    assert attr_of(plain, "#p", "phx-hook") == []
+  end
+
+  test "hover is the default and only opens; click toggles" do
+    [hover] = attr_of(nav("default"), "#nav-trigger-1", "phx-click")
+    assert attr_of(nav("default"), "#nav", "data-open-on") == ["hover"]
+    assert hover =~ ~s(["show",)
+    refute hover =~ ~s(["toggle",)
+
+    [click] = attr_of(nav("default", "click"), "#nav-trigger-1", "phx-click")
+    assert attr_of(nav("default", "click"), "#nav", "data-open-on") == ["click"]
+    assert click =~ ~s(["toggle",)
+    refute click =~ ~s(["show",)
   end
 
   test "a link with content is a closed mega trigger with a hidden panel" do
@@ -160,5 +185,75 @@ defmodule LineaUI.Components.LandingNavTest do
     assert click =~ "#ann"
     assert click =~ "hide"
     assert count(html, "#fixed button") == 0
+  end
+
+  describe "landing_mega variant=cards" do
+    test "product cards side by side, each one a link with its logo, title, link label and preview" do
+      html =
+        render(~H"""
+        <.landing_mega variant="cards">
+          <.landing_product
+            name="Cloud"
+            logo="huge-cloud"
+            title="Publique rápido"
+            link_label="Publicar"
+            href="/cloud"
+            mock
+          />
+          <.landing_product
+            name="Forge"
+            title="Servidores"
+            link_label="Gerenciar"
+            navigate="/forge"
+            tone="tint"
+          >
+            <:preview><img src="/forge.png" alt="" /></:preview>
+          </.landing_product>
+          <.landing_product title="Observe tudo" href="/watch" tone="dark">
+            <:mark><svg viewBox="0 0 24 24"></svg></:mark>
+          </.landing_product>
+        </.landing_mega>
+        """)
+
+      assert count(html, ".sg-lp-cards > a.sg-lp-prod") == 3
+      assert count(html, ".sg-lp-grid") == 0
+      assert attr_of(html, ".sg-lp-prod", "href") == ["/cloud", "/forge", "/watch"]
+      assert text(html, ".sg-lp-prod .t") == ["Publique rápido", "Servidores", "Observe tudo"]
+      assert text(html, ".sg-lp-prod .go") == ["Publicar", "Gerenciar"]
+      assert text(html, ".sg-lp-prod .hd > span:not(.lg):not(.mk)") == ["Cloud", "Forge"]
+      assert count(html, ".sg-lp-prod .lg") == 1
+      assert count(html, ".sg-lp-prod .mk svg") == 1
+      assert count(html, ".sg-lp-prod .pv.mock[aria-hidden=true]") == 1
+      assert attr_of(html, ".sg-lp-prod .pv img", "src") == ["/forge.png"]
+      assert "tint" in classes(html, ".sg-lp-prod[href='/forge']")
+      assert "dark" in classes(html, ".sg-lp-prod[href='/watch']")
+      refute "dark" in classes(html, ".sg-lp-prod[href='/cloud']")
+    end
+
+    test "columns sets how many cards fit in a row" do
+      html =
+        render(~H"""
+        <.landing_mega variant="cards" columns={2}>
+          <.landing_product title="A" />
+        </.landing_mega>
+        """)
+
+      assert attr_of(html, ".sg-lp-cards", "style") == ["--n:2"]
+
+      css = File.read!("assets/css/parts/canvas-landing-nav.css")
+      assert css =~ ".sg-lp-cards:has(>:only-child){--n:1}"
+      assert css =~ ".sg-lp-cards:has(>:nth-child(2):last-child){--n:2}"
+      assert css =~ ".sg-lp-prod.dark:focus-visible{"
+      assert count(html, ".sg-lp-prod .pv") == 0
+    end
+
+    test "accent gives a card its own color, and mock draws an app screen" do
+      html = render(~H|<.landing_product title="A" accent="#2563eb" mock />|)
+
+      assert attr_of(html, ".sg-lp-prod", "style") == ["--accent:#2563eb;--accent-ink:#2563eb"]
+      assert count(html, ".pv.mock .top") == 1
+      assert count(html, ".pv.mock .row") == 4
+      assert render(~H|<.landing_product title="A" />|) |> attr_of(".sg-lp-prod", "style") == []
+    end
   end
 end

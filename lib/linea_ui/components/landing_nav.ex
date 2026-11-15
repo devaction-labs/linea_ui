@@ -42,6 +42,14 @@ defmodule LineaUI.Components.LandingNav do
   content as the mega menu under the bar, built with `Phoenix.LiveView.JS` (no round trip). A click outside the
   bar, or Escape, closes it. Fill it with `landing_mega/1`, `landing_feature/1` and `landing_mega_side/1`.
 
+  With `open_on="hover"` (the default) it opens like laravel.com's: a mouse resting on the trigger opens the
+  panel, the panel stays open while the pointer goes down into it, so its cards and links can be reached, and it
+  closes once the pointer has left both (switching to another trigger swaps panels at once). A click or a tap
+  opens it too; outside, Escape or leaving closes it. `open_on="click"` keeps it to clicks (a second click closes).
+  In both, ArrowDown on a trigger opens the panel and focuses its first item, the arrows walk the items, Escape
+  gives the focus back to the trigger and tabbing out of the bar closes it. Hover and keys come from the
+  `LineaUI.LandingNav` hook, mounted when there is a trigger or `sticky` (register the kit's hooks).
+
   ## Phone
 
   Below 768px (or with `variant="mobile"`) the links and the primary button leave the bar and a menu button
@@ -65,6 +73,11 @@ defmodule LineaUI.Components.LandingNav do
 
   attr :id, :string, required: true, doc: "The root id; the menu toggles and the hook use it."
   attr :variant, :string, default: "default", values: ~w(default float clear mobile)
+
+  attr :open_on, :string,
+    default: "hover",
+    values: ~w(hover click),
+    doc: "How a mega menu opens: on hover (and click), like laravel.com, or on click only."
 
   attr :sticky, :boolean,
     default: false,
@@ -108,7 +121,9 @@ defmodule LineaUI.Components.LandingNav do
       |> assign_derived(:close, [:id], fn -> close_js(assigns.id) end)
       |> assign_derived(:mmenu, [:id], fn -> "#{assigns.id}-mmenu" end)
       |> assign_derived(:menu_toggle, [:id], fn -> menu_toggle_js(assigns.id) end)
-      |> assign_derived(:hook, [:sticky], fn -> assigns.sticky && "LineaUI.LandingNav" end)
+      |> assign_derived(:hook, [:sticky, :link], fn ->
+        (assigns.sticky || Enum.any?(assigns.link, & &1.inner_block)) && "LineaUI.LandingNav"
+      end)
 
     ~H"""
     <div
@@ -116,6 +131,7 @@ defmodule LineaUI.Components.LandingNav do
       class={@bar_class}
       data-variant={@variant}
       data-sticky={@sticky && ""}
+      data-open-on={@open_on}
       data-stuck-after={@sticky && @stuck_after}
       phx-hook={@hook}
       phx-mounted='[["ignore_attrs",{"attrs":["data-stuck"]}]]'
@@ -137,7 +153,7 @@ defmodule LineaUI.Components.LandingNav do
                 aria-haspopup="true"
                 aria-expanded="false"
                 aria-controls={"#{@id}-mega-#{i}"}
-                phx-click={mega_toggle_js(@id, i)}
+                phx-click={mega_js(@id, i, @open_on)}
               >
                 {link.label}<.glyph name={:chevron_down} class="sg-lp-i" />
               </button>
@@ -212,17 +228,28 @@ defmodule LineaUI.Components.LandingNav do
     |> JS.set_attribute({"aria-expanded", "false"}, to: "##{id} .sg-lp-menubtn")
   end
 
-  # Opens (or closes) one mega menu and closes the others.
-  defp mega_toggle_js(id, i) do
+  # Opens one mega menu and closes the others: on hover the trigger only opens (a click right after the hover
+  # opened it must not close it), on click it toggles.
+  defp mega_js(id, i, open_on) do
     trigger = "##{id}-trigger-#{i}"
     others = "##{id} .sg-lp-links button:not(#{trigger})"
 
-    JS.hide(to: "##{id} .sg-lp-mega:not(##{id}-mega-#{i})")
-    |> JS.remove_class("open", to: others)
-    |> JS.set_attribute({"aria-expanded", "false"}, to: others)
-    |> JS.toggle(to: "##{id}-mega-#{i}", display: "flex")
-    |> JS.toggle_class("open", to: trigger)
-    |> JS.toggle_attribute({"aria-expanded", "true", "false"}, to: trigger)
+    js =
+      JS.hide(to: "##{id} .sg-lp-mega:not(##{id}-mega-#{i})")
+      |> JS.remove_class("open", to: others)
+      |> JS.set_attribute({"aria-expanded", "false"}, to: others)
+
+    if open_on == "hover" do
+      js
+      |> JS.show(to: "##{id}-mega-#{i}", display: "flex")
+      |> JS.add_class("open", to: trigger)
+      |> JS.set_attribute({"aria-expanded", "true"}, to: trigger)
+    else
+      js
+      |> JS.toggle(to: "##{id}-mega-#{i}", display: "flex")
+      |> JS.toggle_class("open", to: trigger)
+      |> JS.toggle_attribute({"aria-expanded", "true", "false"}, to: trigger)
+    end
   end
 
   defp menu_toggle_js(id) do
@@ -350,14 +377,106 @@ defmodule LineaUI.Components.LandingNav do
         <.landing_feature icon="huge-kanban" title="Projetos" description="Kanban" navigate={~p"/projetos"} />
         <:side><.landing_mega_side title="Novidade" /></:side>
       </.landing_mega>
+
+  `variant="cards"` lays out large product cards side by side instead (`landing_product/1`), one per product, as
+  the "Products" menu of laravel.com does; `columns` sets how many fit in a row (default: one per card, up to 3).
+
+      <.landing_mega variant="cards">
+        <.landing_product name="Linea Cloud" logo="huge-cloud" title="O jeito mais rápido de publicar" link_label="Publicar agora" navigate={~p"/cloud"} mock />
+        <.landing_product name="Linea Forge" logo="huge-server-stack-01" title="Servidores sob controle" link_label="Gerenciar servidores" navigate={~p"/forge"} tone="tint" mock />
+        <.landing_product name="Linea Watch" logo="huge-activity-01" title="Observe o app inteiro" link_label="Plano grátis" navigate={~p"/watch"} tone="dark" mock />
+      </.landing_mega>
   """
-  slot :inner_block, required: true, doc: "The `landing_feature/1` items."
-  slot :side, doc: "A `landing_mega_side/1`."
+  attr :variant, :string, default: "default", values: ~w(default cards)
+
+  attr :columns, :integer,
+    default: nil,
+    doc: "Cards per row in the `cards` variant (default: the card count, up to 3)."
+
+  slot :inner_block,
+    required: true,
+    doc: "The `landing_feature/1` items, or `landing_product/1` cards."
+
+  slot :side, doc: "A `landing_mega_side/1` (the default variant)."
+
+  def landing_mega(%{variant: "cards"} = assigns) do
+    ~H"""
+    <div class="sg-lp-cards" style={@columns && "--n:#{@columns}"}>{render_slot(@inner_block)}</div>
+    """
+  end
 
   def landing_mega(assigns) do
     ~H"""
     <div class="sg-lp-grid">{render_slot(@inner_block)}</div>
     {render_slot(@side)}
+    """
+  end
+
+  @doc """
+  A product card of `landing_mega variant="cards"`: the product's logo and name, a large title, a link with an
+  arrow and a preview of the product that runs off the bottom of the card. The whole card is the link.
+
+  `tone` is `default` (a soft glow of the accent from a corner), `tint` (a wash of the accent under thin diagonal
+  lines) or `dark` (a near-black card, the same in light and dark pages); `accent` gives the card a color of its own
+  (each product its brand color, as laravel.com does). The preview is the `:preview` slot (an `<img>` of the product, say) or, with
+  `mock`, a drawn placeholder of an app screen. The logo is a Hugeicons name (`logo`) or the `:logo` slot.
+  """
+  attr :title, :string, required: true
+  attr :name, :string, default: nil, doc: "The product name beside the logo."
+  attr :logo, :string, default: nil, doc: "A Hugeicons name for the logo tile."
+  attr :link_label, :string, default: nil
+  attr :tone, :string, default: "default", values: ~w(default tint dark)
+
+  attr :accent, :string,
+    default: nil,
+    doc: "The card's own accent (a CSS color): the link, the logo and the wash take it."
+
+  attr :mock, :boolean,
+    default: false,
+    doc: "Draw a placeholder app screen when there is no `:preview`."
+
+  attr :href, :string, default: "#"
+  attr :navigate, :string, default: nil
+  attr :patch, :string, default: nil
+  attr :class, :any, default: nil
+  attr :rest, :global
+  slot :mark, doc: "The logo, instead of `logo` (an `<img>` or an `<svg>`)."
+  slot :preview, doc: "The picture of the product under the link."
+
+  def landing_product(assigns) do
+    assigns =
+      assign_derived(assigns, :classes, [:tone, :class], fn ->
+        merge(["sg-lp-prod", assigns.tone != "default" && assigns.tone, assigns.class])
+      end)
+
+    ~H"""
+    <.item_link
+      href={@href}
+      navigate={@navigate}
+      patch={@patch}
+      class={@classes}
+      style={@accent && "--accent:#{@accent};--accent-ink:#{@accent}"}
+      {@rest}
+    >
+      <span :if={@name || @logo || @mark != []} class="hd">
+        <span :if={@mark != []} class="mk">{render_slot(@mark)}</span>
+        <span :if={@mark == [] && @logo} class="lg"><.icon name={@logo} class="sg-lp-i" /></span>
+        <span :if={@name}>{@name}</span>
+      </span>
+      <span class="t">{@title}</span>
+      <span :if={@link_label} class="go">
+        {@link_label}<.icon name="huge-arrow-right-01" class="sg-lp-i" />
+      </span>
+      <span :if={@preview != []} class="pv">{render_slot(@preview)}</span>
+      <span :if={@preview == [] && @mock} class="pv mock" aria-hidden="true">
+        <span class="top"><i class="logo"></i><i class="crumb"></i><i class="crumb s"></i><i class="chip"></i></span>
+        <span class="tabs"><i class="on"></i><i></i><i></i><i></i><i></i></span>
+        <span class="row hi"><i class="av"></i><i class="ln"></i><i class="tag"></i></span>
+        <span class="row"><i class="dot"></i><i class="ln"></i><i class="ln s"></i></span>
+        <span class="row"><i class="dot"></i><i class="ln"></i><i class="ln s"></i></span>
+        <span class="row"><i class="dot"></i><i class="ln"></i><i class="ln s"></i></span>
+      </span>
+    </.item_link>
     """
   end
 
