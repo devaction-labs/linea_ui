@@ -13,7 +13,12 @@ defmodule LineaUI.Components.LandingNavTest do
     assigns = %{variant: variant, open_on: open_on}
 
     rendered_to_string(~H"""
-    <.landing_nav id="nav" variant={@variant} open_on={@open_on} brand={%{name: "Linea", logo: "L", href: "/"}}>
+    <.landing_nav
+      id="nav"
+      variant={@variant}
+      open_on={@open_on}
+      brand={%{name: "Linea", logo: "L", href: "/"}}
+    >
       <:link label="Produto">
         <.landing_mega>
           <.landing_feature
