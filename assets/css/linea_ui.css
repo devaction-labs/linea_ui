@@ -1192,7 +1192,7 @@ table.is-zebra > tbody > tr:nth-child(even) > td {
   @apply [--modal-from:translate3d(0,1rem,0)] [--modal-to:translate3d(0,0,0)];
 }
 
-.lo-modal.modal-sheet {
+.lo-modal.lo-modal-sheet {
   @apply [--modal-from:translateY(100%)] [--modal-to:translateY(0)];
 }
 
@@ -1200,21 +1200,21 @@ table.is-zebra > tbody > tr:nth-child(even) > td {
   @apply [--modal-to:translate3d(0,0,0)] [--modal-from:translate3d(0,-1rem,0)];
 }
 
-.lo-modal.modal-scale {
+.lo-modal.lo-modal-scale {
   @apply [--modal-from:scale(0.95)] [--modal-to:scale(1)];
 }
 
 .lo-modal.shift-up .lo-modal-content,
 .lo-modal.shift-down .lo-modal-content,
-.lo-modal.modal-scale .lo-modal-content,
-.lo-modal.modal-sheet .lo-modal-content {
+.lo-modal.lo-modal-scale .lo-modal-content,
+.lo-modal.lo-modal-sheet .lo-modal-content {
   @apply animate-[cubic-bezier(var(--ease-out))_modal-open_300ms];
 }
 
 .lo-modal.shift-up.animate\:leave .lo-modal-content,
 .lo-modal.shift-down.animate\:leave .lo-modal-content,
-.lo-modal.modal-scale.animate\:leave .lo-modal-content,
-.lo-modal.modal-sheet.animate\:leave .lo-modal-content {
+.lo-modal.lo-modal-scale.animate\:leave .lo-modal-content,
+.lo-modal.lo-modal-sheet.animate\:leave .lo-modal-content {
   @apply animate-[cubic-bezier(var(--ease-in))_modal-close_300ms];
 }
 
@@ -1241,7 +1241,7 @@ table.is-zebra > tbody > tr:nth-child(even) > td {
   @apply [--drawer-from:translate(-100%)] [--drawer-to:translate(0%)];
 }
 
-.lo-drawer.drawer-right {
+.lo-drawer.lo-drawer-right {
   @apply [--drawer-from:translate(100%)] [--drawer-to:translate(0%)];
 }
 
@@ -1250,12 +1250,12 @@ table.is-zebra > tbody > tr:nth-child(even) > td {
 }
 
 /* A drawer removed by the server slides out and fades the scrim before it leaves the page. */
-.lo-drawer.drawer-leaving .lo-drawer-overlay {
+.lo-drawer.lo-drawer-leaving .lo-drawer-overlay {
   opacity: 0;
   transition: opacity 200ms ease-in;
 }
 
-.lo-drawer.drawer-leaving .lo-drawer-content {
+.lo-drawer.lo-drawer-leaving .lo-drawer-content {
   animation: none;
   opacity: 0;
   transform: var(--drawer-from, translateX(100%));

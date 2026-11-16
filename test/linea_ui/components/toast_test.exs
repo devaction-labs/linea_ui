@@ -246,7 +246,7 @@ defmodule LineaUI.Components.ToastTest do
       assert find(html, "#t .t") |> LazyHTML.text() == "Não foi possível emitir"
       assert find(html, "#t .sg-toast-desc") |> LazyHTML.text() == "SEFAZ fora do ar."
       assert [_] = find(html, "#t > #undo") |> Enum.to_list()
-      assert find(html, "#t > button.sg-ib") |> LazyHTML.attribute("aria-label") == ["Fechar"]
+      assert find(html, "#t > button.btn-ghost") |> LazyHTML.attribute("aria-label") == ["Fechar"]
     end
 
     test "the dark tone, no description and no close button" do

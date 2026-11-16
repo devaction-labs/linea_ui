@@ -1213,19 +1213,19 @@
   }
 }
 
-.lo-drawer.drawer-float {
+.lo-drawer.lo-drawer-float {
   --drawer-from: translate(calc(-100% - 0.75rem));
 }
 
-.lo-drawer.drawer-float.drawer-right {
+.lo-drawer.lo-drawer-float.lo-drawer-right {
   --drawer-from: translate(calc(100% + 0.75rem));
 }
 
-.lo-drawer.drawer-bottom {
+.lo-drawer.lo-drawer-bottom {
   --drawer-from: translateY(100%);
   --drawer-to: translateY(0%);
 }
 
-.lo-drawer.drawer-float.drawer-bottom {
+.lo-drawer.lo-drawer-float.lo-drawer-bottom {
   --drawer-from: translateY(calc(100% + 0.75rem));
 }

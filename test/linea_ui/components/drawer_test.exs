@@ -11,7 +11,8 @@ defmodule LineaUI.Components.DrawerTest do
     assert attr_of(html, "#d", "data-lock") == ["false"]
     assert ["lo-drawer-overlay", "hidden"] -- classes(html, "#d > [data-backdrop]") == []
 
-    assert ["lo-drawer-content", "hidden", "left-0", "w-72"] -- classes(html, "#d > div:last-child") ==
+    assert ["lo-drawer-content", "hidden", "left-0", "w-72"] --
+             classes(html, "#d > div:last-child") ==
              []
 
     refute "lo-drawer-right" in classes(html, "#d")

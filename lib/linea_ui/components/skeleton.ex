@@ -55,8 +55,7 @@ defmodule LineaUI.Components.Skeleton do
   attr(:variant, :string,
     default: "canvas",
     values: ~w(canvas lineone),
-    doc:
-      "Both draw daisyUI's `skeleton`; kept for compatibility."
+    doc: "Both draw daisyUI's `skeleton`; kept for compatibility."
   )
 
   attr(:shape, :string,

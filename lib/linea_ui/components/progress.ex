@@ -110,8 +110,7 @@ defmodule LineaUI.Components.Progress do
       max={@max}
       aria-label={@label}
       {@rest}
-    >
-    </progress>
+    ></progress>
     """
   end
 

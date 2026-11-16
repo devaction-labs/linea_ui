@@ -472,7 +472,7 @@ defmodule LineaUI.Components.Toast do
       <button
         :if={@dismissible}
         type="button"
-        class="sg-ib sm plain"
+        class="btn btn-ghost btn-sm btn-circle"
         aria-label={@close_label}
         phx-click={JS.hide(@on_dismiss || %JS{}, to: {:closest, ".sg-toast"})}
       >
