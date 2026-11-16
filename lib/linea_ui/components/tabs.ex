@@ -512,10 +512,10 @@ defmodule LineaUI.Components.Tabs do
     """
   end
 
-  attr(:tab, :map, required: true)
-
   defp count_class(true), do: "lo-nav-n badge badge-sm badge-soft badge-error st-over"
   defp count_class(_overdue), do: "lo-nav-n badge badge-sm badge-ghost"
+
+  attr(:tab, :map, required: true)
 
   defp count(%{tab: %{count: count}} = assigns) when not is_nil(count) do
     ~H"""
