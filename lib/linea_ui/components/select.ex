@@ -43,28 +43,25 @@ defmodule LineaUI.Components.Select do
   alias LineaUI.Components.Pickers
   alias LineaUI.Components.Select.Options
 
+  # The native select is daisyUI's `select` (`select-sm`, `select-lg`); a filled one sits on `base-200`.
   @native %{
-    "outline" =>
-      "border-0 bg-white shadow-[inset_0_0_0_1px_var(--color-slate-300),0_1px_2px_rgb(23_23_26/.05)] hover:shadow-[inset_0_0_0_1px_var(--color-slate-400),0_1px_2px_rgb(23_23_26/.05)] focus:shadow-[inset_0_0_0_1px_var(--color-primary),0_0_0_4px_color-mix(in_oklab,var(--color-primary)_14%,transparent)] focus:ring-0 dark:bg-navy-700 dark:shadow-[inset_0_0_0_1px_var(--color-navy-450)] dark:hover:shadow-[inset_0_0_0_1px_var(--color-navy-400)] dark:focus:shadow-[inset_0_0_0_1px_var(--color-accent),0_0_0_4px_color-mix(in_oklab,var(--color-accent)_16%,transparent)]",
-    "filled" =>
-      "bg-slate-150 ring-primary/50 hover:bg-slate-200 focus:ring-3 dark:bg-navy-900/90 dark:ring-accent/50 dark:hover:bg-navy-900 dark:focus:bg-navy-900"
+    "outline" => nil,
+    "filled" => "border-transparent bg-base-200 focus:bg-base-100"
   }
 
   @native_sizes %{
-    {"sm", true} => "mt-1 h-8 px-2.5 text-xs",
-    {"md", true} => "mt-1.5 h-9 px-3 py-0 text-[14px]",
-    {"lg", true} => "mt-1 h-12 px-4 text-sm",
-    {"sm", false} => "h-8 px-2.5 text-xs",
-    {"md", false} => "h-9 px-3 py-0 text-sm",
-    {"lg", false} => "h-12 px-4 text-sm"
+    {"sm", true} => "mt-1 select-sm",
+    {"md", true} => "mt-1.5",
+    {"lg", true} => "mt-1 select-lg",
+    {"sm", false} => "select-sm",
+    {"md", false} => nil,
+    {"lg", false} => "select-lg"
   }
 
-  @native_shapes %{"rounded" => "rounded-[11px]", "pill" => "rounded-full px-4"}
+  @native_shapes %{"rounded" => nil, "pill" => "rounded-full px-4"}
 
   # Painted by `aria-invalid`, so the classes do not change when errors come and go.
-  @native_error "aria-invalid:border-error"
-
-  @native_disabled "disabled:pointer-events-none disabled:select-none disabled:border-none disabled:bg-zinc-100 dark:disabled:bg-navy-600"
+  @native_error "aria-invalid:select-error"
 
   @doc """
   Renders a select.
@@ -320,7 +317,6 @@ defmodule LineaUI.Components.Select do
             @native_sizes[{assigns.size, assigns.label != nil}],
             @native_shapes[assigns.shape],
             inline_class(assigns.inline),
-            @native_disabled,
             @native_error,
             assigns.class
           ])
@@ -480,8 +476,8 @@ defmodule LineaUI.Components.Select do
   defp inline_class(true), do: "w-auto pr-9"
   defp inline_class(false), do: nil
 
-  defp native_base(true), do: "form-multiselect"
-  defp native_base(false), do: "form-select"
+  defp native_base(true), do: "select h-auto py-2"
+  defp native_base(false), do: "select"
 
   attr :entry, :map, required: true
   attr :selected, :list, required: true
