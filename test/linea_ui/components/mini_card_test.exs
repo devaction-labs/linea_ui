@@ -7,7 +7,7 @@ defmodule LineaUI.Components.MiniCardTest do
     html =
       render(~H|<.mini_card id="m" icon="huge-invoice-01" tone="accent" label="Novo pedido" />|)
 
-    assert ["sg-card", "sg-mini"] == classes(html, "div#m")
+    assert ["card", "card-border", "sg-mini"] -- classes(html, "div#m") == []
     assert ["sg-ic", "acc"] == classes(html, "#m > span.sg-ic")
     assert LazyHTML.text(find(html, "#m > b.sg-mini-t")) == "Novo pedido"
   end

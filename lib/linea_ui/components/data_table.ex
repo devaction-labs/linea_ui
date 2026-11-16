@@ -554,7 +554,7 @@ defmodule LineaUI.Components.DataTable do
           {render_slot(@filters, data_table_toggle_filters(@id))}
         </div>
       </div>
-      <div class={["sg-card flush", @title_bar && "mt-3"]}>
+      <div class={["card card-border bg-base-100 overflow-hidden", @title_bar && "mt-3"]}>
         <.loading_body :if={@loading} col={@col} loading_rows={@loading_rows} />
         <%= if !@loading do %>
           <.dt_body
@@ -783,7 +783,7 @@ defmodule LineaUI.Components.DataTable do
         <tr :for={_row <- 1..max(@loading_rows, 1)}>
           <td :for={{col, index} <- Enum.with_index(@col)} class="h-12 px-3.5">
             <div
-              class="sg-skel h-2.5"
+              class="skeleton h-2.5"
               style={skeleton_style(col, index)}
               aria-hidden="true"
             >

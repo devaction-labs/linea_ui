@@ -133,7 +133,7 @@ defmodule LineaUI.Components.LandingNavTest do
   test "the phone menu: a button and a hidden panel with every link and the actions" do
     html = nav("default")
 
-    assert attr_of(html, "button.sg-ib.sg-lp-menubtn", "aria-expanded") == ["false"]
+    assert attr_of(html, "button.btn.sg-lp-menubtn", "aria-expanded") == ["false"]
     assert attr_of(html, "button.sg-lp-menubtn", "aria-controls") == ["nav-mmenu"]
     assert attr_of(html, "#nav-mmenu", "style") == ["display: none"]
     assert text(html, "#nav-mmenu .sg-lp-mi") == ["Produto", "Preços", "Docs"]

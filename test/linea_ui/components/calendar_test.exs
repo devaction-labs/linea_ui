@@ -541,7 +541,7 @@ defmodule LineaUI.Components.CalendarTest do
         />
         """)
 
-      assert html |> find("#c .sg-card") |> Enum.count() == 0
+      assert html |> find("#c .card") |> Enum.count() == 0
       assert html |> find("#c .lc-mini-h") |> Enum.count() == 0
       assert html |> find("#c .lc-mini-legend") |> Enum.count() == 0
       assert html |> find("#c .lc-mini .sg-cal") |> Enum.count() == 1

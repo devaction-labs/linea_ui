@@ -336,7 +336,7 @@ export default {
       const spinner = (kind === "loading" || running) && this.part("span", "spinner sg-spin animate-spin xs")
       spinner && spinner.setAttribute("role", "status")
       const pct = progress !== null && !failed && this.part("span", "pct", `${Math.round(progress)}%`)
-      const close = closeFor(input, toast.duration) && this.closeButton("sg-ib sm plain", "size-4")
+      const close = closeFor(input, toast.duration) && this.closeButton("btn btn-square btn-ghost btn-sm", "size-4")
       this.settleChildren(card, [tile, body, ...actions], spinner, [pct, close])
       card.querySelectorAll("[data-toast-dismiss]").forEach((button) => button.addEventListener("click", () => this.remove(toast)))
     },
@@ -384,7 +384,7 @@ export default {
 
     canvasAction(action, toast) {
       const node = this.action(action, toast)
-      node.className = ["sg-btn", "sm", action.variant === "solid" ? "solid" : action.variant === "soft" ? "soft" : ""].join(" ").trim()
+      node.className = ["btn", "btn-sm", action.variant === "solid" ? "btn-neutral" : action.variant === "soft" ? "btn-soft btn-primary" : ""].join(" ").trim()
       return node
     },
 

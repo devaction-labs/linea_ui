@@ -172,7 +172,7 @@ defmodule LineaUI.Components.LandingNav do
             {render_slot(@actions)}
             <button
               type="button"
-              class="sg-ib sm sg-lp-menubtn"
+              class="btn btn-square btn-sm sg-lp-menubtn"
               aria-label={@menu_label}
               aria-expanded="false"
               aria-controls={@mmenu}

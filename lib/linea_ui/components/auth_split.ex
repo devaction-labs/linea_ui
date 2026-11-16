@@ -244,7 +244,7 @@ defmodule LineaUI.Components.AuthSplit do
     ~H"""
     <button
       type={@type}
-      class={merge(["sg-btn accent lg block", @loading && "is-loading", @class])}
+      class={merge(["btn btn-primary btn-lg btn-block", @loading && "is-loading", @class])}
       disabled={@loading || nil}
       aria-busy={@loading && "true"}
       {@rest}

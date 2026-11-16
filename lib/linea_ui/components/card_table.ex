@@ -384,7 +384,7 @@ defmodule LineaUI.Components.CardTable do
 
     ~H"""
     <div
-      class={merge(["sg-card flush linea-ctable-flat", !@bordered && "is-plain", @class])}
+      class={merge(["card card-border bg-base-100 overflow-hidden linea-ctable-flat", !@bordered && "is-plain", @class])}
       id={@id <> "-box"}
       data-resp={@resp && ""}
       data-cards={@cards && @resp && ""}
@@ -904,8 +904,8 @@ defmodule LineaUI.Components.CardTable do
     & .linea-ctable-top { border-bottom: 1px solid var(--line); }
     & .linea-ctable-top-text { flex-basis: 100%; }
     & .linea-ctable-top-act { flex: 1 1 100%; justify-content: flex-end; }
-    & .linea-ctable-top-act > :not(.sg-btn):not(a) { flex: 1 1 100%; width: auto !important; max-width: 100%; }
-    & .linea-ctable-top-act > .sg-btn { flex: 0 0 auto !important; width: auto !important; }
+    & .linea-ctable-top-act > :not(.btn):not(a) { flex: 1 1 100%; width: auto !important; max-width: 100%; }
+    & .linea-ctable-top-act > .btn { flex: 0 0 auto !important; width: auto !important; }
     & .linea-ctable-grid { grid-template-columns: auto minmax(0, 1fr) max-content max-content; column-gap: 0; }
     & .linea-ctable-row { grid-template-areas: "sel head status act" "sel title value act"; row-gap: 4px; min-height: 0; padding: 12px 14px 12px 16px; }
     & .linea-ctable-row > .linea-ctable-cell { display: none; }

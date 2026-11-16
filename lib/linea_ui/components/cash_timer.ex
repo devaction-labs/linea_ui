@@ -60,7 +60,7 @@ defmodule LineaUI.Components.CashTimer do
     ~H"""
     <div
       id={@id}
-      class={merge(["sg-card linea-cash", @stat != [] && "has-stats", @class])}
+      class={merge(["card card-border bg-base-100 p-5 linea-cash", @stat != [] && "has-stats", @class])}
       data-state={@state}
       phx-hook={@elapsed && "LineaUI.Timer"}
       data-elapsed={@elapsed}

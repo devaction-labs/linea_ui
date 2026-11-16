@@ -57,7 +57,7 @@ defmodule LineaUI.Components.MiniCard do
     """
   end
 
-  defp classes(value, class), do: merge(["sg-card sg-mini", value && "sg-mini-v", class])
+  defp classes(value, class), do: merge(["card card-border bg-base-100 p-5 sg-mini", value && "sg-mini-v", class])
 
   defp icon_box(assigns) do
     ~H"""

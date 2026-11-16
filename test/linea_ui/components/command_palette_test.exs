@@ -234,7 +234,7 @@ defmodule LineaUI.Components.CommandPaletteTest do
     assert attr_of(html, "#palette-palette", "data-highlight") == ["typed"]
     refute html |> find("#palette-palette") |> LazyHTML.text() =~ "Mover"
     assert html |> find("#palette-item-0") |> LazyHTML.text() =~ "CD"
-    assert "sg-kbd" in classes(html, "#palette-item-1 kbd")
+    assert "kbd" in classes(html, "#palette-item-1 kbd")
   end
 
   test "the hints footer shows by default and the first row is highlighted always" do

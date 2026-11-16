@@ -807,7 +807,7 @@ defmodule LineaUI.Components.Navbar do
     <.link role="menuitem" class={merge([@danger && "neg", @class])} {@rest}>
       <.icon :if={@icon} name={@icon} class="i" />
       <span class="t">{render_slot(@inner_block)}</span>
-      <span :if={@kbd} class="sg-kbd">{@kbd}</span>
+      <span :if={@kbd} class="kbd kbd-sm">{@kbd}</span>
     </.link>
     """
   end

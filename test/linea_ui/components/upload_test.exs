@@ -203,7 +203,7 @@ defmodule LineaUI.Components.UploadTest do
       """)
 
     assert [_] = find(html, "label.sg-drop.p-10") |> Enum.to_list()
-    assert html |> find("label.sg-drop .sg-btn.sm") |> LazyHTML.text() =~ "Escolher arquivo"
+    assert html |> find("label.sg-drop .btn.btn-sm") |> LazyHTML.text() =~ "Escolher arquivo"
     assert [_] = find(html, "label.sg-drop svg path[d='M4 8h3']") |> Enum.to_list()
   end
 
