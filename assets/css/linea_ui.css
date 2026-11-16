@@ -1152,15 +1152,15 @@ table.is-zebra > tbody > tr:nth-child(even) > td {
 }
 
 /* tabs */
-.tab-content.tab-shift-left {
+.lo-tab-content.tab-shift-left {
   @apply animate-[cubic-bezier(var(--ease-in-out))_tab-shift-left_300ms_forwards];
 }
 
-.tab-content.tab-shift-up {
+.lo-tab-content.tab-shift-up {
   @apply animate-[cubic-bezier(var(--ease-in-out))_tab-shift-up_300ms_forwards];
 }
 
-.tab-content:not(.is-active) {
+.lo-tab-content:not(.is-active) {
   @apply !hidden;
 }
 
