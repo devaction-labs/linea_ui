@@ -1017,73 +1017,20 @@ code.inline-code {
   @apply bg-navy-600 text-base-content/25;
 }
 
-/* timeline */
-.lo-timeline {
-  @apply flex flex-col [--size:12px] [--tl-line:2px];
+/* timeline, compact: the type of the canvas (daisyUI's timeline draws the line and the points) */
+.timeline.is-compact .timeline-item-title {
+  @apply text-sm leading-5 font-medium text-base-content;
 }
 
-.lo-timeline.line-space {
-  --space: 12px;
+.timeline.is-compact .timeline-item-time {
+  @apply font-mono text-[11.5px] leading-5 text-base-content/50;
 }
 
-.lo-timeline .timeline-item {
-  @apply relative flex flex-1 pb-8;
+.timeline.is-compact .timeline-item-description {
+  @apply mt-0 p-0 text-[12.5px] leading-5 text-base-content/50;
 }
 
-.lo-timeline .timeline-item .timeline-item-point {
-  @apply relative m-0 flex h-[var(--size)] w-[var(--size)] shrink-0 items-center justify-center;
-}
-
-.lo-timeline .timeline-item::before {
-  @apply absolute inset-0 order-[-1] w-[var(--tl-line)] translate-x-[calc((var(--size)/2)-(var(--tl-line)/2))] content-[''];
-}
-
-.lo-timeline .timeline-item:not(:last-child) {
-  @apply before:bg-base-300;
-}
-
-.lo-timeline .timeline-item:last-child {
-  @apply pb-0;
-}
-
-.lo-timeline.line-space .timeline-item::before {
-  @apply top-[calc(var(--size)+var(--space))] bottom-[var(--space)];
-}
-
-/* compact timeline: the canvas look */
-.lo-timeline.is-compact {
-  --space: 4px;
-}
-
-.lo-timeline.is-compact .timeline-item {
-  @apply pb-[22px];
-}
-
-.lo-timeline.is-compact .timeline-item:last-child {
-  @apply pb-0;
-}
-
-.lo-timeline.is-compact .timeline-day {
-  @apply pb-3.5;
-}
-
-.lo-timeline.is-compact .timeline-item-content {
-  @apply pt-1 pl-3.5 text-[13px] leading-normal;
-}
-
-.lo-timeline.is-compact .timeline-item-title {
-  @apply font-inter text-[13.5px] leading-[1.35] font-semibold text-base-content/85;
-}
-
-.lo-timeline.is-compact .timeline-item-time {
-  @apply text-xs leading-[1.35];
-}
-
-.lo-timeline.is-compact .timeline-item-description {
-  @apply mt-[3px] p-0 text-base-content/65;
-}
-
-.lo-timeline.is-compact .timeline-item-description b {
+.timeline.is-compact .timeline-item-description b {
   @apply font-semibold text-base-content/85;
 }
 
@@ -1288,45 +1235,3 @@ code.inline-code {
   color: var(--color-slate-500);
 }
 
-/* timeline, compact: the canvas `sg-tl` (a 28px tile, a 1px line, 18px between items) */
-.lo-timeline.is-compact {
-  --size: 28px;
-  --tl-line: 1px;
-  --space: 2px;
-}
-.lo-timeline.is-compact .timeline-item {
-  padding-bottom: 18px;
-}
-.lo-timeline.is-compact .timeline-item:last-child {
-  padding-bottom: 0;
-}
-.lo-timeline.is-compact .timeline-item:not(:last-child)::before {
-  background-color: var(--line, var(--color-slate-150));
-}
-.lo-timeline.is-compact .timeline-item-content {
-  padding-top: 0;
-  padding-left: 14px;
-}
-.lo-timeline.is-compact .timeline-item-title {
-  font-size: 14px;
-  line-height: 20px;
-  font-weight: 500;
-  color: var(--color-slate-900);
-}
-.dark .lo-timeline.is-compact .timeline-item-title:not([data-theme="light"] *),
-[data-theme="dark"] .lo-timeline.is-compact .timeline-item-title {
-  color: var(--color-navy-50);
-}
-.lo-timeline.is-compact .timeline-item-time {
-  font-family: var(--font-mono);
-  font-size: 11.5px;
-  line-height: 20px;
-  color: var(--color-slate-400);
-}
-.lo-timeline.is-compact .timeline-item-description {
-  margin-top: 0;
-  padding: 0;
-  font-size: 12.5px;
-  line-height: 20px;
-  color: var(--color-slate-400);
-}

@@ -11,7 +11,11 @@ defmodule LineaUI.Components.TimelineTest do
       </.timeline>
       """)
 
-    assert ["lo-timeline", "max-w-sm"] == classes(html, "ol")
+    assert ["timeline", "timeline-vertical", "timeline-compact", "max-w-sm"] -- classes(html, "ol") ==
+             []
+
+    assert html |> find("li > .timeline-middle .timeline-item-point") |> Enum.count() == 1
+    assert html |> find("li > hr") |> Enum.count() == 2
     assert "bg-primary" in classes(html, ".timeline-item-point")
 
     assert html
@@ -34,8 +38,7 @@ defmodule LineaUI.Components.TimelineTest do
       </.timeline>
       """)
 
-    assert ["timeline-item", "timeline-day", "pb-3", "x"] -- classes(html, "li.timeline-day") ==
-             []
+    assert ["timeline-item", "timeline-day", "x"] -- classes(html, "li.timeline-day") == []
 
     assert html
            |> find("li.timeline-day span")
@@ -55,7 +58,7 @@ defmodule LineaUI.Components.TimelineTest do
       """)
 
     assert "line-space" in classes(html, "ol")
-    assert "[--size:1.5rem]" in classes(html, "ol")
+    assert "[--tl-point:1.5rem]" in classes(html, "ol")
     assert "border-success" in classes(html, "li:first-child .timeline-item-point")
     point = classes(html, "li:last-child .timeline-item-point")
     assert "text-error" in point
@@ -90,8 +93,8 @@ defmodule LineaUI.Components.TimelineTest do
       <.timeline id="u" size="2xl"></.timeline>
       """)
 
-    assert "[--size:2rem]" in classes(html, "#t")
-    assert "[--size:2.5rem]" in classes(html, "#u")
+    assert "[--tl-point:2rem]" in classes(html, "#t")
+    assert "[--tl-point:2.5rem]" in classes(html, "#u")
     point = classes(html, "#a .timeline-item-point")
     assert ["rounded-full", "ring-2"] -- point == []
     refute Enum.any?(point, &String.starts_with?(&1, "bg-"))
@@ -110,7 +113,7 @@ defmodule LineaUI.Components.TimelineTest do
       <.timeline id="d"><.timeline_item title="Default" description="Text" /></.timeline>
       """)
 
-    assert ["lo-timeline", "line-space", "is-compact"] -- classes(html, "#c") == []
+    assert ["timeline", "line-space", "is-compact"] -- classes(html, "#c") == []
     refute "is-compact" in classes(html, "#d")
     refute "line-space" in classes(html, "#d")
     assert html |> find("#a .timeline-item-description b") |> Enum.count() == 1
@@ -123,7 +126,7 @@ defmodule LineaUI.Components.TimelineTest do
     assert "timeline-item-title" in classes(html, "#a p.timeline-item-title")
   end
 
-  test "the canvas variant is an sg-tl of timeline_event rows" do
+  test "the canvas variant is a daisyUI timeline of timeline_event rows" do
     html =
       render(~H"""
       <.timeline variant="canvas" id="t" rows={[%{n: "a"}, %{n: "b"}]} row_id={&"r-#{&1.n}"}>
@@ -135,18 +138,17 @@ defmodule LineaUI.Components.TimelineTest do
       </.timeline>
       """)
 
-    assert "sg-tl" in classes(html, "div#t")
-    assert [_, _] = find(html, "#t > .sg-tl-i") |> Enum.to_list()
-    assert ["sg-ic", "warn"] -- classes(html, "#r-a > span") == []
+    assert "timeline" in classes(html, "ul#t")
+    assert [_, _] = find(html, "#t > li.timeline-event") |> Enum.to_list()
+    assert ["timeline-middle", "bg-warning/10", "text-warning"] -- classes(html, "#r-a > span") == []
     assert find(html, "#r-a .grow > div") |> Enum.map(&LazyHTML.text/1) == ["a", "by me"]
-    assert [_] = find(html, "#r-a .faint:not(.mono)") |> Enum.to_list()
-    assert find(html, "#r-a span.mono.faint") |> LazyHTML.text() == "10:42"
+    assert find(html, "#r-a span.font-mono") |> LazyHTML.text() == "10:42"
     assert [] = find(html, "ol") |> Enum.to_list()
   end
 
   test "a timeline_event without a subtitle or time drops those tags" do
     html = render(~H|<.timeline_event title="T" />|)
-    assert [] = find(html, ".faint") |> Enum.to_list()
-    assert ["sg-ic"] = classes(html, "span")
+    assert [] = find(html, ".font-mono") |> Enum.to_list()
+    assert find(html, ".grow > div") |> Enum.count() == 1
   end
 end
