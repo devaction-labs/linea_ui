@@ -1,7 +1,7 @@
 defmodule LineaUI.Components.Card do
   @moduledoc """
-  LineOne's cards: the white panel, bordered, outlined, tinted, filled with a theme color, glowing,
-  gradient and gradient-outlined, with optional composable parts (header, body, footer).
+  daisyUI's card (`card card-border` on `base-100`, `card-body`, `card-title`): the panel, soft, a link row, and
+  the gradient-outlined card, with optional composable parts (header, body, footer).
 
       <.card>
         <:title>Simple Card</:title>
@@ -103,7 +103,7 @@ defmodule LineaUI.Components.Card do
   @outline_inner_shapes %{"rounded" => "", "xl" => "rounded-xl [--card-r:0.75rem]"}
 
   @titles %{
-    "light" => "text-lg font-medium tracking-wide text-slate-700 line-clamp-1 dark:text-navy-100",
+    "light" => "text-lg font-medium tracking-wide text-base-content/85 line-clamp-1",
     "colored" => "text-lg font-medium tracking-wide line-clamp-1"
   }
 
@@ -201,7 +201,7 @@ defmodule LineaUI.Components.Card do
       <div
         class={
           merge([
-            "card rounded-lg bg-slate-50 shadow-none [--card-r:0.5rem] dark:bg-navy-900",
+            "lo-card rounded-lg bg-base-200 shadow-none [--card-r:0.5rem]",
             outline_inner_shape(@shape)
           ])
         }
@@ -228,8 +228,8 @@ defmodule LineaUI.Components.Card do
       href={@href}
       class={
         merge([
-          "sg-card sg-card-link flex items-center gap-3.5 no-underline",
-          @variant == "soft" && "soft",
+          "card card-border flex-row items-center gap-3.5 bg-base-100 p-4 no-underline transition-colors hover:bg-base-200",
+          @variant == "soft" && "border-transparent bg-base-200 hover:bg-base-300",
           @class
         ])
       }
@@ -253,16 +253,18 @@ defmodule LineaUI.Components.Card do
     <div
       class={
         merge([
-          "sg-card",
-          @variant == "soft" && "soft",
-          (@variant == "flush" or !@padded) && "flush",
+          "card card-border bg-base-100",
+          @variant == "soft" && "border-transparent bg-base-200",
+          @variant != "flush" and @padded && "p-5",
           @class
         ])
       }
       {@rest}
     >
       <div :if={@title != []} class="sg-card-h">
-        <h3 :for={title <- @title} class={title[:class]}>{render_slot(title)}</h3>
+        <h3 :for={title <- @title} class={merge(["card-title text-base", title[:class]])}>
+          {render_slot(title)}
+        </h3>
       </div>
       {render_slot(@inner_block)}
     </div>
@@ -408,7 +410,7 @@ defmodule LineaUI.Components.Card do
 
   def card_bleed(assigns) do
     ~H"""
-    <div class={merge(["card-bleed", @class])} {@rest}>{render_slot(@inner_block)}</div>
+    <div class={merge(["lo-card-bleed", @class])} {@rest}>{render_slot(@inner_block)}</div>
     """
   end
 

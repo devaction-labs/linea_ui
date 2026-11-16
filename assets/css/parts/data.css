@@ -161,13 +161,13 @@
     navy-500 of the row lines, so the lines of a table inside a card vanished (both about rgb(57 71 100)). Inside a card the
     lines are a veil of white instead, which reads on any of those panels.
   */
-  .dark .card table > :is(thead, tbody) > tr:not(:last-child) {
+  .dark .lo-card table > :is(thead, tbody) > tr:not(:last-child) {
     border-bottom-color: rgb(255 255 255 / 0.09);
   }
 
-  .dark .card table > :is(thead, tbody, tfoot) > tr > :is(th, td):not([data-theme="light"] *),
+  .dark .lo-card table > :is(thead, tbody, tfoot) > tr > :is(th, td):not([data-theme="light"] *),
 
-  [data-theme="dark"] .card table > :is(thead, tbody, tfoot) > tr > :is(th, td){
+  [data-theme="dark"] .lo-card table > :is(thead, tbody, tfoot) > tr > :is(th, td){
     border-color: rgb(255 255 255 / 0.09);
   }
 
