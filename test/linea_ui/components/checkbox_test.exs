@@ -19,7 +19,9 @@ defmodule LineaUI.Components.CheckboxTest do
       """)
 
     classes = classes(html, "input[type=checkbox]")
-    assert ["checkbox", "checkbox-primary", "checkbox-lg", "bg-base-200", "rounded-full"] -- classes == []
+
+    assert ["checkbox", "checkbox-primary", "checkbox-lg", "bg-base-200", "rounded-full"] --
+             classes == []
   end
 
   test "checked comes from value or field" do

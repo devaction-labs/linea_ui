@@ -400,7 +400,6 @@ defmodule LineaUI.Components.Upload do
     |> String.replace_suffix(".0", "")
   end
 
-
   @doc """
   A button that opens the file chooser: daisyUI's `btn` on a `<label>` holding an invisible file input.
 

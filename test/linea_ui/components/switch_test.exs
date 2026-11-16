@@ -33,6 +33,7 @@ defmodule LineaUI.Components.SwitchTest do
              "[--radius-selector:calc(var(--radius-field)*.6)]",
              "[--toggle-p:5px]"
            ] -- classes == []
+
     assert "text-base" in classes(html, "label span")
   end
 
@@ -57,7 +58,11 @@ defmodule LineaUI.Components.SwitchTest do
   end
 
   test "the small switch is daisyUI's toggle-sm" do
-    assert "toggle-sm" in classes(render(~H|<.switch name="a" size="sm" />|), "input[role=switch]")
+    assert "toggle-sm" in classes(
+             render(~H|<.switch name="a" size="sm" />|),
+             "input[role=switch]"
+           )
+
     refute "toggle-sm" in classes(render(~H|<.switch name="a" />|), "input[role=switch]")
   end
 end

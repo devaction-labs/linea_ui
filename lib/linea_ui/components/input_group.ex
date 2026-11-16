@@ -51,7 +51,8 @@ defmodule LineaUI.Components.InputGroup do
 
   @addons %{
     "outline" => "input join-item w-auto shrink-0 text-base-content/60",
-    "filled" => "input join-item w-auto shrink-0 border-transparent bg-base-200 text-base-content/70"
+    "filled" =>
+      "input join-item w-auto shrink-0 border-transparent bg-base-200 text-base-content/70"
   }
 
   @addon_sizes %{"sm" => "input-sm", "md" => nil, "lg" => "input-lg"}
@@ -220,9 +221,7 @@ defmodule LineaUI.Components.InputGroup do
 
     ~H"""
     <span
-      class={
-        merge([addon_class(@variant), @addon_sizes[@size], @class])
-      }
+      class={merge([addon_class(@variant), @addon_sizes[@size], @class])}
       {@rest}
     >
       <span>{render_slot(@inner_block)}</span>

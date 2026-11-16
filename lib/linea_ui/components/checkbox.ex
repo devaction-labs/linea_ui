@@ -55,11 +55,13 @@ defmodule LineaUI.Components.Checkbox do
   attr(:unchecked_value, :string, default: "false")
   attr(:hidden_input, :boolean, default: true, doc: "Renders the hidden unchecked input.")
   attr(:color, :string, default: "neutral", values: @colors)
+
   attr(:variant, :string,
     default: "basic",
     values: ~w(basic outline),
     doc: "Kept for compatibility: both draw daisyUI's checkbox."
   )
+
   attr(:filled, :boolean, default: false, doc: "A tinted box while unchecked.")
   attr(:shape, :string, default: "square", values: ~w(square circle))
   attr(:size, :string, default: "md", values: Choice.sizes())

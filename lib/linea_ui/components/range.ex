@@ -359,7 +359,8 @@ defmodule LineaUI.Components.Range do
         text: pair_text(assigns.value_format, low, high),
         min_text: format(min),
         max_text: format(max),
-        input_class: merge(["form-range", @pair_colors[assigns.color], @pair_sizes[assigns.size]]),
+        input_class:
+          merge(["form-range", @pair_colors[assigns.color], @pair_sizes[assigns.size]]),
         pair_class:
           merge([
             "linea-range-pair",

@@ -26,7 +26,6 @@ defmodule LineaUI.Components.Switch do
 
   @label_positions %{"right" => nil, "left" => "flex-row-reverse space-x-reverse"}
 
-
   @doc """
   Renders a switch: a checkbox drawn as a track and thumb. Like `checkbox`, it sends
   `unchecked_value` through a hidden input when off.
