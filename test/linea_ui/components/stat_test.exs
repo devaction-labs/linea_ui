@@ -11,11 +11,11 @@ defmodule LineaUI.Components.StatTest do
       </.stat_group>
       """)
 
-    assert ["sg-card", "sg-stat-group"] == classes(html, "#g")
-    assert find(html, "#g > .sg-stat") |> Enum.count() == 3
-    assert LazyHTML.text(find(html, ".sg-stat:nth-child(2) .v small")) == "dias"
-    assert ["v", "acc"] == classes(html, ".sg-stat:nth-child(3) .v")
-    assert LazyHTML.text(find(html, ".sg-stat:first-child .l")) == "Subtotal"
+    assert ["stats", "border", "border-base-300", "bg-base-100"] == classes(html, "#g")
+    assert find(html, "#g > .stat") |> Enum.count() == 3
+    assert LazyHTML.text(find(html, ".stat:nth-child(2) .stat-value small")) == "dias"
+    assert "text-primary" in classes(html, ".stat:nth-child(3) .stat-value")
+    assert LazyHTML.text(find(html, ".stat:first-child .stat-title")) == "Subtotal"
   end
 
   test "card false drops the frame" do
@@ -24,7 +24,7 @@ defmodule LineaUI.Components.StatTest do
         ~H|<.stat_group id="g" card={false}><.stat_item label="a" value="1" /></.stat_group>|
       )
 
-    assert ["sg-stat-group"] == classes(html, "#g")
+    assert ["stats"] == classes(html, "#g")
   end
 
   test "no empty small without a unit" do
@@ -34,7 +34,7 @@ defmodule LineaUI.Components.StatTest do
 
   test "size sm adds the sm class to the figure" do
     html = render(~H|<.stat_item label="a" value="Boleto" size="sm" />|)
-    assert ["v", "sm"] == classes(html, ".v")
+    assert "text-lg" in classes(html, ".stat-value")
   end
 
   test "sunken variant" do
@@ -43,6 +43,6 @@ defmodule LineaUI.Components.StatTest do
         ~H|<.stat_group id="g" variant="sunken"><.stat_item label="a" value="1" /></.stat_group>|
       )
 
-    assert ["sg-card", "sg-stat-group", "sg-stat-sunken"] == classes(html, "#g")
+    assert ["stats", "border", "border-transparent", "bg-base-200"] -- classes(html, "#g") == []
   end
 end
