@@ -283,7 +283,7 @@ defmodule LineaUI.Components.Dropdown do
         <div
           class={
             merge([
-              "popper-box min-w-[220px] rounded-[14px] bg-white p-1.5 font-inter shadow-[0_0_0_1px_var(--color-slate-150),0_24px_60px_-20px_rgb(23_23_26/.28)] dark:bg-navy-700 dark:shadow-[0_0_0_1px_var(--color-navy-600)]",
+              "popper-box min-w-[220px] rounded-box p-1.5 font-inter bg-base-100 text-base-content shadow-xl ring-1 ring-base-content/8",
               @class
             ])
           }
@@ -314,17 +314,17 @@ defmodule LineaUI.Components.Dropdown do
   @item_styles %{
     "default" => %{
       "neutral" =>
-        "flex h-[34px] items-center gap-2.5 rounded-[9px] px-2.5 text-[13.5px] text-slate-700 outline-hidden transition-colors hover:bg-slate-100 hover:text-slate-900 focus:bg-slate-100 focus:text-slate-900 aria-[current=true]:bg-slate-100 aria-[current=true]:text-slate-900 dark:text-navy-100 dark:hover:bg-navy-600 dark:hover:text-navy-50 dark:focus:bg-navy-600 dark:aria-[current=true]:bg-navy-600 dark:aria-[current=true]:text-navy-50",
+        "flex h-[34px] items-center gap-2.5 rounded-[9px] px-2.5 text-[13.5px] text-base-content/85 outline-hidden transition-colors hover:bg-base-200 hover:text-base-content focus:bg-base-200 focus:text-base-content aria-[current=true]:bg-base-200 aria-[current=true]:text-base-content",
       "primary" =>
-        "flex h-[34px] items-center gap-2.5 rounded-[9px] px-2.5 text-[13.5px] text-primary outline-hidden transition-colors hover:bg-slate-100 focus:bg-slate-100 dark:text-accent-light dark:hover:bg-navy-600",
+        "flex h-[34px] items-center gap-2.5 rounded-[9px] px-2.5 text-[13.5px] text-primary outline-hidden transition-colors hover:bg-base-200 focus:bg-base-200",
       "error" =>
         "flex h-[34px] items-center gap-2.5 rounded-[9px] px-2.5 text-[13.5px] text-error outline-hidden transition-colors hover:bg-error/10 focus:bg-error/10"
     },
     "media" => %{
       "neutral" =>
-        "flex items-center gap-3.5 px-4 py-2 pr-8 tracking-wide outline-hidden transition-all hover:bg-slate-100 focus:bg-slate-100 dark:hover:bg-navy-600 dark:focus:bg-navy-600",
+        "flex items-center gap-3.5 px-4 py-2 pr-8 tracking-wide outline-hidden transition-all hover:bg-base-200 focus:bg-base-200",
       "primary" =>
-        "flex items-center gap-3.5 px-4 py-2 pr-8 tracking-wide outline-hidden transition-all hover:bg-primary/10 focus:bg-primary/10 dark:hover:bg-accent-light/10 dark:focus:bg-accent-light/10",
+        "flex items-center gap-3.5 px-4 py-2 pr-8 tracking-wide outline-hidden transition-all hover:bg-primary/10 focus:bg-primary/10",
       "error" =>
         "flex items-center gap-3.5 px-4 py-2 pr-8 tracking-wide text-error outline-hidden transition-all hover:bg-error/20 focus:bg-error/20"
     }
@@ -474,7 +474,7 @@ defmodule LineaUI.Components.Dropdown do
         class={
           merge([
             @item_class,
-            "h-9 w-full gap-2.5 pr-3 font-inter text-sm font-normal tracking-normal text-slate-600 dark:text-navy-100 dark:hover:text-navy-50 dark:focus:text-navy-50",
+            "h-9 w-full gap-2.5 pr-3 font-inter text-sm font-normal tracking-normal text-base-content/75",
             "text-left",
             @disabled && "pointer-events-none opacity-55",
             @trigger_class
@@ -494,18 +494,18 @@ defmodule LineaUI.Components.Dropdown do
         <span
           data-submenu-count
           hidden={@count in [nil, 0]}
-          class="inline-flex h-4.5 min-w-4.5 items-center justify-center rounded-full bg-primary px-1.5 font-inter text-tiny-plus text-white dark:bg-accent"
+          class="inline-flex h-4.5 min-w-4.5 items-center justify-center rounded-full bg-primary px-1.5 font-inter text-tiny-plus text-white"
         >
           {@count}
         </span>
-        <.glyph name={:chevron_right} class="size-4 shrink-0 text-slate-400 dark:text-navy-300" />
+        <.glyph name={:chevron_right} class="size-4 shrink-0 text-base-content/45" />
       </button>
       <div class="linea-submenu" data-submenu-panel>
         <div
           id={"#{@id}-menu"}
           class={
             merge([
-              "w-max min-w-40 rounded-lg border border-slate-150 bg-white py-1 font-inter shadow-[0_10px_30px_-8px_rgb(48_46_56/0.18)] dark:border-navy-500 dark:bg-navy-700 dark:shadow-soft-dark",
+              "w-max min-w-40 rounded-box py-1 font-inter bg-base-100 text-base-content shadow-xl ring-1 ring-base-content/8",
               @class
             ])
           }
@@ -528,13 +528,13 @@ defmodule LineaUI.Components.Dropdown do
   def dropdown_header(assigns) do
     ~H"""
     <h3
-      class={merge(["px-4 py-3 font-medium tracking-wide text-slate-700 dark:text-navy-100", @class])}
+      class={merge(["px-4 py-3 font-medium tracking-wide text-base-content/85", @class])}
       {@rest}
     >
       {render_slot(@inner_block)}
       <span
         :if={@subtitle}
-        class="block text-xs font-normal tracking-normal text-slate-400 dark:text-navy-300"
+        class="block text-xs font-normal tracking-normal text-base-content/45"
       >
         {@subtitle}
       </span>
@@ -577,24 +577,24 @@ defmodule LineaUI.Components.Dropdown do
         placeholder={@placeholder}
         class={
           merge([
-            "form-input peer h-8 w-full rounded-md border border-slate-150 bg-transparent px-3 py-0 pl-9 text-xs-plus placeholder:text-slate-500 dark:border-navy-600",
+            "form-input peer h-8 w-full rounded-md border border-base-300 bg-transparent px-3 py-0 pl-9 text-xs-plus placeholder:text-base-content/60",
             @class
           ])
         }
         {@rest}
       />
-      <span class="pointer-events-none absolute flex h-full w-10 items-center justify-center text-slate-400 peer-focus:text-primary dark:text-navy-300 dark:peer-focus:text-accent">
+      <span class="pointer-events-none absolute flex h-full w-10 items-center justify-center text-base-content/45 peer-focus:text-primary">
         <.glyph name={:search_solid} class="size-4.5 transition-colors duration-200" />
       </span>
     </label>
     """
   end
 
-  @choice_item "group flex h-9 w-full items-center gap-2.5 px-3 text-left font-inter text-sm font-normal text-slate-600 outline-hidden transition-colors hover:bg-slate-100 hover:text-slate-800 focus:bg-slate-100 focus:text-slate-800 dark:text-navy-100 dark:hover:bg-navy-600 dark:hover:text-navy-50 dark:focus:bg-navy-600 dark:focus:text-navy-50"
+  @choice_item "group flex h-9 w-full items-center gap-2.5 px-3 text-left font-inter text-sm font-normal text-base-content/75 outline-hidden transition-colors hover:bg-base-200 hover:text-base-content focus:bg-base-200 focus:text-base-content"
 
-  @check_box "flex size-4 shrink-0 items-center justify-center rounded border border-slate-400 text-white transition-colors group-aria-checked:border-primary group-aria-checked:bg-primary dark:border-navy-300 dark:group-aria-checked:border-accent dark:group-aria-checked:bg-accent"
+  @check_box "flex size-4 shrink-0 items-center justify-center rounded border border-base-content/30 text-white transition-colors group-aria-checked:border-primary group-aria-checked:bg-primary"
 
-  @radio_box "size-4 shrink-0 rounded-full border border-slate-400 bg-white transition-all group-aria-checked:border-[5px] group-aria-checked:border-primary dark:border-navy-300 dark:bg-navy-700 dark:group-aria-checked:border-accent"
+  @radio_box "size-4 shrink-0 rounded-full border border-base-content/30 bg-base-100 transition-all group-aria-checked:border-[5px] group-aria-checked:border-primary"
 
   @doc """
   A checkbox item (`menuitemcheckbox`). Choosing it flips it and leaves the menu open, for filters. With a
@@ -714,7 +714,7 @@ defmodule LineaUI.Components.Dropdown do
           />
         </span>
         <span class="flex-1">{render_slot(@inner_block)}</span>
-        <span :if={@count != nil} class="ml-4 font-inter text-xs text-slate-400 dark:text-navy-300">
+        <span :if={@count != nil} class="ml-4 font-inter text-xs text-base-content/45">
           {@count}
         </span>
       </button>
@@ -817,7 +817,7 @@ defmodule LineaUI.Components.Dropdown do
       role="none"
       class={
         merge([
-          "mt-1.5 flex justify-between gap-2 border-t border-slate-150 px-2.5 pt-2 pb-0.5 dark:border-navy-500",
+          "mt-1.5 flex justify-between gap-2 border-t border-base-300 px-2.5 pt-2 pb-0.5",
           @class
         ])
       }

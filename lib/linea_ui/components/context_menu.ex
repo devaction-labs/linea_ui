@@ -48,13 +48,13 @@ defmodule LineaUI.Components.ContextMenu do
         data-menu
         hidden
         phx-update="ignore"
-        class="fixed z-[9500] min-w-44 rounded-md border border-slate-200 bg-white p-1 shadow-md dark:border-navy-450 dark:bg-navy-900"
+        class="fixed z-[9500] min-w-44 rounded-box p-1 bg-base-100 text-base-content shadow-xl ring-1 ring-base-content/8"
       >
         <%= for item <- @item do %>
           <div
             :if={item[:divider]}
             role="separator"
-            class="-mx-1 my-1 h-px bg-slate-200 dark:bg-navy-450"
+            class="-mx-1 my-1 h-px bg-base-300"
           >
           </div>
           <button
@@ -66,8 +66,8 @@ defmodule LineaUI.Components.ContextMenu do
             phx-value-id={item[:"phx-value-id"]}
             phx-target={item[:"phx-target"]}
             class={[
-              "flex w-full items-center gap-2 rounded-md px-2.5 py-1.75 text-start text-sm outline-none focus-visible:bg-slate-100 hover:bg-slate-100 disabled:pointer-events-none disabled:opacity-50 dark:focus-visible:bg-navy-600 dark:hover:bg-navy-600",
-              (item[:tone] == "danger" && "text-error") || "text-slate-950 dark:text-navy-50"
+              "flex w-full items-center gap-2 rounded-md px-2.5 py-1.75 text-start text-sm outline-none focus-visible:bg-base-200 hover:bg-base-200 disabled:pointer-events-none disabled:opacity-50",
+              (item[:tone] == "danger" && "text-error") || "text-base-content"
             ]}
           >
             {render_slot(item)}
