@@ -273,7 +273,12 @@ defmodule LineaUI.Components.LandingNav do
       class="lo-lp-brand"
     >
       <img :if={@brand[:src]} src={@brand[:src]} alt="" />
-      <span :if={!@brand[:src] && @brand[:logo]} class="lo-nb-logo bg-primary text-primary-content">{@brand[:logo]}</span>
+      <span
+        :if={!@brand[:src] && @brand[:logo]}
+        class="lo-nb-logo bg-primary text-primary-content"
+      >
+        {@brand[:logo]}
+      </span>
       <b :if={@brand[:name]} class="lo-nb-brand">{@brand[:name]}</b>
     </.item_link>
     """
@@ -318,7 +323,9 @@ defmodule LineaUI.Components.LandingNav do
 
   def landing_login(assigns) do
     assigns =
-      assign_derived(assigns, :classes, [:class], fn -> merge(["lo-lp-login btn btn-ghost", assigns.class]) end)
+      assign_derived(assigns, :classes, [:class], fn ->
+        merge(["lo-lp-login btn btn-ghost", assigns.class])
+      end)
 
     ~H"""
     <.item_link href={@href} navigate={@navigate} patch={@patch} class={@classes} {@rest}>

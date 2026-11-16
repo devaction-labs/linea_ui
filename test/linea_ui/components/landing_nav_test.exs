@@ -165,8 +165,10 @@ defmodule LineaUI.Components.LandingNavTest do
       """)
 
     assert ["lo-lp-cta", "btn", "btn-neutral"] == classes(html, "button")
+
     assert ["lo-lp-cta", "btn", "btn-neutral", "lg", "btn-lg", "block", "btn-block"] ==
              classes(html, "a")
+
     assert count(html, "a .huge-arrow-right-02") == 1
   end
 
