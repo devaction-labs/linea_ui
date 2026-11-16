@@ -305,7 +305,10 @@ defmodule LineaUI.Components.Table do
     doc: "A function giving each row's DOM id. Streams default to the stream id."
   )
 
-  attr(:row_click, :any, default: nil, doc: "A function of the row returning a `JS` or an event.")
+  attr(:row_click, :any,
+    default: nil,
+    doc: "A function of the row returning a `JS` or an event; `nil` for a row that does nothing."
+  )
 
   attr(:row_class, :any,
     default: nil,
@@ -1073,12 +1076,14 @@ defmodule LineaUI.Components.Table do
   defp data_checkbox?(checkbox), do: checkbox == @checkbox_data
 
   # The value of the data-row-click of a tr: what `row_click` gives for the row. The cells run it
-  # with `JS.exec`. An event name is the same as `JS.push(event)`.
+  # with `JS.exec`. An event name is the same as `JS.push(event)`; `nil` or `false` is an empty `JS`,
+  # a row that does nothing (`JS.exec` raises when the attribute is missing).
   defp row_click_js(nil, _row), do: nil
 
   defp row_click_js(fun, row) do
     case fun.(row) do
       %JS{} = js -> js
+      empty when empty in [nil, false] -> %JS{}
       event -> JS.push(event)
     end
   end
