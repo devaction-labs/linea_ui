@@ -5,12 +5,7 @@ defmodule LineaUI.Components.SwitchTest do
     html = render(~H'<.switch name="n" label="Notify" color="primary" />')
     assert [_] = find(html, "input[type=hidden][name=n][value=false]") |> Enum.to_list()
     assert [_] = find(html, "input[type=checkbox][role=switch][value=true]") |> Enum.to_list()
-    classes = classes(html, "input[role=switch]")
-    assert "form-switch" in classes
-    assert "h-5" in classes
-    assert "rounded-full" in classes
-    assert "checked:bg-primary" in classes
-    assert "dark:checked:bg-accent" in classes
+    assert classes(html, "input[role=switch]") == ["toggle", "toggle-primary"]
   end
 
   test "outline, filled, squircle, size and thumb" do
@@ -29,13 +24,15 @@ defmodule LineaUI.Components.SwitchTest do
       """)
 
     classes = classes(html, "input[role=switch]")
-    assert "is-outline" in classes
-    assert "bg-slate-100" in classes
-    assert "rounded-lg" in classes
-    assert "before:rounded-md" in classes
-    assert "h-5.5" in classes
-    assert "[--thumb-border:5px]" in classes
-    assert "checked:before:!bg-error" in classes
+
+    assert [
+             "toggle",
+             "toggle-error",
+             "toggle-lg",
+             "bg-base-200",
+             "[--radius-selector:calc(var(--radius-field)*.6)]",
+             "[--toggle-p:5px]"
+           ] -- classes == []
     assert "text-base" in classes(html, "label span")
   end
 
@@ -59,11 +56,8 @@ defmodule LineaUI.Components.SwitchTest do
     refute "flex-row-reverse" in classes(html, "label:has(#b)")
   end
 
-  test "the small switch carries is-sm, the canvas .8 size" do
-    assigns = %{}
-    html = rendered_to_string(~H|<.switch name="a" size="sm" />|)
-    assert html =~ "is-sm"
-    html = rendered_to_string(~H|<.switch name="a" />|)
-    refute html =~ "is-sm"
+  test "the small switch is daisyUI's toggle-sm" do
+    assert "toggle-sm" in classes(render(~H|<.switch name="a" size="sm" />|), "input[role=switch]")
+    refute "toggle-sm" in classes(render(~H|<.switch name="a" />|), "input[role=switch]")
   end
 end
