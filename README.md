@@ -7,7 +7,7 @@
 
 # LineaUI
 
-Phoenix LiveView components on daisyUI 5 (Tailwind CSS v4), with the LineOne design, used the way Fluxon is
+Phoenix LiveView components on daisyUI 5 (Tailwind CSS 4.1 or later), with the LineOne design, used the way Fluxon is
 used: `use LineaUI`, one function per component, `class` that overrides the defaults, overlays
 opened by id, and hooks that survive LiveView patches. No JavaScript dependencies.
 

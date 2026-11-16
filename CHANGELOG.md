@@ -1,7 +1,8 @@
 # Changelog
 
-## Unreleased
+## 0.26.1 (2026-11-16)
 
+- The daisyUI colours and sizes the components build from an attr are generated again: `alert` (`alert-info`, `alert-success`…), `spinner` (`loading-sm`…`loading-xl`), `progress` (`progress-warning`, `progress-error`), `button` (`btn-success`, `btn-info`…), `switch`, `checkbox`, `radio`, `range`, `badge` and `steps` wrote them as `"alert-" <> color`, which Tailwind cannot see, so they came out grey or unstyled in an app. `linea_ui.css` now lists them with `@source inline(...)`, so the kit needs Tailwind 4.1 or later (Phoenix 1.8 ships 4.1).
 - A `button` (or any daisyUI piece) drawn as a link inside the canvas look keeps its text colour: the `.sg a { color: inherit }` reset moved into the base layer, so it no longer beats daisyUI's `.btn` (a `<.button navigate={...} color="mono">` showed its text in the colour of its background).
 - A table `row_click` may return `nil` (or `false`) for a row that does nothing: the row gets an empty `JS` instead of raising in the browser (`JS.exec` needs the `data-row-click` attribute).
 
