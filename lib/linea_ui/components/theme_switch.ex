@@ -7,8 +7,9 @@ defmodule LineaUI.Components.ThemeSwitch do
       <.theme_switch id="theme" variant="switch" />
       <.theme_switch id="theme" system={false} light_label="Claro" dark_label="Escuro" />
 
-  `variant` is `"segmented"` (icon and label, a pill whose thumb slides to the choice), `"icons"` (the same with the
-  labels visually hidden, for a top bar) or `"switch"` (a sun/moon switch: on is dark). `size="sm"` is the compact
+  `variant` is `"segmented"` (icon and label in daisyUI's `tabs tabs-box`: a grey track with the choice in white),
+  `"icons"` (the same with the labels visually hidden, for a top bar) or `"switch"` (daisyUI's `toggle` with a sun
+  and a moon: on is dark). `size="sm"` is the compact
   one; `system={false}` leaves only light and dark.
 
   The segmented and icons variants are a `radiogroup` of `radio` buttons (arrow keys move the choice); the switch is
@@ -53,7 +54,9 @@ defmodule LineaUI.Components.ThemeSwitch do
 
   def theme_switch(%{variant: "switch"} = assigns) do
     assigns =
-      assign_derived(assigns, :classes, [:class], fn -> merge(["sg-theme-sw", assigns.class]) end)
+      assign_derived(assigns, :classes, [:class], fn ->
+        merge(["theme-switch toggle toggle-lg text-base-content [&_svg]:size-3.5", assigns.class])
+      end)
 
     ~H"""
     <button
@@ -67,12 +70,8 @@ defmodule LineaUI.Components.ThemeSwitch do
       phx-mounted='[["ignore_attrs",{"attrs":["aria-checked"]}]]'
       {@rest}
     >
-      <span class="end"><.glyph name="sun" /></span>
-      <span class="end"><.glyph name="moon" /></span>
-      <span class="k">
-        <span class="sun"><.glyph name="sun" /></span>
-        <span class="moon"><.glyph name="moon" /></span>
-      </span>
+      <.glyph name="sun" />
+      <.glyph name="moon" />
     </button>
     """
   end
@@ -82,10 +81,10 @@ defmodule LineaUI.Components.ThemeSwitch do
       assigns
       |> assign_derived(:classes, [:variant, :size, :system, :class], fn ->
         merge([
-          "sg-theme",
+          "theme-switch tabs tabs-box flex-nowrap",
           assigns.variant == "icons" && "icons",
           !assigns.system && "two",
-          assigns.size == "sm" && "sm",
+          (assigns.size == "sm" && "tabs-xs") || "tabs-sm",
           assigns.class
         ])
       end)
@@ -114,9 +113,10 @@ defmodule LineaUI.Components.ThemeSwitch do
         tabindex={if index == 0, do: "0", else: "-1"}
         data-theme-value={value}
         title={@variant == "icons" && text}
+        class="tab gap-1.5 [&_svg]:size-4"
         phx-mounted='[["ignore_attrs",{"attrs":["aria-checked","tabindex"]}]]'
       >
-        <.glyph name={icon_for(value)} /><span class="lbl">{text}</span>
+        <.glyph name={icon_for(value)} /><span class={["lbl", @variant == "icons" && "sr-only"]}>{text}</span>
       </button>
     </div>
     """

@@ -31,7 +31,6 @@
 @import "./parts/canvas-dark-auth.css";
 @import "./parts/canvas-ai.css";
 @import "./parts/canvas-pixel-card.css";
-@import "./parts/canvas-theme-switch.css";
 @import "./parts/canvas-theme-picker.css";
 @import "./parts/canvas-sidebar.css";
 @import "./parts/canvas-error-page.css";
@@ -1023,6 +1022,13 @@ code.inline-code {
 
 .timeline.is-compact .timeline-item-description b {
   @apply font-semibold text-base-content/85;
+}
+
+/* theme_switch: daisyUI's tabs-box made of radios, the checked one drawn as the active tab */
+.theme-switch.tabs-box > .tab[aria-checked="true"] {
+  background-color: var(--tab-bg, var(--color-base-100));
+  color: var(--color-base-content);
+  box-shadow: 0 1px 2px color-mix(in oklab, var(--color-base-content) 12%, transparent);
 }
 
 /* tabs */
