@@ -1,7 +1,7 @@
 defmodule LineaUI.Components.KpiCard do
   @moduledoc """
-  The canvas's metric card (`sg-card sg-kpi`): the label and the change on top, the figure with its unit and a
-  sparkline beside it.
+  A metric card made of daisyUI's pieces (`card card-border` with a `stat`): the label and the change (a soft
+  `badge`) on top, the figure with its unit and a sparkline beside it.
 
       <.kpi_card label="Faturamento" value="R$ 248,6" unit="mil" delta="12,4%" trend="up" spark={[8, 12, 9, 14, 11, 16]} />
       <.kpi_card label="Ticket médio" value="R$ 164" delta="2,3%" trend="down" delta_tone="error" spark={[14, 12, 13, 9]} />
@@ -10,12 +10,12 @@ defmodule LineaUI.Components.KpiCard do
   `up`) and a fall is bad (`error`, `down`). `color="primary"` draws the sparkline in the accent; any other color in
   the ink.
 
-  `progress` (0 to 100) swaps the sparkline for the canvas goal meter, with `caption` under it:
+  `progress` (0 to 100) swaps the sparkline for daisyUI's `progress`, with `caption` under it:
 
       <.kpi_card label="Vendas do mês" value="R$ 248,6" unit="mil" delta="12,4%" progress={78}
         caption="78% da meta de R$ 320 mil" />
 
-  `<:icon>` puts a canvas icon chip (`sg-ic`) before the label, `icon_tone` colors it. `caption` is a faint line under
+  `<:icon>` puts an icon chip before the label, `icon_tone` colors it. `caption` is a faint line under
   the figure, with or without `progress`. `value_id` is the id of the figure:
 
       <.kpi_card label="Automações" value="12" value_id="kpi-auto" caption="3 pausadas" icon_tone="pos">
@@ -30,6 +30,14 @@ defmodule LineaUI.Components.KpiCard do
   @w 104
   @h 34
   @pad 4
+
+  @icon_tones %{
+    "acc" => "border-primary/25 bg-primary/10 text-primary",
+    "pos" => "border-success/25 bg-success/10 text-success",
+    "neg" => "border-error/25 bg-error/10 text-error",
+    "warn" => "border-warning/25 bg-warning/10 text-warning",
+    "info" => "border-info/25 bg-info/10 text-info"
+  }
 
   attr(:label, :string, default: nil)
   attr(:value, :string, default: nil, doc: "The figure, already formatted.")
@@ -80,7 +88,7 @@ defmodule LineaUI.Components.KpiCard do
     doc: "Colors the `<:icon>` chip."
   )
 
-  attr(:value_id, :string, default: nil, doc: "The `id` of the figure element (`sg-kpi-v`).")
+  attr(:value_id, :string, default: nil, doc: "The `id` of the figure element (`stat-value`).")
 
   attr(:gap, :boolean,
     default: true,
@@ -91,13 +99,15 @@ defmodule LineaUI.Components.KpiCard do
   attr(:loading, :boolean, default: false, doc: "Placeholder blocks in place of the content.")
   attr(:class, :any, default: nil)
   attr(:rest, :global)
-  slot(:icon, doc: "An icon shown in a `sg-ic` chip before the label.")
+  slot(:icon, doc: "An icon shown in a tinted chip before the label.")
 
   def kpi_card(%{loading: true} = assigns) do
     ~H"""
-    <div class={merge(["sg-card sg-kpi", @class])} aria-busy="true" {@rest}>
-      <div class="sg-skel h-3 w-24"></div>
-      <div class="sg-skel h-8 w-32"></div>
+    <div class={merge(["card card-border kpi-card bg-base-100", @class])} aria-busy="true" {@rest}>
+      <div class="card-body gap-3 px-5 py-4">
+        <div class="skeleton h-3 w-24"></div>
+        <div class="skeleton h-8 w-32"></div>
+      </div>
     </div>
     """
   end
@@ -108,79 +118,90 @@ defmodule LineaUI.Components.KpiCard do
       |> assign(:tone, tone(assigns.delta_tone, assigns.trend))
       |> assign(:paths, paths(assigns.spark))
       |> assign(:uid, "kpi-#{:erlang.phash2({assigns.label, assigns.spark})}")
+      |> assign(:icon_class, @icon_tones[assigns.icon_tone])
 
     ~H"""
     <div
       class={
         merge([
-          "sg-card sg-kpi",
-          (!@gap or @progress) && "sg-kpi-tight",
-          @progress && "sg-kpi-goal",
+          "card card-border kpi-card bg-base-100",
+          (!@gap or @progress) && "kpi-tight",
+          @progress && "kpi-goal",
           @class
         ])
       }
       {@rest}
     >
-      <div class="row" style="justify-content:space-between">
-        <span :if={@icon != []} class={["sg-ic", @icon_tone]}>{render_slot(@icon)}</span>
-        <span class="sg-kpi-l">{@label}</span>
-        <span :if={@delta} class={["sg-delta", @tone]}>
-          <svg class="i" viewBox="0 0 24 24" aria-hidden="true">
-            <path :if={@trend == "up"} d="M7 17 17 7M9 7h8v8" />
-            <path :if={@trend == "down"} d="M7 7l10 10M17 9v8H9" />
-            <path :if={@trend == "flat"} d="M5 12h14" />
-          </svg>
-          {@delta}
-        </span>
-      </div>
-      <div :if={@progress} id={@value_id} class="sg-kpi-v">{@value}<small>{@unit}</small></div>
-      <div
-        :if={@progress}
-        class="sg-meter acc"
-        role="progressbar"
-        aria-valuenow={@progress}
-        aria-valuemin="0"
-        aria-valuemax="100"
-        aria-label={@label}
-      >
-        <i style={"width:#{min(max(@progress, 0), 100)}%"}></i>
-      </div>
-      <div :if={!@progress} class="sg-kpi-row">
-        <span id={@value_id} class="sg-kpi-v">{@value}<small>{@unit}</small></span>
-        <svg
-          :if={@paths}
-          class="sg-spark"
-          viewBox="0 0 104 34"
-          preserveAspectRatio="none"
-          style={"color:" <> ((@color == "primary" && "var(--accent)") || "var(--ink)")}
-          aria-hidden="true"
+      <div class={["stat gap-y-0 px-5 py-4", (@gap and !@progress) && "gap-y-3.5"]}>
+        <div class="stat-title flex items-center gap-2.5">
+          <span
+            :if={@icon != []}
+            class={[
+              "kpi-icon grid size-7 shrink-0 place-items-center rounded-field border [&_svg]:size-4",
+              @icon_class
+            ]}
+          >
+            {render_slot(@icon)}
+          </span>
+          <span class="kpi-label grow text-[13px] text-base-content/60">{@label}</span>
+          <span :if={@delta} class={["kpi-delta badge badge-soft badge-sm gap-1", @tone]}>
+            <svg class="size-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path :if={@trend == "up"} d="M7 17 17 7M9 7h8v8" />
+              <path :if={@trend == "down"} d="M7 7l10 10M17 9v8H9" />
+              <path :if={@trend == "flat"} d="M5 12h14" />
+            </svg>
+            {@delta}
+          </span>
+        </div>
+        <div :if={@progress} id={@value_id} class="kpi-value stat-value text-2xl font-semibold">
+          {@value}<small :if={@unit} class="ml-1 text-sm font-normal text-base-content/60">{@unit}</small>
+        </div>
+        <progress
+          :if={@progress}
+          class="progress progress-primary mt-2.5 h-1.5"
+          value={min(max(@progress, 0), 100)}
+          max="100"
+          aria-label={@label}
         >
-          <defs>
-            <linearGradient id={@uid} x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0" stop-color="currentColor" stop-opacity=".16" />
-              <stop offset="1" stop-color="currentColor" stop-opacity="0" />
-            </linearGradient>
-          </defs>
-          <path d={elem(@paths, 0)} fill={"url(##{@uid})"} />
-          <path
-            d={elem(@paths, 1)}
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.4"
-            stroke-linejoin="round"
-          />
-        </svg>
+        </progress>
+        <div :if={!@progress} class="flex items-end justify-between gap-3">
+          <span id={@value_id} class="kpi-value stat-value text-2xl font-semibold">
+            {@value}<small :if={@unit} class="ml-1 text-sm font-normal text-base-content/60">{@unit}</small>
+          </span>
+          <svg
+            :if={@paths}
+            class={["kpi-spark h-[34px] w-[104px]", (@color == "primary" && "text-primary") || "text-base-content"]}
+            viewBox="0 0 104 34"
+            preserveAspectRatio="none"
+            aria-hidden="true"
+          >
+            <defs>
+              <linearGradient id={@uid} x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="currentColor" stop-opacity=".16" />
+                <stop offset="1" stop-color="currentColor" stop-opacity="0" />
+              </linearGradient>
+            </defs>
+            <path d={elem(@paths, 0)} fill={"url(##{@uid})"} />
+            <path
+              d={elem(@paths, 1)}
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.4"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </div>
+        <span :if={@caption} class="kpi-caption stat-desc mt-1.5 text-xs">{@caption}</span>
       </div>
-      <span :if={@caption} class="sg-kpi-c">{@caption}</span>
     </div>
     """
   end
 
-  defp tone(nil, "up"), do: "up"
-  defp tone(nil, "down"), do: "down"
-  defp tone("success", _trend), do: "up"
-  defp tone("error", _trend), do: "down"
-  defp tone(_tone, _trend), do: nil
+  defp tone(nil, "up"), do: "badge-success"
+  defp tone(nil, "down"), do: "badge-error"
+  defp tone("success", _trend), do: "badge-success"
+  defp tone("error", _trend), do: "badge-error"
+  defp tone(_tone, _trend), do: "badge-ghost"
 
   # {area path, line path}: the points spread over the width, the highest at the top.
   defp paths([_, _ | _] = values) do
