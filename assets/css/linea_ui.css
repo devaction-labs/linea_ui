@@ -56,6 +56,13 @@
 @source "../../lib";
 @source "../js";
 
+/* The daisyUI classes the components build from an attr (`"alert-" <> color`, `"loading-#{size}"`):
+   Tailwind only generates a class it finds written out, so they are listed here. */
+@source inline("{btn,badge,alert,progress,toggle,checkbox,radio,range,step,status,input,select,textarea,text}-{primary,secondary,accent,neutral,info,success,warning,error}");
+@source inline("{btn,badge,toggle,checkbox,radio,range,loading,status,input,select,textarea}-{xs,sm,md,lg,xl}");
+@source inline("aria-invalid:{checkbox,radio}-error");
+@source inline("bg-{primary,secondary,info,success,warning,error}/15");
+
 @custom-variant dark (&:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *):not(:where(:is(.dark, [data-theme="dark"]) [data-theme="light"], :is(.dark, [data-theme="dark"]) [data-theme="light"] *):not(:where(:is(.dark, [data-theme="dark"]) [data-theme="light"] :is(.dark, [data-theme="dark"]), :is(.dark, [data-theme="dark"]) [data-theme="light"] :is(.dark, [data-theme="dark"]) *))));
 
 @theme {
