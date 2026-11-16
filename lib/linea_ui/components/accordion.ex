@@ -49,8 +49,7 @@ defmodule LineaUI.Components.Accordion do
   }
 
   @frames %{
-    "primary" =>
-      "divide-[color-mix(in_oklab,var(--color-primary)_55%,white)] border-primary",
+    "primary" => "divide-[color-mix(in_oklab,var(--color-primary)_55%,white)] border-primary",
     "secondary" =>
       "divide-[color-mix(in_oklab,var(--color-secondary)_55%,white)] border-secondary dark:border-secondary",
     "info" =>

@@ -95,20 +95,16 @@ defmodule LineaUI.Components.Avatar do
     "soft" => %{
       "neutral" => "bg-slate-150/60 text-base-content/75",
       "primary" => "bg-primary/10 text-primary",
-      "secondary" =>
-        "bg-secondary/10 text-secondary",
+      "secondary" => "bg-secondary/10 text-secondary",
       "info" => "bg-info/10 text-info",
       "success" => "bg-success/10 text-success",
       "warning" => "bg-warning/10 text-warning",
       "error" => "bg-error/10 text-error"
     },
     "bordered" => %{
-      "neutral" =>
-        "border border-base-content/20 bg-slate-150/60 text-base-content/75",
-      "primary" =>
-        "border border-primary/30 bg-primary/10 text-primary",
-      "secondary" =>
-        "border border-secondary/30 bg-secondary/10 text-secondary",
+      "neutral" => "border border-base-content/20 bg-slate-150/60 text-base-content/75",
+      "primary" => "border border-primary/30 bg-primary/10 text-primary",
+      "secondary" => "border border-secondary/30 bg-secondary/10 text-secondary",
       "info" => "border border-info/30 bg-info/10 text-info",
       "success" => "border border-success/30 bg-success/10 text-success",
       "warning" => "border border-warning/30 bg-warning/10 text-warning",
@@ -246,8 +242,7 @@ defmodule LineaUI.Components.Avatar do
     "customer" => "rounded-[10px] bg-success-focus text-white",
     "supplier" => "rounded-[10px] bg-warning-focus text-white",
     "assistant" => "bg-linear-to-br from-primary to-purple-500 text-white",
-    "invite" =>
-      "border-[1.5px] border-base-content/20 bg-transparent text-base-content/60"
+    "invite" => "border-[1.5px] border-base-content/20 bg-transparent text-base-content/60"
   }
 
   @ring_widths %{

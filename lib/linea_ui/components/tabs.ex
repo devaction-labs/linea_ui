@@ -94,8 +94,7 @@ defmodule LineaUI.Components.Tabs do
   }
 
   @pill_colors %{
-    "primary" =>
-      "aria-selected:bg-primary/10 aria-selected:text-primary",
+    "primary" => "aria-selected:bg-primary/10 aria-selected:text-primary",
     "neutral" => "aria-selected:bg-base-200 aria-selected:text-base-content"
   }
 
@@ -109,10 +108,8 @@ defmodule LineaUI.Components.Tabs do
   @scroll %{
     {"line", "horizontal"} => "is-scrollbar-hidden overflow-x-auto",
     {"line", "vertical"} => "shrink-0",
-    {"boxed", "horizontal"} =>
-      "is-scrollbar-hidden overflow-x-auto",
-    {"boxed", "vertical"} =>
-      "shrink-0 self-start",
+    {"boxed", "horizontal"} => "is-scrollbar-hidden overflow-x-auto",
+    {"boxed", "vertical"} => "shrink-0 self-start",
     {"pill", "horizontal"} => "is-scrollbar-hidden overflow-x-auto",
     {"pill", "vertical"} => "shrink-0",
     {"text", "horizontal"} => "is-scrollbar-hidden overflow-x-auto",

@@ -28,8 +28,7 @@ defmodule LineaUI.Components.TableComposableTest do
     assert ["top"] = html |> find("table") |> LazyHTML.attribute("data-rounded")
     assert [_] = html |> find("table[data-compact][data-sticky]") |> Enum.to_list()
 
-    assert ["Number", "Total"] =
-             html |> find("th") |> Enum.map(&String.trim(LazyHTML.text(&1)))
+    assert ["Number", "Total"] = html |> find("th") |> Enum.map(&String.trim(LazyHTML.text(&1)))
 
     assert "text-right" in classes(html, "th:last-child")
     assert "w-32" in classes(html, "th:last-child")

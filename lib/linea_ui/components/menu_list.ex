@@ -72,20 +72,16 @@ defmodule LineaUI.Components.MenuList do
     {"pill", "neutral"} => "bg-base-200 text-base-content",
     {"gradient", "primary"} => "bg-gradient-to-r from-purple-500 to-purple-600 text-white",
     {"gradient", "neutral"} => "bg-gradient-to-r from-purple-500 to-purple-600 text-white",
-    {"bordered", "primary"} =>
-      "border border-base-300 text-primary shadow-xs",
-    {"bordered", "neutral"} =>
-      "border border-base-300 text-base-content shadow-xs"
+    {"bordered", "primary"} => "border border-base-300 text-primary shadow-xs",
+    {"bordered", "neutral"} => "border border-base-300 text-base-content shadow-xs"
   }
 
   @neutral_hover "hover:bg-base-200 hover:text-base-content focus:bg-base-200 focus:text-base-content"
 
   @inactive %{
-    "link" =>
-      "hover:text-base-content focus:text-base-content",
+    "link" => "hover:text-base-content focus:text-base-content",
     "solid" => @neutral_hover,
-    "pill" =>
-      "hover:bg-primary/10 hover:text-primary focus:bg-primary/10 focus:text-primary",
+    "pill" => "hover:bg-primary/10 hover:text-primary focus:bg-primary/10 focus:text-primary",
     "gradient" => @neutral_hover,
     "bordered" => @neutral_hover
   }

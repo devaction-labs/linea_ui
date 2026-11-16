@@ -26,8 +26,7 @@ defmodule LineaUI.Components.AvatarTest do
              "uppercase",
              "rounded-full",
              "text-[17px]" | _
-           ] =
-             classes(html, "#a > div")
+           ] = classes(html, "#a > div")
 
     assert "bg-primary" in classes(html, "#a > div")
     assert "bg-info/10" in classes(html, "#b > div")

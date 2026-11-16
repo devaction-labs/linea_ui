@@ -344,7 +344,7 @@ defmodule LineaUI.Components.Pagination do
       <ol class={[
         @shape == "canvas" && "flex items-center gap-x-1",
         @shape != "canvas" && ((@divided && "flex items-center gap-1.5") || "join"),
-        @shapes[@shape]
+        shape_class(@shape)
       ]}>
         <li :for={item <- @items} :key={item.key} class={item.li_class}>
           <.entry
@@ -370,6 +370,8 @@ defmodule LineaUI.Components.Pagination do
 
   defp li_class(_assigns, _index), do: nil
 
+  defp shape_class(shape), do: @shapes[shape]
+
   defp entry_class(%{shape: "canvas", page: page}, :page, page, _disabled),
     do:
       "grid h-[30px] min-w-[30px] place-items-center rounded-[9px] bg-neutral px-2 font-mono text-[12.5px] font-medium text-neutral-content"
@@ -379,7 +381,8 @@ defmodule LineaUI.Components.Pagination do
       "grid h-[30px] min-w-[30px] place-items-center rounded-[9px] px-2 font-mono text-[12.5px] font-medium text-base-content/65 hover:bg-base-200"
 
   defp entry_class(%{shape: "canvas"}, :gap, _number, _disabled),
-    do: "grid h-[30px] min-w-[30px] place-items-center font-mono text-[12.5px] text-base-content/65"
+    do:
+      "grid h-[30px] min-w-[30px] place-items-center font-mono text-[12.5px] text-base-content/65"
 
   # the canvas `sg-ib sm`: a 28px panel circle with an inset line; an arrow at either end stays
   # inert (a `<span aria-disabled>`) but is not dimmed, as on the canvas

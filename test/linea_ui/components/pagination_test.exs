@@ -225,8 +225,7 @@ defmodule LineaUI.Components.PaginationTest do
   end
 
   test "%{shown} is the rows on the current page" do
-    html =
-      render(~H|<.pagination
+    html = render(~H|<.pagination
   page={2}
   page_size={10}
   total_entries={14}
@@ -236,8 +235,7 @@ defmodule LineaUI.Components.PaginationTest do
 
     assert "4 de 14 cobranças" = html |> find("[role=status]") |> LazyHTML.text() |> String.trim()
 
-    html =
-      render(~H|<.pagination
+    html = render(~H|<.pagination
   page={1}
   page_size={10}
   total_entries={14}

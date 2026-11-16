@@ -71,16 +71,14 @@ defmodule LineaUI.Components.Steps do
 
   @stepper_bars %{
     "done" => "bg-primary",
-    "current" =>
-      "bg-[linear-gradient(90deg,var(--color-primary)_50%,var(--color-base-300)_50%)]",
+    "current" => "bg-[linear-gradient(90deg,var(--color-primary)_50%,var(--color-base-300)_50%)]",
     "error" => "bg-error",
     "todo" => "bg-base-200"
   }
 
   @stepper_dots %{
     "done" => "bg-primary text-primary-content",
-    "current" =>
-      "bg-base-100 text-primary ring-2 ring-inset ring-primary",
+    "current" => "bg-base-100 text-primary ring-2 ring-inset ring-primary",
     "error" => "bg-error text-error-content",
     "todo" => "bg-base-200 text-base-content/50"
   }

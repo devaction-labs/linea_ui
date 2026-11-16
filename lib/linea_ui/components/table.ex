@@ -179,8 +179,7 @@ defmodule LineaUI.Components.Table do
     "hoverable" => "",
     "zebra" => "",
     "grid" => "border border-transparent border-b-base-300",
-    "data" =>
-      "border-y border-transparent border-b-base-300 last:border-b-transparent",
+    "data" => "border-y border-transparent border-b-base-300 last:border-b-transparent",
     "data-grid" => ""
   }
 
@@ -441,9 +440,7 @@ defmodule LineaUI.Components.Table do
   slot :col, doc: "A column; receives the row (after `row_item`)." do
     attr(:label, :string, doc: "Header text.")
 
-    attr(:class, :any,
-      doc: "Extra classes of the column's cells (the header takes `head_class`)."
-    )
+    attr(:class, :any, doc: "Extra classes of the column's cells (the header takes `head_class`).")
 
     attr(:head_class, :any, doc: "Extra classes of the column's header.")
 
@@ -604,7 +601,10 @@ defmodule LineaUI.Components.Table do
     do: [@table[variant], hoverable != false && "is-dt-hover"]
 
   defp table_class(%{hoverable: nil, variant: variant}), do: @table[variant]
-  defp table_class(%{hoverable: true}), do: "table w-full text-left [&>tbody>tr:hover]:bg-base-200/70"
+
+  defp table_class(%{hoverable: true}),
+    do: "table w-full text-left [&>tbody>tr:hover]:bg-base-200/70"
+
   defp table_class(%{variant: "zebra"}), do: "table table-zebra w-full text-left"
   defp table_class(_assigns), do: "table w-full text-left"
 
