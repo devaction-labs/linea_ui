@@ -250,14 +250,17 @@ defmodule LineaUI.Components.NavbarTest do
     end
 
     test "sep, env, sync" do
-      assert ["lo-nb-sep", "divider", "divider-horizontal"] == classes(render(~H|<.navbar_sep />|), "span")
+      assert ["lo-nb-sep", "divider", "divider-horizontal"] ==
+               classes(render(~H|<.navbar_sep />|), "span")
 
       html = render(~H|<.navbar_env label="Produção" />|)
       assert ["lo-nb-env", "badge", "badge-soft", "badge-success"] == classes(html, "span")
       assert text(html, "span") == ["Produção"]
 
       html = render(~H|<.navbar_env label="Homologação" tone="warn" />|)
-      assert ["lo-nb-env", "badge", "badge-soft", "warn", "badge-warning"] == classes(html, "span")
+
+      assert ["lo-nb-env", "badge", "badge-soft", "warn", "badge-warning"] ==
+               classes(html, "span")
 
       html = render(~H|<.navbar_sync text="Salvo há 2 min" />|)
       assert text(html, ".lo-nb-sync") == ["Salvo há 2 min"]

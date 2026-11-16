@@ -290,7 +290,11 @@ defmodule LineaUI.Components.Navbar do
   def navbar_chip(assigns) do
     ~H"""
     <button type="button" class={merge(["lo-nb-chip btn btn-ghost btn-sm", @class])} {@rest}>
-      <span :if={@square} class="lo-nb-sq bg-neutral text-neutral-content" style={@color && "background:#{@color}"}>
+      <span
+        :if={@square}
+        class="lo-nb-sq bg-neutral text-neutral-content"
+        style={@color && "background:#{@color}"}
+      >
         {@square}
       </span>
       <b>{@label}</b>
