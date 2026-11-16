@@ -1,7 +1,7 @@
 defmodule LineaUI.Components.Input do
   @moduledoc """
-  LineOne's text inputs: outlined or filled, rounded or pill, three sizes, icons inside,
-  success and error states, and input masks.
+  daisyUI's text input (`input`, `input-sm`, `input-lg`, `input-ghost`, `input-success`, `input-error`): outlined
+  or filled, rounded or pill, three sizes, icons inside, success and error states, and input masks.
 
       <.input name="username" placeholder="Username" />
       <.input field={@form[:email]} type="email" label="Email" help="We never share it" />
@@ -97,47 +97,28 @@ defmodule LineaUI.Components.Input do
   @types ~w(text email password number search tel url date time datetime-local month week color file hidden)
 
   @variants %{
-    "outlined" =>
-      "form-input w-full rounded-(--pill) border-0 bg-(--ctl) px-3 py-0 text-[14px] leading-[22px] text-(--fg) shadow-[inset_0_0_0_1px_var(--ctl-line),var(--shadow-xs)] placeholder:text-(--faint) hover:shadow-[inset_0_0_0_1px_var(--ctl-line-strong),var(--shadow-xs)] focus:shadow-[inset_0_0_0_1px_var(--accent),0_0_0_3px_color-mix(in_srgb,var(--accent)_22%,transparent)] focus:ring-0 disabled:pointer-events-none disabled:select-none disabled:opacity-50",
-    "filled" =>
-      "form-input w-full rounded-(--pill) border-0 bg-(--ctl-fill) px-3 py-0 text-[14px] leading-[22px] text-(--fg) placeholder:text-(--faint) hover:bg-(--ctl-fill-hover) focus:bg-(--ctl) focus:shadow-[inset_0_0_0_1px_var(--accent),0_0_0_3px_color-mix(in_srgb,var(--accent)_22%,transparent)] focus:ring-0 disabled:pointer-events-none disabled:select-none disabled:opacity-50",
-    "plain" => "form-input w-full bg-transparent px-3 py-2 placeholder:text-(--faint)"
+    "outlined" => "input w-full",
+    "filled" => "input w-full border-transparent bg-base-200 focus:bg-base-100",
+    "plain" => "input input-ghost w-full"
   }
 
-  # The error paint is part of the variant (`aria-invalid:` utilities) instead of a class swap, so the
-  # classes do not change when errors appear or go away on a keystroke.
-  @error_states %{
-    "outlined" => "linea-invalid",
-    "filled" => "linea-invalid-filled"
-  }
+  # The error paint reads `aria-invalid` (`aria-invalid:input-error`) instead of a class swap, so the classes do
+  # not change when errors appear or go away on a keystroke.
+  @error_paint "aria-invalid:input-error"
 
-  @states %{
-    {"outlined", "success"} =>
-      "shadow-[inset_0_0_0_1px_var(--color-success),0_0_0_4px_color-mix(in_oklab,var(--color-success)_14%,transparent)] hover:shadow-[inset_0_0_0_1px_var(--color-success),0_0_0_4px_color-mix(in_oklab,var(--color-success)_14%,transparent)] focus:shadow-[inset_0_0_0_1px_var(--color-success),0_0_0_4px_color-mix(in_oklab,var(--color-success)_14%,transparent)] dark:shadow-[inset_0_0_0_1px_var(--color-success),0_0_0_4px_color-mix(in_oklab,var(--color-success)_16%,transparent)] dark:hover:shadow-[inset_0_0_0_1px_var(--color-success),0_0_0_4px_color-mix(in_oklab,var(--color-success)_16%,transparent)] dark:focus:shadow-[inset_0_0_0_1px_var(--color-success),0_0_0_4px_color-mix(in_oklab,var(--color-success)_16%,transparent)]",
-    {"filled", "success"} =>
-      "shadow-[inset_0_0_0_1px_var(--color-success)] focus:shadow-[inset_0_0_0_1px_var(--color-success),0_0_0_3px_color-mix(in_srgb,var(--color-success)_18%,transparent)]"
-  }
+  @sizes %{"sm" => "input-sm", "md" => nil, "lg" => "input-lg"}
 
-  @sizes %{
-    "sm" => "h-8 rounded-(--pill-in) px-2.5 text-[13px]",
-    "md" => "h-9 text-sm",
-    "lg" => "h-12 px-4 text-[15px]"
-  }
-
-  @shapes %{
-    "rounded" => "",
-    "pill" => "rounded-full px-4"
-  }
+  @shapes %{"rounded" => nil, "pill" => "rounded-full px-4"}
 
   @aligns %{"left" => nil, "right" => "text-right"}
 
-  @icon "pointer-events-none absolute flex h-full w-10 items-center justify-center text-(--faint) peer-focus:text-(--accent)"
+  @icon "pointer-events-none absolute z-[2] flex h-full w-10 items-center justify-center text-base-content/45 peer-focus:text-primary"
 
-  @interactive_icon "absolute flex h-full w-10 items-center justify-center text-(--faint) hover:text-(--ink)"
+  @interactive_icon "absolute z-[2] flex h-full w-10 items-center justify-center text-base-content/45 hover:text-base-content"
 
-  @text_suffix "pointer-events-none absolute flex h-full items-center whitespace-nowrap pr-3 pl-1 text-[13px] text-(--faint) peer-focus:text-(--accent)"
+  @text_suffix "pointer-events-none absolute z-[2] flex h-full items-center whitespace-nowrap pr-3 pl-1 text-[13px] text-base-content/45 peer-focus:text-primary"
 
-  @interactive_text_suffix "absolute flex h-full items-center whitespace-nowrap pr-3 pl-1 text-[13px] text-(--faint) hover:text-(--ink)"
+  @interactive_text_suffix "absolute z-[2] flex h-full items-center whitespace-nowrap pr-3 pl-1 text-[13px] text-base-content/45 hover:text-base-content"
 
   @doc """
   Renders a text-like `<input>`, with its caption, help and errors when given.
@@ -349,18 +330,15 @@ defmodule LineaUI.Components.Input do
   def classes(assigns) do
     merge([
       @variants[assigns.variant],
-      Map.get(assigns, :error_paint, true) && @error_states[assigns.variant],
+      Map.get(assigns, :error_paint, true) && assigns.variant != "plain" && @error_paint,
       @sizes[assigns.size],
       @shapes[assigns.shape],
       @aligns[assigns.align],
       icon_padding(assigns),
-      @states[{assigns.variant, success(assigns.state)}],
+      assigns.state == "success" && "input-success",
       assigns.class
     ])
   end
-
-  defp success("success"), do: "success"
-  defp success(_state), do: nil
 
   defp icon_padding(%{prefix: [], suffix: []}), do: nil
 

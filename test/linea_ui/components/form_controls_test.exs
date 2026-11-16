@@ -8,7 +8,7 @@ defmodule LineaUI.Components.FormControlsTest do
                |> Enum.to_list()
 
       assert "text-error" in classes(render(~H'<.error>bad</.error>'), "span")
-      assert "text-slate-400" in classes(render(~H'<.help_text>hi</.help_text>'), "span")
+      assert "text-base-content/55" in classes(render(~H'<.help_text>hi</.help_text>'), "span")
 
       assert "text-success" in classes(
                render(~H'<.help_text state="success">ok</.help_text>'),

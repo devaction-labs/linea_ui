@@ -65,7 +65,7 @@ defmodule LineaUI.Components.SelectTest do
       assert "aria-invalid:border-error" in classes(html, "select")
       assert html |> find("select") |> LazyHTML.attribute("aria-invalid") == ["true"]
       assert html |> find(".text-error") |> LazyHTML.text() =~ "is bad"
-      assert html |> find(".text-slate-400") |> LazyHTML.text() =~ "Pick"
+      assert html |> find("span.leading-5") |> LazyHTML.text() =~ "Pick"
     end
   end
 

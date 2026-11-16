@@ -199,7 +199,7 @@ defmodule LineaUI.Components.NumberInputTest do
 
     assert html |> find("label") |> LazyHTML.text() =~ "Amount"
     assert html |> find(".text-error") |> LazyHTML.text() =~ "is invalid"
-    assert "linea-invalid" in classes(html, "#a")
+    assert "aria-invalid:input-error" in classes(html, "#a")
     assert attr_of(html, "#a", "disabled") == [""]
     assert attr_of(html, "input[name=a]", "disabled") == [""]
     assert attr_of(html, "button[data-step-by=up]", "disabled") == [""]
@@ -214,7 +214,7 @@ defmodule LineaUI.Components.NumberInputTest do
     html = render(~H|<.number_input id="i" name="i" steppers value={12} />|)
     assert "inset" in classes(html, ".lc-stepper")
     assert [_, _] = find(html, ".lc-stepper button.lc-step") |> Enum.to_list()
-    assert "form-input" in classes(html, "#i")
+    assert "input" in classes(html, "#i")
 
     html = render(~H|<.number_input id="r" name="r" steppers stepper_style="round" value={3} />|)
     assert "round" in classes(html, ".lc-stepper")

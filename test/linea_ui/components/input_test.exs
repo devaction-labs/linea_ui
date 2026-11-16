@@ -11,8 +11,8 @@ defmodule LineaUI.Components.InputTest do
     assert [_] = find(html, "input[type=text][name=u][placeholder=Username]") |> Enum.to_list()
     assert find(html, "label") |> Enum.to_list() == []
     classes = classes(html, "input")
-    assert "form-input" in classes
-    assert "border-0" in classes
+    assert "input" in classes
+    assert "w-full" in classes
   end
 
   test "variant, size and shape pick LineOne's classes and class overrides them" do
@@ -22,9 +22,8 @@ defmodule LineaUI.Components.InputTest do
       """)
 
     classes = classes(html, "input")
-    assert "bg-(--ctl-fill)" in classes
-    assert "focus:bg-(--ctl)" in classes
-    assert "h-12" in classes
+    assert "bg-base-200" in classes
+    assert "input-lg" in classes
     assert "rounded-full" in classes
     assert "px-6" in classes
     refute "px-4" in classes
@@ -44,7 +43,7 @@ defmodule LineaUI.Components.InputTest do
 
   test "state paints the border and the help line" do
     html = render(~H'<.input name="u" state="success" help="Username is valid" />')
-    assert Enum.any?(classes(html, "input"), &(&1 =~ ~r/^shadow-.*--color-success/))
+    assert "input-success" in classes(html, "input")
     refute "border-slate-200" in classes(html, "input")
     assert "text-success" in classes(html, "label + span")
   end
@@ -54,7 +53,7 @@ defmodule LineaUI.Components.InputTest do
     assigns = %{field: field}
     html = rendered_to_string(~H'<.input field={@field} type="email" />')
     assert [_] = find(html, "input#user_email[name='user[email]'][value='a@b']") |> Enum.to_list()
-    assert "linea-invalid" in classes(html, "input")
+    assert "aria-invalid:input-error" in classes(html, "input")
     assert LazyHTML.text(find(html, "span.text-error")) =~ "is invalid"
     assert [_] = find(html, "input[aria-invalid=true]") |> Enum.to_list()
 
@@ -90,7 +89,6 @@ defmodule LineaUI.Components.InputTest do
   test "disabled and hidden types" do
     html = render(~H'<.input name="u" disabled />')
     assert [_] = find(html, "input[disabled]") |> Enum.to_list()
-    assert "disabled:opacity-50" in classes(html, "input")
 
     html = render(~H'<.input type="hidden" name="t" value="x" />')
     assert [_] = find(html, "input[type=hidden][name=t][value=x]") |> Enum.to_list()
@@ -284,11 +282,11 @@ defmodule LineaUI.Components.InputTest do
 
     test "rules over the one the error sets, and the tag has it once" do
       html = render(~H'<.input name="u" state="error" aria-invalid="false" />')
-      assert count(html, "aria-invalid") == 1
+      assert count(html, "aria-invalid=") == 1
       assert [_] = find(html, "input[aria-invalid=false]") |> Enum.to_list()
 
       html = render(~H'<.input name="u" label="U" errors={["bad"]} aria-invalid="false" />')
-      assert count(html, "aria-invalid") == 1
+      assert count(html, "aria-invalid=") == 1
       assert [_] = find(html, "input[aria-invalid=false]") |> Enum.to_list()
 
       html =
@@ -296,27 +294,27 @@ defmodule LineaUI.Components.InputTest do
   <:prefix>x</:prefix>
 </.input>')
 
-      assert count(html, "aria-invalid") == 1
+      assert count(html, "aria-invalid=") == 1
       assert [_] = find(html, "input[aria-invalid=spelling]") |> Enum.to_list()
     end
 
     test "is the only one when there is no error, and the error sets its own otherwise" do
       html = render(~H'<.input name="u" aria-invalid="true" />')
-      assert count(html, "aria-invalid") == 1
+      assert count(html, "aria-invalid=") == 1
       assert [_] = find(html, "input[aria-invalid=true]") |> Enum.to_list()
 
       html = render(~H'<.input name="u" state="error" />')
-      assert count(html, "aria-invalid") == 1
+      assert count(html, "aria-invalid=") == 1
       assert [_] = find(html, "input[aria-invalid=true]") |> Enum.to_list()
     end
 
     test "is kept by number_input and phone_input as well" do
       html = render(~H'<.number_input name="n" errors={["bad"]} aria-invalid="false" />')
-      assert count(html, "aria-invalid") == 1
+      assert count(html, "aria-invalid=") == 1
       assert [_] = find(html, "input[data-display][aria-invalid=false]") |> Enum.to_list()
 
       html = render(~H'<.phone_input name="p" errors={["bad"]} aria-invalid="false" />')
-      assert count(html, "aria-invalid") == 1
+      assert count(html, "aria-invalid=") == 1
       assert [_] = find(html, "input[data-display][aria-invalid=false]") |> Enum.to_list()
     end
   end
