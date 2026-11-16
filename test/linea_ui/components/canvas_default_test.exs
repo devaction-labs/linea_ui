@@ -81,9 +81,9 @@ defmodule LineaUI.Components.CanvasDefaultTest do
     assert has?(render(~H"<.skeleton variant=\"lineone\" />"), ".skeleton")
   end
 
-  test "spinner: canvas by default, border is the old look" do
-    assert has?(render(~H"<.spinner />"), ".sg-spin")
-    refute has?(render(~H"<.spinner variant=\"border\" />"), ".sg-spin")
+  test "spinner: daisyUI's loading-spinner for the canvas and border variants" do
+    assert has?(render(~H"<.spinner />"), ".loading-spinner")
+    assert has?(render(~H"<.spinner variant=\"border\" />"), ".loading-spinner")
   end
 
   test "stepper: canvas by default, classic is the old look" do

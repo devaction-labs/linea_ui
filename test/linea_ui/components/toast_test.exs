@@ -270,7 +270,7 @@ defmodule LineaUI.Components.ToastTest do
     test "no aura leaves the card alone, and busy puts a spinner" do
       html = render(~H|<.toast_card id="t" busy title="Lendo" dismissible={false} />|)
       assert find(html, ".sg-aura") |> Enum.empty?()
-      assert [_] = find(html, "#t > .sg-spin") |> Enum.to_list()
+      assert [_] = find(html, "#t > .loading") |> Enum.to_list()
     end
 
     test "a progress toast fills up to the percentage, with spinner and label" do
@@ -278,7 +278,7 @@ defmodule LineaUI.Components.ToastTest do
       assert "prog" in classes(html, "#t")
       assert find(html, "#t") |> LazyHTML.attribute("style") == ["--p:42%"]
       assert find(html, "#t .pct") |> LazyHTML.text() == "42%"
-      assert [_] = find(html, "#t > .sg-spin") |> Enum.to_list()
+      assert [_] = find(html, "#t > .loading") |> Enum.to_list()
     end
 
     test "a done progress toast is complete without spinner; a failed one shows neither percentage nor spinner" do
