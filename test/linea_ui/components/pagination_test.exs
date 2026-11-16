@@ -19,14 +19,12 @@ defmodule LineaUI.Components.PaginationTest do
       <.pagination shape="rounded" page={2} total_pages={5} patch={&"/p?page=#{&1}"} />
       """)
 
-    assert count(html, "nav[aria-label=Pagination] ol.pagination > li") == 7
+    assert count(html, "nav[aria-label=Pagination] ol.join > li") == 7
     assert count(html, "a[data-phx-link=patch][href='/p?page=3']") == 2
     assert count(html, "a[aria-current=page][href='/p?page=2']") == 1
-    assert "bg-slate-900" in classes(html, "a[aria-current=page]")
+    assert ["join-item", "btn", "btn-neutral"] -- classes(html, "a[aria-current=page]") == []
     assert count(html, "a[aria-label='Previous page'][href='/p?page=1']") == 1
     assert count(html, "a[aria-label='Next page'][href='/p?page=3']") == 1
-    assert "rounded-l-lg" in classes(html, "li:first-child")
-    assert "bg-slate-150" in classes(html, "li:first-child")
   end
 
   test "navigate and href links" do
@@ -85,11 +83,10 @@ defmodule LineaUI.Components.PaginationTest do
       )
 
     assert html =~ "…"
-    assert "space-x-1.5" in classes(html, "ol")
+    assert ["flex", "gap-1.5", "[--radius-field:9999px]"] -- classes(html, "ol") == []
     assert classes(html, "li") == []
-    assert "rounded-full" in classes(html, "button[phx-value-page='10']")
-    assert "bg-slate-150" in classes(html, "button[phx-value-page='10']")
-    assert "h-10" in classes(html, "button[phx-value-page='10']")
+    assert ["btn", "btn-md"] -- classes(html, "button[phx-value-page='10']") == []
+    refute "join-item" in classes(html, "button[phx-value-page='10']")
     assert "size-4.5" in classes(html, "svg")
 
     html =
@@ -97,7 +94,7 @@ defmodule LineaUI.Components.PaginationTest do
         ~H|<.pagination shape="rounded" page={1} total_pages={2} on_change="go" size="sm" arrows={false} />|
       )
 
-    assert "h-7" in classes(html, "button")
+    assert "btn-xs" in classes(html, "button")
     assert count(html, "li") == 2
   end
 
@@ -169,7 +166,7 @@ defmodule LineaUI.Components.PaginationTest do
     assert html =~ "&lt;i&gt;Mostrando&lt;/i&gt;"
   end
 
-  test "the labels are 12.5, 13.5 and 14.5px, the large one with 14px of padding" do
+  test "the sizes are daisyUI's btn-xs, btn-sm and btn-md" do
     html =
       render(~H"""
       <.pagination shape="rounded" page={1} total_pages={3} on_change="go" size="sm" />
@@ -177,10 +174,9 @@ defmodule LineaUI.Components.PaginationTest do
       <.pagination shape="rounded" page={1} total_pages={3} on_change="go" size="lg" />
       """)
 
-    assert "text-[12.5px]" in classes(html, "button[phx-value-page='2'].h-7")
-    assert "text-[13.5px]" in classes(html, "button[phx-value-page='2'].h-8")
-    assert "text-[14.5px]" in classes(html, "button[phx-value-page='2'].h-10")
-    assert "px-3.5" in classes(html, "button[phx-value-page='2'].h-10")
+    assert count(html, "button[phx-value-page='2'].btn-xs") == 1
+    assert count(html, "button[phx-value-page='2'].btn-sm") == 1
+    assert count(html, "button[phx-value-page='2'].btn-md") == 1
   end
 
   test "page_sizes add a rows-per-page select in its own form" do
