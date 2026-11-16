@@ -8,27 +8,13 @@
    inherits from the nearest .dark or [data-theme] ancestor, so a light block in a dark page (and the reverse)
    gets its own tokens at any depth. */
 :where(:root, .sg:not(:is(.dark, [data-theme]) *)){
-  --canvas:#fafafa;--main:var(--canvas);--panel:#ffffff;--raised:#ffffff;--sunken:#f5f5f5;--hover:#f5f5f5;--line:#ebebeb;--line-strong:#d9d9d9;
-  --ink:#0a0a0a;--fg:#171717;--muted:#737373;--faint:#a3a3a3;
-  --accent:#0d8f91;--accent-ink:#08686b;--accent-soft:#e2f2f1;--accent-2:#7fcfcb;--accent-3:#bfe6e3;--on-accent:#ffffff;
-  --solid:#171717;--on-solid:#fafafa;
-  --pos:#1a7f4b;--pos-soft:#e5f3eb;--neg:#c2410c;--neg-soft:#fbeee6;--warn:#a16207;--warn-soft:#fbf3dc;--info:#2f5fd0;--info-soft:#e8eefc;
-  --c1:#0d8f91;--c2:#2f5fd0;--c3:#8a5cd6;--c4:#d97a1e;--c5:#a3a3a3;
-  --heat0:#f0f0f0;--heat1:#cfe9e6;--heat2:#93d1cc;--heat3:#4fb3ae;--heat4:#0d8f91;
-  --shadow-sm:0 1px 2px 0 rgb(0 0 0/.05);--shadow:0 1px 3px 0 rgb(0 0 0/.06),0 1px 2px -1px rgb(0 0 0/.06);--shadow-lg:0 10px 15px -3px rgb(0 0 0/.08),0 4px 6px -4px rgb(0 0 0/.06);
-  --r-sm:8px;--r:10px;--r-lg:14px;--r-xl:16px;--pill:8px;--pill-in:6px;--pill-xs:6px;--ctl:#ffffff;--ctl-line:rgb(10 10 10/.1);--ctl-line-strong:rgb(10 10 10/.18);--ctl-hover:rgb(10 10 10/.035);--ctl-fill:rgb(10 10 10/.04);--ctl-fill-hover:rgb(10 10 10/.075);--ctl-track:rgb(10 10 10/.12);--shadow-xs:0 1px 2px 0 rgb(0 0 0/.05);
+  --main:var(--canvas);--canvas:#f4f3f0;--panel:#ffffff;--raised:#ffffff;--sunken:#efeeea;--hover:#f1f0ec;--line:#e8e6e1;--line-strong:#d9d6cf;--ink:#17171a;--fg:#2e2e33;--muted:#6c6b70;--faint:#9d9ba1;--accent:#0d8f91;--accent-ink:#08686b;--accent-soft:#e2f2f1;--accent-2:#7fcfcb;--accent-3:#bfe6e3;--on-accent:#ffffff;--solid:#17171a;--on-solid:#ffffff;--pos:#1a7f4b;--pos-soft:#e5f3eb;--neg:#c2410c;--neg-soft:#fbeee6;--warn:#a16207;--warn-soft:#fbf3dc;--info:#2f5fd0;--info-soft:#e8eefc;--c1:#0d8f91;--c2:#2f5fd0;--c3:#8a5cd6;--c4:#d97a1e;--c5:#a1a1a6;--heat0:#ecebe7;--heat1:#cfe9e6;--heat2:#93d1cc;--heat3:#4fb3ae;--heat4:#0d8f91;
+  --r-sm:8px;--r:12px;--r-lg:16px;--r-xl:22px;--pill:999px;--pill-in:8px;--pill-xs:8px;--ctl:#ffffff;--ctl-line:rgb(10 10 9/.1);--ctl-line-strong:rgb(10 10 9/.18);--ctl-hover:rgb(10 10 9/.035);--ctl-fill:rgb(10 10 9/.04);--ctl-fill-hover:rgb(10 10 9/.075);--ctl-track:rgb(10 10 9/.12);--shadow-sm:0 1px 2px rgb(23 23 26/.04);--shadow:0 1px 2px rgb(23 23 26/.04),0 4px 16px -6px rgb(23 23 26/.08);--shadow-lg:0 24px 60px -20px rgb(23 23 26/.28),0 2px 6px rgb(23 23 26/.06);--shadow-xs:0 1px 2px rgb(23 23 26/.04);
   --sans:"Geist",ui-sans-serif,system-ui,sans-serif;--mono:"Geist Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
 }
 [data-theme="light"]{
-  --canvas:#fafafa;--main:var(--canvas);--panel:#ffffff;--raised:#ffffff;--sunken:#f5f5f5;--hover:#f5f5f5;--line:#ebebeb;--line-strong:#d9d9d9;
-  --ink:#0a0a0a;--fg:#171717;--muted:#737373;--faint:#a3a3a3;
-  --accent:#0d8f91;--accent-ink:#08686b;--accent-soft:#e2f2f1;--accent-2:#7fcfcb;--accent-3:#bfe6e3;--on-accent:#ffffff;
-  --solid:#171717;--on-solid:#fafafa;
-  --pos:#1a7f4b;--pos-soft:#e5f3eb;--neg:#c2410c;--neg-soft:#fbeee6;--warn:#a16207;--warn-soft:#fbf3dc;--info:#2f5fd0;--info-soft:#e8eefc;
-  --c1:#0d8f91;--c2:#2f5fd0;--c3:#8a5cd6;--c4:#d97a1e;--c5:#a3a3a3;
-  --heat0:#f0f0f0;--heat1:#cfe9e6;--heat2:#93d1cc;--heat3:#4fb3ae;--heat4:#0d8f91;
-  --shadow-sm:0 1px 2px 0 rgb(0 0 0/.05);--shadow:0 1px 3px 0 rgb(0 0 0/.06),0 1px 2px -1px rgb(0 0 0/.06);--shadow-lg:0 10px 15px -3px rgb(0 0 0/.08),0 4px 6px -4px rgb(0 0 0/.06);
-  --r-sm:8px;--r:10px;--r-lg:14px;--r-xl:16px;--pill:8px;--pill-in:6px;--pill-xs:6px;--ctl:#ffffff;--ctl-line:rgb(10 10 10/.1);--ctl-line-strong:rgb(10 10 10/.18);--ctl-hover:rgb(10 10 10/.035);--ctl-fill:rgb(10 10 10/.04);--ctl-fill-hover:rgb(10 10 10/.075);--ctl-track:rgb(10 10 10/.12);--shadow-xs:0 1px 2px 0 rgb(0 0 0/.05);
+  --main:var(--canvas);--canvas:#f4f3f0;--panel:#ffffff;--raised:#ffffff;--sunken:#efeeea;--hover:#f1f0ec;--line:#e8e6e1;--line-strong:#d9d6cf;--ink:#17171a;--fg:#2e2e33;--muted:#6c6b70;--faint:#9d9ba1;--accent:#0d8f91;--accent-ink:#08686b;--accent-soft:#e2f2f1;--accent-2:#7fcfcb;--accent-3:#bfe6e3;--on-accent:#ffffff;--solid:#17171a;--on-solid:#ffffff;--pos:#1a7f4b;--pos-soft:#e5f3eb;--neg:#c2410c;--neg-soft:#fbeee6;--warn:#a16207;--warn-soft:#fbf3dc;--info:#2f5fd0;--info-soft:#e8eefc;--c1:#0d8f91;--c2:#2f5fd0;--c3:#8a5cd6;--c4:#d97a1e;--c5:#a1a1a6;--heat0:#ecebe7;--heat1:#cfe9e6;--heat2:#93d1cc;--heat3:#4fb3ae;--heat4:#0d8f91;
+  --r-sm:8px;--r:12px;--r-lg:16px;--r-xl:22px;--pill:999px;--pill-in:8px;--pill-xs:8px;--ctl:#ffffff;--ctl-line:rgb(10 10 9/.1);--ctl-line-strong:rgb(10 10 9/.18);--ctl-hover:rgb(10 10 9/.035);--ctl-fill:rgb(10 10 9/.04);--ctl-fill-hover:rgb(10 10 9/.075);--ctl-track:rgb(10 10 9/.12);--shadow-sm:0 1px 2px rgb(23 23 26/.04);--shadow:0 1px 2px rgb(23 23 26/.04),0 4px 16px -6px rgb(23 23 26/.08);--shadow-lg:0 24px 60px -20px rgb(23 23 26/.28),0 2px 6px rgb(23 23 26/.06);--shadow-xs:0 1px 2px rgb(23 23 26/.04);
   --sans:"Geist",ui-sans-serif,system-ui,sans-serif;--mono:"Geist Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
 }
 .sg{
@@ -36,15 +22,9 @@
   box-sizing:border-box;position:relative;
 }
 :is(.dark, [data-theme="dark"]){
-  --canvas:#141414;--panel:#171717;--raised:#171717;--sunken:#212121;--hover:#262626;--line:rgb(255 255 255/.1);--line-strong:rgb(255 255 255/.15);
-  --ink:#fafafa;--fg:#e5e5e5;--muted:#a1a1a1;--faint:#737373;
-  --accent:#2bbfbd;--accent-ink:#5fd6d3;--accent-soft:rgb(43 191 189/.14);--accent-2:#1f8f8d;--accent-3:#16605f;--on-accent:#04201f;
-  --solid:#e5e5e5;--on-solid:#171717;
-  --pos:#4cc584;--pos-soft:rgb(76 197 132/.13);--neg:#f08a5b;--neg-soft:rgb(240 138 91/.13);--warn:#e6b24a;--warn-soft:rgb(230 178 74/.13);--info:#7aa2ff;--info-soft:rgb(122 162 255/.13);
-  --c1:#2bbfbd;--c2:#7aa2ff;--c3:#b48cff;--c4:#f0a256;--c5:#525252;
-  --heat0:#262626;--heat1:#174443;--heat2:#1b6664;--heat3:#22938f;--heat4:#2bbfbd;
-  --shadow-sm:0 0 #0000;--shadow:0 0 #0000;--shadow-lg:0 16px 40px -12px rgb(0 0 0/.65),0 0 0 1px rgb(255 255 255/.04);--ctl:rgb(255 255 255/.045);--ctl-line:rgb(255 255 255/.15);--ctl-line-strong:rgb(255 255 255/.24);--ctl-hover:rgb(255 255 255/.05);--ctl-fill:rgb(255 255 255/.07);--ctl-fill-hover:rgb(255 255 255/.11);--ctl-track:rgb(255 255 255/.16);--shadow-xs:0 1px 2px 0 rgb(0 0 0/.3);
-  color-scheme:dark;--main:#0a0a0a;}
+  color-scheme:dark;--main:var(--canvas);--canvas:#111113;--panel:#19191c;--raised:#1f1f23;--sunken:#151517;--hover:#232327;--line:#28282d;--line-strong:#36363c;--ink:#f3f3f4;--fg:#d9d9dd;--muted:#a3a3ab;--faint:#74747c;--accent:#2bbfbd;--accent-ink:#5fd6d3;--accent-soft:rgb(43 191 189/.14);--accent-2:#1f8f8d;--accent-3:#16605f;--on-accent:#04201f;--solid:#f3f3f4;--on-solid:#111113;--pos:#4cc584;--pos-soft:rgb(76 197 132/.13);--neg:#f08a5b;--neg-soft:rgb(240 138 91/.13);--warn:#e6b24a;--warn-soft:rgb(230 178 74/.13);--info:#7aa2ff;--info-soft:rgb(122 162 255/.13);--c1:#2bbfbd;--c2:#7aa2ff;--c3:#b48cff;--c4:#f0a256;--c5:#6b6b73;--heat0:#232327;--heat1:#174443;--heat2:#1b6664;--heat3:#22938f;--heat4:#2bbfbd;
+  --r-sm:8px;--r:12px;--r-lg:16px;--r-xl:22px;--pill:999px;--pill-in:8px;--pill-xs:8px;--ctl:rgb(251 250 248/.045);--ctl-line:rgb(251 250 248/.15);--ctl-line-strong:rgb(251 250 248/.24);--ctl-hover:rgb(251 250 248/.05);--ctl-fill:rgb(251 250 248/.07);--ctl-fill-hover:rgb(251 250 248/.11);--ctl-track:rgb(251 250 248/.16);--shadow-sm:0 0 #0000;--shadow:0 0 0 1px rgb(255 255 255/.02);--shadow-lg:0 30px 70px -20px rgb(0 0 0/.7);--shadow-xs:0 1px 2px 0 rgb(0 0 0/.3);
+}
 .sg *,.sg *::before,.sg *::after{box-sizing:border-box}
 /* In the base layer, so the colour of a link drawn as a daisyUI piece (btn, tab, menu item) wins. */
 @layer base{.sg a{color:inherit;text-decoration:none}}
