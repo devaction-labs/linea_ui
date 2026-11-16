@@ -382,7 +382,7 @@ defmodule LineaUI.Components.NavbarTest do
       assert count(html, ".sg-nb-mrow #ctl") == 1
       assert attrs(html, "a[role=menuitem]", "href") == ["/c", "/sair"]
       assert text(html, "a .t") == ["Configurações", "Sair"]
-      assert text(html, "a .sg-kbd") == ["⌘,"]
+      assert text(html, "a .kbd") == ["⌘,"]
       assert classes(html, "a.neg") == ["neg"]
       assert count(html, "a .huge-settings-02") == 1
     end

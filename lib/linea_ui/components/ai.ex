@@ -93,7 +93,7 @@ defmodule LineaUI.Components.Ai do
         </.chip>
         <span class="mono">{@summary}</span>
       </div>
-      <div :if={@expanded} class="sg-card ai-trace-detail">
+      <div :if={@expanded} class="card card-border bg-base-100 p-5 ai-trace-detail">
         <div :for={tool <- @tools} class="ai-trace-row">
           <.icon :if={tool[:icon]} name={tool.icon} class="i sm" boxed box_size="sm" />
           <b class="ink">{tool[:title] || tool.label}</b>
@@ -274,7 +274,12 @@ defmodule LineaUI.Components.Ai do
     assigns = assign(assigns, :state, to_string(assigns.status))
 
     ~H"""
-    <div id={@id} class={merge(["sg-card flush ai-proposal", @class])} data-status={@state} {@rest}>
+    <div
+      id={@id}
+      class={merge(["card card-border bg-base-100 overflow-hidden ai-proposal", @class])}
+      data-status={@state}
+      {@rest}
+    >
       <div class="ai-proposal-head">
         <span class="ai-proposal-spark"><.icon name="huge-sparkles" class="i sm" /></span>
         <b class="ink">{@title}</b>
@@ -440,7 +445,7 @@ defmodule LineaUI.Components.Ai do
         <.chip :for={file <- @files} icon="huge-file-01">{file}</.chip>
       </div>
       <div class="ai-composer-row">
-        <label :if={@upload} class="sg-ib plain" aria-label="Anexar">
+        <label :if={@upload} class="btn btn-square btn-ghost btn-sm" aria-label="Anexar">
           <.icon name="huge-attachment" class="i" /><.live_file_input
             upload={@upload}
             class="sr-only"
@@ -515,7 +520,7 @@ defmodule LineaUI.Components.Ai do
           autocomplete="off"
           phx-hook="LineaUI.AiComposer"
         >{@value}</textarea>
-        <label :if={@upload} class="sg-ib plain" aria-label="Anexar">
+        <label :if={@upload} class="btn btn-square btn-ghost btn-sm" aria-label="Anexar">
           <.icon name="huge-attachment" class="i" /><.live_file_input
             upload={@upload}
             class="sr-only"
@@ -655,13 +660,13 @@ defmodule LineaUI.Components.Ai do
     ~H"""
     <button
       type="button"
-      class="sg-card ai-suggestion"
+      class="card card-border bg-base-100 p-5 ai-suggestion"
       style={@tilt && "transform:rotate(#{@tilt}deg)"}
       phx-click={pick(@on_pick, @title, @prompt, @target)}
     >
       <span class="mono ai-suggestion-title">{@title}</span>
       <span class="ai-suggestion-text">{render_slot(@inner_block)}</span>
-      <span class="sg-ib sm ai-suggestion-go">
+      <span class="btn btn-square btn-sm ai-suggestion-go">
         <.icon name="huge-arrow-up-right-01" class="i sm" />
       </span>
     </button>
@@ -788,7 +793,7 @@ defmodule LineaUI.Components.Ai do
           <b class="ink">{@title}</b>
         </div>
         <.button class="block" phx-click={click(@on_new, nil, @target)}>
-          <.icon name="huge-add-01" class="i" />Nova conversa<span class="sg-kbd">{@shortcut}</span>
+          <.icon name="huge-add-01" class="i" />Nova conversa<span class="kbd kbd-sm">{@shortcut}</span>
         </.button>
         <form
           class="ai-conversations-search"

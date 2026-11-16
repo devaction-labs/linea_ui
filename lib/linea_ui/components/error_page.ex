@@ -187,7 +187,7 @@ defmodule LineaUI.Components.ErrorPage do
           <p :if={@description} class="sg-err-desc">{@description}</p>
           <div :if={@actions != [] or @back_label} class="sg-err-actions">
             {render_slot(@actions)}
-            <button :if={@back_label} type="button" class="sg-btn lg" onclick="history.back()">
+            <button :if={@back_label} type="button" class="btn btn-lg" onclick="history.back()">
               {@back_label}
             </button>
           </div>
@@ -209,7 +209,7 @@ defmodule LineaUI.Components.ErrorPage do
             :if={@copy}
             type="button"
             id={"#{@id}-copy"}
-            class="sg-ib xs plain group/clip"
+            class="btn btn-square btn-xs btn-ghost group/clip"
             data-from={"#{@id}-rid"}
             aria-label={@copy_label}
             onclick={copy_js()}

@@ -98,7 +98,7 @@ defmodule LineaUI.Components.AuthSplitTest do
     html = render(~H"<.auth_submit>Cadastrar</.auth_submit>")
 
     assert attr_of(html, "button", "type") == ["submit"]
-    assert classes(html, "button") |> Enum.sort() == ~w(accent block lg sg-btn)
+    assert classes(html, "button") |> Enum.sort() == ~w(btn btn-block btn-lg btn-primary)
     assert find(html, ".linea-auth-spin") |> Enum.to_list() == []
     assert attr_of(html, "button", "disabled") == []
     assert attr_of(html, "button", "aria-busy") == []

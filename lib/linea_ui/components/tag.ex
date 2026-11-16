@@ -38,84 +38,57 @@ defmodule LineaUI.Components.Tag do
 
   use LineaUI.Component
 
-  @base "tag disabled:pointer-events-none disabled:opacity-55 aria-disabled:pointer-events-none aria-disabled:opacity-55"
+  # daisyUI's badge, sized as LineOne's tag (28px, 12.5px type) and clickable
+  @base "badge tag h-7 cursor-pointer gap-1.5 px-[11px] text-[12.5px] leading-none font-medium whitespace-nowrap transition-all duration-200 outline-hidden focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary/50 disabled:pointer-events-none disabled:opacity-55 aria-disabled:pointer-events-none aria-disabled:opacity-55"
 
   @variants %{
     "solid" => %{
-      "neutral" =>
-        "bg-base-200 text-base-content hover:bg-base-300 focus:bg-base-300 active:bg-base-300/80",
-      "primary" =>
-        "bg-primary text-white hover:bg-primary-focus focus:bg-primary-focus active:bg-primary-focus/90 dark:bg-accent dark:hover:bg-accent-focus dark:focus:bg-accent-focus dark:active:bg-accent/90",
-      "secondary" =>
-        "bg-secondary text-white hover:bg-secondary-focus focus:bg-secondary-focus active:bg-secondary-focus/90",
-      "info" =>
-        "bg-info text-white hover:bg-info-focus focus:bg-info-focus active:bg-info-focus/90",
-      "success" =>
-        "bg-success text-white hover:bg-success-focus focus:bg-success-focus active:bg-success-focus/90",
-      "warning" =>
-        "bg-warning text-white hover:bg-warning-focus focus:bg-warning-focus active:bg-warning-focus/90",
-      "error" =>
-        "bg-error text-white hover:bg-error-focus focus:bg-error-focus active:bg-error-focus/90",
-      "light" =>
-        "bg-base-200 text-base-content hover:bg-base-300 focus:bg-base-300 active:bg-base-300/80"
+      "neutral" => "border-base-200 bg-base-200 text-base-content hover:bg-base-300",
+      "light" => "border-base-200 bg-base-200 text-base-content hover:bg-base-300",
+      "primary" => "badge-primary hover:brightness-95",
+      "secondary" => "badge-secondary hover:brightness-95",
+      "info" => "badge-info hover:brightness-95",
+      "success" => "badge-success hover:brightness-95",
+      "warning" => "badge-warning hover:brightness-95",
+      "error" => "badge-error hover:brightness-95"
     },
     "soft" => %{
-      "neutral" =>
-        "bg-base-200/60 text-base-content/85 hover:bg-base-200 focus:bg-base-200 active:bg-base-200/80",
-      "primary" =>
-        "bg-primary/10 text-primary hover:bg-primary/20 focus:bg-primary/20 active:bg-primary/25 dark:bg-accent-light/10 dark:text-accent-light dark:hover:bg-accent-light/20 dark:focus:bg-accent-light/20 dark:active:bg-accent-light/25",
-      "secondary" =>
-        "bg-secondary/10 text-secondary hover:bg-secondary/20 focus:bg-secondary/20 active:bg-secondary/25 dark:bg-secondary-light/10 dark:text-secondary-light dark:hover:bg-secondary-light/20 dark:focus:bg-secondary-light/20 dark:active:bg-secondary-light/25",
-      "info" => "bg-info/10 text-info hover:bg-info/20 focus:bg-info/20 active:bg-info/25",
-      "success" =>
-        "bg-success/10 text-success hover:bg-success/20 focus:bg-success/20 active:bg-success/25",
-      "warning" =>
-        "bg-warning/10 text-warning hover:bg-warning/20 focus:bg-warning/20 active:bg-warning/25",
-      "error" => "bg-error/10 text-error hover:bg-error/20 focus:bg-error/20 active:bg-error/25",
-      "light" =>
-        "bg-base-200/60 text-base-content/85 hover:bg-base-200 focus:bg-base-200 active:bg-base-200/80"
+      "neutral" => "badge-ghost text-base-content/85 hover:bg-base-300",
+      "light" => "badge-ghost text-base-content/85 hover:bg-base-300",
+      "primary" => "badge-soft badge-primary hover:brightness-95",
+      "secondary" => "badge-soft badge-secondary hover:brightness-95",
+      "info" => "badge-soft badge-info hover:brightness-95",
+      "success" => "badge-soft badge-success hover:brightness-95",
+      "warning" => "badge-soft badge-warning hover:brightness-95",
+      "error" => "badge-soft badge-error hover:brightness-95"
     },
     "bordered" => %{
-      "neutral" =>
-        "border border-base-content/20 bg-base-200/60 text-base-content/85 hover:bg-base-200 focus:bg-base-200 active:bg-base-200/80",
-      "primary" =>
-        "border border-primary/30 bg-primary/10 text-primary hover:bg-primary/20 focus:bg-primary/20 active:bg-primary/25 dark:border-accent-light/30 dark:bg-accent-light/10 dark:text-accent-light dark:hover:bg-accent-light/20 dark:focus:bg-accent-light/20 dark:active:bg-accent-light/25",
-      "secondary" =>
-        "border border-secondary/30 bg-secondary/10 text-secondary hover:bg-secondary/20 focus:bg-secondary/20 active:bg-secondary/25 dark:border-secondary-light/30 dark:bg-secondary-light/10 dark:text-secondary-light dark:hover:bg-secondary-light/20 dark:focus:bg-secondary-light/20 dark:active:bg-secondary-light/25",
-      "info" =>
-        "border border-info/30 bg-info/10 text-info hover:bg-info/20 focus:bg-info/20 active:bg-info/25",
-      "success" =>
-        "border border-success/30 bg-success/10 text-success hover:bg-success/20 focus:bg-success/20 active:bg-success/25",
-      "warning" =>
-        "border border-warning/30 bg-warning/10 text-warning hover:bg-warning/20 focus:bg-warning/20 active:bg-warning/25",
-      "error" =>
-        "border border-error/30 bg-error/10 text-error hover:bg-error/20 focus:bg-error/20 active:bg-error/25",
-      "light" =>
-        "border border-base-content/20 bg-base-200/60 text-base-content/85 hover:bg-base-200 focus:bg-base-200 active:bg-base-200/80"
+      "neutral" => "badge-ghost border-base-content/20 text-base-content/85 hover:bg-base-300",
+      "light" => "badge-ghost border-base-content/20 text-base-content/85 hover:bg-base-300",
+      "primary" => "badge-soft badge-primary border-primary/30 hover:brightness-95",
+      "secondary" => "badge-soft badge-secondary border-secondary/30 hover:brightness-95",
+      "info" => "badge-soft badge-info border-info/30 hover:brightness-95",
+      "success" => "badge-soft badge-success border-success/30 hover:brightness-95",
+      "warning" => "badge-soft badge-warning border-warning/30 hover:brightness-95",
+      "error" => "badge-soft badge-error border-error/30 hover:brightness-95"
     },
     "outline" => %{
-      "neutral" =>
-        "border border-base-content/20 text-base-content hover:bg-base-200 focus:bg-base-200 active:bg-base-200/80",
-      "primary" =>
-        "border border-primary text-primary hover:bg-primary/20 focus:bg-primary/20 active:bg-primary/25 dark:border-accent-light dark:text-accent-light dark:hover:bg-accent-light/20 dark:focus:bg-accent-light/20 dark:active:bg-accent-light/25",
-      "secondary" =>
-        "border border-secondary text-secondary hover:bg-secondary/20 focus:bg-secondary/20 active:bg-secondary/25 dark:border-secondary-light dark:text-secondary-light dark:hover:bg-secondary-light/20 dark:focus:bg-secondary-light/20 dark:active:bg-secondary-light/25",
-      "info" =>
-        "border border-info text-info hover:bg-info/20 focus:bg-info/20 active:bg-info/25",
-      "success" =>
-        "border border-success text-success hover:bg-success/20 focus:bg-success/20 active:bg-success/25",
-      "warning" =>
-        "border border-warning text-warning hover:bg-warning/20 focus:bg-warning/20 active:bg-warning/25",
-      "error" =>
-        "border border-error text-error hover:bg-error/20 focus:bg-error/20 active:bg-error/25",
-      "light" =>
-        "border border-base-300 text-base-content hover:bg-base-200 focus:bg-base-200 active:bg-base-200/80"
+      "neutral" => "badge-outline border-base-content/20 text-base-content hover:bg-base-200",
+      "light" => "badge-outline border-base-content/20 text-base-content hover:bg-base-200",
+      "primary" => "badge-outline badge-primary hover:bg-primary/10",
+      "secondary" => "badge-outline badge-secondary hover:bg-secondary/10",
+      "info" => "badge-outline badge-info hover:bg-info/10",
+      "success" => "badge-outline badge-success hover:bg-success/10",
+      "warning" => "badge-outline badge-warning hover:bg-warning/10",
+      "error" => "badge-outline badge-error hover:bg-error/10"
     }
   }
 
-  @flat "sg-tag"
+  @flat "tag-flat badge-ghost border-transparent font-normal text-base-content/60 hover:text-base-content"
 
-  @active "border border-primary bg-primary text-white hover:bg-primary-focus focus:bg-primary-focus active:bg-primary-focus/90 dark:border-accent dark:bg-accent dark:hover:bg-accent-focus dark:focus:bg-accent-focus dark:active:bg-accent/90"
+  @flat_on "tag-flat on badge-soft badge-primary"
+
+  @active "badge-primary"
 
   @shapes %{"rounded" => "", "pill" => "rounded-full", "square" => "rounded-none"}
 
@@ -190,7 +163,8 @@ defmodule LineaUI.Components.Tag do
   defp variant_classes(%{tint: tint, variant: variant}) when is_binary(tint),
     do: [variant == "flat" && @flat, "tag-tint"]
 
-  defp variant_classes(%{variant: "flat", active: active}), do: [@flat, active && "on"]
+  defp variant_classes(%{variant: "flat", active: true}), do: @flat_on
+  defp variant_classes(%{variant: "flat"}), do: @flat
   defp variant_classes(%{active: true}), do: @active
   defp variant_classes(%{variant: variant, color: color}), do: @variants[variant][color]
 

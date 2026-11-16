@@ -488,7 +488,7 @@ defmodule LineaUI.Components.Fab do
     ~H"""
     <.link
       id={@id}
-      class={merge(["sg-fab sg-btn solid lg", @class])}
+      class={merge(["btn btn-neutral btn-lg sg-fab", @class])}
       style={@style}
       aria-disabled={@disabled && "true"}
       tabindex={@disabled && "-1"}
@@ -505,7 +505,7 @@ defmodule LineaUI.Components.Fab do
     <button
       id={@id}
       type={@type}
-      class={merge(["sg-fab sg-btn solid lg", @class])}
+      class={merge(["btn btn-neutral btn-lg sg-fab", @class])}
       style={@style}
       disabled={@disabled}
       {@rest}

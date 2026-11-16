@@ -29,15 +29,17 @@ defmodule LineaUI.Components.CanvasDefaultTest do
     assert has?(
              render(~H"<.breadcrumb>
   <:item>A</:item>
+  <:item>B</:item>
 </.breadcrumb>"),
-             ".sg-crumb"
+             ".breadcrumbs .sep"
            )
 
     refute has?(
              render(~H"<.breadcrumb variant=\"plain\">
   <:item>A</:item>
+  <:item>B</:item>
 </.breadcrumb>"),
-             ".sg-crumb"
+             ".breadcrumbs .sep"
            )
   end
 

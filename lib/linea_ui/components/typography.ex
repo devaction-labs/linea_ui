@@ -313,7 +313,7 @@ defmodule LineaUI.Components.Typography do
 
   def kbd(%{variant: "flat"} = assigns) do
     ~H"""
-    <kbd class={merge(["sg-kbd inline-block whitespace-nowrap", @class])} {@rest}>{render_slot(
+    <kbd class={merge(["kbd kbd-sm inline-block whitespace-nowrap", @class])} {@rest}>{render_slot(
       @inner_block
     )}</kbd>
     """

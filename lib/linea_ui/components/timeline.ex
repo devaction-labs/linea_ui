@@ -48,8 +48,8 @@ defmodule LineaUI.Components.Timeline do
 
   Given a stream, the list renders with `phx-update="stream"` (and needs an `id`).
 
-  `variant="canvas"` is the canvas `sg-tl`: a `<div>` of `timeline_event`s, each with a boxed icon
-  tile, a title over a subtitle and the time at the right. It takes `rows` and the `:item` slot
+  Both are daisyUI's `timeline timeline-vertical timeline-compact`. `variant="canvas"` is a list of
+  `timeline_event`s, each with a boxed icon tile, a title over a subtitle and the time at the right. It takes `rows` and the `:item` slot
   the same way:
 
       <.timeline variant="canvas" id="events" rows={@streams.events}>
@@ -65,9 +65,9 @@ defmodule LineaUI.Components.Timeline do
 
   @solid %{
     "neutral" => "bg-base-content/55",
-    "primary" => "bg-primary dark:bg-accent",
-    "secondary" => "bg-secondary dark:bg-secondary-light",
-    "accent" => "bg-accent dark:bg-accent",
+    "primary" => "bg-primary",
+    "secondary" => "bg-secondary",
+    "accent" => "bg-accent",
     "info" => "bg-info",
     "success" => "bg-success",
     "warning" => "bg-warning",
@@ -76,9 +76,9 @@ defmodule LineaUI.Components.Timeline do
 
   @outline %{
     "neutral" => "border-2 border-base-content/40",
-    "primary" => "border-2 border-primary dark:border-accent",
-    "secondary" => "border-2 border-secondary dark:border-secondary-light",
-    "accent" => "border-2 border-accent dark:border-accent",
+    "primary" => "border-2 border-primary",
+    "secondary" => "border-2 border-secondary",
+    "accent" => "border-2 border-accent",
     "info" => "border-2 border-info",
     "success" => "border-2 border-success",
     "warning" => "border-2 border-warning",
@@ -89,8 +89,8 @@ defmodule LineaUI.Components.Timeline do
 
   @icon %{
     "neutral" => "#{@icon_disc} text-base-content/65",
-    "primary" => "#{@icon_disc} text-primary dark:text-accent",
-    "secondary" => "#{@icon_disc} text-secondary dark:text-secondary-light",
+    "primary" => "#{@icon_disc} text-primary",
+    "secondary" => "#{@icon_disc} text-secondary",
     "accent" => "#{@icon_disc} text-accent",
     "info" => "#{@icon_disc} text-info",
     "success" => "#{@icon_disc} text-success",
@@ -104,9 +104,9 @@ defmodule LineaUI.Components.Timeline do
 
   @pings %{
     "neutral" => "bg-base-content/55",
-    "primary" => "bg-primary dark:bg-accent",
-    "secondary" => "bg-secondary dark:bg-secondary-light",
-    "accent" => "bg-accent dark:bg-accent",
+    "primary" => "bg-primary",
+    "secondary" => "bg-secondary",
+    "accent" => "bg-accent",
     "info" => "bg-info",
     "success" => "bg-success",
     "warning" => "bg-warning",
@@ -114,11 +114,15 @@ defmodule LineaUI.Components.Timeline do
   }
 
   @sizes %{
-    "md" => nil,
-    "lg" => "[--size:1.5rem]",
-    "xl" => "[--size:2rem]",
-    "2xl" => "[--size:2.5rem]"
+    "md" => "[--tl-point:0.75rem]",
+    "lg" => "[--tl-point:1.5rem]",
+    "xl" => "[--tl-point:2rem]",
+    "2xl" => "[--tl-point:2.5rem]"
   }
+
+  # daisyUI's vertical, compact timeline: the points on the line, the content at their right, the line's
+  # ends trimmed at the first and the last item
+  @timeline "timeline timeline-vertical timeline-compact timeline-snap-icon [&>li>hr]:bg-base-300 [&>li:first-child>hr:first-child]:invisible [&>li:last-child>hr:last-child]:invisible"
 
   @doc """
   Renders the line the `timeline_item`s hang on, either from its inner block or from `rows`.
@@ -156,7 +160,7 @@ defmodule LineaUI.Components.Timeline do
     default: "line",
     values: ~w(line canvas),
     doc:
-      "`line` is the LineOne vertical line of points; `canvas` the `sg-tl` of `timeline_event`s with icon tiles."
+      "`line` is the vertical line of points; `canvas` the list of `timeline_event`s with icon tiles."
   )
 
   attr(:id, :string, default: nil, doc: "Required with a stream.")
@@ -177,6 +181,7 @@ defmodule LineaUI.Components.Timeline do
       assigns
       |> assign(:size_class, @sizes[assigns.size])
       |> assign(:stream, stream_update(assigns.rows))
+      |> assign(:timeline, @timeline)
       |> assign(:entries, entries(assigns.rows, assigns.row_id))
 
     render_timeline(assigns)
@@ -184,12 +189,17 @@ defmodule LineaUI.Components.Timeline do
 
   defp render_timeline(%{variant: "canvas"} = assigns) do
     ~H"""
-    <div id={@id} class={merge(["sg-tl", @class])} phx-update={@stream} {@rest}>
+    <ul
+      id={@id}
+      class={merge([@timeline, "[--tl-gap:1rem]", @class])}
+      phx-update={@stream}
+      {@rest}
+    >
       {render_slot(@inner_block)}
       <%= for entry <- @entries do %>
         {render_slot(@item, entry)}
       <% end %>
-    </div>
+    </ul>
     """
   end
 
@@ -199,9 +209,9 @@ defmodule LineaUI.Components.Timeline do
       id={@id}
       class={
         merge([
-          "lo-timeline",
-          (@line_space || @density == "compact") && "line-space",
-          @density == "compact" && "is-compact",
+          @timeline,
+          (@line_space || @density == "compact") && "line-space [&_.timeline-middle]:my-1",
+          (@density == "compact" && "is-compact [--tl-gap:22px]") || "[--tl-gap:2rem]",
           @size_class,
           @class
         ])
@@ -276,17 +286,26 @@ defmodule LineaUI.Components.Timeline do
 
     ~H"""
     <li class={merge(["timeline-item", @class])} {@rest}>
-      <div class={merge(["timeline-item-point rounded-full", @point_class, @point_extra])}>
-        <span
-          :if={@ping}
-          class={[
-            "inline-flex h-full w-full motion-safe:animate-ping rounded-full opacity-80",
-            @ping_class
-          ]}
-        ></span>
-        {render_slot(@point)}
+      <hr />
+      <div class="timeline-middle">
+        <div class={
+          merge([
+            "timeline-item-point relative grid size-(--tl-point) place-items-center rounded-full",
+            @point_class,
+            @point_extra
+          ])
+        }>
+          <span
+            :if={@ping}
+            class={[
+              "absolute inset-0 inline-flex motion-safe:animate-ping rounded-full opacity-80",
+              @ping_class
+            ]}
+          ></span>
+          {render_slot(@point)}
+        </div>
       </div>
-      <div class="timeline-item-content flex-1 pl-4 sm:pl-8">
+      <div class="timeline-end timeline-item-content mb-(--tl-gap) ms-4 w-full sm:ms-8">
         <div
           :if={@title || @time}
           class="flex flex-col justify-between pb-2 sm:flex-row sm:pb-0"
@@ -303,17 +322,18 @@ defmodule LineaUI.Components.Timeline do
         </p>
         {render_slot(@inner_block)}
       </div>
+      <hr />
     </li>
     """
   end
 
   @tones %{
-    "default" => nil,
-    "acc" => "acc",
-    "pos" => "pos",
-    "neg" => "neg",
-    "warn" => "warn",
-    "info" => "info"
+    "default" => "border-base-300 bg-base-200 text-base-content/70",
+    "acc" => "border-primary/25 bg-primary/10 text-primary",
+    "pos" => "border-success/25 bg-success/10 text-success",
+    "neg" => "border-error/25 bg-error/10 text-error",
+    "warn" => "border-warning/25 bg-warning/10 text-warning",
+    "info" => "border-info/25 bg-info/10 text-info"
   }
 
   @doc """
@@ -331,7 +351,7 @@ defmodule LineaUI.Components.Timeline do
   attr(:tone, :string,
     default: "default",
     values: ~w(default acc pos neg warn info),
-    doc: "Tints the icon tile (`sg-ic acc|pos|neg|warn|info`)."
+    doc: "Tints the icon tile with the primary, success, error, warning or info color."
   )
 
   attr(:class, :any, default: nil)
@@ -343,15 +363,24 @@ defmodule LineaUI.Components.Timeline do
     assigns = assign(assigns, :tone_class, @tones[assigns.tone])
 
     ~H"""
-    <div class={merge(["sg-tl-i", @class])} {@rest}>
-      <span class={merge(["sg-ic", @tone_class])}>{render_slot(@icon)}</span>
-      <div class="grow">
-        <div :if={@title}>{@title}</div>
-        <div :if={@subtitle} class="faint">{@subtitle}</div>
-        {render_slot(@inner_block)}
+    <li class={merge(["timeline-event", @class])} {@rest}>
+      <hr />
+      <span class={[
+        "timeline-middle grid size-8 place-items-center rounded-field border [&_svg]:size-4",
+        @tone_class
+      ]}>
+        {render_slot(@icon)}
+      </span>
+      <div class="timeline-end mb-(--tl-gap) ms-3 flex w-full items-start gap-3 text-sm">
+        <div class="grow">
+          <div :if={@title} class="font-medium text-base-content">{@title}</div>
+          <div :if={@subtitle} class="text-base-content/50">{@subtitle}</div>
+          {render_slot(@inner_block)}
+        </div>
+        <span :if={@time} class="font-mono text-xs text-base-content/50">{@time}</span>
       </div>
-      <span :if={@time} class="mono faint">{@time}</span>
-    </div>
+      <hr />
+    </li>
     """
   end
 
@@ -366,13 +395,15 @@ defmodule LineaUI.Components.Timeline do
 
   def timeline_day(assigns) do
     ~H"""
-    <li class={merge(["timeline-item timeline-day pb-3", @class])} {@rest}>
-      <div class="timeline-item-point"></div>
-      <div class="timeline-item-content flex-1 pl-4 sm:pl-8">
-        <span class="inline-flex h-5.5 items-center rounded-full bg-base-200 px-2.5 text-[11px] font-semibold uppercase tracking-wide text-base-content/65">
+    <li class={merge(["timeline-item timeline-day", @class])} {@rest}>
+      <hr />
+      <div class="timeline-middle size-(--tl-point)"></div>
+      <div class="timeline-end timeline-item-content mb-3 ms-4 sm:ms-8">
+        <span class="badge badge-sm border-0 bg-base-200 text-[11px] font-semibold tracking-wide text-base-content/65 uppercase">
           {@label}
         </span>
       </div>
+      <hr />
     </li>
     """
   end

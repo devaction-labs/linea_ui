@@ -133,7 +133,7 @@ defmodule LineaUI.Components.Upload do
         </span>
         <button
           type="button"
-          class="sg-ib sm lu-upload-thumb-remove"
+          class="btn btn-square btn-sm lu-upload-thumb-remove"
           aria-label={"#{@remove_label} #{entry.client_name}"}
           phx-click={@on_cancel}
           phx-value-ref={entry.ref}
@@ -190,7 +190,7 @@ defmodule LineaUI.Components.Upload do
           {error_text(@error_texts, error.error, @upload.max_entries, error.name)}
         </b>
         <span :if={@hint} class="lu-upload-hint">{@hint}</span>
-        <span :if={@browse && @refused == []} class="sg-btn sm">
+        <span :if={@browse && @refused == []} class="btn btn-sm">
           <svg class="i" viewBox="0 0 24 24" aria-hidden="true">
             <path d="M12 15V4M8 8l4-4 4 4M5 14v6h14v-6" />
           </svg>
@@ -202,7 +202,7 @@ defmodule LineaUI.Components.Upload do
         :for={entry <- @upload.entries}
         :if={entry_errors(@upload, entry) == []}
         id={"#{@id}-#{entry.ref}"}
-        class="sg-card row lu-upload-file"
+        class="card card-border bg-base-100 p-5 row lu-upload-file"
         data-state={state(@upload, entry)}
       >
         <span class="sg-ic">
@@ -228,7 +228,7 @@ defmodule LineaUI.Components.Upload do
         </div>
         <button
           type="button"
-          class="sg-ib sm plain"
+          class="btn btn-square btn-sm btn-ghost"
           aria-label={"#{@remove_label} #{entry.client_name}"}
           phx-click={@on_cancel}
           phx-value-ref={entry.ref}

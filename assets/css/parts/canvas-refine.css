@@ -154,10 +154,6 @@ input.form-checkbox:focus-visible,input.form-radio:focus-visible,input.form-swit
 .sg-tabs a,.sg-tabs > .sg-tab{font-size:14px;font-weight:500}
 
 /* breadcrumbs: plain text, muted links, the current page ink */
-.sg-crumb{height:auto;padding:0;gap:6px;border-radius:0;background:none;box-shadow:none;font-size:14px}
-:is(.dark .sg:not([data-theme="light"]), .sg[data-theme="dark"]) .sg-crumb{background:none}
-.sg-crumb b{font-weight:400}
-.sg-crumb .sep{color:var(--faint)}
 
 /* pagination: 32px ghost buttons, the current page outlined */
 .sg-pages span{min-width:32px;height:32px;border-radius:var(--pill);font:500 14px var(--sans);color:var(--fg)}
@@ -248,7 +244,6 @@ span.flatpickr-weekday{font-size:12.5px;font-weight:400;color:var(--muted)}
 
 /* step group and timeline */
 .sg-sgp{border-radius:var(--r-lg);box-shadow:0 0 0 1px var(--line)}
-.sg-tl-i .sg-ic{border-radius:var(--pill);box-shadow:inset 0 0 0 1px var(--line);background:var(--panel)}
 .sg-step.cur i{background:var(--control-on);color:var(--on-control)}
 .sg-step.done i{background:var(--tint);color:var(--ink)}
 

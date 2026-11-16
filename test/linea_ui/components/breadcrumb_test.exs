@@ -15,11 +15,12 @@ defmodule LineaUI.Components.BreadcrumbTest do
     assert [_, _] = find(html, "li > a") |> Enum.to_list()
     assert [current] = find(html, "[aria-current=page]") |> Enum.to_list()
     assert String.trim(LazyHTML.text(current)) == "Breadcrumb"
-    assert [_, _] = find(html, "li > svg") |> Enum.to_list()
+    assert "breadcrumbs" in classes(html, "nav")
+    refute "[&_li+*]:before:hidden" in classes(html, "nav")
+    assert [] = find(html, "li > .sep") |> Enum.to_list()
     assert "text-primary" in classes(html, "a")
     assert "rounded-md" in classes(html, "a")
     assert "hover:underline-offset-3" in classes(html, "a")
-    assert "text-base-content/50" in classes(html, "li > svg")
   end
 
   test "a custom separator and the bordered variant" do
@@ -33,7 +34,7 @@ defmodule LineaUI.Components.BreadcrumbTest do
       """)
 
     assert [_] = find(html, "span.sep") |> Enum.to_list()
-    assert [] = find(html, "li > svg") |> Enum.to_list()
+    assert "[&_li+*]:before:hidden" in classes(html, "nav")
     assert "shadow-[inset_0_0_0_1px_var(--color-base-300)]" in classes(html, "a")
     refute "border" in classes(html, "a")
     assert "px-2" in classes(html, "a")
@@ -76,7 +77,7 @@ defmodule LineaUI.Components.BreadcrumbTest do
     assert [_] = find(html, "div#now[data-kind=current][aria-current=page]") |> Enum.to_list()
   end
 
-  test "the canvas variant is the sg-crumb pill with / separators and the current page in the ink" do
+  test "the canvas variant has / separators in place of daisyUI's and the current page in the ink" do
     html =
       render(~H"""
       <.breadcrumb variant="canvas">
@@ -85,7 +86,7 @@ defmodule LineaUI.Components.BreadcrumbTest do
       </.breadcrumb>
       """)
 
-    assert "sg-crumb" in classes(html, "ul")
+    assert ["breadcrumbs", "[&_li+*]:before:hidden"] -- classes(html, "nav") == []
     assert html |> find("ul .sep") |> LazyHTML.text() == "/"
     assert "font-medium" in classes(html, "[aria-current=page]")
   end
@@ -162,7 +163,7 @@ defmodule LineaUI.Components.BreadcrumbTest do
 
     assert [_] = find(html, "li a") |> Enum.to_list()
     assert texts(html, "li > div > span") == ["Admin", "Group", "Area"]
-    assert texts(html, "nav.sg-crumb b, ul.sg-crumb b") == ["Now"]
+    assert texts(html, "nav.breadcrumbs b") == ["Now"]
   end
 
   test "steps built with :for and a nil navigate" do

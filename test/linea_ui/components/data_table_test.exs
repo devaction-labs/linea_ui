@@ -45,7 +45,7 @@ defmodule LineaUI.Components.DataTableTest do
     assert "text-[13px]" in classes(html, "#a-table th")
     assert "h-12" in classes(html, "#a-table td")
     assert "checkbox-xs" in classes(html, "#a-table td input")
-    assert "flush" in classes(html, "#a .sg-card")
+    assert "overflow-hidden" in classes(html, "#a .card")
 
     assert "linea-dt" in classes(html, "#g-table")
     assert "rounded-[10px]" in classes(html, "#g > div")
@@ -236,9 +236,9 @@ defmodule LineaUI.Components.DataTableTest do
       """)
 
     assert [] = find(bare, "#t > div.flex.items-center.justify-between") |> Enum.to_list()
-    refute "mt-3" in classes(bare, "#t > .sg-card")
+    refute "mt-3" in classes(bare, "#t > .card")
     assert LazyHTML.attribute(find(loading, "#l"), "aria-busy") == ["true"]
-    assert [_, _, _, _, _, _] = find(loading, "#l tbody .sg-skel") |> Enum.to_list()
+    assert [_, _, _, _, _, _] = find(loading, "#l tbody .skeleton") |> Enum.to_list()
     assert [_] = find(canvas, "#c .sg-pager") |> Enum.to_list()
     assert find(canvas, "#c .sg-pager") |> LazyHTML.text() =~ "1–3 de 30"
   end

@@ -112,7 +112,7 @@ defmodule LineaUI.Components.CommandPalette do
       head: "gap-4 border-b border-[var(--line)] px-3.5 py-3",
       search: "size-4 shrink-0 text-[var(--fg)]",
       input: "h-6 text-sm text-[var(--ink)] placeholder:text-[var(--faint)]",
-      key: "sg-kbd",
+      key: "kbd kbd-sm",
       heading: "px-2.5 pb-1 pt-2 text-[11px] tracking-[.06em] uppercase text-[var(--faint)]",
       row:
         "group/item flex min-h-[34px] w-full cursor-pointer items-center gap-2.5 rounded-[9px] px-2.5 py-[5px] text-left text-[13.5px] text-[var(--fg)] no-underline outline-hidden aria-selected:bg-[var(--hover)] aria-selected:text-[var(--ink)]",

@@ -489,7 +489,10 @@ defmodule LineaUI.Components.Calendar do
   defp render_mini(assigns) do
     ~H"""
     <div id={@id} class={merge(["lc-mini-wrap", @count > 1 && "multi", @class])} {@rest}>
-      <div :for={page <- @pages} class={["lc-mini", @card && "sg-card", @count > 1 && "two"]}>
+      <div
+        :for={page <- @pages}
+        class={["lc-mini", @card && "card card-border bg-base-100 p-5", @count > 1 && "two"]}
+      >
         <div :if={@card && @legend != []} class="lc-mini-legend">
           <span :for={{label, color} <- @legend}><i class={"lc-key-#{color}"}></i>{label}</span>
         </div>
@@ -497,7 +500,7 @@ defmodule LineaUI.Components.Calendar do
           <b id={page.id <> "-title"}>{page.title}</b>
           <button
             type="button"
-            class="sg-ib sm plain"
+            class="btn btn-square btn-sm btn-ghost"
             aria-label={@text.calendar_previous}
             disabled={@on_navigate == nil}
             phx-click={
@@ -511,7 +514,7 @@ defmodule LineaUI.Components.Calendar do
           </button>
           <button
             type="button"
-            class="sg-ib sm plain"
+            class="btn btn-square btn-sm btn-ghost"
             aria-label={@text.calendar_next}
             disabled={@on_navigate == nil}
             phx-click={

@@ -282,7 +282,7 @@ defmodule LineaUI.Components.CardTableTest do
       </.card_table>
       """)
 
-    assert [_] = find(html, "#t-box.sg-card.flush table.sg-table") |> Enum.to_list()
+    assert [_] = find(html, "#t-box.card.overflow-hidden table.sg-table") |> Enum.to_list()
     assert find(html, "#t-box .sg-card-h h3") |> LazyHTML.text() == "Últimos pedidos"
     assert [_] = find(html, "#t-box .sg-card-h .meta a") |> Enum.to_list()
     assert [_] = find(html, "#t-box th.r") |> Enum.to_list()
@@ -593,7 +593,7 @@ defmodule LineaUI.Components.CardTableTest do
 
       assert html =~ ~s(.linea-ctable-sub[data-w="2"] { display: block; })
       assert html =~ ~s("sel head status act" "sel title value act")
-      assert html =~ ".sg-btn { flex: 0 0 auto !important; width: auto !important; }"
+      assert html =~ ".btn { flex: 0 0 auto !important; width: auto !important; }"
       assert html =~ ~s(.linea-ctable-cell[data-role="title"].is-wrap { display: block;)
       assert html =~ ~s(.linea-ctable-cell[data-card="true"] { display: block;)
     end

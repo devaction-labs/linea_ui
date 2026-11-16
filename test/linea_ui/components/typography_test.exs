@@ -92,7 +92,7 @@ defmodule LineaUI.Components.TypographyTest do
 
   test "a flat kbd is the canvas key" do
     html = render(~H|<.kbd variant="flat">⌘ K</.kbd>|)
-    assert "sg-kbd" in classes(html, "kbd")
+    assert "kbd" in classes(html, "kbd")
 
     refute "shadow-[inset_0_0_0_1px_var(--color-slate-300),0_1px_0_var(--color-slate-300)]" in classes(
              html,
