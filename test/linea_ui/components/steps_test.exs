@@ -12,8 +12,7 @@ defmodule LineaUI.Components.StepsTest do
 
     assert "steps" in classes(html, "ol")
     assert html |> find("li.step") |> Enum.count() == 2
-    assert "before:bg-slate-200" in classes(html, "li")
-    assert "bg-slate-200" in classes(html, ".step-header")
+    assert html |> find("li.step > .step-icon") |> Enum.count() == 2
     assert html |> find("li[aria-current=step]") |> Enum.count() == 1
     assert html |> find("h3") |> Enum.map(&LazyHTML.text/1) == ["Step 1", "Step 2"]
   end
@@ -27,10 +26,9 @@ defmodule LineaUI.Components.StepsTest do
       </.steps>
       """)
 
-    assert "before:bg-primary" in classes(html, "li")
-    assert "bg-primary" in classes(html, ".step-header")
-    assert "bg-secondary" in classes(html, "li:last-child .step-header")
-    assert "animate-ping" in classes(html, "li:last-child .step-header span")
+    assert "step-primary" in classes(html, "li:first-child")
+    assert "step-secondary" in classes(html, "li:last-child")
+    assert "animate-ping" in classes(html, "li:last-child .step-icon span")
   end
 
   test "vertical, line space and sizes" do
@@ -42,14 +40,12 @@ defmodule LineaUI.Components.StepsTest do
       """)
 
     ol = classes(html, "ol")
-    assert "is-vertical" in ol
-    assert "line-space" in ol
-    assert "[--size:1rem]" in ol
-    assert "not-last:pb-12" in classes(html, "li")
+    assert "steps-vertical" in ol
+    assert "text-xs-plus" in ol
     assert "text-xs-plus" in classes(html, "h3")
 
     html = render(~H|<.steps size="lg"><:step label="A" /></.steps>|)
-    assert "[--size:2.75rem]" in classes(html, "ol")
+    assert "text-base" in classes(html, "ol")
   end
 
   test "a step's state colors its point and marks the current step" do
@@ -63,10 +59,10 @@ defmodule LineaUI.Components.StepsTest do
       </.steps>
       """)
 
-    assert "bg-primary" in classes(html, "li:nth-child(1) .step-header")
-    assert "bg-slate-200" in classes(html, "li:nth-child(2) .step-header")
-    assert "bg-error" in classes(html, "li:nth-child(3) .step-header")
-    assert "bg-slate-200" in classes(html, "li:nth-child(4) .step-header")
+    assert "step-primary" in classes(html, "li:nth-child(1)")
+    refute Enum.any?(classes(html, "li:nth-child(2)"), &String.starts_with?(&1, "step-"))
+    assert "step-error" in classes(html, "li:nth-child(3)")
+    refute Enum.any?(classes(html, "li:nth-child(4)"), &String.starts_with?(&1, "step-"))
     assert html |> find("li[aria-current=step]") |> Enum.count() == 1
     assert [_] = find(html, "li:nth-child(2)[aria-current=step]") |> Enum.to_list()
   end
@@ -193,7 +189,7 @@ defmodule LineaUI.Components.StepsTest do
     assert "grid" in classes(html, "ol")
     assert find(html, "li > span.h-1") |> Enum.count() == 3
     assert "bg-primary" in classes(html, "li:nth-child(1) > span.h-1")
-    assert "bg-slate-150" in classes(html, "li:nth-child(3) > span.h-1")
+    assert "bg-base-200" in classes(html, "li:nth-child(3) > span.h-1")
   end
 
   test "horizontal shows a step's content under its text" do
@@ -222,7 +218,7 @@ defmodule LineaUI.Components.StepsTest do
     assert "flex-col" in classes(html, "ol")
     refute html |> find("ol") |> LazyHTML.attribute("style") |> Enum.join() =~ "grid-template"
     assert "before:bg-primary" in classes(html, "li:nth-child(1)")
-    assert "before:bg-slate-150" in classes(html, "li:nth-child(2)")
+    assert "before:bg-base-200" in classes(html, "li:nth-child(2)")
     assert "last:before:hidden" in classes(html, "li:nth-child(3)")
     assert find(html, "li > span.h-1") |> Enum.count() == 0
     assert stepper_texts(html, "li:nth-child(2) button") == ["Import"]

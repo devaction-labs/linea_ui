@@ -816,13 +816,6 @@ code.inline-code {
    focus:outline-hidden disabled:pointer-events-none;
 }
 
-/* badge */
-.badge {
-    @apply inline-flex items-center justify-center px-2 py-1.5
-     text-xs font-inter tracking-wide align-baseline transition-all duration-200
-     leading-none rounded-lg font-medium
-}
-
 /* tag: a clickable chip (LineOne's refined look: 28px high, 8px radius, 12.5px type) */
 .tag {
     @apply inline-flex h-7 cursor-pointer items-center justify-center gap-1.5 whitespace-nowrap
@@ -1024,52 +1017,6 @@ code.inline-code {
   @apply bg-navy-600 text-slate-200;
 }
 
-/* steps */
-.steps {
-  @apply flex items-baseline [--size:2rem] [--line:0.25rem];
-}
-
-.steps.line-space {
-  --space: 0.5rem;
-}
-
-.steps .step {
-  @apply flex flex-1 flex-col break-words text-center font-inter tracking-wide;
-}
-
-.steps .step .step-header {
-  @apply relative m-auto mb-2 flex h-[var(--size)] w-[var(--size)] shrink-0 items-center justify-center;
-}
-
-.steps .step:not(:last-child)::before {
-  @apply relative left-[50%] top-[calc(var(--size)/2+var(--line)/2)] order-[-1] h-[var(--line)] rounded-full content-[''];
-}
-
-.steps.line-space .step:not(:last-child)::before {
-  width: calc(100% - var(--size) - calc(var(--space) * 2));
-  left: calc(50% + calc(var(--size) / 2 + var(--space)));
-}
-
-.steps.is-vertical {
-  @apply flex-col;
-}
-
-.steps.is-vertical .step {
-  @apply relative flex-row;
-}
-
-.steps.is-vertical .step .step-header {
-  @apply z-1 m-0;
-}
-
-.steps.is-vertical .step:not(:last-child)::before {
-  @apply absolute inset-0 h-auto w-[var(--line)] translate-x-[calc((var(--size)/2)-(var(--line)/2))];
-}
-
-.steps.is-vertical.line-space .step:not(:last-child)::before {
-  @apply top-[calc(var(--size)+var(--space))] bottom-[var(--space)];
-}
-
 /* timeline */
 .timeline {
   @apply flex flex-col [--size:12px] [--tl-line:2px];
@@ -1138,17 +1085,6 @@ code.inline-code {
 
 .timeline.is-compact .timeline-item-description b {
   @apply font-semibold text-slate-700 dark:text-navy-50;
-}
-
-/* pagination */
-.pagination {
-    @apply font-inter font-medium flex text-slate-600 dark:text-navy-100
-}
-
-/* table */
-table.is-hoverable > tbody > tr:hover > td,
-table.is-zebra > tbody > tr:nth-child(even) > td {
-  @apply bg-slate-100 dark:bg-navy-600;
 }
 
 /* tabs */
