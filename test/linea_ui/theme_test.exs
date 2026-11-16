@@ -129,19 +129,69 @@ defmodule LineaUI.ThemeTest do
       end
     end
 
-    test "linea reproduces the kit's own colors" do
+    test "linea is the canvas palette, exactly" do
       %{light: light, dark: dark} = Theme.tokens(hd(Theme.themes()))
 
-      assert get(light, "canvas") == "#fafafa"
-      assert get(light, "line") == "#ebebeb"
-      assert get(light, "muted") == "#737373"
-      assert get(light, "accent") == "#0d8f91"
-      assert get(light, "on-accent") == "#ffffff"
-      assert get(light, "r-lg") == "14px"
-      assert get(dark, "canvas") == "#141414"
-      assert get(dark, "main") == "#0a0a0a"
-      assert get(dark, "panel") == "#171717"
-      assert get(dark, "accent") == "#2bbfbd"
+      for {name, value} <- [
+            {"canvas", "#f4f3f0"},
+            {"line", "#e8e6e1"},
+            {"line-strong", "#d9d6cf"},
+            {"muted", "#6c6b70"},
+            {"ink", "#17171a"},
+            {"accent", "#0d8f91"},
+            {"neg", "#c2410c"},
+            {"heat0", "#ecebe7"},
+            {"on-accent", "#ffffff"},
+            {"r-sm", "8px"},
+            {"r", "12px"},
+            {"r-lg", "16px"},
+            {"r-xl", "22px"},
+            {"pill", "999px"}
+          ],
+          do: assert(get(light, name) == value, name)
+
+      for {name, value} <- [
+            {"canvas", "#111113"},
+            {"main", "#111113"},
+            {"panel", "#19191c"},
+            {"raised", "#1f1f23"},
+            {"accent-soft", "rgb(43 191 189/.14)"},
+            {"neg", "#f08a5b"},
+            {"heat4", "#2bbfbd"},
+            {"pill", "999px"}
+          ],
+          do: assert(get(dark, name) == value, name)
+    end
+
+    test "tokens of a seed are written over the generated ones, and daisyUI's follow" do
+      %{light: light, dark: dark} = Theme.tokens(hd(Theme.themes()))
+
+      assert get(light, "color-base-300") == "#e8e6e1"
+      assert get(light, "color-base-200") == "#efeeea"
+      assert get(light, "color-neutral") == "#17171a"
+      assert get(light, "color-error") == "#c2410c"
+      assert get(light, "radius-selector") == "8px"
+      assert get(light, "radius-field") == "12px"
+      assert get(light, "radius-box") == "16px"
+      assert get(light, "color-primary") == "#0d8f91"
+      assert get(dark, "color-base-100") == "#19191c"
+      assert get(dark, "color-base-300") == "#232327"
+
+      seed = %{id: "t", accent: "#7c3aed", tokens: %{light: %{"line" => "#123456"}}}
+      t = Theme.tokens(seed)
+      assert get(t.light, "line") == "#123456"
+      assert get(t.light, "color-base-300") == "#123456"
+      assert get(t.dark, "line") == get(Theme.tokens(Map.delete(seed, :tokens)).dark, "line")
+
+      assert_raise ArgumentError, ~r/does not have: nope/, fn ->
+        Theme.tokens(%{seed | tokens: %{light: %{"nope" => "#000000"}}})
+      end
+    end
+
+    test "the other themes do not take the canvas's tokens" do
+      for theme <- tl(Theme.themes()) do
+        refute Map.has_key?(theme, :tokens), theme.id
+      end
     end
 
     test "themes.css is the stylesheet the seeds build" do
@@ -188,7 +238,9 @@ defmodule LineaUI.ThemeTest do
       assert_raise ArgumentError, ~r/accent/, fn -> Theme.seed("acme", []) end
       assert_raise ArgumentError, ~r/#rrggbb/, fn -> Theme.seed("acme", accent: "purple") end
 
-      assert_raise ArgumentError, ~r/radius/, fn ->
+      assert Theme.seed("acme", accent: "#7c3aed", radius: "canvas").radius == "canvas"
+
+      assert_raise ArgumentError, ~r/radius is none, sm, md, lg or canvas/, fn ->
         Theme.seed("acme", accent: "#7c3aed", radius: "xl")
       end
 

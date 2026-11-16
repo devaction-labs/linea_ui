@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- The default theme `linea` is the design canvas's palette, exactly: warm neutrals (`#f4f3f0` canvas, `#e8e6e1` lines, `#17171a` ink), the teal accent, the canvas's status colors and its dark version (`#111113` canvas, `#19191c` panels), and its corners (8/12/16/22px, round controls). daisyUI's variables follow (`--color-base-300` is `#e8e6e1`, `--radius-field` 12px). The other eleven themes are unchanged.
+- A theme seed takes `tokens: %{light: %{"line" => "#e8e6e1"}, dark: %{...}}`, kit tokens written over the generated ones before the Tailwind and daisyUI tokens are derived from them (a name the theme does not have raises), and `radius: "canvas"` (`pill` 999px, the inner pieces 8px; `seed/2` accepts it).
+
 ## 0.26.1 (2026-11-16)
 
 - The daisyUI colours and sizes the components build from an attr are generated again: `alert` (`alert-info`, `alert-success`…), `spinner` (`loading-sm`…`loading-xl`), `progress` (`progress-warning`, `progress-error`), `button` (`btn-success`, `btn-info`…), `switch`, `checkbox`, `radio`, `range`, `badge` and `steps` wrote them as `"alert-" <> color`, which Tailwind cannot see, so they came out grey or unstyled in an app. `linea_ui.css` now lists them with `@source inline(...)`, so the kit needs Tailwind 4.1 or later (Phoenix 1.8 ships 4.1).

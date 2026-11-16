@@ -7,7 +7,7 @@ defmodule LineaUI.Theme do
       <html data-theme="ocean" class="dark">
 
   The kit ships twelve (`themes/0`) in `assets/css/parts/themes.css`, built from the seeds below by
-  `mix linea_ui.themes` (the default one, `linea`, is the teal of the kit). An app makes its own with
+  `mix linea_ui.themes` (the default one, `linea`, is the canvas look of the kit: warm neutrals, teal, round controls, with the canvas's own colors set through `tokens`). An app makes its own with
   `mix linea_ui.gen.theme acme --accent "#7c3aed"` (or `css/1` with a seed) and lists it in the picker through
   `config :linea_ui, :themes, [%{id: "acme", label: "Acme"}]`. `theme_picker/1` lets the user choose; the choice
   is kept in `localStorage["linea-theme"]` and `theme_script/1` applies it before the first paint.
@@ -22,7 +22,8 @@ defmodule LineaUI.Theme do
   | `dark_accent` | the accent of the dark version (default: the light one, lifted to read on dark)        |
   | `neutral`     | the hue of the grays (degrees, or `"neutral"`, `"cool"`, `"slate"`, `"warm"`, `"stone"`) |
   | `chroma`      | how tinted the grays are (0 for pure grays, 0.02 for a clear tint)                     |
-  | `radius`      | `"none"`, `"sm"`, `"md"` (the kit's) or `"lg"`                                         |
+  | `radius`      | `"none"`, `"sm"`, `"md"`, `"lg"` or `"canvas"` (round controls, 12/16/22px boxes)      |
+  | `tokens`      | `%{light: %{"line" => "#e8e6e1"}, dark: %{...}}`: kit tokens written over the generated ones, before daisyUI's and Tailwind's are derived from them |
   | `paper`       | `true` tints the cards too (a cream or paper look), not only the page                 |
   | `dark_lift`   | how much lighter the dark version's surfaces are (0 is the kit's near-black, 0.1 a slate) |
 
@@ -43,7 +44,10 @@ defmodule LineaUI.Theme do
     "none" => [r_sm: 4, r: 4, r_lg: 6, r_xl: 8, pill: 4, pill_in: 3, pill_xs: 3],
     "sm" => [r_sm: 6, r: 8, r_lg: 10, r_xl: 12, pill: 6, pill_in: 4, pill_xs: 4],
     "md" => [r_sm: 8, r: 10, r_lg: 14, r_xl: 16, pill: 8, pill_in: 6, pill_xs: 6],
-    "lg" => [r_sm: 10, r: 12, r_lg: 18, r_xl: 22, pill: 10, pill_in: 8, pill_xs: 8]
+    "lg" => [r_sm: 10, r: 12, r_lg: 18, r_xl: 22, pill: 10, pill_in: 8, pill_xs: 8],
+    # the design canvas's: round controls (pill), but the inner pieces (small icon buttons, chips, cells) keep
+    # 8px: they are boxes of text, which a 999px radius would turn into stadiums
+    "canvas" => [r_sm: 8, r: 12, r_lg: 16, r_xl: 22, pill: 999, pill_in: 8, pill_xs: 8]
   }
 
   @neutrals %{"neutral" => 90, "cool" => 285, "slate" => 257, "warm" => 50, "stone" => 70}
@@ -54,10 +58,86 @@ defmodule LineaUI.Theme do
       label: "Linea",
       accent: "#0d8f91",
       dark_accent: "#2bbfbd",
-      neutral: "neutral",
-      chroma: 0,
-      radius: "md",
-      on_accent: "#ffffff"
+      neutral: 90,
+      chroma: 0.006,
+      radius: "canvas",
+      on_accent: "#ffffff",
+      # the design canvas's own palette (warm neutrals, teal), exactly: the generated grays are kept for the
+      # tokens the canvas does not name (ctl-*, ring, tip, the Tailwind grays)
+      tokens: %{
+        light: %{
+          "canvas" => "#f4f3f0",
+          "main" => "#f4f3f0",
+          "panel" => "#ffffff",
+          "raised" => "#ffffff",
+          "sunken" => "#efeeea",
+          "hover" => "#f1f0ec",
+          "line" => "#e8e6e1",
+          "line-strong" => "#d9d6cf",
+          "ink" => "#17171a",
+          "fg" => "#2e2e33",
+          "muted" => "#6c6b70",
+          "faint" => "#9d9ba1",
+          "accent" => "#0d8f91",
+          "accent-ink" => "#08686b",
+          "accent-soft" => "#e2f2f1",
+          "accent-2" => "#7fcfcb",
+          "accent-3" => "#bfe6e3",
+          "on-accent" => "#ffffff",
+          "solid" => "#17171a",
+          "on-solid" => "#ffffff",
+          "pos" => "#1a7f4b",
+          "pos-soft" => "#e5f3eb",
+          "neg" => "#c2410c",
+          "neg-soft" => "#fbeee6",
+          "warn" => "#a16207",
+          "warn-soft" => "#fbf3dc",
+          "info" => "#2f5fd0",
+          "info-soft" => "#e8eefc",
+          "c1" => "#0d8f91",
+          "heat0" => "#ecebe7",
+          "heat1" => "#cfe9e6",
+          "heat2" => "#93d1cc",
+          "heat3" => "#4fb3ae",
+          "heat4" => "#0d8f91"
+        },
+        dark: %{
+          "canvas" => "#111113",
+          "main" => "#111113",
+          "panel" => "#19191c",
+          "raised" => "#1f1f23",
+          "sunken" => "#151517",
+          "hover" => "#232327",
+          "line" => "#28282d",
+          "line-strong" => "#36363c",
+          "ink" => "#f3f3f4",
+          "fg" => "#d9d9dd",
+          "muted" => "#a3a3ab",
+          "faint" => "#74747c",
+          "accent" => "#2bbfbd",
+          "accent-ink" => "#5fd6d3",
+          "accent-soft" => "rgb(43 191 189/.14)",
+          "accent-2" => "#1f8f8d",
+          "accent-3" => "#16605f",
+          "on-accent" => "#04201f",
+          "solid" => "#f3f3f4",
+          "on-solid" => "#111113",
+          "pos" => "#4cc584",
+          "pos-soft" => "rgb(76 197 132/.13)",
+          "neg" => "#f08a5b",
+          "neg-soft" => "rgb(240 138 91/.13)",
+          "warn" => "#e6b24a",
+          "warn-soft" => "rgb(230 178 74/.13)",
+          "info" => "#7aa2ff",
+          "info-soft" => "rgb(122 162 255/.13)",
+          "c1" => "#2bbfbd",
+          "heat0" => "#232327",
+          "heat1" => "#174443",
+          "heat2" => "#1b6664",
+          "heat3" => "#22938f",
+          "heat4" => "#2bbfbd"
+        }
+      }
     },
     %{
       id: "graphite",
@@ -222,7 +302,7 @@ defmodule LineaUI.Theme do
     radius = to_string(opts[:radius] || "md")
 
     unless Map.has_key?(@radius, radius),
-      do: raise(ArgumentError, "radius is none, sm, md or lg: #{inspect(radius)}")
+      do: raise(ArgumentError, "radius is none, sm, md, lg or canvas: #{inspect(radius)}")
 
     %{
       id: id,
@@ -345,10 +425,29 @@ defmodule LineaUI.Theme do
         accent_tokens(dark_accent, :dark, seed[:dark_on_accent], d.(0.205)) ++
         status_tokens(:dark) ++ heat(dark_accent, d.(0.269), [0.25, 0.45, 0.7])
 
+    light = override(light, seed[:tokens][:light])
+    dark = override(dark, seed[:tokens][:dark])
     light = light ++ shared ++ tailwind(accent, light, :light)
     dark = dark ++ shared ++ tailwind(dark_accent, dark, :dark)
 
     %{light: light ++ daisy(light, :light), dark: dark ++ daisy(dark, :dark)}
+  end
+
+  # a seed's `tokens` replace the generated ones by name, before the derived (Tailwind, daisyUI) tokens are built
+  defp override(tokens, nil), do: tokens
+
+  defp override(tokens, overrides) do
+    names = Enum.map(tokens, &elem(&1, 0))
+
+    case Map.keys(overrides) -- names do
+      [] ->
+        :ok
+
+      unknown ->
+        raise ArgumentError, "tokens the theme does not have: #{Enum.join(unknown, ", ")}"
+    end
+
+    Enum.map(tokens, fn {name, value} -> {name, Map.get(overrides, name, value)} end)
   end
 
   @doc """
