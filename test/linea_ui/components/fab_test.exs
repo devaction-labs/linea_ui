@@ -261,7 +261,7 @@ defmodule LineaUI.Components.FabTest do
       classes = classes(html, "#new")
       assert "sg-fab" in classes
       assert "btn" in classes
-      assert "solid" in classes
+      assert "btn-neutral" in classes
       assert attr_of(html, "#new", "style") == ["bottom: 18px; right: 18px"]
       assert find(html, "#new") |> LazyHTML.text() =~ "Novo pedido"
     end

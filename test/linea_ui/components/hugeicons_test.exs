@@ -55,7 +55,7 @@ defmodule LineaUI.Components.HugeiconsTest do
     assert svgs(html) == 0
   end
 
-  test "breadcrumb separates with the Hugeicons chevron" do
+  test "breadcrumb leaves the separator to daisyUI's breadcrumbs, no icon" do
     html =
       render(~H"""
       <.breadcrumb variant="plain">
@@ -64,7 +64,7 @@ defmodule LineaUI.Components.HugeiconsTest do
       </.breadcrumb>
       """)
 
-    assert huge(html) == ["huge-arrow-right-01"]
+    assert huge(html) == []
     assert svgs(html) == 0
   end
 
