@@ -31,7 +31,7 @@ defmodule LineaUI.Components.Navbar do
 
   ## Your own components in the bar
 
-  The pieces are optional: `:center` and `:end` take any markup, in the same `.sg-nb-end` wrapper, so an app can
+  The pieces are optional: `:center` and `:end` take any markup, in the same `.lo-nb-end` wrapper, so an app can
   put a `live_component` (the ⌘K palette, the notifications bell, the account menu) in place of `navbar_search/1`,
   `navbar_bell/1` and `navbar_user/1` and the bar keeps the same markup around it:
 
@@ -60,8 +60,9 @@ defmodule LineaUI.Components.Navbar do
     * `navbar_user/1` is the avatar and, with the `:menu` slot, the account menu; `navbar_menu_head/1`,
       `navbar_menu_status/1`, `navbar_menu_row/1` and `navbar_menu_item/1` are what goes in it.
 
-  Icons are Hugeicons: write each name in full (`huge-search-01`) so Tailwind sees it. Styles: `canvas-navbar.css`
-  (`sg-nb`), inside a `.sg` root.
+  Icons are Hugeicons: write each name in full (`huge-search-01`) so Tailwind sees it. The bar is a daisyUI
+  `navbar`; its pieces are daisyUI too (`menu-horizontal` links, `tabs-border` tabs, `breadcrumbs`, `btn`, `join`,
+  `indicator`, `badge`, `status`, `kbd`), painted by the theme. `canvas-navbar.css` (`lo-nb`) only lays them out.
   """
 
   use LineaUI.Component
@@ -83,14 +84,14 @@ defmodule LineaUI.Components.Navbar do
 
   slot :inner_block, doc: "The left side."
   slot :center, doc: "Between the left and the right: `navbar_links/1`, a wide `navbar_search/1`."
-  slot :end, doc: "The right side (inside `.sg-nb-end`)."
+  slot :end, doc: "The right side (inside `.lo-nb-end`)."
   slot :tabs, doc: "`navbar_tabs/1`: makes the bar two rows (`tall`)."
 
   def navbar(%{variant: "float"} = assigns) do
     assigns = assign_derived(assigns, :end_, [:end], fn -> assigns.end end)
 
     ~H"""
-    <div class="sg-nb-floatwrap">
+    <div class="lo-nb-floatwrap">
       <.bar
         variant={@variant}
         class={@class}
@@ -135,7 +136,7 @@ defmodule LineaUI.Components.Navbar do
     assigns =
       assign_derived(assigns, :classes, [:variant, :tabs, :class], fn ->
         merge([
-          "sg-nb",
+          "navbar lo-nb",
           variant_class(assigns.variant),
           assigns.tabs != [] && "tall",
           assigns.class
@@ -144,13 +145,13 @@ defmodule LineaUI.Components.Navbar do
 
     ~H"""
     <header id={@id} class={@classes} {@rest}>
-      <div :if={@tabs != []} class="sg-nb-row">
+      <div :if={@tabs != []} class="lo-nb-row">
         {render_slot(@inner)}{render_slot(@center)}
-        <div :if={@end_slot != []} class="sg-nb-end">{render_slot(@end_slot)}</div>
+        <div :if={@end_slot != []} class="lo-nb-end">{render_slot(@end_slot)}</div>
       </div>
       <%= if @tabs == [] do %>
         {render_slot(@inner)}{render_slot(@center)}
-        <div :if={@end_slot != []} class="sg-nb-end">{render_slot(@end_slot)}</div>
+        <div :if={@end_slot != []} class="lo-nb-end">{render_slot(@end_slot)}</div>
       <% end %>
       {render_slot(@tabs)}
     </header>
@@ -185,14 +186,14 @@ defmodule LineaUI.Components.Navbar do
       end)
 
     ~H"""
-    <span class={merge(["row sg-nb-brandrow", @class])} {@rest}>
-      <span class="sg-nb-logo" aria-hidden={@name && "true"}>
+    <span class={merge(["row lo-nb-brandrow", @class])} {@rest}>
+      <span class="lo-nb-logo bg-primary text-primary-content" aria-hidden={@name && "true"}>
         <img :if={@src} src={@src} alt="" />
         <%= if !@src do %>
           {@letter}
         <% end %>
       </span>
-      <b :if={@name} class="sg-nb-brand">{@name}</b>
+      <b :if={@name} class="lo-nb-brand">{@name}</b>
     </span>
     """
   end
@@ -213,13 +214,14 @@ defmodule LineaUI.Components.Navbar do
       assign_derived(assigns, :entries, [:items], fn -> crumb_entries(assigns.items) end)
 
     ~H"""
-    <nav class={merge(["sg-nb-crumb", @class])} aria-label={@label} {@rest}>
-      <%= for entry <- @entries do %>
-        <span :if={!entry.first} class="sep" aria-hidden="true">/</span>
-        <b :if={entry.last} aria-current="page">{entry.label}</b>
-        <.link :if={!entry.last && entry.link} {entry.link}>{entry.label}</.link>
-        <span :if={!entry.last && !entry.link}>{entry.label}</span>
-      <% end %>
+    <nav class={merge(["breadcrumbs lo-nb-crumb", @class])} aria-label={@label} {@rest}>
+      <ul>
+        <li :for={entry <- @entries}>
+          <b :if={entry.last} aria-current="page">{entry.label}</b>
+          <.link :if={!entry.last && entry.link} {entry.link}>{entry.label}</.link>
+          <span :if={!entry.last && !entry.link}>{entry.label}</span>
+        </li>
+      </ul>
     </nav>
     """
   end
@@ -236,7 +238,7 @@ defmodule LineaUI.Components.Navbar do
 
   @doc """
   The workspace (company) switcher at the left of the bar: the logo, the name, a line under it and a chevron. It is a
-  button: `phx-click` opens your menu. It brings its own `.sg-nb-start` column, which keeps a wide search centered.
+  button: `phx-click` opens your menu. It brings its own `.lo-nb-start` column, which keeps a wide search centered.
 
       <.navbar_workspace name="Loja Bom Fim" sub="Plano Pro" phx-click={...} />
   """
@@ -254,9 +256,9 @@ defmodule LineaUI.Components.Navbar do
       end)
 
     ~H"""
-    <div class="sg-nb-start">
-      <button type="button" class={merge(["sg-nb-ws", @class])} {@rest}>
-        <span class="sg-nb-logo" aria-hidden="true">
+    <div class="lo-nb-start">
+      <button type="button" class={merge(["lo-nb-ws btn btn-ghost", @class])} {@rest}>
+        <span class="lo-nb-logo bg-primary text-primary-content" aria-hidden="true">
           <img :if={@src} src={@src} alt="" />
           <%= if !@src do %>
             {@letter}
@@ -287,10 +289,12 @@ defmodule LineaUI.Components.Navbar do
 
   def navbar_chip(assigns) do
     ~H"""
-    <button type="button" class={merge(["sg-nb-chip", @class])} {@rest}>
-      <span :if={@square} class="sg-nb-sq" style={@color && "background:#{@color}"}>{@square}</span>
+    <button type="button" class={merge(["lo-nb-chip btn btn-ghost btn-sm", @class])} {@rest}>
+      <span :if={@square} class="lo-nb-sq bg-neutral text-neutral-content" style={@color && "background:#{@color}"}>
+        {@square}
+      </span>
       <b>{@label}</b>
-      <span :if={@tag} class="sg-nb-tag tag">{@tag}</span>
+      <span :if={@tag} class="lo-nb-tag badge badge-soft badge-primary badge-xs">{@tag}</span>
       <.icon name="huge-arrow-down-01" class="i sm" />
     </button>
     """
@@ -302,7 +306,7 @@ defmodule LineaUI.Components.Navbar do
 
   def navbar_slash(assigns) do
     ~H"""
-    <span class={merge(["sg-nb-slash", @class])} aria-hidden="true" {@rest}>/</span>
+    <span class={merge(["lo-nb-slash", @class])} aria-hidden="true" {@rest}>/</span>
     """
   end
 
@@ -332,15 +336,14 @@ defmodule LineaUI.Components.Navbar do
       end)
 
     ~H"""
-    <nav class={merge(["sg-nb-links", @class])} aria-label={@label} {@rest}>
-      <.link
-        :for={entry <- @entries}
-        class={entry.on && "on"}
-        aria-current={entry.on && "page"}
-        {entry.link}
-      >
-        {entry.label}
-      </.link>
+    <nav class={merge(["lo-nb-links", @class])} aria-label={@label} {@rest}>
+      <ul class="menu menu-horizontal menu-sm">
+        <li :for={entry <- @entries}>
+          <.link class={entry.on && "menu-active"} aria-current={entry.on && "page"} {entry.link}>
+            {entry.label}
+          </.link>
+        </li>
+      </ul>
     </nav>
     """
   end
@@ -364,14 +367,14 @@ defmodule LineaUI.Components.Navbar do
       end)
 
     ~H"""
-    <nav class={merge(["sg-nb-tabs", @class])} aria-label={@label} {@rest}>
+    <nav class={merge(["tabs tabs-border lo-nb-tabs", @class])} aria-label={@label} {@rest}>
       <.link
         :for={entry <- @entries}
-        class={entry.on && "on"}
+        class={["tab", entry.on && "tab-active"]}
         aria-current={entry.on && "page"}
         {entry.link}
       >
-        {entry.label}<span :if={entry.count} class="n">{entry.count}</span>
+        {entry.label}<span :if={entry.count} class="n badge badge-ghost badge-sm">{entry.count}</span>
       </.link>
     </nav>
     """
@@ -384,7 +387,7 @@ defmodule LineaUI.Components.Navbar do
 
   def navbar_title(assigns) do
     ~H"""
-    <b class={merge(["sg-nb-mtitle", @class])} {@rest}>{render_slot(@inner_block)}</b>
+    <b class={merge(["lo-nb-mtitle", @class])} {@rest}>{render_slot(@inner_block)}</b>
     """
   end
 
@@ -408,13 +411,13 @@ defmodule LineaUI.Components.Navbar do
     ~H"""
     <button
       type="button"
-      class={merge(["sg-nb-search", @wide && "wide", @class])}
+      class={merge(["lo-nb-search input", @wide && "wide", @class])}
       style={@width && "width:#{@width}"}
       {@rest}
     >
       <.icon name="huge-search-01" class="i" />
       <span>{@placeholder}</span>
-      <kbd :if={@kbd}>{@kbd}</kbd>
+      <kbd :if={@kbd} class="kbd kbd-sm">{@kbd}</kbd>
     </button>
     """
   end
@@ -432,11 +435,11 @@ defmodule LineaUI.Components.Navbar do
 
   def navbar_bell(assigns) do
     ~H"""
-    <span class={merge(["sg-nb-bell", @class])}>
+    <span class={merge(["lo-nb-bell indicator", @class])}>
+      <span :if={@dot} class="indicator-item status status-warning" aria-hidden="true"></span>
       <.button icon size={@size} aria-label={@label} {@rest}>
         <.icon name="huge-notification-03" class="i" />
       </.button>
-      <i :if={@dot} aria-hidden="true"></i>
     </span>
     """
   end
@@ -481,10 +484,10 @@ defmodule LineaUI.Components.Navbar do
       end)
 
     ~H"""
-    <span class={merge(["sg-nb-lang", @class])} role="group" aria-label={@label} {@rest}>
+    <span class={merge(["lo-nb-lang join", @class])} role="group" aria-label={@label} {@rest}>
       <.link
         :for={entry <- @entries}
-        class={entry.on && "on"}
+        class={["btn btn-xs join-item", entry.on && "btn-active"]}
         aria-current={entry.on && "true"}
         title={entry.title}
         {entry.link}
@@ -518,7 +521,7 @@ defmodule LineaUI.Components.Navbar do
 
   def navbar_sep(assigns) do
     ~H"""
-    <span class={merge(["sg-nb-sep", @class])} aria-hidden="true" {@rest}></span>
+    <span class={merge(["lo-nb-sep divider divider-horizontal", @class])} aria-hidden="true" {@rest}></span>
     """
   end
 
@@ -530,8 +533,17 @@ defmodule LineaUI.Components.Navbar do
 
   def navbar_env(assigns) do
     ~H"""
-    <span class={merge(["sg-nb-env", @tone == "warn" && "warn", @class])} {@rest}>
-      <i aria-hidden="true"></i>{@label}
+    <span
+      class={
+        merge([
+          "lo-nb-env badge badge-soft",
+          if(@tone == "warn", do: "warn badge-warning", else: "badge-success"),
+          @class
+        ])
+      }
+      {@rest}
+    >
+      <span class="status" aria-hidden="true"></span>{@label}
     </span>
     """
   end
@@ -543,8 +555,8 @@ defmodule LineaUI.Components.Navbar do
 
   def navbar_sync(assigns) do
     ~H"""
-    <span class={merge(["sg-nb-sync", @class])} role="status" {@rest}>
-      <.icon name="huge-tick-02" />{@text}
+    <span class={merge(["lo-nb-sync", @class])} role="status" {@rest}>
+      <.icon name="huge-tick-02" class="text-success" />{@text}
     </span>
     """
   end
@@ -577,9 +589,9 @@ defmodule LineaUI.Components.Navbar do
       end)
 
     ~H"""
-    <span class={merge(["sg-nb-avs", @class])} {@rest}>
+    <span class={merge(["lo-nb-avs", @class])} {@rest}>
       <.user_avatar :for={user <- @shown} user={user} class="sm" />
-      <span :if={@extra > 0} class="more">+{@extra}</span>
+      <span :if={@extra > 0} class="more lo-av sm bg-base-200 text-base-content">+{@extra}</span>
     </span>
     """
   end
@@ -624,7 +636,7 @@ defmodule LineaUI.Components.Navbar do
     ~H"""
     <div
       id={@id}
-      class="sg-nb-mewrap"
+      class="lo-nb-mewrap"
       phx-click-away={@close}
       phx-window-keydown={@close}
       phx-key="Escape"
@@ -639,7 +651,13 @@ defmodule LineaUI.Components.Navbar do
         toggle={@toggle}
         rest={@rest}
       />
-      <div id={@ids.menu} class="sg-am sg-nb-menu" role="menu" aria-label={@label} hidden>
+      <div
+        id={@ids.menu}
+        class="lo-nb-menu bg-base-100 rounded-box border border-base-300 shadow-lg"
+        role="menu"
+        aria-label={@label}
+        hidden
+      >
         {render_slot(@menu)}
       </div>
     </div>
@@ -677,7 +695,8 @@ defmodule LineaUI.Components.Navbar do
     assigns =
       assign_derived(assigns, :classes, [:variant, :class], fn ->
         merge([
-          "sg-nb-me",
+          "lo-nb-me btn btn-ghost",
+          assigns.variant != "named" && "btn-circle",
           assigns.variant == "ring" && "ring",
           assigns.variant == "named" && "named",
           assigns.class
@@ -697,7 +716,7 @@ defmodule LineaUI.Components.Navbar do
       {@rest}
     >
       <.user_avatar user={@user} />
-      <span :if={@variant == "named"} class="col sg-nb-who">
+      <span :if={@variant == "named"} class="col lo-nb-who">
         <b>{@user[:name]}</b>
         <span :if={@user[:role]}>{@user[:role]}</span>
       </span>
@@ -714,7 +733,7 @@ defmodule LineaUI.Components.Navbar do
 
     ~H"""
     <span
-      class={merge(["sg-av", @class])}
+      class={merge(["lo-av bg-neutral text-neutral-content", @class])}
       style={@user[:color] && "background:#{@user[:color]}"}
       title={@user[:name]}
       role="img"
@@ -740,7 +759,7 @@ defmodule LineaUI.Components.Navbar do
 
   def navbar_menu_head(assigns) do
     ~H"""
-    <div class={merge(["sg-nb-mhead", @class])} {@rest}>
+    <div class={merge(["lo-nb-mhead", @class])} {@rest}>
       <.user_avatar user={@user} />
       <div class="col">
         <b>{@user[:name]}</b>
@@ -763,8 +782,8 @@ defmodule LineaUI.Components.Navbar do
 
   def navbar_menu_status(assigns) do
     ~H"""
-    <div class={merge(["sg-nb-mstatus", @class])} {@rest}>
-      <i aria-hidden="true"></i>{@label}
+    <div class={merge(["lo-nb-mstatus bg-base-200 rounded-field", @class])} {@rest}>
+      <span class="status status-success" aria-hidden="true"></span>{@label}
       <span :if={@action != []} class="faint">{render_slot(@action)}</span>
     </div>
     """
@@ -782,7 +801,7 @@ defmodule LineaUI.Components.Navbar do
 
   def navbar_menu_row(assigns) do
     ~H"""
-    <div class={merge(["sg-nb-mrow", @class])} {@rest}>
+    <div class={merge(["lo-nb-mrow", @class])} {@rest}>
       <span>{@label}</span>
       {render_slot(@inner_block)}
     </div>
@@ -804,7 +823,17 @@ defmodule LineaUI.Components.Navbar do
 
   def navbar_menu_item(assigns) do
     ~H"""
-    <.link role="menuitem" class={merge([@danger && "neg", @class])} {@rest}>
+    <.link
+      role="menuitem"
+      class={
+        merge([
+          "lo-nb-mi btn btn-ghost btn-sm justify-start w-full font-normal",
+          @danger && "neg text-error",
+          @class
+        ])
+      }
+      {@rest}
+    >
       <.icon :if={@icon} name={@icon} class="i" />
       <span class="t">{render_slot(@inner_block)}</span>
       <span :if={@kbd} class="kbd kbd-sm">{@kbd}</span>

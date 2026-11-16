@@ -24,8 +24,8 @@ defmodule LineaUI.Components.NavbarSlotsTest do
       </.navbar>
       """)
 
-    assert ["sg-nb"] == classes(html, "header")
+    assert ["navbar", "lo-nb"] == classes(html, "header")
     assert [_] = Enum.to_list(find(html, "header > #palette"))
-    assert [_] = Enum.to_list(find(html, "header > .sg-nb-end > #bell"))
+    assert [_] = Enum.to_list(find(html, "header > .lo-nb-end > #bell"))
   end
 end

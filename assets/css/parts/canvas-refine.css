@@ -189,7 +189,6 @@ span.flatpickr-weekday{font-size:12.5px;font-weight:400;color:var(--muted)}
 .sg-skel{border-radius:6px;background:var(--tint)}
 .sg-kb-col{border-radius:var(--r-lg);box-shadow:none}
 .sg-kb-card{border-radius:var(--r);box-shadow:0 0 0 1px var(--line),var(--shadow-xs)}
-.sg-avs .sg-av{box-shadow:0 0 0 2px var(--canvas)}
 
 /* the app shell's side menu, in the same rows */
 .sg-nav-a{height:32px;gap:8px;padding:0 8px;border-radius:6px;font-size:14px;font-weight:400}
@@ -260,15 +259,6 @@ span.flatpickr-weekday{font-size:12.5px;font-weight:400;color:var(--muted)}
 /* ---------- navbars, landing, hero, pixel card, toasts with aura, error page and auth, in the same finish ---------- */
 
 /* app navbar: 36px search with the field line, 8px links and toggles, menus as the popover surface */
-.sg-nb-search{height:36px;border-radius:var(--pill);box-shadow:inset 0 0 0 1px var(--ctl-line),var(--shadow-xs)}
-.sg-nb-search.wide{border-radius:var(--pill);box-shadow:inset 0 0 0 1px var(--ctl-line),var(--shadow-xs)}
-.sg-nb-search kbd{border-radius:4px;box-shadow:none;background:var(--sunken)}
-.sg-nb-lang,.sg-nb-links{border-radius:var(--pill)}
-.sg-nb-lang a,.sg-nb-links a,.sg-nb-sq,.sg-nb-txt,.sg-nb-logo{border-radius:6px}
-.sg-nb-me{border-radius:50%}
-.sg-nb-me.named,.sg-nb-ws,.sg-nb-chip,.sg-nb-mstatus{border-radius:var(--pill)}
-.sg-nb.float{border-radius:var(--r-lg);box-shadow:0 0 0 1px var(--line),var(--shadow-sm)}
-.sg-am{border-radius:var(--r);box-shadow:var(--pop-shadow);background:var(--pop)}
 .sg-am a{border-radius:6px}
 
 /* landing navbar: 8px links and buttons, the mega menu as a 14px popover */

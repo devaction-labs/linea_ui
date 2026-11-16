@@ -335,7 +335,7 @@ defmodule LineaUI.Components.Select.Listbox do
     <div class="item" data-value={@option.value} data-ts-item>
       <span
         :if={@face}
-        class="sg-av"
+        class="lo-av bg-neutral text-neutral-content"
         style={@face.color && "background:#{@face.color}"}
         title={@option.label}
       >{@face.initials}</span><span class="item-text">{@option.label}</span><button

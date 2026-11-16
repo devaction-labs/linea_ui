@@ -141,14 +141,14 @@ defmodule LineaUI.Components.PillboxTest do
   test "people: the pill gets an avatar with the initials and the color" do
     html = render(~H|<.pillbox name="p" value={["1", "2"]} options={people()} />|)
 
-    assert texts(html, "#p .ts-control .sg-av") == ["MC", "RA"]
+    assert texts(html, "#p .ts-control .lo-av") == ["MC", "RA"]
 
-    assert attr_of(html, "#p .ts-control .sg-av", "style") == [
+    assert attr_of(html, "#p .ts-control .lo-av", "style") == [
              "background:#8a5cd6",
              "background:#1a7f4b"
            ]
 
-    assert Enum.empty?(find(html, "#p [role=option] .sg-av"))
+    assert Enum.empty?(find(html, "#p [role=option] .lo-av"))
   end
 
   test "a created value or a value outside the options still shows as a pill" do
