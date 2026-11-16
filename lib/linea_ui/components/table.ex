@@ -135,7 +135,7 @@ defmodule LineaUI.Components.Table do
   alias Phoenix.LiveView.LiveStream
 
   # The look of `data_table/1`: 40px header and 48px rows of 13.5px Inter, 14px of padding at the sides.
-  @data_table "linea-dt w-full text-left font-inter text-[13.5px] text-slate-600 dark:text-navy-200"
+  @data_table "linea-dt w-full text-left font-inter text-[13.5px] text-base-content/75"
 
   @data_variants ~w(data data-grid)
 
@@ -144,21 +144,21 @@ defmodule LineaUI.Components.Table do
   @wrapper %{
     "basic" => "is-scrollbar-hidden relative min-w-full overflow-x-auto",
     "bordered" =>
-      "is-scrollbar-hidden relative min-w-full overflow-x-auto rounded-lg border border-slate-200 dark:border-navy-500",
+      "is-scrollbar-hidden relative min-w-full overflow-x-auto rounded-lg border border-base-300",
     "hoverable" => "is-scrollbar-hidden relative min-w-full overflow-x-auto",
     "zebra" => "is-scrollbar-hidden relative min-w-full overflow-x-auto",
     "grid" => "is-scrollbar-hidden relative min-w-full overflow-x-auto",
     "data" => "is-scrollbar-hidden relative min-w-full overflow-x-auto",
     "data-grid" =>
-      "is-scrollbar-hidden relative min-w-full overflow-auto rounded-[10px] shadow-[0_0_0_1px_var(--color-slate-150)] dark:shadow-[0_0_0_1px_var(--color-navy-500)]"
+      "is-scrollbar-hidden relative min-w-full overflow-auto rounded-[10px] shadow-[0_0_0_1px_var(--color-base-300)]"
   }
 
   @table %{
-    "basic" => "sg-table w-full text-left",
-    "bordered" => "w-full text-left text-[13.5px]",
-    "hoverable" => "sg-table w-full text-left",
-    "zebra" => "sg-table w-full text-left",
-    "grid" => "is-hoverable w-full text-left",
+    "basic" => "table w-full text-left",
+    "bordered" => "table w-full text-left text-[13.5px]",
+    "hoverable" => "table w-full text-left [&>tbody>tr:hover]:bg-base-200/70",
+    "zebra" => "table table-zebra w-full text-left",
+    "grid" => "table w-full text-left [&>tbody>tr:hover]:bg-base-200/70",
     "data" => @data_table,
     "data-grid" => @data_table
   }
@@ -168,7 +168,7 @@ defmodule LineaUI.Components.Table do
     "bordered" => "",
     "hoverable" => "",
     "zebra" => "",
-    "grid" => "border border-transparent border-b-slate-200 dark:border-b-navy-500",
+    "grid" => "border border-transparent border-b-base-300",
     "data" => "",
     "data-grid" => ""
   }
@@ -178,37 +178,37 @@ defmodule LineaUI.Components.Table do
     "bordered" => "[&:last-child>td]:border-b-0",
     "hoverable" => "",
     "zebra" => "",
-    "grid" => "border border-transparent border-b-slate-200 dark:border-b-navy-500",
+    "grid" => "border border-transparent border-b-base-300",
     "data" =>
-      "border-y border-transparent border-b-slate-150 last:border-b-transparent dark:border-b-navy-500",
+      "border-y border-transparent border-b-base-300 last:border-b-transparent",
     "data-grid" => ""
   }
 
-  @data_th "h-10 whitespace-nowrap px-3.5 py-0 font-inter text-[13px] font-normal text-slate-500 dark:text-navy-300"
+  @data_th "h-10 whitespace-nowrap px-3.5 py-0 font-inter text-[13px] font-normal text-base-content/65"
 
   @th %{
     "basic" => "",
     "bordered" =>
-      "whitespace-nowrap border border-t-0 border-slate-200 px-3 py-3 font-normal text-slate-500 first:border-l-0 last:border-r-0 dark:border-navy-500 dark:text-navy-300 lg:px-4",
+      "whitespace-nowrap border border-t-0 border-base-300 px-3 py-3 font-normal text-base-content/65 first:border-l-0 last:border-r-0 lg:px-4",
     "hoverable" => "",
     "zebra" => "",
-    "grid" => "whitespace-nowrap px-3 py-3 font-normal text-slate-500 dark:text-navy-300 lg:px-4",
+    "grid" => "whitespace-nowrap px-3 py-3 font-normal text-base-content/65 lg:px-4",
     "data" => @data_th,
     "data-grid" =>
       @data_th <>
-        " border border-t-0 border-slate-150 first:border-l-0 last:border-r-0 dark:border-navy-500"
+        " border border-t-0 border-base-300 first:border-l-0 last:border-r-0"
   }
 
   @td %{
     "basic" => "",
     "bordered" =>
-      "whitespace-nowrap border border-slate-200 px-3 py-3 first:border-l-0 last:border-r-0 dark:border-navy-500 lg:px-4",
+      "whitespace-nowrap border border-base-300 px-3 py-3 first:border-l-0 last:border-r-0 lg:px-4",
     "hoverable" => "",
     "zebra" => "",
     "grid" => "whitespace-nowrap px-4 py-3",
     "data" => "h-12 whitespace-nowrap px-3.5 py-0",
     "data-grid" =>
-      "h-12 whitespace-nowrap border border-t-0 border-slate-150 px-3.5 py-0 first:border-l-0 last:border-r-0 dark:border-navy-500 [tr:last-child>&]:border-b-0"
+      "h-12 whitespace-nowrap border border-t-0 border-base-300 px-3.5 py-0 first:border-l-0 last:border-r-0 [tr:last-child>&]:border-b-0"
   }
 
   @th_rounded %{
@@ -225,11 +225,11 @@ defmodule LineaUI.Components.Table do
 
   @filled ~w(hoverable zebra)
 
-  @data_sticky "sticky top-0 z-10 shadow-[0_1px_0_var(--color-slate-300),0_6px_8px_-6px_rgb(15_23_42/0.25)] dark:shadow-[0_1px_0_var(--color-navy-450),0_6px_8px_-6px_rgb(0_0_0/0.5)]"
+  @data_sticky "sticky top-0 z-10 shadow-[0_1px_0_var(--color-base-300),0_6px_8px_-6px_rgb(0_0_0/0.25)]"
 
   @sticky %{
-    "basic" => "sticky top-0 z-10 bg-white dark:bg-navy-700",
-    "bordered" => "sticky top-0 z-10 bg-white dark:bg-navy-700",
+    "basic" => "sticky top-0 z-10 bg-base-100",
+    "bordered" => "sticky top-0 z-10 bg-base-100",
     "hoverable" => "sticky top-0 z-10",
     "zebra" => "sticky top-0 z-10",
     "grid" => "sticky top-0 z-10",
@@ -251,9 +251,9 @@ defmodule LineaUI.Components.Table do
     peek_label: "Hidden columns"
   }
 
-  @sort_button "-mx-1.5 inline-flex h-7 max-w-full cursor-pointer items-center gap-1.5 rounded-md px-1.5 text-left font-normal outline-hidden transition-colors hover:bg-slate-300/40 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-primary/55 dark:hover:bg-navy-450/40"
+  @sort_button "-mx-1.5 inline-flex h-7 max-w-full cursor-pointer items-center gap-1.5 rounded-md px-1.5 text-left font-normal outline-hidden transition-colors hover:bg-base-300/40 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-primary/55"
 
-  @foot_td "whitespace-nowrap border-t border-slate-200 px-4 py-3 font-semibold text-slate-700 dark:border-navy-500 dark:text-navy-100 sm:px-4"
+  @foot_td "whitespace-nowrap border-t border-base-300 px-4 py-3 font-semibold text-base-content/85 sm:px-4"
 
   @compact "px-3 py-2 sm:px-3 lg:px-3"
 
@@ -266,11 +266,11 @@ defmodule LineaUI.Components.Table do
 
   @cell_keys ~w(__slot__ inner_block class align colspan rowspan priority)a
 
-  @checkbox_data "form-checkbox is-basic size-4 rounded-[4px] border-slate-400/70 checked:border-primary checked:bg-primary hover:border-primary focus:border-primary dark:border-navy-400 dark:checked:border-accent dark:checked:bg-accent dark:hover:border-accent dark:focus:border-accent"
+  @checkbox_data "checkbox checkbox-primary checkbox-xs"
 
-  @checkbox "form-checkbox is-basic size-5 rounded-sm border-slate-400/70 checked:border-primary checked:bg-primary hover:border-primary focus:border-primary dark:border-navy-400 dark:checked:border-accent dark:checked:bg-accent dark:hover:border-accent dark:focus:border-accent"
+  @checkbox "checkbox checkbox-primary checkbox-sm"
 
-  @expand_button "lo-btn size-8 rounded-full p-0 hover:bg-slate-300/20 focus:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25"
+  @expand_button "btn btn-ghost btn-circle btn-sm"
 
   @doc """
   Renders a table of `rows` (a list or a stream), one column per `:col` slot.
@@ -526,7 +526,7 @@ defmodule LineaUI.Components.Table do
       merge([@head_row[assigns.variant], no_border(assigns)])
     end)
     |> assign_derived(:body_row_class, [:variant, :borderless], fn ->
-      merge([@body_row[assigns.variant], no_border(assigns)])
+      merge([@body_row[assigns.variant], "data-[selected=true]:bg-primary/10", no_border(assigns)])
     end)
     |> assign_derived(
       :wrapper,
@@ -604,9 +604,9 @@ defmodule LineaUI.Components.Table do
     do: [@table[variant], hoverable != false && "is-dt-hover"]
 
   defp table_class(%{hoverable: nil, variant: variant}), do: @table[variant]
-  defp table_class(%{hoverable: true}), do: "is-hoverable w-full text-left"
-  defp table_class(%{variant: "zebra"}), do: "is-zebra w-full text-left"
-  defp table_class(_assigns), do: "w-full text-left"
+  defp table_class(%{hoverable: true}), do: "table w-full text-left [&>tbody>tr:hover]:bg-base-200/70"
+  defp table_class(%{variant: "zebra"}), do: "table table-zebra w-full text-left"
+  defp table_class(_assigns), do: "table w-full text-left"
 
   defp th_rounded(%{variant: variant, rounded: rounded}) when variant in @filled,
     do: @th_rounded[rounded]
@@ -758,7 +758,7 @@ defmodule LineaUI.Components.Table do
               </button>
             </td>
           </tr>
-          <tr class="border-y border-transparent border-b-slate-200 dark:border-b-navy-500">
+          <tr class="border-y border-transparent border-b-base-300">
             <td colspan="100" class="p-0">
               <div id={dom_id <> "-detail"} class="hidden px-4 pb-4 sm:px-4">
                 {render_slot(@expand, %{row: @row_item.(row), toggle: table_toggle_row(dom_id)})}
@@ -1005,7 +1005,7 @@ defmodule LineaUI.Components.Table do
         <input
           :if={!data_checkbox?(@checkbox)}
           type="checkbox"
-          class="form-checkbox is-basic size-5 rounded-sm border-slate-400/70 checked:border-primary checked:bg-primary hover:border-primary focus:border-primary dark:border-navy-400 dark:checked:border-accent dark:checked:bg-accent dark:hover:border-accent dark:focus:border-accent"
+          class="checkbox checkbox-primary checkbox-sm"
           checked={@selected}
           aria-label={row_label(@row_label, @select_label, @row_item, @row)}
           phx-click={@on_select}
@@ -1016,7 +1016,7 @@ defmodule LineaUI.Components.Table do
         <input
           :if={data_checkbox?(@checkbox)}
           type="checkbox"
-          class="form-checkbox is-basic size-4 rounded-[4px] border-slate-400/70 checked:border-primary checked:bg-primary hover:border-primary focus:border-primary dark:border-navy-400 dark:checked:border-accent dark:checked:bg-accent dark:hover:border-accent dark:focus:border-accent"
+          class="checkbox checkbox-primary checkbox-xs"
           checked={@selected}
           aria-label={row_label(@row_label, @select_label, @row_item, @row)}
           phx-click={@on_select}
@@ -1467,7 +1467,7 @@ defmodule LineaUI.Components.Table do
     <tr id={@id} class="hidden only:table-row" {@rest}>
       <td
         colspan="100"
-        class={merge(["px-4 py-12 text-center text-slate-400 dark:text-navy-300", @class])}
+        class={merge(["px-4 py-12 text-center text-base-content/50", @class])}
       >
         {render_slot(@inner_block)}
       </td>
@@ -1571,7 +1571,7 @@ defmodule LineaUI.Components.Table do
   The detail row under the row with DOM id `row_id`: one cell spanning every column,
   hidden until `table_expand_toggle/1` (or `table_toggle_row/2`) opens it.
 
-      <.table_detail_row row_id="order-1" class="bg-slate-50">Notes...</.table_detail_row>
+      <.table_detail_row row_id="order-1" class="bg-base-200">Notes...</.table_detail_row>
   """
   attr(:row_id, :string, required: true)
   attr(:open, :boolean, default: false)

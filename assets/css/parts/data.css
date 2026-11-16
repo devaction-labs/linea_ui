@@ -11,12 +11,12 @@
     mask-image: var(--table-sort-none);
     mask-size: cover;
     mask-repeat: no-repeat;
-    @apply inline-block size-3 shrink-0 bg-slate-400 dark:bg-navy-400;
+    @apply inline-block size-3 shrink-0 bg-base-content/40;
   }
 
   .table-sort-icon[data-sort="asc"] {
     mask-image: var(--table-sort-asc);
-    @apply bg-slate-600 dark:bg-navy-100;
+    @apply bg-base-content/70;
   }
 
   .table-select-all:indeterminate {
@@ -27,14 +27,14 @@
 
   .table-sort-icon[data-sort="desc"] {
     mask-image: var(--table-sort-desc);
-    @apply bg-slate-600 dark:bg-navy-100;
+    @apply bg-base-content/70;
   }
 }
 
 /* hand-written tables (table/1 without rows): the cells take the variant from the table */
 @layer components {
   .linea-table > thead > tr > th {
-    @apply whitespace-nowrap px-3 py-3 font-semibold uppercase text-slate-800 dark:text-navy-100 lg:px-5;
+    @apply whitespace-nowrap px-3 py-3 text-xs font-semibold text-base-content/60 lg:px-5;
   }
 
   .linea-table > tbody > tr > td,
@@ -44,7 +44,7 @@
   }
 
   .linea-table:is([data-variant="basic"], [data-variant="hoverable"], [data-variant="grid"]) > :is(thead, tbody) > tr {
-    @apply border-y border-transparent border-b-slate-200 dark:border-b-navy-500;
+    @apply border-y border-transparent border-b-base-300;
   }
 
   .linea-table[data-variant="hoverable"] > thead > tr,
@@ -53,11 +53,11 @@
   }
 
   .linea-table[data-variant="bordered"] > thead > tr > th {
-    @apply border border-t-0 border-slate-200 first:border-l-0 last:border-r-0 dark:border-navy-500;
+    @apply border border-t-0 border-base-300 first:border-l-0 last:border-r-0;
   }
 
   .linea-table[data-variant="bordered"] > :is(tbody, tfoot) > tr > :is(td, th) {
-    @apply border border-slate-200 px-3 first:border-l-0 last:border-r-0 dark:border-navy-500 lg:px-5;
+    @apply border border-base-300 px-3 first:border-l-0 last:border-r-0 lg:px-5;
   }
 
   .linea-table[data-variant="bordered"] > tbody > tr:last-child > :is(td, th) {
@@ -65,7 +65,7 @@
   }
 
   .linea-table:is([data-variant="hoverable"], [data-variant="zebra"], [data-variant="grid"]) > thead > tr > th {
-    @apply bg-slate-200 px-4 dark:bg-navy-800;
+    @apply bg-base-300 px-4;
   }
 
   .linea-table[data-variant="grid"] > thead > tr > th {
@@ -98,7 +98,7 @@
   }
 
   .linea-table > tfoot > tr > td {
-    @apply border-t border-slate-200 font-semibold text-slate-700 dark:border-navy-500 dark:text-navy-100;
+    @apply border-t border-base-300 font-semibold text-base-content/85;
   }
 
   .linea-table[data-sticky] > thead > tr > th {
@@ -106,7 +106,7 @@
   }
 
   .linea-table[data-sticky]:is([data-variant="basic"], [data-variant="bordered"]) > thead > tr > th {
-    @apply bg-white dark:bg-navy-700;
+    @apply bg-base-100;
   }
 
   /* the lean look of data_table: arrows that say which way the rows run, and the same cells in a hand-written table */
@@ -116,7 +116,7 @@
     --table-sort-desc: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M19.5 13.5 12 21m0 0-7.5-7.5M12 21V3'/%3E%3C/svg%3E");
     mask-size: contain;
     mask-position: center;
-    @apply size-[13px] bg-slate-300 dark:bg-navy-400;
+    @apply size-[13px] bg-base-300;
   }
 
   .linea-dt .table-sort-icon[data-sort="asc"],
@@ -125,11 +125,11 @@
   }
 
   .linea-dt button:hover > .table-sort-icon[data-sort="none"] {
-    @apply bg-slate-500 dark:bg-navy-200;
+    @apply bg-base-content/55;
   }
 
   .linea-dt.is-dt-hover > tbody > tr:not([data-selected="true"]):hover > td {
-    @apply bg-slate-200/90 dark:bg-navy-600;
+    @apply bg-base-300/90;
   }
 
   .linea-dt > tbody > tr[data-selected="true"] > td {
@@ -137,7 +137,7 @@
   }
 
   .linea-table:is([data-variant="data"], [data-variant="data-grid"]) > thead > tr > th {
-    @apply h-10 bg-slate-200 px-3.5 py-0 font-inter text-[11.5px] font-semibold tracking-[.05em] text-slate-800 uppercase dark:bg-navy-800 dark:text-navy-100 lg:px-3.5;
+    @apply h-10 bg-base-300 px-3.5 py-0 font-inter text-[11.5px] font-semibold tracking-[.05em] text-base-content uppercase lg:px-3.5;
   }
 
   .linea-table:is([data-variant="data"], [data-variant="data-grid"]) > tbody > tr > td {
@@ -145,11 +145,11 @@
   }
 
   .linea-table[data-variant="data"] > tbody > tr {
-    @apply border-y border-transparent border-b-slate-150 last:border-b-transparent dark:border-b-navy-500;
+    @apply border-y border-transparent border-b-base-300 last:border-b-transparent;
   }
 
   .linea-table[data-variant="data-grid"] > :is(thead, tbody) > tr > :is(th, td) {
-    @apply border border-t-0 border-slate-150 first:border-l-0 last:border-r-0 dark:border-navy-500;
+    @apply border border-t-0 border-base-300 first:border-l-0 last:border-r-0;
   }
 
   .linea-table[data-variant="data-grid"] > tbody > tr:last-child > td {
@@ -541,12 +541,12 @@
   }
 
   .linea-chart-label {
-    @apply fill-slate-400 font-inter dark:fill-navy-300;
+    @apply fill-base-content/50 font-inter;
   }
 
   .linea-chart-gridline,
   .linea-chart-axisline {
-    @apply stroke-slate-200 dark:stroke-navy-500;
+    @apply stroke-base-content/25;
     stroke-width: 1;
     shape-rendering: crispEdges;
   }
@@ -560,16 +560,16 @@
   }
 
   .linea-chart-datalabel {
-    @apply fill-slate-500 font-inter font-semibold dark:fill-navy-200;
+    @apply fill-base-content/65 font-inter font-semibold;
     pointer-events: none;
   }
 
   .linea-chart-datalabel--end {
-    @apply fill-slate-700 dark:fill-navy-50;
+    @apply fill-base-content/85;
   }
 
   .linea-chart-marker {
-    @apply stroke-slate-150 dark:stroke-navy-800;
+    @apply stroke-base-content/20;
     stroke-width: 2;
   }
 
@@ -580,14 +580,14 @@
   }
 
   .linea-chart-crosshair {
-    @apply stroke-slate-300 dark:stroke-navy-400;
+    @apply stroke-base-content/35;
     stroke-width: 1;
     stroke-dasharray: 3;
     pointer-events: none;
   }
 
   .linea-chart-band {
-    @apply fill-slate-300/25 dark:fill-navy-300/20;
+    @apply fill-base-content/35;
     pointer-events: none;
   }
 
@@ -623,16 +623,16 @@
   }
 
   .linea-chart-track {
-    @apply stroke-slate-150 dark:stroke-navy-900;
+    @apply stroke-base-content/20;
   }
 
   .linea-chart-polygon {
-    @apply fill-slate-100 stroke-slate-200 dark:fill-navy-800 dark:stroke-navy-600;
+    @apply fill-base-content/15 stroke-base-content/25;
     stroke-width: 1;
   }
 
   .linea-chart-spoke {
-    @apply stroke-slate-200 dark:stroke-navy-600;
+    @apply stroke-base-content/25;
     stroke-width: 1;
   }
 
@@ -641,27 +641,27 @@
   }
 
   .linea-chart-radar-value {
-    @apply fill-slate-500 font-inter dark:fill-navy-200;
+    @apply fill-base-content/65 font-inter;
   }
 
   .linea-chart-center-label {
-    @apply fill-slate-600 font-inter dark:fill-navy-100;
+    @apply fill-base-content/75 font-inter;
   }
 
   .linea-chart-center-figure {
-    @apply fill-slate-800 font-inter dark:fill-navy-50;
+    @apply fill-base-content font-inter;
   }
 
   .linea-chart-center-caption {
-    @apply fill-slate-400 font-inter dark:fill-navy-300;
+    @apply fill-base-content/50 font-inter;
   }
 
   .linea-chart-center-value {
-    @apply fill-slate-500 font-inter dark:fill-navy-200;
+    @apply fill-base-content/65 font-inter;
   }
 
   .linea-chart-tooltip {
-    @apply pointer-events-none absolute top-0 left-0 z-10 min-w-24 max-w-64 overflow-hidden rounded-sm border border-slate-150 bg-white/[.85] text-xs text-slate-700 dark:border-navy-600 dark:bg-navy-700/[.85] dark:text-navy-50;
+    @apply pointer-events-none absolute top-0 left-0 z-10 min-w-24 max-w-64 overflow-hidden rounded-sm border border-base-300 bg-white/[.85] text-xs text-base-content/85 dark:bg-navy-700/[.85];
     backdrop-filter: blur(2px);
   }
 
@@ -682,7 +682,7 @@
   }
 
   .linea-chart-tooltip-title {
-    @apply border-b border-slate-150 bg-slate-150 px-2.5 py-1 dark:border-transparent dark:bg-navy-900;
+    @apply border-b border-base-300 bg-base-200 px-2.5 py-1 dark:border-transparent;
   }
 
   .linea-chart-tooltip-body {
@@ -698,12 +698,12 @@
   }
 
   .linea-chart-tooltip-name {
-    @apply text-slate-500 dark:text-navy-200;
+    @apply text-base-content/65;
   }
 
   /* The line of figures above the plot (`summary`): the label as a chip, then name and value per series. */
   .linea-chart-summary {
-    @apply mb-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs-plus text-slate-700 dark:text-navy-50;
+    @apply mb-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs-plus text-base-content/85;
   }
 
   .linea-chart-summary:empty {
@@ -711,7 +711,7 @@
   }
 
   .linea-chart-summary-chip {
-    @apply rounded-(--pill-xs) bg-slate-150 px-2 py-0.5 text-xs font-medium tabular-nums dark:bg-navy-500;
+    @apply rounded-(--pill-xs) bg-base-200 px-2 py-0.5 text-xs font-medium tabular-nums;
   }
 
   .linea-chart-summary-item {
@@ -723,7 +723,7 @@
   }
 
   .linea-chart-summary-name {
-    @apply text-slate-500 dark:text-navy-200;
+    @apply text-base-content/65;
   }
 
   .linea-chart-axistips {
@@ -731,7 +731,7 @@
   }
 
   .linea-chart-axistip {
-    @apply absolute rounded-sm border border-slate-300 bg-slate-150 px-1.5 py-0.5 text-xs whitespace-nowrap text-slate-600 dark:border-navy-600 dark:bg-navy-900 dark:text-navy-100;
+    @apply absolute rounded-sm border border-base-content/20 bg-base-200 px-1.5 py-0.5 text-xs whitespace-nowrap text-base-content/75;
   }
 
   .linea-chart-axistip--x {
@@ -743,7 +743,7 @@
   }
 
   .linea-chart-legend {
-    @apply absolute flex flex-wrap items-center text-slate-500 dark:text-navy-200;
+    @apply absolute flex flex-wrap items-center text-base-content/65;
   }
 
   .linea-chart-legend[data-position="bottom"] {
@@ -774,7 +774,7 @@
   }
 
   .linea-chart-legend[data-layout="table"] .linea-chart-legend-item {
-    @apply col-span-4 grid grid-cols-subgrid items-center gap-x-2 rounded-lg px-0 py-1.5 hover:bg-slate-150/60 dark:hover:bg-navy-600/60;
+    @apply col-span-4 grid grid-cols-subgrid items-center gap-x-2 rounded-lg px-0 py-1.5 hover:bg-base-200/60;
   }
 
   .linea-chart-legend[data-layout="table"] .linea-chart-legend-marker {
@@ -782,11 +782,11 @@
   }
 
   .linea-chart-legend-value {
-    @apply text-end text-xs-plus text-slate-400 tabular-nums dark:text-navy-300;
+    @apply text-end text-xs-plus text-base-content/50 tabular-nums;
   }
 
   .linea-chart-legend-percent {
-    @apply min-w-11 text-end font-semibold text-slate-700 tabular-nums dark:text-navy-50;
+    @apply min-w-11 text-end font-semibold text-base-content/85 tabular-nums;
   }
 
   .linea-chart-legend-text {
@@ -794,7 +794,7 @@
   }
 
   .linea-chart-legend-item {
-    @apply flex min-h-6 cursor-pointer items-center text-slate-500 transition-opacity dark:text-navy-200;
+    @apply flex min-h-6 cursor-pointer items-center text-base-content/65 transition-opacity;
   }
 
   .linea-chart-legend-item[aria-pressed="false"] {
@@ -816,7 +816,7 @@
   }
 
   .linea-chart-legend-figures {
-    @apply ml-2 font-semibold text-slate-700 tabular-nums dark:text-navy-50;
+    @apply ml-2 font-semibold text-base-content/85 tabular-nums;
   }
 
   /* The Chart / Table switch: the table takes the drawing's place, the stage grows with it. */
@@ -838,23 +838,23 @@
   }
 
   .linea-chart[data-view="table"] .linea-chart-sr {
-    @apply static size-auto w-full overflow-visible border-collapse text-left text-xs-plus whitespace-normal text-slate-600 dark:text-navy-100;
+    @apply static size-auto w-full overflow-visible border-collapse text-left text-xs-plus whitespace-normal text-base-content/75;
     clip: auto;
     clip-path: none;
   }
 
   .linea-chart[data-view="table"] .linea-chart-sr caption {
-    @apply pb-2 text-left font-medium text-slate-700 dark:text-navy-50;
+    @apply pb-2 text-left font-medium text-base-content/85;
   }
 
   .linea-chart[data-view="table"] .linea-chart-sr th,
   .linea-chart[data-view="table"] .linea-chart-sr td {
-    @apply border-b border-slate-150 px-3 py-2 dark:border-navy-500;
+    @apply border-b border-base-300 px-3 py-2;
   }
 
   .linea-chart[data-view="table"] .linea-chart-sr thead th,
   .linea-chart[data-view="table"] .linea-chart-sr tr:first-child th {
-    @apply font-medium text-slate-500 dark:text-navy-200;
+    @apply font-medium text-base-content/65;
   }
 
   .linea-chart[data-view="table"] .linea-chart-sr td {
