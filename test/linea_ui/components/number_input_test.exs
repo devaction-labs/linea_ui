@@ -110,15 +110,15 @@ defmodule LineaUI.Components.NumberInputTest do
   end
 
   test "the field is as tall as its steppers, so the group has one height" do
-    for {size, height} <- [{"sm", "h-7"}, {"md", "h-9"}, {"lg", "h-11"}] do
+    for {size, input, button} <- [{"sm", "input-sm", "btn-sm"}, {"lg", "input-lg", "btn-lg"}] do
       html =
         Phoenix.LiveViewTest.render_component(
           &number_input/1,
           %{id: "n", name: "n", size: size, steppers: true, stepper_style: "joined"}
         )
 
-      assert height in classes(html, "#n")
-      assert height in classes(html, "button[data-step-by=down]")
+      assert input in classes(html, "#n")
+      assert button in classes(html, "button[data-step-by=down]")
     end
   end
 
@@ -141,8 +141,8 @@ defmodule LineaUI.Components.NumberInputTest do
 
     assert attr_of(html, "button[data-step-by]", "data-step-by") == ["down", "up"]
     assert attr_of(html, "button[data-step-by=up]", "aria-label") == ["Increase"]
-    assert "h-7" in classes(html, "button[data-step-by=up]")
-    assert html |> find("span.bg-slate-100") |> LazyHTML.text() =~ "R$"
+    assert "btn-sm" in classes(html, "button[data-step-by=up]")
+    assert html |> find("span.bg-base-200") |> LazyHTML.text() =~ "R$"
     assert html |> find("span.pointer-events-none") |> LazyHTML.text() =~ "un"
     assert attr_of(html, "input[name=qty]", "phx-debounce") == ["200"]
     assert attr_of(html, "#q", "phx-debounce") == []

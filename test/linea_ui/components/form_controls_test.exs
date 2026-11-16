@@ -183,7 +183,7 @@ defmodule LineaUI.Components.FormControlsTest do
         </.input_group>
         """)
 
-      assert "[&>*]:!border-error" in classes(html, "div[role=group]")
+      assert "[&_.input]:input-error" in classes(html, "div[role=group]")
 
       assert [_] =
                find(html, "div[role=group][aria-invalid=true][aria-describedby=g-messages]")
@@ -194,33 +194,32 @@ defmodule LineaUI.Components.FormControlsTest do
 
     test "help shows under the row without turning it red" do
       html = render(~H'<.input_group help="In dollars"><.input name="p" /></.input_group>')
-      refute "[&>*]:!border-error" in classes(html, "div[role=group]")
+      refute "[&_.input]:input-error" in classes(html, "div[role=group]")
       assert find(html, "div[role=group][aria-invalid]") |> Enum.to_list() == []
       assert LazyHTML.text(find(html, "div > span")) =~ "In dollars"
     end
 
     test "size sizes the parts together" do
       sm = classes(render(~H'<.input_group size="sm"><.input name="p" /></.input_group>'), "div")
-      assert "[&>*]:!h-7" in sm
-      assert "[&>*]:!text-xs" in sm
+      assert "[&_.input]:input-sm" in sm
+      assert "[&_.btn]:btn-sm" in sm
       lg = classes(render(~H'<.input_group size="lg"><.input name="p" /></.input_group>'), "div")
-      assert "[&>*]:!h-10" in lg
-      assert "[&>*]:!text-sm" in lg
+      assert "[&_.input]:input-lg" in lg
 
-      refute "[&>*]:!h-7" in classes(
+      refute "[&_.input]:input-sm" in classes(
                render(~H'<.input_group><.input name="p" /></.input_group>'),
                "div"
              )
     end
 
-    test "the outline addon text is soft" do
+    test "the outline addon is a field with soft text" do
       html = render(~H'<.input_group>
   <.input_group_addon>@</.input_group_addon>
 </.input_group>')
-      assert "text-slate-500" in classes(html, "div > span")
+      assert ["input", "join-item", "text-base-content/60"] -- classes(html, "div > span") == []
     end
 
-    test "joins its children and rounds only the ends" do
+    test "is daisyUI's join of its children" do
       html =
         render(~H"""
         <.input_group label="Price">
@@ -229,12 +228,10 @@ defmodule LineaUI.Components.FormControlsTest do
         </.input_group>
         """)
 
-      classes = classes(html, "div.flex")
-      assert "-space-x-px" in classes
-      assert "[&>:first-child]:rounded-l-[11px]" in classes
+      classes = classes(html, "div.join")
       assert "mt-1.5" in classes
-      assert "bg-slate-100" in classes(html, "div.flex > span")
-      assert [_] = find(html, "div.flex > input[name=p]") |> Enum.to_list()
+      assert "bg-base-200" in classes(html, "div.join > span")
+      assert [_] = find(html, "div.join > input[name=p]") |> Enum.to_list()
     end
 
     test "addon size follows the inputs" do
@@ -247,15 +244,15 @@ defmodule LineaUI.Components.FormControlsTest do
         </.input_group>
         """)
 
-      [sm, lg, md] = find(html, "div.flex > span") |> LazyHTML.attribute("class")
-      assert sm =~ "text-xs-plus"
-      assert lg =~ "text-base"
-      refute md =~ "text-xs-plus"
-      refute md =~ "text-base"
+      [sm, lg, md] = find(html, "div.join > span") |> LazyHTML.attribute("class")
+      assert sm =~ "input-sm"
+      assert lg =~ "input-lg"
+      refute md =~ "input-sm"
+      refute md =~ "input-lg"
     end
 
     test "pill shape" do
-      assert "[&>:last-child]:rounded-r-full" in classes(
+      assert "[--join-r:9999px]" in classes(
                render(~H'<.input_group shape="pill"><.input name="p" /></.input_group>'),
                "div"
              )
