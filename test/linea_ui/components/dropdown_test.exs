@@ -119,9 +119,9 @@ defmodule LineaUI.Components.DropdownTest do
       """)
 
     a = classes(html, "#a-button")
-    assert ["sg-ib", "plain", "-mr-2"] -- a == []
+    assert ["btn-square", "btn-ghost", "-mr-2"] -- a == []
     refute "size-8" in a
-    refute "pill" in a
+    refute "btn-circle" in a
     assert attr_of(html, "#a-button", "aria-label") == ["Menu"]
     assert [_] = find(html, "#a-button svg path[d^='M5 12h.01']") |> Enum.to_list()
     assert attr_of(html, "#b-button", "aria-label") == ["Row actions"]
@@ -143,8 +143,8 @@ defmodule LineaUI.Components.DropdownTest do
       </.dropdown>
       """)
 
-    refute "sq" in classes(html, "#a-button")
-    assert "sq" in classes(html, "#b-button")
+    refute "rounded-[calc(var(--radius-field)*.6)]" in classes(html, "#a-button")
+    assert "rounded-[calc(var(--radius-field)*.6)]" in classes(html, "#b-button")
   end
 
   test "a submenu: an item that opens a nested menu to its side" do
@@ -377,7 +377,7 @@ defmodule LineaUI.Components.DropdownTest do
 
     assert "gap-px" in classes(html, "#sp")
     assert [_] = find(html, "#sp > button[phx-click=save][phx-value-id='1']") |> Enum.to_list()
-    assert "solid" in classes(html, "#sp > button[phx-click=save]")
+    assert "btn-neutral" in classes(html, "#sp > button[phx-click=save]")
     assert "rounded-r-none!" in classes(html, "#sp > button[phx-click=save]")
     refute "rounded-l-full!" in classes(html, "#sp > button[phx-click=save]")
     assert find(html, "#sp > button[phx-click=save]") |> LazyHTML.text() =~ "Save"
@@ -385,7 +385,7 @@ defmodule LineaUI.Components.DropdownTest do
     assert [_] = find(html, "#sp [data-trigger] button") |> Enum.to_list()
     assert [] = find(html, "#sp [data-trigger] button[phx-click]") |> Enum.to_list()
     assert attr_of(html, "#sp-button", "aria-label") == ["More options"]
-    assert "sq" in classes(html, "#sp-button")
+    assert "rounded-[calc(var(--radius-field)*.6)]" in classes(html, "#sp-button")
     assert "rounded-l-none!" in classes(html, "#sp-button")
     refute "rounded-r-full!" in classes(html, "#sp-button")
     assert [_] = find(html, "#sp-button svg") |> Enum.to_list()
@@ -435,14 +435,17 @@ defmodule LineaUI.Components.DropdownTest do
 
   describe "apply_color and control" do
     test "Apply is primary (teal) by default and mono (solid black) on request" do
-      assert "accent" in classes(render(~H|<.dropdown_footer />|), "[data-menu-action=apply]")
+      assert "btn-primary" in classes(
+               render(~H|<.dropdown_footer />|),
+               "[data-menu-action=apply]"
+             )
 
-      refute "accent" in classes(
+      refute "btn-primary" in classes(
                render(~H|<.dropdown_footer apply_color="mono" />|),
                "[data-menu-action=apply]"
              )
 
-      assert "solid" in classes(
+      assert "btn-neutral" in classes(
                render(~H|<.dropdown_footer apply_color="mono" />|),
                "[data-menu-action=apply]"
              )
@@ -450,11 +453,9 @@ defmodule LineaUI.Components.DropdownTest do
 
     test "control makes the trigger take the control height, and shape rounded stays" do
       plain = render(~H|<.dropdown id="d" label="Filters">x</.dropdown>|)
-      refute "ctl" in classes(plain, "#d-button")
-
       html = render(~H|<.dropdown id="d" label="Filters" control shape="rounded">x</.dropdown>|)
-      assert "ctl" in classes(html, "#d-button")
-      refute "pill" in classes(html, "#d-button")
+      assert classes(html, "#d-button") == classes(plain, "#d-button")
+      refute "rounded-full" in classes(html, "#d-button")
     end
   end
 end

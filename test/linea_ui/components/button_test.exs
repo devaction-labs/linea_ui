@@ -1,92 +1,58 @@
 defmodule LineaUI.Components.ButtonTest do
   use LineaUI.ComponentCase, async: true
 
-  test "a plain canvas button by default, typed as a plain button" do
+  defmacrop cls(template) do
+    quote do: classes(render(unquote(template)), "button")
+  end
+
+  test "daisyUI's plain btn by default, typed as a plain button" do
     html = render(~H"<.button>Go</.button>")
     assert [button] = find(html, "button[type=button]") |> Enum.to_list()
     assert String.trim(LazyHTML.text(button)) == "Go"
-    assert "sg-btn" in classes(html, "button")
-    refute "solid" in classes(html, "button")
+    assert ["btn" | neutral] = classes(html, "button")
+    assert Enum.all?(neutral, &String.starts_with?(&1, "[--btn-"))
   end
 
-  test "color and variant pick the canvas tone, size picks its height, and class is kept" do
-    assert "solid" in classes(render(~H|<.button color="mono">Go</.button>|), "button")
-    assert "accent" in classes(render(~H|<.button color="primary">Go</.button>|), "button")
+  test "color, variant and size map to daisyUI's modifiers, and class is kept" do
+    assert "btn-neutral" in cls(~H|<.button color="mono">Go</.button>|)
+    assert "btn-primary" in cls(~H|<.button color="primary">Go</.button>|)
+    assert "btn-error" in cls(~H|<.button color="error">Go</.button>|)
 
-    assert "soft" in classes(
-             render(~H|<.button color="primary" variant="soft">Go</.button>|),
-             "button"
-           )
+    assert ["btn", "btn-primary", "btn-soft"] ==
+             cls(~H|<.button color="primary" variant="soft">Go</.button>|)
 
-    assert "danger" in classes(
-             render(~H|<.button color="error" variant="soft">Go</.button>|),
-             "button"
-           )
+    assert ["btn", "btn-error", "btn-outline"] ==
+             cls(~H|<.button color="error" variant="outline">Go</.button>|)
 
-    assert "ghost" in classes(render(~H|<.button variant="flat">Go</.button>|), "button")
-    assert "filled" in classes(render(~H|<.button variant="soft">Go</.button>|), "button")
-    assert "subtle" in classes(render(~H|<.button variant="dim">Go</.button>|), "button")
-    assert "xs" in classes(render(~H|<.button size="xs">Go</.button>|), "button")
-    refute "sm" in classes(render(~H|<.button size="xs">Go</.button>|), "button")
+    assert "btn-ghost" in cls(~H|<.button variant="flat">Go</.button>|)
+    assert "btn-ghost" in cls(~H|<.button variant="ghost">Go</.button>|)
+    assert "btn-ghost" in cls(~H|<.button variant="dim">Go</.button>|)
+    assert "btn-soft" in cls(~H|<.button variant="bordered">Go</.button>|)
+    assert "glass" in cls(~H|<.button variant="glass">Go</.button>|)
 
-    html = render(~H|<.button size="sm" class="px-8">Go</.button>|)
-    assert "sm" in classes(html, "button")
-    assert "px-8" in classes(html, "button")
-
-    assert "lg" in classes(render(~H|<.button size="lg">Go</.button>|), "button")
-    assert "sq" in classes(render(~H|<.button shape="square">Go</.button>|), "button")
-    assert "pill" in classes(render(~H|<.button shape="pill">Go</.button>|), "button")
-    refute "pill" in classes(render(~H|<.button>Go</.button>|), "button")
-
-    assert "pill" in classes(
-             render(~H|<.button icon shape="pill" aria-label="More">⋮</.button>|),
-             "button"
-           )
-
-    refute "pill" in classes(render(~H|<.button icon aria-label="More">⋮</.button>|), "button")
-  end
-
-  test "icon makes the round canvas icon button" do
-    html = render(~H|<.button icon aria-label="More">+</.button>|)
-    assert "sg-ib" in classes(html, "button")
-    assert "plain" in classes(render(~H|<.button icon variant="flat">+</.button>|), "button")
-    assert "sm" in classes(render(~H|<.button icon size="sm">+</.button>|), "button")
-  end
-
-  test "icon button sizes follow the canvas: md 36, sm 32, xs 24, lg and xl as md" do
-    cls = &classes(&1, "button")
-    assert cls.(render(~H|<.button icon aria-label="a">+</.button>|)) == ["sg-ib"]
-    assert cls.(render(~H|<.button icon size="md" aria-label="a">+</.button>|)) == ["sg-ib"]
-    assert cls.(render(~H|<.button icon size="sm" aria-label="a">+</.button>|)) == ["sg-ib", "sm"]
-    assert cls.(render(~H|<.button icon size="xs" aria-label="a">+</.button>|)) == ["sg-ib", "xs"]
-    assert cls.(render(~H|<.button icon size="lg" aria-label="a">+</.button>|)) == ["sg-ib"]
-    assert cls.(render(~H|<.button icon size="xl" aria-label="a">+</.button>|)) == ["sg-ib"]
-  end
-
-  test "icon button variants: flat, ghost and dim are plain, the rest the bordered control" do
-    for variant <- ~w(flat ghost dim) do
-      assert ["sg-ib", "plain"] == icon_classes(variant, "neutral")
+    for size <- ~w(xs sm lg xl) do
+      assigns = %{size: size, __changed__: nil}
+      html = rendered_to_string(~H|<.button size={@size}>Go</.button>|)
+      assert "btn-#{size}" in classes(html, "button")
     end
 
-    for variant <- ~w(solid glow outline soft bordered glass),
-        color <- ~w(neutral primary error mono) do
-      assert ["sg-ib"] == icon_classes(variant, color)
-    end
+    refute Enum.any?(cls(~H|<.button size="md">Go</.button>|), &(&1 == "btn-md"))
+    assert "px-8" in cls(~H|<.button size="sm" class="px-8">Go</.button>|)
+    assert "rounded-full" in cls(~H|<.button shape="pill">Go</.button>|)
+    refute "rounded-full" in cls(~H|<.button>Go</.button>|)
   end
 
-  defp icon_classes(variant, color) do
-    assigns = %{variant: variant, color: color, __changed__: nil}
+  test "icon makes daisyUI's square button, pill its circle" do
+    assert "btn-square" in cls(~H|<.button icon aria-label="More">+</.button>|)
 
-    ~H|<.button icon variant={@variant} color={@color} aria-label="a">+</.button>|
-    |> rendered_to_string()
-    |> classes("button")
-  end
+    assert "btn-sm" in cls(~H|<.button icon size="sm" aria-label="a">+</.button>|)
 
-  test "icon button combines plain, size and pill" do
-    html =
-      render(~H|<.button icon variant="ghost" size="xs" shape="pill" aria-label="a">+</.button>|)
+    assert ["btn", "btn-ghost", "btn-xs", "btn-circle", "btn-square"] ==
+             cls(
+               ~H|<.button icon variant="ghost" size="xs" shape="pill" aria-label="a">+</.button>|
+             )
 
-    assert ["sg-ib", "xs", "plain", "pill"] == classes(html, "button")
+    assert "btn-primary" in cls(~H|<.button icon color="primary" aria-label="a">+</.button>|)
   end
 
   test "navigate renders a link, and disabled marks it" do
@@ -94,46 +60,49 @@ defmodule LineaUI.Components.ButtonTest do
     assert [link] = find(html, "a") |> Enum.to_list()
     assert LazyHTML.attribute(link, "aria-disabled") == ["true"]
     assert LazyHTML.attribute(link, "tabindex") == ["-1"]
+    assert "btn-disabled" in classes(html, "a")
   end
 
-  test "loading disables the button, marks it busy and shows a spinner" do
+  test "loading disables the button, marks it busy and shows daisyUI's spinner" do
     html = render(~H|<.button loading>Save</.button>|)
     assert [button] = find(html, "button") |> Enum.to_list()
     assert LazyHTML.attribute(button, "disabled") == [""]
     assert LazyHTML.attribute(button, "aria-busy") == ["true"]
-    assert [_ | _] = find(html, "button [role=status]") |> Enum.to_list()
-    assert "sg-spin" in classes(html, "button [role=status]")
-    assert "xs" in classes(html, "button [role=status]")
+    assert ["loading", "loading-spinner", "loading-xs"] == classes(html, "button [role=status]")
+    assert text(html, "button [role=status] .sr-only") == ["Loading"]
   end
 
-  test "pip puts the accent dot on an icon button" do
+  test "pip puts the status dot on the corner of the button" do
     html = render(~H|<.button icon pip aria-label="Notices">+</.button>|)
-    assert [_] = find(html, "button.sg-ib span.pip") |> Enum.to_list()
+    assert "indicator" in classes(html, "button")
+    assert [_] = find(html, "button span.indicator-item.status.status-primary") |> Enum.to_list()
 
-    assert find(render(~H|<.button icon aria-label="Notices">+</.button>|), ".pip")
+    assert find(render(~H|<.button icon aria-label="Notices">+</.button>|), ".indicator-item")
            |> Enum.empty?()
   end
 
   test "an idle button has no spinner nor aria-busy" do
-    html = render(~H|<.button>Save</.button>|)
+    html = render(~H"<.button>Save</.button>")
     assert attr_of(html, "button", "aria-busy") == []
     assert find(html, "button [role=status]") |> Enum.to_list() == []
   end
 
-  defp attr_of(html, selector, name) do
-    html |> find(selector) |> LazyHTML.attribute(name)
+  test "control is accepted and changes nothing: buttons and fields share one height" do
+    assert cls(~H"<.button control>Go</.button>") == cls(~H"<.button>Go</.button>")
   end
 
-  test "control is opt-in and takes the form control height of the size" do
-    refute "ctl" in classes(render(~H"<.button>Go</.button>"), "button")
-    assert "ctl" in classes(render(~H"<.button control>Go</.button>"), "button")
-    html = render(~H|<.button control size="sm">Go</.button>|)
-    assert "ctl" in classes(html, "button")
-    assert "sm" in classes(html, "button")
+  test "button_group is daisyUI's join, pill rounds its ends" do
+    html = render(~H|<.button_group><.button>A</.button><.button>B</.button></.button_group>|)
+    assert classes(html, "div[role=group]") == ["join"]
 
-    refute "ctl" in classes(
-             render(~H|<.button control icon aria-label="x">i</.button>|),
-             "button"
+    assert "[--join-r:9999px]" in classes(
+             render(~H|<.button_group shape="pill"><.button>A</.button></.button_group>|),
+             "div"
            )
   end
+
+  defp attr_of(html, selector, name), do: html |> find(selector) |> LazyHTML.attribute(name)
+
+  defp text(html, selector),
+    do: html |> find(selector) |> Enum.map(&(&1 |> LazyHTML.text() |> String.trim()))
 end

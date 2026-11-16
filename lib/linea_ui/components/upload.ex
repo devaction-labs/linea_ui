@@ -400,30 +400,9 @@ defmodule LineaUI.Components.Upload do
     |> String.replace_suffix(".0", "")
   end
 
-  @button_styles %{
-    {"solid", "neutral"} =>
-      "bg-slate-150 text-slate-800 hover:bg-slate-200 focus:bg-slate-200 active:bg-slate-200/80 dark:bg-navy-500 dark:text-navy-50 dark:hover:bg-navy-450 dark:focus:bg-navy-450 dark:active:bg-navy-450/90",
-    {"solid", "primary"} =>
-      "bg-primary text-white hover:bg-primary-focus focus:bg-primary-focus active:bg-primary-focus/90 dark:bg-accent dark:hover:bg-accent-focus dark:focus:bg-accent-focus dark:active:bg-accent/90",
-    {"solid", "info"} =>
-      "bg-info text-white hover:bg-info-focus focus:bg-info-focus active:bg-info-focus/90",
-    {"outline", "neutral"} =>
-      "border border-slate-300 text-slate-600 hover:bg-slate-150 focus:bg-slate-150 active:bg-slate-150/80 dark:border-navy-450 dark:text-navy-100 dark:hover:bg-navy-500 dark:focus:bg-navy-500 dark:active:bg-navy-500/90",
-    {"outline", "primary"} =>
-      "border border-primary text-primary hover:bg-primary hover:text-white focus:bg-primary focus:text-white active:bg-primary/90 dark:border-accent dark:text-accent-light dark:hover:bg-accent dark:hover:text-white dark:focus:bg-accent dark:focus:text-white dark:active:bg-accent/90",
-    {"outline", "info"} =>
-      "border border-info text-info hover:bg-info hover:text-white focus:bg-info focus:text-white active:bg-info/90",
-    {"glow", "neutral"} =>
-      "bg-slate-150 text-slate-800 hover:bg-slate-200 hover:shadow-lg hover:shadow-slate-200/50 focus:bg-slate-200 active:bg-slate-200/80 dark:bg-navy-500 dark:text-navy-50 dark:hover:bg-navy-450 dark:hover:shadow-navy-450/50 dark:focus:bg-navy-450 dark:active:bg-navy-450/90",
-    {"glow", "primary"} =>
-      "bg-primary text-white hover:bg-primary-focus hover:shadow-lg hover:shadow-primary/50 focus:bg-primary-focus active:bg-primary-focus/90 dark:bg-accent dark:hover:bg-accent-focus dark:hover:shadow-accent/50 dark:focus:bg-accent-focus dark:active:bg-accent/90",
-    {"glow", "info"} =>
-      "bg-info text-white hover:bg-info-focus hover:shadow-lg hover:shadow-info/50 focus:bg-info-focus active:bg-info-focus/90"
-  }
 
   @doc """
-  A button that opens the file chooser: LineOne's Input File, a `<label class="btn">` holding an
-  invisible file input.
+  A button that opens the file chooser: daisyUI's `btn` on a `<label>` holding an invisible file input.
 
       <.upload_button upload={@uploads.avatar}>Choose File</.upload_button>
       <.upload_button name="doc" color="info" variant="glow" icon shape="pill" aria-label="Upload">
@@ -434,8 +413,7 @@ defmodule LineaUI.Components.Upload do
   button shows a 2px primary outline (half opaque, as the other focus rings) while its input has
   keyboard focus.
 
-  With a `size` (or a `variant` or `color` that LineOne's button does not have) it draws the canvas button
-  instead (`sg-btn`), with the same `size`, `variant`, `color` and `shape` classes as `LineaUI.Components.Button`:
+  It takes the same `size`, `variant`, `color` and `shape` as `LineaUI.Components.Button`, and gets the same classes:
 
       <.upload_button upload={@uploads.files} id="attach-button" size="sm" variant="ghost">Attach</.upload_button>
   """
@@ -451,18 +429,17 @@ defmodule LineaUI.Components.Upload do
   attr :color, :string,
     default: "neutral",
     values: ~w(neutral primary secondary info success warning error white current mono),
-    doc: "LineOne's button has `neutral`, `primary` and `info`; the rest draw the canvas button."
+    doc: "As `<.button color>`."
 
   attr :variant, :string,
     default: "solid",
     values: ~w(solid glow outline soft bordered flat glass ghost dim),
-    doc: "LineOne's button has `solid`, `outline` and `glow`; the rest draw the canvas button."
+    doc: "As `<.button variant>`."
 
   attr :size, :string,
     default: nil,
     values: [nil, "xs", "sm", "md", "lg", "xl"],
-    doc:
-      "Any size draws the canvas button (`sg-btn`), as `<.button size>`; `nil` is LineOne's `btn`."
+    doc: "As `<.button size>`; `nil` is `md`."
 
   attr :shape, :string, default: "rounded", values: ~w(rounded pill square)
   attr :icon, :boolean, default: false, doc: "A square button that holds only an icon."
@@ -476,8 +453,8 @@ defmodule LineaUI.Components.Upload do
         assigns,
         :classes,
         merge([
-          button_classes(assigns),
-          "has-[input:focus-visible]:outline-2 has-[input:focus-visible]:outline-solid has-[input:focus-visible]:outline-offset-2 has-[input:focus-visible]:outline-primary/50",
+          LineaUI.Daisy.btn(%{assigns | size: assigns.size || "md", class: nil}),
+          "relative has-[input:focus-visible]:outline-2 has-[input:focus-visible]:outline-solid has-[input:focus-visible]:outline-offset-2 has-[input:focus-visible]:outline-primary/50",
           assigns.disabled && "pointer-events-none opacity-55",
           assigns.class
         ])
@@ -506,48 +483,4 @@ defmodule LineaUI.Components.Upload do
     </label>
     """
   end
-
-  defp button_classes(%{size: nil, variant: variant, color: color} = assigns)
-       when variant in ~w(solid outline glow) and color in ~w(neutral primary info) do
-    [
-      "btn relative font-medium",
-      @button_styles[{variant, color}],
-      assigns.icon && "size-9 p-0",
-      assigns.shape == "pill" && "rounded-full"
-    ]
-  end
-
-  defp button_classes(%{icon: true} = assigns) do
-    [
-      "sg-ib relative",
-      assigns.size == "sm" && "sm",
-      assigns.size == "xs" && "xs",
-      assigns.variant in ~w(flat ghost dim) && "plain",
-      assigns.shape == "pill" && "pill"
-    ]
-  end
-
-  defp button_classes(assigns) do
-    [
-      "sg-btn relative",
-      tone(assigns.color, assigns.variant),
-      canvas_size(assigns.size),
-      assigns.shape == "square" && "sq",
-      assigns.shape == "pill" && "pill"
-    ]
-  end
-
-  defp canvas_size(nil), do: nil
-  defp canvas_size("md"), do: nil
-  defp canvas_size(size), do: size
-
-  defp tone("mono", _variant), do: "solid"
-  defp tone("error", _variant), do: "danger"
-  defp tone("primary", "solid"), do: "accent"
-  defp tone("primary", "glow"), do: "accent"
-  defp tone(color, "soft") when color in ~w(neutral secondary current white), do: "filled"
-  defp tone(_color, variant) when variant in ~w(soft bordered), do: "soft"
-  defp tone(_color, "dim"), do: "subtle"
-  defp tone(_color, variant) when variant in ~w(flat ghost), do: "ghost"
-  defp tone(_color, _variant), do: nil
 end

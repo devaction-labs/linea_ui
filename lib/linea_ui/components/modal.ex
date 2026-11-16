@@ -242,7 +242,7 @@ defmodule LineaUI.Components.Modal do
           type="button"
           class={
             merge([
-              "btn absolute right-3 top-3 z-10 size-7 rounded-full p-0",
+              "lo-btn absolute right-3 top-3 z-10 size-7 rounded-full p-0",
               close_variant_class(@close_variant)
             ])
           }
@@ -316,7 +316,7 @@ defmodule LineaUI.Components.Modal do
     ~H"""
     <button
       type="button"
-      class="btn -mr-1.5 size-7 rounded-full p-0 hover:bg-slate-300/20 focus:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25"
+      class="lo-btn -mr-1.5 size-7 rounded-full p-0 hover:bg-slate-300/20 focus:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25"
       aria-label={@label}
       phx-click={LineaUI.close(@id)}
     >

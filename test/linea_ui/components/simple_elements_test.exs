@@ -107,8 +107,8 @@ defmodule LineaUI.Components.SimpleElementsTest do
         """)
 
       classes = classes(html, "div[role=group]")
-      assert "-space-x-px" in classes
-      assert "[&>*:first-child]:rounded-l-full" in classes
+      assert "join" in classes
+      assert "[--join-r:9999px]" in classes
     end
   end
 end

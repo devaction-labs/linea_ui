@@ -93,7 +93,7 @@ defmodule LineaUI.Components.DataTable do
 
   @numbers "[&_b]:font-semibold [&_b]:text-slate-700 dark:[&_b]:text-navy-50"
 
-  @icon_button "btn size-8 rounded-full p-0 hover:bg-slate-300/20 focus:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25"
+  @icon_button "lo-btn size-8 rounded-full p-0 hover:bg-slate-300/20 focus:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25"
 
   @doc """
   Renders a data table. The LiveView passes the rows of the current page and handles the

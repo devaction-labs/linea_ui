@@ -125,7 +125,7 @@ defmodule LineaUI.Components.ThemePicker do
           phx-mounted='[["ignore_attrs",{"attrs":["aria-checked","tabindex"]}]]'
         >
           <span class="sg-tp-prev" data-theme={option.id} aria-hidden="true">
-            <span class="card"><i class="t1"></i><i class="t2"></i><span class="btn"></span></span>
+            <span class="tp-card"><i class="t1"></i><i class="t2"></i><span class="tp-btn"></span></span>
             <span class="dots"><i class="a"></i><i class="b"></i><i class="c"></i></span>
           </span>
           <span class="lbl">{option.label}</span>

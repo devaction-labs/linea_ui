@@ -76,11 +76,11 @@ defmodule LineaUI.Components.ActionMenuTest do
 
     assert attr_of(html, "button#d", "aria-label") == ["Delete"]
     assert attr_of(html, "button#d", "phx-click") == ["delete"]
-    assert "sg-ib" in classes(html, "button#d")
+    assert "btn-square" in classes(html, "button#d")
     assert find(html, "[phx-hook]") |> Enum.to_list() == []
 
     html = render(~H|<.action_button label="Open" navigate="/c/1">Open</.action_button>|)
     assert attr_of(html, "a", "href") == ["/c/1"]
-    assert "sg-btn" in classes(html, "a")
+    assert "btn" in classes(html, "a")
   end
 end

@@ -18,8 +18,7 @@ defmodule LineaUI.Components.AiTest do
     running = render(~H|<.ai_tool_trace tools={[%{label: "Pedidos"}]} running />|)
     assert "em andamento" in texts(running, ".mono")
 
-    failed =
-      render(~H|<.ai_tool_trace tools={[%{label: "A"}, %{label: "B", failed: true}]} />|)
+    failed = render(~H|<.ai_tool_trace tools={[%{label: "A"}, %{label: "B", failed: true}]} />|)
 
     assert "1 de 2 falhou" in texts(failed, ".mono")
     assert [_] = find(failed, ".ai-chip.neg") |> Enum.to_list()
@@ -49,7 +48,7 @@ defmodule LineaUI.Components.AiTest do
       </.ai_proposal>
       """)
 
-    assert "Aguardando você" in texts(html, ".sg-badge")
+    assert "Aguardando você" in texts(html, ".badge")
     clicks = html |> find("button") |> Enum.flat_map(&LazyHTML.attribute(&1, "phx-click"))
     assert Enum.any?(clicks, &String.contains?(&1, "approve"))
     assert Enum.any?(clicks, &String.contains?(&1, "reject"))
@@ -62,7 +61,7 @@ defmodule LineaUI.Components.AiTest do
         ~H|<.ai_proposal id="p" title="T" status={:approved} note="Aprovado por Ana" on_undo="undo" />|
       )
 
-    assert "Aprovado" in texts(approved, ".sg-badge")
+    assert "Aprovado" in texts(approved, ".badge")
 
     assert String.contains?(
              LazyHTML.text(find(approved, ".ai-proposal-foot")),
@@ -166,7 +165,7 @@ defmodule LineaUI.Components.AiTest do
     assert [_] = find(html, ".ai-body > p b.ink") |> Enum.to_list()
     assert [_] = find(html, "#p.ai-proposal") |> Enum.to_list()
     assert find(html, "h1") |> Enum.to_list() == []
-    assert "Propõe, você aprova" in texts(html, ".sg-badge")
+    assert "Propõe, você aprova" in texts(html, ".badge")
   end
 
   test "the chat leaves the composer out with composer={false}" do
@@ -266,11 +265,11 @@ defmodule LineaUI.Components.AiTest do
       <.ai_proposal id="p" title="T" pending_label="Pendente" pending_note="Entra no rastreamento" />
       """)
 
-    assert "Pendente" in texts(html, ".sg-badge")
+    assert "Pendente" in texts(html, ".badge")
     assert texts(html, ".ai-proposal-note") == ["Entra no rastreamento"]
 
     default = render(~H|<.ai_proposal id="p" title="T" />|)
-    assert "Aguardando você" in texts(default, ".sg-badge")
+    assert "Aguardando você" in texts(default, ".badge")
     assert find(default, ".ai-proposal-note") |> Enum.to_list() == []
 
     approved = render(~H|<.ai_proposal id="p" title="T" status="approved" pending_note="Nota" />|)
@@ -287,7 +286,7 @@ defmodule LineaUI.Components.AiTest do
       """)
 
     assert texts(html, "s") == ["Aberto"]
-    assert "Faturado" in texts(html, ".ai-proposal-value .sg-badge")
+    assert "Faturado" in texts(html, ".ai-proposal-value .badge")
     assert find(html, ".ai-to") |> Enum.to_list() == []
     assert "#2491" in texts(html, ".ai-proposal-value")
   end

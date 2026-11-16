@@ -113,8 +113,7 @@ defmodule LineaUI.Components.NavbarTest do
     end
 
     test "a crumb with no link in the middle is plain text" do
-      html =
-        render(~H|<.navbar_crumbs items={[%{label: "A"}, %{label: "B"}]} label="Caminho" />|)
+      html = render(~H|<.navbar_crumbs items={[%{label: "A"}, %{label: "B"}]} label="Caminho" />|)
 
       assert attrs(html, "nav", "aria-label") == ["Caminho"]
       assert count(html, "nav a") == 0
@@ -123,8 +122,7 @@ defmodule LineaUI.Components.NavbarTest do
     end
 
     test "workspace is a button in .sg-nb-start" do
-      html =
-        render(~H|<.navbar_workspace name="Loja Bom Fim" sub="Plano Pro" phx-click="ws" />|)
+      html = render(~H|<.navbar_workspace name="Loja Bom Fim" sub="Plano Pro" phx-click="ws" />|)
 
       assert count(html, ".sg-nb-start > button.sg-nb-ws") == 1
       assert attrs(html, "button", "phx-click") == ["ws"]
@@ -134,8 +132,7 @@ defmodule LineaUI.Components.NavbarTest do
     end
 
     test "chip with square, color and tag; slash" do
-      html =
-        render(~H|<.navbar_chip label="Loja" square="LB" color="#1a7f4b" tag="Pro" />|)
+      html = render(~H|<.navbar_chip label="Loja" square="LB" color="#1a7f4b" tag="Pro" />|)
 
       assert text(html, "button.sg-nb-chip b") == ["Loja"]
       assert text(html, ".sg-nb-sq") == ["LB"]
@@ -214,19 +211,19 @@ defmodule LineaUI.Components.NavbarTest do
 
     test "bell with and without the dot" do
       html = render(~H|<.navbar_bell dot label="Avisos" phx-click="bell" />|)
-      assert count(html, "span.sg-nb-bell > button.sg-ib") == 1
+      assert count(html, "span.sg-nb-bell > button.btn-square") == 1
       assert attrs(html, "button", "aria-label") == ["Avisos"]
       assert attrs(html, "button", "phx-click") == ["bell"]
       assert count(html, ".sg-nb-bell > i") == 1
 
       html = render(~H|<.navbar_bell size="sm" />|)
-      assert ["sg-ib", "sm"] == classes(html, "button")
+      assert "btn-sm" in classes(html, "button")
       assert count(html, ".sg-nb-bell > i") == 0
     end
 
     test "generic icon button" do
       html = render(~H|<.navbar_icon name="huge-search-01" label="Buscar" phx-click="s" />|)
-      assert ["sg-ib"] == classes(html, "button")
+      assert "btn-square" in classes(html, "button")
       assert attrs(html, "button", "aria-label") == ["Buscar"]
       assert count(html, "button .huge-search-01") == 1
     end

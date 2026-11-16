@@ -373,8 +373,8 @@ defmodule LineaUI.Theme do
 
     [
       {"color-base-100", get.("panel")},
-      {"color-base-200", get.("canvas")},
-      {"color-base-300", if(scheme == :light, do: get.("line"), else: get.("main"))},
+      {"color-base-200", get.("sunken")},
+      {"color-base-300", if(scheme == :light, do: get.("line"), else: get.("hover"))},
       {"color-base-content", get.("fg")},
       {"color-primary-content", get.("on-accent")},
       {"color-secondary", secondary},

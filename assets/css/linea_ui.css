@@ -794,7 +794,7 @@ code.inline-code {
 }
 
 /* button */
-.btn {
+.lo-btn {
   @apply inline-flex h-9 cursor-pointer items-center justify-center gap-1.5 rounded-(--pill) px-4 py-0 text-[13px]
    text-center outline-hidden transition-all duration-200
    focus:outline-hidden disabled:pointer-events-none;
