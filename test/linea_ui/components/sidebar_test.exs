@@ -174,14 +174,22 @@ defmodule LineaUI.Components.SidebarTest do
     test "an item has an icon, a tooltip for the collapsed menu and a name" do
       html = html()
 
-      assert "huge-home-01" in classes(html, ".lo-sb-scroll > ul > li:first-child > .lo-sb-item > .i")
-      assert texts(html, ".lo-sb-scroll > ul > li:first-child > .lo-sb-item > .rail-tip") == ["Início"]
+      assert "huge-home-01" in classes(
+               html,
+               ".lo-sb-scroll > ul > li:first-child > .lo-sb-item > .i"
+             )
 
-      assert attrs(html, ".lo-sb-scroll > ul > li:first-child > .lo-sb-item > .rail-tip", "role") == [
-               "tooltip"
+      assert texts(html, ".lo-sb-scroll > ul > li:first-child > .lo-sb-item > .rail-tip") == [
+               "Início"
              ]
 
-      assert attrs(html, ".lo-sb-scroll > ul > li:first-child > .lo-sb-item", "data-rail-tip") == [""]
+      assert attrs(html, ".lo-sb-scroll > ul > li:first-child > .lo-sb-item > .rail-tip", "role") ==
+               [
+                 "tooltip"
+               ]
+
+      assert attrs(html, ".lo-sb-scroll > ul > li:first-child > .lo-sb-item", "data-rail-tip") ==
+               [""]
     end
   end
 
@@ -246,7 +254,11 @@ defmodule LineaUI.Components.SidebarTest do
       assert attrs(html, ".lo-sb-gh > button", "aria-expanded") == ["false"]
       assert attrs(html, ".lo-sb-gh > button", "aria-controls") |> length() == 1
       assert texts(html, ".lo-sb-children a.t .lbl") == ["Abertos", "Cancelados"]
-      assert classes(html, ".lo-sb-children > li:first-child > a.t > span") |> Enum.take(2) == ["ci", "blue"]
+
+      assert classes(html, ".lo-sb-children > li:first-child > a.t > span") |> Enum.take(2) == [
+               "ci",
+               "blue"
+             ]
 
       assert attrs(html, ".lo-sb-children > li:last-child > a.t > span.ci", "style") == [
                "background:#f43f5e"
@@ -333,11 +345,19 @@ defmodule LineaUI.Components.SidebarTest do
     end
 
     test "children are a nested daisyUI menu list, without a drawn connector" do
-      nav = [%{group: "G", items: [%{label: "P", href: "/p", children: [%{label: "A", href: "/a"}]}]}]
+      nav = [
+        %{group: "G", items: [%{label: "P", href: "/p", children: [%{label: "A", href: "/a"}]}]}
+      ]
+
       html = html(%{format: "tree", nav: nav, current: "/a"})
       assert [_] = Enum.to_list(find(html, "ul.menu li.lo-sb-li > ul.lo-sb-children > li > a"))
       assert find(html, "svg.tb") |> Enum.empty?()
-      assert classes(html, ".lo-sb-children a[aria-current]") == ["lo-sb-item", "on", "menu-active"]
+
+      assert classes(html, ".lo-sb-children a[aria-current]") == [
+               "lo-sb-item",
+               "on",
+               "menu-active"
+             ]
     end
 
     test "a group with `collapsible: false` has a label without a button" do
@@ -477,7 +497,9 @@ defmodule LineaUI.Components.SidebarTest do
       ids = attrs(first, "button.lo-sb-caret, .lo-sb-gt > button", "aria-controls")
       assert length(ids) == 4
       assert ids == Enum.uniq(ids)
-      assert attrs(first, "ul.lo-sb-children, ul.lo-sb-group", "id") |> Enum.sort() == Enum.sort(ids)
+
+      assert attrs(first, "ul.lo-sb-children, ul.lo-sb-group", "id") |> Enum.sort() ==
+               Enum.sort(ids)
 
       assert ids ==
                attrs(

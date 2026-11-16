@@ -681,7 +681,11 @@ defmodule LineaUI.Components.Sidebar do
           </span>
         </div>
         <div class="lo-sb-scroll">
-          <.link :if={@menu.module.action} class="lo-sb-new btn btn-sm w-full justify-start" {@menu.module.action.link}>
+          <.link
+            :if={@menu.module.action}
+            class="lo-sb-new btn btn-sm w-full justify-start"
+            {@menu.module.action.link}
+          >
             <Icon.icon :if={@menu.module.action.icon} name={@menu.module.action.icon} class="i sm" />{@menu.module.action.label}
           </.link>
           <ul class="menu lo-sb-menu menu-sm w-full">
@@ -704,8 +708,7 @@ defmodule LineaUI.Components.Sidebar do
             aria-label={@trial[:title]}
             value={@trial[:value] || 0}
             max="100"
-          >
-          </progress>
+          ></progress>
           <div class="row2">
             <span>{@trial[:text]}</span>
             <.link :if={@trial[:action]} {Nav.link_attrs(@trial)}>{@trial[
