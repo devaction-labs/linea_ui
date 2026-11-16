@@ -1,7 +1,7 @@
 defmodule LineaUI.Components.Alert do
   @moduledoc """
-  LineOne's alerts: filled, outlined, soft and bordered, with an icon, an accent bar or a close
-  button.
+  daisyUI's alert (`alert`, `alert-soft`, `alert-outline`, `alert-{color}`): filled, outlined, soft and
+  bordered, with an icon, an accent bar or a close button.
 
       <.alert>This is simple alert</.alert>
       <.alert color="primary" variant="soft" shape="pill">Saved</.alert>
@@ -12,10 +12,10 @@ defmodule LineaUI.Components.Alert do
       </.alert>
       <.alert id="notice" color="info" variant="outline" dismissible>Closable</.alert>
 
-  The `canvas` variant (the default; `variant="solid"`, `outline`, `soft` and `bordered` are the old LineOne alerts) is the design canvas's `sg-alert`: a soft block tinted by `color` (`primary`,
-  `warning`, `error`, `info`, `success`; `neutral` is the sunken gray one), the icon at the top left, the
-  content growing beside it (write it as `<b>` and `<p>`), the `:action` buttons in a row under the text
-  and a muted round close button:
+  The `canvas` variant (the default) is a soft `alert` tinted by `color` (`primary`, `warning`, `error`, `info`,
+  `success`; `neutral` is daisyUI's plain one), the icon at the top left, the content growing beside it (write it
+  as `<b>` and `<p>`), the `:action` buttons in a row under the text and a ghost round close button
+  (`variant="solid"`, `outline`, `soft` and `bordered` give the other daisyUI styles):
 
       <.alert variant="canvas" color="warning">
         <:icon><.icon name="huge-alert-02" class="size-4" /></:icon>
@@ -33,94 +33,32 @@ defmodule LineaUI.Components.Alert do
   use LineaUI.Component
   import LineaUI.Components.Icon, only: [glyph: 1]
 
+  # daisyUI's `alert`: its color and style (`alert-soft`, `alert-outline`); `flex` keeps the kit's own layouts
   @base "alert flex"
+  @colors ~w(primary secondary info success warning error)
 
-  @variants %{
-    "solid" => %{
-      "neutral" => "bg-slate-200 text-slate-600 dark:bg-navy-500 dark:text-navy-100",
-      "primary" => "bg-primary text-white dark:bg-accent",
-      "secondary" => "bg-secondary text-white",
-      "info" => "bg-info text-white",
-      "success" => "bg-success text-white",
-      "warning" => "bg-warning text-white",
-      "error" => "bg-error text-white",
-      "dark" => "bg-navy-900 text-slate-200 dark:text-navy-100"
-    },
-    "outline" => %{
-      "neutral" =>
-        "border border-slate-300 text-slate-800 dark:border-navy-450 dark:text-navy-50",
-      "primary" => "border border-primary text-primary dark:border-accent dark:text-accent-light",
-      "secondary" =>
-        "border border-secondary text-secondary dark:border-secondary dark:text-secondary-light",
-      "info" => "border border-info text-info",
-      "success" => "border border-success text-success",
-      "warning" => "border border-warning text-warning",
-      "error" => "border border-error text-error",
-      "dark" => "border border-navy-900 text-navy-900 dark:border-navy-50 dark:text-navy-50"
-    },
-    "soft" => %{
-      "neutral" => "bg-slate-150/60 text-slate-700 dark:bg-navy-500/40 dark:text-navy-100",
-      "primary" => "bg-primary/10 text-primary dark:bg-accent-light/15 dark:text-accent-light",
-      "secondary" =>
-        "bg-secondary/10 text-secondary dark:bg-secondary-light/15 dark:text-secondary-light",
-      "info" => "bg-info/10 text-info dark:bg-info/15",
-      "success" => "bg-success/10 text-success dark:bg-success/15",
-      "warning" => "bg-warning/10 text-warning dark:bg-warning/15",
-      "error" => "bg-error/10 text-error dark:bg-error/15",
-      "dark" => "bg-navy-900/10 text-navy-900 dark:bg-navy-50/15 dark:text-navy-50"
-    },
-    "bordered" => %{
-      "neutral" =>
-        "border border-slate-300 bg-slate-150/60 text-slate-700 dark:border-navy-450 dark:bg-navy-500/40 dark:text-navy-100",
-      "primary" =>
-        "border border-primary/30 bg-primary/10 text-primary dark:border-accent-light/30 dark:bg-accent-light/15 dark:text-accent-light",
-      "secondary" =>
-        "border border-secondary/30 bg-secondary/10 text-secondary dark:border-secondary-light/30 dark:bg-secondary-light/15 dark:text-secondary-light",
-      "info" => "border border-info/30 bg-info/10 text-info dark:bg-info/15",
-      "success" => "border border-success/30 bg-success/10 text-success dark:bg-success/15",
-      "warning" => "border border-warning/30 bg-warning/10 text-warning dark:bg-warning/15",
-      "error" => "border border-error/30 bg-error/10 text-error dark:bg-error/15",
-      "dark" =>
-        "border border-navy-900/30 bg-navy-900/10 text-navy-900 dark:border-navy-50/30 dark:bg-navy-50/15 dark:text-navy-50"
-    }
-  }
-
-  @shapes %{"rounded" => "rounded-lg", "pill" => "rounded-full"}
+  @shapes %{"rounded" => nil, "pill" => "rounded-full"}
 
   @bars %{
-    "neutral" => "w-1.5 bg-slate-400 dark:bg-navy-300",
-    "primary" => "w-1.5 bg-primary dark:bg-accent",
+    "neutral" => "w-1.5 bg-base-300",
+    "primary" => "w-1.5 bg-primary",
     "secondary" => "w-1.5 bg-secondary",
     "info" => "w-1.5 bg-info",
     "success" => "w-1.5 bg-success",
     "warning" => "w-1.5 bg-warning",
     "error" => "w-1.5 bg-error",
-    "dark" => "w-1.5 bg-navy-900"
+    "dark" => "w-1.5 bg-neutral"
   }
 
   @icon_boxes %{
-    "neutral" => "bg-slate-300 p-3 text-slate-800 dark:bg-navy-450 dark:text-navy-50",
-    "primary" => "bg-primary p-3 text-white dark:bg-accent",
-    "secondary" => "bg-secondary p-3 text-white",
-    "info" => "bg-info p-3 text-white",
-    "success" => "bg-success p-3 text-white",
-    "warning" => "bg-warning p-3 text-white",
-    "error" => "bg-error p-3 text-white",
-    "dark" => "bg-navy-900 p-3 text-white"
-  }
-
-  @close_buttons %{
-    "neutral" =>
-      "text-slate-700 hover:bg-slate-300/20 focus:bg-slate-300/20 active:bg-slate-300/25 dark:text-navy-100 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25",
-    "primary" =>
-      "text-primary hover:bg-primary/20 focus:bg-primary/20 active:bg-primary/25 dark:text-accent-light dark:hover:bg-accent-light/20 dark:focus:bg-accent-light/20 dark:active:bg-accent-light/25",
-    "secondary" =>
-      "text-secondary hover:bg-secondary/20 focus:bg-secondary/20 active:bg-secondary/25 dark:text-secondary-light dark:hover:bg-secondary-light/20 dark:focus:bg-secondary-light/20 dark:active:bg-secondary-light/25",
-    "info" => "text-info hover:bg-info/20 focus:bg-info/20 active:bg-info/25",
-    "success" => "text-success hover:bg-success/20 focus:bg-success/20 active:bg-success/25",
-    "warning" => "text-warning hover:bg-warning/20 focus:bg-warning/20 active:bg-warning/25",
-    "error" => "text-error hover:bg-error/20 focus:bg-error/20 active:bg-error/25",
-    "white" => "text-white hover:bg-white/20 focus:bg-white/20 active:bg-white/25"
+    "neutral" => "bg-base-content/15 p-3 text-base-content",
+    "primary" => "bg-primary p-3 text-primary-content",
+    "secondary" => "bg-secondary p-3 text-secondary-content",
+    "info" => "bg-info p-3 text-info-content",
+    "success" => "bg-success p-3 text-success-content",
+    "warning" => "bg-warning p-3 text-warning-content",
+    "error" => "bg-error p-3 text-error-content",
+    "dark" => "bg-neutral p-3 text-neutral-content"
   }
 
   @doc """
@@ -147,7 +85,7 @@ defmodule LineaUI.Components.Alert do
     default: "canvas",
     values: ~w(canvas solid outline soft bordered),
     doc:
-      "`canvas` (the default) is the canvas's `sg-alert` (see the module doc). The old LineOne look is `solid` (or `outline`, `soft`, `bordered`)."
+      "`canvas` (the default) is the soft alert with the icon, body and actions laid out (see the module doc); `solid`, `outline`, `soft` and `bordered` are daisyUI's styles."
   )
 
   attr(:shape, :string, default: "rounded", values: ~w(rounded pill))
@@ -197,18 +135,18 @@ defmodule LineaUI.Components.Alert do
       id={@id}
       role="alert"
       hidden={!@open}
-      class={merge(["sg-alert", canvas_tone(@color), @class])}
+      class={merge(["alert alert-soft flex items-start gap-3", tone(@color), @class])}
       {@rest}
     >
       {render_slot(@icon)}
-      <div class="sg-alert-body">
+      <div class="flex min-w-0 flex-1 flex-col gap-0.5 [&_b]:font-semibold [&_p]:opacity-80">
         {render_slot(@inner_block)}
-        <div :if={@action != []} class="sg-alert-actions">{render_slot(@action)}</div>
+        <div :if={@action != []} class="mt-2 flex flex-wrap gap-2">{render_slot(@action)}</div>
       </div>
       <button
         :if={@dismissible}
         type="button"
-        class="sg-ib sm plain"
+        class="btn btn-ghost btn-sm btn-circle -my-1 -mr-1"
         aria-label={@close_label}
         phx-click={dismiss_alert(dismiss_js(@on_dismiss, @target, @id))}
       >
@@ -224,18 +162,21 @@ defmodule LineaUI.Components.Alert do
     |> assign(:boxed, boxed?(assigns.icon))
     |> assign(:base_classes, [
       @base,
-      @variants[assigns.variant][assigns.color],
+      variant_class(assigns.variant),
+      tone(assigns.color),
       @shapes[assigns.shape]
     ])
     |> render_alert()
   end
 
-  defp canvas_tone("primary"), do: "acc"
-  defp canvas_tone("warning"), do: "warn"
-  defp canvas_tone("error"), do: "neg"
-  defp canvas_tone("info"), do: "info"
-  defp canvas_tone("success"), do: "pos"
-  defp canvas_tone(_color), do: nil
+  defp tone(color) when color in @colors, do: "alert-" <> color
+  defp tone("dark"), do: "border-neutral bg-neutral text-neutral-content"
+  defp tone(_neutral), do: nil
+
+  defp variant_class("outline"), do: "alert-outline"
+  defp variant_class("soft"), do: "alert-soft"
+  defp variant_class("bordered"), do: "alert-soft border-current/25"
+  defp variant_class(_solid), do: nil
 
   defp boxed?([%{boxed: true} | _]), do: true
   defp boxed?(_icon), do: false
@@ -341,7 +282,7 @@ defmodule LineaUI.Components.Alert do
       type="button"
       aria-label={@label}
       phx-click={dismiss_alert(@on_dismiss)}
-      class={["lo-btn size-7 shrink-0 rounded-full p-0 font-medium", close_classes(@color)]}
+      class={["btn btn-ghost btn-sm btn-circle shrink-0", @color == "white" && "text-white"]}
     >
       <.glyph name={:close} class="size-4" />
     </button>
@@ -352,8 +293,6 @@ defmodule LineaUI.Components.Alert do
   defp dismiss_js(%JS{} = js, _target, _id), do: js
   defp dismiss_js(event, nil, id), do: JS.push(event, value: %{id: id})
   defp dismiss_js(event, target, id), do: JS.push(event, target: target, value: %{id: id})
-
-  defp close_classes(color), do: @close_buttons[color]
 
   @doc """
   Fades out and hides the alert that holds the element running it, the way LineOne removes a

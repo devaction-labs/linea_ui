@@ -8,9 +8,9 @@ defmodule LineaUI.Components.CanvasDefaultTest do
     socket.assigns.uploads.photos
   end
 
-  test "alert: canvas by default, solid is the old look" do
-    assert has?(render(~H"<.alert>Hi</.alert>"), ".sg-alert")
-    refute has?(render(~H"<.alert variant=\"solid\">Hi</.alert>"), ".sg-alert")
+  test "alert: the soft canvas alert by default, solid is daisyUI's filled one" do
+    assert has?(render(~H"<.alert>Hi</.alert>"), ".alert.alert-soft")
+    refute has?(render(~H"<.alert variant=\"solid\">Hi</.alert>"), ".alert-soft")
   end
 
   test "accordion: canvas by default, basic is the old look" do
