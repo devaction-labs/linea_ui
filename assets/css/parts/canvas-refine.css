@@ -154,10 +154,6 @@ input.form-checkbox:focus-visible,input.form-radio:focus-visible,input.form-swit
 .sg-tabs a,.sg-tabs > .sg-tab{font-size:14px;font-weight:500}
 
 /* breadcrumbs: plain text, muted links, the current page ink */
-.sg-crumb{height:auto;padding:0;gap:6px;border-radius:0;background:none;box-shadow:none;font-size:14px}
-:is(.dark .sg:not([data-theme="light"]), .sg[data-theme="dark"]) .sg-crumb{background:none}
-.sg-crumb b{font-weight:400}
-.sg-crumb .sep{color:var(--faint)}
 
 /* pagination: 32px ghost buttons, the current page outlined */
 .sg-pages span{min-width:32px;height:32px;border-radius:var(--pill);font:500 14px var(--sans);color:var(--fg)}

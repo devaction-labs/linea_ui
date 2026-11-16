@@ -37,7 +37,7 @@ defmodule LineaUI.Components.Breadcrumb do
         <:item>October</:item>
       </.breadcrumb>
 
-  The separator is LineOne's chevron unless a `:separator` is given:
+  It is daisyUI's `breadcrumbs`, whose own separator goes between the steps unless a `:separator` is given:
 
       <.breadcrumb variant="bordered">
         <:separator><span class="text-xs font-light">/</span></:separator>
@@ -45,9 +45,9 @@ defmodule LineaUI.Components.Breadcrumb do
         <:item>Calendar</:item>
       </.breadcrumb>
 
-  `variant="canvas"` (the default; `variant="plain"` is the old LineOne trail) is the design canvas trail (`sg-crumb`): a 32px pill with an inset line, muted
-  13px links, faint `/` separators and the current page in the ink, inside a `<b>` (the canvas
-  `.sg-crumb b`) with `aria-current="page"` on its wrapper.
+  `variant="canvas"` (the default; `variant="plain"` is the old LineOne trail) is the design canvas trail: muted
+  13px links, faint `/` separators and the current page in the ink, inside a `<b>` with `aria-current="page"` on
+  its wrapper.
 
       <.breadcrumb>
         <:item navigate={~p"/customers"}>Customers</:item>
@@ -69,19 +69,19 @@ defmodule LineaUI.Components.Breadcrumb do
     "bordered" =>
       "flex items-center gap-1.5 rounded-lg px-2 py-[5px] leading-none text-primary shadow-[inset_0_0_0_1px_var(--color-base-300)] transition-colors hover:text-primary-focus hover:shadow-[inset_0_0_0_1px_color-mix(in_oklab,var(--color-primary)_40%,transparent)]",
     "canvas" =>
-      "flex items-center gap-1.5 rounded-md text-[var(--muted)] transition-colors hover:text-[var(--ink)]"
+      "flex items-center gap-1.5 rounded-md text-base-content/60 transition-colors hover:text-base-content"
   }
 
   @lists %{
-    "plain" => "flex flex-wrap items-center gap-2",
-    "bordered" => "flex flex-wrap items-center gap-2",
-    "canvas" => "sg-crumb"
+    "plain" => nil,
+    "bordered" => nil,
+    "canvas" => "gap-0"
   }
 
   @currents %{
     "plain" => "text-base-content/75",
     "bordered" => "text-base-content/75",
-    "canvas" => "font-medium text-[var(--ink)]"
+    "canvas" => "font-medium text-base-content"
   }
 
   @doc """
@@ -137,7 +137,7 @@ defmodule LineaUI.Components.Breadcrumb do
     attr(:title, :string, doc: "The full label, shown on hover when the current page is cut.")
   end
 
-  slot(:separator, doc: "What goes between two steps, LineOne's chevron by default.")
+  slot(:separator, doc: "What goes between two steps, daisyUI's (or `/` in the canvas variant) by default.")
 
   def breadcrumb(assigns) do
     assigns =
@@ -148,11 +148,20 @@ defmodule LineaUI.Components.Breadcrumb do
       |> assign(:current_class, @currents[assigns.variant])
 
     ~H"""
-    <nav id={@id} aria-label={@label} {@rest}>
+    <nav
+      id={@id}
+      aria-label={@label}
+      class={[
+        "breadcrumbs overflow-visible py-0 text-sm",
+        (@variant == "canvas" or @separator != []) && "[&_li+*]:before:hidden",
+        @variant == "canvas" && "text-[13px]"
+      ]}
+      {@rest}
+    >
       <ul class={merge([@lists[@variant], @class])}>
         <li
           :for={{crumb, index} <- Enum.with_index(@crumbs)}
-          class={if index < @last, do: "flex items-center gap-2", else: "min-w-0 max-w-full"}
+          class={if index < @last, do: "gap-2", else: "min-w-0 max-w-full"}
         >
           <.more
             :if={match?({:more, _}, crumb)}
@@ -168,7 +177,11 @@ defmodule LineaUI.Components.Breadcrumb do
             current={index == @last}
             variant={@variant}
           />
-          <.separator :if={index < @last} separator={@separator} variant={@variant} />
+          <.separator
+            :if={index < @last and (@variant == "canvas" or @separator != [])}
+            separator={@separator}
+            variant={@variant}
+          />
         </li>
       </ul>
     </nav>
@@ -269,7 +282,9 @@ defmodule LineaUI.Components.Breadcrumb do
       aria-current={@current && "page"}
       {@extra}
     >
-      <b :if={@current && @variant == "canvas"} class="min-w-0 truncate">{render_slot(@item)}</b>
+      <b :if={@current && @variant == "canvas"} class="min-w-0 truncate font-medium text-base-content">
+        {render_slot(@item)}
+      </b>
       <span :if={!@current || @variant != "canvas"} class="min-w-0 truncate">
         {render_slot(@item)}
       </span>
@@ -283,15 +298,9 @@ defmodule LineaUI.Components.Breadcrumb do
   attr(:separator, :list, required: true)
   attr(:variant, :string, default: "plain")
 
-  defp separator(%{separator: [], variant: "canvas"} = assigns) do
-    ~H"""
-    <span aria-hidden="true" class="sep">/</span>
-    """
-  end
-
   defp separator(%{separator: []} = assigns) do
     ~H"""
-    <.glyph name={:chevron_right} class="size-3.5 shrink-0 text-base-content/50" />
+    <span aria-hidden="true" class="sep pr-2 text-base-content/35">/</span>
     """
   end
 
