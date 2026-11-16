@@ -79,8 +79,8 @@ defmodule LineaUI.Components.Breadcrumb do
   }
 
   @currents %{
-    "plain" => "text-slate-600 dark:text-navy-200",
-    "bordered" => "text-slate-600 dark:text-navy-200",
+    "plain" => "text-base-content/75",
+    "bordered" => "text-base-content/75",
     "canvas" => "font-medium text-[var(--ink)]"
   }
 
@@ -291,7 +291,7 @@ defmodule LineaUI.Components.Breadcrumb do
 
   defp separator(%{separator: []} = assigns) do
     ~H"""
-    <.glyph name={:chevron_right} class="size-3.5 shrink-0 text-slate-400 dark:text-navy-300" />
+    <.glyph name={:chevron_right} class="size-3.5 shrink-0 text-base-content/50" />
     """
   end
 
