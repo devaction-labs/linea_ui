@@ -105,4 +105,11 @@ defmodule LineaUI.Components.ButtonTest do
 
   defp text(html, selector),
     do: html |> find(selector) |> Enum.map(&(&1 |> LazyHTML.text() |> String.trim()))
+
+  test "the link reset of the canvas sits in the base layer, so a btn on an anchor keeps its colour" do
+    css = File.read!("assets/css/parts/canvas.css")
+
+    assert css =~ "@layer base{.sg a{color:inherit;text-decoration:none}}"
+    refute css =~ ~r/^\.sg a\{/m
+  end
 end

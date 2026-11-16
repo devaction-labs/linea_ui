@@ -299,6 +299,21 @@ defmodule LineaUI.Components.TableTest do
       assert Phoenix.json_library().decode!(row) == [["push", %{"event" => "open"}]]
     end
 
+    test "a row whose row_click gives nil gets an empty JS, so its cells do nothing" do
+      html =
+        render(~H"""
+        <.table id="t" rows={[%{id: 1}, %{id: 2}]} row_click={&if(&1.id == 1, do: "open")}>
+          <:col :let={row}>{row.id}</:col>
+        </.table>
+        """)
+
+      assert [open, none] =
+               html |> find("tbody tr") |> Enum.map(&LazyHTML.attribute(&1, "data-row-click"))
+
+      assert Phoenix.json_library().decode!(hd(open)) == [["push", %{"event" => "open"}]]
+      assert none == ["[]"]
+    end
+
     test "without row_click there is no attribute and no phx-click on the cells" do
       html = render_table(%{})
       assert [] = html |> find("[data-row-click], td[phx-click]") |> Enum.to_list()
