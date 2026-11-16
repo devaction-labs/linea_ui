@@ -160,7 +160,11 @@ defmodule LineaUI.Components.Carousel do
       {@rest}
     >
       {render_slot(@background)}
-      <div id={"#{@id}-track"} data-carousel-track class="carousel-track">
+      <div
+        id={"#{@id}-track"}
+        data-carousel-track
+        class={["carousel carousel-track w-full", @direction == "vertical" && "carousel-vertical"]}
+      >
         {render_slot(@inner_block)}
       </div>
       <button
@@ -248,7 +252,7 @@ defmodule LineaUI.Components.Carousel do
 
   def carousel_slide(assigns) do
     ~H"""
-    <div data-carousel-slide class={merge(["carousel-slide", @class])} {@rest}>
+    <div data-carousel-slide class={merge(["carousel-item carousel-slide", @class])} {@rest}>
       {render_slot(@inner_block)}
     </div>
     """
