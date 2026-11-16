@@ -55,11 +55,11 @@ defmodule LineaUI.Components.SimpleElementsTest do
         <.skeleton variant="lineone" id="n" animation="none" shape="square" />
         """)
 
-      assert ["skeleton", "animate-wave" | _] = classes(html, "#w")
-      assert "rounded-sm" in classes(html, "#w")
+      assert ["skeleton" | _] = classes(html, "#w")
+      assert "rounded-selector" in classes(html, "#w")
       assert "animate-pulse" in classes(html, "#p")
       assert "rounded-full" in classes(html, "#p")
-      refute "skeleton" in classes(html, "#n")
+      assert "[animation:none]" in classes(html, "#n")
     end
 
     test "a group announces the loading and keeps the blocks hidden" do

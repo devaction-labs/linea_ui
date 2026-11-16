@@ -29,14 +29,15 @@ defmodule LineaUI.Components.Skeleton do
 
   use LineaUI.Component
 
+  # daisyUI's `skeleton` (its own shimmer); `pulse` swaps the shimmer for Tailwind's pulse
   @animations %{
-    "wave" => "skeleton animate-wave",
-    "pulse" => "animate-pulse",
-    "none" => ""
+    "wave" => nil,
+    "pulse" => "animate-pulse [background-image:none]",
+    "none" => "[animation:none] [background-image:none]"
   }
 
   @shapes %{
-    "rounded" => "rounded-sm",
+    "rounded" => "rounded-selector",
     "pill" => "rounded-full",
     "circle" => "rounded-full",
     "square" => "",
@@ -55,13 +56,13 @@ defmodule LineaUI.Components.Skeleton do
     default: "canvas",
     values: ~w(canvas lineone),
     doc:
-      "`canvas` (the default) is the canvas's `sg-skel`; `lineone` is the old LineOne slate block."
+      "Both draw daisyUI's `skeleton`; kept for compatibility."
   )
 
   attr(:shape, :string,
     default: "rounded",
     values: ~w(rounded pill circle square lg),
-    doc: "`rounded` is LineOne's small radius, `lg` the large one, `square` none."
+    doc: "`rounded` is the theme's small radius, `lg` the large one, `square` none."
   )
 
   attr(:class, :any, default: nil)
@@ -71,7 +72,7 @@ defmodule LineaUI.Components.Skeleton do
     ~H"""
     <div
       aria-hidden="true"
-      class={merge(["sg-skel", animation(@animation), @shape, @class])}
+      class={merge(["skeleton", animation(@animation), shape(@shape), @class])}
       {@rest}
     >
     </div>
@@ -84,8 +85,8 @@ defmodule LineaUI.Components.Skeleton do
       aria-hidden="true"
       class={
         merge([
+          "skeleton",
           animation(@animation),
-          "bg-slate-150 bg-[linear-gradient(90deg,var(--color-slate-150),var(--color-slate-100),var(--color-slate-150))] dark:bg-navy-500 dark:bg-none",
           shape(@shape),
           @class
         ])

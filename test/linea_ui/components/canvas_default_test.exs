@@ -76,9 +76,9 @@ defmodule LineaUI.Components.CanvasDefaultTest do
     refute has?(old, "[class*='rounded-[9px]']")
   end
 
-  test "skeleton: canvas by default, lineone is the old look" do
-    assert has?(render(~H"<.skeleton />"), ".sg-skel")
-    refute has?(render(~H"<.skeleton variant=\"lineone\" />"), ".sg-skel")
+  test "skeleton: daisyUI's skeleton in both variants" do
+    assert has?(render(~H"<.skeleton />"), ".skeleton")
+    assert has?(render(~H"<.skeleton variant=\"lineone\" />"), ".skeleton")
   end
 
   test "spinner: canvas by default, border is the old look" do
