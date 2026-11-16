@@ -139,7 +139,7 @@ defmodule LineaUI.Components.Rating do
       help={@help}
       errors={@errors}
       as="div"
-      label_class="mb-2 text-xs-plus text-slate-500 dark:text-navy-200"
+      label_class="mb-2 text-xs-plus text-base-content/60"
     >
       <div
         id={@id}
@@ -153,7 +153,7 @@ defmodule LineaUI.Components.Rating do
             @styles.gap,
             @disabled && "pointer-events-none opacity-50",
             !@outline &&
-              "[&_input:checked~label_svg]:text-yellow-400 [&_label:hover_svg]:text-yellow-400 [&_label:hover~label_svg]:text-yellow-400 [&_label:hover_svg]:scale-110",
+              "[&_input:checked~label_svg]:text-warning [&_label:hover_svg]:text-warning [&_label:hover~label_svg]:text-warning [&_label:hover_svg]:scale-110",
             @outline &&
               "[&_input:checked~label_svg]:opacity-100 [&_label:hover_svg]:opacity-100 [&_label:hover~label_svg]:opacity-100 [&_label:hover_svg]:scale-110",
             @class
@@ -184,8 +184,8 @@ defmodule LineaUI.Components.Rating do
               {outline_stroke(@outline)}
               class={[
                 @styles.box,
-                !@outline && "text-slate-300 dark:text-navy-500",
-                @outline && "text-(--warn) opacity-30",
+                !@outline && "text-base-content/30",
+                @outline && "text-warning opacity-30",
                 "transition-[color,opacity,transform] duration-100 motion-reduce:transition-none"
               ]}
             >
@@ -218,7 +218,7 @@ defmodule LineaUI.Components.Rating do
       <span
         :if={@show_value}
         class={[
-          !@outline && "font-semibold tabular-nums text-slate-800 dark:text-navy-50",
+          !@outline && "font-semibold tabular-nums text-base-content",
           @outline && "font-mono font-bold text-(--ink)",
           @styles.text
         ]}
@@ -228,7 +228,7 @@ defmodule LineaUI.Components.Rating do
       <span
         :if={@count}
         class={[
-          !@outline && "tabular-nums text-slate-500 dark:text-navy-200",
+          !@outline && "tabular-nums text-base-content/60",
           @outline && "tabular-nums text-(--faint)",
           @styles.text
         ]}
@@ -246,7 +246,7 @@ defmodule LineaUI.Components.Rating do
 
   defp star(%{outline: true} = assigns) do
     ~H"""
-    <span class={["relative inline-block shrink-0 text-(--warn)", @box]} aria-hidden="true">
+    <span class={["relative inline-block shrink-0 text-warning", @box]} aria-hidden="true">
       <span class="absolute inset-0 block overflow-hidden opacity-30">
         <svg viewBox="0 0 24 24" fill="none" {outline_stroke(true)} class={["block", @box]}>
           <path d={@path} />
@@ -268,12 +268,12 @@ defmodule LineaUI.Components.Rating do
   defp star(assigns) do
     ~H"""
     <span class={["relative inline-block shrink-0", @box]} aria-hidden="true">
-      <span class="absolute inset-0 block overflow-hidden text-slate-300 dark:text-navy-500">
+      <span class="absolute inset-0 block overflow-hidden text-base-content/20">
         <svg viewBox="0 0 24 24" fill="currentColor" class={["block", @box]}><path d={@path} /></svg>
       </span>
       <span
         :if={@fill > 0}
-        class="absolute inset-0 block overflow-hidden text-yellow-400"
+        class="absolute inset-0 block overflow-hidden text-warning"
         style={"width: #{percent(@fill)}%"}
       >
         <svg viewBox="0 0 24 24" fill="currentColor" class={["block", @box]}><path d={@path} /></svg>
@@ -322,18 +322,18 @@ defmodule LineaUI.Components.Rating do
       {@rest}
     >
       <div>
-        <div class="text-4xl font-semibold leading-none tabular-nums text-slate-800 dark:text-navy-50">
+        <div class="text-4xl font-semibold leading-none tabular-nums text-base-content">
           {format(@mean, @decimal)}
         </div>
         <div class="my-1.5"><.rating value={@mean} size="sm" max={@max} /></div>
-        <span class="block text-xs-plus tabular-nums text-slate-500 dark:text-navy-200">
+        <span class="block text-xs-plus tabular-nums text-base-content/60">
           {delimit(@total_count)} {@unit}
         </span>
       </div>
       <ul class="m-0 list-none space-y-1.5 p-0">
         <li
           :for={row <- @rows}
-          class="grid grid-cols-[0.875rem_1fr_2.5rem] items-center gap-2.5 text-xs-plus text-slate-500 dark:text-navy-200"
+          class="grid grid-cols-[0.875rem_1fr_2.5rem] items-center gap-2.5 text-xs-plus text-base-content/60"
         >
           <span class="tabular-nums">{row.grade}</span>
           <span
@@ -342,7 +342,7 @@ defmodule LineaUI.Components.Rating do
             aria-valuemin="0"
             aria-valuemax="100"
             aria-valuenow={row.percent}
-            class="h-2 overflow-hidden rounded bg-slate-150 dark:bg-navy-500"
+            class="h-2 overflow-hidden rounded bg-base-200"
           >
             <span class="block h-full rounded bg-warning" style={"width: #{row.percent}%"}></span>
           </span>

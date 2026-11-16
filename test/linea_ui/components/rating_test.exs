@@ -103,7 +103,7 @@ defmodule LineaUI.Components.RatingTest do
 
     assert html =~ ~s(fill="none")
     assert html =~ ~s(stroke-width="1.7")
-    assert html =~ "text-(--warn)"
+    assert html =~ "text-warning"
     assert html =~ "opacity-30"
     assert html =~ "font-mono"
     assert html =~ "size-4"
@@ -115,6 +115,6 @@ defmodule LineaUI.Components.RatingTest do
 
     assert html =~ ~s(role="radiogroup")
     assert html =~ "input:checked~label_svg]:opacity-100"
-    refute html =~ "text-yellow-400"
+    refute html =~ "[&_input:checked~label_svg]:text-warning"
   end
 end
