@@ -200,39 +200,6 @@ defmodule LineaUI.Components.TabsTest do
     assert count(html, "#o-tab-b .lo-nav-n.st-over") == 0
   end
 
-  test "the segmented variant is a daisyUI tabs-box and a tab's count is a badge" do
-    html =
-      render(~H"""
-      <.tabs id="t" variant="segmented" selected="b">
-        <:tab name="a">A</:tab>
-        <:tab name="b" count={4}>B</:tab>
-      </.tabs>
-      """)
-
-    assert "tabs-box" in classes(html, "[role=tablist]")
-    assert "tab" in classes(html, "#t-tab-a")
-    assert html |> find("#t-tab-b .lo-nav-n") |> LazyHTML.text() == "4"
-    assert [] = html |> find("#t-tab-a .lo-nav-n") |> Enum.to_list()
-  end
-
-  test "the count badge is negative when the tab is overdue" do
-    assigns = %{__changed__: nil}
-
-    html =
-      rendered_to_string(~H"""
-      <.tabs id="o">
-        <:tab name="a" count={3} overdue>Late</:tab>
-        <:tab name="b" count={5}>Ok</:tab>
-        <:panel name="a">A</:panel>
-        <:panel name="b">B</:panel>
-      </.tabs>
-      """)
-
-    assert count(html, "#o-tab-a .lo-nav-n.st-over") == 1
-    assert count(html, "#o-tab-b .lo-nav-n") == 1
-    assert count(html, "#o-tab-b .lo-nav-n.st-over") == 0
-  end
-
   describe "variant nav" do
     test "renders a tabs-border nav with tab-active on the current tab, no hook and no roles" do
       html =
@@ -248,11 +215,11 @@ defmodule LineaUI.Components.TabsTest do
       assert count(html, "[phx-hook]") == 0
       assert count(html, "[role=tab], [role=tablist]") == 0
       assert count(html, "nav > a") == 3
-      assert count(html, "a.on[aria-current=page][data-phx-link=patch]") == 1
+      assert count(html, "a.tab-active[aria-current=page][data-phx-link=patch]") == 1
       assert html =~ ~r/Tasks<span class="lo-nav-n[^"]*">12<\/span>/
-      assert count(html, "a.on .lo-nav-n") == 1
-      assert count(html, "a[href='/system'][data-phx-link=redirect]:not(.on)") == 1
-      assert count(html, "a[href='/docs']:not(.on)") == 1
+      assert count(html, "a.tab-active .lo-nav-n") == 1
+      assert count(html, "a[href='/system'][data-phx-link=redirect]:not(.tab-active)") == 1
+      assert count(html, "a[href='/docs']:not(.tab-active)") == 1
     end
 
     test "selected nil leaves none current" do
@@ -264,7 +231,7 @@ defmodule LineaUI.Components.TabsTest do
         </.tabs>
         """)
 
-      assert count(html, "a.on") == 0
+      assert count(html, "a.tab-active") == 0
       assert count(html, "[aria-current]") == 0
     end
 
@@ -281,7 +248,7 @@ defmodule LineaUI.Components.TabsTest do
                1
 
       assert count(html, "a[role=button][phx-click=soon]") == 2
-      assert count(html, "a.on, [aria-current], [href]") == 0
+      assert count(html, "a.tab-active, [aria-current], [href]") == 0
     end
 
     test "soon and disabled tabs are not clickable and carry a title" do
@@ -293,7 +260,7 @@ defmodule LineaUI.Components.TabsTest do
         </.tabs>
         """)
 
-      assert count(html, "a[aria-disabled=true][title=Soon]:not([href]):not(.on)") == 1
+      assert count(html, "a[aria-disabled=true][title=Soon]:not([href]):not(.tab-active)") == 1
       assert count(html, "a[aria-disabled=true][title=Locked]:not([href])") == 1
       assert count(html, "[phx-click]") == 0
     end
@@ -308,7 +275,7 @@ defmodule LineaUI.Components.TabsTest do
         </.tabs>
         """)
 
-      assert count(html, "a.on[href='/a']") == 1
+      assert count(html, "a.tab-active[href='/a']") == 1
       assert count(html, "a[role=button]:not([href])") == 1
     end
   end

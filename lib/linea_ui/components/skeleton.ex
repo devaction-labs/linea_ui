@@ -17,7 +17,7 @@ defmodule LineaUI.Components.Skeleton do
         <.skeleton class="h-3 w-8/12" />
       </.skeleton_group>
 
-  `variant="canvas"` (the default; `variant="lineone"` is the old slate block) draws the design canvas's `sg-skel` (the warm gray gradient of the Signetum
+  `variant="canvas"` (the default; `variant="lineone"` is the old slate block) draws the daisyUI `skeleton` in the canvas tint (the warm gray gradient of the Signetum
   screens, 8px corners); `shape` still rounds it (`circle` for an avatar):
 
       <.skeleton variant="canvas" shape="circle" class="size-8" />

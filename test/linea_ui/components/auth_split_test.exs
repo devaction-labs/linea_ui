@@ -33,7 +33,7 @@ defmodule LineaUI.Components.AuthSplitTest do
     assert attr_of(html, ".linea-auth-providers a.linea-oauth", "href") == ["/auth/google"]
     assert "huge-google" in classes(html, ".linea-auth-providers a.linea-oauth > span")
     assert attr_of(html, ".linea-auth-providers button.linea-oauth", "type") == ["button"]
-    assert html =~ ~s(<div class="sg-divider" role="separator">Ou</div>)
+    assert html =~ ~s(<div class="divider" role="separator">Ou</div>)
     assert [_] = find(html, ".linea-auth-body #f") |> Enum.to_list()
     assert attr_of(html, ".linea-auth-aside img", "src") == ["/auth.jpg"]
     assert text(html, ".linea-auth-quote blockquote") == ["Em uma semana todos usavam."]

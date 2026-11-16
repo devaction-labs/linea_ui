@@ -137,21 +137,18 @@
 
 /* rules that style the canvas sg-* classes (or draw icons) stay unlayered so they keep winning over them */
 .sg-card.ai-trace-detail{display:flex;flex-direction:column;gap:8px;padding:12px 14px;font-size:12.5px}
-.ai-msg.me .sg-bubble{max-width:420px;border-bottom-right-radius:6px;box-shadow:inset 0 0 0 1px var(--line)}
+.ai-msg.me .lo-chat{max-width:420px;padding:0}
 .ai-spark.lo-ic{width:30px;height:30px;border-radius:10px}
 .sg-card.ai-proposal{width:100%;box-shadow:0 0 0 1px var(--ctl-line)}
 .sg-card.ai-suggestion{display:flex;flex-direction:column;align-items:stretch;gap:8px;flex:1 1 148px;max-width:170px;min-height:var(--ai-sug-h,128px);padding:14px;text-align:left;cursor:pointer;font:inherit;border:0;box-shadow:0 0 0 1px var(--ctl-line),0 10px 24px -14px rgb(20 20 25/.35);transition:box-shadow .15s}
 .sg-card.ai-suggestion:hover{box-shadow:0 0 0 1px var(--line-strong),0 10px 24px -14px rgb(20 20 25/.35)}
 .sg-card.ai-suggestion:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-.sg-tag.ai-pill{height:32px;padding:0 14px;border:0;cursor:pointer;font:inherit;font-size:12.5px;color:var(--muted);background:var(--sunken)}
-.sg-tag.ai-pill:hover{color:var(--ink)}
-.sg-tag.ai-pill:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.ai-pill{font-weight:400}
 @keyframes linea-glow{0%{background-position:0% 50%}100%{background-position:100% 50%}}
 @media (prefers-reduced-motion:reduce){.ai-greeting h1{animation-duration:12s}}
 .ai-conversations .sg-btn.block{justify-content:center}
 .ai-conversations .sg-kbd{margin-left:6px}
-.ai-conversations-search .sg-input{height:36px}
-.ai-conversations-search .sg-input input{color:var(--ink)}
+.ai-conversations-search .input{height:36px}
 @media (prefers-reduced-motion:no-preference){
   .ai-suggestion{transition:box-shadow .15s,transform .15s}
 }

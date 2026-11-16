@@ -282,7 +282,7 @@ defmodule LineaUI.Components.CardTableTest do
       </.card_table>
       """)
 
-    assert [_] = find(html, "#t-box.card.overflow-hidden table.sg-table") |> Enum.to_list()
+    assert [_] = find(html, "#t-box.card.overflow-hidden table.table.lo-table") |> Enum.to_list()
     assert find(html, "#t-box .sg-card-h h3") |> LazyHTML.text() == "Últimos pedidos"
     assert [_] = find(html, "#t-box .sg-card-h .meta a") |> Enum.to_list()
     assert [_] = find(html, "#t-box th.r") |> Enum.to_list()

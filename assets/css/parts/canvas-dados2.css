@@ -10,7 +10,7 @@
 .sg-stat-group:not(.sg-card){padding:0}
 .sg-stat-group.sg-stat-sunken{background:var(--sunken);border-radius:12px}
 .sg-stat-group.sg-stat-sunken.sg-card{box-shadow:none}
-.sg-stat .v.sm{font-size:18px}
+.lo-stat .v.sm{font-size:18px}
 
 /* ---------- Mini card ---------- */
 .sg-mini{display:flex;flex-direction:column;gap:10px;padding:14px}
@@ -40,7 +40,7 @@
 
 /* ---------- Table ---------- */
 /* The canvas marks a selected row by its tint alone: no accent bar on its first cell. */
-.sg-table > tbody > tr[data-selected="true"] > td:first-child{box-shadow:none}
+.lo-table > tbody > tr[data-selected="true"] > td:first-child{box-shadow:none}
 
 /* ---------- Icon ---------- */
 /* The boxed icon (`lo-ic`) in its smaller sizes: a timeline point and a tree row. */

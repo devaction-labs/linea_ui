@@ -38,6 +38,6 @@ defmodule LineaUI.Components.CashTimerTest do
     assert [_] = find(closed, "#c #open") |> Enum.to_list()
     assert "warn" in classes(alert, "#a .lo-ic")
     assert find(alert, "#a .linea-cash-diff") |> LazyHTML.text() == "− R$ 12,50"
-    assert find(alert, "#a .sg-stat dt") |> Enum.map(&LazyHTML.text/1) == ["Esperado", "Contado"]
+    assert find(alert, "#a .stat dt") |> Enum.map(&LazyHTML.text/1) == ["Esperado", "Contado"]
   end
 end

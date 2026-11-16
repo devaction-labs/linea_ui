@@ -762,7 +762,7 @@ defmodule LineaUI.Components.DataTable do
     """
   end
 
-  # the first load: the headers over skeleton rows (the canvas `sg-skel` bars)
+  # the first load: the headers over skeleton rows (daisyUI `skeleton` bars)
   attr(:col, :any, required: true)
   attr(:loading_rows, :integer, required: true)
 

@@ -90,9 +90,9 @@ defmodule LineaUI.Components.CashTimer do
         {render_slot(@action)}
       </div>
       <dl :if={@stat != []} class="linea-cash-stats">
-        <div :for={stat <- @stat} class="sg-stat">
-          <dt class="l">{stat.label}</dt>
-          <dd class="v">{render_slot(stat)}</dd>
+        <div :for={stat <- @stat} class="stat lo-stat">
+          <dt class="stat-title l">{stat.label}</dt>
+          <dd class="stat-value v">{render_slot(stat)}</dd>
         </div>
       </dl>
     </div>

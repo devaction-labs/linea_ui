@@ -168,7 +168,7 @@ defmodule LineaUI.Components.CardTable do
 
   `width` is the CSS track of the column (`max-content` by default; `minmax(120px,1.3fr)` to let it take what is
   left). `align` is `start` (default) or `end` (numbers). Text is cut with an ellipsis; `truncate={false}` lets
-  it wrap (in the card too: a `role="title"` is not cut at two lines then; with the default, even a `sg-cellx` of avatar and text ends in an ellipsis). `sort_key` with the table's `on_sort` makes the header a button, as in `table/1`.
+  it wrap (in the card too: a `role="title"` is not cut at two lines then; with the default, even a `lo-cellx` of avatar and text ends in an ellipsis). `sort_key` with the table's `on_sort` makes the header a button, as in `table/1`.
 
   ## Rows
 
@@ -186,7 +186,7 @@ defmodule LineaUI.Components.CardTable do
 
   ## Flat
 
-  `variant="flat"` is the canvas card table: a plain table in a card (`sg-card flush` and `sg-table`), for
+  `variant="flat"` is the canvas card table: a plain table in a card (a daisyUI `card` and `table`), for
   short lists on a dashboard ("Últimos pedidos", "Maiores clientes"). The `title` and `<:actions>` (a "Ver
   todos" link, drawn quiet) head the card; `<:top>` takes the place of the heading (tabs that filter the
   table). Columns keep `label`, `align` and `class`, and also take `priority`, `role` and `card`: a column leaves
@@ -413,7 +413,7 @@ defmodule LineaUI.Components.CardTable do
           {render_slot(@actions)}
         </div>
       </div>
-      <table class="sg-table">
+      <table class="table lo-table">
         <thead>
           <tr>
             <th :for={col <- @col} class={col[:align] == "end" && "r"} data-p={flat_p(col)}>
@@ -926,12 +926,12 @@ defmodule LineaUI.Components.CardTable do
     & .linea-ctable-row > .linea-ctable-cell[data-role="status"] { display: block; grid-area: status; justify-self: end; padding-left: 10px; }
     & .linea-ctable-row > .linea-ctable-cell[data-role="value"] { display: block; grid-area: value; justify-self: end; align-self: end; padding-left: 10px; }
     & .linea-ctable-row > .linea-ctable-cell[data-role="title"] { display: -webkit-box; grid-area: title; white-space: normal; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
-    & .linea-ctable-row > .linea-ctable-cell[data-role="title"]:has(> .sg-cellx) { display: block; white-space: nowrap; }
-    & .linea-ctable-row > .linea-ctable-cell[data-role="title"] > .sg-cellx { min-width: 0; }
-    & .linea-ctable-row > .linea-ctable-cell[data-role="title"] .sg-cellx > * { min-width: 0; }
-    & .linea-ctable-row > .linea-ctable-cell[data-role="title"] .sg-cellx > :last-child, & .linea-ctable-row > .linea-ctable-cell[data-role="title"] .sg-cellx > :last-child > * { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    & .linea-ctable-row > .linea-ctable-cell[data-role="title"]:has(> .lo-cellx) { display: block; white-space: nowrap; }
+    & .linea-ctable-row > .linea-ctable-cell[data-role="title"] > .lo-cellx { min-width: 0; }
+    & .linea-ctable-row > .linea-ctable-cell[data-role="title"] .lo-cellx > * { min-width: 0; }
+    & .linea-ctable-row > .linea-ctable-cell[data-role="title"] .lo-cellx > :last-child, & .linea-ctable-row > .linea-ctable-cell[data-role="title"] .lo-cellx > :last-child > * { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     & .linea-ctable-row > .linea-ctable-cell[data-role="title"].is-wrap { display: block; overflow: visible; text-overflow: clip; white-space: normal; -webkit-line-clamp: unset; }
-    & .linea-ctable-row > .linea-ctable-cell[data-role="title"].is-wrap .sg-cellx > :last-child, & .linea-ctable-row > .linea-ctable-cell[data-role="title"].is-wrap .sg-cellx > :last-child > * { overflow: visible; text-overflow: clip; white-space: normal; }
+    & .linea-ctable-row > .linea-ctable-cell[data-role="title"].is-wrap .lo-cellx > :last-child, & .linea-ctable-row > .linea-ctable-cell[data-role="title"].is-wrap .lo-cellx > :last-child > * { overflow: visible; text-overflow: clip; white-space: normal; }
     & .linea-ctable-pop { display: none !important; }
     & .linea-ctable-row { cursor: auto !important; }
     & .linea-ctable-nn { display: inline; }
