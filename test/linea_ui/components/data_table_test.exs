@@ -53,7 +53,7 @@ defmodule LineaUI.Components.DataTableTest do
     assert "h-[34px]" in classes(html, "#g-table th")
     assert "h-[38px]" in classes(html, "#g-table td")
     assert "sticky" in classes(html, "#g-table th")
-    assert "border-slate-150" in classes(html, "#g-table td")
+    assert "border-base-300" in classes(html, "#g-table td")
   end
 
   test "density options reach the table" do
