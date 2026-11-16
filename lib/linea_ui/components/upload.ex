@@ -205,7 +205,7 @@ defmodule LineaUI.Components.Upload do
         class="card card-border bg-base-100 p-5 row lu-upload-file"
         data-state={state(@upload, entry)}
       >
-        <span class="sg-ic">
+        <span class="lo-ic">
           <svg class="i" viewBox="0 0 24 24" aria-hidden="true">
             <path d="M7 3h7l5 5v13H7zM14 3v5h5M10 13h6M10 17h6" />
           </svg>
@@ -215,16 +215,17 @@ defmodule LineaUI.Components.Upload do
             <b class="ink lu-upload-name" title={entry.client_name}>{entry.client_name}</b>
             <span class="faint mono lu-upload-size">{size(entry.client_size)}</span>
           </div>
-          <div
-            class="sg-meter acc"
+          <progress
+            class="progress progress-primary"
             role="progressbar"
             aria-label={(entry.done? && @complete_label) || @uploading_label}
             aria-valuenow={entry.progress}
             aria-valuemin="0"
             aria-valuemax="100"
+            value={entry.progress}
+            max="100"
           >
-            <i style={"width: #{entry.progress}%"}></i>
-          </div>
+          </progress>
         </div>
         <button
           type="button"

@@ -400,7 +400,7 @@
   fill: var(--ink);
 }
 
-/* bar_list: a ranking over full-width tracks (the canvas `sg-meter acc` rows) */
+/* bar_list: a ranking over full-width tracks (the canvas `lo-meter acc` rows) */
 .linea-bar-list {
   display: flex;
   flex-direction: column;

@@ -308,7 +308,7 @@ defmodule LineaUI.Components.Radio do
     ~H"""
     <label class={["lu-rcard", @count != nil && "is-stacked"]} data-color={@color}>
       <span :if={@control == "start"} class="lu-rcard-control">{render_slot(@inner_block)}</span>
-      <span :if={@icon} class="sg-ic lu-rcard-icon">
+      <span :if={@icon} class="lo-ic lu-rcard-icon">
         <LineaUI.Components.Icon.icon name={@icon} class="size-4" />
       </span>
       <span class="lu-rcard-text">

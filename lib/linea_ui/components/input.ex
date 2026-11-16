@@ -82,7 +82,7 @@ defmodule LineaUI.Components.Input do
 
       <.input field={@form[:password]} type="password" label="Senha" help="Mínimo de 8 caracteres">
         <:label_aside><.link navigate={~p"/forgot"}>Esqueci</.link></:label_aside>
-        <:below><div class="sg-meter">…</div></:below>
+        <:below><div class="lo-meter">…</div></:below>
       </.input>
 
   The mask runs in the `LineaUI.InputMask` hook, so a masked input needs a stable `id` (it gets

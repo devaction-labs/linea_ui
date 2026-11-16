@@ -262,9 +262,9 @@ defmodule LineaUI.Components.StepsTest do
       """)
 
     assert "is-vertical" in classes(html, "ol")
-    assert "pos" in classes(html, "li:nth-child(1) .sg-ic")
-    assert "acc" in classes(html, "li:nth-child(2) .sg-ic")
-    assert [_] = find(html, "li:nth-child(2) .sg-ic .huge-file-02") |> Enum.to_list()
+    assert "pos" in classes(html, "li:nth-child(1) .lo-ic")
+    assert "acc" in classes(html, "li:nth-child(2) .lo-ic")
+    assert [_] = find(html, "li:nth-child(2) .lo-ic .huge-file-02") |> Enum.to_list()
     assert stepper_texts(html, ".stepper-canvas-sub") == ["Done"]
   end
 

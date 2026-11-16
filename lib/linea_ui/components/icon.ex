@@ -6,7 +6,7 @@ defmodule LineaUI.Components.Icon do
       <.icon name="huge-search-01" class="size-4" />
       <.glyph name={:chevron_down} class="size-4" />
 
-  `boxed` puts the icon in the canvas icon box (`sg-ic`, 36px with 11px corners), `tone` colours the box by state:
+  `boxed` puts the icon in the canvas icon box (`lo-ic`, 36px with 11px corners), `tone` colours the box by state:
 
       <.icon name="huge-tick-02" boxed tone="success" />
       <.icon name="huge-file-01" boxed box_size="sm" />
@@ -524,7 +524,7 @@ defmodule LineaUI.Components.Icon do
 
     ~H"""
     <span
-      class={merge(["sg-ic", @tone_class, box_size(@box_size), @box_class])}
+      class={merge(["lo-ic", @tone_class, box_size(@box_size), @box_class])}
       style={@box_style}
       aria-hidden="true"
       {@rest}
@@ -545,8 +545,8 @@ defmodule LineaUI.Components.Icon do
     end
   end
 
-  defp box_size("sm"), do: "sg-ic-sm"
-  defp box_size("md"), do: "sg-ic-md"
+  defp box_size("sm"), do: "lo-ic-sm"
+  defp box_size("md"), do: "lo-ic-md"
   defp box_size(_size), do: nil
 
   defp bare_icon(%{name: "huge-" <> _} = assigns) do

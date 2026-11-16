@@ -138,7 +138,13 @@ defmodule LineaUI.Components.Segmented do
         phx-hook="LineaUI.Segmented"
         phx-target={@target}
         class={
-          merge(["sg-seg", @size == "sm" && "sm", @full && "flex w-full", @label && "mt-1.5", @class])
+          merge([
+            "lo-seg tabs tabs-box flex-nowrap",
+            @size == "sm" && "sm tabs-sm",
+            @full && "flex w-full",
+            @label && "mt-1.5",
+            @class
+          ])
         }
         data-value={@value}
         data-shape={@shape == "pill" && "pill"}
@@ -161,13 +167,13 @@ defmodule LineaUI.Components.Segmented do
           id={segment.id}
           aria-pressed={bool(pressed)}
           disabled={@disabled || segment.disabled}
-          class={merge([@full && "flex-1 justify-center"])}
+          class={merge(["tab gap-1.5", @full && "flex-1 justify-center"])}
           phx-mounted='[["ignore_attrs",{"attrs":["aria-pressed","tabindex"]}]]'
           data-value={segment.value}
         >
           <.icon :if={segment.icon} name={segment.icon} class="size-4 shrink-0" />
           {segment.label}
-          <span :if={segment.count != nil} class="font-mono font-normal text-(--faint)">
+          <span :if={segment.count != nil} class="badge badge-ghost badge-xs font-mono font-normal">
             {segment.count}
           </span>
         </button>

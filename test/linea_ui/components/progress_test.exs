@@ -55,7 +55,7 @@ defmodule LineaUI.Components.ProgressTest do
       </.progress_stack>
       """)
 
-    assert "sg-stack" in classes(html, "#s")
+    assert "lo-stack" in classes(html, "#s")
     assert LazyHTML.attribute(find(html, "#s"), "aria-label") == ["Canais"]
 
     assert LazyHTML.attribute(find(html, "#s i"), "style") == [
@@ -70,7 +70,7 @@ defmodule LineaUI.Components.ProgressTest do
   test "variant gradient draws the thin app-gradient meter" do
     html = render(~H|<.progress id="p" value={72} variant="gradient" color="success" />|)
 
-    assert ["sg-meter", "grad"] == classes(html, "#p")
+    assert ["lo-meter", "grad"] == classes(html, "#p")
     assert LazyHTML.attribute(find(html, "#p i"), "style") == ["width: 72.0%"]
   end
 end

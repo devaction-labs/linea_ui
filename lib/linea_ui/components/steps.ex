@@ -275,7 +275,7 @@ defmodule LineaUI.Components.Steps do
         data-state={entry.state}
       >
         <span class="flex flex-col items-center">
-          <span class={["sg-ic stepper-canvas-dot", canvas_tile(entry.state)]}>
+          <span class={["lo-ic stepper-canvas-dot", canvas_tile(entry.state)]}>
             <.canvas_marker entry={entry} />
           </span>
           <span class="stepper-canvas-line"></span>

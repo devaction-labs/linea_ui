@@ -52,7 +52,7 @@ defmodule LineaUI.Components.KanbanTest do
     assert "rounded-[18px]" in classes(html, "section")
     assert "bg-[var(--sunken)]" in classes(html, "section")
     assert LazyHTML.text(find(html, "section > div")) =~ "2"
-    assert LazyHTML.text(find(html, "section > div > span.sg-nav-n")) =~ "2"
+    assert LazyHTML.text(find(html, "section > div > span.lo-nav-n")) =~ "2"
   end
 
   test "the list and the card item default to the id" do

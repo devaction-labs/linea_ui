@@ -25,12 +25,12 @@
 .sg-alert-body{flex:1;min-width:0}
 .sg-alert-actions{display:flex;align-items:center;gap:8px;margin-top:10px}
 
-/* ---------- Progress: the sg-meter tones ---------- */
-.sg-meter.pos i{background:var(--pos)}
-.sg-meter.warn i{background:var(--warn)}
-.sg-meter.neg i{background:var(--neg)}
-.sg-meter.info i{background:var(--info)}
-.sg-meter.grad i{background:var(--grad,linear-gradient(90deg,var(--accent),var(--info)))}
+/* ---------- Progress: the lo-meter tones ---------- */
+.lo-meter.pos i{background:var(--pos)}
+.lo-meter.warn i{background:var(--warn)}
+.lo-meter.neg i{background:var(--neg)}
+.lo-meter.info i{background:var(--info)}
+.lo-meter.grad i{background:var(--grad,linear-gradient(90deg,var(--accent),var(--info)))}
 
 /* ---------- Skeleton (variant="canvas"): sg-skel shapes ---------- */
 .sg-skel.circle,.sg-skel.pill{border-radius:999px}
@@ -55,8 +55,8 @@
 .sg-menu > .sg-menu-item:is(:disabled, [aria-disabled="true"]){opacity:.45;cursor:not-allowed}
 .sg-menu-ic{display:inline-flex;flex:none;color:var(--muted)}
 
-/* ---------- Toast card (toast_card/1): the sg-toast parts ---------- */
-.sg-toast .sg-toast-ic{width:30px;height:30px}
-.sg-toast-body{display:flex;flex-direction:column;flex:1;min-width:0}
-.sg-toast-desc{font-size:12.5px;color:var(--faint)}
-.sg-toast > .sg-btn,.sg-toast > .sg-ib{flex:none}
+/* ---------- Toast card (toast_card/1): the lo-toast parts ---------- */
+.lo-toast .lo-toast-ic{width:30px;height:30px}
+.lo-toast-body{display:flex;flex-direction:column;flex:1;min-width:0}
+.lo-toast-desc{font-size:12.5px;color:var(--faint)}
+.lo-toast > .btn{flex:none}

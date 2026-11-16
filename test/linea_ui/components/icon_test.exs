@@ -86,10 +86,10 @@ defmodule LineaUI.Components.IconTest do
       <.icon id="md" name="huge-flash" tone="accent" box_size="md" />
       """)
 
-    assert ["sg-ic"] == classes(html, "#plain")
+    assert ["lo-ic"] == classes(html, "#plain")
     assert ["huge-file-01", "size-4"] == classes(html, "#plain > span")
-    assert ["sg-ic", "pos"] == classes(html, "#ok")
-    assert ["sg-ic", "acc", "sg-ic-md"] == classes(html, "#md")
+    assert ["lo-ic", "pos"] == classes(html, "#ok")
+    assert ["lo-ic", "acc", "lo-ic-md"] == classes(html, "#md")
   end
 
   test "an inner block draws its own icon in a box of free size and a canvas tone" do
@@ -100,7 +100,7 @@ defmodule LineaUI.Components.IconTest do
       <.icon id="c" tone="neg" name="huge-flash" box_size="md" />
       """)
 
-    assert ["sg-ic", "acc"] == classes(html, "#a")
+    assert ["lo-ic", "acc"] == classes(html, "#a")
 
     assert LazyHTML.attribute(find(html, "#a"), "style") == [
              "width:30px;height:30px;border-radius:9px"
@@ -108,13 +108,13 @@ defmodule LineaUI.Components.IconTest do
 
     assert [_] = find(html, "#a > svg#own") |> Enum.to_list()
     assert find(html, "#a > span") |> Enum.to_list() == []
-    assert ["sg-ic", "warn"] == classes(html, "#b")
+    assert ["lo-ic", "warn"] == classes(html, "#b")
 
     assert LazyHTML.attribute(find(html, "#b"), "style") == [
              "width:32px;height:32px;border-radius:10px"
            ]
 
-    assert ["sg-ic", "neg", "sg-ic-md"] == classes(html, "#c")
+    assert ["lo-ic", "neg", "lo-ic-md"] == classes(html, "#c")
     assert LazyHTML.attribute(find(html, "#c"), "style") in [[], [""]]
   end
 end

@@ -138,7 +138,7 @@
 /* rules that style the canvas sg-* classes (or draw icons) stay unlayered so they keep winning over them */
 .sg-card.ai-trace-detail{display:flex;flex-direction:column;gap:8px;padding:12px 14px;font-size:12.5px}
 .ai-msg.me .sg-bubble{max-width:420px;border-bottom-right-radius:6px;box-shadow:inset 0 0 0 1px var(--line)}
-.ai-spark.sg-ic{width:30px;height:30px;border-radius:10px}
+.ai-spark.lo-ic{width:30px;height:30px;border-radius:10px}
 .sg-card.ai-proposal{width:100%;box-shadow:0 0 0 1px var(--ctl-line)}
 .sg-card.ai-suggestion{display:flex;flex-direction:column;align-items:stretch;gap:8px;flex:1 1 148px;max-width:170px;min-height:var(--ai-sug-h,128px);padding:14px;text-align:left;cursor:pointer;font:inherit;border:0;box-shadow:0 0 0 1px var(--ctl-line),0 10px 24px -14px rgb(20 20 25/.35);transition:box-shadow .15s}
 .sg-card.ai-suggestion:hover{box-shadow:0 0 0 1px var(--line-strong),0 10px 24px -14px rgb(20 20 25/.35)}

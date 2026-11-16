@@ -45,7 +45,7 @@ defmodule LineaUI.Components.RadioTest do
       </.radio_group>
       """)
 
-    assert "sg-ic" in classes(html, "label .lu-rcard-icon")
+    assert "lo-ic" in classes(html, "label .lu-rcard-icon")
     assert html |> find("label:first-child > span:last-child input") |> Enum.count() == 1
 
     assert "is-stacked" in (html

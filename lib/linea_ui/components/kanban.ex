@@ -351,7 +351,7 @@ defmodule LineaUI.Components.Kanban do
           {render_slot(@icon)}
         </span>
         <span class="text-[13.5px] font-[550] text-base-content">{@label}</span>
-        <span :if={@shown && !@exceeded} class="sg-nav-n">{@shown}</span>
+        <span :if={@shown && !@exceeded} class="lo-nav-n badge badge-ghost badge-sm">{@shown}</span>
         <span :if={@shown && @exceeded} class={merge([@pill, "ml-auto", @over_limit_class])}>
           {@shown}
         </span>

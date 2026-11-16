@@ -73,7 +73,7 @@ defmodule LineaUI.Components.CashTimer do
       {@rest}
     >
       <div class="linea-cash-head">
-        <span class={["sg-ic", @tone]} aria-hidden="true">
+        <span class={["lo-ic", @tone]} aria-hidden="true">
           <svg class="linea-cash-icon" viewBox="0 0 24 24">
             <path d="M3 7h18v10H3zM12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM6 10v4M18 10v4" />
           </svg>

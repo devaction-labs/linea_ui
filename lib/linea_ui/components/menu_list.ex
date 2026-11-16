@@ -31,7 +31,7 @@ defmodule LineaUI.Components.MenuList do
         <:item value="shipping">Shipping</:item>
       </.menu_list>
 
-  `variant="static"` is the canvas `sg-list`: plain rows (`menu_row`) with an icon, a title over a
+  `variant="static"` is the canvas `lo-list`: plain rows (`menu_row`) with an icon, a title over a
   sub line, a value at the right and an unread dot; see `menu_row`.
 
   Streams render one `menu_item` per row:
@@ -115,7 +115,7 @@ defmodule LineaUI.Components.MenuList do
     default: "link",
     values: ~w(link solid pill gradient bordered static),
     doc:
-      "LineOne's menu list examples 1–2 (`link`), 3–4/7–8 (`solid`), 5–6 (`pill`), 9–10 (`gradient`), 11–12 (`bordered`). `static` is the canvas `sg-list` of `menu_row`s: a `<div>` (no `<ul>`), rows given by `rows` and `:row`, which render the `menu_row` themselves (with its `id`, for a stream) and `:item` slots become rows."
+      "LineOne's menu list examples 1–2 (`link`), 3–4/7–8 (`solid`), 5–6 (`pill`), 9–10 (`gradient`), 11–12 (`bordered`). `static` is the canvas `lo-list` of `menu_row`s: a `<div>` (no `<ul>`), rows given by `rows` and `:row`, which render the `menu_row` themselves (with its `id`, for a stream) and `:item` slots become rows."
   )
 
   attr(:color, :string,
@@ -162,7 +162,7 @@ defmodule LineaUI.Components.MenuList do
 
   defp render_list(%{variant: "static"} = assigns) do
     ~H"""
-    <div id={@id} class={merge(["sg-list", @class])} phx-update={@stream? && "stream"} {@rest}>
+    <div id={@id} class={merge(["list lo-list", @class])} phx-update={@stream? && "stream"} {@rest}>
       <.menu_row
         :for={item <- @item}
         {Map.drop(item, [:__slot__, :inner_block, :active, :value, :count])}
@@ -206,7 +206,7 @@ defmodule LineaUI.Components.MenuList do
   end
 
   @doc """
-  Renders one static row of the canvas `sg-list` (`<.menu_list variant="static">`): an optional
+  Renders one static row of the canvas `lo-list` (`<.menu_list variant="static">`): an optional
   icon or avatar, a title over a sub line, a value at the right and an unread dot. The row is a
   `<div>`, or a link with `href`, `navigate` or `patch`; `phx-click` and any other attribute go
   through `rest`. `id` is what a stream needs on each row.
@@ -224,13 +224,13 @@ defmodule LineaUI.Components.MenuList do
   attr(:unread_label, :string, default: "Unread", doc: "Screen reader text of the dot.")
   attr(:class, :any, default: nil)
   attr(:rest, :global, include: ~w(href navigate patch method download replace))
-  slot(:icon, doc: "Before the text: an `sg-ic` tile, an avatar.")
+  slot(:icon, doc: "Before the text: an `lo-ic` tile, an avatar.")
   slot(:value, doc: "At the right.")
   slot(:inner_block, doc: "Free content after `title` and `sub` (or alone).")
 
   def menu_row(assigns) do
     assigns
-    |> assign(:class, merge(["sg-li", assigns.class]))
+    |> assign(:class, merge(["list-row lo-li", assigns.class]))
     |> render_row()
   end
 
@@ -277,7 +277,7 @@ defmodule LineaUI.Components.MenuList do
     </div>
     {render_slot(@value)}<span
       :if={@unread}
-      class="size-2 shrink-0 rounded-full bg-[var(--accent)]"
+      class="status status-primary shrink-0"
       role="img"
       aria-label={@unread_label}
     ></span>

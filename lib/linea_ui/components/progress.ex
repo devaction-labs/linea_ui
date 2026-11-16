@@ -17,7 +17,7 @@ defmodule LineaUI.Components.Progress do
   The color is daisyUI's (`progress-primary`, `progress-success`…; `neutral` is the ink bar); `gradient` keeps the
   kit's thin gradient meter.
 
-  `progress_stack/1` is the canvas's stacked bar (`sg-stack`), the parts of a total side by side:
+  `progress_stack/1` is the canvas's stacked bar (`lo-stack`), the parts of a total side by side:
 
       <.progress_stack label="Sales by channel">
         <:segment value={46} label="Counter" />
@@ -86,7 +86,7 @@ defmodule LineaUI.Components.Progress do
       aria-valuemin="0"
       aria-valuemax={@max}
       aria-valuenow={!@indeterminate && @value}
-      class={merge(["sg-meter grad", @class])}
+      class={merge(["lo-meter grad", @class])}
       {@rest}
     >
       <i class={@bar_class} style={!@indeterminate && "width: #{@percent}%"}></i>
@@ -135,7 +135,7 @@ defmodule LineaUI.Components.Progress do
   defp clamp(_value, _max), do: 0
 
   @doc """
-  Renders the canvas's stacked bar (`sg-stack`): one segment per part, its width the part's share of `max`
+  Renders the canvas's stacked bar (`lo-stack`): one segment per part, its width the part's share of `max`
   (100 by default), in the chart colors `--c1`, `--c2`... in order unless a segment sets `color`.
 
       <.progress_stack label="Sales by channel: counter 46%, online 33%, reps 21%">
@@ -163,7 +163,7 @@ defmodule LineaUI.Components.Progress do
 
   def progress_stack(assigns) do
     ~H"""
-    <div role="img" aria-label={@label} class={merge(["sg-stack", @class])} {@rest}>
+    <div role="img" aria-label={@label} class={merge(["lo-stack", @class])} {@rest}>
       <i
         :for={{segment, index} <- Enum.with_index(@segment)}
         title={segment[:label]}

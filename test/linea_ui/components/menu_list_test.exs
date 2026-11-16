@@ -96,7 +96,7 @@ defmodule LineaUI.Components.MenuListTest do
     assert find(html, "#l span.ml-auto") |> LazyHTML.text() == "3"
   end
 
-  test "a static list renders sg-list with sg-li rows" do
+  test "a static list is a daisyUI list of list-row rows" do
     html =
       render(~H"""
       <.menu_list variant="static" id="l" class="mt-2">
@@ -112,9 +112,9 @@ defmodule LineaUI.Components.MenuListTest do
       </.menu_list>
       """)
 
-    assert ["sg-list", "mt-2"] -- classes(html, "div#l") == []
-    assert [_, _] = find(html, "#l > .sg-li") |> Enum.to_list()
-    assert [_] = find(html, "#l > a.sg-li[href='/a']") |> Enum.to_list()
+    assert ["list", "lo-list", "mt-2"] -- classes(html, "div#l") == []
+    assert [_, _] = find(html, "#l > .lo-li") |> Enum.to_list()
+    assert [_] = find(html, "#l > a.lo-li[href='/a']") |> Enum.to_list()
     assert [_] = find(html, "#l span[aria-label=Unread]") |> Enum.to_list()
     assert [] = find(html, "#l ul") |> Enum.to_list()
   end
@@ -131,11 +131,11 @@ defmodule LineaUI.Components.MenuListTest do
       <.menu_row id="c" phx-click="open" phx-value-id="3" title="C" />
       """)
 
-    assert "sg-li" in classes(html, "div#a")
+    assert "lo-li" in classes(html, "div#a")
     assert find(html, "#a .t") |> LazyHTML.text() == "Title"
     assert find(html, "#a .s") |> LazyHTML.text() == "Sub"
     assert [_] = find(html, "#a > i#ic") |> Enum.to_list()
-    assert [_] = find(html, "a#b.sg-li[data-phx-link=redirect]") |> Enum.to_list()
+    assert [_] = find(html, "a#b.lo-li[data-phx-link=redirect]") |> Enum.to_list()
     assert find(html, "#b .t") |> LazyHTML.text() == "Own"
     assert LazyHTML.attribute(find(html, "div#c"), "phx-click") == ["open"]
     assert [] = find(html, "#a [aria-label]") |> Enum.to_list()
@@ -207,7 +207,7 @@ defmodule LineaUI.Components.MenuListLiveTest do
 
   test "a static list streams its rows", %{conn: conn} do
     {:ok, _view, html} = live_isolated(conn, StaticLive)
-    assert [_] = find(html, "div#st.sg-list[phx-update=stream]") |> Enum.to_list()
+    assert [_] = find(html, "div#st.lo-list[phx-update=stream]") |> Enum.to_list()
     assert [_, _] = find(html, "#st > #rows-a, #st > #rows-b") |> Enum.to_list()
   end
 end

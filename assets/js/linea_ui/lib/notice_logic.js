@@ -102,7 +102,7 @@ export const kindOf = (kind) => (KINDS.includes(kind) ? kind : null)
 /** How long a finished progress toast stays before it leaves. */
 export const PROGRESS_DONE_MS = 1600
 
-/** The states of a status toast (`sg-toast st`): running, queued, done and failed. */
+/** The states of a status toast (`lo-toast st`): running, queued, done and failed. */
 export const STATUSES = ["run", "queue", "ok", "err"]
 
 /**
@@ -250,7 +250,7 @@ export const actionPayload = (action, id) => ({...(action.value ?? {}), toast_id
 /** An action's `%JS{}` as the string `liveSocket.execJS` takes, or `null` without one. */
 export const encodedJS = (js) => (js === null || js === undefined ? null : typeof js === "string" ? js : JSON.stringify(js))
 
-/** Whether a toast is drawn as the canvas card (`sg-toast`): every rich toast except the ones in steps. */
+/** Whether a toast is drawn as the canvas card (`lo-toast`): every rich toast except the ones in steps. */
 export const canvasOf = (input) => isRich(input) && stepsOf(input) === null
 
 const CANVAS_AURA_TONES = {assistant: "ai", primary: "", secondary: "violet", info: "info", success: "pos", warning: "warn", error: "neg"}

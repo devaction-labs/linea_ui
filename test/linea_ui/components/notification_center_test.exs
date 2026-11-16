@@ -153,7 +153,7 @@ defmodule LineaUI.Components.NotificationCenterTest do
     refute html |> find("#nc-panel") |> LazyHTML.text() =~ "Ver todas"
     assert html |> find(".nc-canvas-h") |> Enum.map(&LazyHTML.text/1) == ["Hoje", "Ontem"]
     assert html |> find(".nc-canvas-row[data-unread] .nc-canvas-at") |> LazyHTML.text() == "10:12"
-    assert "pos" in classes(html, ".nc-canvas-row:not([data-unread]) .sg-ic")
+    assert "pos" in classes(html, ".nc-canvas-row:not([data-unread]) .lo-ic")
   end
 
   test "the empty state can show an icon tile" do
@@ -163,7 +163,7 @@ defmodule LineaUI.Components.NotificationCenterTest do
       """)
 
     assert html |> find(".nc-canvas-empty b") |> LazyHTML.text() == "Tudo lido"
-    assert [_] = html |> find(".nc-canvas-empty .sg-ic.pos .huge-tick-02") |> Enum.to_list()
+    assert [_] = html |> find(".nc-canvas-empty .lo-ic.pos .huge-tick-02") |> Enum.to_list()
 
     html =
       render(~H"""
@@ -177,6 +177,6 @@ defmodule LineaUI.Components.NotificationCenterTest do
       />
       """)
 
-    assert [_] = html |> find("#nc-panel .sg-ic.info .huge-inbox") |> Enum.to_list()
+    assert [_] = html |> find("#nc-panel .lo-ic.info .huge-inbox") |> Enum.to_list()
   end
 end

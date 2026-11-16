@@ -24,7 +24,7 @@
    the figure and the faint caption 6px under the meter. */
 .sg-kpi.sg-kpi-tight{gap:0}
 .sg-kpi-goal > .sg-kpi-v{margin-top:8px}
-.sg-kpi-goal > .sg-meter{margin-top:12px}
+.sg-kpi-goal > .lo-meter{margin-top:12px}
 .sg-kpi-c{display:block;margin-top:6px;font-size:12px;color:var(--faint)}
 .sg-kpi:not(.sg-kpi-tight) > .sg-kpi-c{margin-top:-8px}
 
@@ -43,9 +43,9 @@
 .sg-table > tbody > tr[data-selected="true"] > td:first-child{box-shadow:none}
 
 /* ---------- Icon ---------- */
-/* The boxed icon (`sg-ic`) in its smaller sizes: a timeline point and a tree row. */
-.sg-ic.sg-ic-md{width:28px;height:28px;border-radius:9px}
-.sg-ic.sg-ic-sm{width:24px;height:24px}
+/* The boxed icon (`lo-ic`) in its smaller sizes: a timeline point and a tree row. */
+.lo-ic.lo-ic-md{width:28px;height:28px;border-radius:9px}
+.lo-ic.lo-ic-sm{width:24px;height:24px}
 
 /* ---------- Treeview, variant="canvas" ---------- */
 /* 36px rows 2px apart, 8px corners, regular weight in the ink (the top level in 550), a 14px chevron. The depth

@@ -255,7 +255,7 @@ defmodule LineaUI.Components.NavbarTest do
 
       html = render(~H|<.navbar_env label="Produção" />|)
       assert ["lo-nb-env", "badge", "badge-soft", "badge-success"] == classes(html, "span")
-      assert text(html, "span") == ["Produção"]
+      assert text(html, "span.lo-nb-env") == ["Produção"]
 
       html = render(~H|<.navbar_env label="Homologação" tone="warn" />|)
 
