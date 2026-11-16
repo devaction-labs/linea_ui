@@ -817,15 +817,15 @@ code.inline-code {
 }
 
 /* progress */
-.progress {
+.lo-progress {
   @apply relative flex w-full overflow-hidden rounded-full;
 }
 
-.progress .is-indeterminate {
+.lo-progress .is-indeterminate {
   animation: progress-increase 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
 
-.progress .is-active::before {
+.lo-progress .is-active::before {
   @apply absolute inset-0 rounded-sm bg-white content-[''];
   animation: progress-active 2s cubic-bezier(0.55, 0.2, 0.3, 0.67) infinite;
 }

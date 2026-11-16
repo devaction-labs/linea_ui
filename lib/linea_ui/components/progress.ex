@@ -1,7 +1,7 @@
 defmodule LineaUI.Components.Progress do
   @moduledoc """
-  LineOne's linear progress bar, solid or soft, in every size, with the active shimmer or the
-  indeterminate slide.
+  daisyUI's progress bar (`<progress class="progress progress-{color}">`), solid or soft, in every size, with
+  the indeterminate slide when there is no value.
 
       <.progress value={42} />
       <.progress value={70} color="success" variant="soft" />
@@ -14,8 +14,8 @@ defmodule LineaUI.Components.Progress do
 
   `value` is read against `max` (100 by default) and updates with the assign.
 
-  It draws the canvas's `sg-meter`: `primary` is the accent bar, `success`, `warning`, `error` and `info`
-  the canvas's positive, warning, negative and info colors, `neutral` the ink one.
+  The color is daisyUI's (`progress-primary`, `progress-success`…; `neutral` is the ink bar); `gradient` keeps the
+  kit's thin gradient meter.
 
   `progress_stack/1` is the canvas's stacked bar (`sg-stack`), the parts of a total side by side:
 
@@ -76,7 +76,7 @@ defmodule LineaUI.Components.Progress do
   attr(:bar_class, :any, default: nil)
   attr(:rest, :global)
 
-  def progress(assigns) do
+  def progress(%{variant: "gradient"} = assigns) do
     assigns = assign(assigns, :percent, percent(assigns.value, assigns.max))
 
     ~H"""
@@ -86,26 +86,54 @@ defmodule LineaUI.Components.Progress do
       aria-valuemin="0"
       aria-valuemax={@max}
       aria-valuenow={!@indeterminate && @value}
-      class={merge(["sg-meter", tone(@variant, @color), @class])}
+      class={merge(["sg-meter grad", @class])}
       {@rest}
     >
-      <i
-        class={merge([@indeterminate && "is-indeterminate relative w-4/12", @bar_class])}
-        style={!@indeterminate && "width: #{@percent}%"}
-      ></i>
+      <i class={@bar_class} style={!@indeterminate && "width: #{@percent}%"}></i>
     </div>
     """
   end
 
-  defp tone("gradient", _color), do: "grad"
-  defp tone(_variant, color), do: tone(color)
+  def progress(assigns) do
+    ~H"""
+    <progress
+      class={
+        merge([
+          "progress w-full",
+          color_class(@color),
+          @variant == "soft" && track_class(@color),
+          height_class(@height || @size),
+          @class
+        ])
+      }
+      value={!@indeterminate && clamp(@value, @max)}
+      max={@max}
+      aria-label={@label}
+      {@rest}
+    >
+    </progress>
+    """
+  end
 
-  defp tone("primary"), do: "acc"
-  defp tone("success"), do: "pos"
-  defp tone("warning"), do: "warn"
-  defp tone("error"), do: "neg"
-  defp tone("info"), do: "info"
-  defp tone(_color), do: nil
+  @colors ~w(primary secondary info success warning error)
+
+  defp color_class(color) when color in @colors, do: "progress-" <> color
+  defp color_class("white"), do: "text-white bg-white/25"
+  defp color_class(_neutral), do: nil
+
+  defp track_class(color) when color in @colors, do: "bg-#{color}/15"
+  defp track_class(_color), do: nil
+
+  defp height_class("sm"), do: "h-1"
+  defp height_class("md"), do: nil
+  defp height_class("lg"), do: "h-3"
+  defp height_class("xl"), do: "h-4"
+  defp height_class(step), do: "h-" <> step
+
+  defp clamp(value, limit) when is_number(value) and is_number(limit),
+    do: value |> min(limit) |> max(0)
+
+  defp clamp(_value, _max), do: 0
 
   @doc """
   Renders the canvas's stacked bar (`sg-stack`): one segment per part, its width the part's share of `max`
