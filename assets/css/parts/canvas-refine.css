@@ -128,7 +128,7 @@ input.form-checkbox:focus-visible,input.form-radio:focus-visible,input.form-swit
 
 /* modals and sheets: the scrim, a 14px card with a thin line, 18px titles, a muted description, a plain footer */
 .sg-scrim,:is(.dark .sg:not([data-theme="light"]), .sg[data-theme="dark"]) .sg-scrim{background:var(--scrim);backdrop-filter:none}
-.sg-modal,.modal-content[data-panel]{border-radius:var(--r-lg);background:var(--panel);box-shadow:0 0 0 1px var(--line),var(--shadow-lg)}
+.sg-modal,.lo-modal-content[data-panel]{border-radius:var(--r-lg);background:var(--panel);box-shadow:0 0 0 1px var(--line),var(--shadow-lg)}
 .sg-drawer{border-radius:var(--r-lg);box-shadow:0 0 0 1px var(--line),var(--shadow-lg)}
 .sg-drawer-h,[data-drawer-header]{padding:24px 24px 16px}
 .sg-drawer-h h3,[data-drawer-header] h2{font-size:18px;line-height:24px;font-weight:600;letter-spacing:-.01em;color:var(--ink)}

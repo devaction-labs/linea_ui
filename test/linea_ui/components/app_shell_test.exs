@@ -299,7 +299,7 @@ defmodule LineaUI.Components.AppShellTest do
       """)
 
     assert [root] =
-             find(html, "#rs.drawer.drawer-right[phx-hook='LineaUI.RightSidebar']")
+             find(html, "#rs.lo-drawer.lo-drawer-right[phx-hook='LineaUI.RightSidebar']")
              |> Enum.to_list()
 
     assert LazyHTML.attribute(root, "data-open") == ["true"]

@@ -103,14 +103,14 @@ defmodule LineaUI.Components.Popover do
         <div class="popper-box">
           <div class={
             merge([
-              "w-68 max-w-[90vw] rounded-[14px] bg-white p-4 shadow-[0_0_0_1px_var(--color-slate-150),0_24px_60px_-20px_rgb(23_23_26/.28)] dark:bg-navy-700 dark:shadow-[0_0_0_1px_var(--color-navy-600)]",
+              "w-68 max-w-[90vw] rounded-box p-4 bg-base-100 text-base-content shadow-xl ring-1 ring-base-content/8",
               @class
             ])
           }>
             <h3
               :for={title <- @title}
               id={"#{@id}-title"}
-              class="text-[15px] font-medium tracking-[.01em] text-slate-700 line-clamp-1 dark:text-navy-100"
+              class="text-[15px] font-medium tracking-[.01em] text-base-content/85 line-clamp-1"
             >
               {render_slot(title)}
             </h3>
@@ -124,11 +124,11 @@ defmodule LineaUI.Components.Popover do
               fill="currentColor"
             >
               <path
-                class="text-slate-300 dark:text-navy-500"
+                class="text-base-content/8"
                 d="M1.5 8.357s-.48.624 2.754-4.779C5.583 1.35 6.796.01 8 0c1.204-.009 2.417 1.33 3.76 3.578 3.253 5.43 2.74 4.78 2.74 4.78h-13z"
               />
               <path
-                class="text-white dark:text-navy-700"
+                class="text-base-100"
                 d="M0 9s1.796-.017 4.67-4.648C5.853 2.442 6.93 1.293 8 1.286c1.07-.008 2.147 1.14 3.343 3.066C14.233 9.006 15.999 9 15.999 9H0z"
               />
             </svg>

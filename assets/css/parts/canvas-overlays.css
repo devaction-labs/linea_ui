@@ -148,7 +148,7 @@
 
 /* drawer sheets (`float`, `flush`), modals with a `title` (`sg-modal`) and the sheet footer: in dark the canvas panel (`sg-drawer`), a
    step darker than the kit's raised navy-700, with the canvas line over the footer */
-:is(.drawer[data-variant] [data-panel], .modal[data-layout="sheet"] [data-panel], [data-drawer-footer]):where(.dark *, [data-theme="dark"] *):not(:where(:is(.dark, [data-theme="dark"]) [data-theme="light"], :is(.dark, [data-theme="dark"]) [data-theme="light"] *):not(:where(:is(.dark, [data-theme="dark"]) [data-theme="light"] :is(.dark, [data-theme="dark"]), :is(.dark, [data-theme="dark"]) [data-theme="light"] :is(.dark, [data-theme="dark"]) *))) {
+:is(.lo-drawer[data-variant] [data-panel], .lo-modal[data-layout="sheet"] [data-panel], [data-drawer-footer]):where(.dark *, [data-theme="dark"] *):not(:where(:is(.dark, [data-theme="dark"]) [data-theme="light"], :is(.dark, [data-theme="dark"]) [data-theme="light"] *):not(:where(:is(.dark, [data-theme="dark"]) [data-theme="light"] :is(.dark, [data-theme="dark"]), :is(.dark, [data-theme="dark"]) [data-theme="light"] :is(.dark, [data-theme="dark"]) *))) {
   background: var(--panel);
 }
 [data-drawer-footer]:where(.dark *, [data-theme="dark"] *):not(:where(:is(.dark, [data-theme="dark"]) [data-theme="light"], :is(.dark, [data-theme="dark"]) [data-theme="light"] *):not(:where(:is(.dark, [data-theme="dark"]) [data-theme="light"] :is(.dark, [data-theme="dark"]), :is(.dark, [data-theme="dark"]) [data-theme="light"] :is(.dark, [data-theme="dark"]) *))) {

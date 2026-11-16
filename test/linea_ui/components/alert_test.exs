@@ -5,9 +5,8 @@ defmodule LineaUI.Components.AlertTest do
     html = render(~H"<.alert variant=\"solid\">Hello</.alert>")
     assert [_] = find(html, "div[role=alert]") |> Enum.to_list()
     classes = classes(html, "[role=alert]")
-    assert "bg-slate-200" in classes
-    assert "rounded-lg" in classes
-    assert "px-4" in classes
+    assert ["alert", "px-4"] -- classes == []
+    refute Enum.any?(classes, &String.starts_with?(&1, "alert-"))
   end
 
   test "variant, color and shape pick LineOne's classes, class overrides" do
@@ -17,8 +16,7 @@ defmodule LineaUI.Components.AlertTest do
       """)
 
     classes = classes(html, "[role=alert]")
-    assert "bg-primary/10" in classes
-    assert "dark:bg-accent-light/15" in classes
+    assert ["alert", "alert-soft", "alert-primary"] -- classes == []
     assert "rounded-full" in classes
     assert "px-8" in classes
     refute "px-4" in classes
@@ -32,9 +30,9 @@ defmodule LineaUI.Components.AlertTest do
       <.alert variant="solid" id="d" color="dark">x</.alert>
       """)
 
-    assert "border-info" in classes(html, "#o")
-    assert "border-success/30" in classes(html, "#b")
-    assert "bg-navy-900" in classes(html, "#d")
+    assert ["alert-outline", "alert-info"] -- classes(html, "#o") == []
+    assert ["alert-soft", "alert-success", "border-current/25"] -- classes(html, "#b") == []
+    assert "bg-neutral" in classes(html, "#d")
   end
 
   test "an accent bar moves the padding to the content" do
@@ -81,7 +79,7 @@ defmodule LineaUI.Components.AlertTest do
     click = button |> LazyHTML.attribute("phx-click") |> hd()
     assert click =~ "hide"
     assert click =~ "[role=alert]"
-    assert "text-info" in classes(html, "button")
+    assert "btn-ghost" in classes(html, "button")
   end
 
   test "open={false} renders it hidden, and actions render after the content" do
@@ -102,7 +100,7 @@ defmodule LineaUI.Components.AlertTest do
              dismiss_alert()
   end
 
-  test "the canvas variant renders sg-alert with its tone, actions and a muted close button" do
+  test "the canvas variant is a soft daisyUI alert with its tone, actions and a muted close button" do
     html =
       render(~H"""
       <.alert id="a" variant="canvas" color="warning" dismissible close_label="Fechar">
@@ -111,27 +109,26 @@ defmodule LineaUI.Components.AlertTest do
       </.alert>
       """)
 
-    assert "sg-alert" in classes(html, "#a")
-    assert "warn" in classes(html, "#a")
-    assert [_] = find(html, "#a .sg-alert-body .sg-alert-actions button") |> Enum.to_list()
-    assert find(html, "#a > button.sg-ib.plain") |> LazyHTML.attribute("aria-label") == ["Fechar"]
+    assert ["alert", "alert-soft", "alert-warning"] -- classes(html, "#a") == []
+    assert [_] = find(html, "#a > div > div button") |> Enum.to_list()
+    assert find(html, "#a > button.btn-ghost") |> LazyHTML.attribute("aria-label") == ["Fechar"]
 
-    assert "acc" in classes(
+    assert "alert-primary" in classes(
              render(~H|<.alert id="a" variant="canvas" color="primary">x</.alert>|),
              "#a"
            )
 
-    assert "neg" in classes(
+    assert "alert-error" in classes(
              render(~H|<.alert id="a" variant="canvas" color="error">x</.alert>|),
              "#a"
            )
 
-    assert "info" in classes(
+    assert "alert-info" in classes(
              render(~H|<.alert id="a" variant="canvas" color="info">x</.alert>|),
              "#a"
            )
 
-    assert "pos" in classes(
+    assert "alert-success" in classes(
              render(~H|<.alert id="a" variant="canvas" color="success">x</.alert>|),
              "#a"
            )

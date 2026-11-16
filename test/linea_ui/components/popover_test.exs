@@ -22,7 +22,7 @@ defmodule LineaUI.Components.PopoverTest do
     assert attr_of(html, "#p-panel", "popover") == ["manual"]
     assert "fixed" in classes(html, "#p-panel")
 
-    assert ["rounded-[14px]", "p-4", "max-w-xs"] -- classes(html, "#p-panel .popper-box > div") ==
+    assert ["rounded-box", "p-4", "max-w-xs"] -- classes(html, "#p-panel .popper-box > div") ==
              []
 
     assert find(html, "#p-panel h3") |> LazyHTML.text() =~ "UI/UX Design"
@@ -58,7 +58,7 @@ defmodule LineaUI.Components.PopoverTest do
     refute "w-68" in classes(html, "#q-panel .popper-box > div")
   end
 
-  test "the card has the canvas's 300 border and soft shadow, and the arrow border matches" do
+  test "the card is a base-100 box with daisyUI's corners and a ring, and the arrow border matches" do
     html =
       render(~H"""
       <.popover id="p">
@@ -69,9 +69,9 @@ defmodule LineaUI.Components.PopoverTest do
 
     card = classes(html, "#p-panel .popper-box > div")
 
-    assert ["rounded-[14px]"] -- card == []
-    assert Enum.any?(card, &String.starts_with?(&1, "shadow-[0_0_0_1px"))
-    assert "text-slate-300" in classes(html, "[data-popper-arrow] path:first-child")
+    assert ["rounded-box"] -- card == []
+    assert ["bg-base-100", "ring-1", "ring-base-content/8"] -- card == []
+    assert "text-base-content/8" in classes(html, "[data-popper-arrow] path:first-child")
   end
 
   test "hover, placement, no arrow, open and callbacks" do

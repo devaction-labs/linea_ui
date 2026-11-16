@@ -55,11 +55,11 @@ defmodule LineaUI.Components.SimpleElementsTest do
         <.skeleton variant="lineone" id="n" animation="none" shape="square" />
         """)
 
-      assert ["skeleton", "animate-wave" | _] = classes(html, "#w")
-      assert "rounded-sm" in classes(html, "#w")
+      assert ["skeleton" | _] = classes(html, "#w")
+      assert "rounded-selector" in classes(html, "#w")
       assert "animate-pulse" in classes(html, "#p")
       assert "rounded-full" in classes(html, "#p")
-      refute "skeleton" in classes(html, "#n")
+      assert "[animation:none]" in classes(html, "#n")
     end
 
     test "a group announces the loading and keeps the blocks hidden" do
@@ -88,13 +88,11 @@ defmodule LineaUI.Components.SimpleElementsTest do
         <.spinner id="v" variant="svg" color="success" />
         """)
 
-      assert "border-r-transparent" in classes(html, "#b")
-      assert "border-[3px]" in classes(html, "#b")
-      assert "border-info/30" in classes(html, "#s")
-      assert "is-elastic" in classes(html, "#s")
-      assert "size-12" in classes(html, "#s")
-      assert [_, _] = find(html, "#g > span.bg-error") |> Enum.to_list()
-      assert [_] = find(html, ~s|#v > svg[aria-hidden="true"]|) |> Enum.to_list()
+      assert "loading-spinner" in classes(html, "#b")
+      assert "text-primary" in classes(html, "#b")
+      assert ["loading-spinner", "text-info", "loading-lg"] -- classes(html, "#s") == []
+      assert "loading-ring" in classes(html, "#g")
+      assert "loading-ball" in classes(html, "#v")
       assert [_] = find(html, "#b[role=status][aria-label=Loading]") |> Enum.to_list()
     end
   end

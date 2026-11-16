@@ -8,9 +8,9 @@ defmodule LineaUI.Components.CanvasDefaultTest do
     socket.assigns.uploads.photos
   end
 
-  test "alert: canvas by default, solid is the old look" do
-    assert has?(render(~H"<.alert>Hi</.alert>"), ".sg-alert")
-    refute has?(render(~H"<.alert variant=\"solid\">Hi</.alert>"), ".sg-alert")
+  test "alert: the soft canvas alert by default, solid is daisyUI's filled one" do
+    assert has?(render(~H"<.alert>Hi</.alert>"), ".alert.alert-soft")
+    refute has?(render(~H"<.alert variant=\"solid\">Hi</.alert>"), ".alert-soft")
   end
 
   test "accordion: canvas by default, basic is the old look" do
@@ -76,14 +76,14 @@ defmodule LineaUI.Components.CanvasDefaultTest do
     refute has?(old, "[class*='rounded-[9px]']")
   end
 
-  test "skeleton: canvas by default, lineone is the old look" do
-    assert has?(render(~H"<.skeleton />"), ".sg-skel")
-    refute has?(render(~H"<.skeleton variant=\"lineone\" />"), ".sg-skel")
+  test "skeleton: daisyUI's skeleton in both variants" do
+    assert has?(render(~H"<.skeleton />"), ".skeleton")
+    assert has?(render(~H"<.skeleton variant=\"lineone\" />"), ".skeleton")
   end
 
-  test "spinner: canvas by default, border is the old look" do
-    assert has?(render(~H"<.spinner />"), ".sg-spin")
-    refute has?(render(~H"<.spinner variant=\"border\" />"), ".sg-spin")
+  test "spinner: daisyUI's loading-spinner for the canvas and border variants" do
+    assert has?(render(~H"<.spinner />"), ".loading-spinner")
+    assert has?(render(~H"<.spinner variant=\"border\" />"), ".loading-spinner")
   end
 
   test "stepper: canvas by default, classic is the old look" do

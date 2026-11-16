@@ -1478,14 +1478,14 @@ defmodule LineaUI.Components.AppShell do
       data-close-event={event_name(@on_close)}
       data-on-close={js_command(@on_close)}
       data-target={@target}
-      class={merge(["right-sidebar drawer drawer-right", @class])}
+      class={merge(["right-sidebar lo-drawer lo-drawer-right", @class])}
       {@rest}
     >
       <div
         id={@id <> "-overlay"}
         data-drawer-overlay
         phx-mounted='[["ignore_attrs",{"attrs":["class"]}]]'
-        class="drawer-overlay right-sidebar-overlay fixed inset-0 z-[150] hidden bg-slate-900/60"
+        class="lo-drawer-overlay right-sidebar-overlay fixed inset-0 z-[150] hidden bg-slate-900/60"
       >
       </div>
       <div
@@ -1496,7 +1496,7 @@ defmodule LineaUI.Components.AppShell do
         aria-label={@label}
         aria-hidden="true"
         phx-mounted='[["ignore_attrs",{"attrs":["class","aria-hidden"]}]]'
-        class="drawer-content right-sidebar-content fixed right-0 top-0 z-[151] hidden h-full w-full sm:w-80"
+        class="lo-drawer-content right-sidebar-content fixed right-0 top-0 z-[151] hidden h-full w-full sm:w-80"
       >
         <div class="relative flex h-full w-full flex-col bg-white dark:bg-navy-750">
           <div class="flex items-center justify-between py-2 px-4">

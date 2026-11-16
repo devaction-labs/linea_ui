@@ -46,7 +46,7 @@ const unlock = () => {
   saved = null
 }
 
-const PARTS = ":scope > .drawer-overlay, :scope > .drawer-content"
+const PARTS = ":scope > .lo-drawer-overlay, :scope > .lo-drawer-content"
 
 const PAINT = {
   modal: (el, state) => {

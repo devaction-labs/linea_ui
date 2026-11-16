@@ -64,7 +64,7 @@ defmodule LineaUI.Components.DropdownTest do
 
     [primary, error, media, disabled] = find(html, "button") |> Enum.to_list()
 
-    assert ["text-primary", "hover:bg-slate-100"] --
+    assert ["text-primary", "hover:bg-base-200"] --
              (LazyHTML.attribute(primary, "class") |> hd() |> String.split()) == []
 
     assert ["text-error", "gap-3"] --
@@ -363,7 +363,7 @@ defmodule LineaUI.Components.DropdownTest do
              "E"
 
     assert attr_of(html, "button[aria-current=true]", "class") |> hd() =~
-             "aria-[current=true]:bg-slate-100"
+             "aria-[current=true]:bg-base-200"
   end
 
   test "an :action slot makes a split button: the arrow alone is the trigger" do

@@ -152,7 +152,7 @@ defmodule LineaUI.Components.FilterMenu do
   @custom_labels %{"en" => "Custom…", "pt_BR" => "Personalizado…"}
   @range_separator " – "
 
-  @menu_class "min-w-57.5 shadow-[0_10px_30px_-8px_rgb(48_46_56/0.18)] dark:border-navy-700 dark:shadow-soft-dark"
+  @menu_class "min-w-57.5"
 
   @doc """
   Renders the filter menu.
@@ -287,7 +287,7 @@ defmodule LineaUI.Components.FilterMenu do
             <span
               data-filter-applied
               hidden={@applied == 0}
-              class="inline-flex h-5 min-w-5 items-center justify-center rounded bg-primary/10 px-1.5 font-inter text-tiny-plus font-medium text-primary dark:bg-accent-light/15 dark:text-accent-light"
+              class="inline-flex h-5 min-w-5 items-center justify-center rounded bg-primary/10 px-1.5 font-inter text-tiny-plus font-medium text-primary"
             >
               {@applied}
             </span>
@@ -305,7 +305,6 @@ defmodule LineaUI.Components.FilterMenu do
           show_apply={@mode == "apply"}
           apply_count={@apply_count}
           on_apply={%JS{}}
-          class="dark:border-navy-700"
         />
       </Dropdown.dropdown>
     </div>
@@ -323,7 +322,7 @@ defmodule LineaUI.Components.FilterMenu do
       id={"#{@id}-#{slug(@group.name)}"}
       label={@group.label}
       count={length(@group.selected)}
-      class="min-w-57.5 dark:border-navy-700"
+      class="min-w-57.5"
       data-filter-group={@group.name}
       data-filter-type={@group.type}
       data-count-radios="true"
@@ -336,7 +335,7 @@ defmodule LineaUI.Components.FilterMenu do
 
   defp group_block(%{group: %{display: :section}} = assigns) do
     ~H"""
-    <Dropdown.dropdown_separator :if={not @first} class="dark:bg-navy-700" />
+    <Dropdown.dropdown_separator :if={not @first} />
     <div
       role="group"
       aria-label={@group.caption || @group.label}
@@ -407,7 +406,7 @@ defmodule LineaUI.Components.FilterMenu do
       )
 
     ~H"""
-    <Dropdown.dropdown_separator class="dark:bg-navy-700" />
+    <Dropdown.dropdown_separator />
     <div class="contents" role="none">
       <input
         type="radio"
@@ -424,7 +423,7 @@ defmodule LineaUI.Components.FilterMenu do
         id={@prefix}
         label={@shown}
         class="w-auto min-w-0 border-0 bg-transparent p-0 shadow-none dark:border-0 dark:bg-transparent dark:shadow-none"
-        trigger_class="dark:focus:text-navy-50 in-data-[selected]:font-medium in-data-[selected]:text-slate-800 dark:in-data-[selected]:text-navy-50"
+        trigger_class="in-data-[selected]:font-medium in-data-[selected]:text-base-content"
         data-filter-custom
         data-selected={@stored != "" && "true"}
         data-server-value={@stored}

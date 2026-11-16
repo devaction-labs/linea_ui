@@ -1,6 +1,7 @@
 defmodule LineaUI.Components.Modal do
   @moduledoc """
-  LineOne's modal: a centered card over a dark backdrop, with LineOne's enter and leave animations.
+  A modal in daisyUI's look: a centered `base-100` box with the theme's `rounded-box` corners over a dark
+  backdrop, with its enter and leave animations.
 
       <.button phx-click={LineaUI.open("edit-pin")}>Edit</.button>
 
@@ -51,8 +52,8 @@ defmodule LineaUI.Components.Modal do
     "fade" => "",
     "shift-up" => "shift-up",
     "shift-down" => "shift-down",
-    "scale" => "modal-scale",
-    "sheet" => "modal-sheet"
+    "scale" => "lo-modal-scale",
+    "sheet" => "lo-modal-sheet"
   }
 
   @placements %{
@@ -71,10 +72,8 @@ defmodule LineaUI.Components.Modal do
   }
 
   @close_variants %{
-    "plain" =>
-      "hover:bg-slate-300/20 focus:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25",
-    "chip" =>
-      "bg-white/80 text-slate-700 shadow-sm backdrop-blur-sm hover:bg-white focus:bg-white dark:bg-navy-700/80 dark:text-navy-100 dark:hover:bg-navy-700 dark:focus:bg-navy-700"
+    "plain" => "btn-ghost",
+    "chip" => "bg-base-100/80 shadow-sm backdrop-blur-sm"
   }
 
   @origins %{"center" => "", "top" => "origin-top", "bottom" => "origin-bottom"}
@@ -108,7 +107,7 @@ defmodule LineaUI.Components.Modal do
   attr :backdrop_class, :any,
     default: nil,
     doc:
-      "Merged into the backdrop (`bg-black/30` for a lighter one than the default `bg-slate-900/60`)."
+      "Merged into the backdrop (`bg-black/20` for a lighter one than the default `bg-black/40`)."
 
   attr :prevent_close, :boolean, default: false, doc: "Esc and the backdrop do not close it."
 
@@ -173,7 +172,7 @@ defmodule LineaUI.Components.Modal do
     <div
       id={@id}
       class={[
-        "modal fixed inset-0 flex flex-col items-center overflow-hidden px-4 py-6 sm:px-5",
+        "lo-modal fixed inset-0 flex flex-col items-center overflow-hidden px-4 py-6 sm:px-5",
         animation_class(@animation),
         placement_class(@placement)
       ]}
@@ -197,7 +196,7 @@ defmodule LineaUI.Components.Modal do
       <div
         class={
           merge([
-            "modal-overlay absolute inset-0 bg-slate-900/60",
+            "lo-modal-overlay absolute inset-0 bg-black/40",
             @blur && "backdrop-blur-sm",
             @backdrop_class
           ])
@@ -209,7 +208,7 @@ defmodule LineaUI.Components.Modal do
         id={"#{@id}-panel"}
         class={
           merge([
-            "modal-content relative flex w-full flex-col rounded-[22px] bg-white shadow-[0_0_0_1px_var(--color-slate-150),0_40px_90px_-30px_rgb(23_23_26/.4)] outline-hidden dark:bg-navy-700 dark:shadow-[0_0_0_1px_var(--color-navy-600)]",
+            "lo-modal-content relative flex w-full flex-col rounded-box bg-base-100 text-base-content shadow-2xl ring-1 ring-base-content/5 outline-hidden",
             panel_class(@layout),
             size_class(@size),
             origin_class(@origin),
@@ -242,7 +241,7 @@ defmodule LineaUI.Components.Modal do
           type="button"
           class={
             merge([
-              "lo-btn absolute right-3 top-3 z-10 size-7 rounded-full p-0",
+              "btn btn-sm btn-circle absolute right-3 top-3 z-10",
               close_variant_class(@close_variant)
             ])
           }
@@ -284,7 +283,7 @@ defmodule LineaUI.Components.Modal do
     }>
       <h2
         id={"#{@id}-title"}
-        class="font-medium tracking-wide text-slate-700 line-clamp-1 dark:text-navy-100 lg:text-base"
+        class="font-medium tracking-wide text-base-content/85 line-clamp-1 lg:text-base"
       >
         {render_slot(@header)}
       </h2>
@@ -297,11 +296,11 @@ defmodule LineaUI.Components.Modal do
     ~H"""
     <div class={
       merge([
-        "flex justify-between rounded-t-lg bg-slate-200 px-4 py-3 dark:bg-navy-800 sm:px-5",
+        "flex justify-between rounded-t-box bg-base-200 px-4 py-3 sm:px-5",
         Map.get(@header, :class)
       ])
     }>
-      <h3 id={"#{@id}-title"} class="text-base font-medium text-slate-700 dark:text-navy-100">
+      <h3 id={"#{@id}-title"} class="text-base font-medium text-base-content/85">
         {render_slot(@header)}
       </h3>
       <.close_button :if={@close_button} id={@id} label={@close_label} />
@@ -316,7 +315,7 @@ defmodule LineaUI.Components.Modal do
     ~H"""
     <button
       type="button"
-      class="lo-btn -mr-1.5 size-7 rounded-full p-0 hover:bg-slate-300/20 focus:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25"
+      class="btn btn-ghost btn-sm btn-circle -mr-1.5"
       aria-label={@label}
       phx-click={LineaUI.close(@id)}
     >
