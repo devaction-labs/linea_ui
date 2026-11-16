@@ -17,26 +17,18 @@ defmodule LineaUI.Components.RadioTest do
              |> Enum.to_list()
 
     assert [_] = find(html, "input#plan-1[value=pro][checked]") |> Enum.to_list()
-    classes = classes(html, "input")
-    assert "form-radio" in classes
-    assert "is-basic" in classes
-    assert "rounded-full" in classes
+    assert "radio" in classes(html, "input")
   end
 
-  test "the md radio is 18px with the 6px dot; other sizes keep the scale and a checkbox stays 20px" do
+  test "sizes are daisyUI's: md is the default, the others its modifiers" do
     md = render(~H|<.radio_group name="r" options={~w(a)} />|)
-    assert "size-[18px]" in classes(md, "input")
-    assert "is-md" in classes(md, "input")
-    refute "size-5" in classes(md, "input")
+    refute Enum.any?(classes(md, "input"), &String.starts_with?(&1, "radio-"))
 
     sm = render(~H|<.radio_group name="r" size="sm" options={~w(a)} />|)
-    assert "size-4" in classes(sm, "input")
-    refute "is-md" in classes(sm, "input")
+    assert "radio-sm" in classes(sm, "input")
 
     lg = render(~H|<.radio_group name="r" size="lg" options={~w(a)} />|)
-    assert "size-6" in classes(lg, "input")
-
-    assert "size-5" in classes(render(~H|<.checkbox name="c" />|), "input")
+    assert "radio-lg" in classes(lg, "input")
   end
 
   test "the card is the canvas sg-choice: radio at the start by default, at the end with control=end" do
@@ -77,9 +69,9 @@ defmodule LineaUI.Components.RadioTest do
       """)
 
     [first | _] = find(html, "input") |> LazyHTML.attribute("class")
-    assert first =~ "before:bg-primary"
-    assert first =~ "rounded-md"
-    assert first =~ "bg-slate-100"
+    assert first =~ "radio-primary"
+    assert first =~ "rounded-[calc(var(--radius-selector)*.6)]"
+    assert first =~ "bg-base-200"
     assert [_] = find(html, "input[value=b][disabled]") |> Enum.to_list()
   end
 
@@ -108,7 +100,7 @@ defmodule LineaUI.Components.RadioTest do
     html =
       rendered_to_string(~H'<.radio_group field={@form[:plan]} options={["free", "pro"]} />')
 
-    assert "border-error" in classes(html, "input")
+    assert "radio-error" in classes(html, "input")
 
     html = render(~H'<.radio_group name="plan" options={["free", "pro"]} />')
     refute "border-error" in classes(html, "input")

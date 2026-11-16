@@ -54,8 +54,7 @@ defmodule LineaUI.Components.ChoiceTest do
 
       assert "grid" in classes(html, "[role=radiogroup]")
       assert "grid-cols-2" in classes(html, "[role=radiogroup]")
-      assert "form-radio" in classes(html, "input")
-      assert "is-basic" in classes(html, "input")
+      assert "radio" in classes(html, "input")
       [first | _] = find(html, "label.lu-rcard") |> Enum.to_list()
       assert LazyHTML.attribute(first, "data-color") == ["success"]
       assert "is-stacked" in classes(html, "label")
@@ -68,7 +67,7 @@ defmodule LineaUI.Components.ChoiceTest do
     test "basic radios are unchanged" do
       html = render(~H|<.radio_group name="r" options={["a"]} />|)
       assert "inline-space" in classes(html, "[role=radiogroup]")
-      assert "form-radio" in classes(html, "input")
+      assert "radio" in classes(html, "input")
     end
   end
 
@@ -102,7 +101,7 @@ defmodule LineaUI.Components.ChoiceTest do
         </.checkbox_group>
         """)
 
-      assert "form-checkbox" in classes(html, "input[type=checkbox]")
+      assert "checkbox" in classes(html, "input[type=checkbox]")
       assert "has-checked:border-primary" in classes(html, "label")
       assert html |> find("label") |> LazyHTML.text() =~ "Daily digest"
     end

@@ -1,7 +1,7 @@
 defmodule LineaUI.Components.Checkbox do
   @moduledoc """
-  LineOne's checkboxes: basic (filled when checked) or outline (a colored check on a clear
-  box), on a plain or a filled box, square or circle, in every theme color.
+  daisyUI's checkbox (`checkbox`, `checkbox-primary`, `checkbox-sm`…), on a plain or a filled box, square or
+  circle, in every theme color.
 
       <.checkbox name="terms" label="I agree" />
       <.checkbox field={@form[:remember]} label="Remember me" color="primary" />
@@ -29,15 +29,11 @@ defmodule LineaUI.Components.Checkbox do
   alias LineaUI.Components.Form
 
   @shapes %{
-    "square" => "rounded-sm",
+    "square" => nil,
     "circle" => "rounded-full"
   }
 
   @colors ~w(neutral primary secondary info success warning error)
-
-  # The error border of a lone checkbox is part of its classes (`aria-invalid` turns it on, see `forms.css`), so
-  # the classes do not change when the error comes and goes and LiveView does not resend them.
-  @error_border "linea-invalid-check"
 
   @doc """
   Renders a checkbox with its label. Inside a form it sends `unchecked_value` when unchecked,
@@ -59,7 +55,11 @@ defmodule LineaUI.Components.Checkbox do
   attr(:unchecked_value, :string, default: "false")
   attr(:hidden_input, :boolean, default: true, doc: "Renders the hidden unchecked input.")
   attr(:color, :string, default: "neutral", values: @colors)
-  attr(:variant, :string, default: "basic", values: ~w(basic outline))
+  attr(:variant, :string,
+    default: "basic",
+    values: ~w(basic outline),
+    doc: "Kept for compatibility: both draw daisyUI's checkbox."
+  )
   attr(:filled, :boolean, default: false, doc: "A tinted box while unchecked.")
   attr(:shape, :string, default: "square", values: ~w(square circle))
   attr(:size, :string, default: "md", values: Choice.sizes())
@@ -109,14 +109,13 @@ defmodule LineaUI.Components.Checkbox do
     merge([
       Choice.classes("form-checkbox", assigns),
       @shapes[assigns.shape],
-      @error_border,
       assigns.class
     ])
   end
 
   # The group's boxes carry no `aria-invalid`, so they still get the border class from the errors.
   defp invalid(%{errors: [_ | _], variant: variant}) when variant != "chip",
-    do: "border-error dark:border-error"
+    do: "checkbox-error"
 
   defp invalid(_assigns), do: nil
 
