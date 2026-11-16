@@ -9,12 +9,7 @@ defmodule LineaUI.Components.CheckboxTest do
              find(html, "label.inline-flex > input[type=checkbox][value=true]") |> Enum.to_list()
 
     assert LazyHTML.text(find(html, "label span")) =~ "Default"
-    classes = classes(html, "input[type=checkbox]")
-    assert "form-checkbox" in classes
-    assert "is-basic" in classes
-    assert "size-5" in classes
-    assert "rounded-sm" in classes
-    assert "checked:bg-slate-900" in classes
+    assert classes(html, "input[type=checkbox]") == ["checkbox", "aria-invalid:checkbox-error"]
   end
 
   test "color, variant, filled, shape and size" do
@@ -24,12 +19,9 @@ defmodule LineaUI.Components.CheckboxTest do
       """)
 
     classes = classes(html, "input[type=checkbox]")
-    assert "is-outline" in classes
-    assert "before:bg-primary" in classes
-    assert "dark:before:bg-accent" in classes
-    assert "bg-slate-100" in classes
-    assert "rounded-full" in classes
-    assert "size-6" in classes
+
+    assert ["checkbox", "checkbox-primary", "checkbox-lg", "bg-base-200", "rounded-full"] --
+             classes == []
   end
 
   test "checked comes from value or field" do
@@ -92,28 +84,28 @@ defmodule LineaUI.Components.CheckboxTest do
       </.checkbox_group>
       """)
 
-    assert "checked:bg-success" in classes(html, "input[type=checkbox]")
+    assert "checkbox-success" in classes(html, "input[type=checkbox]")
   end
 
   test "errors paint the checkboxes with the error border" do
-    # A lone checkbox paints the error from `aria-invalid` (its classes carry `linea-invalid-check` either way).
+    # A lone checkbox paints the error from `aria-invalid` (its classes carry `aria-invalid:checkbox-error` either way).
     html = render(~H'<.checkbox name="t" errors={["required"]} />')
     assert [_] = find(html, "input[type=checkbox][aria-invalid=true]") |> Enum.to_list()
-    assert "linea-invalid-check" in classes(html, "input[type=checkbox]")
+    assert "aria-invalid:checkbox-error" in classes(html, "input[type=checkbox]")
 
     html = render(~H'<.checkbox name="t" variant="outline" errors={["required"]} />')
     assert [_] = find(html, "input[type=checkbox][aria-invalid=true]") |> Enum.to_list()
 
     html = render(~H'<.checkbox name="t" />')
     assert find(html, "input[type=checkbox][aria-invalid]") |> Enum.to_list() == []
-    assert "linea-invalid-check" in classes(html, "input[type=checkbox]")
-    refute "border-error" in classes(html, "input[type=checkbox]")
+    assert "aria-invalid:checkbox-error" in classes(html, "input[type=checkbox]")
+    refute "checkbox-error" in classes(html, "input[type=checkbox]")
 
     html = render(~H'<.checkbox_group name="g[]" options={["a", "b"]} errors={["pick one"]} />')
-    assert "border-error" in classes(html, "input[type=checkbox]")
+    assert "checkbox-error" in classes(html, "input[type=checkbox]")
 
     html = render(~H'<.checkbox_group name="g[]" options={["a", "b"]} />')
-    refute "border-error" in classes(html, "input[type=checkbox]")
+    refute "checkbox-error" in classes(html, "input[type=checkbox]")
   end
 
   defp input_attr(html, name) do

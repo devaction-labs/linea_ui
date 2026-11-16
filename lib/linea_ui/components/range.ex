@@ -59,17 +59,22 @@ defmodule LineaUI.Components.Range do
   alias LineaUI.Components.Form
   alias LineaUI.Components.NumberInput.Format
 
-  @colors %{
-    "neutral" => "text-slate-500 dark:text-navy-300",
-    "primary" => "text-primary dark:text-accent",
-    "secondary" => "text-secondary dark:text-secondary-light",
+  @colors ~w(primary secondary info success warning error)
+
+  @sizes %{"sm" => "range-sm", "md" => nil, "lg" => "range-lg"}
+
+  # the two-thumb range keeps its own track (two inputs over one bar), in the theme's colors
+  @pair_colors %{
+    "neutral" => "text-base-content/60",
+    "primary" => "text-primary",
+    "secondary" => "text-secondary",
     "info" => "text-info",
     "success" => "text-success",
     "warning" => "text-warning",
     "error" => "text-error"
   }
 
-  @sizes %{
+  @pair_sizes %{
     "sm" => "[--range-track-h:3px] [--range-thumb-size:12px]",
     "md" => nil,
     "lg" => "[--range-track-h:8px] [--range-thumb-size:24px]"
@@ -304,12 +309,10 @@ defmodule LineaUI.Components.Range do
 
   defp classes(assigns) do
     merge([
-      "form-range disabled:pointer-events-none disabled:opacity-60",
-      @colors[assigns.color],
+      "range w-full disabled:pointer-events-none disabled:opacity-60",
+      (assigns.color in @colors && "range-#{assigns.color}") || "range-neutral",
       @sizes[assigns.size],
-      assigns.filled && "linea-range-filled",
-      assigns.vertical? && "linea-range-vertical [direction:rtl] [writing-mode:vertical-lr]",
-      assigns.vertical? && "h-full w-(--range-thumb-size)",
+      assigns.vertical? && "range-vertical h-full w-auto",
       assigns.class
     ])
   end
@@ -356,9 +359,15 @@ defmodule LineaUI.Components.Range do
         text: pair_text(assigns.value_format, low, high),
         min_text: format(min),
         max_text: format(max),
-        input_class: merge(["form-range", @colors[assigns.color], @sizes[assigns.size]]),
+        input_class:
+          merge(["form-range", @pair_colors[assigns.color], @pair_sizes[assigns.size]]),
         pair_class:
-          merge(["linea-range-pair", @colors[assigns.color], @sizes[assigns.size], assigns.class])
+          merge([
+            "linea-range-pair",
+            @pair_colors[assigns.color],
+            @pair_sizes[assigns.size],
+            assigns.class
+          ])
       )
 
     ~H"""

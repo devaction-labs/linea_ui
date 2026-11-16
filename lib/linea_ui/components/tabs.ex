@@ -71,20 +71,20 @@ defmodule LineaUI.Components.Tabs do
   @tab_base %{
     {"line", "horizontal"} => "sg-tab",
     {"line", "vertical"} =>
-      "btn justify-start gap-2 rounded-none border-r-2 px-3 py-2 text-left font-medium aria-selected:border-primary aria-selected:text-primary dark:aria-selected:border-accent dark:aria-selected:text-accent-light not-aria-selected:border-transparent not-aria-selected:hover:text-slate-800 not-aria-selected:focus:text-slate-800 dark:not-aria-selected:hover:text-navy-100 dark:not-aria-selected:focus:text-navy-100",
+      "lo-btn justify-start gap-2 rounded-none border-r-2 px-3 py-2 text-left font-medium aria-selected:border-primary aria-selected:text-primary dark:aria-selected:border-accent dark:aria-selected:text-accent-light not-aria-selected:border-transparent not-aria-selected:hover:text-slate-800 not-aria-selected:focus:text-slate-800 dark:not-aria-selected:hover:text-navy-100 dark:not-aria-selected:focus:text-navy-100",
     {"boxed", "horizontal"} =>
-      "btn gap-2 px-3 py-1.5 font-medium aria-selected:bg-white aria-selected:shadow-sm dark:aria-selected:bg-navy-500 dark:aria-selected:text-navy-100 not-aria-selected:hover:text-slate-800 not-aria-selected:focus:text-slate-800 dark:not-aria-selected:hover:text-navy-100 dark:not-aria-selected:focus:text-navy-100",
+      "lo-btn gap-2 px-3 py-1.5 font-medium aria-selected:bg-white aria-selected:shadow-sm dark:aria-selected:bg-navy-500 dark:aria-selected:text-navy-100 not-aria-selected:hover:text-slate-800 not-aria-selected:focus:text-slate-800 dark:not-aria-selected:hover:text-navy-100 dark:not-aria-selected:focus:text-navy-100",
     {"boxed", "vertical"} =>
-      "btn justify-start gap-2 px-3 py-1.5 text-left font-medium aria-selected:bg-white aria-selected:shadow-sm dark:aria-selected:bg-navy-500 dark:aria-selected:text-navy-100 not-aria-selected:hover:text-slate-800 not-aria-selected:focus:text-slate-800 dark:not-aria-selected:hover:text-navy-100 dark:not-aria-selected:focus:text-navy-100",
+      "lo-btn justify-start gap-2 px-3 py-1.5 text-left font-medium aria-selected:bg-white aria-selected:shadow-sm dark:aria-selected:bg-navy-500 dark:aria-selected:text-navy-100 not-aria-selected:hover:text-slate-800 not-aria-selected:focus:text-slate-800 dark:not-aria-selected:hover:text-navy-100 dark:not-aria-selected:focus:text-navy-100",
     {"pill", "horizontal"} =>
-      "btn h-8 gap-2 rounded-full text-xs-plus font-medium not-aria-selected:hover:bg-slate-300/20 not-aria-selected:focus:bg-slate-300/20 not-aria-selected:active:bg-slate-300/25 not-aria-selected:hover:text-slate-800 not-aria-selected:focus:text-slate-800 dark:not-aria-selected:hover:bg-navy-300/20 dark:not-aria-selected:focus:bg-navy-300/20 dark:not-aria-selected:active:bg-navy-300/25 dark:not-aria-selected:hover:text-navy-100 dark:not-aria-selected:focus:text-navy-100",
+      "lo-btn h-8 gap-2 rounded-full text-xs-plus font-medium not-aria-selected:hover:bg-slate-300/20 not-aria-selected:focus:bg-slate-300/20 not-aria-selected:active:bg-slate-300/25 not-aria-selected:hover:text-slate-800 not-aria-selected:focus:text-slate-800 dark:not-aria-selected:hover:bg-navy-300/20 dark:not-aria-selected:focus:bg-navy-300/20 dark:not-aria-selected:active:bg-navy-300/25 dark:not-aria-selected:hover:text-navy-100 dark:not-aria-selected:focus:text-navy-100",
     {"pill", "vertical"} =>
-      "btn h-8 justify-start gap-2 rounded-full text-left text-xs-plus font-medium not-aria-selected:hover:bg-slate-300/20 not-aria-selected:focus:bg-slate-300/20 not-aria-selected:active:bg-slate-300/25 not-aria-selected:hover:text-slate-800 not-aria-selected:focus:text-slate-800 dark:not-aria-selected:hover:bg-navy-300/20 dark:not-aria-selected:focus:bg-navy-300/20 dark:not-aria-selected:active:bg-navy-300/25 dark:not-aria-selected:hover:text-navy-100 dark:not-aria-selected:focus:text-navy-100",
+      "lo-btn h-8 justify-start gap-2 rounded-full text-left text-xs-plus font-medium not-aria-selected:hover:bg-slate-300/20 not-aria-selected:focus:bg-slate-300/20 not-aria-selected:active:bg-slate-300/25 not-aria-selected:hover:text-slate-800 not-aria-selected:focus:text-slate-800 dark:not-aria-selected:hover:bg-navy-300/20 dark:not-aria-selected:focus:bg-navy-300/20 dark:not-aria-selected:active:bg-navy-300/25 dark:not-aria-selected:hover:text-navy-100 dark:not-aria-selected:focus:text-navy-100",
     {"segmented", "horizontal"} => "sg-seg-tab",
     {"segmented", "vertical"} => "sg-seg-tab"
   }
 
-  @text_base "btn gap-2 rounded-none p-0 font-medium tracking-wide not-aria-selected:hover:text-slate-800 not-aria-selected:focus:text-slate-800 dark:not-aria-selected:hover:text-navy-100 dark:not-aria-selected:focus:text-navy-100"
+  @text_base "lo-btn gap-2 rounded-none p-0 font-medium tracking-wide not-aria-selected:hover:text-slate-800 not-aria-selected:focus:text-slate-800 dark:not-aria-selected:hover:text-navy-100 dark:not-aria-selected:focus:text-navy-100"
 
   @boxed_sizes %{
     "xs" => "px-2.5 py-0.5 text-xs",

@@ -46,20 +46,15 @@ defmodule LineaUI.Components.NumberInput do
   alias LineaUI.Components.NumberInput.Format
   alias LineaUI.Components.Pickers
 
-  @group "flex w-full -space-x-px [&>*]:rounded-none [&>*_.form-input]:rounded-none [&>*:hover]:z-10 [&>*:focus]:z-10 [&>*:focus-within]:z-10"
+  @group "join w-full"
 
-  @shapes %{
-    "rounded" =>
-      "[&>:first-child]:rounded-l-md [&>:first-child_.form-input]:rounded-l-md [&>:last-child]:rounded-r-md [&>:last-child_.form-input]:rounded-r-md",
-    "pill" =>
-      "[&>:first-child]:rounded-l-full [&>:first-child_.form-input]:rounded-l-full [&>:last-child]:rounded-r-full [&>:last-child_.form-input]:rounded-r-full"
-  }
+  @shapes %{"rounded" => nil, "pill" => "[--join-r:9999px]"}
 
-  @stepper "flex shrink-0 items-center justify-center border border-slate-200 px-3 text-slate-600 outline-hidden transition-colors hover:bg-slate-100 hover:text-slate-800 focus-visible:bg-slate-100 active:bg-slate-150 disabled:pointer-events-none disabled:opacity-35 dark:border-navy-450 dark:text-navy-100 dark:hover:bg-navy-600 dark:hover:text-navy-50 dark:focus-visible:bg-navy-600 dark:active:bg-navy-500"
+  @stepper "btn join-item px-3 font-normal disabled:opacity-35"
 
-  @stepper_sizes %{"sm" => "h-7", "md" => "h-9", "lg" => "h-11"}
+  @stepper_sizes %{"sm" => "btn-sm", "md" => nil, "lg" => "btn-lg"}
 
-  @addon_sizes %{"sm" => "h-7 text-xs", "md" => "h-9 text-sm", "lg" => "h-11 text-sm"}
+  @addon_sizes %{"sm" => "input-sm", "md" => nil, "lg" => "input-lg"}
 
   @doc """
   Renders the number input.
@@ -332,7 +327,7 @@ defmodule LineaUI.Components.NumberInput do
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14" /></svg>
         </button>
         <div
-          class="relative min-w-0 flex-1 [&_.form-input]:w-full"
+          class="relative min-w-0 flex-1 [&_.input]:w-full"
           style={if(@suffix && @align == "center", do: "--nlen: #{@shown}")}
           data-field
         >
@@ -390,7 +385,6 @@ defmodule LineaUI.Components.NumberInput do
       |> assign_derived(:stepper_class, [:size], fn ->
         merge([@stepper, @stepper_sizes[assigns.size]])
       end)
-      |> assign_derived(:field_height, [:size], fn -> @stepper_sizes[assigns.size] end)
       |> assign_derived(:addon_class, [:size], fn -> @addon_sizes[assigns.size] end)
       |> assign_derived(:shown, [:display], fn -> String.length(assigns.display) end)
       |> assign_input(:group)
@@ -429,7 +423,7 @@ defmodule LineaUI.Components.NumberInput do
           {@prefix}
         </InputGroup.input_group_addon>
         <div
-          class="relative min-w-0 flex-1 [&_.form-input]:w-full"
+          class="relative min-w-0 flex-1 [&_.input]:w-full"
           style={if((@steppers and @suffix) && @align == "center", do: "--nlen: #{@shown}")}
           data-field
         >
@@ -453,7 +447,7 @@ defmodule LineaUI.Components.NumberInput do
             ]}
             data-suffix
           >
-            <span class="font-inter text-xs-plus font-normal text-slate-400 dark:text-navy-300">
+            <span class="font-inter text-xs-plus font-normal text-base-content/50">
               {@suffix}
             </span>
           </span>
@@ -530,9 +524,7 @@ defmodule LineaUI.Components.NumberInput do
       class:
         merge([
           assigns.align == "center" && "text-center",
-          assigns.steppers && @stepper_sizes[assigns.size],
-          assigns.steppers &&
-            "font-mono text-sm-plus font-medium text-slate-800 dark:text-navy-50",
+          assigns.steppers && "font-mono text-sm-plus font-medium",
           assigns.steppers && assigns.suffix && assigns.align != "center" && "pe-9",
           assigns.class
         ])

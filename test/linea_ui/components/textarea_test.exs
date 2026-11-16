@@ -1,7 +1,7 @@
 defmodule LineaUI.Components.TextareaTest do
   use LineaUI.ComponentCase, async: true
 
-  test "a bare outlined textarea is the canvas field: white, 11px corners, 14px text, primary focus ring" do
+  test "a bare outlined textarea is daisyUI's textarea, full width, not resizable" do
     html = render(~H'<.textarea name="bio" placeholder="Enter Text" />')
 
     assert [_] =
@@ -11,14 +11,7 @@ defmodule LineaUI.Components.TextareaTest do
     assert find(html, "label") |> Enum.to_list() == []
 
     classes = classes(html, "textarea")
-    assert "bg-white" in classes
-    assert "rounded-[11px]" in classes
-    assert "text-[14px]" in classes
-
-    assert "focus:shadow-[inset_0_0_0_1px_var(--color-primary),0_0_0_4px_color-mix(in_oklab,var(--color-primary)_14%,transparent)]" in classes
-
-    assert "disabled:bg-zinc-100" in classes
-    assert "resize-none" in classes
+    assert ["textarea", "w-full", "resize-none", "aria-invalid:textarea-error"] -- classes == []
   end
 
   test "resizable drops resize-none and disabled sets the attribute" do
@@ -28,7 +21,7 @@ defmodule LineaUI.Components.TextareaTest do
   end
 
   test "filled variant" do
-    assert "bg-slate-150" in classes(
+    assert "bg-base-200" in classes(
              render(~H'<.textarea name="b" variant="filled" />'),
              "textarea"
            )
@@ -36,12 +29,12 @@ defmodule LineaUI.Components.TextareaTest do
 
   test "error and success paint the line and ring; error sets aria-invalid" do
     html = render(~H'<.textarea name="b" errors={["too short"]} />')
-    assert "linea-invalid" in classes(html, "textarea")
+    assert "aria-invalid:textarea-error" in classes(html, "textarea")
     assert [_] = find(html, "textarea[aria-invalid=true]") |> Enum.to_list()
     assert LazyHTML.text(find(html, "span.text-error")) =~ "too short"
 
     html = render(~H'<.textarea name="b" state="success" help="Valid" />')
-    assert Enum.any?(classes(html, "textarea"), &(&1 =~ "var(--color-success)"))
+    assert "textarea-success" in classes(html, "textarea")
     assert find(html, "textarea[aria-invalid]") |> Enum.to_list() == []
     assert "text-success" in classes(html, "label + span")
   end
@@ -61,9 +54,8 @@ defmodule LineaUI.Components.TextareaTest do
       </.textarea>
       """)
 
-    frame = classes(html, "div.rounded-md")
-    assert "focus-within:!border-primary" in frame
-    assert "focus-within:ring-3" in frame
+    frame = classes(html, "div.rounded-field")
+    assert "focus-within:outline-2" in frame
     assert "mt-1.5" in frame
     assert "pt-0" not in classes(html, "textarea")
     assert "py-0" in classes(html, "textarea")

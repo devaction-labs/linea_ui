@@ -22,7 +22,7 @@ defmodule LineaUI.Components.Form do
   alias LineaUI.Components.Control
 
   @help %{
-    nil => "text-xs leading-5 text-slate-400 dark:text-navy-300",
+    nil => "text-xs leading-5 text-base-content/55",
     "success" => "inline-flex items-center gap-1 text-xs leading-5 text-success",
     "error" => "text-xs leading-5 text-error"
   }
@@ -156,12 +156,12 @@ defmodule LineaUI.Components.Form do
           :if={@label}
           class={
             merge([
-              "flex justify-end gap-2 text-right text-[13px]/5 font-medium text-slate-950 dark:text-navy-50",
+              "flex justify-end gap-2 text-right text-[13px]/5 font-medium text-base-content",
               @label_class
             ])
           }
         >
-          {@label}<span :if={@label_hint} class="font-normal text-slate-400 dark:text-navy-300">{@label_hint}</span>
+          {@label}<span :if={@label_hint} class="font-normal text-base-content/50">{@label_hint}</span>
         </span>
         <span class={merge(["flex", !@label && "col-start-2"])}>{render_slot(@inner_block)}</span>
       </label>
@@ -180,13 +180,13 @@ defmodule LineaUI.Components.Form do
         :if={@label}
         class={
           merge([
-            "flex justify-end gap-2 text-right text-[13px]/5 font-medium text-slate-950 dark:text-navy-50",
+            "flex justify-end gap-2 text-right text-[13px]/5 font-medium text-base-content",
             @label_class
           ])
         }
         id={@id && "#{@id}-label"}
       >
-        {@label}<span :if={@label_hint} class="font-normal text-slate-400 dark:text-navy-300">{@label_hint}</span>
+        {@label}<span :if={@label_hint} class="font-normal text-base-content/50">{@label_hint}</span>
       </span>
       <div class={!@label && "col-start-2"}>{render_slot(@inner_block)}</div>
       <div class="col-start-2">
@@ -205,13 +205,13 @@ defmodule LineaUI.Components.Form do
           :if={@label}
           class={
             merge([
-              "block text-[13px]/5 font-medium text-slate-950 dark:text-navy-50",
+              "block text-[13px]/5 font-medium text-base-content",
               (@label_hint || @label_aside != []) && "flex justify-between gap-2",
               @label_class
             ])
           }
         >
-          {@label}<span :if={@label_hint} class="font-normal text-slate-400 dark:text-navy-300">{@label_hint}</span><span
+          {@label}<span :if={@label_hint} class="font-normal text-base-content/50">{@label_hint}</span><span
             :if={@label_aside != []}
             class="ml-auto flex items-center gap-2 font-normal"
           >{render_slot(@label_aside)}</span>
@@ -231,14 +231,14 @@ defmodule LineaUI.Components.Form do
         :if={@label}
         class={
           merge([
-            "block text-[13px]/5 font-medium text-slate-950 dark:text-navy-50",
+            "block text-[13px]/5 font-medium text-base-content",
             (@label_hint || @label_aside != []) && "flex justify-between gap-2",
             @label_class
           ])
         }
         id={@id && "#{@id}-label"}
       >
-        {@label}<span :if={@label_hint} class="font-normal text-slate-400 dark:text-navy-300">{@label_hint}</span><span
+        {@label}<span :if={@label_hint} class="font-normal text-base-content/50">{@label_hint}</span><span
           :if={@label_aside != []}
           class="ml-auto flex items-center gap-2 font-normal"
         >{render_slot(@label_aside)}</span>

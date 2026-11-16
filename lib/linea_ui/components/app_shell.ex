@@ -176,7 +176,7 @@ defmodule LineaUI.Components.AppShell do
     "horizontal" => false
   }
 
-  @icon_button "btn size-8 rounded-full p-0 hover:bg-slate-300/20 focus:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25"
+  @icon_button "lo-btn size-8 rounded-full p-0 hover:bg-slate-300/20 focus:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25"
 
   @doc """
   The page frame: the sidebar, the header, the drawers and the `<main>` content, with LineOne's body classes.
@@ -653,7 +653,7 @@ defmodule LineaUI.Components.AppShell do
       aria-label="Close sidebar"
       class={
         merge([
-          "sidebar-close btn size-7 rounded-full p-0 text-primary hover:bg-slate-300/20 focus:bg-slate-300/20 active:bg-slate-300/25 dark:text-accent-light/80 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25 xl:hidden",
+          "sidebar-close lo-btn size-7 rounded-full p-0 text-primary hover:bg-slate-300/20 focus:bg-slate-300/20 active:bg-slate-300/25 dark:text-accent-light/80 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25 xl:hidden",
           @class
         ])
       }
@@ -926,7 +926,7 @@ defmodule LineaUI.Components.AppShell do
     ~H"""
     <li>
       <.link
-        class={merge(["btn size-10 p-0", @state, @class])}
+        class={merge(["lo-btn size-10 p-0", @state, @class])}
         aria-label={@label}
         aria-current={@active && "page"}
         {@rest}
@@ -1214,7 +1214,7 @@ defmodule LineaUI.Components.AppShell do
           type="button"
           aria-label="Close search"
           phx-click={hide_mobile_search(@id)}
-          class="mobile-searchbar-hide btn -ml-1.5 size-7 shrink-0 rounded-full p-0 text-slate-600 hover:bg-slate-300/20 active:bg-slate-300/25 dark:text-navy-100 dark:hover:bg-navy-300/20 dark:active:bg-navy-300/25"
+          class="mobile-searchbar-hide lo-btn -ml-1.5 size-7 shrink-0 rounded-full p-0 text-slate-600 hover:bg-slate-300/20 active:bg-slate-300/25 dark:text-navy-100 dark:hover:bg-navy-300/20 dark:active:bg-navy-300/25"
         >
           <.glyph name={:chevron_left} class="size-5" stroke_width="1.5" />
         </button>
@@ -1329,7 +1329,7 @@ defmodule LineaUI.Components.AppShell do
         aria-haspopup="true"
         aria-expanded="false"
         class={[
-          "btn popper-ref space-x-2 px-2 py-1.5 text-xs-plus font-medium leading-none",
+          "lo-btn popper-ref space-x-2 px-2 py-1.5 text-xs-plus font-medium leading-none",
           menu_state(@active)
         ]}
       >
@@ -1505,7 +1505,7 @@ defmodule LineaUI.Components.AppShell do
               type="button"
               data-drawer-close
               aria-label="Close"
-              class="btn -mr-1 size-6 rounded-full p-0 hover:bg-slate-300/20 focus:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25"
+              class="lo-btn -mr-1 size-6 rounded-full p-0 hover:bg-slate-300/20 focus:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25"
             >
               <.glyph name={:close} class="size-4" />
             </button>

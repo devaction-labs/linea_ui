@@ -50,7 +50,7 @@ defmodule LineaUI.Components.UploadTest do
   test "upload_button with a LiveView upload or a plain input" do
     assigns = %{__changed__: nil, upload: config()}
     html = rendered_to_string(~H|<.upload_button upload={@upload}>Choose File</.upload_button>|)
-    assert "bg-slate-150" in classes(html, "label")
+    assert "btn" in classes(html, "label")
     assert find(html, "label input[type=file][id='#{assigns.upload.ref}']") |> Enum.count() == 1
 
     html =
@@ -59,10 +59,7 @@ defmodule LineaUI.Components.UploadTest do
       )
 
     classes = classes(html, "label")
-    assert "bg-info" in classes
-    assert "hover:shadow-info/50" in classes
-    assert "size-9" in classes
-    assert "rounded-full" in classes
+    assert ["btn", "btn-info", "btn-circle", "btn-square"] -- classes == []
     assert find(html, "input[type=file][name=doc][multiple]") |> Enum.count() == 1
   end
 
@@ -273,31 +270,28 @@ defmodule LineaUI.Components.UploadTest do
     assert find(html, "input[type=file][disabled]") |> Enum.count() == 1
   end
 
-  describe "upload_button canvas variant" do
-    test "a size draws sg-btn like <.button> and takes an id" do
+  describe "upload_button is daisyUI's btn" do
+    test "size, variant and id as <.button>" do
       html =
         render(
           ~H|<.upload_button id="attach-button" size="sm" variant="ghost">Anexar</.upload_button>|
         )
 
       assert ["attach-button"] == html |> find("label") |> LazyHTML.attribute("id")
-      assert "sg-btn" in classes(html, "label")
-      assert "ghost" in classes(html, "label")
-      assert "sm" in classes(html, "label")
-      refute "btn" in classes(html, "label")
+      assert ["btn", "btn-ghost", "btn-sm"] -- classes(html, "label") == []
     end
 
     test "colors map as in <.button>" do
       html = render(~H|<.upload_button size="md" color="primary">A</.upload_button>|)
-      assert "accent" in classes(html, "label")
+      assert "btn-primary" in classes(html, "label")
       html = render(~H|<.upload_button color="error" variant="soft">A</.upload_button>|)
-      assert "danger" in classes(html, "label")
+      assert ["btn-error", "btn-soft"] -- classes(html, "label") == []
     end
 
-    test "without size, LineOne's classes stay" do
+    test "without size it is the md button" do
       html = render(~H|<.upload_button>A</.upload_button>|)
       assert "btn" in classes(html, "label")
-      refute "sg-btn" in classes(html, "label")
+      refute Enum.any?(classes(html, "label"), &(&1 in ~w(btn-xs btn-sm btn-lg btn-xl)))
     end
   end
 end

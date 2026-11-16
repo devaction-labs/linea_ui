@@ -1,25 +1,36 @@
 defmodule LineaUI.Components.BadgeTest do
   use LineaUI.ComponentCase, async: true
 
-  test "a canvas badge with its text" do
+  test "daisyUI's badge with its text, soft by default" do
     html = render(~H|<.badge>Novo</.badge>|)
-    assert "sg-badge" in classes(html, "span")
+    assert classes(html, "span") == ["badge", "badge-soft"]
     assert String.trim(LazyHTML.text(find(html, "span"))) == "Novo"
   end
 
-  test "color picks the canvas tone" do
-    assert "pos" in classes(render(~H|<.badge color="success">x</.badge>|), "span")
-    assert "neg" in classes(render(~H|<.badge color="error">x</.badge>|), "span")
-    assert "warn" in classes(render(~H|<.badge color="warning">x</.badge>|), "span")
-    assert "info" in classes(render(~H|<.badge color="info">x</.badge>|), "span")
-    assert "acc" in classes(render(~H|<.badge color="primary">x</.badge>|), "span")
-    assert "solid" in classes(render(~H|<.badge color="dark">x</.badge>|), "span")
+  test "color, variant, size and shape map to daisyUI's modifiers" do
+    assert ["badge", "badge-success", "badge-soft"] ==
+             classes(render(~H|<.badge color="success">x</.badge>|), "span")
+
+    assert "badge-error" in classes(render(~H|<.badge color="error">x</.badge>|), "span")
+    assert "badge-neutral" in classes(render(~H|<.badge color="dark">x</.badge>|), "span")
+
+    assert ["badge", "badge-primary"] ==
+             classes(render(~H|<.badge color="primary" variant="solid">x</.badge>|), "span")
+
+    assert "badge-outline" in classes(render(~H|<.badge variant="outline">x</.badge>|), "span")
+    assert "badge-sm" in classes(render(~H|<.badge size="sm">x</.badge>|), "span")
+    assert "rounded-full" in classes(render(~H|<.badge shape="pill">x</.badge>|), "span")
   end
 
-  test "dot draws the dot of the canvas badge" do
+  test "dot draws a status dot in the badge's color" do
     html = render(~H|<.badge dot>Ativo</.badge>|)
-    assert [_] = find(html, "span.dot") |> Enum.to_list()
-    assert find(render(~H|<.badge>Ativo</.badge>|), "span.dot") |> Enum.to_list() == []
+    assert [_] = find(html, "span.badge > span.status") |> Enum.to_list()
+    assert find(render(~H|<.badge>Ativo</.badge>|), "span.status") |> Enum.to_list() == []
+  end
+
+  test "on_remove adds the remove button" do
+    html = render(~H|<.badge id="f" on_remove="drop">Filtro</.badge>|)
+    assert [_] = find(html, "#f > button[aria-label=Remove]") |> Enum.to_list()
   end
 
   test "class and attributes land on the badge" do

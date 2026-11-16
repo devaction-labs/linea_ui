@@ -1,6 +1,6 @@
 defmodule LineaUI.Components.Button do
   @moduledoc """
-  LineOne's buttons: filled, outlined, soft, bordered, flat and glowing, in every theme color.
+  daisyUI's button (`btn`): filled, outlined, soft, ghost and glass, in every theme color.
 
       <.button>Neutral</.button>
       <.button color="primary">Save</.button>
@@ -12,27 +12,23 @@ defmodule LineaUI.Components.Button do
 
   With `href`, `navigate` or `patch` it renders a link that looks the same.
 
-  While work runs, `loading` disables the button (no double submit), marks it `aria-busy` and
-  puts the canvas's 14px spinner (`sg-spin`) in the color of its text before the label; change
-  the label to the gerund yourself:
+  The classes are daisyUI's: `btn`, its color (`btn-primary`, `btn-error`…), style (`btn-outline`, `btn-soft`,
+  `btn-ghost`), size (`btn-xs` to `btn-xl`) and shape (`btn-square`, `btn-circle`), so the theme (`data-theme`)
+  paints it, and any other daisyUI or Tailwind class can be added.
+
+  While work runs, `loading` disables the button (no double submit), marks it `aria-busy` and puts daisyUI's
+  spinner (`loading loading-spinner`) before the label; change the label to the gerund yourself:
 
       <.button color="primary" loading={@saving}>{if @saving, do: "Saving…", else: "Save"}</.button>
 
-  The canvas button matches an `md` input (36px), but its `lg` is 40px while an `lg` field is 48px. In a row
-  with inputs, selects, pillboxes and date pickers, pass `control` and every control of the same `size` gets
-  the same height (`sm` 32px, `md` 36px, `lg` 48px):
-
-      <.button control>Filter</.button>
-      <.input name="q" /> <.button control color="primary">Search</.button>
-
-  A `disabled` button is faded (the canvas's 45% opacity). An icon button takes `pip`, the accent
-  dot on its corner that tells there is something new:
+  A button and a field of the same `size` have the same height (daisyUI's `--size-field`), so `control` is no longer
+  needed to line them up; it is kept so existing calls compile. A `disabled` button is faded. An icon button takes
+  `pip`, the accent dot on its corner (`indicator` and `status`) that tells there is something new:
 
       <.button icon variant="outline" pip aria-label="Notifications"><svg>…</svg></.button>
   """
 
   use LineaUI.Component
-  import LineaUI.Components.Spinner, only: [spinner: 1]
 
   @doc """
   Renders a button, or a link when `href`, `navigate` or `patch` is given.
@@ -41,39 +37,34 @@ defmodule LineaUI.Components.Button do
     default: "neutral",
     values: ~w(neutral primary secondary info success warning error white current mono),
     doc:
-      "`white` is for buttons on colored or gradient surfaces; `current` takes the parent's text color (`solid` and `glow` have no `current`)."
+      "`white` is for buttons on colored or gradient surfaces; `current` takes the parent's text color; `mono` is daisyUI's `btn-neutral`."
   )
 
   attr(:variant, :string,
     default: "solid",
     values: ~w(solid glow outline soft bordered flat glass ghost dim),
     doc:
-      "`solid` is filled, `glow` adds the colored shadow, `ghost` is transparent until hovered and `dim` is muted text that darkens on hover (`kt-btn-ghost` and `kt-btn-dim`; `mono` is its black button), `bordered` is soft with a tinted border, `flat` has no background until hovered, `glass` is translucent white with white text for gradient and colored cards (it ignores `color`)."
+      "`solid` is filled, `glow` adds a colored shadow, `outline` is `btn-outline`, `soft` is `btn-soft` (`bordered` adds a tinted border), `flat` and `ghost` are `btn-ghost`, `dim` is a ghost with muted text that darkens on hover, `glass` is daisyUI's `glass` for gradient and colored cards."
   )
 
-  attr(:size, :string,
-    default: "md",
-    values: ~w(xs sm md lg xl),
-    doc:
-      "With `icon`, the canvas defines three sizes: `md` 36px, `sm` 32px and `xs` 24px; `lg` and `xl` render as `md`."
-  )
+  attr(:size, :string, default: "md", values: ~w(xs sm md lg xl))
 
   attr(:shape, :string,
     default: "rounded",
     values: ~w(rounded pill square),
-    doc: "`rounded` (10px corners, the default), `pill` (fully round ends, opt-in) or `square`."
+    doc:
+      "`rounded` (the theme's `--radius-field`, the default), `pill` (fully round ends, opt-in; `btn-circle` on an icon button) or `square` (tighter corners)."
   )
 
   attr(:icon, :boolean,
     default: false,
-    doc:
-      "A square button that holds only an icon (`sg-ib`). The canvas draws it in one look, a bordered control, or `plain` (no border or fill until hovered) for `flat`, `ghost` and `dim`; every other `variant` and `color` renders the bordered control. Always pass `aria-label`."
+    doc: "A square button that holds only an icon (`btn-square`). Always pass `aria-label`."
   )
 
   attr(:control, :boolean,
     default: false,
     doc:
-      "Opt-in: the button takes the height of the form controls of its `size` (`sm` 32px, `md` 36px, `lg` 48px, tokens `--ctl-h-sm|md|lg`) so it lines up with an input, select, pillbox or date picker of the same `size` in a filter bar. Not for `icon` buttons."
+      "Kept for compatibility: daisyUI's buttons and fields of a `size` already share one height."
   )
 
   attr(:type, :string, default: "button")
@@ -86,7 +77,8 @@ defmodule LineaUI.Components.Button do
 
   attr(:pip, :boolean,
     default: false,
-    doc: "With `icon`, the canvas's accent dot on the corner (an unread notice)."
+    doc:
+      "The accent dot on the corner (an unread notice), as daisyUI's `indicator` with a `status`."
   )
 
   attr(:loading_label, :string,
@@ -104,7 +96,7 @@ defmodule LineaUI.Components.Button do
 
   def button(assigns) do
     assigns
-    |> assign_derived(:classes, [:icon, :size, :variant, :color, :shape, :control, :class], fn ->
+    |> assign_derived(:classes, [:icon, :size, :variant, :color, :shape, :pip, :class], fn ->
       classes(assigns)
     end)
     |> assign_derived(:inactive, [:disabled, :loading], fn ->
@@ -113,63 +105,21 @@ defmodule LineaUI.Components.Button do
     |> render_button()
   end
 
-  # The canvas buttons: `sg-btn` (10px corners) and `sg-ib` (the square icon button), with their own variants.
-  defp classes(assigns) do
-    merge([
-      (assigns.icon && icon_class(assigns)) || button_class(assigns),
-      assigns.class
-    ])
-  end
-
-  defp icon_class(%{size: size, variant: variant, shape: shape}) do
-    [
-      "sg-ib",
-      size == "sm" && "sm",
-      size == "xs" && "xs",
-      variant in ~w(flat ghost dim) && "plain",
-      shape == "pill" && "pill"
-    ]
-  end
-
-  defp button_class(%{color: color, variant: variant, size: size, shape: shape, control: control}) do
-    [
-      "sg-btn",
-      tone(color, variant),
-      size_class(size),
-      control && "ctl",
-      shape == "square" && "sq",
-      shape == "pill" && "pill"
-    ]
-  end
-
-  defp size_class("md"), do: nil
-  defp size_class(size), do: size
-
-  # Neutral `soft` is the gray tint (`filled`); a colored `soft` keeps the accent tint. `dim` is the
-  # muted text that darkens on hover (`subtle`).
-  defp tone("mono", _variant), do: "solid"
-  defp tone("error", _variant), do: "danger"
-  defp tone("primary", "solid"), do: "accent"
-  defp tone("primary", "glow"), do: "accent"
-  defp tone(color, "soft") when color in ~w(neutral secondary current white), do: "filled"
-  defp tone(_color, variant) when variant in ~w(soft bordered), do: "soft"
-  defp tone(_color, "dim"), do: "subtle"
-  defp tone(_color, variant) when variant in ~w(flat ghost), do: "ghost"
-  defp tone(_color, _variant), do: nil
+  defp classes(assigns), do: LineaUI.Daisy.btn(assigns)
 
   defp render_button(%{rest: rest} = assigns)
        when is_map_key(rest, :href) or is_map_key(rest, :navigate) or is_map_key(rest, :patch) do
     ~H"""
     <.link
-      class={@classes}
+      class={merge([@classes, @inactive && "btn-disabled"])}
       aria-disabled={@inactive && "true"}
       aria-busy={@loading && "true"}
       tabindex={@inactive && "-1"}
       {@rest}
     >
-      <.spinner :if={@loading} variant="canvas" color="current" size="xs" label={@loading_label} />
+      <.busy :if={@loading} label={@loading_label} />
       {render_slot(@inner_block)}
-      <span :if={@pip} class="pip" aria-hidden="true"></span>
+      <span :if={@pip} class="indicator-item status status-primary" aria-hidden="true"></span>
     </.link>
     """
   end
@@ -177,15 +127,25 @@ defmodule LineaUI.Components.Button do
   defp render_button(assigns) do
     ~H"""
     <button type={@type} class={@classes} disabled={@inactive} aria-busy={@loading && "true"} {@rest}>
-      <.spinner :if={@loading} variant="canvas" color="current" size="xs" label={@loading_label} />
+      <.busy :if={@loading} label={@loading_label} />
       {render_slot(@inner_block)}
-      <span :if={@pip} class="pip" aria-hidden="true"></span>
+      <span :if={@pip} class="indicator-item status status-primary" aria-hidden="true"></span>
     </button>
     """
   end
 
+  attr(:label, :string, required: true)
+
+  defp busy(assigns) do
+    ~H"""
+    <span role="status" class="loading loading-spinner loading-xs">
+      <span class="sr-only">{@label}</span>
+    </span>
+    """
+  end
+
   @doc """
-  Joins buttons side by side into one segmented control.
+  Joins buttons side by side into one segmented control (daisyUI's `join`).
 
       <.button_group>
         <.button variant="outline">Day</.button>
@@ -195,7 +155,7 @@ defmodule LineaUI.Components.Button do
   attr(:shape, :string,
     default: "rounded",
     values: ~w(rounded pill),
-    doc: "`pill` rounds the outer ends fully, as LineOne's First / Second / Third group."
+    doc: "`pill` rounds the outer ends fully."
   )
 
   attr(:class, :any, default: nil)
@@ -205,13 +165,7 @@ defmodule LineaUI.Components.Button do
   def button_group(assigns) do
     ~H"""
     <div
-      class={
-        merge([
-          "flex -space-x-px [&>*:not(:first-child)]:rounded-l-none [&>*:not(:last-child)]:rounded-r-none [&>*:focus]:z-10",
-          group_shape(@shape),
-          @class
-        ])
-      }
+      class={merge(["join", @shape == "pill" && "[--join-r:9999px]", @class])}
       role="group"
       {@rest}
     >
@@ -219,9 +173,4 @@ defmodule LineaUI.Components.Button do
     </div>
     """
   end
-
-  defp group_shape("pill"),
-    do: "[&>*:first-child]:rounded-l-full [&>*:last-child]:rounded-r-full"
-
-  defp group_shape("rounded"), do: nil
 end

@@ -12,7 +12,7 @@ defmodule LineaUI.Components.RangeTest do
       assert count(html, "[phx-hook]") == 0
       assert count(html, "output") == 0
       assert attr_of(html, "input[type=range]", "value") == ["50"]
-      assert "form-range" in classes(html, "input")
+      assert "range" in classes(html, "input")
     end
   end
 
@@ -48,7 +48,7 @@ defmodule LineaUI.Components.RangeTest do
     test "filled adds the class and the position of the thumb as --p" do
       html = render(~H|<.range variant="classic" name="m" value={50} min={0} max={200} filled />|)
 
-      assert "linea-range-filled" in classes(html, "input")
+      assert "range" in classes(html, "input")
       assert attr_of(html, "input", "style") == ["--p: 25.0%"]
     end
 
@@ -189,8 +189,7 @@ defmodule LineaUI.Components.RangeTest do
           ~H|<.range variant="classic" name="w" value={40} orientation="vertical" height="10rem" />|
         )
 
-      assert "linea-range-vertical" in classes(html, "input")
-      assert "[writing-mode:vertical-lr]" in classes(html, "input")
+      assert "range-vertical" in classes(html, "input")
       assert attr_of(html, "input", "aria-orientation") == ["vertical"]
       assert attr_of(html, "input", "value") == ["40"]
       assert attr_of(html, "[data-slider] > div > div", "style") == ["height: 10rem"]

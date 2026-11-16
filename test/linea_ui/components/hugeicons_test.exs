@@ -52,7 +52,6 @@ defmodule LineaUI.Components.HugeiconsTest do
   test "badge remove draws the cross with its size and dark colour" do
     html = render(~H|<.badge on_remove="gone">x</.badge>|)
     assert huge(html) == ["huge-cancel-01"]
-    assert "dark:text-navy-50" in classes(html, "[class*='huge-']")
     assert svgs(html) == 0
   end
 

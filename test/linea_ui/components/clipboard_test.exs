@@ -10,7 +10,7 @@ defmodule LineaUI.Components.ClipboardTest do
     assert attr_of(html, "#c", "data-value") == ["secret"]
     assert attr_of(html, "#c", "data-toast") == ["Text Copied"]
     assert attr_of(html, "#c", "data-error-toast") == ["Error"]
-    assert "accent" in classes(html, "#c")
+    assert "btn-primary" in classes(html, "#c")
     assert String.trim(find(html, "#c") |> LazyHTML.text()) == "Copy"
   end
 
@@ -24,7 +24,7 @@ defmodule LineaUI.Components.ClipboardTest do
 
     assert attr_of(html, "#c", "data-from") == ["#text"]
     assert attr_of(html, "#c", "data-toast") == []
-    assert "xs" in classes(html, "#c")
+    assert "btn-xs" in classes(html, "#c")
     assert String.trim(find(html, "#c") |> LazyHTML.text()) == "Grab"
     assert attr_of(html, "#c", "data-on-copy") |> hd() =~ "copied"
   end
@@ -63,13 +63,12 @@ defmodule LineaUI.Components.ClipboardTest do
     html = render(~H|<.clipboard id="c" from="#cmd" icon_only aria-label="Copy command" />|)
 
     assert attr_of(html, "#c", "aria-label") == ["Copy command"]
-    assert "sg-ib" in classes(html, "#c")
-    refute "sg-btn" in classes(html, "#c")
+    assert "btn-square" in classes(html, "#c")
     refute LazyHTML.text(find(html, "#c")) =~ "Copy"
 
     small = render(~H|<.clipboard id="c" value="x" icon_only size="sm" variant="flat" />|)
-    assert "sm" in classes(small, "#c")
-    assert "plain" in classes(small, "#c")
+    assert "btn-sm" in classes(small, "#c")
+    assert "btn-ghost" in classes(small, "#c")
   end
 
   test "copied starts the button in its copied state" do

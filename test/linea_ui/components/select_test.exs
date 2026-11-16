@@ -7,22 +7,27 @@ defmodule LineaUI.Components.SelectTest do
     test "outline md by default, with the label above" do
       html = render(~H|<.select native name="e" label="Event" options={~w(A B)} value="B" />|)
       classes = classes(html, "select")
-      assert "form-select" in classes
-      assert "border-0" in classes
+      assert "select" in classes
       assert "mt-1.5" in classes
-      assert "rounded-[11px]" in classes
       assert html |> find("label > span") |> LazyHTML.text() == "Event"
       assert html |> find("option[selected]") |> LazyHTML.attribute("value") == ["B"]
     end
 
     test "variants, sizes and shapes" do
-      assert "bg-slate-150" in classes(
+      assert "bg-base-200" in classes(
                render(~H|<.select native variant="filled" options={[]} />|),
                "select"
              )
 
-      assert "h-8" in classes(render(~H|<.select native size="sm" options={[]} />|), "select")
-      assert "h-12" in classes(render(~H|<.select native size="lg" options={[]} />|), "select")
+      assert "select-sm" in classes(
+               render(~H|<.select native size="sm" options={[]} />|),
+               "select"
+             )
+
+      assert "select-lg" in classes(
+               render(~H|<.select native size="lg" options={[]} />|),
+               "select"
+             )
 
       assert "rounded-full" in classes(
                render(~H|<.select native shape="pill" options={[]} />|),
@@ -45,7 +50,7 @@ defmodule LineaUI.Components.SelectTest do
         />
         """)
 
-      assert "form-multiselect" in classes(html, "select")
+      assert "select" in classes(html, "select")
       assert find(html, "select[multiple][disabled]") |> Enum.count() == 1
       assert html |> find("option[value='']") |> LazyHTML.text() == "Pick"
       assert html |> find("optgroup[label=G] option") |> Enum.count() == 2
@@ -62,10 +67,10 @@ defmodule LineaUI.Components.SelectTest do
 
       assert find(html, "select[name='party[kind]'][id=party_kind]") |> Enum.count() == 1
       assert html |> find("option[selected]") |> LazyHTML.attribute("value") == ["b"]
-      assert "aria-invalid:border-error" in classes(html, "select")
+      assert "aria-invalid:select-error" in classes(html, "select")
       assert html |> find("select") |> LazyHTML.attribute("aria-invalid") == ["true"]
       assert html |> find(".text-error") |> LazyHTML.text() =~ "is bad"
-      assert html |> find(".text-slate-400") |> LazyHTML.text() =~ "Pick"
+      assert html |> find("span.leading-5") |> LazyHTML.text() =~ "Pick"
     end
   end
 

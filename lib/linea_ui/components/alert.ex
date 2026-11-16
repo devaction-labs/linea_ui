@@ -341,7 +341,7 @@ defmodule LineaUI.Components.Alert do
       type="button"
       aria-label={@label}
       phx-click={dismiss_alert(@on_dismiss)}
-      class={["btn size-7 shrink-0 rounded-full p-0 font-medium", close_classes(@color)]}
+      class={["lo-btn size-7 shrink-0 rounded-full p-0 font-medium", close_classes(@color)]}
     >
       <.glyph name={:close} class="size-4" />
     </button>

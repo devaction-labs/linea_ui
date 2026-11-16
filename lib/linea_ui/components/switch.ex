@@ -1,7 +1,7 @@
 defmodule LineaUI.Components.Switch do
   @moduledoc """
-  LineOne's switches: solid or outline (plain or filled track), pill or squircle, three sizes,
-  four thumb sizes, in every theme color.
+  daisyUI's toggle (`toggle`, `toggle-primary`, `toggle-sm`…): solid or outline (plain or filled track), pill or
+  squircle, three sizes, in every theme color.
 
       <.switch name="notify" label="Notifications" color="primary" />
       <.switch field={@form[:public]} label="Public" variant="outline" color="success" />
@@ -15,51 +15,8 @@ defmodule LineaUI.Components.Switch do
   alias LineaUI.Components.Control
   alias LineaUI.Components.Form
 
-  @variants %{
-    {"basic", false} =>
-      "form-switch bg-slate-200 before:bg-white dark:bg-navy-450 dark:before:bg-white",
-    {"basic", true} =>
-      "form-switch bg-slate-200 before:bg-white dark:bg-navy-450 dark:before:bg-white",
-    {"outline", false} =>
-      "form-switch is-outline border border-slate-400/70 bg-transparent before:bg-slate-300 dark:border-navy-400 dark:before:bg-navy-300",
-    {"outline", true} =>
-      "form-switch is-outline border border-slate-400/70 bg-slate-100 before:bg-slate-300 dark:border-navy-500 dark:bg-navy-900 dark:before:bg-navy-400"
-  }
-
-  @colors %{
-    "basic" => %{
-      "neutral" => "checked:bg-slate-500 dark:checked:bg-navy-400",
-      "primary" => "checked:bg-primary dark:checked:bg-accent",
-      "secondary" => "checked:bg-secondary dark:checked:bg-secondary-light",
-      "info" => "checked:!bg-info",
-      "success" => "checked:!bg-success",
-      "warning" => "checked:!bg-warning",
-      "error" => "checked:!bg-error"
-    },
-    "outline" => %{
-      "neutral" =>
-        "checked:border-slate-500 checked:before:bg-slate-500 dark:checked:border-navy-200 dark:checked:before:bg-navy-200",
-      "primary" =>
-        "checked:border-primary checked:before:bg-primary dark:checked:border-accent dark:checked:before:bg-accent",
-      "secondary" =>
-        "checked:border-secondary checked:before:bg-secondary dark:checked:border-secondary-light dark:checked:before:bg-secondary-light",
-      "info" => "checked:!border-info checked:before:!bg-info",
-      "success" => "checked:!border-success checked:before:!bg-success",
-      "warning" => "checked:!border-warning checked:before:!bg-warning",
-      "error" => "checked:!border-error checked:before:!bg-error"
-    }
-  }
-
-  @shapes %{
-    "pill" => "rounded-full before:rounded-full",
-    "squircle" => "rounded-lg before:rounded-md"
-  }
-
-  @sizes %{
-    "sm" => "is-sm h-4.5 w-6.5 [--thumb-border:4px] before:w-2.5 checked:before:translate-x-2",
-    "md" => "h-5 w-7.5 [--thumb-border:4px] before:w-3 checked:before:translate-x-2.5",
-    "lg" => "h-5.5 w-8.5 [--thumb-border:4px] before:w-3.5 checked:before:translate-x-3"
-  }
+  @colors ~w(primary secondary info success warning error)
+  @sizes %{"sm" => "toggle-sm", "md" => nil, "lg" => "toggle-lg"}
 
   @label_sizes %{
     "sm" => "text-xs",
@@ -67,17 +24,7 @@ defmodule LineaUI.Components.Switch do
     "lg" => "text-base"
   }
 
-  @thumbs %{
-    2 => nil,
-    3 => "[--thumb-border:3px]",
-    4 => "[--thumb-border:4px]",
-    5 => "[--thumb-border:5px]",
-    6 => "[--thumb-border:6px]"
-  }
-
   @label_positions %{"right" => nil, "left" => "flex-row-reverse space-x-reverse"}
-
-  @disabled "disabled:pointer-events-none disabled:select-none disabled:opacity-60"
 
   @doc """
   Renders a switch: a checkbox drawn as a track and thumb. Like `checkbox`, it sends
@@ -104,7 +51,7 @@ defmodule LineaUI.Components.Switch do
   attr(:size, :string,
     default: "md",
     values: ~w(sm md lg),
-    doc: "`sm` is the canvas switch at .8 (29×18px), `md` the 36×22px one."
+    doc: "daisyUI's `toggle-sm`, default and `toggle-lg`."
   )
 
   attr(:thumb_inset, :integer,
@@ -162,14 +109,17 @@ defmodule LineaUI.Components.Switch do
     |> render_switch()
   end
 
+  # daisyUI's `toggle`: its color and size; `outline` keeps the track clear until checked, `filled` tints it,
+  # `squircle` rounds the corners less and `thumb_inset` sets the gap around the thumb (daisyUI's `--toggle-p`).
   defp classes(assigns) do
     merge([
-      @variants[{assigns.variant, assigns.filled}],
-      @colors[assigns.variant][assigns.color],
+      "toggle",
+      assigns.color in @colors && "toggle-#{assigns.color}",
       @sizes[assigns.size],
-      @shapes[assigns.shape],
-      @thumbs[assigns.thumb_inset],
-      @disabled,
+      assigns.variant == "outline" && !assigns.filled && "bg-transparent",
+      assigns.filled && "bg-base-200",
+      assigns.shape == "squircle" && "[--radius-selector:calc(var(--radius-field)*.6)]",
+      assigns.thumb_inset != 2 && "[--toggle-p:#{assigns.thumb_inset}px]",
       assigns.class
     ])
   end

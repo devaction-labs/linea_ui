@@ -1,7 +1,7 @@
 defmodule LineaUI.Components.Radio do
   @moduledoc """
-  LineOne's radios, in a group that shares one `name`: basic or outline, plain or filled box,
-  circle or squircle, in every theme color.
+  daisyUI's radios (`radio`, `radio-primary`, `radio-sm`…), in a group that shares one `name`: plain or filled
+  box, circle or squircle, in every theme color.
 
       <.radio_group field={@form[:plan]} options={[{"Free", "free"}, {"Pro", "pro"}]} color="primary" />
 
@@ -11,7 +11,7 @@ defmodule LineaUI.Components.Radio do
         <:radio value="error" color="error" disabled>Error</:radio>
       </.radio_group>
 
-  A `md` radio is 18px with a 6px dot (`xs` 12px, `sm` 16px, `lg` 24px).
+  The sizes are daisyUI's (`radio-xs`, `radio-sm`, `radio-lg`; `md` is its default).
 
   `variant="segmented"` renders the look of `segmented`: a row of toggle buttons on one track, where exactly one
   is chosen. The buttons are real radios (visually hidden), so the form submits the choice, `field` and its errors
@@ -61,13 +61,11 @@ defmodule LineaUI.Components.Radio do
   alias LineaUI.Components.Form
 
   @shapes %{
-    "circle" => "rounded-full",
-    "squircle" => "rounded-md"
+    "circle" => nil,
+    "squircle" => "rounded-[calc(var(--radius-selector)*.6)]"
   }
 
   # A radio is 18px at `md` with a 6px dot (a checkbox of that size stays 20px); `is-md` carries the dot.
-  @md "is-md size-[18px]"
-
   @colors ~w(neutral primary secondary info success warning error)
 
   @doc """
@@ -167,7 +165,6 @@ defmodule LineaUI.Components.Radio do
         classes:
           merge([
             Choice.input_classes("form-radio", %{assigns | color: entry.color || assigns.color}),
-            assigns.size == "md" && @md,
             @shapes[assigns.shape],
             invalid(assigns),
             assigns.radio_class,
@@ -178,7 +175,7 @@ defmodule LineaUI.Components.Radio do
   end
 
   defp invalid(%{errors: [_ | _], variant: variant}) when variant not in ~w(chip segmented tile),
-    do: "border-error dark:border-error"
+    do: "radio-error"
 
   defp invalid(_assigns), do: nil
 

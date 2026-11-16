@@ -1,7 +1,8 @@
 defmodule LineaUI.Components.Badge do
   @moduledoc """
-  LineOne's badges: filled, glowing, soft, outlined or bare text, with a dot, an icon or a
-  remove button.
+  daisyUI's badge (`badge`): filled, glowing, soft, outlined or bare text, with a dot, an icon or a
+  remove button. The classes are daisyUI's (`badge-primary`, `badge-soft`, `badge-outline`, `badge-sm`…), so the
+  theme paints it.
 
       <.badge>Default</.badge>
       <.badge color="success" shape="pill">Paid</.badge>
@@ -28,16 +29,16 @@ defmodule LineaUI.Components.Badge do
   )
 
   attr(:variant, :string,
-    default: "solid",
+    default: "soft",
     values: ~w(solid glow soft outline flat),
-    doc: "`flat` is only the colored text, as LineOne's badges with dots."
+    doc:
+      "`soft` (the default, `badge-soft`) is the tinted chip, `solid` the filled badge, `outline` `badge-outline`, `flat` only the colored text."
   )
 
   attr(:size, :string,
     default: nil,
     values: [nil | ~w(xs sm md lg)],
-    doc:
-      "Fixed heights as LineOne's compact badges: `xs` h-4.5, `sm` h-5, `md` h-5.5 with larger text, `lg` h-6. Without it the badge keeps its padding-based height."
+    doc: "daisyUI's `badge-xs` to `badge-lg`; without it the badge is daisyUI's default (`md`)."
   )
 
   attr(:shape, :string, default: "rounded", values: ~w(rounded pill square))
@@ -65,19 +66,28 @@ defmodule LineaUI.Components.Badge do
     ~H"""
     <span
       id={@id}
-      class={merge(["sg-badge", tone(@color), @class])}
+      class={
+        merge([
+          "badge",
+          color_class(@color),
+          variant_class(@variant),
+          @size && "badge-#{@size}",
+          shape_class(@shape),
+          @class
+        ])
+      }
       {@rest}
     >
-      <span :if={@dot} class="dot"></span>
+      <span :if={@dot} class="status bg-current" aria-hidden="true"></span>
       {render_slot(@inner_block)}
       <button
         :if={@on_remove}
         type="button"
         aria-label={@remove_label}
         phx-click={remove_js(@on_remove, @target, @id)}
-        class="btn size-4.5 rounded-full bg-black/20 p-0 hover:bg-black/30 focus:bg-black/30 dark:bg-white/20 dark:hover:bg-white/30 dark:focus:bg-white/30"
+        class="-mr-1 inline-grid size-4 cursor-pointer place-items-center rounded-full bg-current/15 hover:bg-current/25 focus-visible:outline-2 focus-visible:outline-current"
       >
-        <.glyph name={:close} class="size-3 dark:text-navy-50" stroke_width="3" />
+        <.glyph name={:close} class="size-3" stroke_width="3" />
       </button>
     </span>
     """
@@ -87,12 +97,25 @@ defmodule LineaUI.Components.Badge do
   defp remove_js(event, nil, id), do: JS.push(event, value: %{id: id})
   defp remove_js(event, target, id), do: JS.push(event, target: target, value: %{id: id})
 
-  defp tone("success"), do: "pos"
-  defp tone("error"), do: "neg"
-  defp tone("warning"), do: "warn"
-  defp tone("info"), do: "info"
-  defp tone("primary"), do: "acc"
-  defp tone("secondary"), do: "acc"
-  defp tone("dark"), do: "solid"
-  defp tone(_color), do: nil
+  defp color_class(color) when color in ~w(primary secondary info success warning error),
+    do: "badge-" <> color
+
+  defp color_class("dark"), do: "badge-neutral"
+  defp color_class("light"), do: "badge-ghost"
+  defp color_class("white"), do: "[--badge-color:#fff] [--badge-fg:#0a0a0a]"
+  defp color_class(_neutral), do: nil
+
+  defp variant_class("soft"), do: "badge-soft"
+  defp variant_class("outline"), do: "badge-outline"
+  defp variant_class("flat"), do: "border-transparent bg-transparent px-0"
+
+  defp variant_class("glow"),
+    do:
+      "shadow-[0_4px_12px_-4px_color-mix(in_oklab,var(--badge-color,var(--color-base-content))_70%,transparent)]"
+
+  defp variant_class(_solid), do: nil
+
+  defp shape_class("pill"), do: "rounded-full"
+  defp shape_class("square"), do: "rounded-[calc(var(--radius-selector)*.5)]"
+  defp shape_class(_rounded), do: nil
 end
