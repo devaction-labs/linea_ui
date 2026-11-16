@@ -51,7 +51,7 @@ defmodule LineaUI.Components.OtpInput do
     "lg" => "h-[54px] w-[46px] rounded-xl font-mono text-[22px]"
   }
 
-  @box "shrink-0 border-0 bg-white px-0 text-center font-semibold text-slate-950 shadow-[inset_0_0_0_1px_var(--color-slate-300)] focus:shadow-[inset_0_0_0_1.5px_var(--color-primary),0_0_0_4px_color-mix(in_oklab,var(--color-primary)_14%,transparent)] focus:ring-0 dark:bg-navy-750 dark:text-navy-50 dark:shadow-[inset_0_0_0_1px_var(--color-navy-450)] dark:focus:shadow-[inset_0_0_0_1.5px_var(--color-accent),0_0_0_4px_color-mix(in_oklab,var(--color-accent)_16%,transparent)]"
+  @box "shrink-0 border-0 bg-base-100 px-0 text-center font-semibold text-base-content shadow-[inset_0_0_0_1px_var(--color-slate-300)] focus:shadow-[inset_0_0_0_1.5px_var(--color-primary),0_0_0_4px_color-mix(in_oklab,var(--color-primary)_14%,transparent)] focus:ring-0 dark:shadow-[inset_0_0_0_1px_var(--color-navy-450)] dark:focus:shadow-[inset_0_0_0_1.5px_var(--color-accent),0_0_0_4px_color-mix(in_oklab,var(--color-accent)_16%,transparent)]"
 
   @doc """
   Renders the boxes, with their caption, help and errors when given.
@@ -294,7 +294,7 @@ defmodule LineaUI.Components.OtpInput do
         <span
           :if={box.separator}
           aria-hidden="true"
-          class="shrink-0 select-none text-lg text-slate-400 dark:text-navy-300"
+          class="shrink-0 select-none text-lg text-base-content/50"
         >
           –
         </span>

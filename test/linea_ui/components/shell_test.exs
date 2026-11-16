@@ -72,7 +72,7 @@ defmodule LineaUI.Components.ShellTest do
 
     assert ["sg", "linea-frame", "md:flex-row", "md:p-2.5"] -- classes(html, "#app") == []
     assert [_] = Enum.to_list(find(html, "#app > nav#app-menu.sg-sb"))
-    assert ["md:rounded-[22px]", "bg-white"] -- classes(html, "#app > main") == []
+    assert ["md:rounded-[22px]", "bg-base-100"] -- classes(html, "#app > main") == []
     assert [_] = Enum.to_list(find(html, "#app > main > #page"))
   end
 

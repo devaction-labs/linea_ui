@@ -245,7 +245,7 @@ defmodule LineaUI.Components.NotificationCenter do
       offset={8}
       class={
         merge([
-          "w-[25rem] max-w-[calc(100vw-1.5rem)] overflow-hidden rounded-2xl border-slate-150 p-0 shadow-soft dark:border-navy-600",
+          "w-[25rem] max-w-[calc(100vw-1.5rem)] overflow-hidden rounded-2xl border-base-300 p-0 shadow-soft",
           @class
         ])
       }
@@ -255,8 +255,8 @@ defmodule LineaUI.Components.NotificationCenter do
         <.bell label={@bell_label} unread={@unread_count} unread_label={@unread_label} />
       </:trigger>
 
-      <div class="flex items-center gap-2 bg-slate-50 py-3.5 pl-4.5 pr-3 dark:bg-navy-800">
-        <h3 class="text-base font-bold text-slate-800 dark:text-navy-50">{@title}</h3>
+      <div class="flex items-center gap-2 bg-base-200 py-3.5 pl-4.5 pr-3">
+        <h3 class="text-base font-bold text-base-content">{@title}</h3>
         <span
           :if={@unread_count > 0}
           aria-label={"#{@unread_count} #{@unread_label}"}
@@ -272,7 +272,7 @@ defmodule LineaUI.Components.NotificationCenter do
             title={@read_all_label}
             disabled={@unread_count == 0}
             phx-click={@read_all_js}
-            class="flex size-8 items-center justify-center rounded-lg text-slate-500 hover:bg-slate-200/70 hover:text-slate-800 disabled:pointer-events-none disabled:opacity-40 dark:text-navy-200 dark:hover:bg-navy-600 dark:hover:text-navy-50"
+            class="flex size-8 items-center justify-center rounded-lg text-base-content/65 hover:bg-base-300/70 hover:text-base-content disabled:pointer-events-none disabled:opacity-40"
           >
             <.icon name="huge-tick-double-02" class="size-4" />
           </button>
@@ -281,7 +281,7 @@ defmodule LineaUI.Components.NotificationCenter do
             navigate={@preferences_href}
             aria-label={@preferences_label}
             title={@preferences_label}
-            class="flex size-8 items-center justify-center rounded-lg text-slate-500 hover:bg-slate-200/70 hover:text-slate-800 dark:text-navy-200 dark:hover:bg-navy-600 dark:hover:text-navy-50"
+            class="flex size-8 items-center justify-center rounded-lg text-base-content/65 hover:bg-base-300/70 hover:text-base-content"
           >
             <.icon name="huge-settings-02" class="size-4" />
           </.link>
@@ -296,7 +296,7 @@ defmodule LineaUI.Components.NotificationCenter do
         overlap
         on_change={@on_change}
         target={@target}
-        list_class="bg-slate-50 px-3 dark:bg-navy-800"
+        list_class="bg-base-200 px-3"
         panels_class="p-1.5"
         class="block"
       >
@@ -304,7 +304,7 @@ defmodule LineaUI.Components.NotificationCenter do
           {tab.label}
           <span
             :if={tab_unread(@items, tab) > 0}
-            class="font-mono text-[11px] font-semibold text-slate-400 dark:text-navy-300"
+            class="font-mono text-[11px] font-semibold text-base-content/50"
           >
             {tab_unread(@items, tab)}
           </span>
@@ -346,7 +346,7 @@ defmodule LineaUI.Components.NotificationCenter do
 
       <div
         :if={@items != [] and (@all_href || @unread_count > 0)}
-        class="flex items-center justify-between gap-2 border-t border-slate-150 bg-slate-50 py-2 pl-3 pr-4 dark:border-navy-600 dark:bg-navy-800"
+        class="flex items-center justify-between gap-2 border-t border-base-300 bg-base-200 py-2 pl-3 pr-4"
       >
         <.link
           :if={@all_href}
@@ -358,7 +358,7 @@ defmodule LineaUI.Components.NotificationCenter do
         </.link>
         <span
           :if={@unread_count > 0}
-          class="ml-auto text-xs-plus text-slate-400 dark:text-navy-300"
+          class="ml-auto text-xs-plus text-base-content/50"
         >
           {@unread_count} {@unread_label}
         </span>
@@ -377,7 +377,7 @@ defmodule LineaUI.Components.NotificationCenter do
       type="button"
       aria-label={bell_label(@label, @unread, @unread_label)}
       aria-haspopup="dialog"
-      class="relative flex size-9 items-center justify-center rounded-full bg-white text-slate-500 ring-1 ring-slate-200 transition-colors hover:bg-slate-100 hover:text-slate-800 aria-expanded:text-primary aria-expanded:ring-primary dark:bg-navy-700 dark:text-navy-200 dark:ring-navy-500 dark:hover:bg-navy-600 dark:hover:text-navy-50 dark:aria-expanded:text-accent-light dark:aria-expanded:ring-accent-light"
+      class="relative flex size-9 items-center justify-center rounded-full bg-base-100 text-base-content/65 ring-1 ring-base-300 transition-colors hover:bg-base-200 hover:text-base-content aria-expanded:text-primary aria-expanded:ring-primary dark:aria-expanded:text-accent-light dark:aria-expanded:ring-accent-light"
     >
       <.icon name="huge-notification-01" class="size-4.5" />
       <span
@@ -408,8 +408,8 @@ defmodule LineaUI.Components.NotificationCenter do
       <span :if={@empty_icon} class={["sg-ic", canvas_tone(@empty_tone)]}>
         <.icon name={@empty_icon} class="size-4" />
       </span>
-      <h4 class="mt-3 text-[15px] font-semibold text-slate-800 dark:text-navy-50">{@empty}</h4>
-      <p class="max-w-60 text-xs-plus leading-5 text-slate-500 dark:text-navy-200">{@empty_text}</p>
+      <h4 class="mt-3 text-[15px] font-semibold text-base-content">{@empty}</h4>
+      <p class="max-w-60 text-xs-plus leading-5 text-base-content/65">{@empty_text}</p>
       <div :if={@empty_action != []} class="mt-2 flex flex-wrap justify-center gap-2">
         {render_slot(@empty_action)}
       </div>
@@ -425,7 +425,7 @@ defmodule LineaUI.Components.NotificationCenter do
       <section :for={{group, items} <- @groups} aria-label={group}>
         <h4
           :if={group}
-          class="px-3 pb-1 pt-2.5 font-mono text-[11px] font-medium uppercase leading-none tracking-wider text-slate-400 dark:text-navy-300"
+          class="px-3 pb-1 pt-2.5 font-mono text-[11px] font-medium uppercase leading-none tracking-wider text-base-content/50"
         >
           {group}
         </h4>
@@ -465,7 +465,7 @@ defmodule LineaUI.Components.NotificationCenter do
     <.link
       {@link}
       phx-click={@click}
-      class="flex items-start gap-3 rounded-xl px-3 py-2.5 text-inherit no-underline outline-hidden hover:bg-slate-50 focus-visible:ring-2 focus-visible:ring-primary/50 dark:hover:bg-navy-800 dark:focus-visible:ring-accent-light/50"
+      class="flex items-start gap-3 rounded-xl px-3 py-2.5 text-inherit no-underline outline-hidden hover:bg-base-200 focus-visible:ring-2 focus-visible:ring-primary/50 dark:focus-visible:ring-accent-light/50"
     >
       <span class={["flex size-10 flex-none items-center justify-center rounded-[11px]", @tone]}>
         <.icon name={@icon_name} class="size-5" />
@@ -473,25 +473,25 @@ defmodule LineaUI.Components.NotificationCenter do
       <span class="block min-w-0 flex-1">
         <span class={[
           "block text-sm+",
-          @unread && "font-semibold text-slate-800 dark:text-navy-50",
-          !@unread && "font-medium text-slate-600 dark:text-navy-100"
+          @unread && "font-semibold text-base-content",
+          !@unread && "font-medium text-base-content/75"
         ]}>
           {@item.title}
         </span>
         <span
           :if={@item[:body]}
-          class="mt-0.5 block truncate text-[13px] leading-[18px] text-slate-500 dark:text-navy-200"
+          class="mt-0.5 block truncate text-[13px] leading-[18px] text-base-content/65"
         >
           {@item[:body]}
         </span>
         <span
           :if={@item[:at] || @category}
-          class="mt-1 flex items-center gap-1.5 text-xs-plus text-slate-400 dark:text-navy-300"
+          class="mt-1 flex items-center gap-1.5 text-xs-plus text-base-content/50"
         >
           <span :if={@item[:at]}>{@item[:at]}</span>
           <span
             :if={@item[:at] && @category}
-            class="h-2.5 w-px bg-slate-300 dark:bg-navy-500"
+            class="h-2.5 w-px bg-base-300"
             aria-hidden="true"
           ></span>
           <span :if={@category}>{@category}</span>

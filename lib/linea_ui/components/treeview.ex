@@ -61,13 +61,13 @@ defmodule LineaUI.Components.Treeview do
   use LineaUI.Component
   import LineaUI.Components.Icon, only: [glyph: 1]
 
-  @header "flex min-w-0 cursor-pointer items-center rounded-sm px-2 py-1 tracking-wide outline-hidden transition-all hover:bg-slate-100 hover:text-slate-800 focus:bg-slate-100 focus:text-slate-800 dark:hover:bg-navy-600 dark:hover:text-navy-100 dark:focus:bg-navy-600 dark:focus:text-navy-100 focus-visible:ring-2 focus-visible:ring-primary/55 dark:focus-visible:ring-accent/55"
+  @header "flex min-w-0 cursor-pointer items-center rounded-sm px-2 py-1 tracking-wide outline-hidden transition-all hover:bg-base-200 hover:text-base-content focus:bg-base-200 focus:text-base-content focus-visible:ring-2 focus-visible:ring-primary/55 dark:focus-visible:ring-accent/55"
 
   @selected "bg-primary/10 text-primary hover:bg-primary/10 hover:text-primary focus:bg-primary/10 focus:text-primary dark:bg-accent/15 dark:text-accent-light dark:hover:bg-accent/15 dark:hover:text-accent-light dark:focus:bg-accent/15 dark:focus:text-accent-light"
 
   @layouts %{
     basic: "space-x-1.5",
-    advanced: "text-slate-800 dark:text-navy-100"
+    advanced: "text-base-content"
   }
 
   @doc """
@@ -270,7 +270,7 @@ defmodule LineaUI.Components.Treeview do
     <.dynamic_tag tag_name={@tag} role={@tag == "div" && "none"} class={@class} {@rest}>
       <details
         id={@id}
-        class="tree-item [&[open]>summary]:text-slate-800 [&[open]>summary_.tree-chevron]:rotate-90 dark:[&[open]>summary]:text-navy-100"
+        class="tree-item [&[open]>summary]:text-base-content [&[open]>summary_.tree-chevron]:rotate-90"
         open={@expanded}
         data-tree-item={@id || ""}
         data-server-open={bool(@expanded)}
@@ -284,7 +284,7 @@ defmodule LineaUI.Components.Treeview do
           aria-checked={aria_checked(@checked)}
         >
           <span class={[
-            "tree-toggle lo-btn size-5 rounded-lg p-0 hover:bg-slate-300/20 focus:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25",
+            "tree-toggle lo-btn size-5 rounded-lg p-0 hover:bg-base-300/20 focus:bg-base-300/20 active:bg-base-300/25",
             @layout == :advanced && "mr-1"
           ]}>
             <.glyph name={:chevron_right_solid} class="tree-chevron size-4 transition-transform" />

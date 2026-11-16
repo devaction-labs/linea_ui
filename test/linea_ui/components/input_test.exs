@@ -31,8 +31,7 @@ defmodule LineaUI.Components.InputTest do
   end
 
   test "a caption wraps the input in a block label, help goes under it" do
-    html =
-      render(~H'<.input name="u" label="Choose Username:" help="This is a help text" />')
+    html = render(~H'<.input name="u" label="Choose Username:" help="This is a help text" />')
 
     assert [label] = find(html, "label.block") |> Enum.to_list()
     assert LazyHTML.text(label) =~ "Choose Username:"
@@ -44,7 +43,7 @@ defmodule LineaUI.Components.InputTest do
   test "state paints the border and the help line" do
     html = render(~H'<.input name="u" state="success" help="Username is valid" />')
     assert "input-success" in classes(html, "input")
-    refute "border-slate-200" in classes(html, "input")
+    refute "border-base-300" in classes(html, "input")
     assert "text-success" in classes(html, "label + span")
   end
 
@@ -289,8 +288,7 @@ defmodule LineaUI.Components.InputTest do
       assert count(html, "aria-invalid=") == 1
       assert [_] = find(html, "input[aria-invalid=false]") |> Enum.to_list()
 
-      html =
-        render(~H'<.input name="u" state="error" aria-invalid="spelling">
+      html = render(~H'<.input name="u" state="error" aria-invalid="spelling">
   <:prefix>x</:prefix>
 </.input>')
 

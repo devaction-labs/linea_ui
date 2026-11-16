@@ -16,16 +16,18 @@ defmodule LineaUI.ClassMergeTest do
   end
 
   test "variants and important are part of the key" do
-    assert merge("hover:bg-primary bg-white hover:bg-error") == "bg-white hover:bg-error"
-    assert merge("dark:text-navy-50 text-slate-700") == "dark:text-navy-50 text-slate-700"
-    assert merge("bg-white !bg-black") == "bg-white !bg-black"
+    assert merge("hover:bg-primary bg-base-100 hover:bg-error") == "bg-base-100 hover:bg-error"
+    assert merge("text-base-content/85") == "text-base-content/85"
+    assert merge("bg-base-100 !bg-black") == "bg-base-100 !bg-black"
   end
 
   test "kinds that share a prefix stay apart" do
-    assert merge("text-xs text-slate-700 text-center") == "text-xs text-slate-700 text-center"
-    assert merge("border border-slate-300 border-2") == "border-slate-300 border-2"
+    assert merge("text-xs text-base-content/85 text-center") ==
+             "text-xs text-base-content/85 text-center"
+
+    assert merge("border border-base-content/20 border-2") == "border-base-content/20 border-2"
     assert merge("font-medium font-inter") == "font-medium font-inter"
-    assert merge("bg-center bg-no-repeat bg-slate-150") == "bg-center bg-no-repeat bg-slate-150"
+    assert merge("bg-center bg-no-repeat bg-base-200") == "bg-center bg-no-repeat bg-base-200"
     assert merge("shadow-lg shadow-primary/50") == "shadow-lg shadow-primary/50"
     assert merge("translate-x-0 translate-y-2") == "translate-x-0 translate-y-2"
   end

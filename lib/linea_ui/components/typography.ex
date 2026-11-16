@@ -62,8 +62,8 @@ defmodule LineaUI.Components.Typography do
 
   @colors %{
     "default" => "",
-    "neutral" => "text-slate-700 dark:text-navy-100",
-    "muted" => "text-slate-400 dark:text-navy-300",
+    "neutral" => "text-base-content/85",
+    "muted" => "text-base-content/50",
     "primary" => "text-primary dark:text-accent-light",
     "secondary" => "text-secondary dark:text-secondary-light",
     "info" => "text-info",
@@ -324,7 +324,7 @@ defmodule LineaUI.Components.Typography do
     <kbd
       class={
         merge([
-          "inline-flex h-5 min-w-5 items-center justify-center rounded-[5px] bg-slate-100 px-1.5 py-0.5 font-mono text-[11.5px] leading-none text-slate-700 shadow-[inset_0_0_0_1px_var(--color-slate-300),0_1px_0_var(--color-slate-300)] dark:bg-navy-800 dark:text-navy-100 dark:shadow-[inset_0_0_0_1px_var(--color-navy-450),0_1px_0_var(--color-navy-450)]",
+          "inline-flex h-5 min-w-5 items-center justify-center rounded-[5px] bg-base-200 px-1.5 py-0.5 font-mono text-[11.5px] leading-none text-base-content/85 shadow-[inset_0_0_0_1px_var(--color-slate-300),0_1px_0_var(--color-slate-300)] dark:shadow-[inset_0_0_0_1px_var(--color-navy-450),0_1px_0_var(--color-navy-450)]",
           @class
         ])
       }

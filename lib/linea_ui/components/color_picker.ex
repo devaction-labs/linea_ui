@@ -231,7 +231,7 @@ defmodule LineaUI.Components.ColorPicker do
           autocomplete="off"
           spellcheck="false"
           aria-label={@text.color_hex}
-          class="pl-10 font-mono text-slate-800 uppercase dark:text-navy-50"
+          class="pl-10 font-mono text-base-content uppercase"
           data-hex
         >
           <:prefix>

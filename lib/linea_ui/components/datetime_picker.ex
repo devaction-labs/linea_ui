@@ -90,9 +90,9 @@ defmodule LineaUI.Components.DatetimePicker do
 
   @variants %{
     "outlined" =>
-      "form-input peer h-9 w-full cursor-pointer rounded-[11px] border-0 bg-white px-3 py-0 text-[14px] shadow-[inset_0_0_0_1px_var(--color-slate-300),0_1px_2px_rgb(23_23_26/.05)] placeholder:text-slate-400 hover:shadow-[inset_0_0_0_1px_var(--color-slate-400),0_1px_2px_rgb(23_23_26/.05)] focus:shadow-[inset_0_0_0_1px_var(--color-primary),0_0_0_4px_color-mix(in_oklab,var(--color-primary)_14%,transparent)] focus:ring-0 disabled:pointer-events-none disabled:select-none disabled:bg-zinc-100 dark:bg-navy-750 dark:shadow-[inset_0_0_0_1px_var(--color-navy-450)] dark:hover:shadow-[inset_0_0_0_1px_var(--color-navy-400)] dark:focus:shadow-[inset_0_0_0_1px_var(--color-accent),0_0_0_4px_color-mix(in_oklab,var(--color-accent)_16%,transparent)] dark:disabled:bg-navy-600",
+      "form-input peer h-9 w-full cursor-pointer rounded-[11px] border-0 bg-base-100 px-3 py-0 text-[14px] shadow-[inset_0_0_0_1px_var(--color-slate-300),0_1px_2px_rgb(23_23_26/.05)] placeholder:text-base-content/50 hover:shadow-[inset_0_0_0_1px_var(--color-slate-400),0_1px_2px_rgb(23_23_26/.05)] focus:shadow-[inset_0_0_0_1px_var(--color-primary),0_0_0_4px_color-mix(in_oklab,var(--color-primary)_14%,transparent)] focus:ring-0 disabled:pointer-events-none disabled:select-none disabled:bg-zinc-100 dark:shadow-[inset_0_0_0_1px_var(--color-navy-450)] dark:hover:shadow-[inset_0_0_0_1px_var(--color-navy-400)] dark:focus:shadow-[inset_0_0_0_1px_var(--color-accent),0_0_0_4px_color-mix(in_oklab,var(--color-accent)_16%,transparent)] dark:disabled:bg-navy-600",
     "filled" =>
-      "form-input peer w-full cursor-pointer rounded-lg bg-slate-150 px-3 py-2 ring-primary/50 placeholder:text-slate-500 hover:bg-slate-200 focus:ring-3 disabled:pointer-events-none disabled:select-none disabled:opacity-60 dark:bg-navy-900/90 dark:ring-accent/50 dark:placeholder:text-navy-300 dark:hover:bg-navy-900 dark:focus:bg-navy-900"
+      "form-input peer w-full cursor-pointer rounded-lg bg-base-200 px-3 py-2 ring-primary/50 placeholder:text-base-content/65 hover:bg-base-300 focus:ring-3 disabled:pointer-events-none disabled:select-none disabled:opacity-60 dark:ring-accent/50 dark:focus:bg-navy-900"
   }
 
   @errors %{
@@ -105,7 +105,7 @@ defmodule LineaUI.Components.DatetimePicker do
 
   @icon_sizes %{"sm" => "size-4", "md" => "size-4", "lg" => "size-5"}
 
-  @icon "pointer-events-none absolute flex h-full w-10 items-center justify-center text-slate-400 peer-focus:text-primary dark:text-navy-300 dark:peer-focus:text-accent"
+  @icon "pointer-events-none absolute flex h-full w-10 items-center justify-center text-base-content/50 peer-focus:text-primary dark:peer-focus:text-accent"
 
   @date_formats %{"en" => {"M j, Y", ", "}, "pt_BR" => {"d/m/Y", " "}}
   @hour12 %{"en" => true, "pt_BR" => false}
@@ -589,7 +589,7 @@ defmodule LineaUI.Components.DatetimePicker do
             >
               <span
                 :if={caption}
-                class="mb-1.5 block text-[13px]/5 font-medium text-slate-950 dark:text-navy-50"
+                class="mb-1.5 block text-[13px]/5 font-medium text-base-content"
               >
                 {caption}
               </span>
@@ -663,7 +663,7 @@ defmodule LineaUI.Components.DatetimePicker do
           data-panel
           phx-update="ignore"
         >
-          <div class="popper-box rounded-xl border border-slate-300 bg-white font-inter shadow-soft dark:border-navy-450 dark:bg-navy-700 dark:shadow-none">
+          <div class="popper-box rounded-xl border border-base-content/20 bg-base-100 font-inter shadow-soft dark:shadow-none">
             <div data-surface></div>
           </div>
         </div>

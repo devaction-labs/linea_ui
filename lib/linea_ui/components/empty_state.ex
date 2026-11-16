@@ -44,20 +44,19 @@ defmodule LineaUI.Components.EmptyState do
 
   @icon_tones %{
     "default" =>
-      "bg-white text-primary shadow-[0_0_0_1px_var(--color-slate-200),0_10px_24px_-10px_rgb(79_70_229/0.45)] dark:bg-navy-700 dark:text-accent-light dark:shadow-[0_0_0_1px_var(--color-navy-600),0_10px_24px_-10px_rgb(79_70_229/0.45)]",
+      "bg-base-100 text-primary shadow-[0_0_0_1px_var(--color-slate-200),0_10px_24px_-10px_rgb(79_70_229/0.45)] dark:text-accent-light dark:shadow-[0_0_0_1px_var(--color-navy-600),0_10px_24px_-10px_rgb(79_70_229/0.45)]",
     "gradient" =>
       "bg-gradient-to-br from-blue-600 to-purple-500 text-white shadow-[0_10px_24px_-8px_rgb(124_58_237/0.6)]"
   }
 
   @inline_colors %{
-    "neutral" =>
-      "text-slate-600 ring-1 ring-inset ring-slate-150 dark:text-navy-100 dark:ring-[#2c3a55]",
+    "neutral" => "text-base-content/75 ring-1 ring-inset ring-base-300 dark:ring-[#2c3a55]",
     "success" => "bg-success/10 text-success dark:bg-success/15",
     "error" => "bg-error/10 text-error dark:bg-error/15"
   }
 
   @inline_titles %{
-    "neutral" => "text-slate-800 dark:text-navy-50",
+    "neutral" => "text-base-content",
     "success" => "text-inherit",
     "error" => "text-inherit"
   }
@@ -111,7 +110,7 @@ defmodule LineaUI.Components.EmptyState do
     <section
       class={
         merge([
-          "relative flex flex-col items-center gap-2.5 overflow-hidden rounded-lg bg-white px-7 pb-7.5 pt-9 text-center shadow-soft dark:bg-navy-700 dark:shadow-none dark:ring-1 dark:ring-[#2c3a55]",
+          "relative flex flex-col items-center gap-2.5 overflow-hidden rounded-lg bg-base-100 px-7 pb-7.5 pt-9 text-center shadow-soft dark:shadow-none dark:ring-1 dark:ring-[#2c3a55]",
           @class
         ])
       }
@@ -130,19 +129,19 @@ defmodule LineaUI.Components.EmptyState do
       </span>
       <span
         :if={@kicker}
-        class="relative z-1 mt-2.5 font-inter text-tiny-plus font-semibold uppercase tracking-widest text-slate-400 dark:text-navy-300"
+        class="relative z-1 mt-2.5 font-inter text-tiny-plus font-semibold uppercase tracking-widest text-base-content/50"
       >
         {@kicker}
       </span>
       <.dynamic_tag
         tag_name={"h#{@level}"}
-        class="relative z-1 text-[17px] font-semibold text-slate-800 dark:text-navy-50"
+        class="relative z-1 text-[17px] font-semibold text-base-content"
       >
         {@title}
       </.dynamic_tag>
       <p
         :if={@inner_block != []}
-        class="relative z-1 max-w-75 text-xs-plus leading-5 text-slate-500 dark:text-navy-200"
+        class="relative z-1 max-w-75 text-xs-plus leading-5 text-base-content/65"
       >
         {render_slot(@inner_block)}
       </p>
@@ -188,14 +187,14 @@ defmodule LineaUI.Components.EmptyState do
       {@rest}
     >
       <span
-        class="mb-2 grid size-12 place-items-center rounded-full bg-slate-100 text-slate-400 dark:bg-navy-600 dark:text-navy-300"
+        class="mb-2 grid size-12 place-items-center rounded-full bg-base-200 text-base-content/50"
         aria-hidden="true"
       >
         <.icon :if={@icon && @illustration == []} name={@icon} class="size-6" />
         {render_slot(@illustration)}
       </span>
-      <b class="text-[15px] font-semibold text-slate-800 dark:text-navy-50">{@title}</b>
-      <span :if={@inner_block != []} class="text-[13px] text-slate-500 dark:text-navy-200">
+      <b class="text-[15px] font-semibold text-base-content">{@title}</b>
+      <span :if={@inner_block != []} class="text-[13px] text-base-content/65">
         {render_slot(@inner_block)}
       </span>
       <div :if={@action != []} class="mt-2.5 text-[13px] font-medium">{render_slot(@action)}</div>

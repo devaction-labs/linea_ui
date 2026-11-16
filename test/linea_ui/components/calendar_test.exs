@@ -75,8 +75,7 @@ defmodule LineaUI.Components.CalendarTest do
     end
 
     test "months and weekdays can be given" do
-      html =
-        render(~H|<.calendar
+      html = render(~H|<.calendar
   id="cal"
   date={~D[2026-10-24]}
   months={~w(J F M A M J J A S Oct N D)}
@@ -113,8 +112,7 @@ defmodule LineaUI.Components.CalendarTest do
       events = for n <- 1..5, do: %{id: n, title: "E#{n}", date: ~D[2026-10-15]}
       assigns = %{events: events}
 
-      html =
-        rendered_to_string(~H|<.calendar
+      html = rendered_to_string(~H|<.calendar
   id="cal"
   date={~D[2026-10-24]}
   events={@events}
@@ -149,8 +147,7 @@ defmodule LineaUI.Components.CalendarTest do
     test "is a grid of hour rows by day columns with the events as blocks" do
       assigns = %{events: @events}
 
-      html =
-        rendered_to_string(~H|<.calendar
+      html = rendered_to_string(~H|<.calendar
   id="cal"
   view="week"
   date={~D[2026-10-21]}
@@ -227,8 +224,7 @@ defmodule LineaUI.Components.CalendarTest do
     end
 
     test "the clicks push the next period, the view and the day" do
-      html =
-        render(~H|<.calendar
+      html = render(~H|<.calendar
   id="cal"
   date={~D[2026-01-31]}
   today={~D[2026-10-24]}
@@ -278,20 +274,19 @@ defmodule LineaUI.Components.CalendarTest do
 
     cell = classes(html, "[data-date='2026-10-12']")
     assert "min-h-28" in cell
-    assert "hover:bg-slate-100" in cell
+    assert "hover:bg-base-200" in cell
     assert "ring-[1.5px]" in classes(html, "[data-date='2026-10-12'] > span")
     refute "ring-[1.5px]" in classes(html, "[data-date='2026-10-13'] > span")
     refute "bg-primary/5" in cell
 
     quiet = render(~H|<.calendar id="cal" date={~D[2026-10-24]} />|)
-    refute "hover:bg-slate-100" in classes(quiet, "[data-date='2026-10-12']")
+    refute "hover:bg-base-200" in classes(quiet, "[data-date='2026-10-12']")
   end
 
   test "the week view tints the column of today and marks timed blocks with a coloured edge" do
     assigns = %{events: @events}
 
-    html =
-      rendered_to_string(~H|<.calendar
+    html = rendered_to_string(~H|<.calendar
   id="cal"
   view="week"
   date={~D[2026-10-21]}
@@ -330,8 +325,7 @@ defmodule LineaUI.Components.CalendarTest do
 
     assert texts(month, "[data-date='2026-10-19'] button") == ["Zeta", "Alpha", "Meet"]
 
-    week =
-      rendered_to_string(~H|<.calendar
+    week = rendered_to_string(~H|<.calendar
   id="cal"
   view="week"
   date={~D[2026-10-19]}

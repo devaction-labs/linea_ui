@@ -70,15 +70,16 @@ defmodule LineaUI.Installer.CssTest do
 
   test "knows when daisyUI is loaded" do
     assert Css.daisyui?(@phoenix)
-    refute Css.daisyui?(Css.replace_daisyui(@phoenix))
+    assert Css.daisyui?(Css.replace_daisyui(@phoenix))
+    refute Css.daisyui?(~s|@import "tailwindcss";\n|)
   end
 
-  test "replacing daisyUI removes its plugins, themes, comments and the data-theme dark variant" do
+  test "replacing daisyUI keeps its plugin and removes Phoenix's themes, heroicons and the dark variant" do
     css = Css.replace_daisyui(@phoenix)
 
-    refute css =~ "daisyui"
+    assert css =~ ~s|@plugin "daisyui/packages/bundle/daisyui" {|
+    refute css =~ "daisyui-theme"
     refute css =~ "heroicons"
-    refute css =~ "daisyUI"
     refute css =~ "data-theme"
     assert css =~ ~s|@import "tailwindcss" source(none);|
     assert css =~ "@custom-variant phx-click-loading"

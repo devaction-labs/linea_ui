@@ -58,7 +58,7 @@
   }
 
   .shell-tooltip-box {
-    @apply relative block rounded-[4px] bg-slate-150 px-[9px] py-[5px] text-sm leading-[1.4] whitespace-nowrap text-slate-800 opacity-0 dark:bg-navy-500 dark:text-navy-50;
+    @apply relative block rounded-[4px] bg-base-200 px-[9px] py-[5px] text-sm leading-[1.4] whitespace-nowrap text-base-content opacity-0;
     transform: translateX(-10px);
     transition:
       opacity 300ms,
@@ -71,7 +71,7 @@
   }
 
   .shell-tooltip-arrow {
-    @apply absolute top-1/2 right-full h-1.5 w-4 fill-current text-slate-150 dark:text-navy-500;
+    @apply absolute top-1/2 right-full h-1.5 w-4 fill-current text-base-content/20;
     transform: translate(5px, -50%) rotate(-90deg);
   }
 

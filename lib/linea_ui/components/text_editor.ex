@@ -385,7 +385,7 @@ defmodule LineaUI.Components.TextEditor do
           class={
             merge([
               "ql-container ql-snow",
-              @disabled && "cursor-not-allowed bg-slate-50 opacity-60 dark:bg-navy-800",
+              @disabled && "cursor-not-allowed bg-base-200 opacity-60",
               @footer && "ql-has-footer",
               @content_class
             ])

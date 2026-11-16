@@ -291,7 +291,7 @@ defmodule LineaUI.Components.Select.Listbox do
         <div
           :if={limited?(@mode, @max) and @counter}
           class={[
-            "text-tiny-plus tabular-nums text-slate-400 dark:text-navy-300",
+            "text-tiny-plus tabular-nums text-base-content/50",
             if(@help, do: "absolute end-0 top-full mt-1", else: "mt-1.5 text-end")
           ]}
           hidden={not @full}

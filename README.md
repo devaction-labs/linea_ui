@@ -7,7 +7,7 @@
 
 # LineaUI
 
-Phoenix LiveView components with the LineOne design (Tailwind CSS v4), used the way Fluxon is
+Phoenix LiveView components on daisyUI 5 (Tailwind CSS v4), with the LineOne design, used the way Fluxon is
 used: `use LineaUI`, one function per component, `class` that overrides the defaults, overlays
 opened by id, and hooks that survive LiveView patches. No JavaScript dependencies.
 
@@ -37,9 +37,11 @@ edits:
 
 Each step skips what is already there, so running `mix linea_ui.install` again (after an upgrade, say)
 changes only what the new version changed; a step that cannot find its place warns instead of failing.
-Flags: `--hugeicons` (the icon set below, with its dependency and config), `--replace-daisyui` (removes the
-daisyUI and heroicons plugins from `app.css`; without it they stay, with a warning, as the two stylesheets can
-conflict, and Phoenix's `CoreComponents` and `Layouts` still use their classes) and `--no-skill`.
+The components render daisyUI 5's classes (`btn`, `card`, `input`, `table`, `tabs`, `modal`…) with the kit's own
+API, and the ones daisyUI lacks are drawn on its tokens, so app.css must load daisyUI: Phoenix 1.8's does (the
+installer warns when it does not). Flags: `--hugeicons` (the icon set below, with its dependency and config),
+`--replace-daisyui` (removes Phoenix's two daisyUI themes, the heroicons plugin and the `data-theme` dark variant;
+the daisyUI plugin stays, and LineaUI's themes set its variables) and `--no-skill`.
 
 If the package was compiled before `igniter` was in the app, recompile it once:
 `mix deps.compile linea_ui --force`.
@@ -54,8 +56,9 @@ Without Igniter, `mix linea_ui.install` writes the skill and prints the lines to
 ```
 
 ```css
-/* assets/css/app.css — remove daisyUI and its theme plugins */
+/* assets/css/app.css — keep daisyUI 5 (npm install daisyui@5, or Phoenix's "../vendor/daisyui") */
 @import "tailwindcss";
+@plugin "daisyui" { themes: false; }
 @import "../../deps/linea_ui/assets/css/fonts.css";
 @import "../../deps/linea_ui/assets/css/linea_ui.css";
 ```
@@ -192,7 +195,7 @@ Every theme is also a daisyUI 5 theme: it sets daisyUI's variables (`--color-bas
 same palette and corners, in light and in dark. The other way round works too: a daisyUI theme enabled in the app's
 plugin (`@plugin "daisyui" { themes: light --default, dark, cupcake, dracula; }`) and set as `data-theme`
 drives the kit's own tokens through a bridge, so `data-theme="dracula"` paints LineaUI's components as well.
-The kit is moving onto daisyUI's component classes; see the CHANGELOG for what has moved.
+The components render daisyUI's classes, so a daisyUI theme reaches them too.
 
 Let the user choose with the picker (a menu for the top bar, or a grid of previews for a settings page), and put
 the script in the root layout so the choice is on before the first paint:

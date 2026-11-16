@@ -144,7 +144,7 @@ defmodule LineaUI.Components.Shell do
       id={@id}
       class={
         merge([
-          "sg linea-frame flex h-dvh flex-col gap-2.5 bg-slate-50 max-md:pt-14 md:flex-row md:p-2.5 dark:bg-navy-900",
+          "sg linea-frame flex h-dvh flex-col gap-2.5 bg-base-200 max-md:pt-14 md:flex-row md:p-2.5",
           @class
         ])
       }
@@ -174,7 +174,7 @@ defmodule LineaUI.Components.Shell do
       </Sidebar.sidebar>
       <main class={
         merge([
-          "flex min-w-0 flex-1 flex-col gap-6 overflow-y-auto bg-white px-4 pt-5 pb-10 shadow-[0_0_0_1px_var(--color-slate-150),0_1px_2px_rgb(23_23_26/.04),0_4px_16px_-6px_rgb(23_23_26/.08)] md:rounded-[22px] md:px-8 md:pt-5 md:pb-10 dark:bg-navy-900 dark:shadow-[0_0_0_1px_var(--color-navy-600)]",
+          "flex min-w-0 flex-1 flex-col gap-6 overflow-y-auto bg-base-100 px-4 pt-5 pb-10 shadow-[0_0_0_1px_var(--color-slate-150),0_1px_2px_rgb(23_23_26/.04),0_4px_16px_-6px_rgb(23_23_26/.08)] md:rounded-[22px] md:px-8 md:pt-5 md:pb-10 dark:shadow-[0_0_0_1px_var(--color-navy-600)]",
           @tab_bar != [] && "max-md:pb-[calc(4.25rem+env(safe-area-inset-bottom))]",
           @main_class
         ])
@@ -190,7 +190,7 @@ defmodule LineaUI.Components.Shell do
       </main>
       <div
         :if={@tab_bar != []}
-        class="linea-shell-tabbar fixed inset-x-0 bottom-0 z-30 bg-white pb-[env(safe-area-inset-bottom)] md:hidden dark:bg-navy-900"
+        class="linea-shell-tabbar fixed inset-x-0 bottom-0 z-30 bg-base-100 pb-[env(safe-area-inset-bottom)] md:hidden"
       >
         {render_slot(@tab_bar)}
       </div>

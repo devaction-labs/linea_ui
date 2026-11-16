@@ -144,7 +144,7 @@ defmodule LineaUI.Components.AppShellTest do
       assert html =~ "Layouts"
       assert [_] = find(html, ".sidebar-panel button[data-sidebar-close]") |> Enum.to_list()
       assert "text-primary" in classes(html, "a[href='/a']")
-      assert "text-slate-600" in classes(html, "a[href='/b']")
+      assert "text-base-content/75" in classes(html, "a[href='/b']")
       assert [_] = find(html, "div.h-px") |> Enum.to_list()
     end
 
@@ -407,12 +407,12 @@ defmodule LineaUI.Components.AppShellTest do
         </.app_shell>
         """)
 
-      assert ["linea-frame", "bg-slate-50", "md:flex-row", "md:p-2.5"] --
+      assert ["linea-frame", "bg-base-200", "md:flex-row", "md:p-2.5"] --
                classes(html, "#s") == []
 
       refute "is-sidebar-open" in classes(html, "#s")
       assert [_] = find(html, "#s > #menu") |> Enum.to_list()
-      assert ["md:rounded-[22px]", "bg-white"] -- classes(html, "#s > main") == []
+      assert ["md:rounded-[22px]", "bg-base-100"] -- classes(html, "#s > main") == []
       assert [_] = find(html, "#s > main > #page") |> Enum.to_list()
     end
 
@@ -554,7 +554,7 @@ defmodule LineaUI.Components.AppShellTest do
         """)
 
       refute "text-primary" in classes(html, "nav a")
-      assert "hover:text-slate-800" in classes(html, "nav a")
+      assert "hover:text-base-content" in classes(html, "nav a")
     end
 
     test "the page variant of the header: crumbs, clock, bell, badge, title, context, actions and tabs" do

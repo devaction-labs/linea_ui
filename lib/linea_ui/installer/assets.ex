@@ -16,8 +16,9 @@ if Code.ensure_loaded?(Igniter) do
     @doc """
     Imports LineaUI's fonts and styles in `assets/css/app.css`.
 
-    Options: `:replace_daisyui` removes the daisyUI and heroicons plugins, `:hugeicons` adds the
-    Hugeicons plugin. daisyUI left in place gets a warning, as the two stylesheets can conflict.
+    Options: `:replace_daisyui` removes Phoenix's daisyUI themes and the heroicons plugin (the daisyUI plugin
+    stays), `:hugeicons` adds the Hugeicons plugin. A stylesheet without daisyUI gets a warning: LineaUI's
+    components use daisyUI 5's classes.
     """
     @spec css(Igniter.t(), keyword()) :: Igniter.t()
     def css(igniter, opts) do
@@ -46,8 +47,8 @@ if Code.ensure_loaded?(Igniter) do
       {warn_daisyui(igniter, Css.daisyui?(edited)), edited}
     end
 
-    defp warn_daisyui(igniter, false), do: igniter
-    defp warn_daisyui(igniter, true), do: Igniter.add_warning(igniter, daisyui_conflict())
+    defp warn_daisyui(igniter, true), do: igniter
+    defp warn_daisyui(igniter, false), do: Igniter.add_warning(igniter, daisyui_missing())
 
     @doc """
     Imports `LineaHooks` in `assets/js/app.js` and spreads them into the `LiveSocket` hooks.
@@ -99,10 +100,10 @@ if Code.ensure_loaded?(Igniter) do
         ~s|Add `import {Hooks as LineaHooks} from "linea_ui"` and spread `...LineaHooks` into the `hooks` option.|
     end
 
-    defp daisyui_conflict do
-      "LineaUI: #{@css} still loads daisyUI, whose styles can conflict with LineaUI's. " <>
-        "Run `mix linea_ui.install --replace-daisyui` to remove its plugins (and the heroicons one), " <>
-        "or remove them by hand."
+    defp daisyui_missing do
+      "LineaUI: #{@css} does not load daisyUI, and LineaUI's components use daisyUI 5's classes. " <>
+        ~s|Add `@plugin "daisyui" { themes: false; }` (npm install daisyui@5, or Phoenix's vendored | <>
+        ~s|`@plugin "../vendor/daisyui"`) after the Tailwind import.|
     end
   end
 end

@@ -191,8 +191,8 @@ defmodule LineaUI.Components.PhoneInputTest do
 
       divider = classes(html, "[data-prefix] > span[aria-hidden]")
       assert "w-px" in divider
-      assert "bg-slate-200" in divider
-      refute "bg-slate-100" in divider
+      assert "bg-base-300" in divider
+      refute "bg-base-200" in divider
       assert "w-full" in classes(html, "[data-dropdown]")
       assert "min-w-64" in classes(html, "[data-dropdown]")
       refute "w-72" in classes(html, "[data-dropdown]")

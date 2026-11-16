@@ -16,11 +16,11 @@ defmodule LineaUI.Installer.Css do
   @sources ~r/^@source\s[^\n]*$/m
 
   @comment "(?:^/\\*(?:(?!\\*/).)*\\*/[ \\t]*\\n)?"
-  @daisy_plugins Regex.compile!(
-                   @comment <>
-                     "^@plugin\\s+[\"'][^\"']*(?:daisyui|heroicons)[^\"']*[\"']\\s*(?:\\{[^}]*\\}|;)[ \\t]*\\n?(?:[ \\t]*\\n)?",
-                   "ms"
-                 )
+  @phoenix_plugins Regex.compile!(
+                     @comment <>
+                       "^@plugin\\s+[\"'][^\"']*(?:daisyui-theme|heroicons)[^\"']*[\"']\\s*(?:\\{[^}]*\\}|;)[ \\t]*\\n?(?:[ \\t]*\\n)?",
+                     "ms"
+                   )
   @dark_variant Regex.compile!(
                   @comment <>
                     "^@custom-variant\\s+dark\\s+\\(&:where\\(\\[data-theme=dark\\][^\\n]*\\n?(?:[ \\t]*\\n)?",
@@ -91,13 +91,15 @@ defmodule LineaUI.Installer.Css do
   defp hugeicons_after(false, css), do: insert_after(css, @styles_import, @hugeicons)
 
   @doc """
-  Removes the daisyUI and heroicons `@plugin` blocks (with the comment above each) and the
-  `data-theme` dark variant Phoenix generates next to them, which LineaUI's `.dark` class replaces.
+  Removes Phoenix's two daisyUI themes and the heroicons `@plugin` blocks (with the comment above each) and the
+  `data-theme` dark variant Phoenix generates next to them: LineaUI's themes set daisyUI's variables, its `.dark`
+  class covers the variant and Hugeicons replaces heroicons. The daisyUI plugin itself stays, LineaUI's components
+  use its classes.
   """
   @spec replace_daisyui(String.t()) :: String.t()
   def replace_daisyui(css) do
     css
-    |> remove(@daisy_plugins)
+    |> remove(@phoenix_plugins)
     |> remove(@dark_variant)
   end
 

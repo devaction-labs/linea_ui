@@ -69,7 +69,7 @@ defmodule LineaUI.Components.KanbanTest do
 
   test "the color picks the icon tile and the bar" do
     for {color, tile, bar} <- [
-          {"neutral", "bg-slate-500/[.13]", "bg-slate-500"},
+          {"neutral", "bg-slate-500/[.13]", "bg-base-content/55"},
           {"info", "bg-info-focus/[.13]", "bg-info-focus"},
           {"warning", "bg-warning-focus/[.13]", "bg-warning-focus"},
           {"primary", "bg-primary/[.13]", "bg-primary"},

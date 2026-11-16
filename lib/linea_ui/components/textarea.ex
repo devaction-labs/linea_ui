@@ -470,7 +470,7 @@ defmodule LineaUI.Components.Textarea do
       aria-live="polite"
       aria-atomic="true"
       data-tone={@tone}
-      class="text-xs tabular-nums text-slate-400 data-[tone=bad]:text-error data-[tone=warn]:text-warning dark:text-navy-300"
+      class="text-xs tabular-nums text-base-content/50 data-[tone=bad]:text-error data-[tone=warn]:text-warning"
     >{@text}</span>
     """
   end

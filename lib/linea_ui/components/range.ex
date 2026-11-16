@@ -82,9 +82,9 @@ defmodule LineaUI.Components.Range do
 
   @thumb_px %{"sm" => 12, "md" => 18, "lg" => 24}
 
-  @stepper "inline-flex size-6 shrink-0 items-center justify-center rounded-md text-slate-500 outline-hidden transition-colors hover:bg-slate-150 hover:text-slate-700 focus-visible:bg-slate-150 disabled:pointer-events-none disabled:opacity-40 dark:text-navy-200 dark:hover:bg-navy-500 dark:hover:text-navy-50 dark:focus-visible:bg-navy-500"
+  @stepper "inline-flex size-6 shrink-0 items-center justify-center rounded-md text-base-content/65 outline-hidden transition-colors hover:bg-base-200 hover:text-base-content/85 focus-visible:bg-base-200 disabled:pointer-events-none disabled:opacity-40"
 
-  @mark "absolute whitespace-nowrap rounded px-1.5 py-0.5 font-inter text-tiny-plus font-medium text-slate-400 outline-hidden transition-colors hover:text-slate-600 focus-visible:text-slate-600 aria-pressed:bg-primary/10 aria-pressed:text-primary dark:text-navy-300 dark:hover:text-navy-100 dark:aria-pressed:bg-accent/15 dark:aria-pressed:text-accent-light"
+  @mark "absolute whitespace-nowrap rounded px-1.5 py-0.5 font-inter text-tiny-plus font-medium text-base-content/50 outline-hidden transition-colors hover:text-base-content/75 focus-visible:text-base-content/75 aria-pressed:bg-primary/10 aria-pressed:text-primary dark:aria-pressed:bg-accent/15 dark:aria-pressed:text-accent-light"
 
   @doc "Renders a range slider."
   attr(:field, Phoenix.HTML.FormField, default: nil)
@@ -468,7 +468,7 @@ defmodule LineaUI.Components.Range do
           :if={@show_value and @vertical?}
           data-output
           for={@id}
-          class="font-mono text-xs-plus font-medium text-slate-700 dark:text-navy-100"
+          class="font-mono text-xs-plus font-medium text-base-content/85"
         >
           {@text}
         </output>
@@ -535,7 +535,7 @@ defmodule LineaUI.Components.Range do
         :if={@show_value}
         data-output
         for={@for}
-        class="font-mono text-xs-plus font-medium text-slate-700 dark:text-navy-100"
+        class="font-mono text-xs-plus font-medium text-base-content/85"
       >
         {@text}
       </output>

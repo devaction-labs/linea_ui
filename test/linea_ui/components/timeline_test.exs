@@ -60,7 +60,7 @@ defmodule LineaUI.Components.TimelineTest do
     point = classes(html, "li:last-child .timeline-item-point")
     assert "text-error" in point
     assert Enum.any?(point, &String.starts_with?(&1, "bg-[color-mix"))
-    refute "bg-white" in point
+    refute "bg-base-100" in point
     assert html |> find(".timeline-item-point #icon") |> Enum.count() == 1
     assert "motion-safe:animate-ping" in classes(html, "li:last-child .timeline-item-point span")
   end

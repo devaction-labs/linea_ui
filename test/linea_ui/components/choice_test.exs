@@ -90,7 +90,7 @@ defmodule LineaUI.Components.ChoiceTest do
                |> Enum.to_list()
 
       assert "sr-only" in classes(html, "input[type=checkbox]")
-      assert "has-checked:bg-slate-700" in classes(html, "label")
+      assert "has-checked:bg-base-content/80" in classes(html, "label")
     end
 
     test "cards with descriptions" do
@@ -197,8 +197,7 @@ defmodule LineaUI.Components.ChoiceTest do
     end
 
     test "pt_BR: names, dd/mm/aaaa and até" do
-      html =
-        render(~H|<.date_picker
+      html = render(~H|<.date_picker
   id="p"
   name="p"
   mode="range"

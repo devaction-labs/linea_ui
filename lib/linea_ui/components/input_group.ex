@@ -134,7 +134,7 @@ defmodule LineaUI.Components.InputGroup do
           id={"#{@base_id}-label"}
           class={
             merge([
-              "block text-[13px]/5 font-medium text-slate-950 dark:text-navy-50",
+              "block text-[13px]/5 font-medium text-base-content",
               @label_class
             ])
           }

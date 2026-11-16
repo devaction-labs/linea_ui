@@ -125,7 +125,7 @@ defmodule LineaUI.Components.FabTest do
              "#f"
            )
 
-    assert "bg-white" in classes(
+    assert "bg-base-100" in classes(
              render(~H|<.fab variant="pill" id="f" label="Go" color="light" />|),
              "#f"
            )

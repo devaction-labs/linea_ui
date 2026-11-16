@@ -26,10 +26,10 @@ defmodule LineaUI.Components.DatePicker.Shell do
     }
   }
 
-  @preset "rounded-full bg-slate-150 px-2.5 py-1 text-xs-plus font-medium text-slate-600 transition-colors hover:bg-slate-200 hover:text-slate-800 focus-visible:outline-2 focus-visible:outline-primary/50 data-active:bg-primary data-active:text-white dark:bg-navy-500 dark:text-navy-100 dark:hover:bg-navy-450 dark:hover:text-navy-50 dark:data-active:bg-accent dark:data-active:text-white"
+  @preset "rounded-full bg-base-200 px-2.5 py-1 text-xs-plus font-medium text-base-content/75 transition-colors hover:bg-base-300 hover:text-base-content focus-visible:outline-2 focus-visible:outline-primary/50 data-active:bg-primary data-active:text-white dark:data-active:bg-accent dark:data-active:text-white"
 
-  @input "form-input flatpickr-input peer w-full rounded-lg border border-slate-300 bg-transparent px-3 py-2 placeholder:text-slate-500 hover:border-slate-400 focus:border-primary focus:ring-3 focus:ring-primary/20 disabled:pointer-events-none disabled:select-none disabled:border-none disabled:bg-zinc-100 dark:border-navy-450 dark:hover:border-navy-400 dark:focus:border-accent dark:focus:ring-accent/20 dark:disabled:bg-navy-600 disabled:cursor-not-allowed disabled:opacity-60"
-  @input_grouped "form-input flatpickr-input w-full rounded-l-lg border border-slate-300 bg-transparent px-3 py-2 placeholder:text-slate-500 hover:z-10 hover:border-slate-400 focus:z-10 focus:border-primary dark:border-navy-450 dark:hover:border-navy-400 dark:focus:border-accent disabled:cursor-not-allowed disabled:border-transparent disabled:bg-zinc-100 disabled:opacity-60 dark:disabled:bg-navy-600"
+  @input "form-input flatpickr-input peer w-full rounded-lg border border-base-content/20 bg-transparent px-3 py-2 placeholder:text-base-content/65 hover:border-base-content/30 focus:border-primary focus:ring-3 focus:ring-primary/20 disabled:pointer-events-none disabled:select-none disabled:border-none disabled:bg-zinc-100 dark:focus:border-accent dark:focus:ring-accent/20 dark:disabled:bg-navy-600 disabled:cursor-not-allowed disabled:opacity-60"
+  @input_grouped "form-input flatpickr-input w-full rounded-l-lg border border-base-content/20 bg-transparent px-3 py-2 placeholder:text-base-content/65 hover:z-10 hover:border-base-content/30 focus:z-10 focus:border-primary dark:focus:border-accent disabled:cursor-not-allowed disabled:border-transparent disabled:bg-zinc-100 disabled:opacity-60 dark:disabled:bg-navy-600"
 
   # Painted by `aria-invalid`, so the classes do not change when errors come and go.
   @error "aria-invalid:border-error aria-invalid:hover:border-error aria-invalid:focus:border-error aria-invalid:focus:ring-error/20 aria-invalid:dark:border-error aria-invalid:dark:hover:border-error aria-invalid:dark:focus:border-error aria-invalid:dark:focus:ring-error/20"
@@ -339,7 +339,7 @@ defmodule LineaUI.Components.DatePicker.Shell do
           />
           <span
             :if={not @grouped and (@show_icon or @icon != [])}
-            class="pointer-events-none absolute flex h-full w-10 items-center justify-center text-slate-400 peer-focus:text-primary dark:text-navy-300 dark:peer-focus:text-accent"
+            class="pointer-events-none absolute flex h-full w-10 items-center justify-center text-base-content/50 peer-focus:text-primary dark:peer-focus:text-accent"
           >
             {render_slot(@icon) || default_icon(@kind)}
           </span>
@@ -383,7 +383,7 @@ defmodule LineaUI.Components.DatePicker.Shell do
         >
         </div>
         <template :if={@presets != []} data-presets>
-          <div class="flatpickr-presets flex flex-wrap gap-1.5 rounded-b border-t border-slate-150 bg-white p-2 dark:border-navy-500 dark:bg-navy-700">
+          <div class="flatpickr-presets flex flex-wrap gap-1.5 rounded-b border-t border-base-300 bg-base-100 p-2">
             <button
               :for={preset <- @presets}
               type="button"
