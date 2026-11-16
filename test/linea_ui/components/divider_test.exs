@@ -1,17 +1,17 @@
 defmodule LineaUI.Components.DividerTest do
   use LineaUI.ComponentCase, async: true
 
-  test "the line takes the canvas --line" do
-    html = render(~H|<.divider id="d" />|)
+  test "daisyUI's divider, vertical as divider-horizontal" do
+    assert "divider" in classes(render(~H|<.divider id="d" />|), "#d")
 
-    assert "bg-(--line)" in classes(html, "#d")
+    assert ["divider", "divider-horizontal"] --
+             classes(render(~H|<.divider id="d" orientation="vertical" />|), "#d") == []
   end
 
   test "align left writes the text as a title before a single line" do
     html = render(~H|<.divider id="d" align="left">Entrega</.divider>|)
 
     assert find(html, "#d > b") |> LazyHTML.text() =~ "Entrega"
-    assert "uppercase" in classes(html, "#d > b")
-    assert [_] = find(html, "#d > div") |> Enum.to_list()
+    assert ["divider-start", "uppercase"] -- classes(html, "#d") == []
   end
 end

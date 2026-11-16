@@ -11,11 +11,11 @@ defmodule LineaUI.Components.SimpleElementsTest do
         <.divider id="vt" orientation="vertical">OR</.divider>
         """)
 
-      assert "h-px" in classes(html, "#h")
-      assert [_, _] = find(html, "#ht > div.h-px") |> Enum.to_list()
-      assert "w-px" in classes(html, "#v")
+      assert "divider" in classes(html, "#h")
+      assert LazyHTML.text(find(html, "#ht.divider")) =~ "OR"
+      assert "divider-horizontal" in classes(html, "#v")
       assert [_] = find(html, "#v[aria-orientation=vertical]") |> Enum.to_list()
-      assert [_, _] = find(html, "#vt > div.w-px") |> Enum.to_list()
+      assert "divider-horizontal" in classes(html, "#vt")
     end
   end
 

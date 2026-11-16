@@ -148,7 +148,7 @@
 
 /* ---------- Form section ---------- */
 .lc-fs{display:flex;flex-direction:column;gap:12px;min-width:0}
-.lc-fs.divider{padding-bottom:16px;border-bottom:1px solid var(--line)}
+.lc-fs.is-divided{padding-bottom:16px;border-bottom:1px solid var(--line)}
 .lc-fs-title{margin:0;display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:13px;font-weight:600;line-height:20px;color:var(--ink)}
 .lc-fs-desc{margin:0;font-size:13px;line-height:19px;color:var(--faint)}
 .lc-fs-grid{display:grid;gap:12px 14px;min-width:0}

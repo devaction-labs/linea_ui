@@ -1,7 +1,7 @@
 defmodule LineaUI.Components.Divider do
   @moduledoc """
-  LineOne's divider: a hairline between stacked or side-by-side content, with optional text in
-  the middle.
+  daisyUI's divider (`divider`, `divider-horizontal`, `divider-start`): a line between stacked or side-by-side
+  content, with optional text in the middle.
 
       <.divider />
       <.divider>OR</.divider>
@@ -21,9 +21,6 @@ defmodule LineaUI.Components.Divider do
   """
 
   use LineaUI.Component
-
-  # the canvas `--line`, in light and dark
-  @line "bg-(--line)"
 
   @doc """
   Renders a divider, with the inner block as its text when given.
@@ -46,7 +43,7 @@ defmodule LineaUI.Components.Divider do
 
   def divider(%{inner_block: [], orientation: "horizontal"} = assigns) do
     ~H"""
-    <div role="separator" class={merge(["my-4 h-px", line(), @class])} {@rest}></div>
+    <div role="separator" class={merge(["divider my-2", @class])} {@rest}></div>
     """
   end
 
@@ -55,7 +52,7 @@ defmodule LineaUI.Components.Divider do
     <div
       role="separator"
       aria-orientation="vertical"
-      class={merge(["mx-4 my-1 w-px", line(), @class])}
+      class={merge(["divider divider-horizontal mx-2", @class])}
       {@rest}
     >
     </div>
@@ -64,25 +61,25 @@ defmodule LineaUI.Components.Divider do
 
   def divider(%{orientation: "horizontal", align: "left"} = assigns) do
     ~H"""
-    <div role="separator" class={merge(["my-4 flex items-center gap-2.5", @class])} {@rest}>
-      <b class="text-[11.5px] font-bold tracking-[.06em] text-(--faint) uppercase">
-        {render_slot(@inner_block)}
-      </b>
-      <div class={["h-px flex-1", line()]}></div>
+    <div
+      role="separator"
+      class={
+        merge([
+          "divider divider-start my-2 text-[11.5px] font-bold tracking-[.06em] text-base-content/50 uppercase",
+          @class
+        ])
+      }
+      {@rest}
+    >
+      <b>{render_slot(@inner_block)}</b>
     </div>
     """
   end
 
   def divider(%{orientation: "horizontal"} = assigns) do
     ~H"""
-    <div
-      role="separator"
-      class={merge(["my-4 flex items-center gap-3 text-xs/5 text-(--faint)", @class])}
-      {@rest}
-    >
-      <div class={["h-px flex-1", line()]}></div>
-      <p>{render_slot(@inner_block)}</p>
-      <div class={["h-px flex-1", line()]}></div>
+    <div role="separator" class={merge(["divider my-2 text-xs text-base-content/50", @class])} {@rest}>
+      {render_slot(@inner_block)}
     </div>
     """
   end
@@ -92,15 +89,11 @@ defmodule LineaUI.Components.Divider do
     <div
       role="separator"
       aria-orientation="vertical"
-      class={merge(["mx-4 flex flex-col items-center space-y-3", @class])}
+      class={merge(["divider divider-horizontal mx-2 text-xs text-base-content/50", @class])}
       {@rest}
     >
-      <div class={["w-px flex-1", line()]}></div>
-      <p>{render_slot(@inner_block)}</p>
-      <div class={["w-px flex-1", line()]}></div>
+      {render_slot(@inner_block)}
     </div>
     """
   end
-
-  defp line, do: @line
 end

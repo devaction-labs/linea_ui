@@ -49,7 +49,7 @@ defmodule LineaUI.Components.FormSection do
     ~H"""
     <section
       id={@id}
-      class={merge(["lc-fs aside", @divider == true && "divider", @class])}
+      class={merge(["lc-fs aside", @divider == true && "is-divided", @class])}
       aria-labelledby={@id && "#{@id}-title"}
       {@rest}
     >
@@ -66,7 +66,7 @@ defmodule LineaUI.Components.FormSection do
     ~H"""
     <section
       id={@id}
-      class={merge(["lc-fs stacked", @divider != false && "divider", @class])}
+      class={merge(["lc-fs stacked", @divider != false && "is-divided", @class])}
       aria-labelledby={@id && "#{@id}-title"}
       {@rest}
     >
