@@ -90,26 +90,20 @@ input.form-checkbox:focus-visible,input.form-radio:focus-visible,input.form-swit
 .sg-otp span.on{box-shadow:inset 0 0 0 1px var(--ring-line),0 0 0 3px var(--ring)}
 
 /* menus, dropdowns, select lists and popovers: one surface, 10px corners, a thin line and a short shadow */
-.sg-menu,
 .popper-root[data-panel] > .popper-box[role="menu"],
 .popper-root[role="dialog"][data-panel] > .popper-box > div,
 .ts-wrapper[phx-hook="LineaUI.Select"] .ts-dropdown,
 .palette-canvas{border-radius:var(--r);background:var(--pop);box-shadow:var(--pop-shadow);padding:4px}
-:is(.dark .sg:not([data-theme="light"]), .sg[data-theme="dark"]) .sg-menu,
 :is(.dark .sg:not([data-theme="light"]), .sg[data-theme="dark"], .dark) .ts-wrapper[phx-hook="LineaUI.Select"] .ts-dropdown{background:var(--pop)}
 .popper-root[role="dialog"][data-panel] > .popper-box > div{padding:16px}
 .popper-root[role="dialog"][data-panel] > .popper-box > div > h3{font-size:14px;font-weight:500;letter-spacing:0;color:var(--ink)}
 .ts-wrapper[phx-hook="LineaUI.Select"] .ts-dropdown .ts-dropdown-content{padding:0}
-.sg-menu a,
 .popper-root[data-panel] > .popper-box[role="menu"] [role="menuitem"],
 .ts-wrapper[phx-hook="LineaUI.Select"] .ts-dropdown .option{min-height:32px;height:auto;padding:0 8px;gap:8px;border-radius:6px;font-size:14px;font-weight:400;color:var(--fg)}
-.sg-menu a:hover,.sg-menu a.on,
 .popper-root[data-panel] > .popper-box[role="menu"] [role="menuitem"]:is(:hover,:focus-visible),
 .ts-wrapper[phx-hook="LineaUI.Select"] .ts-dropdown .option:is(.active,:hover),
 .ts-wrapper[phx-hook="LineaUI.Select"] .ts-dropdown .option.selected{background:var(--tint);color:var(--ink)}
-.sg-menu a.neg:hover,
 .popper-root[data-panel] > .popper-box[role="menu"] [role="menuitem"].text-error:is(:hover,:focus-visible){background:color-mix(in srgb,var(--neg) 10%,transparent);color:var(--neg)}
-.sg-menu hr{margin:4px -4px}
 .ts-wrapper[phx-hook="LineaUI.Select"] .ts-dropdown .optgroup-header{padding:6px 8px;font-size:12px;font-weight:500;letter-spacing:0;color:var(--muted)}
 .ts-wrapper[phx-hook="LineaUI.Select"] .ts-dropdown .ts-search{height:36px;margin:0 0 4px;border-radius:6px}
 .ts-wrapper[phx-hook="LineaUI.Select"] .ts-control{min-height:36px;box-shadow:inset 0 0 0 1px var(--ctl-line),var(--shadow-xs)}

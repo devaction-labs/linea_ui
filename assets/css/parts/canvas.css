@@ -287,20 +287,10 @@
 .sg-drawer-b{flex:1;overflow:hidden;padding:4px 24px 20px;display:flex;flex-direction:column;gap:16px}
 .sg-drawer-f{display:flex;justify-content:flex-end;gap:8px;padding:14px 24px;border-top:1px solid var(--line);background:var(--panel)}
 .sg-modal{position:absolute;left:50%;top:120px;z-index:21;width:460px;margin-left:-230px;border-radius:var(--r-xl);background:var(--panel);box-shadow:0 0 0 1px var(--ctl-line),var(--shadow-lg);overflow:hidden}
-.sg-menu{min-width:220px;padding:4px;border-radius:12px;background:var(--panel);box-shadow:0 0 0 1px var(--ctl-line),var(--shadow-lg)}
-:is(.dark .sg:not([data-theme="light"]), .sg[data-theme="dark"]) .sg-menu{background:var(--raised)}
-.sg-menu a{display:flex;align-items:center;gap:8px;height:32px;padding:0 8px;border-radius:var(--pill-in);font-size:14px;color:var(--fg)}
-.sg-menu a .i{color:var(--muted)}
-.sg-menu a.on{background:var(--ctl-fill);color:var(--ink)}
-.sg-menu a.neg{color:var(--neg)}.sg-menu a.neg .i{color:var(--neg)}
-.sg-menu hr{border:0;height:1px;background:var(--line);margin:4px 0}
 /* Lote 2: estados de hover das famílias (depois das regras base) */
 .sg-table tbody tr:hover td{background:var(--ctl-hover)}
 .sg-table tr.sel:hover td{background:var(--accent-soft)}
-.sg-menu a:hover{background:var(--ctl-fill);color:var(--ink)}
-.sg-menu a.neg:hover{background:var(--neg-soft);color:var(--neg)}
 .sg-chip:hover{background:linear-gradient(var(--ctl-hover),var(--ctl-hover)),var(--ctl)}
-.sg-menu .h{padding:8px 10px 4px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint)}
 .lo-toast{display:flex;gap:12px;align-items:flex-start;width:360px;padding:14px 16px;border:0;border-radius:var(--radius-box);background:var(--color-base-100);color:var(--color-base-content);box-shadow:0 0 0 1px var(--color-base-300),0 10px 15px -3px rgb(0 0 0/.08),0 4px 6px -4px rgb(0 0 0/.06)}
 .lo-toast.dark{background:var(--color-neutral);color:var(--color-neutral-content)}
 .lo-toast .t{font-weight:550}.lo-toast.dark .t{color:var(--color-neutral-content)}
@@ -388,7 +378,7 @@
 .sg-m-tab a.on>:is(svg,[class*="huge-"]){color:var(--accent)}
 .linea-shell-tabbar .sg-m-tab{position:static;margin:8px 14px}
 .sg-m-home{position:absolute;left:50%;bottom:8px;width:134px;height:5px;margin-left:-67px;border-radius:5px;background:var(--ink);opacity:.85}
-.sg-m-fab{position:absolute;right:22px;bottom:106px;width:56px;height:56px;border-radius:20px;background:var(--solid);color:var(--on-solid);display:grid;place-items:center;box-shadow:var(--shadow-lg)}
+.lo-m-fab{position:absolute;right:22px;bottom:106px;width:56px;height:56px;border-radius:20px;background:var(--solid);color:var(--on-solid);display:grid;place-items:center;box-shadow:var(--shadow-lg)}
 
 /* ---------- Email ---------- */
 .sg-mail{background:var(--canvas);padding:40px 20px;min-height:100%}

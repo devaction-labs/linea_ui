@@ -243,9 +243,7 @@ defmodule LineaUI.Components.Tabs do
 
     attr(:disabled, :boolean, doc: "Skipped by clicks and the arrow keys.")
 
-    attr(:count, :any,
-      doc: "A number drawn after the label in a daisyUI `badge`."
-    )
+    attr(:count, :any, doc: "A number drawn after the label in a daisyUI `badge`.")
 
     attr(:overdue, :boolean,
       doc:
@@ -273,7 +271,9 @@ defmodule LineaUI.Components.Tabs do
 
   def tabs(%{variant: "nav"} = assigns) do
     assigns
-    |> assign_derived(:nav_class, [:class], fn -> merge(["tabs tabs-border lo-tabs", assigns.class]) end)
+    |> assign_derived(:nav_class, [:class], fn ->
+      merge(["tabs tabs-border lo-tabs", assigns.class])
+    end)
     |> render_nav()
   end
 

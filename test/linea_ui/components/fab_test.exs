@@ -259,7 +259,7 @@ defmodule LineaUI.Components.FabTest do
         """)
 
       classes = classes(html, "#new")
-      assert "sg-fab" in classes
+      assert "lo-fab" in classes
       assert "btn" in classes
       assert "btn-neutral" in classes
       assert attr_of(html, "#new", "style") == ["bottom: 18px; right: 18px"]
@@ -277,7 +277,7 @@ defmodule LineaUI.Components.FabTest do
                "px"
     end
 
-    test "fab_dial is the canvas square with an sg-menu of actions" do
+    test "fab_dial is the canvas square with a surface of ghost-button actions" do
       html =
         render(~H"""
         <.fab_dial id="d" label="Criar" variant="canvas" offset={18}>
@@ -286,10 +286,10 @@ defmodule LineaUI.Components.FabTest do
         </.fab_dial>
         """)
 
-      assert "sg-m-fab" in classes(html, "#d-trigger")
-      assert "sg-menu" in classes(html, "#d-menu")
+      assert "lo-m-fab" in classes(html, "#d-trigger")
+      assert "lo-fab-menu" in classes(html, "#d-menu")
       assert attr_of(html, "#d-menu", "role") == ["menu"]
-      assert find(html, "#d-menu .sg-menu-item[role=menuitem]") |> Enum.count() == 2
+      assert find(html, "#d-menu .lo-fab-item[role=menuitem]") |> Enum.count() == 2
       assert attr_of(html, "#d", "style") == ["bottom: 18px; right: 18px"]
     end
   end

@@ -52,21 +52,21 @@ defmodule LineaUI.Components.CanvasDefaultTest do
   end
 
   test "fab: canvas by default, pill is the old look" do
-    assert has?(render(~H"<.fab id=\"f\" label=\"Go\" />"), ".sg-fab")
-    refute has?(render(~H"<.fab id=\"f\" variant=\"pill\" label=\"Go\" />"), ".sg-fab")
+    assert has?(render(~H"<.fab id=\"f\" label=\"Go\" />"), ".lo-fab")
+    refute has?(render(~H"<.fab id=\"f\" variant=\"pill\" label=\"Go\" />"), ".lo-fab")
 
     assert has?(
              render(~H"<.fab_dial id=\"d\" label=\"Go\">
   <:action label=\"A\">a</:action>
 </.fab_dial>"),
-             ".sg-fab-dial"
+             ".lo-fab-dial"
            )
 
     refute has?(
              render(~H"<.fab_dial id=\"d\" variant=\"pill\" label=\"Go\">
   <:action label=\"A\">a</:action>
 </.fab_dial>"),
-             ".sg-fab-dial"
+             ".lo-fab-dial"
            )
   end
 

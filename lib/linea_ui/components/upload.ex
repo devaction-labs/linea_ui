@@ -224,8 +224,7 @@ defmodule LineaUI.Components.Upload do
             aria-valuemax="100"
             value={entry.progress}
             max="100"
-          >
-          </progress>
+          ></progress>
         </div>
         <button
           type="button"

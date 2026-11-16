@@ -46,14 +46,12 @@
 .sg-empty-line-icon{display:inline-flex;flex:none}
 
 /* ---------- Fab (variant="canvas"): the solid button, the dial square and its menu ---------- */
-.sg-fab{position:fixed;z-index:var(--linea-z-fab, 90);border-radius:18px}
-.sg-fab .huge-add-01,.sg-fab > svg{flex:none}
-.sg-fab-dial .sg-m-fab{position:static;border:0;padding:0;margin:0;cursor:pointer;font:inherit}
-.sg-fab-dial .sg-menu{min-width:200px}
-.sg-menu > .sg-menu-item{all:unset;box-sizing:border-box;display:flex;align-items:center;gap:10px;height:34px;padding:0 10px;border-radius:9px;font-size:13.5px;color:var(--fg);cursor:pointer}
-.sg-menu > .sg-menu-item:is(:hover, :focus-visible){background:var(--ctl-fill);color:var(--ink)}
-.sg-menu > .sg-menu-item:is(:disabled, [aria-disabled="true"]){opacity:.45;cursor:not-allowed}
-.sg-menu-ic{display:inline-flex;flex:none;color:var(--muted)}
+.lo-fab{position:fixed;z-index:var(--linea-z-fab, 90)}
+.lo-fab .huge-add-01,.lo-fab > svg{flex:none}
+.lo-fab-dial .lo-m-fab{position:static;width:56px;height:56px;margin:0}
+.lo-fab-menu{min-width:200px;padding:4px;display:flex;flex-direction:column;gap:1px}
+.lo-fab-item{gap:10px}
+.lo-menu-ic{display:inline-flex;flex:none;opacity:.7}
 
 /* ---------- Toast card (toast_card/1): the lo-toast parts ---------- */
 .lo-toast .lo-toast-ic{width:30px;height:30px}
