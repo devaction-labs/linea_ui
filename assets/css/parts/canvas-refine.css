@@ -24,8 +24,8 @@
 .sg-btn:not(.solid,.accent,.filled,.soft,.ghost,.subtle,.danger):hover,.sg-btn:not(.solid,.accent,.filled,.soft,.ghost,.subtle,.danger).hv{background:var(--ctl-fill)}
 .sg-btn.danger{background:var(--danger);color:var(--on-danger);box-shadow:var(--shadow-xs)}
 .sg-btn.danger:hover,.sg-btn.danger.hv{background:color-mix(in srgb,var(--danger) 90%,transparent);color:var(--on-danger)}
-.sg-btn:focus-visible,.sg-ib:focus-visible{outline:none;box-shadow:inset 0 0 0 1px var(--ring-line),0 0 0 3px var(--ring)}
-.sg-ib:hover,.sg-ib.hv{background:var(--ctl-fill)}
+.sg-btn:focus-visible,.lo-ib:focus-visible{outline:none;box-shadow:inset 0 0 0 1px var(--ring-line),0 0 0 3px var(--ring)}
+.lo-ib:hover,.lo-ib.hv{background:var(--ctl-fill)}
 
 /* fields */
 .sg-input{height:36px;background:var(--ctl);box-shadow:inset 0 0 0 1px var(--ctl-line),var(--shadow-xs);transition:box-shadow .15s}
@@ -38,8 +38,8 @@
 .sg-card{border-radius:var(--r-lg);box-shadow:0 0 0 1px var(--line),var(--shadow-sm);padding:24px}
 .sg-card.flush{padding:0}
 .sg-card.soft{box-shadow:inset 0 0 0 1px var(--line)}
-.sg-card-h h3{font-size:15px;line-height:20px;font-weight:600;letter-spacing:-.01em}
-.sg-card-f{padding:14px 24px}
+.lo-card-h h3{font-size:15px;line-height:20px;font-weight:600;letter-spacing:-.01em}
+.lo-card-f{padding:14px 24px}
 
 /* badges */
 .sg-badge{height:22px;padding:0 8px;border-radius:var(--pill-xs);font-size:12px;font-weight:500;background:var(--sunken);box-shadow:none}
@@ -53,18 +53,18 @@
 .lo-table tbody tr:hover td,.lo-table tbody tr.hv td{background:color-mix(in srgb,var(--sunken) 60%,transparent)}
 
 /* checkbox */
-.sg-box{border-radius:4px;box-shadow:inset 0 0 0 1px var(--ctl-line-strong),var(--shadow-xs)}
-.sg-box.on,.sg-box.mixed{box-shadow:none}
+.lo-box{border-radius:4px;box-shadow:inset 0 0 0 1px var(--ctl-line-strong),var(--shadow-xs)}
+.lo-box.on,.lo-box.mixed{box-shadow:none}
 
 /* ---------- the rest of the kit, in the same finish ---------- */
 
 /* form labels and hints */
 .sg-label{font-size:14px;font-weight:500}
-.sg-kbd,.sg-input .kbd{height:20px;padding:0 5px;border-radius:4px;font:500 11.5px/20px var(--sans);box-shadow:none;background:var(--sunken);color:var(--muted)}
+.lo-kbd,.sg-input .kbd{height:20px;padding:0 5px;border-radius:4px;font:500 11.5px/20px var(--sans);box-shadow:none;background:var(--sunken);color:var(--muted)}
 
 /* checkbox, radio and switch: ink when on (`--control-on`), the neutral ring on focus */
-.sg-box,input.form-checkbox{border-radius:4px}
-.sg-box.on,.sg-box.mixed,input.form-checkbox:checked,input.form-checkbox:indeterminate{background-color:var(--control-on);color:var(--on-control);box-shadow:inset 0 0 0 1px var(--control-on)}
+.lo-box,input.form-checkbox{border-radius:4px}
+.lo-box.on,.lo-box.mixed,input.form-checkbox:checked,input.form-checkbox:indeterminate{background-color:var(--control-on);color:var(--on-control);box-shadow:inset 0 0 0 1px var(--control-on)}
 .sg-radio.on{background:radial-gradient(circle,var(--control-on) 0 3.5px,transparent 4px),var(--ctl);box-shadow:inset 0 0 0 1px var(--control-on),var(--shadow-xs)}
 input.form-radio:checked{background-color:var(--ctl);box-shadow:inset 0 0 0 1px var(--control-on),var(--shadow-xs)}
 input.form-radio:checked::after{width:8px;height:8px;background:var(--control-on)}
@@ -73,13 +73,13 @@ input.form-radio:checked::after{width:8px;height:8px;background:var(--control-on
 .sg-sw.on,input.form-switch:checked{background:var(--control-on)}
 .sg-sw.on::after,input.form-switch:checked::before{left:15px;background:var(--on-control)}
 input.form-checkbox:focus-visible,input.form-radio:focus-visible,input.form-switch:focus-visible{outline:0;box-shadow:inset 0 0 0 1px var(--ring-line),0 0 0 3px var(--ring)}
-.sg-choice{border-radius:var(--r)}
-.sg-choice.on{box-shadow:inset 0 0 0 1px var(--control-on);background:color-mix(in srgb,var(--sunken) 50%,var(--panel))}
+.lo-choice{border-radius:var(--r)}
+.lo-choice.on{box-shadow:inset 0 0 0 1px var(--control-on);background:color-mix(in srgb,var(--sunken) 50%,var(--panel))}
 
 /* slider and meters: a thin track, the range in ink, a white thumb ringed in ink */
-.sg-slider::before{top:7px;height:6px;border-radius:3px;background:var(--track);box-shadow:none}
-.sg-slider i{top:7px;height:6px;border-radius:3px;background:var(--control-on)}
-.sg-slider b{width:16px;height:16px;background:#fff;box-shadow:inset 0 0 0 1px var(--control-on),var(--shadow-xs)}
+.lo-slider::before{top:7px;height:6px;border-radius:3px;background:var(--track);box-shadow:none}
+.lo-slider i{top:7px;height:6px;border-radius:3px;background:var(--control-on)}
+.lo-slider b{width:16px;height:16px;background:#fff;box-shadow:inset 0 0 0 1px var(--control-on),var(--shadow-xs)}
 .lo-meter{height:8px;border-radius:4px;background:color-mix(in srgb,var(--control-on) 14%,transparent);box-shadow:none}
 .lo-meter i{border-radius:4px;background:var(--control-on)}
 .lo-meter.acc{background:color-mix(in srgb,var(--accent) 16%,transparent)}
@@ -154,11 +154,11 @@ input.form-checkbox:focus-visible,input.form-radio:focus-visible,input.form-swit
 .sg-acc-b{padding:0 0 16px;font-size:14px;line-height:20px}
 
 /* calendar: 32px days with 6px corners, today and the range on the gray tint, the chosen day ink */
-.sg-cal span{height:32px;border-radius:6px;font-size:14px}
-.sg-cal span.t{box-shadow:none;background:var(--tint);color:var(--ink)}
-.sg-cal span.on{background:var(--control-on);color:var(--on-control);font-weight:500}
-.sg-cal span.rg{background:var(--tint);color:var(--ink)}
-.sg-cal b{font-size:12.5px;font-weight:400;color:var(--muted)}
+.lo-cal span{height:32px;border-radius:6px;font-size:14px}
+.lo-cal span.t{box-shadow:none;background:var(--tint);color:var(--ink)}
+.lo-cal span.on{background:var(--control-on);color:var(--on-control);font-weight:500}
+.lo-cal span.rg{background:var(--tint);color:var(--ink)}
+.lo-cal b{font-size:12.5px;font-weight:400;color:var(--muted)}
 .flatpickr-calendar{min-width:0;padding:12px;border-radius:var(--r);background:var(--pop);box-shadow:var(--pop-shadow)}
 .flatpickr-current-month{font-size:14px;font-weight:500}
 .flatpickr-prev-month,.flatpickr-next-month{width:28px;height:28px;border-radius:6px;box-shadow:inset 0 0 0 1px var(--ctl-line)}
@@ -170,9 +170,9 @@ span.flatpickr-weekday{font-size:12.5px;font-weight:400;color:var(--muted)}
 .flatpickr-day.startRange{border-radius:6px 0 0 6px}.flatpickr-day.endRange{border-radius:0 6px 6px 0}
 
 /* empty state, skeleton, kanban and avatars */
-.sg-empty .art{width:40px;height:40px;border-radius:var(--pill);background:var(--sunken);box-shadow:none;color:var(--fg)}
-.sg-empty-title{font-size:18px;font-weight:500;letter-spacing:-.01em}
-.sg-empty-text{font-size:14px}
+.lo-empty .art{width:40px;height:40px;border-radius:var(--pill);background:var(--sunken);box-shadow:none;color:var(--fg)}
+.lo-empty-title{font-size:18px;font-weight:500;letter-spacing:-.01em}
+.lo-empty-text{font-size:14px}
 .sg-skel{border-radius:6px;background:var(--tint)}
 .sg-kb-col{border-radius:var(--r-lg);box-shadow:none}
 .sg-kb-card{border-radius:var(--r);box-shadow:0 0 0 1px var(--line),var(--shadow-xs)}
@@ -191,7 +191,7 @@ span.flatpickr-weekday{font-size:12.5px;font-weight:400;color:var(--muted)}
 
 /* chips and pills inside fields: 6px corners, a thin line, no shadow */
 .sg-chip{height:26px;border-radius:6px;box-shadow:inset 0 0 0 1px var(--line);background:var(--panel);font-size:13px}
-.sg-tag{border-radius:6px}
+.lo-tag{border-radius:6px}
 .sg-delta{border-radius:6px;font-family:var(--sans)}
 
 /* KPI and stats: muted 14px labels, 28/600 values */
@@ -209,12 +209,12 @@ span.flatpickr-weekday{font-size:12.5px;font-weight:400;color:var(--muted)}
 .linea-flow-chip{border-radius:6px;box-shadow:inset 0 0 0 1px var(--line)}
 
 /* step group and timeline */
-.sg-sgp{border-radius:var(--r-lg);box-shadow:0 0 0 1px var(--line)}
-.sg-step.cur i{background:var(--control-on);color:var(--on-control)}
-.sg-step.done i{background:var(--tint);color:var(--ink)}
+.lo-sgp{border-radius:var(--r-lg);box-shadow:0 0 0 1px var(--line)}
+.lo-step.cur i{background:var(--control-on);color:var(--on-control)}
+.lo-step.done i{background:var(--tint);color:var(--ink)}
 
 /* upload: a dashed 10px area on the panel */
-.sg-drop{border-radius:var(--r);border:1px dashed var(--line-strong);background:transparent;padding:24px}
+.lo-drop{border-radius:var(--r);border:1px dashed var(--line-strong);background:transparent;padding:24px}
 
 /* tables of the kit: the same header and rows as .lo-table */
 :is(.linea-ctable,.linea-dt) :is(th,.linea-ctable-h){font-size:13px;font-weight:500;color:var(--ink)}
@@ -249,7 +249,7 @@ span.flatpickr-weekday{font-size:12.5px;font-weight:400;color:var(--muted)}
 
 /* hero and pixel cards: the card corners and the thin line */
 .linea-hero{border-radius:var(--r-xl);box-shadow:0 0 0 1px var(--line)}
-.sg-px{border-radius:var(--r-lg);box-shadow:0 0 0 1px var(--line),var(--shadow-xs)}
+.lo-px{border-radius:var(--r-lg);box-shadow:0 0 0 1px var(--line),var(--shadow-xs)}
 
 /* toasts with an aura and the status toast */
 .toastify.rich.canvas[data-behind]{border-radius:var(--r);box-shadow:var(--pop-shadow)}
@@ -257,13 +257,13 @@ span.flatpickr-weekday{font-size:12.5px;font-weight:400;color:var(--muted)}
 .lo-toast.st .act{border-radius:6px}
 
 /* error page */
-.sg-err-status{border-radius:var(--pill);box-shadow:inset 0 0 0 1px var(--line)}
-.sg-err-code{border-radius:6px}
-.sg-err-art{border-radius:var(--r-xl)}
-.sg-err-card{border-radius:var(--r-lg);box-shadow:0 0 0 1px var(--line),var(--shadow-sm)}
-.sg-err-links>a{border-radius:var(--pill)}
-.sg-err-links .ic{border-radius:6px}
-.sg-err-state .tile{border-radius:var(--r-lg)}
+.lo-err-status{border-radius:var(--pill);box-shadow:inset 0 0 0 1px var(--line)}
+.lo-err-code{border-radius:6px}
+.lo-err-art{border-radius:var(--r-xl)}
+.lo-err-card{border-radius:var(--r-lg);box-shadow:0 0 0 1px var(--line),var(--shadow-sm)}
+.lo-err-links>a{border-radius:var(--pill)}
+.lo-err-links .ic{border-radius:6px}
+.lo-err-state .tile{border-radius:var(--r-lg)}
 
 /* auth: the card at 16px, the form and the aside at 14px, OAuth buttons as outline buttons */
 .linea-auth-card{border-radius:var(--r-xl);box-shadow:0 0 0 1px var(--line),var(--shadow-lg)}

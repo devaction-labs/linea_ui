@@ -171,10 +171,10 @@ defmodule LineaUI.Components.UploadTest do
       """)
 
     assert [_] =
-             find(html, "label.sg-drop.is-error[role=alert][phx-value-ref=c]") |> Enum.to_list()
+             find(html, "label.lo-drop.is-error[role=alert][phx-value-ref=c]") |> Enum.to_list()
 
-    assert html |> find("label.sg-drop b") |> LazyHTML.text() =~ "planilha.xls não é aceita"
-    assert html |> find("label.sg-drop .lu-upload-hint") |> LazyHTML.text() =~ "Até 10 MB"
+    assert html |> find("label.lo-drop b") |> LazyHTML.text() =~ "planilha.xls não é aceita"
+    assert html |> find("label.lo-drop .lu-upload-hint") |> LazyHTML.text() =~ "Até 10 MB"
     assert [_] = find(html, ".lu-upload-file") |> Enum.to_list()
     assert html |> find(".lu-upload-file .lu-upload-size") |> LazyHTML.text() =~ "18 MB"
 
@@ -202,9 +202,9 @@ defmodule LineaUI.Components.UploadTest do
       />
       """)
 
-    assert [_] = find(html, "label.sg-drop.p-10") |> Enum.to_list()
-    assert html |> find("label.sg-drop .btn.btn-sm") |> LazyHTML.text() =~ "Escolher arquivo"
-    assert [_] = find(html, "label.sg-drop svg path[d='M4 8h3']") |> Enum.to_list()
+    assert [_] = find(html, "label.lo-drop.p-10") |> Enum.to_list()
+    assert html |> find("label.lo-drop .btn.btn-sm") |> LazyHTML.text() =~ "Escolher arquivo"
+    assert [_] = find(html, "label.lo-drop svg path[d='M4 8h3']") |> Enum.to_list()
   end
 
   test "canvas thumbs layout: a tile per file and the + tile" do

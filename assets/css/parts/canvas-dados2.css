@@ -1,7 +1,7 @@
 /* Canvas look for the dados2 components (see the Vitrine canvas). */
 
 /* ---------- Tag ---------- */
-/* `variant="flat"`: the canvas `sg-tag` over the kit's `.tag` base (no border, regular weight, 26px). */
+/* `variant="flat"`: the canvas `lo-tag` over the kit's `.tag` base (no border, regular weight, 26px). */
 /* `tint`: a colour of the user's own, the text in it on a 14% tint. */
 .tag.tag-tint{color:var(--tag-tint);background:color-mix(in srgb,var(--tag-tint) 14%,transparent);border-color:transparent;box-shadow:none}
 
@@ -13,11 +13,11 @@
 .lo-stat .v.sm{font-size:18px}
 
 /* ---------- Mini card ---------- */
-.sg-mini{display:flex;flex-direction:column;gap:10px;padding:14px}
-.sg-mini.sg-mini-v{gap:4px}
-.sg-mini-t{font-size:13.5px;font-weight:700;color:var(--ink)}
-.sg-mini-l{font-size:12.5px;color:var(--faint)}
-.sg-mini-n{font-family:var(--mono);font-feature-settings:"zero";font-size:18px;font-weight:700;color:var(--ink)}
+.lo-mini{display:flex;flex-direction:column;gap:10px;padding:14px}
+.lo-mini.lo-mini-v{gap:4px}
+.lo-mini-t{font-size:13.5px;font-weight:700;color:var(--ink)}
+.lo-mini-l{font-size:12.5px;color:var(--faint)}
+.lo-mini-n{font-family:var(--mono);font-feature-settings:"zero";font-size:18px;font-weight:700;color:var(--ink)}
 
 /* ---------- KPI card ---------- */
 /* `gap={false}`: the figure right under the top line. `progress`: the figure 8px under it, the meter 12px under
@@ -29,8 +29,8 @@
 .sg-kpi:not(.sg-kpi-tight) > .sg-kpi-c{margin-top:-8px}
 
 /* ---------- Kanban ---------- */
-/* The compact empty hint of a column (an `empty` slot with no title): the canvas `sg-drop`, 18px, 12.5px text. */
-.sg-drop.sg-kb-empty{padding:18px;font-size:12.5px}
+/* The compact empty hint of a column (an `empty` slot with no title): the canvas `lo-drop`, 18px, 12.5px text. */
+.lo-drop.lo-kb-empty{padding:18px;font-size:12.5px}
 /* The phone mode (`active` on the board): one column at a time, no header, no well. */
 @media (max-width:639px){
   [data-phone] > section:not([data-phone-active]),[data-phone] > aside{display:none !important}

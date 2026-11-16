@@ -173,7 +173,7 @@ defmodule LineaUI.Components.Kanban do
   attr :fluid, :boolean,
     default: false,
     doc:
-      "`true` makes the columns share the width of the page (each `flex-1`, no fixed 272px, no sideways scroll) like the canvas `sg-kb`. The `kanban_lost` aside keeps its 52px."
+      "`true` makes the columns share the width of the page (each `flex-1`, no fixed 272px, no sideways scroll) like the canvas `lo-kb`. The `kanban_lost` aside keeps its 52px."
 
   attr :active, :string,
     default: nil,
@@ -379,7 +379,7 @@ defmodule LineaUI.Components.Kanban do
         :for={empty <- @empty}
         :if={(@count == 0 || @hint == "always") && !empty[:title]}
         data-empty
-        class="sg-drop sg-kb-empty"
+        class="lo-drop lo-kb-empty"
       >
         {render_slot(empty)}
       </div>

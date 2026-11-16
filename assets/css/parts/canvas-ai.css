@@ -147,7 +147,7 @@
 @keyframes linea-glow{0%{background-position:0% 50%}100%{background-position:100% 50%}}
 @media (prefers-reduced-motion:reduce){.ai-greeting h1{animation-duration:12s}}
 .ai-conversations .sg-btn.block{justify-content:center}
-.ai-conversations .sg-kbd{margin-left:6px}
+.ai-conversations .lo-kbd{margin-left:6px}
 .ai-conversations-search .input{height:36px}
 @media (prefers-reduced-motion:no-preference){
   .ai-suggestion{transition:box-shadow .15s,transform .15s}

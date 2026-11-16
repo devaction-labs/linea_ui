@@ -262,14 +262,14 @@ defmodule LineaUI.Components.ToastTest do
         <.toast_card id="t" aura="dual" aura_tone="ai" aura_width="lg" title="Pronto" dismissible={false} />
         """)
 
-      aura = classes(html, "div.sg-aura")
-      for c <- ~w(sg-aura sg-aura-shadow ai dual lg), do: assert(c in aura)
-      assert [_] = find(html, ".sg-aura > #t.lo-toast") |> Enum.to_list()
+      aura = classes(html, "div.lo-aura")
+      for c <- ~w(lo-aura lo-aura-shadow ai dual lg), do: assert(c in aura)
+      assert [_] = find(html, ".lo-aura > #t.lo-toast") |> Enum.to_list()
     end
 
     test "no aura leaves the card alone, and busy puts a spinner" do
       html = render(~H|<.toast_card id="t" busy title="Lendo" dismissible={false} />|)
-      assert find(html, ".sg-aura") |> Enum.empty?()
+      assert find(html, ".lo-aura") |> Enum.empty?()
       assert [_] = find(html, "#t > .loading") |> Enum.to_list()
     end
 
@@ -289,7 +289,7 @@ defmodule LineaUI.Components.ToastTest do
 
       assert "done" in classes(done, "#t")
       assert find(done, "#t .pct") |> LazyHTML.text() == "100%"
-      assert find(done, "#t > .sg-spin") |> Enum.empty?()
+      assert find(done, "#t > .lo-spin") |> Enum.empty?()
 
       fail =
         render(
@@ -298,7 +298,7 @@ defmodule LineaUI.Components.ToastTest do
 
       assert "fail" in classes(fail, "#t")
       assert find(fail, "#t .pct") |> Enum.empty?()
-      assert find(fail, "#t > .sg-spin") |> Enum.empty?()
+      assert find(fail, "#t > .lo-spin") |> Enum.empty?()
     end
   end
 

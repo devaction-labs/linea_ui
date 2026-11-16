@@ -391,7 +391,7 @@ defmodule LineaUI.Components.Select.Listbox do
       aria-disabled={@entry.disabled && "true"}
       aria-selected="false"
     >
-      <span :if={@box} class="sg-box" aria-hidden="true"></span>
+      <span :if={@box} class="lo-box" aria-hidden="true"></span>
       <span data-text>{@entry.label}</span>
       <small :if={Options.hint(@entry)} data-hint>{Options.hint(@entry)}</small>
     </div>

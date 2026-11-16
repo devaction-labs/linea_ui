@@ -20,7 +20,7 @@ defmodule LineaUI.Components.TabBarCanvasTest do
     assert texts(html, "a") == ["", ""]
   end
 
-  test "variant canvas is the sg-m-tab with the label under the icon and the current tab on" do
+  test "variant canvas is the lo-m-tab with the label under the icon and the current tab on" do
     html =
       render(~H"""
       <.tab_bar variant="canvas" current="/b">
@@ -29,7 +29,7 @@ defmodule LineaUI.Components.TabBarCanvasTest do
       </.tab_bar>
       """)
 
-    assert ["sg-m-tab"] == classes(html, "nav")
+    assert ["lo-m-tab"] == classes(html, "nav")
     assert texts(html, "nav > a") == ["Início", "Tarefas"]
     assert attr_of(html, "a.on", "aria-current") == ["page"]
     assert texts(html, "a.on") == ["Tarefas"]

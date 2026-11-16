@@ -1,4 +1,4 @@
-/* ActionMenu (the canvas `sg-am*`): the "⋯" button of one item and its raised menu; the Dropdown's menu is `sg-menu` in canvas.css. */
+/* ActionMenu (the canvas `sg-am*`): the "⋯" button of one item and its raised menu; the Dropdown's menu is `lo-menu` in canvas.css. */
 
 .linea-am-root {
   position: relative;
@@ -172,7 +172,7 @@ tr[data-am-open] > td {
   background: var(--line);
 }
 
-/* Dropdown (the canvas `sg-menu`): the icon of an item is muted, ink on hover */
+/* Dropdown (the canvas `lo-menu`): the icon of an item is muted, ink on hover */
 [data-panel] [role="menuitem"]:not(.linea-am-i, .text-error, .text-primary) > [class*="huge-"] {
   color: var(--muted);
 }

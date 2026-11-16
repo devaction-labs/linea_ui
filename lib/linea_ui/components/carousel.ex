@@ -29,7 +29,7 @@ defmodule LineaUI.Components.Carousel do
   ## Canvas look and thumbnails
 
   `variant="canvas"` (the default; `variant="classic"` is the old LineOne carousel) is the design canvas carousel: a 16px rounded track, round white arrows (the
-  canvas `sg-ib`), the fraction as a small mono `1/3` at the top right, and bullets under the track
+  canvas `lo-ib`), the fraction as a small mono `1/3` at the top right, and bullets under the track
   (the active one a long ink pill). `:thumb` slots draw a row of 64px thumbnails under the track,
   one per slide, that pick the slide and ring the active one:
 

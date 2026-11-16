@@ -398,7 +398,7 @@ defmodule LineaUI.Components.CardTable do
       <div :if={@top != []} class="linea-ctable-flat-top">{render_slot(@top)}</div>
       <div
         :if={@top == [] and (@title || @actions != [])}
-        class="sg-card-h linea-ctable-flat-h"
+        class="lo-card-h linea-ctable-flat-h"
       >
         <h3 :if={@title && !@description && !@meta}>{@title}</h3>
         <div :if={@title && (@description || @meta)} class="linea-ctable-flat-text">

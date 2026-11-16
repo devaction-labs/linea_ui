@@ -133,7 +133,7 @@ defmodule LineaUI.Components.EmptyStateTest do
     assert html |> find("#i") |> LazyHTML.attribute("data-y") == ["2"]
   end
 
-  test "the canvas variant is sg-empty with the art tile, the title, the reason and the actions" do
+  test "the canvas variant is lo-empty with the art tile, the title, the reason and the actions" do
     html =
       render(~H"""
       <.empty_state variant="canvas" icon="huge-search-01" title="Nada encontrado">
@@ -143,17 +143,17 @@ defmodule LineaUI.Components.EmptyStateTest do
       """)
 
     assert [_] =
-             find(html, ".sg-empty > .art[aria-hidden=true] span.huge-search-01")
+             find(html, ".lo-empty > .art[aria-hidden=true] span.huge-search-01")
              |> Enum.to_list()
 
     refute "pos" in classes(html, ".art")
-    assert texts(html, ".sg-empty h2") == ["Nada encontrado"]
-    assert texts(html, ".sg-empty p") == ["Verifique a grafia."]
-    assert texts(html, ".sg-empty-actions button") == ["Limpar"]
+    assert texts(html, ".lo-empty h2") == ["Nada encontrado"]
+    assert texts(html, ".lo-empty p") == ["Verifique a grafia."]
+    assert texts(html, ".lo-empty-actions button") == ["Limpar"]
 
     positive = render(~H|<.empty_state variant="canvas" tone="positive" title="Em dia" />|)
     assert "pos" in classes(positive, ".art")
-    assert find(positive, ".sg-empty-actions") |> Enum.empty?()
+    assert find(positive, ".lo-empty-actions") |> Enum.empty?()
   end
 
   test "the plain variant is the one-line canvas notice" do
@@ -164,7 +164,7 @@ defmodule LineaUI.Components.EmptyStateTest do
       </.empty_state>
       """)
 
-    assert [_] = find(html, ".sg-empty-line span.huge-attachment-01") |> Enum.to_list()
-    assert texts(html, ".sg-empty-line") == ["Nenhum anexo. Adicionar"]
+    assert [_] = find(html, ".lo-empty-line span.huge-attachment-01") |> Enum.to_list()
+    assert texts(html, ".lo-empty-line") == ["Nenhum anexo. Adicionar"]
   end
 end

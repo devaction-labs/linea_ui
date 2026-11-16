@@ -34,7 +34,7 @@ defmodule LineaUI.Components.PillboxTest do
 
     assert texts(html, "#cats .ts-control .item-text") == ["Tintas", "Acessórios"]
     assert Enum.count(find(html, "#cats .ts-control .remove")) == 2
-    assert Enum.count(find(html, "#cats [role=option] .sg-box")) == 3
+    assert Enum.count(find(html, "#cats [role=option] .lo-box")) == 3
     assert texts(html, "#cats [role=option] [data-hint]") == ["128", "86", "54"]
   end
 
@@ -199,13 +199,13 @@ defmodule LineaUI.Components.PillboxTest do
       assert attr_of(html, "#product .ts-control [data-ts-item]", "data-value") == ["tintas"]
       assert attr_of(html, "select[data-input]", "name") == ["product"]
       assert find(html, "select[data-input][multiple]") |> Enum.count() == 0
-      assert find(html, "#product .option .sg-box") |> Enum.count() == 0
+      assert find(html, "#product .option .lo-box") |> Enum.count() == 0
       assert find(html, "#product [data-panel-search]") |> Enum.count() == 1
     end
 
     test "the multiple pillbox keeps its check boxes and name[]" do
       html = render(~H|<.pillbox name="cats" options={options()} />|)
-      assert find(html, "#cats .option .sg-box") |> Enum.count() == 3
+      assert find(html, "#cats .option .lo-box") |> Enum.count() == 3
       assert attr_of(html, "select[data-input]", "name") == ["cats[]"]
     end
   end

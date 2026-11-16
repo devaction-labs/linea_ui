@@ -102,7 +102,7 @@ defmodule LineaUI.Components.TimePicker do
         id={@id}
         role="radiogroup"
         aria-label={@label}
-        class={merge(["sg-time-list", @label && "mt-1.5", @class])}
+        class={merge(["lo-time-list", @label && "mt-1.5", @class])}
         {@rest}
       >
         <label :for={slot <- @slots} data-value={slot}>

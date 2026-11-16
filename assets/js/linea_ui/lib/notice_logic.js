@@ -256,7 +256,7 @@ export const canvasOf = (input) => isRich(input) && stepsOf(input) === null
 const CANVAS_AURA_TONES = {assistant: "ai", primary: "", secondary: "violet", info: "info", success: "pos", warning: "warn", error: "neg"}
 
 /**
- * The classes of the canvas aura (`sg-aura`) around a toast, or `null` without `aura`: the mode (`dual`, `glow`
+ * The classes of the canvas aura (`lo-aura`) around a toast, or `null` without `aura`: the mode (`dual`, `glow`
  * or none for the rotating one), the tone (`aura_color` mapped to the canvas's) and the width (`aura_size`, `xs` .75px,
  * `sm` 1px, `lg` 2px; none, the canvas's 1.25px, when it is not given or is `default`).
  *

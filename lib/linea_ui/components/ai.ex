@@ -179,7 +179,9 @@ defmodule LineaUI.Components.Ai do
   def ai_message(%{role: "user"} = assigns) do
     ~H"""
     <div class={merge(["ai-msg me", @class])} {@rest}>
-      <div class="chat chat-end lo-chat"><div class="chat-bubble lo-bubble me">{render_slot(@inner_block)}</div></div>
+      <div class="chat chat-end lo-chat">
+        <div class="chat-bubble lo-bubble me">{render_slot(@inner_block)}</div>
+      </div>
       <.avatar :if={@name} name={@name} size="24" tint="#8a5cd6" />
     </div>
     """

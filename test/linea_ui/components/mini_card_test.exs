@@ -7,16 +7,16 @@ defmodule LineaUI.Components.MiniCardTest do
     html =
       render(~H|<.mini_card id="m" icon="huge-invoice-01" tone="accent" label="Novo pedido" />|)
 
-    assert ["card", "card-border", "sg-mini"] -- classes(html, "div#m") == []
+    assert ["card", "card-border", "lo-mini"] -- classes(html, "div#m") == []
     assert ["lo-ic", "acc"] == classes(html, "#m > span.lo-ic")
-    assert LazyHTML.text(find(html, "#m > b.sg-mini-t")) == "Novo pedido"
+    assert LazyHTML.text(find(html, "#m > b.lo-mini-t")) == "Novo pedido"
   end
 
   test "a figure: the faint label over the mono value" do
     html = render(~H|<.mini_card id="m" label="A receber" value="R$ 41,2 mil" />|)
-    assert "sg-mini-v" in classes(html, "#m")
-    assert LazyHTML.text(find(html, "#m > .sg-mini-l")) == "A receber"
-    assert LazyHTML.text(find(html, "#m > b.sg-mini-n")) == "R$ 41,2 mil"
+    assert "lo-mini-v" in classes(html, "#m")
+    assert LazyHTML.text(find(html, "#m > .lo-mini-l")) == "A receber"
+    assert LazyHTML.text(find(html, "#m > b.lo-mini-n")) == "R$ 41,2 mil"
     assert find(html, "#m .lo-ic") |> Enum.count() == 0
   end
 

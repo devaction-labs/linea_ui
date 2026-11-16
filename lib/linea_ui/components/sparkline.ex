@@ -1,6 +1,6 @@
 defmodule LineaUI.Components.Sparkline do
   @moduledoc """
-  The canvas's sparkline (`sg-spark`): a line with a soft fill under it, drawn from a list of numbers, the
+  The canvas's sparkline (`lo-spark`): a line with a soft fill under it, drawn from a list of numbers, the
   highest at the top. The one the KPI card has beside its figure, for a card that lays its own figure out
   (the balance of a bank account).
 
@@ -35,7 +35,7 @@ defmodule LineaUI.Components.Sparkline do
     ~H"""
     <svg
       :if={@paths}
-      class={merge(["sg-spark", @class])}
+      class={merge(["lo-spark", @class])}
       viewBox="0 0 104 34"
       preserveAspectRatio="none"
       style={"color:" <> ((@color == "primary" && "var(--accent)") || "var(--ink)")}

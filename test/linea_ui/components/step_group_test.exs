@@ -18,12 +18,12 @@ defmodule LineaUI.Components.StepGroupTest do
   test "status classes on the header and on the rows" do
     html = render(~H"<.deploy />")
 
-    assert "fail" in classes(html, ".sg-sgp-h .sg-sgs")
-    assert "ok" in classes(html, ".sg-sgp-r:nth-of-type(1)")
-    assert find(html, ".sg-sgp-r.ok") |> Enum.count() == 1
-    assert find(html, ".sg-sgp-r.fail") |> Enum.count() == 1
-    assert find(html, ".sg-sgp-r.skip") |> Enum.count() == 1
-    assert find(html, ".sg-sgp-r.lead .sg-sgs[aria-hidden=true]") |> Enum.count() == 3
+    assert "fail" in classes(html, ".lo-sgp-h .lo-sgs")
+    assert "ok" in classes(html, ".lo-sgp-r:nth-of-type(1)")
+    assert find(html, ".lo-sgp-r.ok") |> Enum.count() == 1
+    assert find(html, ".lo-sgp-r.fail") |> Enum.count() == 1
+    assert find(html, ".lo-sgp-r.skip") |> Enum.count() == 1
+    assert find(html, ".lo-sgp-r.lead .lo-sgs[aria-hidden=true]") |> Enum.count() == 3
   end
 
   test "every status maps to its class" do
@@ -40,7 +40,7 @@ defmodule LineaUI.Components.StepGroupTest do
       """)
 
     for c <- ~w(ok run wait fail skip cancel) do
-      assert find(html, ".sg-sgp-h .sg-sgs.#{c}") |> Enum.count() == 1
+      assert find(html, ".lo-sgp-h .lo-sgs.#{c}") |> Enum.count() == 1
     end
   end
 
@@ -52,60 +52,60 @@ defmodule LineaUI.Components.StepGroupTest do
       </.step_group>
       """)
 
-    assert find(html, ".sg-sgp-r.cancel") |> Enum.count() == 1
-    assert find(html, ".sg-sgp-r.lead") |> Enum.count() == 0
-    assert find(html, ".sg-sgp-r .sg-sgs") |> Enum.count() == 0
+    assert find(html, ".lo-sgp-r.cancel") |> Enum.count() == 1
+    assert find(html, ".lo-sgp-r.lead") |> Enum.count() == 0
+    assert find(html, ".lo-sgp-r .lo-sgs") |> Enum.count() == 0
   end
 
   test "the duration is shown only when given" do
-    assert render(~H"<.deploy />") |> find(".sg-sgp-h .m") |> LazyHTML.text() == "1m 04s"
+    assert render(~H"<.deploy />") |> find(".lo-sgp-h .m") |> LazyHTML.text() == "1m 04s"
 
     html = render(~H|<.step_group id="g" title="T" status={:ok} />|)
-    assert find(html, ".sg-sgp-h .m") |> Enum.count() == 0
-    assert find(html, ".sg-sgp-h .t") |> LazyHTML.text() == "T"
+    assert find(html, ".lo-sgp-h .m") |> Enum.count() == 0
+    assert find(html, ".lo-sgp-h .t") |> LazyHTML.text() == "T"
   end
 
   test "expanded by default, collapsed on request" do
     html = render(~H"<.deploy />")
     refute "is-collapsed" in classes(html, "section")
-    assert find(html, ".sg-sgp-h") |> LazyHTML.attribute("aria-expanded") == ["true"]
-    assert find(html, ".sg-sgp-b") |> LazyHTML.attribute("hidden") == []
+    assert find(html, ".lo-sgp-h") |> LazyHTML.attribute("aria-expanded") == ["true"]
+    assert find(html, ".lo-sgp-b") |> LazyHTML.attribute("hidden") == []
 
     html = render(~H|<.step_group id="g" title="T" status={:ok} collapsed />|)
     assert "is-collapsed" in classes(html, "section")
-    assert find(html, ".sg-sgp-h") |> LazyHTML.attribute("aria-expanded") == ["false"]
-    assert find(html, ".sg-sgp-b") |> LazyHTML.attribute("hidden") == [""]
+    assert find(html, ".lo-sgp-h") |> LazyHTML.attribute("aria-expanded") == ["false"]
+    assert find(html, ".lo-sgp-b") |> LazyHTML.attribute("hidden") == [""]
   end
 
   test "a step with a log renders its lines" do
     html = render(~H"<.deploy />")
 
-    assert find(html, ".sg-sgp-log") |> Enum.count() == 1
-    assert find(html, ".sg-sgp-log > div") |> Enum.count() == 3
-    assert find(html, ".sg-sgp-log .n") |> Enum.map(&LazyHTML.text/1) == ["1", "2", "3"]
+    assert find(html, ".lo-sgp-log") |> Enum.count() == 1
+    assert find(html, ".lo-sgp-log > div") |> Enum.count() == 3
+    assert find(html, ".lo-sgp-log .n") |> Enum.map(&LazyHTML.text/1) == ["1", "2", "3"]
 
-    assert find(html, ".sg-sgp-log .ts") |> Enum.map(&LazyHTML.text/1) ==
+    assert find(html, ".lo-sgp-log .ts") |> Enum.map(&LazyHTML.text/1) ==
              ["09:41:02", "09:41:04", "09:41:05"]
 
-    assert find(html, ".sg-sgp-log .dim") |> LazyHTML.text() == "Connecting"
-    assert find(html, ".sg-sgp-log .err") |> LazyHTML.text() == "Rejected"
+    assert find(html, ".lo-sgp-log .dim") |> LazyHTML.text() == "Connecting"
+    assert find(html, ".lo-sgp-log .err") |> LazyHTML.text() == "Rejected"
 
-    assert find(html, ".sg-sgp-log span:not(.n):not(.ts):not(.dim):not(.err)") |> LazyHTML.text() ==
+    assert find(html, ".lo-sgp-log span:not(.n):not(.ts):not(.dim):not(.err)") |> LazyHTML.text() ==
              "Try again"
   end
 
   test "an open step has open and aria-expanded true, the log is visible" do
     html = render(~H"<.deploy />")
 
-    assert "open" in classes(html, "button.sg-sgp-r")
-    assert find(html, "button.sg-sgp-r") |> LazyHTML.attribute("aria-expanded") == ["true"]
-    assert find(html, ".sg-sgp-log") |> LazyHTML.attribute("hidden") == []
+    assert "open" in classes(html, "button.lo-sgp-r")
+    assert find(html, "button.lo-sgp-r") |> LazyHTML.attribute("aria-expanded") == ["true"]
+    assert find(html, ".lo-sgp-log") |> LazyHTML.attribute("hidden") == []
 
-    assert find(html, "button.sg-sgp-r") |> LazyHTML.attribute("aria-controls") == [
+    assert find(html, "button.lo-sgp-r") |> LazyHTML.attribute("aria-controls") == [
              "deploy-step-2-log"
            ]
 
-    assert find(html, ".sg-sgp-log") |> LazyHTML.attribute("id") == ["deploy-step-2-log"]
+    assert find(html, ".lo-sgp-log") |> LazyHTML.attribute("id") == ["deploy-step-2-log"]
   end
 
   test "a closed step with a log keeps it hidden" do
@@ -118,36 +118,36 @@ defmodule LineaUI.Components.StepGroupTest do
       </.step_group>
       """)
 
-    refute "open" in classes(html, "button.sg-sgp-r")
-    assert find(html, "button.sg-sgp-r") |> LazyHTML.attribute("aria-expanded") == ["false"]
-    assert find(html, ".sg-sgp-log") |> LazyHTML.attribute("hidden") == [""]
+    refute "open" in classes(html, "button.lo-sgp-r")
+    assert find(html, "button.lo-sgp-r") |> LazyHTML.attribute("aria-expanded") == ["false"]
+    assert find(html, ".lo-sgp-log") |> LazyHTML.attribute("hidden") == [""]
   end
 
   test "rows without a log are plain, with no log and no chevron" do
     html = render(~H"<.deploy />")
 
-    assert find(html, "button.sg-sgp-r") |> Enum.count() == 1
-    assert find(html, "div.sg-sgp-r") |> Enum.count() == 2
-    assert find(html, "div.sg-sgp-r[aria-expanded]") |> Enum.count() == 0
-    assert find(html, "div.sg-sgp-r .c svg") |> Enum.count() == 0
+    assert find(html, "button.lo-sgp-r") |> Enum.count() == 1
+    assert find(html, "div.lo-sgp-r") |> Enum.count() == 2
+    assert find(html, "div.lo-sgp-r[aria-expanded]") |> Enum.count() == 0
+    assert find(html, "div.lo-sgp-r .c svg") |> Enum.count() == 0
   end
 
   test "the toggles are client-side JS and keep the browser's state" do
     html = render(~H"<.deploy />")
 
-    [group_click] = find(html, ".sg-sgp-h") |> LazyHTML.attribute("phx-click")
+    [group_click] = find(html, ".lo-sgp-h") |> LazyHTML.attribute("phx-click")
     assert group_click =~ "toggle_class"
     assert group_click =~ "is-collapsed"
     assert group_click =~ "aria-expanded"
     assert group_click =~ "#deploy-body"
 
-    [row_click] = find(html, "button.sg-sgp-r") |> LazyHTML.attribute("phx-click")
+    [row_click] = find(html, "button.lo-sgp-r") |> LazyHTML.attribute("phx-click")
     assert row_click =~ "open"
     assert row_click =~ "#deploy-step-2-log"
 
     assert find(html, "section") |> LazyHTML.attribute("phx-mounted") |> hd() =~ "ignore_attrs"
 
-    assert find(html, "button.sg-sgp-r") |> LazyHTML.attribute("phx-mounted") |> hd() =~
+    assert find(html, "button.lo-sgp-r") |> LazyHTML.attribute("phx-mounted") |> hd() =~
              "ignore_attrs"
   end
 end

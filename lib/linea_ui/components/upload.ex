@@ -142,7 +142,7 @@ defmodule LineaUI.Components.Upload do
           <svg class="i sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg>
         </button>
       </div>
-      <label for={@upload.ref} class="sg-drop lu-upload-add" aria-label={@drop_label}>
+      <label for={@upload.ref} class="lo-drop lu-upload-add" aria-label={@drop_label}>
         <svg class="i lg" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>
       </label>
       <.live_file_input upload={@upload} class="sr-only" />
@@ -173,7 +173,7 @@ defmodule LineaUI.Components.Upload do
     >
       <label
         for={@upload.ref}
-        class={["sg-drop lu-upload-drop", @refused != [] && "is-error", @drop_class]}
+        class={["lo-drop lu-upload-drop", @refused != [] && "is-error", @drop_class]}
         role={@refused != [] && "alert"}
         phx-click={@refused_ref && @on_cancel}
         phx-value-ref={@refused_ref}

@@ -239,8 +239,8 @@ defmodule LineaUI.Components.DataTableTest do
     refute "mt-3" in classes(bare, "#t > .card")
     assert LazyHTML.attribute(find(loading, "#l"), "aria-busy") == ["true"]
     assert [_, _, _, _, _, _] = find(loading, "#l tbody .skeleton") |> Enum.to_list()
-    assert [_] = find(canvas, "#c .sg-pager") |> Enum.to_list()
-    assert find(canvas, "#c .sg-pager") |> LazyHTML.text() =~ "1–3 de 30"
+    assert [_] = find(canvas, "#c .lo-pager") |> Enum.to_list()
+    assert find(canvas, "#c .lo-pager") |> LazyHTML.text() =~ "1–3 de 30"
   end
 
   describe "change tracking" do

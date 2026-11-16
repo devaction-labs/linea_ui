@@ -7,7 +7,7 @@ defmodule LineaUI.Components.GlowTextTest do
   test "a span with the glow class by default" do
     html = render(~H|<.glow_text id="g">Hello</.glow_text>|)
 
-    assert text(html, "span#g.sg-glow-text") == ["Hello"]
+    assert text(html, "span#g.lo-glow-text") == ["Hello"]
     refute "warm" in classes(html, "span#g")
   end
 
@@ -15,7 +15,7 @@ defmodule LineaUI.Components.GlowTextTest do
     html =
       render(~H|<.glow_text as="h1" tone="warm" class="mt-2" data-x="1">Hi</.glow_text>|)
 
-    assert text(html, "h1.sg-glow-text.warm.mt-2[data-x='1']") == ["Hi"]
+    assert text(html, "h1.lo-glow-text.warm.mt-2[data-x='1']") == ["Hi"]
   end
 
   test "stylesheet slows the animation under reduced motion" do

@@ -1,19 +1,18 @@
 /* Canvas look for the forms2 components (see the Vitrine canvas). */
 
-/* ---------- pill_select: a row of sg-tag pills over native radios/checkboxes ---------- */
-.sg-pills{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
-.sg-pills > .sg-tag{position:relative;cursor:pointer;user-select:none;font-weight:400;transition:background-color .15s,color .15s}
-.sg-pills > .sg-tag > input{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:inherit;appearance:none}
-.sg-pills > .sg-tag:hover{color:var(--fg)}
-.sg-pills > .sg-tag:has(> input:checked){background:var(--accent-soft);color:var(--accent-ink);font-weight:500}
-.sg-pills > .sg-tag:has(> input:focus-visible){outline:2px solid var(--accent);outline-offset:2px}
-.sg-pills > .sg-tag:has(> input:disabled){opacity:.55;cursor:default}
-.sg-pills-count{margin-left:4px;font-family:var(--mono);font-feature-settings:"zero";opacity:.6}
+/* ---------- pill_select: a row of daisyUI btn pills over native radios/checkboxes ---------- */
+.lo-pills{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.lo-pills > .lo-pill{position:relative;font-weight:400}
+.lo-pills > .lo-pill > input{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:inherit;appearance:none}
+.lo-pills > .lo-pill:has(> input:checked){--btn-bg:color-mix(in oklab,var(--color-primary) 14%,var(--color-base-100));--btn-fg:var(--color-primary);--btn-border:color-mix(in oklab,var(--color-primary) 30%,transparent);font-weight:500}
+.lo-pills > .lo-pill:has(> input:focus-visible){outline:2px solid var(--color-primary);outline-offset:2px}
+.lo-pills > .lo-pill:has(> input:disabled){opacity:.55;cursor:default}
+.lo-pills-count{margin-left:2px;font-family:var(--font-mono,ui-monospace,monospace)}
 
 /* ---------- radio: the kit radio's dot is the canvas ::after; drop the kit's white ::before thumb ---------- */
 input.form-radio::before{content:none}
 
-/* ---------- radio_group variant="card": the canvas sg-choice ---------- */
+/* ---------- radio_group variant="card": the canvas lo-choice ---------- */
 .lu-rcard{--lu-rcard-on:var(--ink);display:flex;gap:12px;align-items:flex-start;padding:14px;border-radius:14px;background:var(--panel);box-shadow:inset 0 0 0 1px var(--line);cursor:pointer;transition:box-shadow .15s;min-width:0}
 .lu-rcard:hover{box-shadow:inset 0 0 0 1px var(--ctl-line)}
 .lu-rcard:has(input:checked){box-shadow:inset 0 0 0 1.5px var(--lu-rcard-on)}
@@ -37,7 +36,7 @@ input.form-radio::before{content:none}
 .lu-rcard-icon{color:var(--fg)}
 .lu-rcard:has(input:checked) .lu-rcard-icon{background:var(--accent-soft);box-shadow:none;color:var(--accent-ink)}
 
-/* ---------- range variant="canvas": the canvas sg-slider ---------- */
+/* ---------- range variant="canvas": the canvas lo-slider ---------- */
 .lu-range-canvas{gap:8px}
 .lu-range-canvas label{font-size:13px;line-height:20px;font-weight:500;color:var(--ink)}
 .lu-range-canvas output[data-output]{font:700 14px/20px var(--mono);font-feature-settings:"zero";color:var(--ink)}
@@ -72,7 +71,7 @@ input.form-radio::before{content:none}
 .ql-readonly ol{list-style:decimal}
 .ql-readonly a{color:var(--accent-ink);text-decoration:underline}
 
-/* ---------- select (listbox): the canvas sg-input control and sg-menu list ---------- */
+/* ---------- select (listbox): the canvas sg-input control and lo-menu list ---------- */
 .ts-wrapper[phx-hook="LineaUI.Select"] .ts-control{background-color:var(--panel);border-radius:var(--pill);font-family:var(--sans);font-weight:400;font-size:14px;color:var(--ink)}
 .ts-wrapper[phx-hook="LineaUI.Select"].disabled .ts-control{background-color:var(--sunken)}
 .ts-wrapper[phx-hook="LineaUI.Select"] .ts-control > .item{font-weight:400;color:var(--ink)}
@@ -106,22 +105,22 @@ input.form-switch.is-sm:checked::before{left:13.5px}
 label:has(input.form-switch:disabled){opacity:.55;cursor:default}
 label:has(input.form-switch:disabled) input.form-switch:disabled{opacity:1}
 
-/* ---------- time_picker variant="list": fixed slots as the canvas sg-menu ---------- */
-.sg-time-list{display:flex;flex-direction:column;padding:6px;border-radius:14px;background:var(--panel);box-shadow:0 0 0 1px var(--ctl-line),var(--shadow-lg)}
-:is(.dark .sg:not([data-theme="light"]), .sg[data-theme="dark"], .dark) .sg-time-list{background:var(--raised)}
-.sg-time-list > label{position:relative;display:flex;align-items:center;height:34px;padding:0 10px;border-radius:9px;font-size:13.5px;color:var(--fg);font-variant-numeric:tabular-nums;cursor:pointer;flex:none}
-.sg-time-list > label:hover{background:var(--ctl-fill)}
-.sg-time-list > label > input{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:inherit;appearance:none}
-.sg-time-list > label:has(> input:checked){background:var(--ctl-fill);color:var(--ink)}
-.sg-time-list > label:has(> input:focus-visible){outline:2px solid var(--accent);outline-offset:-2px}
-.sg-time-list > label:has(> input:disabled){opacity:.55;cursor:default}
+/* ---------- time_picker variant="list": fixed slots as the canvas lo-menu ---------- */
+.lo-time-list{display:flex;flex-direction:column;padding:6px;border-radius:14px;background:var(--panel);box-shadow:0 0 0 1px var(--ctl-line),var(--shadow-lg)}
+:is(.dark .sg:not([data-theme="light"]), .sg[data-theme="dark"], .dark) .lo-time-list{background:var(--raised)}
+.lo-time-list > label{position:relative;display:flex;align-items:center;height:34px;padding:0 10px;border-radius:9px;font-size:13.5px;color:var(--fg);font-variant-numeric:tabular-nums;cursor:pointer;flex:none}
+.lo-time-list > label:hover{background:var(--ctl-fill)}
+.lo-time-list > label > input{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:inherit;appearance:none}
+.lo-time-list > label:has(> input:checked){background:var(--ctl-fill);color:var(--ink)}
+.lo-time-list > label:has(> input:focus-visible){outline:2px solid var(--accent);outline-offset:-2px}
+.lo-time-list > label:has(> input:disabled){opacity:.55;cursor:default}
 
 /* ---------- time_picker input: the canvas sg-input (white, 11px corners, 16px clock) ---------- */
 [phx-hook="LineaUI.TimePicker"] input.flatpickr-input{height:40px;border-radius:var(--pill);background-color:var(--panel);font-size:14px;color:var(--ink)}
 :is(.dark .sg:not([data-theme="light"]), .sg[data-theme="dark"], .dark) [phx-hook="LineaUI.TimePicker"] input.flatpickr-input{background-color:var(--sunken)}
 [phx-hook="LineaUI.TimePicker"] [data-display] + span svg,[phx-hook="LineaUI.TimePicker"] [data-display] + span [class*="huge-"]{width:16px;height:16px}
 
-/* upload, canvas variant: the sg-drop area, the file cards and the image thumbnails */
+/* upload, canvas variant: the lo-drop area, the file cards and the image thumbnails */
 .lu-upload-drop{cursor:pointer;font-size:14px}
 .lu-upload-drop .lu-upload-hint{font-size:12.5px}
 .lu-upload-drop.is-error{border-color:var(--neg);background:var(--neg-soft);color:var(--neg)}

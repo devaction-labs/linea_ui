@@ -23,7 +23,7 @@ defmodule LineaUI.Components.EmptyState do
   The `canvas` variant is the default (below); `card` is the old LineOne centered block for a whole area; the `inline` one is a compact notice for inside
   tables, lists and search results, in a neutral, success or error color.
 
-  The `canvas` variant is the design canvas's `sg-empty`: the icon on a 96×72 sunken tile, the title, the
+  The `canvas` variant is the design canvas's `lo-empty`: the icon on a 96×72 sunken tile, the title, the
   reason and the actions, centered (`tone="positive"` paints the icon green, for an "all done" state).
   The `plain` variant is the canvas's one-line notice inside a card: a small faint icon, the title and the
   content (say, a link) on one line.
@@ -70,7 +70,7 @@ defmodule LineaUI.Components.EmptyState do
     default: "canvas",
     values: ~w(canvas card inline table plain),
     doc:
-      "`card` fills an area, `inline` is a compact notice for lists and search results, `table` is the centered notice (a 48px disc, a title, the reason and the next step) for the body of an empty table, `canvas` the canvas's `sg-empty` (icon on a 96×72 tile), `plain` the canvas's faint one-line notice."
+      "`card` fills an area, `inline` is a compact notice for lists and search results, `table` is the centered notice (a 48px disc, a title, the reason and the next step) for the body of an empty table, `canvas` the canvas's `lo-empty` (icon on a 96×72 tile), `plain` the canvas's faint one-line notice."
 
   attr :title, :string, required: true, doc: "What is missing, as a short sentence."
 
@@ -154,22 +154,22 @@ defmodule LineaUI.Components.EmptyState do
 
   def empty_state(%{variant: "canvas"} = assigns) do
     ~H"""
-    <div class={merge(["sg-empty", @class])} {@rest}>
+    <div class={merge(["lo-empty", @class])} {@rest}>
       <div class={["art", @tone == "positive" && "pos"]} aria-hidden="true">
         <.icon :if={@icon && @illustration == []} name={@icon} class="size-5.5" />
         {render_slot(@illustration)}
       </div>
-      <.dynamic_tag tag_name={"h#{@level}"} class="sg-empty-title">{@title}</.dynamic_tag>
-      <p :if={@inner_block != []} class="sg-empty-text">{render_slot(@inner_block)}</p>
-      <div :if={@action != []} class="sg-empty-actions">{render_slot(@action)}</div>
+      <.dynamic_tag tag_name={"h#{@level}"} class="lo-empty-title">{@title}</.dynamic_tag>
+      <p :if={@inner_block != []} class="lo-empty-text">{render_slot(@inner_block)}</p>
+      <div :if={@action != []} class="lo-empty-actions">{render_slot(@action)}</div>
     </div>
     """
   end
 
   def empty_state(%{variant: "plain"} = assigns) do
     ~H"""
-    <div class={merge(["sg-empty-line", @class])} {@rest}>
-      <span :if={@icon || @illustration != []} class="sg-empty-line-icon" aria-hidden="true">
+    <div class={merge(["lo-empty-line", @class])} {@rest}>
+      <span :if={@icon || @illustration != []} class="lo-empty-line-icon" aria-hidden="true">
         <.icon :if={@icon && @illustration == []} name={@icon} class="size-3.5" />
         {render_slot(@illustration)}
       </span>

@@ -190,7 +190,7 @@ defmodule LineaUI.Components.Calendar do
   attr :card, :boolean,
     default: true,
     doc:
-      "`mini` only: `false` renders just the `sg-cal` grid, with no card, title, arrows or legend, for an app card that has its own."
+      "`mini` only: `false` renders just the `lo-cal` grid, with no card, title, arrows or legend, for an app card that has its own."
 
   attr :on_navigate, :string, default: nil
   attr :on_view, :string, default: nil
@@ -530,7 +530,7 @@ defmodule LineaUI.Components.Calendar do
         <b :if={@card && @header && !page.title} id={page.id <> "-title"} class="lc-mini-name">
           {page.name}
         </b>
-        <div class="sg-cal" role="group" aria-label={page.title || page.name}>
+        <div class="lo-cal" role="group" aria-label={page.title || page.name}>
           <b :for={letter <- @letters} aria-hidden="true">{letter}</b>
           <i :for={_ <- List.duplicate(nil, page.blanks)} class="lc-blank" aria-hidden="true"></i>
           <.mini_cell

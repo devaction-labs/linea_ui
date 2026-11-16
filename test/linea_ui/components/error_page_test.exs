@@ -9,24 +9,24 @@ defmodule LineaUI.Components.ErrorPageTest do
   test "error_page takes the defaults of the code" do
     html = render(~H|<.error_page code={404} />|)
 
-    assert ["sg-err"] == classes(html, "#error-page")
+    assert ["lo-err"] == classes(html, "#error-page")
     assert attr_of(html, "#error-page", "data-tone") == ["neutral"]
-    assert text(html, ".sg-err-code") == ["404"]
-    assert text(html, ".sg-err-title") == ["We couldn't find this page."]
-    assert text(html, ".sg-err-digits") == ["404"]
-    assert attr_of(html, ".sg-err-art", "aria-hidden") == ["true"]
-    assert find(html, ".sg-err-foot") |> Enum.to_list() == []
+    assert text(html, ".lo-err-code") == ["404"]
+    assert text(html, ".lo-err-title") == ["We couldn't find this page."]
+    assert text(html, ".lo-err-digits") == ["404"]
+    assert attr_of(html, ".lo-err-art", "aria-hidden") == ["true"]
+    assert find(html, ".lo-err-foot") |> Enum.to_list() == []
   end
 
   test "the tone follows the code and can be overridden" do
-    assert attr_of(render(~H|<.error_page code={500} />|), ".sg-err", "data-tone") == ["error"]
-    assert attr_of(render(~H|<.error_page code={503} />|), ".sg-err", "data-tone") == ["accent"]
-    assert attr_of(render(~H|<.error_page code="off" />|), ".sg-err", "data-tone") == ["warning"]
+    assert attr_of(render(~H|<.error_page code={500} />|), ".lo-err", "data-tone") == ["error"]
+    assert attr_of(render(~H|<.error_page code={503} />|), ".lo-err", "data-tone") == ["accent"]
+    assert attr_of(render(~H|<.error_page code="off" />|), ".lo-err", "data-tone") == ["warning"]
 
-    assert attr_of(render(~H|<.error_page code={418} tone="accent" />|), ".sg-err", "data-tone") ==
+    assert attr_of(render(~H|<.error_page code={418} tone="accent" />|), ".lo-err", "data-tone") ==
              ["accent"]
 
-    assert attr_of(render(~H|<.error_page code={599} />|), ".sg-err", "data-tone") == ["error"]
+    assert attr_of(render(~H|<.error_page code={599} />|), ".lo-err", "data-tone") == ["error"]
   end
 
   test "error_page with texts, slots and the request id" do
@@ -51,19 +51,19 @@ defmodule LineaUI.Components.ErrorPageTest do
       </.error_page>
       """)
 
-    assert text(html, ".sg-err-label") == ["403Acesso negado"]
-    assert text(html, ".sg-err-desc") == ["Peça acesso."]
-    assert [_] = find(html, ".sg-err-top #brand") |> Enum.to_list()
-    assert attr_of(html, ".sg-err-status", "data-status") == ["warning"]
-    assert attr_of(html, ".sg-err-status", "href") == ["/status"]
-    assert [_] = find(html, ".sg-err-actions #home") |> Enum.to_list()
-    assert text(html, ".sg-err-links .t b") == ["Alex"]
-    assert text(html, ".sg-err-links .t span") == ["Administrador"]
-    assert [_] = find(html, ".sg-err-card #card") |> Enum.to_list()
-    assert attr_of(html, ".sg-err-art", "aria-hidden") in [[], [nil]]
-    assert text(html, ".sg-err-foot code") == ["req_1"]
+    assert text(html, ".lo-err-label") == ["403Acesso negado"]
+    assert text(html, ".lo-err-desc") == ["Peça acesso."]
+    assert [_] = find(html, ".lo-err-top #brand") |> Enum.to_list()
+    assert attr_of(html, ".lo-err-status", "data-status") == ["warning"]
+    assert attr_of(html, ".lo-err-status", "href") == ["/status"]
+    assert [_] = find(html, ".lo-err-actions #home") |> Enum.to_list()
+    assert text(html, ".lo-err-links .t b") == ["Alex"]
+    assert text(html, ".lo-err-links .t span") == ["Administrador"]
+    assert [_] = find(html, ".lo-err-card #card") |> Enum.to_list()
+    assert attr_of(html, ".lo-err-art", "aria-hidden") in [[], [nil]]
+    assert text(html, ".lo-err-foot code") == ["req_1"]
     assert attr_of(html, "#error-page-copy", "aria-label") == ["Copy request ID"]
-    assert text(html, ".sg-err-foot .end") == ["Ajuda"]
+    assert text(html, ".lo-err-foot .end") == ["Ajuda"]
   end
 
   test "error_page without the copy button" do
@@ -83,7 +83,7 @@ defmodule LineaUI.Components.ErrorPageTest do
       </.error_state>
       """)
 
-    assert ["sg-err-state"] == classes(html, "section")
+    assert ["lo-err-state"] == classes(html, "section")
     assert text(html, "h1") == ["Pedido #2499 não encontrado"]
     assert text(html, "p") == ["Pode ter sido excluído."]
     assert "huge-search-01" in classes(html, ".tile > span")
@@ -119,7 +119,7 @@ defmodule LineaUI.Components.ErrorPageTest do
            )
 
     html = render(~H|<.error_page code={404} />|)
-    assert text(html, ".sg-err-label") == ["404Page not found"]
+    assert text(html, ".lo-err-label") == ["404Page not found"]
   end
 
   test "the copy button works without a hook and back_label adds history.back" do
@@ -129,10 +129,10 @@ defmodule LineaUI.Components.ErrorPageTest do
     assert [js] = attr_of(html, "#error-page-copy", "onclick")
     assert js =~ "navigator.clipboard.writeText"
     assert attr_of(html, "#error-page-copy", "data-from") == ["error-page-rid"]
-    assert attr_of(html, ".sg-err-actions button", "onclick") == ["history.back()"]
-    assert text(html, ".sg-err-actions button") == ["Página anterior"]
+    assert attr_of(html, ".lo-err-actions button", "onclick") == ["history.back()"]
+    assert text(html, ".lo-err-actions button") == ["Página anterior"]
 
     plain = render(~H|<.error_page code={500} />|)
-    assert find(plain, ".sg-err-actions") |> Enum.to_list() == []
+    assert find(plain, ".lo-err-actions") |> Enum.to_list() == []
   end
 end

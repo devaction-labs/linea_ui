@@ -235,7 +235,7 @@ defmodule LineaUI.Components.StepsTest do
     assert html |> find("#s") |> LazyHTML.attribute("data-x") == ["1"]
   end
 
-  test "the canvas stepper: sg-steps with checks, a solid current and numbers to do" do
+  test "the canvas stepper: lo-steps with checks, a solid current and numbers to do" do
     html =
       render(~H"""
       <.stepper variant="canvas" current={1}>
@@ -245,7 +245,7 @@ defmodule LineaUI.Components.StepsTest do
       </.stepper>
       """)
 
-    assert "sg-steps" in classes(html, "ol")
+    assert "lo-steps" in classes(html, "ol")
     assert states(html) == ["done", "current", "todo"]
     assert "done" in classes(html, "li:nth-child(1)")
     assert "cur" in classes(html, "li:nth-child(2)")

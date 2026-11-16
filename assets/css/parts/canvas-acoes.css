@@ -1,22 +1,22 @@
 /* Canvas look for the acoes components (see the Vitrine canvas). */
 
 /* ---------- Button: disabled and loading ---------- */
-:is(.sg-btn, .sg-ib):is(:disabled, [aria-disabled="true"]):not([aria-busy="true"]){opacity:.45;cursor:not-allowed}
-:is(.sg-btn, .sg-ib)[aria-busy="true"]{cursor:progress}
+:is(.sg-btn, .lo-ib):is(:disabled, [aria-disabled="true"]):not([aria-busy="true"]){opacity:.45;cursor:not-allowed}
+:is(.sg-btn, .lo-ib)[aria-busy="true"]{cursor:progress}
 
-/* ---------- Spinner (variant="canvas"): sg-spin sizes and tones ---------- */
-.sg-spin.spinner{display:inline-block;flex:none}
-.sg-spin.xs{width:14px;height:14px}
-.sg-spin.sm{width:18px;height:18px}
-.sg-spin.md{width:20px;height:20px}
-.sg-spin.lg{width:24px;height:24px}
-.sg-spin.xl{width:32px;height:32px}
-.sg-spin.current{border-color:color-mix(in srgb,currentColor 30%,transparent);border-top-color:currentColor}
-.sg-spin.white{border-color:rgb(255 255 255/.3);border-top-color:#fff}
-.sg-spin.pos{border-top-color:var(--pos)}
-.sg-spin.warn{border-top-color:var(--warn)}
-.sg-spin.neg{border-top-color:var(--neg)}
-.sg-spin.info{border-top-color:var(--info)}
+/* ---------- Spinner (variant="canvas"): lo-spin sizes and tones ---------- */
+.lo-spin.spinner{display:inline-block;flex:none}
+.lo-spin.xs{width:14px;height:14px}
+.lo-spin.sm{width:18px;height:18px}
+.lo-spin.md{width:20px;height:20px}
+.lo-spin.lg{width:24px;height:24px}
+.lo-spin.xl{width:32px;height:32px}
+.lo-spin.current{border-color:color-mix(in srgb,currentColor 30%,transparent);border-top-color:currentColor}
+.lo-spin.white{border-color:rgb(255 255 255/.3);border-top-color:#fff}
+.lo-spin.pos{border-top-color:var(--pos)}
+.lo-spin.warn{border-top-color:var(--warn)}
+.lo-spin.neg{border-top-color:var(--neg)}
+.lo-spin.info{border-top-color:var(--info)}
 
 /* ---------- Alert (variant="canvas"): sg-alert body, actions and the tones canvas.css lacks ---------- */
 .sg-alert.info{background:var(--info-soft);box-shadow:none;color:var(--info)}
@@ -38,12 +38,12 @@
 .sg-skel.lg{border-radius:12px}
 
 /* ---------- Empty state (variant="canvas" and "plain") ---------- */
-.sg-empty .art.pos{color:var(--pos)}
-.sg-empty-title{margin:0;font-size:16px;font-weight:700;line-height:20px;color:var(--ink)}
-.sg-empty-text{margin:0;max-width:320px;font-size:13.5px;color:var(--muted)}
-.sg-empty-actions{display:flex;align-items:center;gap:8px}
-.sg-empty-line{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--faint)}
-.sg-empty-line-icon{display:inline-flex;flex:none}
+.lo-empty .art.pos{color:var(--pos)}
+.lo-empty-title{margin:0;font-size:16px;font-weight:700;line-height:20px;color:var(--ink)}
+.lo-empty-text{margin:0;max-width:320px;font-size:13.5px;color:var(--muted)}
+.lo-empty-actions{display:flex;align-items:center;gap:8px}
+.lo-empty-line{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--faint)}
+.lo-empty-line-icon{display:inline-flex;flex:none}
 
 /* ---------- Fab (variant="canvas"): the solid button, the dial square and its menu ---------- */
 .lo-fab{position:fixed;z-index:var(--linea-z-fab, 90)}

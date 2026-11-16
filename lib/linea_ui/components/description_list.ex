@@ -1,6 +1,6 @@
 defmodule LineaUI.Components.DescriptionList do
   @moduledoc """
-  Label and value pairs in a grid, as the canvas `sg-dl`: the label small and faint, the value in
+  Label and value pairs in a grid, as the canvas `lo-dl`: the label small and faint, the value in
   the ink color. For the short data of a detail (an order, a client).
 
       <.description_list cols={2}>
@@ -46,7 +46,7 @@ defmodule LineaUI.Components.DescriptionList do
   def description_list(assigns) do
     ~H"""
     <dl
-      class={merge(["sg-dl linea-dl", @class])}
+      class={merge(["lo-dl linea-dl", @class])}
       data-layout={@layout}
       style={"grid-template-columns: repeat(#{@cols}, minmax(0, 1fr))"}
       {@rest}

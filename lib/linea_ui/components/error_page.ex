@@ -37,7 +37,7 @@ defmodule LineaUI.Components.ErrorPage do
 
   It is a whole page: render it as the `ErrorHTML` template, with the root layout that loads the CSS
   (`render_errors: [formats: [html: MyAppWeb.ErrorHTML], root_layout: {MyAppWeb.Layouts, :root}]`).
-  The styles are `canvas-error-page.css` (`sg-err`).
+  The styles are `canvas-error-page.css` (`lo-err`).
   """
 
   use LineaUI.Component
@@ -166,13 +166,13 @@ defmodule LineaUI.Components.ErrorPage do
       |> assign(:label, assigns.label || label)
 
     ~H"""
-    <div id={@id} class={merge(["sg-err", @class])} data-tone={@tone} {@rest}>
-      <header class="sg-err-top">
+    <div id={@id} class={merge(["lo-err", @class])} data-tone={@tone} {@rest}>
+      <header class="lo-err-top">
         {render_slot(@brand)}
         <a
           :for={status <- @status}
           href={status[:href]}
-          class="sg-err-status"
+          class="lo-err-status"
           data-status={status[:status] || "ok"}
         >
           <i aria-hidden="true"></i>{render_slot(status)}
@@ -180,12 +180,12 @@ defmodule LineaUI.Components.ErrorPage do
         </a>
       </header>
 
-      <main class="sg-err-main">
-        <div class="sg-err-text">
-          <span class="sg-err-label"><span class="sg-err-code">{@code}</span>{@label}</span>
-          <h1 class="sg-err-title">{@title}</h1>
-          <p :if={@description} class="sg-err-desc">{@description}</p>
-          <div :if={@actions != [] or @back_label} class="sg-err-actions">
+      <main class="lo-err-main">
+        <div class="lo-err-text">
+          <span class="lo-err-label"><span class="lo-err-code">{@code}</span>{@label}</span>
+          <h1 class="lo-err-title">{@title}</h1>
+          <p :if={@description} class="lo-err-desc">{@description}</p>
+          <div :if={@actions != [] or @back_label} class="lo-err-actions">
             {render_slot(@actions)}
             <button :if={@back_label} type="button" class="btn btn-lg" onclick="history.back()">
               {@back_label}
@@ -193,16 +193,16 @@ defmodule LineaUI.Components.ErrorPage do
           </div>
           {render_slot(@inner_block)}
         </div>
-        <div class="sg-err-art" aria-hidden={@card == [] && "true"}>
-          <svg class="sg-err-rings" viewBox="0 0 600 600" aria-hidden="true">
+        <div class="lo-err-art" aria-hidden={@card == [] && "true"}>
+          <svg class="lo-err-rings" viewBox="0 0 600 600" aria-hidden="true">
             <circle :for={r <- [90, 150, 210, 270]} cx="300" cy="300" r={r} />
           </svg>
-          <div class="sg-err-digits" aria-hidden="true">{@code}</div>
-          <div :if={@card != []} class="sg-err-card">{render_slot(@card)}</div>
+          <div class="lo-err-digits" aria-hidden="true">{@code}</div>
+          <div :if={@card != []} class="lo-err-card">{render_slot(@card)}</div>
         </div>
       </main>
 
-      <footer :if={@request_id || @timestamp || @footer != []} class="sg-err-foot">
+      <footer :if={@request_id || @timestamp || @footer != []} class="lo-err-foot">
         <span :if={@request_id} class="rid">
           {@request_id_label} <code id={"#{@id}-rid"}>{@request_id}</code>
           <button
@@ -261,20 +261,20 @@ defmodule LineaUI.Components.ErrorPage do
     ~H"""
     <section
       id={@id}
-      class={merge(["sg-err-state", @class])}
+      class={merge(["lo-err-state", @class])}
       data-tone={@tone}
       aria-labelledby={@title_id}
       {@rest}
     >
       <div class="in">
         <div class="mark">
-          <div class="sg-err-digits" aria-hidden="true">{@code}</div>
+          <div class="lo-err-digits" aria-hidden="true">{@code}</div>
           <span class="tile" aria-hidden="true"><.icon name={@icon} /></span>
         </div>
         <h1 id={@title_id}>{@title}</h1>
         <p :if={@inner_block != []}>{render_slot(@inner_block)}</p>
         <p :if={@inner_block == [] and @description}>{@description}</p>
-        <div :if={@actions != []} class="sg-err-actions">{render_slot(@actions)}</div>
+        <div :if={@actions != []} class="lo-err-actions">{render_slot(@actions)}</div>
         <div :if={@more != []} class="more">{render_slot(@more)}</div>
       </div>
     </section>
@@ -301,7 +301,7 @@ defmodule LineaUI.Components.ErrorPage do
 
   def error_links(assigns) do
     ~H"""
-    <nav class={merge(["sg-err-links", @class])} aria-label={@title}>
+    <nav class={merge(["lo-err-links", @class])} aria-label={@title}>
       <span :if={@title} class="h">{@title}</span>
       <.link :for={link <- @link} href={link[:href]} navigate={link[:navigate]}>
         <span :if={link[:icon]} class="ic"><.icon name={link.icon} /></span>

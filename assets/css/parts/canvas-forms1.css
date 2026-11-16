@@ -40,18 +40,18 @@
 .lc-mini.two{width:270px;padding:12px}
 .lc-mini-h{display:flex;align-items:center;gap:8px;margin-bottom:6px}
 .lc-mini-h b{flex:1;min-width:0;font-weight:600;color:var(--ink)}
-.lc-mini-h .sg-ib svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
-.lc-mini-h .sg-ib:disabled{cursor:default}
+.lc-mini-h .lo-ib svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.lc-mini-h .lo-ib:disabled{cursor:default}
 .lc-mini-name{display:block;margin-bottom:6px;font-size:13.5px;font-weight:600;color:var(--ink)}
-.lc-mini .sg-cal > button{all:unset;box-sizing:border-box;height:36px;display:grid;place-items:center;border-radius:10px;color:var(--fg);font-variant-numeric:tabular-nums;cursor:pointer}
-.lc-mini .sg-cal > button:hover:not(.on){background:var(--ctl-fill)}
-.lc-mini .sg-cal > button:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
-.lc-mini .sg-cal > :is(span,button).o{color:var(--faint)}
-.lc-mini .sg-cal > button.t{box-shadow:inset 0 0 0 1px var(--ctl-line)}
-.lc-mini .sg-cal > button.on{background:var(--solid);color:var(--on-solid);font-weight:600}
-.lc-mini .sg-cal > button.rg{background:var(--accent-soft);border-radius:0;color:var(--accent-ink)}
-.lc-mini .sg-cal > :is(span,button){position:relative;display:flex;align-items:center;justify-content:center}
-.lc-mini.two .sg-cal > :is(span,button){height:30px}
+.lc-mini .lo-cal > button{all:unset;box-sizing:border-box;height:36px;display:grid;place-items:center;border-radius:10px;color:var(--fg);font-variant-numeric:tabular-nums;cursor:pointer}
+.lc-mini .lo-cal > button:hover:not(.on){background:var(--ctl-fill)}
+.lc-mini .lo-cal > button:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.lc-mini .lo-cal > :is(span,button).o{color:var(--faint)}
+.lc-mini .lo-cal > button.t{box-shadow:inset 0 0 0 1px var(--ctl-line)}
+.lc-mini .lo-cal > button.on{background:var(--solid);color:var(--on-solid);font-weight:600}
+.lc-mini .lo-cal > button.rg{background:var(--accent-soft);border-radius:0;color:var(--accent-ink)}
+.lc-mini .lo-cal > :is(span,button){position:relative;display:flex;align-items:center;justify-content:center}
+.lc-mini.two .lo-cal > :is(span,button){height:30px}
 .lc-mini .lc-mk{position:absolute;bottom:4px;left:50%;width:4px;height:4px;margin-left:-2px;border-radius:50%;background:var(--accent)}
 .lc-mini .lc-mk-success{background:var(--pos)}.lc-mini .lc-mk-error{background:var(--neg)}.lc-mini .lc-mk-warning{background:var(--warn)}.lc-mini .lc-mk-info{background:var(--info)}.lc-mini .lc-mk-neutral{background:var(--faint)}
 .lc-mini .on .lc-mk{background:var(--on-solid)}
@@ -161,11 +161,11 @@
 .lc-mini-legend span{display:inline-flex;align-items:center;gap:6px}
 .lc-mini-legend i{width:8px;height:8px;border-radius:2px;background:var(--accent)}
 .lc-mini-legend .lc-key-warning{background:var(--warn)}.lc-mini-legend .lc-key-error{background:var(--neg)}.lc-mini-legend .lc-key-success{background:var(--pos)}.lc-mini-legend .lc-key-info{background:var(--info)}.lc-mini-legend .lc-key-neutral{background:var(--faint)}
-.lc-mini .sg-cal > .lc-tn{background:var(--accent-soft);color:var(--accent-ink)}
-.lc-mini .sg-cal > .lc-tn-warning{background:var(--warn-soft);color:var(--warn)}
-.lc-mini .sg-cal > .lc-tn-error{background:var(--neg-soft);color:var(--neg)}
-.lc-mini .sg-cal > .lc-tn-success{background:var(--pos-soft);color:var(--pos)}
-.lc-mini .sg-cal > .lc-tn-info{background:var(--info-soft);color:var(--info)}
+.lc-mini .lo-cal > .lc-tn{background:var(--accent-soft);color:var(--accent-ink)}
+.lc-mini .lo-cal > .lc-tn-warning{background:var(--warn-soft);color:var(--warn)}
+.lc-mini .lo-cal > .lc-tn-error{background:var(--neg-soft);color:var(--neg)}
+.lc-mini .lo-cal > .lc-tn-success{background:var(--pos-soft);color:var(--pos)}
+.lc-mini .lo-cal > .lc-tn-info{background:var(--info-soft);color:var(--info)}
 .lc-mini.sg-card:has(> .lc-mini-legend){padding:18px 20px}
 
 /* ---------- Textarea with `tokens`: the text is drawn by a mirror over a transparent-text textarea ---------- */

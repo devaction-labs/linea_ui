@@ -83,13 +83,13 @@ defmodule LineaUI.Components.StepGroup do
     ~H"""
     <section
       id={@id}
-      class={merge(["sg-sgp", @collapsed && "is-collapsed", @class])}
+      class={merge(["lo-sgp", @collapsed && "is-collapsed", @class])}
       phx-mounted='[["ignore_attrs",{"attrs":["class"]}]]'
       {@rest}
     >
       <button
         type="button"
-        class="sg-sgp-h"
+        class="lo-sgp-h"
         aria-expanded={bool(!@collapsed)}
         aria-controls={"#{@id}-body"}
         phx-click={toggle_group(@id)}
@@ -102,7 +102,7 @@ defmodule LineaUI.Components.StepGroup do
       </button>
       <div
         id={"#{@id}-body"}
-        class="sg-sgp-b"
+        class="lo-sgp-b"
         hidden={@collapsed}
         phx-mounted='[["ignore_attrs",{"attrs":["hidden"]}]]'
       >
@@ -125,7 +125,7 @@ defmodule LineaUI.Components.StepGroup do
           <div
             :if={row.log}
             id={row.log_id}
-            class="sg-sgp-log"
+            class="lo-sgp-log"
             role="log"
             hidden={!row.open}
             phx-mounted='[["ignore_attrs",{"attrs":["hidden"]}]]'
@@ -156,7 +156,7 @@ defmodule LineaUI.Components.StepGroup do
     assigns = assign_derived(assigns, :path, [:status], fn -> Map.get(@icons, assigns.status) end)
 
     ~H"""
-    <span class={["sg-sgs", @class]} aria-hidden="true">
+    <span class={["lo-sgs", @class]} aria-hidden="true">
       <svg viewBox="0 0 24 24"><path :if={@path} d={@path} /></svg>
     </span>
     """
@@ -222,7 +222,7 @@ defmodule LineaUI.Components.StepGroup do
   end
 
   defp row_class(row) do
-    merge(["sg-sgp-r", row.class, row.open && "open", row.lead && "lead", row.extra])
+    merge(["lo-sgp-r", row.class, row.open && "open", row.lead && "lead", row.extra])
   end
 
   # collapse the card: the class, the header's aria-expanded and the panel, all in the browser

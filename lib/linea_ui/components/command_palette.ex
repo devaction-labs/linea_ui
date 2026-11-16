@@ -94,7 +94,7 @@ defmodule LineaUI.Components.CommandPalette do
 
   @assistant_icon "flex size-6 shrink-0 items-center justify-center rounded-md bg-gradient-to-br from-blue-600 to-purple-500 text-white"
 
-  # the canvas menu (`sg-menu`): the classes that differ from the default look
+  # the canvas menu (`lo-menu`): the classes that differ from the default look
   @looks %{
     "classic" => %{
       card: "rounded-xl",

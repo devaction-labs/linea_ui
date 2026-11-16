@@ -26,7 +26,7 @@
   color: var(--muted);
 }
 
-/* stepper, canvas variant (horizontal): the canvas `sg-steps` as a list; the steps' dots and labels
+/* stepper, canvas variant (horizontal): the canvas `lo-steps` as a list; the steps' dots and labels
    are items of the row (`display: contents`) so every 1px line between them (drawn before each step
    after the first) gets the same share of the width, like the canvas `hr` */
 .stepper-canvas:not(.is-vertical) > li {
@@ -41,10 +41,10 @@
   height: 1px;
   background: var(--line);
 }
-.stepper-canvas > li.sg-step.err {
+.stepper-canvas > li.lo-step.err {
   color: var(--neg);
 }
-.stepper-canvas > li.sg-step.err i {
+.stepper-canvas > li.lo-step.err i {
   background: var(--neg-soft);
   color: var(--neg);
   box-shadow: none;
@@ -137,7 +137,7 @@
   display: none;
 }
 
-/* command palette, canvas variant: the card is the canvas menu (`sg-menu`), on the raised color in dark */
+/* command palette, canvas variant: the card is the canvas menu (`lo-menu`), on the raised color in dark */
 .palette-canvas {
   background: var(--panel);
   box-shadow: 0 0 0 1px var(--ctl-line), var(--shadow-lg);

@@ -39,8 +39,8 @@ defmodule LineaUI.Components.MiniCard do
     ~H"""
     <.link class={classes(@value, @class)} {@rest}>
       <.icon_box :if={@icon && !@value} icon={@icon} tone={@tone} />
-      <span :if={@value} class="sg-mini-l">{@label}</span>
-      <b class={if @value, do: "sg-mini-n", else: "sg-mini-t"}>{@value || @label}</b>
+      <span :if={@value} class="lo-mini-l">{@label}</span>
+      <b class={if @value, do: "lo-mini-n", else: "lo-mini-t"}>{@value || @label}</b>
       {render_slot(@inner_block)}
     </.link>
     """
@@ -50,15 +50,15 @@ defmodule LineaUI.Components.MiniCard do
     ~H"""
     <div class={classes(@value, @class)} {@rest}>
       <.icon_box :if={@icon && !@value} icon={@icon} tone={@tone} />
-      <span :if={@value} class="sg-mini-l">{@label}</span>
-      <b class={if @value, do: "sg-mini-n", else: "sg-mini-t"}>{@value || @label}</b>
+      <span :if={@value} class="lo-mini-l">{@label}</span>
+      <b class={if @value, do: "lo-mini-n", else: "lo-mini-t"}>{@value || @label}</b>
       {render_slot(@inner_block)}
     </div>
     """
   end
 
   defp classes(value, class),
-    do: merge(["card card-border bg-base-100 p-5 sg-mini", value && "sg-mini-v", class])
+    do: merge(["card card-border bg-base-100 p-5 lo-mini", value && "lo-mini-v", class])
 
   defp icon_box(assigns) do
     ~H"""

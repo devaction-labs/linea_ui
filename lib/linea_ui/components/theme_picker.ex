@@ -73,7 +73,7 @@ defmodule LineaUI.Components.ThemePicker do
     ~H"""
     <div
       id={@id}
-      class={merge(["sg-tp", @variant == "grid" && "grid", @class])}
+      class={merge(["lo-tp", @variant == "grid" && "grid", @class])}
       phx-hook="LineaUI.ThemePicker"
       data-variant={@variant}
       data-default={@current}
@@ -87,21 +87,21 @@ defmodule LineaUI.Components.ThemePicker do
         :if={@variant == "menu"}
         id={"#{@id}-menu"}
         placement={@placement}
-        class="sg-tp-pop"
+        class="lo-tp-pop"
       >
         <:toggle>
-          <button type="button" class="sg-tp-btn" aria-label={@label} aria-haspopup="menu">
+          <button type="button" class="lo-tp-btn btn btn-sm" aria-label={@label} aria-haspopup="menu">
             <.palette_glyph />
-            <span class="sg-tp-name" data-theme-current>{@current_label}</span>
+            <span class="lo-tp-name" data-theme-current>{@current_label}</span>
             <svg class="i sm cv" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10l5 5 5-5" /></svg>
           </button>
         </:toggle>
-        <div class="sg-tp-h">{@label}</div>
+        <div class="lo-tp-h menu-title">{@label}</div>
         <button
           :for={option <- @options}
           type="button"
           role="menuitemradio"
-          class="sg-tp-opt"
+          class="lo-tp-opt btn btn-ghost btn-sm justify-start font-normal"
           aria-checked={bool(option.id == @current)}
           data-theme-value={option.id}
           data-label={option.label}
@@ -112,19 +112,19 @@ defmodule LineaUI.Components.ThemePicker do
           <svg class="i sm ck" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>
         </button>
       </Dropdown.dropdown>
-      <div :if={@variant == "grid"} class="sg-tp-grid" role="radiogroup" aria-label={@label}>
+      <div :if={@variant == "grid"} class="lo-tp-grid" role="radiogroup" aria-label={@label}>
         <button
           :for={option <- @options}
           type="button"
           role="radio"
-          class="sg-tp-card"
+          class="lo-tp-card"
           aria-checked={bool(option.id == @current)}
           tabindex={if option.id == @tab_stop, do: "0", else: "-1"}
           data-theme-value={option.id}
           data-label={option.label}
           phx-mounted='[["ignore_attrs",{"attrs":["aria-checked","tabindex"]}]]'
         >
-          <span class="sg-tp-prev" data-theme={option.id} aria-hidden="true">
+          <span class="lo-tp-prev" data-theme={option.id} aria-hidden="true">
             <span class="tp-card"><i class="t1"></i><i class="t2"></i><span class="tp-btn"></span></span>
             <span class="dots"><i class="a"></i><i class="b"></i><i class="c"></i></span>
           </span>
@@ -139,7 +139,7 @@ defmodule LineaUI.Components.ThemePicker do
 
   defp swatch(assigns) do
     ~H"""
-    <span class="sg-tp-sw" data-theme={@id} aria-hidden="true"><i class="a"></i><i class="b"></i><i class="c"></i><i class="d"></i></span>
+    <span class="lo-tp-sw" data-theme={@id} aria-hidden="true"><i class="a"></i><i class="b"></i><i class="c"></i><i class="d"></i></span>
     """
   end
 

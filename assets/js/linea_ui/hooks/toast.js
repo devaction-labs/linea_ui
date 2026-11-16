@@ -305,7 +305,7 @@ export default {
       const card = document.createElement("div")
       el.classList.add("rich", "canvas")
       this.fillCard(card, input, toast)
-      const ring = aura && this.part("div", ["sg-aura", "sg-aura-shadow", aura.tone, aura.mode, aura.width].filter(Boolean).join(" "), card)
+      const ring = aura && this.part("div", ["lo-aura", "lo-aura-shadow", aura.tone, aura.mode, aura.width].filter(Boolean).join(" "), card)
       el.append(ring ?? card)
     },
 
@@ -333,7 +333,7 @@ export default {
       input.message && body.append(this.part("span", "t", input.message))
       input.description && body.append(this.part("span", "lo-toast-desc", input.description))
       const actions = (input.actions ?? []).map((action) => this.canvasAction(action, toast))
-      const spinner = (kind === "loading" || running) && this.part("span", "spinner sg-spin animate-spin xs")
+      const spinner = (kind === "loading" || running) && this.part("span", "spinner lo-spin animate-spin xs")
       spinner && spinner.setAttribute("role", "status")
       const pct = progress !== null && !failed && this.part("span", "pct", `${Math.round(progress)}%`)
       const close = closeFor(input, toast.duration) && this.closeButton("btn btn-square btn-ghost btn-sm", "size-4")
@@ -373,7 +373,7 @@ export default {
      * progress toast); the rest is redrawn around it.
      */
     settleChildren(card, head, spinner, tail) {
-      const keep = spinner ? card.querySelector(":scope > .sg-spin") : null
+      const keep = spinner ? card.querySelector(":scope > .lo-spin") : null
       const before = [...head].filter(Boolean)
       const after = tail.filter(Boolean)
       if (!keep) return card.replaceChildren(...before, ...[spinner].filter(Boolean), ...after)

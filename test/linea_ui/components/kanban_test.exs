@@ -148,7 +148,7 @@ defmodule LineaUI.Components.KanbanTest do
       </.kanban_column>
       """)
 
-    assert ["sg-drop", "sg-kb-empty"] == classes(html, "div[data-empty]")
+    assert ["lo-drop", "lo-kb-empty"] == classes(html, "div[data-empty]")
     assert LazyHTML.text(find(html, "div[data-empty]")) =~ "Arraste para cá"
     assert find(html, "div[data-empty] svg") |> Enum.count() == 0
   end

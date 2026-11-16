@@ -261,7 +261,7 @@ defmodule LineaUI.Components.Card do
       }
       {@rest}
     >
-      <div :if={@title != []} class="sg-card-h">
+      <div :if={@title != []} class="lo-card-h">
         <h3 :for={title <- @title} class={merge(["card-title text-base", title[:class]])}>
           {render_slot(title)}
         </h3>
@@ -295,7 +295,7 @@ defmodule LineaUI.Components.Card do
 
   def card_header(assigns) do
     ~H"""
-    <div class={merge(["sg-card-h", @class])} {@rest}>
+    <div class={merge(["lo-card-h", @class])} {@rest}>
       {render_slot(@inner_block)}
     </div>
     """
@@ -393,7 +393,7 @@ defmodule LineaUI.Components.Card do
 
   def card_footer(assigns) do
     ~H"""
-    <div class={merge(["sg-card-f", @class])} {@rest}>
+    <div class={merge(["lo-card-f", @class])} {@rest}>
       {render_slot(@inner_block)}
     </div>
     """

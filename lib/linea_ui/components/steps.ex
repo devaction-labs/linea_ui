@@ -248,10 +248,10 @@ defmodule LineaUI.Components.Steps do
     assigns = assign(assigns, :entries, entries(assigns))
 
     ~H"""
-    <ol class={merge(["sg-steps stepper-canvas m-0 list-none p-0", @class])} {@rest}>
+    <ol class={merge(["lo-steps stepper-canvas m-0 list-none p-0", @class])} {@rest}>
       <li
         :for={entry <- @entries}
-        class={merge(["sg-step", canvas_step(entry.state), entry.class])}
+        class={merge(["lo-step", canvas_step(entry.state), entry.class])}
         aria-current={entry.state in ~w(current error) && "step"}
         data-state={entry.state}
       >

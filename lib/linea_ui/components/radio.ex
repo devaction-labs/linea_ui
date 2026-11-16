@@ -35,7 +35,7 @@ defmodule LineaUI.Components.Radio do
         <:radio value="b" aria_label="Segment B" disabled><svg viewBox="0 0 24 24">…</svg></:radio>
       </.radio_group>
 
-  `variant="card"` lays each option out as the canvas card (`sg-choice`): white, 14px of padding, a 1px line
+  `variant="card"` lays each option out as the canvas card (`lo-choice`): white, 14px of padding, a 1px line
   that turns to a 1.5px ink line when chosen (or the `color`, when not `neutral`), the title, the description,
   an optional icon in a 36px square that takes the accent tint when chosen, and `count` as a big figure between
   the title and the description (a price). `control="end"` puts the radio at the right; `variant="chip"` renders pill chips, the
@@ -293,7 +293,7 @@ defmodule LineaUI.Components.Radio do
     """
   end
 
-  # The canvas `sg-choice`: a white card with a 1px line that turns to a 1.5px ink line when chosen (or the
+  # The canvas `lo-choice`: a white card with a 1px line that turns to a 1.5px ink line when chosen (or the
   # `color`), an optional tinted icon square, and with `count` a big figure between the title and the description.
   attr(:color, :string, required: true)
   attr(:label, :string, default: nil)

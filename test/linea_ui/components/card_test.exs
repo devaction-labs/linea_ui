@@ -23,7 +23,7 @@ defmodule LineaUI.Components.CardTest do
       </.card>
       """)
 
-    assert [h3] = find(html, "#c > .sg-card-h > h3") |> Enum.to_list()
+    assert [h3] = find(html, "#c > .lo-card-h > h3") |> Enum.to_list()
     assert String.trim(LazyHTML.text(h3)) == "Faturamento"
   end
 
@@ -40,10 +40,10 @@ defmodule LineaUI.Components.CardTest do
       </.card>
       """)
 
-    assert [_] = find(html, "#c .sg-card-h h3") |> Enum.to_list()
-    assert [_] = find(html, "#c .sg-card-h .meta") |> Enum.to_list()
-    assert [_] = find(html, "#c .sg-card-h .end") |> Enum.to_list()
-    assert [_] = find(html, "#c .sg-card-f") |> Enum.to_list()
+    assert [_] = find(html, "#c .lo-card-h h3") |> Enum.to_list()
+    assert [_] = find(html, "#c .lo-card-h .meta") |> Enum.to_list()
+    assert [_] = find(html, "#c .lo-card-h .end") |> Enum.to_list()
+    assert [_] = find(html, "#c .lo-card-f") |> Enum.to_list()
   end
 
   test "navigate, patch or href make the whole card a link with an arrow" do

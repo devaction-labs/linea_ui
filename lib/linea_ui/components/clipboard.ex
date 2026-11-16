@@ -17,7 +17,7 @@ defmodule LineaUI.Components.Clipboard do
       <.clipboard value={@pix} locale="pt_BR" variant="soft" icon copied_label="Copiado">Copiar Pix</.clipboard>
 
   `icon` puts a copy icon before the text (a check while copied) and `icon_only` makes the round
-  canvas icon button (`sg-ib`) of it, for a value already on screen:
+  canvas icon button (`lo-ib`) of it, for a value already on screen:
 
       <.clipboard value="mix phx.new demo" icon copied_label="Copied">Copy</.clipboard>
       <.clipboard from="#cmd" icon_only variant="flat" size="sm" aria-label="Copy command" />
@@ -83,7 +83,7 @@ defmodule LineaUI.Components.Clipboard do
   attr :icon_only, :boolean,
     default: false,
     doc:
-      "Just the icon, the round canvas icon button (`sg-ib`; `size` `xs`/`sm` is the small one, `flat` the borderless one); give it an `aria-label`. After a copy it shows the check."
+      "Just the icon, the round canvas icon button (`lo-ib`; `size` `xs`/`sm` is the small one, `flat` the borderless one); give it an `aria-label`. After a copy it shows the check."
 
   attr :color, :string,
     default: "primary",

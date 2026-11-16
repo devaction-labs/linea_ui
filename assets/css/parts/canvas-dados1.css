@@ -108,7 +108,7 @@
   color: var(--bb-soft);
 }
 
-/* the canvas `sg-ib sm plain` close */
+/* the canvas `lo-ib sm plain` close */
 .linea-bulk[data-variant="solid"] .linea-bulk-clear {
   width: 28px;
   min-width: 28px;
@@ -118,7 +118,7 @@
   color: var(--muted);
 }
 
-/* the card that asks before a destructive action (the canvas `sg-menu`) */
+/* the card that asks before a destructive action (the canvas `lo-menu`) */
 .linea-bulk-confirm {
   position: absolute;
   top: calc(100% + 10px);
