@@ -122,7 +122,6 @@
 .lo-sb .rail-tip{pointer-events:none}
 .lo-sb [data-rail-tip="always"]:is(:hover,:focus-visible)>.rail-tip{display:block;position:fixed;top:auto;left:auto}
 .lo-sb-mbar,.lo-sb-burger,.lo-sb-drawer{display:none}
-@media (prefers-reduced-motion:reduce){.lo-sb,.lo-sb .i{transition:none}}
 
 /* collapsed: icons only, a tooltip with the label, counts and notices as dots */
 @media (min-width:768px){
@@ -158,6 +157,8 @@
   .lo-sb.nestx[data-collapsed="true"] :is(.lo-sb-mb,.lo-sb-team){grid-template-columns:auto;justify-content:center;padding:8px 0}
   .lo-sb.nestx[data-collapsed="true"] :is(.lo-sb-mb,.lo-sb-team)>:is(b,.sub,.who,.ud){display:none}
 }
+
+@media (prefers-reduced-motion:reduce){.lo-sb,.lo-sb :is(.lo-sb-toggle,.cv,.lo-sb-caret) .i{transition:none}}
 
 /* a phone: the menu is a top bar with a hamburger, and opens under it */
 @media (max-width:767.98px){
