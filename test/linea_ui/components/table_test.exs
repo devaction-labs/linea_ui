@@ -177,7 +177,7 @@ defmodule LineaUI.Components.TableTest do
 
     assert "h-7" in classes(html, "th button")
     assert "inline-flex" in classes(html, "th button")
-    assert "hover:bg-slate-300/40" in classes(html, "th button")
+    assert "hover:bg-base-300/40" in classes(html, "th button")
   end
 
   test "selection adds checkboxes with their keys" do
@@ -435,7 +435,7 @@ defmodule LineaUI.Components.TableTest do
   test "sticky_header pins the header cells" do
     html = render(~H|<.table id="t" rows={[]} sticky_header><:col label="A" /></.table>|)
     assert "sticky" in classes(html, "th")
-    assert "bg-white" in classes(html, "th")
+    assert "bg-base-100" in classes(html, "th")
 
     html =
       render(

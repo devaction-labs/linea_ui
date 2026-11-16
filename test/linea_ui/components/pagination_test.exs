@@ -40,7 +40,7 @@ defmodule LineaUI.Components.PaginationTest do
   test "the first page disables the previous arrow" do
     html = render(~H|<.pagination shape="rounded" page={1} total_pages={3} on_change="go" />|)
     assert count(html, "span[aria-label='Previous page'][aria-disabled=true]") == 1
-    assert "opacity-60" in classes(html, "span[aria-label='Previous page']")
+    assert "btn-disabled" in classes(html, "span[aria-label='Previous page']")
   end
 
   test "on_change buttons with a target, or JS" do
@@ -174,9 +174,10 @@ defmodule LineaUI.Components.PaginationTest do
       <.pagination shape="rounded" page={1} total_pages={3} on_change="go" size="lg" />
       """)
 
-    assert count(html, "button[phx-value-page='2'].btn-xs") == 1
-    assert count(html, "button[phx-value-page='2'].btn-sm") == 1
-    assert count(html, "button[phx-value-page='2'].btn-md") == 1
+    # the page and the next arrow both go to page 2
+    assert count(html, "button[phx-value-page='2'].btn-xs") == 2
+    assert count(html, "button[phx-value-page='2'].btn-sm") == 2
+    assert count(html, "button[phx-value-page='2'].btn-md") == 2
   end
 
   test "page_sizes add a rows-per-page select in its own form" do

@@ -111,8 +111,7 @@ defmodule LineaUI.Components.DisclosureTest do
 
     assert [
              "border-primary",
-             "divide-[color-mix(in_oklab,var(--color-primary)_55%,white)]",
-             "dark:border-accent"
+             "divide-[color-mix(in_oklab,var(--color-primary)_55%,white)]"
            ] -- classes(html, "#a") ==
              []
 
@@ -145,7 +144,7 @@ defmodule LineaUI.Components.DisclosureTest do
     assert "size-4" in classes(html, "#b > summary > svg")
     assert [] = find(html, "#c svg") |> Enum.to_list()
     refute "group/collapse" in classes(html, "#c")
-    assert ["size-4", "text-slate-400"] -- classes(html, "#a > summary > svg") == []
+    assert ["size-4", "text-base-content/50"] -- classes(html, "#a > summary > svg") == []
   end
 
   test "collapse variant is a data attribute and the panel takes a class" do

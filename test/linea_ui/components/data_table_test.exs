@@ -44,7 +44,7 @@ defmodule LineaUI.Components.DataTableTest do
     assert "h-10" in classes(html, "#a-table th")
     assert "text-[13px]" in classes(html, "#a-table th")
     assert "h-12" in classes(html, "#a-table td")
-    assert "size-4" in classes(html, "#a-table td input")
+    assert "checkbox-xs" in classes(html, "#a-table td input")
     assert "flush" in classes(html, "#a .sg-card")
 
     assert "linea-dt" in classes(html, "#g-table")
