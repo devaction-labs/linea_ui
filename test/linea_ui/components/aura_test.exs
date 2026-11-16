@@ -5,7 +5,7 @@ defmodule LineaUI.Components.AuraTest do
     html = render(~H|<.aura>
   <p>Dentro</p>
 </.aura>|)
-    assert classes(html, "div") == ["sg-aura"]
+    assert classes(html, "div") == ["lo-aura"]
     assert [_] = find(html, "p") |> Enum.to_list()
   end
 
@@ -19,7 +19,7 @@ defmodule LineaUI.Components.AuraTest do
 
     cls = classes(html, "div")
 
-    for c <- ~w(sg-aura sg-aura-shadow ai dual lg pill w-80), do: assert(c in cls)
+    for c <- ~w(lo-aura lo-aura-shadow ai dual lg pill w-80), do: assert(c in cls)
   end
 
   test "glow with a status tone and the thin widths" do
@@ -28,7 +28,7 @@ defmodule LineaUI.Components.AuraTest do
 </.aura>|)
     cls = classes(html, "div")
     for c <- ~w(glow warn xs r12), do: assert(c in cls)
-    refute "sg-aura-shadow" in cls
+    refute "lo-aura-shadow" in cls
   end
 
   test "global attributes pass through" do

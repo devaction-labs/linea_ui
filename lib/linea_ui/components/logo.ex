@@ -46,14 +46,14 @@ defmodule LineaUI.Components.Logo do
       end)
 
     ~H"""
-    <span class={merge(["sg-logo", @class])} {@rest}>
+    <span class={merge(["lo-logo", @class])} {@rest}>
       <svg
         viewBox="0 0 64 64"
         width={@size}
         height={@size}
         role="img"
         aria-label={@label}
-        class={["sg-logo-mark", @size < 24 && "small"]}
+        class={["lo-logo-mark", @size < 24 && "small"]}
       >
         <defs>
           <linearGradient
@@ -96,7 +96,7 @@ defmodule LineaUI.Components.Logo do
       </svg>
       <span
         :if={@wordmark}
-        class="sg-logo-word"
+        class="lo-logo-word"
         style={"font-size:#{@word_px}px"}
         aria-hidden="true"
       >Linea<b>UI</b></span>

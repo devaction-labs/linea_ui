@@ -171,7 +171,7 @@ defmodule LineaUI.Components.Toast do
 
   ## A toast in the page
 
-  `toast_card/1` draws the design canvas's toast card (`sg-toast`, light or dark) where it is written, not in
+  `toast_card/1` draws the design canvas's toast card (`lo-toast`, light or dark) where it is written, not in
   the toaster: for a notice that stays in a panel, or to show what a toast looks like.
 
       <.toast_card kind="error" icon="huge-cancel-circle" title="Could not issue"
@@ -294,7 +294,7 @@ defmodule LineaUI.Components.Toast do
   end
 
   @doc """
-  The canvas's toast card (`sg-toast`), drawn in place: a 30px icon tile tinted by `kind`, the title and the
+  The canvas's toast card (`lo-toast`), drawn in place: a 30px icon tile tinted by `kind`, the title and the
   description, the `:action` buttons and a muted close button that hides the card (and runs `on_dismiss`).
 
       <.toast_card tone="dark" icon="huge-delete-02" title="Order #2488 deleted">
@@ -320,7 +320,7 @@ defmodule LineaUI.Components.Toast do
   attr :tone, :string,
     default: "light",
     values: ~w(light dark),
-    doc: "`light` is the panel card; `dark` the ink card (the canvas's `sg-toast dark`)."
+    doc: "`light` is the panel card; `dark` the ink card (the canvas's `lo-toast dark`)."
 
   attr :kind, :string,
     default: "neutral",
@@ -443,7 +443,7 @@ defmodule LineaUI.Components.Toast do
       id={@id}
       class={
         merge([
-          "sg-toast",
+          "lo-toast alert",
           @tone == "dark" && "dark",
           @progress && "prog",
           @progress && @progress_state != "run" && @progress_state,
@@ -453,13 +453,13 @@ defmodule LineaUI.Components.Toast do
       style={@progress && "--p:#{@progress}%"}
       {@rest}
     >
-      <span class={["sg-ic sg-toast-ic", card_tone(@kind)]} aria-hidden="true">
+      <span class={["lo-ic lo-toast-ic", card_tone(@kind)]} aria-hidden="true">
         <.icon :if={@icon && @icon_tile == []} name={@icon} class="size-3.5" />
         {render_slot(@icon_tile)}
       </span>
-      <div class="sg-toast-body">
+      <div class="lo-toast-body">
         <span class="t">{@title}</span>
-        <span :if={@description} class="sg-toast-desc">{@description}</span>
+        <span :if={@description} class="lo-toast-desc">{@description}</span>
       </div>
       {render_slot(@action)}
       <.spinner
@@ -474,7 +474,7 @@ defmodule LineaUI.Components.Toast do
         type="button"
         class="btn btn-ghost btn-sm btn-circle"
         aria-label={@close_label}
-        phx-click={JS.hide(@on_dismiss || %JS{}, to: {:closest, ".sg-toast"})}
+        phx-click={JS.hide(@on_dismiss || %JS{}, to: {:closest, ".lo-toast"})}
       >
         <.glyph name={:close} class="size-4" />
       </button>
@@ -490,7 +490,7 @@ defmodule LineaUI.Components.Toast do
   defp card_tone(_kind), do: nil
 
   @doc """
-  The compact, inverse status card (`sg-toast st`) drawn in place: a circle for the `state`, the message (put
+  The compact, inverse status card (`lo-toast st`) drawn in place: a circle for the `state`, the message (put
   the names in `<b>`) and the buttons at the right. Dark in both themes.
 
       <.status_toast state="run">
@@ -532,9 +532,9 @@ defmodule LineaUI.Components.Toast do
 
   def status_toast(assigns) do
     ~H"""
-    <div class={merge(["sg-toast st", @class])} role="status" {@rest}>
+    <div class={merge(["lo-toast alert st", @class])} role="status" {@rest}>
       <span
-        class={["sg-st", @state != "run" && @state]}
+        class={["lo-st", @state != "run" && @state]}
         style={@percent && "--stp:#{@percent}%"}
         aria-hidden="true"
       >

@@ -4,7 +4,7 @@ defmodule LineaUI.Components.SparklineTest do
   test "draws the line and its fill from the numbers, the highest at the top" do
     html = render(~H|<.sparkline id="s" values={[1, 3, 2]} />|)
 
-    assert [_] = find(html, "svg.sg-spark") |> Enum.to_list()
+    assert [_] = find(html, "svg.lo-spark") |> Enum.to_list()
     assert [_] = find(html, "linearGradient#s-fill") |> Enum.to_list()
     [line] = find(html, "path[stroke=currentColor]") |> Enum.to_list()
     assert LazyHTML.attribute(line, "d") == ["M0.0 30.0 L52.0 4.0 L104.0 17.0"]

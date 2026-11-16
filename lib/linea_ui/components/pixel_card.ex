@@ -23,14 +23,14 @@ defmodule LineaUI.Components.PixelCard do
 
       <.pixel_card title="Marca" description="--px: var(--accent)" style="--px: #f97316" />
 
-  The cards sit in a 3-column grid of the canvas with `sg-px-grid`, and `sg-px-sec` is the heading of a section of
+  The cards sit in a 3-column grid of the canvas with `lo-px-grid`, and `lo-px-sec` is the heading of a section of
   them (a bold name over a muted line); both are plain classes.
 
   ## How the pixels blink
 
   There is no JavaScript. The card's `::before` is masked by a 60px tile of 2.6px squares (three tiles, `--pxa`,
   `--pxb` and `--pxc`, each with its own random pattern and opacities) intersected with a radial gradient from the
-  top right corner. A stepped keyframe (`sg-px-twinkle`, `.9s steps(1)`) swaps the tile every 0.3s. Under
+  top right corner. A stepped keyframe (`lo-px-twinkle`, `.9s steps(1)`) swaps the tile every 0.3s. Under
   `prefers-reduced-motion: reduce` the animation is off: the first tile stays drawn, lit on hover and focus.
   """
 
@@ -88,7 +88,7 @@ defmodule LineaUI.Components.PixelCard do
     """
   end
 
-  defp classes(color, class), do: merge(["sg-px", color, class])
+  defp classes(color, class), do: merge(["lo-px", color, class])
 
   attr(:icon, :string, default: nil)
   attr(:title, :string, required: true)

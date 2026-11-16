@@ -73,7 +73,7 @@ defmodule LineaUI.Components.CashTimer do
       {@rest}
     >
       <div class="linea-cash-head">
-        <span class={["sg-ic", @tone]} aria-hidden="true">
+        <span class={["lo-ic", @tone]} aria-hidden="true">
           <svg class="linea-cash-icon" viewBox="0 0 24 24">
             <path d="M3 7h18v10H3zM12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM6 10v4M18 10v4" />
           </svg>
@@ -90,9 +90,9 @@ defmodule LineaUI.Components.CashTimer do
         {render_slot(@action)}
       </div>
       <dl :if={@stat != []} class="linea-cash-stats">
-        <div :for={stat <- @stat} class="sg-stat">
-          <dt class="l">{stat.label}</dt>
-          <dd class="v">{render_slot(stat)}</dd>
+        <div :for={stat <- @stat} class="stat lo-stat">
+          <dt class="stat-title l">{stat.label}</dt>
+          <dd class="stat-value v">{render_slot(stat)}</dd>
         </div>
       </dl>
     </div>

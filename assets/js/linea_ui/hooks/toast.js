@@ -56,7 +56,7 @@ const NOTE_ICONS = {primary: "info", secondary: "info", info: "info", success: "
  * A rich toast is a surface card with a tile for the icon (tinted by the color or kind) and its actions on the right.
  * `aura` (with `aura_size`, `aura_color`) runs a ring of light around the card. A numeric `value` makes a progress
  * toast: a fill grows behind it (a 3px bar at the bottom with `bar`), a spinner turns until 100, then it becomes a
- * success and leaves by itself. A `status` (`run queue ok err`) draws the compact inverse card (`sg-toast st`) with `**name**`
+ * success and leaves by itself. A `status` (`run queue ok err`) draws the compact inverse card (`lo-toast st`) with `**name**`
  * highlighted in the message; `value` is then the real percentage of the circle. `linea:toast-update` with a new `value` moves it, and a `kind` of `error` on a toast that
  * had a `value` turns it into a failure.
  */
@@ -130,7 +130,7 @@ export default {
       toast.input = input
       toast.duration = this.durationOf(input)
       toast.left = toast.duration
-      if (this.sameCanvas(previous, input) && toast.el.querySelector(".sg-toast")) return this.repaint(toast, input)
+      if (this.sameCanvas(previous, input) && toast.el.querySelector(".lo-toast")) return this.repaint(toast, input)
       const el = this.render(input, toast)
       el.style.cssText = toast.el.style.cssText
       el.classList.add("on")
@@ -168,7 +168,7 @@ export default {
     /** Paints a canvas toast again on its own card, so the fill of a progress toast (`--p`) moves with a transition. */
     repaint(toast, input) {
       const el = toast.el
-      this.fillCard(el.querySelector(".sg-toast"), input, toast)
+      this.fillCard(el.querySelector(".lo-toast"), input, toast)
       el.setAttribute("role", colorFor(input) === "error" ? "alert" : "status")
       toast.size = this.measure(el)
       this.expanded.has(toast.position.key) ? this.pause(toast) : this.start(toast)
@@ -305,11 +305,11 @@ export default {
       const card = document.createElement("div")
       el.classList.add("rich", "canvas")
       this.fillCard(card, input, toast)
-      const ring = aura && this.part("div", ["sg-aura", "sg-aura-shadow", aura.tone, aura.mode, aura.width].filter(Boolean).join(" "), card)
+      const ring = aura && this.part("div", ["lo-aura", "lo-aura-shadow", aura.tone, aura.mode, aura.width].filter(Boolean).join(" "), card)
       el.append(ring ?? card)
     },
 
-    /** The canvas card (`sg-toast`): icon tile, title and description, buttons, spinner and percentage, close. */
+    /** The canvas card (`lo-toast`): icon tile, title and description, buttons, spinner and percentage, close. */
     fillCard(card, input, toast) {
       if (statusOf(input)) return this.fillStatus(card, input, toast)
       const progress = progressOf(input)
@@ -320,20 +320,20 @@ export default {
       const dark = colorFor(input) === "dark"
       const surface = surfaceFor(invertFor(input, this.el.dataset.invert === "true"), this.el.closest(".dark") !== null)
       const state = failed ? "fail" : progress !== null && progress >= 100 ? "done" : ""
-      card.className = ["sg-toast", (dark || surface === "dark") && "dark", fill !== null && "prog", state].filter(Boolean).join(" ")
+      card.className = ["lo-toast", "alert", (dark || surface === "dark") && "dark", fill !== null && "prog", state].filter(Boolean).join(" ")
       fill === null ? card.style.removeProperty("--p") : card.style.setProperty("--p", `${fill}%`)
       card.setAttribute("aria-busy", String(kind === "loading" || running))
       const icon = this.el.querySelector(`template[data-toast-icon="${kind === "loading" || running ? "info" : kind}"]`)
       const tone = canvasTileTone(kind, input.color, running)
       const glyph = icon && icon.content.firstElementChild.cloneNode(true)
       glyph && glyph.classList.replace("size-4.5", "size-3.5")
-      const tile = glyph && this.part("span", `sg-ic sg-toast-ic ${tone}`.trim(), glyph)
+      const tile = glyph && this.part("span", `lo-ic lo-toast-ic ${tone}`.trim(), glyph)
       tile && tile.setAttribute("aria-hidden", "true")
-      const body = this.part("div", "sg-toast-body")
+      const body = this.part("div", "lo-toast-body")
       input.message && body.append(this.part("span", "t", input.message))
-      input.description && body.append(this.part("span", "sg-toast-desc", input.description))
+      input.description && body.append(this.part("span", "lo-toast-desc", input.description))
       const actions = (input.actions ?? []).map((action) => this.canvasAction(action, toast))
-      const spinner = (kind === "loading" || running) && this.part("span", "spinner sg-spin animate-spin xs")
+      const spinner = (kind === "loading" || running) && this.part("span", "spinner lo-spin animate-spin xs")
       spinner && spinner.setAttribute("role", "status")
       const pct = progress !== null && !failed && this.part("span", "pct", `${Math.round(progress)}%`)
       const close = closeFor(input, toast.duration) && this.closeButton("btn btn-square btn-ghost btn-sm", "size-4")
@@ -342,16 +342,16 @@ export default {
     },
 
     /**
-     * The status card (`sg-toast st`): the circle, the message (`**name**` highlighted) and the buttons at the right. The
+     * The status card (`lo-toast st`): the circle, the message (`**name**` highlighted) and the buttons at the right. The
      * circle stays the same node while the toast is updated, so its fill moves on instead of restarting.
      */
     fillStatus(card, input, toast) {
       const {state, percent} = statusOf(input)
-      card.className = "sg-toast st"
+      card.className = "lo-toast alert st"
       card.style.removeProperty("--p")
       card.removeAttribute("aria-busy")
-      const circle = card.querySelector(":scope > .sg-st") ?? this.part("span", "sg-st", document.createElement("i"))
-      circle.className = state === "run" ? "sg-st" : `sg-st ${state}`
+      const circle = card.querySelector(":scope > .lo-st") ?? this.part("span", "lo-st", document.createElement("i"))
+      circle.className = state === "run" ? "lo-st" : `lo-st ${state}`
       percent === null ? circle.style.removeProperty("--stp") : circle.style.setProperty("--stp", `${percent}%`)
       circle.setAttribute("aria-hidden", "true")
       const msg = this.part("span", "msg", ...messageParts(input.message).map(({text, bold}) => (bold ? this.part("b", "", text) : document.createTextNode(text))))
@@ -373,7 +373,7 @@ export default {
      * progress toast); the rest is redrawn around it.
      */
     settleChildren(card, head, spinner, tail) {
-      const keep = spinner ? card.querySelector(":scope > .sg-spin") : null
+      const keep = spinner ? card.querySelector(":scope > .lo-spin") : null
       const before = [...head].filter(Boolean)
       const after = tail.filter(Boolean)
       if (!keep) return card.replaceChildren(...before, ...[spinner].filter(Boolean), ...after)

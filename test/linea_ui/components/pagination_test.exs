@@ -250,12 +250,12 @@ defmodule LineaUI.Components.PaginationTest do
   test "the aside slot sits beside the pages, and replaces them with a single page" do
     html =
       render(~H"""
-      <.pagination class="sg-pager" page={1} page_size={10} total_entries={25} on_change="go">
+      <.pagination class="lo-pager" page={1} page_size={10} total_entries={25} on_change="go">
         <:aside><i id="a">Webhook</i></:aside>
       </.pagination>
       """)
 
-    assert "sg-pager" in classes(html, "div")
+    assert "lo-pager" in classes(html, "div")
     assert [_] = find(html, "#a") |> Enum.to_list()
     assert [_] = find(html, "nav") |> Enum.to_list()
 

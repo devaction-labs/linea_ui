@@ -1,7 +1,7 @@
 /* Canvas rules for the Signetum fin1 screens (canvas "Signetum — Landing page"). */
 
 /* The pager summary of a table card is 13px, as the canvas pager (the pagination footer draws 12.5px). */
-.sg-pager .text-\[12\.5px\] { font-size: 13px; }
+.lo-pager .text-\[12\.5px\] { font-size: 13px; }
 
 /* Choice cards of the finance sheets: the canvas lays the title and the help on the body's 1.5 line height. */
 .fin-choices .lu-rcard-title { line-height: 21px; }

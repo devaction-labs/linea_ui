@@ -24,7 +24,7 @@ defmodule LineaUI.Components.GlowText do
     ~H"""
     <.dynamic_tag
       tag_name={@as}
-      class={merge(["sg-glow-text", @tone == "warm" && "warm", @class])}
+      class={merge(["lo-glow-text", @tone == "warm" && "warm", @class])}
       {@rest}
     >
       {render_slot(@inner_block)}

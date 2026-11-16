@@ -47,7 +47,7 @@ defmodule LineaUI.Components.Tabs do
         <:tab name="history" navigate={~p"/customers/\#{@customer}/history"}>History</:tab>
       </.tabs>
 
-  `variant="nav"` renders the canvas navigation tabs, exactly `<nav class="sg-tabs"><a class="on">…</a></nav>`
+  `variant="nav"` renders the canvas navigation tabs, a daisyUI `tabs tabs-border` of links (`<nav class="tabs tabs-border"><a class="tab tab-active">…</a></nav>`)
   (14px links, a 2px underline on the current one). It is for routes only: no hook, no roles, no
   panels, and `on_change` is never pushed. `selected` may be `nil` (none is current). A `:tab`
   without `patch`, `navigate` or `href` (or with them `nil`/`false`) is never current: with
@@ -76,8 +76,8 @@ defmodule LineaUI.Components.Tabs do
     {"boxed", "vertical"} => "tab justify-start gap-2 text-left",
     {"pill", "horizontal"} => "tab h-8 gap-2 rounded-field text-xs-plus",
     {"pill", "vertical"} => "tab h-8 justify-start gap-2 rounded-field text-left text-xs-plus",
-    {"segmented", "horizontal"} => "sg-seg-tab",
-    {"segmented", "vertical"} => "sg-seg-tab"
+    {"segmented", "horizontal"} => "tab gap-2",
+    {"segmented", "vertical"} => "tab justify-start gap-2 text-left"
   }
 
   @text_base "tab h-auto gap-2 rounded-none p-0 tracking-wide"
@@ -134,8 +134,8 @@ defmodule LineaUI.Components.Tabs do
     {"pill", "vertical"} => "tabs flex-col items-stretch gap-2",
     {"text", "horizontal"} => "tabs flex-nowrap gap-4",
     {"text", "vertical"} => "tabs flex-col items-stretch gap-2",
-    {"segmented", "horizontal"} => "sg-seg",
-    {"segmented", "vertical"} => "sg-seg flex-col items-stretch rounded-[18px]"
+    {"segmented", "horizontal"} => "tabs tabs-box flex-nowrap",
+    {"segmented", "vertical"} => "tabs tabs-box flex-col items-stretch"
   }
 
   @overlap %{
@@ -179,7 +179,7 @@ defmodule LineaUI.Components.Tabs do
     default: "line",
     values: ~w(line boxed pill text segmented nav),
     doc:
-      "`line` underlines the selected tab, `boxed` lifts it off a gray track, `pill` fills a rounded tab, `text` is plain text that only changes color (no border or background; spacing comes from `list_class`, `space-x-4` by default), `segmented` is the design canvas segmented control (a sunken pill track, the selected tab raised on the panel color), `nav` is the canvas `nav.sg-tabs` of links (see Navigation tabs)."
+      "`line` underlines the selected tab, `boxed` lifts it off a gray track, `pill` fills a rounded tab, `text` is plain text that only changes color (no border or background; spacing comes from `list_class`, `space-x-4` by default), `segmented` is the segmented control (daisyUI `tabs-box`: the selected tab raised on the track), `nav` is a `tabs-border` `nav` of links (see Navigation tabs)."
   )
 
   attr(:size, :string,
@@ -243,9 +243,7 @@ defmodule LineaUI.Components.Tabs do
 
     attr(:disabled, :boolean, doc: "Skipped by clicks and the arrow keys.")
 
-    attr(:count, :any,
-      doc: "A number drawn after the label in the canvas count badge (`sg-nav-n`)."
-    )
+    attr(:count, :any, doc: "A number drawn after the label in a daisyUI `badge`.")
 
     attr(:overdue, :boolean,
       doc:
@@ -273,7 +271,9 @@ defmodule LineaUI.Components.Tabs do
 
   def tabs(%{variant: "nav"} = assigns) do
     assigns
-    |> assign_derived(:nav_class, [:class], fn -> merge(["sg-tabs", assigns.class]) end)
+    |> assign_derived(:nav_class, [:class], fn ->
+      merge(["tabs tabs-border lo-tabs", assigns.class])
+    end)
     |> render_nav()
   end
 
@@ -363,7 +363,7 @@ defmodule LineaUI.Components.Tabs do
       :if={nav_off?(@tab)}
       aria-disabled="true"
       title={@tab[:title] || @soon_label}
-      class={merge(["cursor-not-allowed opacity-50", @tab[:class]])}
+      class={merge(["tab tab-disabled cursor-not-allowed", @tab[:class]])}
     >
       {render_slot(@tab)}<.count tab={@tab} />
     </a>
@@ -374,7 +374,7 @@ defmodule LineaUI.Components.Tabs do
       patch={@tab[:patch]}
       replace={@tab[:replace] || false}
       aria-current={@selected && "page"}
-      class={merge([@selected && "on", @tab[:class]])}
+      class={merge(["tab", @selected && "tab-active", @tab[:class]])}
       {@extra}
     >
       {render_slot(@tab)}<.count tab={@tab} />
@@ -383,7 +383,7 @@ defmodule LineaUI.Components.Tabs do
       :if={!nav_off?(@tab) && !nav_route?(@tab)}
       role="button"
       tabindex="0"
-      class={merge(["cursor-pointer", @tab[:class]])}
+      class={merge(["tab cursor-pointer", @tab[:class]])}
       {@extra}
     >
       {render_slot(@tab)}<.count tab={@tab} />
@@ -512,11 +512,14 @@ defmodule LineaUI.Components.Tabs do
     """
   end
 
+  defp count_class(true), do: "lo-nav-n badge badge-sm badge-soft badge-error st-over"
+  defp count_class(_overdue), do: "lo-nav-n badge badge-sm badge-ghost"
+
   attr(:tab, :map, required: true)
 
   defp count(%{tab: %{count: count}} = assigns) when not is_nil(count) do
     ~H"""
-    <span class={["sg-nav-n", @tab[:overdue] && "st-over"]}>{@tab.count}</span>
+    <span class={count_class(@tab[:overdue])}>{@tab.count}</span>
     """
   end
 

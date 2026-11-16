@@ -59,25 +59,25 @@ defmodule LineaUI.Components.SidebarCanvasTest do
   test "a group has a chevron button with aria-expanded and aria-controls, and children draw a line" do
     html = html(%{current: "/app/tasks"})
 
-    assert attrs(html, "button.sg-sb-gt", "aria-expanded") == ["true"]
-    assert [id] = attrs(html, "button.sg-sb-gt", "aria-controls")
-    assert [_] = Enum.to_list(find(html, "##{id}.sg-sb-grp"))
-    assert [_] = Enum.to_list(find(html, ".sg-sb-tree.line"))
-    assert [_] = Enum.to_list(find(html, ".sg-sb-tree.line > svg.tb"))
+    assert attrs(html, ".lo-sb-gt > button", "aria-expanded") == ["true"]
+    assert [id] = attrs(html, ".lo-sb-gt > button", "aria-controls")
+    assert [_] = Enum.to_list(find(html, "##{id}.lo-sb-group"))
+    assert [_] = Enum.to_list(find(html, ".lo-sb-children"))
+    assert find(html, "svg.tb") |> Enum.empty?()
   end
 
-  test "the count is mono (sg-sb-n)" do
-    assert [_, _] = Enum.to_list(find(html(%{}), ".sg-sb-n"))
+  test "the count is mono (lo-sb-count)" do
+    assert [_, _] = Enum.to_list(find(html(%{}), ".lo-sb-count"))
   end
 
   test "a disabled item is a span with a title, not a link, and never active" do
     html = html(%{current: "/app/tasks"})
 
-    assert [span] = Enum.to_list(find(html, "span.sg-sb-a.dis"))
+    assert [span] = Enum.to_list(find(html, "span.lo-sb-item.dis"))
     assert LazyHTML.attribute(span, "title") == ["Em breve"]
     assert LazyHTML.attribute(span, "aria-disabled") == ["true"]
     assert find(html, "a[href='#']") |> Enum.empty?()
-    assert [_] = Enum.to_list(find(html, "span.sg-sb-a.dis > .sg-sb-n"))
+    assert [_] = Enum.to_list(find(html, "span.lo-sb-item.dis > .lo-sb-count"))
   end
 
   test "a disabled item with no title uses its label, and a string disabled is the title" do
@@ -87,14 +87,14 @@ defmodule LineaUI.Components.SidebarCanvasTest do
     ]
 
     html = html(%{nav: nav})
-    assert attrs(html, "span.sg-sb-a.dis", "title") == ["Um", "Chega logo"]
+    assert attrs(html, "span.lo-sb-item.dis", "title") == ["Um", "Chega logo"]
   end
 
   test "match prefix marks the item with aria-current for a deeper path" do
     html = html(%{current: "/app/tasks/NXP-1", match: "prefix"})
 
     assert attrs(html, "a[aria-current=page]", "href") == ["/app/tasks"]
-    assert find(html, "a.sg-sb-a.on[href='/app']") |> Enum.empty?()
+    assert find(html, "a.lo-sb-item.on[href='/app']") |> Enum.empty?()
   end
 
   test "exact is the default: a deeper path marks nothing" do
@@ -130,16 +130,16 @@ defmodule LineaUI.Components.SidebarCanvasTest do
   test "the footer slot holds the collapse button together with the version line" do
     html = html(%{})
 
-    assert [_] = Enum.to_list(find(html, ".sg-sb-foot > #rec[data-rail-toggle=sb]"))
-    assert [_] = Enum.to_list(find(html, ".sg-sb-ver"))
+    assert [_] = Enum.to_list(find(html, ".lo-sb-foot > #rec[data-rail-toggle=sb]"))
+    assert [_] = Enum.to_list(find(html, ".lo-sb-ver"))
   end
 
   test "the mobile drawer slot is drawn only when given" do
-    assert find(html(%{}), ".sg-sb-drawer") |> Enum.empty?()
+    assert find(html(%{}), ".lo-sb-drawer") |> Enum.empty?()
 
     for format <- ["tree", "sections", "rail"] do
       html = html(%{drawer: true, format: format})
-      assert [_] = Enum.to_list(find(html, ".sg-sb-body > .sg-sb-drawer > #out"))
+      assert [_] = Enum.to_list(find(html, ".lo-sb-body > .lo-sb-drawer > #out"))
     end
   end
 
@@ -166,6 +166,6 @@ defmodule LineaUI.Components.SidebarCanvasTest do
 
     assert attrs(html, "a[aria-current=page]", "href") == ["/t"]
     assert attrs(html, "nav", "data-persist-groups") == ["true"]
-    assert [_] = Enum.to_list(find(html, ".sg-sb-drawer > #out"))
+    assert [_] = Enum.to_list(find(html, ".lo-sb-drawer > #out"))
   end
 end

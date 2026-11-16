@@ -239,12 +239,12 @@ defmodule LineaUI.Components.ToastTest do
         </.toast_card>
         """)
 
-      assert "sg-toast" in classes(html, "#t")
+      assert "lo-toast" in classes(html, "#t")
       refute "dark" in classes(html, "#t")
-      assert "neg" in classes(html, "#t .sg-ic")
-      assert [_] = find(html, "#t .sg-ic span.huge-cancel-circle") |> Enum.to_list()
+      assert "neg" in classes(html, "#t .lo-ic")
+      assert [_] = find(html, "#t .lo-ic span.huge-cancel-circle") |> Enum.to_list()
       assert find(html, "#t .t") |> LazyHTML.text() == "Não foi possível emitir"
-      assert find(html, "#t .sg-toast-desc") |> LazyHTML.text() == "SEFAZ fora do ar."
+      assert find(html, "#t .lo-toast-desc") |> LazyHTML.text() == "SEFAZ fora do ar."
       assert [_] = find(html, "#t > #undo") |> Enum.to_list()
       assert find(html, "#t > button.btn-ghost") |> LazyHTML.attribute("aria-label") == ["Fechar"]
     end
@@ -252,7 +252,7 @@ defmodule LineaUI.Components.ToastTest do
     test "the dark tone, no description and no close button" do
       html = render(~H|<.toast_card id="t" tone="dark" title="Excluído" dismissible={false} />|)
       assert "dark" in classes(html, "#t")
-      assert find(html, "#t .sg-toast-desc") |> Enum.empty?()
+      assert find(html, "#t .lo-toast-desc") |> Enum.empty?()
       assert find(html, "#t button") |> Enum.empty?()
     end
 
@@ -262,14 +262,14 @@ defmodule LineaUI.Components.ToastTest do
         <.toast_card id="t" aura="dual" aura_tone="ai" aura_width="lg" title="Pronto" dismissible={false} />
         """)
 
-      aura = classes(html, "div.sg-aura")
-      for c <- ~w(sg-aura sg-aura-shadow ai dual lg), do: assert(c in aura)
-      assert [_] = find(html, ".sg-aura > #t.sg-toast") |> Enum.to_list()
+      aura = classes(html, "div.lo-aura")
+      for c <- ~w(lo-aura lo-aura-shadow ai dual lg), do: assert(c in aura)
+      assert [_] = find(html, ".lo-aura > #t.lo-toast") |> Enum.to_list()
     end
 
     test "no aura leaves the card alone, and busy puts a spinner" do
       html = render(~H|<.toast_card id="t" busy title="Lendo" dismissible={false} />|)
-      assert find(html, ".sg-aura") |> Enum.empty?()
+      assert find(html, ".lo-aura") |> Enum.empty?()
       assert [_] = find(html, "#t > .loading") |> Enum.to_list()
     end
 
@@ -289,7 +289,7 @@ defmodule LineaUI.Components.ToastTest do
 
       assert "done" in classes(done, "#t")
       assert find(done, "#t .pct") |> LazyHTML.text() == "100%"
-      assert find(done, "#t > .sg-spin") |> Enum.empty?()
+      assert find(done, "#t > .lo-spin") |> Enum.empty?()
 
       fail =
         render(
@@ -298,7 +298,7 @@ defmodule LineaUI.Components.ToastTest do
 
       assert "fail" in classes(fail, "#t")
       assert find(fail, "#t .pct") |> Enum.empty?()
-      assert find(fail, "#t > .sg-spin") |> Enum.empty?()
+      assert find(fail, "#t > .lo-spin") |> Enum.empty?()
     end
   end
 
@@ -314,9 +314,9 @@ defmodule LineaUI.Components.ToastTest do
         </.status_toast>
         """)
 
-      assert "sg-toast" in classes(html, "#s")
+      assert "lo-toast" in classes(html, "#s")
       assert "st" in classes(html, "#s")
-      assert "ok" in classes(html, "#s > .sg-st")
+      assert "ok" in classes(html, "#s > .lo-st")
       assert find(html, "#s .msg b") |> LazyHTML.text() == "f798c00"
       assert [_, _] = find(html, "#s > button.act") |> Enum.to_list()
       assert [_] = find(html, "#s > button.act.ghost") |> Enum.to_list()
@@ -324,8 +324,8 @@ defmodule LineaUI.Components.ToastTest do
 
     test "a running circle takes the percentage; the default state has no extra class" do
       html = render(~H|<.status_toast id="s" percent={42}>Importando</.status_toast>|)
-      assert classes(html, "#s > .sg-st") == ["sg-st"]
-      assert find(html, "#s > .sg-st") |> LazyHTML.attribute("style") == ["--stp:42%"]
+      assert classes(html, "#s > .lo-st") == ["lo-st"]
+      assert find(html, "#s > .lo-st") |> LazyHTML.attribute("style") == ["--stp:42%"]
     end
   end
 

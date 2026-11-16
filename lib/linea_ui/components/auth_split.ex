@@ -90,7 +90,7 @@ defmodule LineaUI.Components.AuthSplit do
               <p :if={@subtitle} class="linea-auth-sub">{@subtitle}</p>
             </header>
             <div :if={@providers != []} class="linea-auth-providers">{render_slot(@providers)}</div>
-            <div :if={@providers != []} class="sg-divider" role="separator">{@divider_label}</div>
+            <div :if={@providers != []} class="divider" role="separator">{@divider_label}</div>
             {render_slot(@inner_block)}
             <p :if={@footer != []} class="linea-auth-foot">{render_slot(@footer)}</p>
           </div>

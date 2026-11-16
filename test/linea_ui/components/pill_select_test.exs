@@ -9,15 +9,21 @@ defmodule LineaUI.Components.PillSelectTest do
       |> find(selector)
       |> Enum.map(&(&1 |> LazyHTML.text() |> String.split() |> Enum.join(" ")))
 
-  test "one choice: a radiogroup of sg-tag labels over radios" do
+  test "one choice: a radiogroup of btn labels over radios" do
     html =
       render(
         ~H|<.pill_select name="canal" value="Online" options={["Todos", "Balcão", "Online"]} />|
       )
 
     assert attr_of(html, "#canal", "role") == ["radiogroup"]
-    assert "sg-pills" in classes(html, "#canal")
-    assert attr_of(html, "#canal label", "class") == ["sg-tag", "sg-tag", "sg-tag"]
+    assert "lo-pills" in classes(html, "#canal")
+
+    assert attr_of(html, "#canal label", "class") == [
+             "lo-pill btn btn-sm",
+             "lo-pill btn btn-sm",
+             "lo-pill btn btn-sm"
+           ]
+
     assert attr_of(html, "#canal input", "type") == ["radio", "radio", "radio"]
     assert attr_of(html, "#canal input", "name") == ["canal", "canal", "canal"]
     assert attr_of(html, "#canal input[checked]", "value") == ["Online"]
@@ -51,7 +57,7 @@ defmodule LineaUI.Components.PillSelectTest do
       />
       """)
 
-    assert texts(html, "#c .sg-pills-count") == ["128"]
+    assert texts(html, "#c .lo-pills-count") == ["128"]
     assert texts(html, "#c label") == ["Todos128", "Online"]
   end
 

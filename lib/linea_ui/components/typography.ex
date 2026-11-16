@@ -301,7 +301,7 @@ defmodule LineaUI.Components.Typography do
 
   @doc """
   Renders a keyboard key: mono 11.5px, with a 1px inset border and a 1px shadow under it.
-  `variant="flat"` is the canvas key (`sg-kbd`): 18px high, muted, on the sunken fill, with no shadow under it.
+  `variant="flat"` is the canvas key (`lo-kbd`): 18px high, muted, on the sunken fill, with no shadow under it.
 
       <.kbd>Ctrl</.kbd> + <.kbd>K</.kbd>
       <.kbd variant="flat">⌘ K</.kbd>

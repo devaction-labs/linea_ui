@@ -71,7 +71,7 @@ defmodule LineaUI.Components.ShellTest do
     html = html()
 
     assert ["sg", "linea-frame", "md:flex-row", "md:p-2.5"] -- classes(html, "#app") == []
-    assert [_] = Enum.to_list(find(html, "#app > nav#app-menu.sg-sb"))
+    assert [_] = Enum.to_list(find(html, "#app > nav#app-menu.lo-sb"))
     assert ["md:rounded-[22px]", "bg-base-100"] -- classes(html, "#app > main") == []
     assert [_] = Enum.to_list(find(html, "#app > main > #page"))
   end
@@ -80,9 +80,9 @@ defmodule LineaUI.Components.ShellTest do
     html = html(%{current: "/clientes"})
 
     assert attrs(html, "#app-menu", "data-format") == ["sections"]
-    assert texts(html, ".sg-sb-h") == ["Vendas"]
-    assert texts(html, ".sg-sb-a.on > .lbl") == ["Clientes"]
-    assert texts(html, ".sg-sb-plan .pro") == ["Pro"]
+    assert texts(html, ".lo-sb-title") == ["Vendas"]
+    assert texts(html, ".lo-sb-item.on > .lbl") == ["Clientes"]
+    assert texts(html, ".lo-sb-plan .pro") == ["Pro"]
   end
 
   for format <- ~w(rail tree) do
@@ -90,8 +90,8 @@ defmodule LineaUI.Components.ShellTest do
       html = html(%{sidebar: unquote(format), current: "/pedidos"})
 
       assert attrs(html, "#app-menu", "data-format") == [unquote(format)]
-      assert "Pedidos" in texts(html, ".sg-sb-a > .lbl")
-      assert texts(html, ".sg-sb-a.on > .lbl") == ["Pedidos"]
+      assert "Pedidos" in texts(html, ".lo-sb-item > .lbl")
+      assert texts(html, ".lo-sb-item.on > .lbl") == ["Pedidos"]
     end
   end
 
@@ -106,34 +106,34 @@ defmodule LineaUI.Components.ShellTest do
 </.shell>|)
 
     assert attrs(html, "#app-menu", "data-format") == ["tree"]
-    assert texts(html, ".sg-sb-gt") == ["Config"]
-    assert texts(html, ".sg-sb-a.on > .lbl") == ["Perfil"]
+    assert texts(html, ".lo-sb-gt") == ["Config"]
+    assert texts(html, ".lo-sb-item.on > .lbl") == ["Perfil"]
 
     html = html(%{sidebar: "rail"})
     assert attrs(html, "#app-menu", "data-format") == ["rail"]
-    assert "Pedidos" in texts(html, ".sg-sb-a > .lbl")
-    refute "Perfil" in texts(html, ".sg-sb-a > .lbl")
+    assert "Pedidos" in texts(html, ".lo-sb-item > .lbl")
+    refute "Perfil" in texts(html, ".lo-sb-item > .lbl")
   end
 
   test "`footer` and `version` reach the menu in the three formats (user, version, none)" do
     for sidebar <- ["tree", "sections", "rail"] do
       html = html(%{sidebar: sidebar, footer: "version", version: "v1.4.2"})
-      assert texts(html, ".sg-sb-ver") == ["v1.4.2"]
-      assert find(html, ".sg-sb-user, .sg-sb-plan, .sg-sb-rail > .sg-av") |> Enum.empty?()
+      assert texts(html, ".lo-sb-ver") == ["v1.4.2"]
+      assert find(html, ".lo-sb-user, .lo-sb-plan, .lo-sb-rail > .lo-sb-av") |> Enum.empty?()
 
       html = html(%{sidebar: sidebar, footer: :none, version: "v1.4.2"})
 
-      assert find(html, ".sg-sb-user, .sg-sb-plan, .sg-sb-ver, .sg-sb-rail > .sg-av")
+      assert find(html, ".lo-sb-user, .lo-sb-plan, .lo-sb-ver, .lo-sb-rail > .lo-sb-av")
              |> Enum.empty?()
 
       html = html(%{sidebar: sidebar, footer: "user"})
-      assert find(html, ".sg-sb-user, .sg-sb-rail > .sg-av") != []
-      assert find(html, ".sg-sb-ver, .sg-sb-plan") |> Enum.empty?()
+      assert find(html, ".lo-sb-user, .lo-sb-rail > .lo-sb-av") != []
+      assert find(html, ".lo-sb-ver, .lo-sb-plan") |> Enum.empty?()
     end
 
     html = html(%{sidebar: "tree"})
-    assert find(html, ".sg-sb-user") != []
-    assert find(html, ".sg-sb-ver") |> Enum.empty?()
+    assert find(html, ".lo-sb-user") != []
+    assert find(html, ".lo-sb-ver") |> Enum.empty?()
   end
 
   test "`version` as a map reaches the line" do
@@ -146,38 +146,38 @@ defmodule LineaUI.Components.ShellTest do
     }
 
     html = html(%{sidebar: "tree", footer: "version", version: version})
-    assert attrs(html, ".sg-sb-ver", "aria-label") == ["Version v1.4.2 (2a9f1c3)"]
-    assert attrs(html, ".sg-sb-ver", "data-status") == ["warning"]
-    assert texts(html, ".sg-sb-ver a.new") == ["Novidades"]
-    assert attrs(html, ".sg-sb-ver a.new", "href") == ["/novidades"]
+    assert attrs(html, ".lo-sb-ver", "aria-label") == ["Version v1.4.2 (2a9f1c3)"]
+    assert attrs(html, ".lo-sb-ver", "data-status") == ["warning"]
+    assert texts(html, ".lo-sb-ver a.new") == ["Novidades"]
+    assert attrs(html, ".lo-sb-ver a.new", "href") == ["/novidades"]
   end
 
   test "`show_user={false}` (deprecated) still works: none, or the version when there is one" do
     html = html(%{sidebar: "tree", show_user: false})
-    assert find(html, ".sg-sb-user, .sg-sb-ver") |> Enum.empty?()
+    assert find(html, ".lo-sb-user, .lo-sb-ver") |> Enum.empty?()
 
     html = html(%{sidebar: "tree", show_user: false, version: "v1.4.2"})
-    assert find(html, ".sg-sb-user") |> Enum.empty?()
-    assert texts(html, ".sg-sb-ver") == ["v1.4.2"]
+    assert find(html, ".lo-sb-user") |> Enum.empty?()
+    assert texts(html, ".lo-sb-ver") == ["v1.4.2"]
   end
 
   test "the config sets the foot and the attributes win" do
     Application.put_env(:linea_ui, :shell, sidebar: :tree, footer: :version, version: "v9.0.0")
     html = html()
-    assert find(html, ".sg-sb-user") |> Enum.empty?()
-    assert texts(html, ".sg-sb-ver") == ["v9.0.0"]
+    assert find(html, ".lo-sb-user") |> Enum.empty?()
+    assert texts(html, ".lo-sb-ver") == ["v9.0.0"]
 
     html = html(%{footer: "user", version: "v2.0.0"})
-    assert find(html, ".sg-sb-user") != []
-    assert find(html, ".sg-sb-ver") |> Enum.empty?()
+    assert find(html, ".lo-sb-user") != []
+    assert find(html, ".lo-sb-ver") |> Enum.empty?()
 
     html = html(%{footer: "none"})
-    assert find(html, ".sg-sb-user, .sg-sb-ver") |> Enum.empty?()
+    assert find(html, ".lo-sb-user, .lo-sb-ver") |> Enum.empty?()
 
     Application.put_env(:linea_ui, :shell, sidebar: :tree, show_user: false, version: "v9.0.0")
     html = html()
-    assert find(html, ".sg-sb-user") |> Enum.empty?()
-    assert texts(html, ".sg-sb-ver") == ["v9.0.0"]
+    assert find(html, ".lo-sb-user") |> Enum.empty?()
+    assert texts(html, ".lo-sb-ver") == ["v9.0.0"]
   end
 
   test "the menu collapses: the hook, the start state and the toggle of `sections` in the top bar" do
@@ -215,8 +215,8 @@ defmodule LineaUI.Components.ShellTest do
       """)
 
     assert [_] = Enum.to_list(find(html, "#app > main > div > #crumbs"))
-    assert [_] = Enum.to_list(find(html, ".sg-sb-brand > #mark"))
-    assert [_] = Enum.to_list(find(html, ".sg-sb-foot > #foot"))
+    assert [_] = Enum.to_list(find(html, ".lo-sb-brand > #mark"))
+    assert [_] = Enum.to_list(find(html, ".lo-sb-foot > #foot"))
   end
 
   describe "the `:tab_bar` slot" do

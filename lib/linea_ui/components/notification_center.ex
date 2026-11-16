@@ -201,7 +201,7 @@ defmodule LineaUI.Components.NotificationCenter do
         <.bell label={@bell_label} unread={@unread_count} unread_label={@unread_label} />
       </:trigger>
       <div :if={@items == []} class="nc-canvas-empty">
-        <span class={["sg-ic", canvas_tone(@empty_tone)]}><.icon name={@empty_tile} class="size-4" /></span>
+        <span class={["lo-ic", canvas_tone(@empty_tone)]}><.icon name={@empty_tile} class="size-4" /></span>
         <b>{@empty}</b>
         <span>{@empty_text}</span>
         <div :if={@empty_action != []} class="mt-2 flex flex-wrap justify-center gap-2">
@@ -218,7 +218,7 @@ defmodule LineaUI.Components.NotificationCenter do
             class="nc-canvas-row"
             data-unread={unread?(item) && "true"}
           >
-            <span class={["sg-ic", canvas_tone(Map.get(item, :type, "primary"))]}>
+            <span class={["lo-ic", canvas_tone(Map.get(item, :type, "primary"))]}>
               <.icon name={icon_for(item)} class="size-4" />
             </span>
             <span class="flex min-w-0 flex-1 flex-col">
@@ -405,7 +405,7 @@ defmodule LineaUI.Components.NotificationCenter do
     ~H"""
     <div class="flex flex-col items-center gap-1.5 px-7 pb-7 pt-6 text-center">
       <.empty_box :if={!@empty_icon} />
-      <span :if={@empty_icon} class={["sg-ic", canvas_tone(@empty_tone)]}>
+      <span :if={@empty_icon} class={["lo-ic", canvas_tone(@empty_tone)]}>
         <.icon name={@empty_icon} class="size-4" />
       </span>
       <h4 class="mt-3 text-[15px] font-semibold text-base-content">{@empty}</h4>

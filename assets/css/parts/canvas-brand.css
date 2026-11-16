@@ -6,7 +6,6 @@
 [data-theme="dark"] .ai-conversations.rail{background:color-mix(in srgb,var(--accent) 5%,var(--sunken))}
 
 /* Standalone pages (landing, brand): the board zeroes the margin of the subtitle paragraph. */
-.sg-solo .sg-sub{margin-top:0}
 
 /* An expanded module can be taller than the rail: the menu and its footer scroll as one, as the boards' page grows. */
 .linea-rail:not([data-collapsed="true"]) .rail-body{overflow-y:auto;scrollbar-width:none}

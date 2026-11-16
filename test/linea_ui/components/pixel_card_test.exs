@@ -16,7 +16,7 @@ defmodule LineaUI.Components.PixelCardTest do
       />
       """)
 
-    assert ["sg-px", "red"] == classes(html, "#p")
+    assert ["lo-px", "red"] == classes(html, "#p")
     assert ["huge-shopping-cart-01", "size-[13px]"] == classes(html, "#p > .ico > span")
     assert LazyHTML.text(find(html, "#p > b")) == "Loja"
     assert LazyHTML.text(find(html, "#p > span.d")) == "PDV, estoque, NFC-e"
@@ -43,7 +43,7 @@ defmodule LineaUI.Components.PixelCardTest do
 
   test "the colour is optional, the arrow and the icon can be left out" do
     html = render(~H|<.pixel_card id="p" title="Marca" arrow={false} class="extra" />|)
-    assert ["sg-px", "extra"] == classes(html, "#p")
+    assert ["lo-px", "extra"] == classes(html, "#p")
     assert find(html, "#p .go") |> Enum.count() == 0
     assert find(html, "#p .ico") |> Enum.count() == 0
     assert find(html, "#p .d") |> Enum.count() == 0

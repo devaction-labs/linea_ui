@@ -128,7 +128,7 @@ defmodule LineaUI.Components.SegmentedTest do
       <.segmented id="lg" value="A" options={["A"]} size="lg" full />
       """)
 
-    assert "sg-seg" in classes(html, "#sm")
+    assert "tabs-box" in classes(html, "#sm")
     assert "sm" in classes(html, "#sm")
     refute "sm" in classes(html, "#lg")
     assert "flex-1" in classes(html, "#lg button")

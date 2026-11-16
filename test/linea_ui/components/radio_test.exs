@@ -31,7 +31,7 @@ defmodule LineaUI.Components.RadioTest do
     assert "radio-lg" in classes(lg, "input")
   end
 
-  test "the card is the canvas sg-choice: radio at the start by default, at the end with control=end" do
+  test "the card is the canvas lo-choice: radio at the start by default, at the end with control=end" do
     html = render(~H|<.radio_group name="r" variant="card" value="a" options={~w(a b)} />|)
     assert "lu-rcard" in classes(html, "label")
     assert attr_of(html, "label", "data-color") == ["neutral", "neutral"]
@@ -45,7 +45,7 @@ defmodule LineaUI.Components.RadioTest do
       </.radio_group>
       """)
 
-    assert "sg-ic" in classes(html, "label .lu-rcard-icon")
+    assert "lo-ic" in classes(html, "label .lu-rcard-icon")
     assert html |> find("label:first-child > span:last-child input") |> Enum.count() == 1
 
     assert "is-stacked" in (html

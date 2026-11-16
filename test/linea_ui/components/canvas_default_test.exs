@@ -52,21 +52,21 @@ defmodule LineaUI.Components.CanvasDefaultTest do
   end
 
   test "fab: canvas by default, pill is the old look" do
-    assert has?(render(~H"<.fab id=\"f\" label=\"Go\" />"), ".sg-fab")
-    refute has?(render(~H"<.fab id=\"f\" variant=\"pill\" label=\"Go\" />"), ".sg-fab")
+    assert has?(render(~H"<.fab id=\"f\" label=\"Go\" />"), ".lo-fab")
+    refute has?(render(~H"<.fab id=\"f\" variant=\"pill\" label=\"Go\" />"), ".lo-fab")
 
     assert has?(
              render(~H"<.fab_dial id=\"d\" label=\"Go\">
   <:action label=\"A\">a</:action>
 </.fab_dial>"),
-             ".sg-fab-dial"
+             ".lo-fab-dial"
            )
 
     refute has?(
              render(~H"<.fab_dial id=\"d\" variant=\"pill\" label=\"Go\">
   <:action label=\"A\">a</:action>
 </.fab_dial>"),
-             ".sg-fab-dial"
+             ".lo-fab-dial"
            )
   end
 
@@ -89,13 +89,13 @@ defmodule LineaUI.Components.CanvasDefaultTest do
   end
 
   test "stepper: canvas by default, classic is the old look" do
-    assert has?(render(~H"<.stepper current={1}><:step label=\"A\" /></.stepper>"), ".sg-steps")
+    assert has?(render(~H"<.stepper current={1}><:step label=\"A\" /></.stepper>"), ".lo-steps")
 
     refute has?(
              render(
                ~H"<.stepper variant=\"classic\" current={1}><:step label=\"A\" /></.stepper>"
              ),
-             ".sg-steps"
+             ".lo-steps"
            )
   end
 
@@ -162,7 +162,7 @@ defmodule LineaUI.Components.CanvasDefaultTest do
   end
 
   test "empty_state: canvas by default, card is the old look" do
-    assert has?(render(~H"<.empty_state title=\"Nada\" />"), ".sg-empty")
-    refute has?(render(~H"<.empty_state variant=\"card\" title=\"Nada\" />"), ".sg-empty")
+    assert has?(render(~H"<.empty_state title=\"Nada\" />"), ".lo-empty")
+    refute has?(render(~H"<.empty_state variant=\"card\" title=\"Nada\" />"), ".lo-empty")
   end
 end

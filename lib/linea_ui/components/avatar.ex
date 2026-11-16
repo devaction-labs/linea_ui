@@ -315,7 +315,7 @@ defmodule LineaUI.Components.Avatar do
     default: "sm",
     values: ~w(3xs 2xs xs xs-plus sm sm-plus md lg xl 2xl 24 26 30 32 40 44 48 64),
     doc:
-      "`3xs` is size-6, `2xs` size-7, `xs` size-8, `xs-plus` size-9, `sm` size-10 (default), `md` size-12, `lg` size-16, `xl` size-20, `2xl` size-24. The pixel sizes are aliases: `24` is `3xs`, `32` is `xs`, `40` is `sm`, `48` is `md`, `64` is `lg`. `30` and `26` are the canvas `sg-av` (30px, 12px initials) and `sg-av sm` (26px, 10px initials), both semibold."
+      "`3xs` is size-6, `2xs` size-7, `xs` size-8, `xs-plus` size-9, `sm` size-10 (default), `md` size-12, `lg` size-16, `xl` size-20, `2xl` size-24. The pixel sizes are aliases: `24` is `3xs`, `32` is `xs`, `40` is `sm`, `48` is `md`, `64` is `lg`. `30` and `26` are the canvas `lo-av` (30px, 12px initials) and `lo-av sm` (26px, 10px initials), both semibold."
   )
 
   attr(:shape, :string,
@@ -334,7 +334,7 @@ defmodule LineaUI.Components.Avatar do
   attr(:background, :string,
     default: nil,
     doc:
-      "Any CSS `background` for the initials' face (a gradient such as `\"var(--grad)\"`, or a colour), with white text like the canvas `sg-av`; it wins over `tint` and `color`. Put another text colour in `face_class`."
+      "Any CSS `background` for the initials' face (a gradient such as `\"var(--grad)\"`, or a colour), with white text like the canvas `lo-av`; it wins over `tint` and `color`. Put another text colour in `face_class`."
   )
 
   attr(:color, :string,

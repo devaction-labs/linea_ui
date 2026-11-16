@@ -406,11 +406,11 @@ defmodule LineaUI.Components.CalendarTest do
         """)
 
       assert html |> find("#m .lc-mini-h b") |> LazyHTML.text() == "Novembro 2026"
-      assert html |> find("#m .sg-cal > b") |> Enum.count() == 7
-      assert html |> find("#m .sg-cal > span") |> Enum.count() == 30
-      assert html |> find("#m .sg-cal > span.on") |> LazyHTML.text() |> String.trim() == "5"
-      assert html |> find("#m .sg-cal > span.rg") |> Enum.count() == 6
-      assert html |> find("#m .sg-cal > span.t") |> LazyHTML.text() |> String.trim() == "20"
+      assert html |> find("#m .lo-cal > b") |> Enum.count() == 7
+      assert html |> find("#m .lo-cal > span") |> Enum.count() == 30
+      assert html |> find("#m .lo-cal > span.on") |> LazyHTML.text() |> String.trim() == "5"
+      assert html |> find("#m .lo-cal > span.rg") |> Enum.count() == 6
+      assert html |> find("#m .lo-cal > span.t") |> LazyHTML.text() |> String.trim() == "20"
       assert [_] = find(html, "#m .lc-mk") |> Enum.to_list()
     end
 
@@ -436,7 +436,7 @@ defmodule LineaUI.Components.CalendarTest do
         <.calendar id="s" variant="mini" header={false} date={~D[2026-11-01]} on_select="pick" />
         """)
 
-      assert html |> find("#s .sg-cal > button") |> Enum.count() == 30
+      assert html |> find("#s .lo-cal > button") |> Enum.count() == 30
       assert find(html, "#s .lc-mini-h") |> Enum.to_list() == []
     end
 
@@ -469,9 +469,9 @@ defmodule LineaUI.Components.CalendarTest do
         <.calendar id="o" variant="mini" date={~D[2026-11-01]} week_start={1} outside_days />
         """)
 
-      assert html |> find("#o .sg-cal > span") |> Enum.count() == 42
-      assert html |> find("#o .sg-cal > span.o") |> Enum.count() == 12
-      assert html |> find("#o .sg-cal > .lc-blank") |> Enum.count() == 0
+      assert html |> find("#o .lo-cal > span") |> Enum.count() == 42
+      assert html |> find("#o .lo-cal > span.o") |> Enum.count() == 12
+      assert html |> find("#o .lo-cal > .lc-blank") |> Enum.count() == 0
     end
 
     test "outside_days stays off by default" do
@@ -480,8 +480,8 @@ defmodule LineaUI.Components.CalendarTest do
         <.calendar id="o" variant="mini" date={~D[2026-11-01]} week_start={1} />
         """)
 
-      assert html |> find("#o .sg-cal > span.o") |> Enum.count() == 0
-      assert html |> find("#o .sg-cal > .lc-blank") |> Enum.count() == 6
+      assert html |> find("#o .lo-cal > span.o") |> Enum.count() == 0
+      assert html |> find("#o .lo-cal > .lc-blank") |> Enum.count() == 6
     end
 
     test "day_id takes a prefix or a function" do
@@ -524,11 +524,11 @@ defmodule LineaUI.Components.CalendarTest do
         />
         """)
 
-      assert [_] = find(html, "#i .sg-cal > button") |> Enum.to_list()
-      assert html |> find("#i .sg-cal > span") |> Enum.count() == 29
+      assert [_] = find(html, "#i .lo-cal > button") |> Enum.to_list()
+      assert html |> find("#i .lo-cal > span") |> Enum.count() == 29
     end
 
-    test "card={false} renders only the sg-cal grid" do
+    test "card={false} renders only the lo-cal grid" do
       html =
         render(~H"""
         <.calendar
@@ -544,7 +544,7 @@ defmodule LineaUI.Components.CalendarTest do
       assert html |> find("#c .card") |> Enum.count() == 0
       assert html |> find("#c .lc-mini-h") |> Enum.count() == 0
       assert html |> find("#c .lc-mini-legend") |> Enum.count() == 0
-      assert html |> find("#c .lc-mini .sg-cal") |> Enum.count() == 1
+      assert html |> find("#c .lc-mini .lo-cal") |> Enum.count() == 1
     end
   end
 end

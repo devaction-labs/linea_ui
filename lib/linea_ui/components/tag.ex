@@ -21,7 +21,7 @@ defmodule LineaUI.Components.Tag do
 
   A selected chip (`active`) is a solid primary fill with white text, for every variant but `flat`.
 
-  `variant="flat"` is the canvas tag (`sg-tag`): 26px, regular weight, muted text on the sunken fill; its
+  `variant="flat"` is the canvas tag (`lo-tag`): 26px, regular weight, muted text on the sunken fill; its
   active state is the accent tint. `tint` paints a tag in a colour of its own (a user's label colour):
 
       <.tag variant="flat" active>Todos</.tag>

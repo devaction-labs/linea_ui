@@ -82,7 +82,7 @@ defmodule LineaUI.Components.PillSelect do
         id={@id}
         role={if @multiple, do: "group", else: "radiogroup"}
         aria-labelledby={@label && "#{@id}-label"}
-        class={merge(["sg-pills", @label && "mt-1.5", @class])}
+        class={merge(["lo-pills", @label && "mt-1.5", @class])}
         {@rest}
       >
         <input
@@ -94,7 +94,7 @@ defmodule LineaUI.Components.PillSelect do
         />
         <label
           :for={pill <- @pills}
-          class="sg-tag"
+          class="lo-pill btn btn-sm"
           data-value={pill.value}
         >
           <input
@@ -108,7 +108,7 @@ defmodule LineaUI.Components.PillSelect do
               @on_change && JS.push(@on_change, value: %{id: @id, value: pill.value}, target: @target)
             }
           />
-          {pill.label}<span :if={pill.count != nil} class="sg-pills-count">{pill.count}</span>
+          {pill.label}<span :if={pill.count != nil} class="lo-pills-count badge badge-xs">{pill.count}</span>
         </label>
       </div>
     </Form.field>

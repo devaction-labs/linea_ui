@@ -208,7 +208,7 @@ defmodule LineaUI.Components.DataTable do
     default: "rounded",
     values: ~w(rounded pill circle canvas),
     doc:
-      "The pager look of the `advanced` variant; `canvas` is the design canvas footer (`sg-pager`): the summary at the left, `pagination/1` with `shape=\"canvas\"` at the right."
+      "The pager look of the `advanced` variant; `canvas` is the design canvas footer (`lo-pager`): the summary at the left, `pagination/1` with `shape=\"canvas\"` at the right."
   )
 
   attr(:pager_siblings, :integer,
@@ -597,7 +597,7 @@ defmodule LineaUI.Components.DataTable do
             peek_label={@peek_label}
           />
         <% end %>
-        <div :if={@paginated and @pager == "canvas"} class="sg-pager linea-dtable-pager">
+        <div :if={@paginated and @pager == "canvas"} class="lo-pager linea-dtable-pager">
           <Pagination.pagination
             page={@page}
             total_pages={@pages}
@@ -762,7 +762,7 @@ defmodule LineaUI.Components.DataTable do
     """
   end
 
-  # the first load: the headers over skeleton rows (the canvas `sg-skel` bars)
+  # the first load: the headers over skeleton rows (daisyUI `skeleton` bars)
   attr(:col, :any, required: true)
   attr(:loading_rows, :integer, required: true)
 

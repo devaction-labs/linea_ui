@@ -173,7 +173,7 @@ defmodule LineaUI.Components.Kanban do
   attr :fluid, :boolean,
     default: false,
     doc:
-      "`true` makes the columns share the width of the page (each `flex-1`, no fixed 272px, no sideways scroll) like the canvas `sg-kb`. The `kanban_lost` aside keeps its 52px."
+      "`true` makes the columns share the width of the page (each `flex-1`, no fixed 272px, no sideways scroll) like the canvas `lo-kb`. The `kanban_lost` aside keeps its 52px."
 
   attr :active, :string,
     default: nil,
@@ -351,7 +351,7 @@ defmodule LineaUI.Components.Kanban do
           {render_slot(@icon)}
         </span>
         <span class="text-[13.5px] font-[550] text-base-content">{@label}</span>
-        <span :if={@shown && !@exceeded} class="sg-nav-n">{@shown}</span>
+        <span :if={@shown && !@exceeded} class="lo-nav-n badge badge-ghost badge-sm">{@shown}</span>
         <span :if={@shown && @exceeded} class={merge([@pill, "ml-auto", @over_limit_class])}>
           {@shown}
         </span>
@@ -379,7 +379,7 @@ defmodule LineaUI.Components.Kanban do
         :for={empty <- @empty}
         :if={(@count == 0 || @hint == "always") && !empty[:title]}
         data-empty
-        class="sg-drop sg-kb-empty"
+        class="lo-drop lo-kb-empty"
       >
         {render_slot(empty)}
       </div>

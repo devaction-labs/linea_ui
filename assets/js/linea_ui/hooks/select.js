@@ -307,7 +307,7 @@ export const Listbox = {
   createdOption(term) {
     this.serial += 1
     const text = escapeHtml(term)
-    return `<div class="option" role="option" id="${this.el.id}-new-${this.serial}" data-value="${text}" data-label="${text}" data-selectable="true" data-created aria-selected="false">${this.toggles() ? '<span class="sg-box" aria-hidden="true"></span>' : ""}<span data-text>${text}</span></div>`
+    return `<div class="option" role="option" id="${this.el.id}-new-${this.serial}" data-value="${text}" data-label="${text}" data-selectable="true" data-created aria-selected="false">${this.toggles() ? '<span class="lo-box" aria-hidden="true"></span>' : ""}<span data-text>${text}</span></div>`
   },
 
   dropCreated(value) {

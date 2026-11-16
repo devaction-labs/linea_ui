@@ -52,7 +52,7 @@ defmodule LineaUI.Components.KanbanTest do
     assert "rounded-[18px]" in classes(html, "section")
     assert "bg-[var(--sunken)]" in classes(html, "section")
     assert LazyHTML.text(find(html, "section > div")) =~ "2"
-    assert LazyHTML.text(find(html, "section > div > span.sg-nav-n")) =~ "2"
+    assert LazyHTML.text(find(html, "section > div > span.lo-nav-n")) =~ "2"
   end
 
   test "the list and the card item default to the id" do
@@ -148,7 +148,7 @@ defmodule LineaUI.Components.KanbanTest do
       </.kanban_column>
       """)
 
-    assert ["sg-drop", "sg-kb-empty"] == classes(html, "div[data-empty]")
+    assert ["lo-drop", "lo-kb-empty"] == classes(html, "div[data-empty]")
     assert LazyHTML.text(find(html, "div[data-empty]")) =~ "Arraste para cá"
     assert find(html, "div[data-empty] svg") |> Enum.count() == 0
   end

@@ -136,22 +136,22 @@ defmodule LineaUI.Components.SidebarTest do
 
       assert "sec" in classes(html, "nav#sb")
       assert attrs(html, "nav#sb", "data-format") == ["sections"]
-      assert texts(html, ".sg-sb-brand > b") == ["Linea"]
-      assert texts(html, ".sg-sb-brand > .sg-sb-logo") == ["S"]
-      assert attrs(html, ".sg-sb-brand button.sw", "aria-label") == ["Switch company"]
-      assert texts(html, ".sg-sb-h") == ["Vendas", "Notas", "Financeiro"]
-      assert texts(html, ".sg-sb-h2") == ["Configurações e ajuda"]
-      assert texts(html, ".sg-sb-plan > b") == ["Linea"]
-      assert texts(html, ".sg-sb-plan .pro") == ["Pro"]
-      assert find(html, ".sg-sb-rail") |> Enum.empty?()
+      assert texts(html, ".lo-sb-brand > b") == ["Linea"]
+      assert texts(html, ".lo-sb-brand > .lo-sb-logo") == ["S"]
+      assert attrs(html, ".lo-sb-brand button.sw", "aria-label") == ["Switch company"]
+      assert texts(html, ".lo-sb-title") == ["Vendas", "Notas", "Financeiro"]
+      assert texts(html, ".lo-sb-title2") == ["Configurações e ajuda"]
+      assert texts(html, ".lo-sb-plan > b") == ["Linea"]
+      assert texts(html, ".lo-sb-plan .pro") == ["Pro"]
+      assert find(html, ".lo-sb-rail") |> Enum.empty?()
     end
 
     test "the items of the format only: the foot has its items and `formats` hides the rail ones" do
       html = html()
 
-      assert texts(html, ".sg-sb-foot .sg-sb-a > .lbl") == ["Ajuda"]
+      assert texts(html, ".lo-sb-foot .lo-sb-item > .lbl") == ["Ajuda"]
 
-      assert texts(html, ".sg-sb-scroll > .sg-sb-a > .lbl") == [
+      assert texts(html, ".lo-sb-scroll > ul > li > .lo-sb-item > .lbl") == [
                "Início",
                "Assistente",
                "Pedidos",
@@ -164,25 +164,32 @@ defmodule LineaUI.Components.SidebarTest do
     test "counts, badges and children" do
       html = html()
 
-      assert texts(html, ".sg-sb-scroll > .sg-sb-a > .sg-sb-n") == ["12"]
-      assert texts(html, ".sg-sb-tree .sg-sb-a > .lbl") == ["Abertos", "Cancelados"]
-      assert texts(html, ".sg-sb-tree .sg-sb-n") == ["8"]
-      assert find(html, ".sg-sb-tree.line") |> Enum.empty?()
+      assert texts(html, ".lo-sb-scroll > ul > li > .lo-sb-item > .lo-sb-count") == ["12"]
+      assert texts(html, ".lo-sb-children .lo-sb-item > .lbl") == ["Abertos", "Cancelados"]
+      assert texts(html, ".lo-sb-children .lo-sb-count") == ["8"]
       assert find(html, "svg.tb") |> Enum.empty?()
-      assert [_] = Enum.to_list(find(html, ".sg-sb-a > .red"))
+      assert [_] = Enum.to_list(find(html, ".lo-sb-item > .red"))
     end
 
     test "an item has an icon, a tooltip for the collapsed menu and a name" do
       html = html()
 
-      assert "huge-home-01" in classes(html, ".sg-sb-scroll > .sg-sb-a:first-child > .i")
-      assert texts(html, ".sg-sb-scroll > .sg-sb-a:first-child > .rail-tip") == ["Início"]
+      assert "huge-home-01" in classes(
+               html,
+               ".lo-sb-scroll > ul > li:first-child > .lo-sb-item > .i"
+             )
 
-      assert attrs(html, ".sg-sb-scroll > .sg-sb-a:first-child > .rail-tip", "role") == [
-               "tooltip"
+      assert texts(html, ".lo-sb-scroll > ul > li:first-child > .lo-sb-item > .rail-tip") == [
+               "Início"
              ]
 
-      assert attrs(html, ".sg-sb-scroll > .sg-sb-a:first-child", "data-rail-tip") == [""]
+      assert attrs(html, ".lo-sb-scroll > ul > li:first-child > .lo-sb-item > .rail-tip", "role") ==
+               [
+                 "tooltip"
+               ]
+
+      assert attrs(html, ".lo-sb-scroll > ul > li:first-child > .lo-sb-item", "data-rail-tip") ==
+               [""]
     end
   end
 
@@ -190,22 +197,22 @@ defmodule LineaUI.Components.SidebarTest do
     test "is the one whose path is the current one, with aria-current" do
       html = html(%{current: "/clientes"})
 
-      assert texts(html, ".sg-sb-a.on > .lbl") == ["Clientes"]
-      assert attrs(html, ".sg-sb-a.on", "aria-current") == ["page"]
+      assert texts(html, ".lo-sb-item.on > .lbl") == ["Clientes"]
+      assert attrs(html, ".lo-sb-item.on", "aria-current") == ["page"]
       assert attrs(html, "a[href=\"/\"]", "aria-current") == []
     end
 
     test "compares the query too, so a child is active and its parent is not" do
       html = html(%{current: "/pedidos?status=aberto"})
-      assert texts(html, ".sg-sb-a.on > .lbl") == ["Abertos"]
+      assert texts(html, ".lo-sb-item.on > .lbl") == ["Abertos"]
 
       html = html(%{current: "/pedidos"})
-      assert texts(html, ".sg-sb-a.on > .lbl") == ["Pedidos"]
+      assert texts(html, ".lo-sb-item.on > .lbl") == ["Pedidos"]
     end
 
     test "`active: true` marks it without a path" do
       nav = [%{label: "A", icon: "home", href: "/a", active: true}, %{label: "B", href: "/b"}]
-      assert texts(html(%{nav: nav}), ".sg-sb-a.on > .lbl") == ["A"]
+      assert texts(html(%{nav: nav}), ".lo-sb-item.on > .lbl") == ["A"]
     end
   end
 
@@ -217,90 +224,94 @@ defmodule LineaUI.Components.SidebarTest do
     test "has the rail and the panel of the module of the current item", %{html: html} do
       assert "railx" in classes(html, "nav#sb")
       assert attrs(html, "nav#sb", "data-format") == ["rail"]
-      assert texts(html, ".sg-sb-ph > b") == ["Vendas"]
-      assert texts(html, ".sg-sb-rail > .sg-sb-logo") == ["S"]
-      assert find(html, ".sg-sb-brand") |> Enum.empty?()
+      assert texts(html, ".lo-sb-ph > b") == ["Vendas"]
+      assert texts(html, ".lo-sb-rail > .lo-sb-logo") == ["S"]
+      assert find(html, ".lo-sb-brand") |> Enum.empty?()
     end
 
     test "the rail: home, the person, one icon per module, the other items, extra apps and the foot",
          %{html: html} do
-      labels = attrs(html, ".sg-sb-rail > a", "aria-label")
+      labels = attrs(html, ".lo-sb-rail > a", "aria-label")
       assert labels == ["Início", "Vendas", "Financeiro", "Assistente", "Mapa", "Ajuda", "Avisos"]
 
-      assert texts(html, ".sg-sb-rail > .sg-av") == ["MC"]
-      assert attrs(html, ".sg-sb-rail > .sg-av", "aria-label") == ["Marina Costa"]
-      assert attrs(html, ".sg-sb-rail > a.on", "aria-label") == ["Vendas"]
-      assert attrs(html, ".sg-sb-rail > a.on", "aria-current") == ["page"]
-      assert attrs(html, ".sg-sb-rail > a[data-module]", "aria-label") == ["Vendas", "Financeiro"]
-      assert attrs(html, ".sg-sb-rail > a[data-module]", "href") == ["/pedidos", "/caixa"]
-      assert attrs(html, ".sg-sb-rail a.dot", "style") == ["background:#f97316"]
-      assert attrs(html, ".sg-sb-rail > a.has-badge", "aria-label") == ["Avisos"]
-      assert texts(html, ".sg-sb-rail > a.r > .rail-tip") |> Enum.take(2) == ["Início", "Vendas"]
-      assert attrs(html, ".sg-sb-rail > a.r", "data-rail-tip") |> Enum.uniq() == ["always"]
+      assert texts(html, ".lo-sb-rail > .lo-sb-av") == ["MC"]
+      assert attrs(html, ".lo-sb-rail > .lo-sb-av", "aria-label") == ["Marina Costa"]
+      assert attrs(html, ".lo-sb-rail > a.on", "aria-label") == ["Vendas"]
+      assert attrs(html, ".lo-sb-rail > a.on", "aria-current") == ["page"]
+      assert attrs(html, ".lo-sb-rail > a[data-module]", "aria-label") == ["Vendas", "Financeiro"]
+      assert attrs(html, ".lo-sb-rail > a[data-module]", "href") == ["/pedidos", "/caixa"]
+      assert attrs(html, ".lo-sb-rail a.dot", "style") == ["background:#f97316"]
+      assert attrs(html, ".lo-sb-rail > a.has-badge", "aria-label") == ["Avisos"]
+      assert texts(html, ".lo-sb-rail > a.r > .rail-tip") |> Enum.take(2) == ["Início", "Vendas"]
+      assert attrs(html, ".lo-sb-rail > a.r", "data-rail-tip") |> Enum.uniq() == ["always"]
     end
 
     test "the panel: the create button, the items, the nested group, the coloured tree and the shortcuts",
          %{html: html} do
-      assert texts(html, ".sg-sb-panel a.sg-sb-new") == ["Novo pedido"]
-      assert attrs(html, "a.sg-sb-new", "href") == ["/pedidos/novo"]
-      assert texts(html, ".sg-sb-panel .sg-sb-gh") == ["Notas", "Experimente"]
-      assert attrs(html, "button.sg-sb-gh", "aria-expanded") == ["false"]
-      assert attrs(html, "button.sg-sb-gh", "aria-controls") |> length() == 1
-      assert texts(html, ".sg-sb-tree a.t .lbl") == ["Abertos", "Cancelados"]
-      assert classes(html, ".sg-sb-tree a.t:first-child > span") |> Enum.take(2) == ["ci", "blue"]
+      assert texts(html, ".lo-sb-panel a.lo-sb-new") == ["Novo pedido"]
+      assert attrs(html, "a.lo-sb-new", "href") == ["/pedidos/novo"]
+      assert texts(html, ".lo-sb-panel .lo-sb-gh") == ["Notas", "Experimente"]
+      assert attrs(html, ".lo-sb-gh > button", "aria-expanded") == ["false"]
+      assert attrs(html, ".lo-sb-gh > button", "aria-controls") |> length() == 1
+      assert texts(html, ".lo-sb-children a.t .lbl") == ["Abertos", "Cancelados"]
 
-      assert attrs(html, ".sg-sb-tree a.t:last-child > span.ci", "style") == [
+      assert classes(html, ".lo-sb-children > li:first-child > a.t > span") |> Enum.take(2) == [
+               "ci",
+               "blue"
+             ]
+
+      assert attrs(html, ".lo-sb-children > li:last-child > a.t > span.ci", "style") == [
                "background:#f43f5e"
              ]
 
-      assert texts(html, ".sg-sb-scroll > a.sg-sb-a > .lbl") ==
+      assert texts(html, ".lo-sb-scroll > ul > li > a.lo-sb-item > .lbl") ==
                ["Conectar banco"]
                |> then(&(&1 -- &1))
-               |> Kernel.++(texts(html, ".sg-sb-scroll > a.sg-sb-a > .lbl"))
+               |> Kernel.++(texts(html, ".lo-sb-scroll > ul > li > a.lo-sb-item > .lbl"))
 
-      assert "Conectar banco" in texts(html, ".sg-sb-scroll .sg-sb-a > .lbl")
-      assert attrs(html, ".sg-sb-panel [data-rail-toggle]", "data-rail-toggle") == ["sb"]
+      assert "Conectar banco" in texts(html, ".lo-sb-scroll .lo-sb-item > .lbl")
+      assert attrs(html, ".lo-sb-panel [data-rail-toggle]", "data-rail-toggle") == ["sb"]
     end
 
     test "the trial card", %{html: html} do
-      assert texts(html, ".sg-sb-trial .row1 > b") == ["Termina em 7 dias"]
-      assert texts(html, ".sg-sb-trial .free") == ["Teste"]
-      assert texts(html, ".sg-sb-trial .row2 > span") == ["Acesso completo"]
-      assert attrs(html, ".sg-sb-trial .row2 a", "href") == ["/assinar"]
-      assert texts(html, ".sg-sb-trial .row2 a") == ["Assinar"]
-      assert attrs(html, ".sg-sb-trial .bar i", "style") == ["width:32%"]
-      assert attrs(html, ".sg-sb-trial .bar", "aria-valuenow") == ["32"]
+      assert texts(html, ".lo-sb-trial .row1 > b") == ["Termina em 7 dias"]
+      assert texts(html, ".lo-sb-trial .free") == ["Teste"]
+      assert texts(html, ".lo-sb-trial .row2 > span") == ["Acesso completo"]
+      assert attrs(html, ".lo-sb-trial .row2 a", "href") == ["/assinar"]
+      assert texts(html, ".lo-sb-trial .row2 a") == ["Assinar"]
+      assert attrs(html, ".lo-sb-trial progress.progress", "value") == ["32"]
+      assert attrs(html, ".lo-sb-trial progress.progress", "max") == ["100"]
     end
 
     test "the panel follows the module that holds the active item, and the first one without it" do
-      assert texts(html(%{format: "rail", current: "/caixa"}), ".sg-sb-ph > b") == ["Financeiro"]
-      assert texts(html(%{format: "rail", current: "/x"}), ".sg-sb-ph > b") == ["Vendas"]
+      assert texts(html(%{format: "rail", current: "/caixa"}), ".lo-sb-ph > b") == ["Financeiro"]
+      assert texts(html(%{format: "rail", current: "/x"}), ".lo-sb-ph > b") == ["Vendas"]
     end
 
     test "a nested group of the panel starts closed, and open when it holds the current item" do
       html = html(%{format: "rail", current: "/pedidos"})
-      assert attrs(html, "button.sg-sb-gh", "aria-expanded") == ["false"]
-      assert find(html, "div.sg-sb-grp[data-closed]") |> Enum.count() == 1
+      assert attrs(html, ".lo-sb-gh > button", "aria-expanded") == ["false"]
+      assert find(html, "ul.lo-sb-group[data-closed]") |> Enum.count() == 1
 
       html = html(%{format: "rail", current: "/notas"})
-      assert attrs(html, "button.sg-sb-gh", "aria-expanded") == ["true"]
-      assert find(html, "div.sg-sb-grp[data-closed]") |> Enum.empty?()
+      assert attrs(html, ".lo-sb-gh > button", "aria-expanded") == ["true"]
+      assert find(html, "ul.lo-sb-group[data-closed]") |> Enum.empty?()
     end
 
     test "the header of a nested group is the toggle, with the chevron decorative inside" do
       html = html(%{format: "rail", current: "/pedidos"})
-      assert texts(html, "button.sg-sb-gh") == ["Notas"]
-      assert attrs(html, "button.sg-sb-gh", "type") == ["button"]
-      [controls] = attrs(html, "button.sg-sb-gh", "aria-controls")
-      assert attrs(html, "div.sg-sb-grp", "id") |> Enum.member?(controls)
-      assert find(html, "button.sg-sb-gh button") |> Enum.empty?()
-      assert attrs(html, "button.sg-sb-gh > span.tg", "aria-hidden") == ["true"]
-      assert find(html, "button.sg-sb-gh .tg svg") |> Enum.count() == 1
+      assert texts(html, ".lo-sb-gh > button") == ["Notas"]
+      assert attrs(html, ".lo-sb-gh > button", "type") == ["button"]
+      [controls] = attrs(html, ".lo-sb-gh > button", "aria-controls")
+      assert attrs(html, "ul.lo-sb-group", "id") |> Enum.member?(controls)
+      assert find(html, ".lo-sb-gh > button button") |> Enum.empty?()
+      assert attrs(html, ".lo-sb-gh > button > span.tg", "aria-hidden") == ["true"]
+      assert find(html, ".lo-sb-gh > button .tg svg") |> Enum.count() == 1
     end
 
     test "the panel button is left out with `collapsible` false" do
       html = html(%{format: "rail", collapsible: false})
-      assert find(html, ".sg-sb-panel [data-rail-toggle]") |> Enum.empty?()
+      assert find(html, ".lo-sb-panel [data-rail-toggle]") |> Enum.empty?()
     end
   end
 
@@ -313,118 +324,84 @@ defmodule LineaUI.Components.SidebarTest do
       html: html
     } do
       assert "treex" in classes(html, "nav#sb")
-      assert attrs(html, ".sg-sb-brand button.col", "data-rail-toggle") == ["sb"]
-      assert attrs(html, ".sg-sb-brand button.col", "aria-label") == ["Collapse menu"]
-      assert texts(html, "button.sg-sb-gt") == ["Vendas", "Notas", "Financeiro"]
-      assert attrs(html, "button.sg-sb-gt", "aria-expanded") == ["false", "false", "true"]
-      assert texts(html, ".sg-sb-user .who > b") == ["Marina Costa"]
-      assert texts(html, ".sg-sb-user .who > span") == ["marina@linea.com"]
-      assert texts(html, ".sg-sb-user .sg-av") == ["MC"]
+      assert attrs(html, ".lo-sb-brand button.col", "data-rail-toggle") == ["sb"]
+      assert attrs(html, ".lo-sb-brand button.col", "aria-label") == ["Collapse menu"]
+      assert texts(html, ".lo-sb-gt > button") == ["Vendas", "Notas", "Financeiro"]
+      assert attrs(html, ".lo-sb-gt > button", "aria-expanded") == ["false", "false", "true"]
+      assert texts(html, ".lo-sb-user .who > b") == ["Marina Costa"]
+      assert texts(html, ".lo-sb-user .who > span") == ["marina@linea.com"]
+      assert texts(html, ".lo-sb-user .lo-sb-av") == ["MC"]
     end
 
     test "children are joined by a line, items with colour are squares and the badge is a dot", %{
       html: html
     } do
-      assert [_] = Enum.to_list(find(html, ".sg-sb-tree.line"))
-      assert classes(html, ".sg-sb-tree.line > a") == ["sg-sb-a"]
-      assert classes(html, "a.sq") == ["sg-sb-a", "on", "sq"]
+      assert [_] = Enum.to_list(find(html, ".lo-sb-children"))
+      assert classes(html, ".lo-sb-children > li > a") == ["lo-sb-item"]
+      assert classes(html, "a.sq") == ["lo-sb-item", "on", "menu-active", "sq"]
       assert classes(html, "a.sq > span") |> Enum.take(2) == ["sqi", "ink"]
       assert [_] = Enum.to_list(find(html, "a.sq > .red"))
       assert attrs(html, "a.sq", "aria-current") == ["page"]
     end
 
-    test "the connector draws a branch and a node per child, the active path in the accent" do
+    test "children are a nested daisyUI menu list, without a drawn connector" do
       nav = [
-        %{
-          group: "Vendas",
-          items: [
-            %{
-              label: "Pedidos",
-              href: "/p",
-              children: [
-                %{label: "A", href: "/a"},
-                %{label: "B", href: "/b"},
-                %{label: "C", href: "/c"}
-              ]
-            }
-          ]
-        }
+        %{group: "G", items: [%{label: "P", href: "/p", children: [%{label: "A", href: "/a"}]}]}
       ]
 
       html = html(%{format: "tree", nav: nav, current: "/a"})
+      assert [_] = Enum.to_list(find(html, "ul.menu li.lo-sb-li > ul.lo-sb-children > li > a"))
+      assert find(html, "svg.tb") |> Enum.empty?()
 
-      assert attrs(html, "svg.tb", "height") == ["97"]
-      assert attrs(html, "svg.tb", "viewBox") == ["0 0 24 97"]
-
-      assert attrs(html, "svg.tb path.t", "d") == [
-               "M1 0V83.0M1 13.0Q1 21.0 9 21.0H12M1 48.0Q1 56.0 9 56.0H12M1 83.0Q1 91.0 9 91.0H12"
+      assert classes(html, ".lo-sb-children a[aria-current]") == [
+               "lo-sb-item",
+               "on",
+               "menu-active"
              ]
-
-      assert attrs(html, "svg.tb path.a", "d") == ["M1 0V13.0Q1 21.0 9 21.0H12"]
-      assert attrs(html, "svg.tb circle.h", "cy") == ["21.0"]
-      assert attrs(html, "svg.tb circle.n.on", "cy") == ["21.0"]
-      assert attrs(html, "svg.tb circle.n", "cy") == ["21.0", "56.0", "91.0"]
-
-      html = html(%{format: "tree", nav: nav, current: "/c"})
-      assert attrs(html, "svg.tb path.a", "d") == ["M1 0V83.0Q1 91.0 9 91.0H12"]
-      assert attrs(html, "svg.tb circle.h", "cy") == ["91.0"]
-
-      html = html(%{format: "tree", nav: nav, current: "/nada"})
-      assert find(html, "svg.tb path.a") |> Enum.empty?()
-      assert find(html, "svg.tb circle.h") |> Enum.empty?()
-      assert find(html, "svg.tb circle.n.on") |> Enum.empty?()
-      assert attrs(html, "svg.tb circle.n", "cy") == ["21.0", "56.0", "91.0"]
-    end
-
-    test "one child makes a short connector" do
-      nav = [%{group: "G", items: [%{label: "P", children: [%{label: "A", href: "/a"}]}]}]
-      html = html(%{format: "tree", nav: nav})
-      assert attrs(html, "svg.tb", "height") == ["27"]
-      assert attrs(html, "svg.tb path.t", "d") == ["M1 0V13.0M1 13.0Q1 21.0 9 21.0H12"]
     end
 
     test "a group with `collapsible: false` has a label without a button" do
       nav = [%{group: "Fixo", collapsible: false, items: [%{label: "A", href: "/a"}]}]
       html = html(%{format: "tree", nav: nav})
-      assert find(html, "button.sg-sb-gt") |> Enum.empty?()
-      assert texts(html, "div.sg-sb-gt") == ["Fixo"]
+      assert find(html, ".lo-sb-gt > button") |> Enum.empty?()
+      assert texts(html, ".lo-sb-gt > span") == ["Fixo"]
     end
 
     test "an item with children has a chevron button, sibling of its link, tied to the children",
          %{
            html: html
          } do
-      assert attrs(html, "button.sg-sb-ct", "aria-expanded") == ["false"]
-      assert attrs(html, "button.sg-sb-ct", "aria-label") == ["Pedidos"]
+      assert attrs(html, "button.lo-sb-caret", "aria-expanded") == ["false"]
+      assert attrs(html, "button.lo-sb-caret", "aria-label") == ["Pedidos"]
       assert find(html, "a button") |> Enum.empty?()
-      assert find(html, "button.sg-sb-ct svg path[d='M7 10l5 5 5-5']") |> Enum.count() == 1
-      [controls] = attrs(html, "button.sg-sb-ct", "aria-controls")
-      assert attrs(html, "div.sg-sb-tree.line", "id") == [controls]
-      assert find(html, "div#" <> controls <> " a") |> Enum.count() == 2
-      assert find(html, "div#" <> controls <> "[data-closed]") |> Enum.count() == 1
+      assert find(html, "button.lo-sb-caret svg path[d='M7 10l5 5 5-5']") |> Enum.count() == 1
+      [controls] = attrs(html, "button.lo-sb-caret", "aria-controls")
+      assert attrs(html, "ul.lo-sb-children", "id") == [controls]
+      assert find(html, "ul#" <> controls <> " a") |> Enum.count() == 2
+      assert find(html, "ul#" <> controls <> "[data-closed]") |> Enum.count() == 1
     end
 
     test "an item without destination is a button that toggles its tree" do
       nav = [%{group: "G", items: [%{label: "P", children: [%{label: "A", href: "/a"}]}]}]
       html = html(%{format: "tree", nav: nav})
-      assert find(html, "button.sg-sb-ct") |> Enum.empty?()
-      assert texts(html, "button.sg-sb-a .lbl") == ["P"]
-      assert attrs(html, "button.sg-sb-a", "type") == ["button"]
-      assert attrs(html, "button.sg-sb-a", "aria-expanded") == ["false"]
-      [controls] = attrs(html, "button.sg-sb-a", "aria-controls")
-      assert attrs(html, "div.sg-sb-tree", "id") == [controls]
-      assert find(html, "button.sg-sb-a > span.cv svg") |> Enum.count() == 1
-      assert find(html, "button.sg-sb-a button") |> Enum.empty?()
+      assert find(html, "button.lo-sb-caret") |> Enum.empty?()
+      assert texts(html, "button.lo-sb-item .lbl") == ["P"]
+      assert attrs(html, "button.lo-sb-item", "type") == ["button"]
+      assert attrs(html, "button.lo-sb-item", "aria-expanded") == ["false"]
+      [controls] = attrs(html, "button.lo-sb-item", "aria-controls")
+      assert attrs(html, "ul.lo-sb-children", "id") == [controls]
+      assert find(html, "button.lo-sb-item > span.cv svg") |> Enum.count() == 1
+      assert find(html, "button.lo-sb-item button") |> Enum.empty?()
     end
 
     test "an item with destination keeps its link, and the click also opens the children", %{
       html: html
     } do
-      assert find(html, "button.sg-sb-a") |> Enum.empty?()
-      [controls] = attrs(html, "button.sg-sb-ct", "aria-controls")
-      [id] = attrs(html, "button.sg-sb-ct", "id")
+      assert find(html, "button.lo-sb-item") |> Enum.empty?()
+      [controls] = attrs(html, "button.lo-sb-caret", "aria-controls")
+      [id] = attrs(html, "button.lo-sb-caret", "id")
       assert id == controls <> "-btn"
-      [click] = attrs(html, "a.sg-sb-a[phx-click]", "phx-click")
+      [click] = attrs(html, "a.lo-sb-item[phx-click]", "phx-click")
       assert click =~ "aria-expanded"
       assert click =~ "#" <> id
       assert click =~ "data-closed"
@@ -440,30 +417,30 @@ defmodule LineaUI.Components.SidebarTest do
       ]
 
       html = html(%{format: "tree", nav: nav})
-      assert find(html, "button.sg-sb-ct") |> Enum.empty?()
-      assert find(html, ".sg-sb-tree.line") |> Enum.count() == 1
+      assert find(html, "button.lo-sb-caret") |> Enum.empty?()
+      assert find(html, ".lo-sb-children") |> Enum.count() == 1
     end
 
     test "an active child opens the children and its group" do
       html = html(%{format: "tree", current: "/pedidos?status=aberto"})
-      assert attrs(html, "button.sg-sb-ct", "aria-expanded") == ["true"]
-      assert find(html, "div.sg-sb-tree[data-closed]") |> Enum.empty?()
-      assert texts(html, ".sg-sb-tree a.on .lbl") == ["Abertos"]
-      assert attrs(html, "button.sg-sb-gt", "aria-expanded") == ["true", "false", "false"]
+      assert attrs(html, "button.lo-sb-caret", "aria-expanded") == ["true"]
+      assert find(html, "ul.lo-sb-children[data-closed]") |> Enum.empty?()
+      assert texts(html, ".lo-sb-children a.on .lbl") == ["Abertos"]
+      assert attrs(html, ".lo-sb-gt > button", "aria-expanded") == ["true", "false", "false"]
     end
 
     test "without a current route every group and tree starts closed" do
       html = html(%{format: "tree"})
-      assert attrs(html, "button.sg-sb-gt", "aria-expanded") == ["false", "false", "false"]
-      assert attrs(html, "button.sg-sb-ct", "aria-expanded") == ["false"]
-      assert find(html, "div.sg-sb-grp[data-closed]") |> Enum.count() == 3
-      assert find(html, "div.sg-sb-tree[data-closed]") |> Enum.count() == 1
+      assert attrs(html, ".lo-sb-gt > button", "aria-expanded") == ["false", "false", "false"]
+      assert attrs(html, "button.lo-sb-caret", "aria-expanded") == ["false"]
+      assert find(html, "ul.lo-sb-group[data-closed]") |> Enum.count() == 3
+      assert find(html, "ul.lo-sb-children[data-closed]") |> Enum.count() == 1
     end
 
     test "the current route in group B opens only B" do
       html = html(%{format: "tree", current: "/caixa"})
-      assert attrs(html, "button.sg-sb-gt", "aria-expanded") == ["false", "false", "true"]
-      closed = attrs(html, "div.sg-sb-grp[data-closed]", "id")
+      assert attrs(html, ".lo-sb-gt > button", "aria-expanded") == ["false", "false", "true"]
+      closed = attrs(html, "ul.lo-sb-group[data-closed]", "id")
       assert closed == ["sb-g2", "sb-g2-2"]
     end
 
@@ -482,10 +459,10 @@ defmodule LineaUI.Components.SidebarTest do
       ]
 
       html = html(%{format: "tree", nav: nav, current: "/y"})
-      assert attrs(html, "button.sg-sb-gt", "aria-expanded") == ["true", "false"]
-      assert attrs(html, "button.sg-sb-a", "aria-expanded") == ["true", "false"]
-      assert find(html, "div.sg-sb-grp[data-closed]") |> Enum.count() == 1
-      assert find(html, "div.sg-sb-tree[data-closed]") |> Enum.count() == 1
+      assert attrs(html, ".lo-sb-gt > button", "aria-expanded") == ["true", "false"]
+      assert attrs(html, "button.lo-sb-item", "aria-expanded") == ["true", "false"]
+      assert find(html, "ul.lo-sb-group[data-closed]") |> Enum.count() == 1
+      assert find(html, "ul.lo-sb-children[data-closed]") |> Enum.count() == 1
     end
 
     test "`collapsible: false` never gets data-closed" do
@@ -517,28 +494,30 @@ defmodule LineaUI.Components.SidebarTest do
       ]
 
       first = html(%{format: "tree", nav: nav})
-      ids = attrs(first, "button.sg-sb-ct, button.sg-sb-gt", "aria-controls")
+      ids = attrs(first, "button.lo-sb-caret, .lo-sb-gt > button", "aria-controls")
       assert length(ids) == 4
       assert ids == Enum.uniq(ids)
-      assert attrs(first, "div.sg-sb-tree, div.sg-sb-grp", "id") |> Enum.sort() == Enum.sort(ids)
+
+      assert attrs(first, "ul.lo-sb-children, ul.lo-sb-group", "id") |> Enum.sort() ==
+               Enum.sort(ids)
 
       assert ids ==
                attrs(
                  html(%{format: "tree", nav: nav}),
-                 "button.sg-sb-ct, button.sg-sb-gt",
+                 "button.lo-sb-caret, .lo-sb-gt > button",
                  "aria-controls"
                )
     end
 
     test "the sections and rail formats have no chevron on items" do
       for format <- ~w(sections rail) do
-        assert find(html(%{format: format}), "button.sg-sb-ct") |> Enum.empty?()
+        assert find(html(%{format: format}), "button.lo-sb-caret") |> Enum.empty?()
       end
     end
 
     test "the foot of the menu has the items of the foot group without its label", %{html: html} do
-      assert texts(html, ".sg-sb-foot .sg-sb-a > .lbl") == ["Ajuda"]
-      assert find(html, ".sg-sb-h2") |> Enum.empty?()
+      assert texts(html, ".lo-sb-foot .lo-sb-item > .lbl") == ["Ajuda"]
+      assert find(html, ".lo-sb-title2") |> Enum.empty?()
     end
   end
 
@@ -597,14 +576,14 @@ defmodule LineaUI.Components.SidebarTest do
         </.sidebar>
         """)
 
-      assert [_] = Enum.to_list(find(html, ".sg-sb-brand > #mine"))
-      assert find(html, ".sg-sb-brand > b") |> Enum.empty?()
-      assert [_] = Enum.to_list(find(html, ".sg-sb-foot > #extra"))
+      assert [_] = Enum.to_list(find(html, ".lo-sb-brand > #mine"))
+      assert find(html, ".lo-sb-brand > b") |> Enum.empty?()
+      assert [_] = Enum.to_list(find(html, ".lo-sb-foot > #extra"))
     end
 
     test "the logo can be an image and the switcher can be left out or labelled" do
       html = html(%{brand: %{name: "L", src: "/logo.svg"}})
-      assert attrs(html, ".sg-sb-brand .sg-sb-logo img", "src") == ["/logo.svg"]
+      assert attrs(html, ".lo-sb-brand .lo-sb-logo img", "src") == ["/logo.svg"]
 
       assert find(html(%{brand: %{name: "L", switch: false}}), "button.sw") |> Enum.empty?()
 
@@ -615,13 +594,13 @@ defmodule LineaUI.Components.SidebarTest do
 
     test "without a user, a plan or a trial there are no cards" do
       html = html(%{format: "tree", user: nil, plan: nil})
-      assert find(html, ".sg-sb-user") |> Enum.empty?()
+      assert find(html, ".lo-sb-user") |> Enum.empty?()
 
       html = html(%{plan: nil})
-      assert find(html, ".sg-sb-plan") |> Enum.empty?()
+      assert find(html, ".lo-sb-plan") |> Enum.empty?()
 
       html = html(%{format: "rail", user: nil, trial: nil, rail_extra: []})
-      assert find(html, ".sg-sb-trial, .sg-av, a.dot") |> Enum.empty?()
+      assert find(html, ".lo-sb-trial, .lo-sb-av, a.dot") |> Enum.empty?()
     end
   end
 
@@ -631,80 +610,80 @@ defmodule LineaUI.Components.SidebarTest do
     test "the photo is a bare <img>: the size and the crop come from the CSS of the kit" do
       for format <- ["tree", "rail"] do
         html = html(%{format: format, user: @photo})
-        assert attrs(html, ".sg-av > img", "src") == ["/marina.png"]
-        assert attrs(html, ".sg-av > img", "class") == []
+        assert attrs(html, ".lo-sb-av > img", "src") == ["/marina.png"]
+        assert attrs(html, ".lo-sb-av > img", "class") == []
       end
     end
 
     test "the image of the brand logo is a bare <img> too" do
       for format <- ["sections", "tree", "rail"] do
         html = html(%{format: format, brand: %{name: "Linea", src: "/logo.png"}})
-        assert attrs(html, ".sg-sb-logo > img", "src") |> Enum.uniq() == ["/logo.png"]
-        assert attrs(html, ".sg-sb-logo > img", "class") |> Enum.reject(&is_nil/1) == []
+        assert attrs(html, ".lo-sb-logo > img", "src") |> Enum.uniq() == ["/logo.png"]
+        assert attrs(html, ".lo-sb-logo > img", "class") |> Enum.reject(&is_nil/1) == []
       end
     end
 
     test "no `footer`: each format keeps its own (the user card, the plan card, the avatar)" do
       html = html(%{format: "tree"})
-      assert find(html, ".sg-sb-user") != []
-      assert find(html, ".sg-sb-ver, .sg-sb-plan") |> Enum.empty?()
+      assert find(html, ".lo-sb-user") != []
+      assert find(html, ".lo-sb-ver, .lo-sb-plan") |> Enum.empty?()
 
       html = html(%{format: "sections"})
-      assert find(html, ".sg-sb-plan") != []
-      assert find(html, ".sg-sb-user, .sg-sb-ver") |> Enum.empty?()
+      assert find(html, ".lo-sb-plan") != []
+      assert find(html, ".lo-sb-user, .lo-sb-ver") |> Enum.empty?()
 
       html = html(%{format: "rail"})
-      assert find(html, ".sg-sb-rail > .sg-av") != []
-      assert find(html, ".sg-sb-ver") |> Enum.empty?()
+      assert find(html, ".lo-sb-rail > .lo-sb-av") != []
+      assert find(html, ".lo-sb-ver") |> Enum.empty?()
     end
 
     test "`footer=\"user\"`: the card (tree, sections), the avatar (rail); an atom works too" do
       for footer <- ["user", :user] do
         html = html(%{format: "tree", footer: footer})
-        assert texts(html, ".sg-sb-body > .sg-sb-user b") == ["Marina Costa"]
+        assert texts(html, ".lo-sb-body > .lo-sb-user b") == ["Marina Costa"]
 
         html = html(%{format: "sections", footer: footer})
-        assert texts(html, ".sg-sb-body > .sg-sb-user b") == ["Marina Costa"]
-        assert find(html, ".sg-sb-plan") |> Enum.empty?()
+        assert texts(html, ".lo-sb-body > .lo-sb-user b") == ["Marina Costa"]
+        assert find(html, ".lo-sb-plan") |> Enum.empty?()
 
         html = html(%{format: "rail", footer: footer, version: "v1.0.0"})
-        assert find(html, ".sg-sb-rail > .sg-av") != []
-        assert find(html, ".sg-sb-ver") |> Enum.empty?()
+        assert find(html, ".lo-sb-rail > .lo-sb-av") != []
+        assert find(html, ".lo-sb-ver") |> Enum.empty?()
       end
     end
 
     test "`footer=\"version\"`: the line, in place of the user (tree, rail) or of the plan card (sections)" do
       for format <- ["tree", "rail", "sections"] do
         html = html(%{format: format, footer: "version", version: "v1.4.2"})
-        assert texts(html, ".sg-sb-ver") == ["v1.4.2"]
-        assert find(html, ".sg-sb-user, .sg-sb-plan, .sg-sb-rail > .sg-av") |> Enum.empty?()
-        assert attrs(html, ".sg-sb-ver", "aria-label") == ["Version v1.4.2"]
-        assert attrs(html, ".sg-sb-ver", "title") == ["Version v1.4.2"]
-        assert attrs(html, ".sg-sb-ver > .dot", "aria-hidden") == ["true"]
-        assert find(html, ".sg-sb-ver .b, .sg-sb-ver a") |> Enum.empty?()
+        assert texts(html, ".lo-sb-ver") == ["v1.4.2"]
+        assert find(html, ".lo-sb-user, .lo-sb-plan, .lo-sb-rail > .lo-sb-av") |> Enum.empty?()
+        assert attrs(html, ".lo-sb-ver", "aria-label") == ["Version v1.4.2"]
+        assert attrs(html, ".lo-sb-ver", "title") == ["Version v1.4.2"]
+        assert attrs(html, ".lo-sb-ver > .dot", "aria-hidden") == ["true"]
+        assert find(html, ".lo-sb-ver .b, .lo-sb-ver a") |> Enum.empty?()
       end
 
       assert texts(
                html(%{format: "tree", footer: "version", version: "v1"}),
-               ".sg-sb-body > .sg-sb-ver"
+               ".lo-sb-body > .lo-sb-ver"
              ) ==
                ["v1"]
 
       assert find(
                html(%{format: "rail", footer: :version, version: "v1"}),
-               ".sg-sb-panel > .sg-sb-ver"
+               ".lo-sb-panel > .lo-sb-ver"
              ) !=
                []
 
       html = html(%{format: "sections", footer: :version, version: "v1"})
-      assert find(html, ".sg-sb-foot + .sg-sb-ver") != []
+      assert find(html, ".lo-sb-foot + .lo-sb-ver") != []
     end
 
     test "`footer=\"version\"` without a version draws nothing, and the plan card is gone" do
       for format <- ["tree", "rail", "sections"] do
         html = html(%{format: format, footer: "version"})
 
-        assert find(html, ".sg-sb-user, .sg-sb-plan, .sg-sb-ver, .sg-sb-rail > .sg-av")
+        assert find(html, ".lo-sb-user, .lo-sb-plan, .lo-sb-ver, .lo-sb-rail > .lo-sb-av")
                |> Enum.empty?()
       end
     end
@@ -713,7 +692,7 @@ defmodule LineaUI.Components.SidebarTest do
       for format <- ["tree", "rail", "sections"] do
         html = html(%{format: format, footer: "none", version: "v1.4.2"})
 
-        assert find(html, ".sg-sb-user, .sg-sb-plan, .sg-sb-ver, .sg-sb-rail > .sg-av")
+        assert find(html, ".lo-sb-user, .lo-sb-plan, .lo-sb-ver, .lo-sb-rail > .lo-sb-av")
                |> Enum.empty?()
       end
     end
@@ -729,28 +708,28 @@ defmodule LineaUI.Components.SidebarTest do
 
       for format <- ["tree", "rail", "sections"] do
         html = html(%{format: format, footer: "version", version: version})
-        assert texts(html, ".sg-sb-ver .v") == ["v1.4.2"]
-        assert texts(html, ".sg-sb-ver .b") == ["2a9f1c3"]
-        assert attrs(html, ".sg-sb-ver", "aria-label") == ["Version v1.4.2 (2a9f1c3)"]
-        assert attrs(html, ".sg-sb-ver a.new", "href") == ["/changelog"]
-        assert attrs(html, ".sg-sb-ver a.new", "title") == ["Hoje"]
-        assert texts(html, ".sg-sb-ver a.new") == ["Novidades"]
-        assert attrs(html, ".sg-sb-ver a.new > svg", "aria-hidden") == ["true"]
-        assert attrs(html, ".sg-sb-ver", "data-status") == ["ok"]
+        assert texts(html, ".lo-sb-ver .v") == ["v1.4.2"]
+        assert texts(html, ".lo-sb-ver .b") == ["2a9f1c3"]
+        assert attrs(html, ".lo-sb-ver", "aria-label") == ["Version v1.4.2 (2a9f1c3)"]
+        assert attrs(html, ".lo-sb-ver a.new", "href") == ["/changelog"]
+        assert attrs(html, ".lo-sb-ver a.new", "title") == ["Hoje"]
+        assert texts(html, ".lo-sb-ver a.new") == ["Novidades"]
+        assert attrs(html, ".lo-sb-ver a.new > svg", "aria-hidden") == ["true"]
+        assert attrs(html, ".lo-sb-ver", "data-status") == ["ok"]
       end
     end
 
     test "the link needs a destination; navigate, patch and href all work; the label defaults to English" do
       html = html(%{format: "tree", footer: "version", version: %{version: "v1", build: "abc"}})
-      assert find(html, ".sg-sb-ver a") |> Enum.empty?()
+      assert find(html, ".lo-sb-ver a") |> Enum.empty?()
 
       for key <- [:navigate, :patch, :href] do
         html =
           html(%{format: "tree", footer: "version", version: %{:version => "v1", key => "/novo"}})
 
-        assert attrs(html, ".sg-sb-ver a.new", "href") == ["/novo"]
-        assert texts(html, ".sg-sb-ver a.new") == ["What's new"]
-        assert attrs(html, ".sg-sb-ver a.new", "title") == []
+        assert attrs(html, ".lo-sb-ver a.new", "href") == ["/novo"]
+        assert texts(html, ".lo-sb-ver a.new") == ["What's new"]
+        assert attrs(html, ".lo-sb-ver a.new", "title") == []
       end
     end
 
@@ -765,67 +744,67 @@ defmodule LineaUI.Components.SidebarTest do
         html =
           html(%{format: "tree", footer: "version", version: %{version: "v1", status: status}})
 
-        assert attrs(html, ".sg-sb-ver", "data-status") == [expected]
+        assert attrs(html, ".lo-sb-ver", "data-status") == [expected]
       end
     end
 
     test "`version` without `footer` shows the line, in place of the user" do
       for format <- ["tree", "rail", "sections"] do
         html = html(%{format: format, version: "v1.4.2"})
-        assert texts(html, ".sg-sb-ver") == ["v1.4.2"]
-        assert find(html, ".sg-sb-user, .sg-sb-plan, .sg-sb-rail > .sg-av") |> Enum.empty?()
+        assert texts(html, ".lo-sb-ver") == ["v1.4.2"]
+        assert find(html, ".lo-sb-user, .lo-sb-plan, .lo-sb-rail > .lo-sb-av") |> Enum.empty?()
       end
     end
 
     test "`show_user={false}` (deprecated) is `footer=\"none\"`, or the version when there is one" do
       for format <- ["tree", "rail", "sections"] do
         html = html(%{format: format, show_user: false})
-        assert find(html, ".sg-sb-user, .sg-sb-ver, .sg-sb-rail > .sg-av") |> Enum.empty?()
+        assert find(html, ".lo-sb-user, .lo-sb-ver, .lo-sb-rail > .lo-sb-av") |> Enum.empty?()
 
         html = html(%{format: format, show_user: false, version: "v1.4.2"})
-        assert texts(html, ".sg-sb-ver") == ["v1.4.2"]
-        assert find(html, ".sg-sb-user, .sg-sb-rail > .sg-av") |> Enum.empty?()
+        assert texts(html, ".lo-sb-ver") == ["v1.4.2"]
+        assert find(html, ".lo-sb-user, .lo-sb-rail > .lo-sb-av") |> Enum.empty?()
       end
     end
 
     test "the config sets `footer` and `version` (a string or a map), and the attributes win" do
       Application.put_env(:linea_ui, :shell, footer: :version, version: "v9.0.0")
       html = html(%{format: "tree"})
-      assert find(html, ".sg-sb-user") |> Enum.empty?()
-      assert texts(html, ".sg-sb-ver") == ["v9.0.0"]
+      assert find(html, ".lo-sb-user") |> Enum.empty?()
+      assert texts(html, ".lo-sb-ver") == ["v9.0.0"]
 
       assert attrs(
                html(%{format: "tree", version: %{version: "v8", build: "abc"}}),
-               ".sg-sb-ver",
+               ".lo-sb-ver",
                "aria-label"
              ) ==
                ["Version v8 (abc)"]
 
       html = html(%{format: "tree", footer: "user"})
-      assert find(html, ".sg-sb-user") != []
-      assert find(html, ".sg-sb-ver") |> Enum.empty?()
+      assert find(html, ".lo-sb-user") != []
+      assert find(html, ".lo-sb-ver") |> Enum.empty?()
 
       html = html(%{format: "tree", footer: "none"})
-      assert find(html, ".sg-sb-user, .sg-sb-ver") |> Enum.empty?()
+      assert find(html, ".lo-sb-user, .lo-sb-ver") |> Enum.empty?()
 
       Application.put_env(:linea_ui, :shell, version: %{version: "v7.0.0", navigate: "/n"})
       html = html(%{format: "sections"})
-      assert texts(html, ".sg-sb-ver .v") == ["v7.0.0"]
-      assert attrs(html, ".sg-sb-ver a", "href") == ["/n"]
+      assert texts(html, ".lo-sb-ver .v") == ["v7.0.0"]
+      assert attrs(html, ".lo-sb-ver a", "href") == ["/n"]
 
       Application.put_env(:linea_ui, :shell, footer: :none)
-      assert find(html(%{format: "tree"}), ".sg-sb-user, .sg-sb-ver") |> Enum.empty?()
+      assert find(html(%{format: "tree"}), ".lo-sb-user, .lo-sb-ver") |> Enum.empty?()
 
       Application.put_env(:linea_ui, :shell, footer: :version)
-      assert find(html(%{format: "tree"}), ".sg-sb-user, .sg-sb-ver") |> Enum.empty?()
+      assert find(html(%{format: "tree"}), ".lo-sb-user, .lo-sb-ver") |> Enum.empty?()
     end
 
     test "the config `show_user: false` still takes the user out" do
       Application.put_env(:linea_ui, :shell, show_user: false)
-      assert find(html(%{format: "tree"}), ".sg-sb-user") |> Enum.empty?()
+      assert find(html(%{format: "tree"}), ".lo-sb-user") |> Enum.empty?()
 
       html = html(%{format: "tree", footer: "user"})
-      assert find(html, ".sg-sb-user") != []
+      assert find(html, ".lo-sb-user") != []
     end
   end
 
@@ -838,10 +817,10 @@ defmodule LineaUI.Components.SidebarTest do
       ]
 
       html = html(%{nav: nav})
-      assert "huge-shopping-cart-01" in classes(html, ".sg-sb-a:nth-child(1) > .i")
-      assert "huge-user-02" in classes(html, ".sg-sb-a:nth-child(2) > .i")
+      assert "huge-shopping-cart-01" in classes(html, "li:nth-child(1) > .lo-sb-item > .i")
+      assert "huge-user-02" in classes(html, "li:nth-child(2) > .lo-sb-item > .i")
 
-      assert classes(html, ".sg-sb-a:nth-child(3) > .i") |> Enum.take(3) == [
+      assert classes(html, "li:nth-child(3) > .lo-sb-item > .i") |> Enum.take(3) == [
                "fa-solid",
                "fa-house",
                "i"
@@ -860,8 +839,8 @@ defmodule LineaUI.Components.SidebarTest do
       html = render(~H|<.sidebar id="c" current="/c" />|)
 
       assert attrs(html, "#c", "data-format") == ["rail"]
-      assert texts(html, ".sg-sb-ph > b") == ["Config"]
-      assert attrs(html, ".sg-sb-panel a.on", "aria-current") == ["page"]
+      assert texts(html, ".lo-sb-ph > b") == ["Config"]
+      assert attrs(html, ".lo-sb-panel a.on", "aria-current") == ["page"]
     end
 
     test "a string works and so does an unknown value (sections)" do
@@ -877,20 +856,20 @@ defmodule LineaUI.Components.SidebarTest do
       html = html(%{format: :tree})
 
       assert attrs(html, "nav#sb", "data-format") == ["tree"]
-      assert texts(html, "button.sg-sb-gt") == ["Vendas", "Notas", "Financeiro"]
+      assert texts(html, ".lo-sb-gt > button") == ["Vendas", "Notas", "Financeiro"]
     end
 
     test "the nav function gets the assigns of the component" do
       Application.put_env(:linea_ui, :shell, nav: {__MODULE__, :current_nav})
       html = render(~H|<.sidebar id="c" current="/ola" />|)
 
-      assert texts(html, ".sg-sb-a > .lbl") == ["/ola"]
+      assert texts(html, ".lo-sb-item > .lbl") == ["/ola"]
     end
 
     test "without config or nav the menu is empty" do
       html = render(~H|<.sidebar id="c" />|)
       assert attrs(html, "#c", "data-format") == ["sections"]
-      assert find(html, ".sg-sb-a") |> Enum.empty?()
+      assert find(html, ".lo-sb-item") |> Enum.empty?()
     end
   end
 
@@ -976,10 +955,10 @@ defmodule LineaUI.Components.SidebarTest do
       html = nested_html()
 
       assert "nestx" in classes(html, "nav#ns")
-      assert texts(html, "#ns-team .sg-sb-mb > b") == ["Acme Inc"]
-      assert texts(html, "#ns-team .sg-sb-mb > .sub") == ["Enterprise"]
+      assert texts(html, "#ns-team .lo-sb-mb > b") == ["Acme Inc"]
+      assert texts(html, "#ns-team .lo-sb-mb > .sub") == ["Enterprise"]
       assert attrs(html, "#ns-team-menu [role=menuitem]", "href") == ["/teams/2"]
-      assert texts(html, "#ns-user .sg-sb-mm-h .who b") == ["Marina Costa"]
+      assert texts(html, "#ns-user .lo-sb-mm-h .who b") == ["Marina Costa"]
       assert attrs(html, "#ns-user-menu a[role=menuitem]", "data-method") == ["delete"]
       assert find(html, "#ns-user-menu [role=separator]") |> Enum.count() == 2
     end
@@ -987,18 +966,18 @@ defmodule LineaUI.Components.SidebarTest do
     test "groups have a label; an item with children toggles them and opens on the active child" do
       html = nested_html()
 
-      assert texts(html, "#ns .sg-sb-h") == ["Platform"]
-      assert attrs(html, "#ns button.sg-sb-a.rw", "aria-expanded") == ["true"]
-      assert texts(html, "#ns .sg-sb-tree .sg-sb-a .lbl") == ["History", "Starred"]
-      assert attrs(html, "#ns .sg-sb-tree a.on", "aria-current") == ["page"]
+      assert texts(html, "#ns .lo-sb-title") == ["Platform"]
+      assert attrs(html, "#ns button.lo-sb-item.rw", "aria-expanded") == ["true"]
+      assert texts(html, "#ns .lo-sb-children .lo-sb-item .lbl") == ["History", "Starred"]
+      assert attrs(html, "#ns .lo-sb-children a.on", "aria-current") == ["page"]
     end
 
     test "without menus the header and the foot are plain rows" do
       html = nested_html(%{brand: %{name: "Acme Inc", logo: "A"}, user: %{name: "Marina Costa"}})
 
       assert find(html, "#ns-team") |> Enum.empty?()
-      assert texts(html, "#ns .sg-sb-team > b") == ["Acme Inc"]
-      assert texts(html, "#ns .sg-sb-user b") == ["Marina Costa"]
+      assert texts(html, "#ns .lo-sb-team > b") == ["Acme Inc"]
+      assert texts(html, "#ns .lo-sb-user b") == ["Marina Costa"]
     end
   end
 

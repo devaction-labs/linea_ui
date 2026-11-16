@@ -282,13 +282,13 @@ defmodule LineaUI.Components.CardTableTest do
       </.card_table>
       """)
 
-    assert [_] = find(html, "#t-box.card.overflow-hidden table.sg-table") |> Enum.to_list()
-    assert find(html, "#t-box .sg-card-h h3") |> LazyHTML.text() == "Últimos pedidos"
-    assert [_] = find(html, "#t-box .sg-card-h .meta a") |> Enum.to_list()
+    assert [_] = find(html, "#t-box.card.overflow-hidden table.table.lo-table") |> Enum.to_list()
+    assert find(html, "#t-box .lo-card-h h3") |> LazyHTML.text() == "Últimos pedidos"
+    assert [_] = find(html, "#t-box .lo-card-h .meta a") |> Enum.to_list()
     assert [_] = find(html, "#t-box th.r") |> Enum.to_list()
     assert find(html, "#t tr td.r") |> LazyHTML.text() =~ "R$ 1"
     assert [_] = find(top, "#u-box .linea-ctable-flat-top #tabs") |> Enum.to_list()
-    assert [] = find(top, "#u-box .sg-card-h") |> Enum.to_list()
+    assert [] = find(top, "#u-box .lo-card-h") |> Enum.to_list()
   end
 
   describe "options" do
@@ -463,9 +463,9 @@ defmodule LineaUI.Components.CardTableTest do
         """)
 
       assert find(flat, "#g-box > .linea-ctable-foot") |> LazyHTML.text() =~ "Total"
-      assert find(flat, "#g-box .sg-card-h h3") |> LazyHTML.text() == "Pedidos"
+      assert find(flat, "#g-box .lo-card-h h3") |> LazyHTML.text() == "Pedidos"
 
-      assert find(flat, "#g-box .sg-card-h .linea-ctable-flat-text p") |> LazyHTML.text() ==
+      assert find(flat, "#g-box .lo-card-h .linea-ctable-flat-text p") |> LazyHTML.text() ==
                "Os mais recentes."
     end
 

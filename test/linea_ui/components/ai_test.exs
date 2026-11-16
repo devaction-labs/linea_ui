@@ -26,7 +26,7 @@ defmodule LineaUI.Components.AiTest do
 
   test "the user's message is a bubble and the assistant's a card with the trace" do
     user = render(~H|<.ai_message role="user" name="Marina Costa">Oi</.ai_message>|)
-    assert [_] = find(user, ".sg-bubble") |> Enum.to_list()
+    assert [_] = find(user, ".chat-bubble") |> Enum.to_list()
 
     assistant =
       render(~H"""
@@ -195,9 +195,9 @@ defmodule LineaUI.Components.AiTest do
     assert [_] = find(render(~H|<.ai_greeting size="sm" />|), ".ai-greeting.sm") |> Enum.to_list()
   end
 
-  test "the user's message is the dark bubble (.sg-bubble.me)" do
+  test "the user's message is a daisyUI chat-end bubble" do
     html = render(~H|<.ai_message role="user" name="Marina Costa">Oi</.ai_message>|)
-    assert [_] = find(html, ".ai-msg.me .sg-bubble.me") |> Enum.to_list()
+    assert [_] = find(html, ".ai-msg.me .chat.chat-end > .chat-bubble.me") |> Enum.to_list()
   end
 
   test "the plain assistant message has the plain class and the card is the default" do

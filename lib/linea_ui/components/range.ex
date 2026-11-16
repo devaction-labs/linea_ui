@@ -110,14 +110,14 @@ defmodule LineaUI.Components.Range do
   attr(:fill, :string,
     default: nil,
     doc:
-      "Any CSS colour (`\"#0d8f91\"`, `\"var(--c2)\"`) for the filled part of the track, with `filled` or in a pair: a slider that takes the colour of what it sets, like the canvas `sg-slider` with `--c`. Without it the fill is the accent."
+      "Any CSS colour (`\"#0d8f91\"`, `\"var(--c2)\"`) for the filled part of the track, with `filled` or in a pair: a slider that takes the colour of what it sets, like the canvas `lo-slider` with `--c`. Without it the fill is the accent."
   )
 
   attr(:variant, :string,
     default: "canvas",
     values: ~w(canvas classic),
     doc:
-      "`canvas` (the default) is the design canvas's `sg-slider`: a 4px sunken track filled in the accent, a 16px white thumb, the label at 13px medium, the value in bold mono and the marks as plain faint mono numbers. `color` and `size` do not apply."
+      "`canvas` (the default) is the design canvas's `lo-slider`: a 4px sunken track filled in the accent, a 16px white thumb, the label at 13px medium, the value in bold mono and the marks as plain faint mono numbers. `color` and `size` do not apply."
   )
 
   attr(:start_field, Phoenix.HTML.FormField,

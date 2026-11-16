@@ -48,23 +48,23 @@ defmodule LineaUI.Components.LandingNavTest do
   test "the classic bar: brand, links, login and cta" do
     html = nav("default")
 
-    assert ["sg-lp-bar"] == classes(html, "div[data-variant]")
-    assert ["sg-lp-nb"] == classes(html, "header")
-    assert text(html, ".sg-nb-logo") == ["L"]
-    assert text(html, ".sg-nb-brand") == ["Linea"]
-    assert count(html, ".sg-lp-floatwrap") == 0
-    assert text(html, ".sg-lp-links a") == ["Preços", "Docs"]
-    assert attr_of(html, ".sg-lp-links a[aria-current]", "aria-current") == ["page"]
-    assert text(html, ".sg-nb-end .sg-lp-login") == ["Entrar"]
-    assert ["sg-lp-cta"] == classes(html, ".sg-nb-end a.sg-lp-cta")
+    assert ["lo-lp-bar"] == classes(html, "div[data-variant]")
+    assert ["navbar", "lo-lp-nb"] == classes(html, "header")
+    assert text(html, ".lo-nb-logo") == ["L"]
+    assert text(html, ".lo-nb-brand") == ["Linea"]
+    assert count(html, ".lo-lp-floatwrap") == 0
+    assert text(html, ".lo-lp-links a") == ["Preços", "Docs"]
+    assert attr_of(html, ".lo-lp-links a[aria-current]", "aria-current") == ["page"]
+    assert text(html, ".lo-nb-end .lo-lp-login") == ["Entrar"]
+    assert ["lo-lp-cta", "btn", "btn-neutral"] == classes(html, ".lo-nb-end a.lo-lp-cta")
   end
 
   test "float wraps the bar, clear and mobile mark it" do
     float = nav("float")
-    assert count(float, ".sg-lp-floatwrap > header.sg-lp-nb.float") == 1
+    assert count(float, ".lo-lp-floatwrap > header.lo-lp-nb.float") == 1
     assert attr_of(float, "div[data-variant]", "data-variant") == ["float"]
-    assert count(nav("clear"), "header.sg-lp-nb.clear") == 1
-    assert count(nav("mobile"), "header.sg-lp-nb.mob") == 1
+    assert count(nav("clear"), "header.lo-lp-nb.clear") == 1
+    assert count(nav("mobile"), "header.lo-lp-nb.mob") == 1
   end
 
   test "sticky or a mega trigger mounts the hook; a plain bar has none" do
@@ -107,7 +107,7 @@ defmodule LineaUI.Components.LandingNavTest do
     assert attr_of(html, "button#nav-trigger-1", "aria-controls") == ["nav-mega-1"]
     assert text(html, "button#nav-trigger-1") == ["Produto"]
     assert attr_of(html, "#nav-mega-1", "style") == ["display: none"]
-    assert count(html, "#nav-mega-1.sg-lp-mega") == 1
+    assert count(html, "#nav-mega-1.lo-lp-mega") == 1
     assert count(html, "#nav-trigger-2") == 0
     assert count(html, "#nav-mega-2") == 0
     assert [click] = attr_of(html, "#nav-trigger-1", "phx-click")
@@ -119,26 +119,26 @@ defmodule LineaUI.Components.LandingNavTest do
   test "features and the side panel" do
     html = nav("default")
 
-    assert text(html, "#nav-mega-1 .sg-lp-feat b") == ["Projetos", "Segurança"]
-    assert text(html, "#nav-mega-1 .sg-lp-feat .col span") == ["Kanban e prazos", "2FA"]
-    assert attr_of(html, "#nav-mega-1 .sg-lp-feat", "href") == ["/p", "/s"]
-    assert count(html, "#nav-mega-1 .sg-lp-feat .ic span.huge-kanban") == 1
-    assert count(html, "#nav-mega-1 .sg-lp-grid") == 1
-    assert text(html, ".sg-lp-megaside .sg-lp-eb") == ["Novidade"]
-    assert text(html, ".sg-lp-megaside b") == ["Kanban"]
-    assert count(html, ".sg-lp-megaside .sg-lp-thumb i") == 4
-    assert attr_of(html, ".sg-lp-megaside a", "href") == ["/n"]
+    assert text(html, "#nav-mega-1 .lo-lp-feat b") == ["Projetos", "Segurança"]
+    assert text(html, "#nav-mega-1 .lo-lp-feat .col span") == ["Kanban e prazos", "2FA"]
+    assert attr_of(html, "#nav-mega-1 .lo-lp-feat", "href") == ["/p", "/s"]
+    assert count(html, "#nav-mega-1 .lo-lp-feat .ic span.huge-kanban") == 1
+    assert count(html, "#nav-mega-1 .lo-lp-grid") == 1
+    assert text(html, ".lo-lp-megaside .lo-lp-eb") == ["Novidade"]
+    assert text(html, ".lo-lp-megaside b") == ["Kanban"]
+    assert count(html, ".lo-lp-megaside .lo-lp-thumb i") == 4
+    assert attr_of(html, ".lo-lp-megaside a", "href") == ["/n"]
   end
 
   test "the phone menu: a button and a hidden panel with every link and the actions" do
     html = nav("default")
 
-    assert attr_of(html, "button.btn.sg-lp-menubtn", "aria-expanded") == ["false"]
-    assert attr_of(html, "button.sg-lp-menubtn", "aria-controls") == ["nav-mmenu"]
+    assert attr_of(html, "button.btn.lo-lp-menubtn", "aria-expanded") == ["false"]
+    assert attr_of(html, "button.lo-lp-menubtn", "aria-controls") == ["nav-mmenu"]
     assert attr_of(html, "#nav-mmenu", "style") == ["display: none"]
-    assert text(html, "#nav-mmenu .sg-lp-mi") == ["Produto", "Preços", "Docs"]
-    assert count(html, "#nav-mmenu .sg-lp-mmenu-end .sg-lp-cta") == 1
-    assert count(html, "#nav-mmenu .sg-lp-mmenu-end .sg-lp-login") == 1
+    assert text(html, "#nav-mmenu .lo-lp-mi") == ["Produto", "Preços", "Docs"]
+    assert count(html, "#nav-mmenu .lo-lp-mmenu-end .lo-lp-cta") == 1
+    assert count(html, "#nav-mmenu .lo-lp-mmenu-end .lo-lp-login") == 1
   end
 
   test "navigate and patch links, the logo slot" do
@@ -152,9 +152,9 @@ defmodule LineaUI.Components.LandingNavTest do
       """)
 
     assert count(html, "#mine") == 1
-    assert count(html, ".sg-nb-logo") == 0
-    assert attr_of(html, ".sg-lp-links a", "data-phx-link") == ["redirect", "patch"]
-    assert attr_of(html, ".sg-lp-links a", "href") == ["/a", "/b"]
+    assert count(html, ".lo-nb-logo") == 0
+    assert attr_of(html, ".lo-lp-links a", "data-phx-link") == ["redirect", "patch"]
+    assert attr_of(html, ".lo-lp-links a", "href") == ["/a", "/b"]
   end
 
   test "cta sizes, block, icon and the button form" do
@@ -164,8 +164,11 @@ defmodule LineaUI.Components.LandingNavTest do
       <.landing_cta size="lg" block icon="huge-arrow-right-02" href="/x">Go</.landing_cta>
       """)
 
-    assert ["sg-lp-cta"] == classes(html, "button")
-    assert ["sg-lp-cta", "lg", "block"] == classes(html, "a")
+    assert ["lo-lp-cta", "btn", "btn-neutral"] == classes(html, "button")
+
+    assert ["lo-lp-cta", "btn", "btn-neutral", "lg", "btn-lg", "block", "btn-block"] ==
+             classes(html, "a")
+
     assert count(html, "a .huge-arrow-right-02") == 1
   end
 
@@ -178,8 +181,8 @@ defmodule LineaUI.Components.LandingNavTest do
       <.landing_announcement id="fixed" dismissible={false}>Fixo</.landing_announcement>
       """)
 
-    assert ["sg-lp-ann"] == classes(html, "#ann")
-    assert text(html, "#ann .sg-lp-eb.light") == ["Novo"]
+    assert ["lo-lp-ann", "bg-neutral", "text-neutral-content"] == classes(html, "#ann")
+    assert text(html, "#ann .lo-lp-eb.light") == ["Novo"]
     assert attr_of(html, "#ann a", "href") == ["/n"]
     assert [click] = attr_of(html, "#ann button", "phx-click")
     assert click =~ "#ann"
@@ -215,19 +218,19 @@ defmodule LineaUI.Components.LandingNavTest do
         </.landing_mega>
         """)
 
-      assert count(html, ".sg-lp-cards > a.sg-lp-prod") == 3
-      assert count(html, ".sg-lp-grid") == 0
-      assert attr_of(html, ".sg-lp-prod", "href") == ["/cloud", "/forge", "/watch"]
-      assert text(html, ".sg-lp-prod .t") == ["Publique rápido", "Servidores", "Observe tudo"]
-      assert text(html, ".sg-lp-prod .go") == ["Publicar", "Gerenciar"]
-      assert text(html, ".sg-lp-prod .hd > span:not(.lg):not(.mk)") == ["Cloud", "Forge"]
-      assert count(html, ".sg-lp-prod .lg") == 1
-      assert count(html, ".sg-lp-prod .mk svg") == 1
-      assert count(html, ".sg-lp-prod .pv.mock[aria-hidden=true]") == 1
-      assert attr_of(html, ".sg-lp-prod .pv img", "src") == ["/forge.png"]
-      assert "tint" in classes(html, ".sg-lp-prod[href='/forge']")
-      assert "dark" in classes(html, ".sg-lp-prod[href='/watch']")
-      refute "dark" in classes(html, ".sg-lp-prod[href='/cloud']")
+      assert count(html, ".lo-lp-cards > a.lo-lp-prod") == 3
+      assert count(html, ".lo-lp-grid") == 0
+      assert attr_of(html, ".lo-lp-prod", "href") == ["/cloud", "/forge", "/watch"]
+      assert text(html, ".lo-lp-prod .t") == ["Publique rápido", "Servidores", "Observe tudo"]
+      assert text(html, ".lo-lp-prod .go") == ["Publicar", "Gerenciar"]
+      assert text(html, ".lo-lp-prod .hd > span:not(.lg):not(.mk)") == ["Cloud", "Forge"]
+      assert count(html, ".lo-lp-prod .lg") == 1
+      assert count(html, ".lo-lp-prod .mk svg") == 1
+      assert count(html, ".lo-lp-prod .pv.mock[aria-hidden=true]") == 1
+      assert attr_of(html, ".lo-lp-prod .pv img", "src") == ["/forge.png"]
+      assert "tint" in classes(html, ".lo-lp-prod[href='/forge']")
+      assert "dark" in classes(html, ".lo-lp-prod[href='/watch']")
+      refute "dark" in classes(html, ".lo-lp-prod[href='/cloud']")
     end
 
     test "columns sets how many cards fit in a row" do
@@ -238,22 +241,22 @@ defmodule LineaUI.Components.LandingNavTest do
         </.landing_mega>
         """)
 
-      assert attr_of(html, ".sg-lp-cards", "style") == ["--n:2"]
+      assert attr_of(html, ".lo-lp-cards", "style") == ["--n:2"]
 
       css = File.read!("assets/css/parts/canvas-landing-nav.css")
-      assert css =~ ".sg-lp-cards:has(>:only-child){--n:1}"
-      assert css =~ ".sg-lp-cards:has(>:nth-child(2):last-child){--n:2}"
-      assert css =~ ".sg-lp-prod.dark:focus-visible{"
-      assert count(html, ".sg-lp-prod .pv") == 0
+      assert css =~ ".lo-lp-cards:has(>:only-child){--n:1}"
+      assert css =~ ".lo-lp-cards:has(>:nth-child(2):last-child){--n:2}"
+      assert css =~ ".lo-lp-prod.dark:focus-visible{"
+      assert count(html, ".lo-lp-prod .pv") == 0
     end
 
     test "accent gives a card its own color, and mock draws an app screen" do
       html = render(~H|<.landing_product title="A" accent="#2563eb" mock />|)
 
-      assert attr_of(html, ".sg-lp-prod", "style") == ["--accent:#2563eb;--accent-ink:#2563eb"]
+      assert attr_of(html, ".lo-lp-prod", "style") == ["--accent:#2563eb;--accent-ink:#2563eb"]
       assert count(html, ".pv.mock .top") == 1
       assert count(html, ".pv.mock .row") == 4
-      assert render(~H|<.landing_product title="A" />|) |> attr_of(".sg-lp-prod", "style") == []
+      assert render(~H|<.landing_product title="A" />|) |> attr_of(".lo-lp-prod", "style") == []
     end
   end
 end

@@ -20,7 +20,7 @@ defmodule LineaUI.Components.ThemePickerTest do
       assert attr_of(html, "#p", "phx-hook") == ["LineaUI.ThemePicker"]
       assert attr_of(html, "#p", "data-default") == ["linea"]
       assert attr_of(html, "#p", "data-variant") == ["menu"]
-      assert attr_of(html, "#p .sg-tp-btn", "aria-label") == ["Theme"]
+      assert attr_of(html, "#p .lo-tp-btn", "aria-label") == ["Theme"]
       assert texts(html, "#p [data-theme-current]") == ["Linea"]
 
       values = attr_of(html, "#p [role=menuitemradio]", "data-theme-value")
@@ -28,9 +28,9 @@ defmodule LineaUI.Components.ThemePickerTest do
       assert values ==
                ~w(linea graphite ocean indigo violet plum rose sunset amber sand forest nord)
 
-      assert attr_of(html, "#p .sg-tp-sw", "data-theme") == values
+      assert attr_of(html, "#p .lo-tp-sw", "data-theme") == values
       assert attr_of(html, "#p [aria-checked=true]", "data-theme-value") == ["linea"]
-      assert texts(html, "#p .sg-tp-opt .lbl") |> Enum.take(3) == ~w(Linea Graphite Ocean)
+      assert texts(html, "#p .lo-tp-opt .lbl") |> Enum.take(3) == ~w(Linea Graphite Ocean)
     end
 
     test "default, a list of themes, the label and the change event" do
@@ -48,8 +48,8 @@ defmodule LineaUI.Components.ThemePickerTest do
       assert attr_of(html, "#p", "data-default") == ["ocean"]
       assert attr_of(html, "#p", "data-change-event") == ["save_theme"]
       assert texts(html, "#p [data-theme-current]") == ["Ocean"]
-      assert texts(html, "#p .sg-tp-h") == ["Tema"]
-      assert texts(html, "#p .sg-tp-opt .lbl") == ["Linea", "Ocean", "Acme Co", "My brand"]
+      assert texts(html, "#p .lo-tp-h") == ["Tema"]
+      assert texts(html, "#p .lo-tp-opt .lbl") == ["Linea", "Ocean", "Acme Co", "My brand"]
       assert attr_of(html, "#p [aria-checked=true]", "data-theme-value") == ["ocean"]
     end
 
@@ -73,12 +73,12 @@ defmodule LineaUI.Components.ThemePickerTest do
       html = render(~H|<.theme_picker id="g" variant="grid" default="forest" />|)
 
       assert "grid" in classes(html, "#g")
-      assert attr_of(html, "#g .sg-tp-grid", "role") == ["radiogroup"]
+      assert attr_of(html, "#g .lo-tp-grid", "role") == ["radiogroup"]
       assert find(html, "#g [role=radio]") |> Enum.count() == 12
-      assert find(html, "#g .sg-tp-btn") |> Enum.empty?()
+      assert find(html, "#g .lo-tp-btn") |> Enum.empty?()
       assert attr_of(html, "#g [role=radio][aria-checked=true]", "data-theme-value") == ["forest"]
       assert attr_of(html, "#g [role=radio][tabindex='0']", "data-theme-value") == ["forest"]
-      assert attr_of(html, "#g .sg-tp-prev", "data-theme") |> Enum.take(2) == ~w(linea graphite)
+      assert attr_of(html, "#g .lo-tp-prev", "data-theme") |> Enum.take(2) == ~w(linea graphite)
     end
 
     test "the first option takes Tab when the current theme is not among them" do
@@ -93,8 +93,8 @@ defmodule LineaUI.Components.ThemePickerTest do
     test "the drop in the hexagon, with the theme's accent" do
       html = render(~H|<.linea_logo />|)
 
-      assert attr_of(html, "svg.sg-logo-mark", "aria-label") == ["LineaUI"]
-      assert attr_of(html, "svg.sg-logo-mark", "width") == ["32"]
+      assert attr_of(html, "svg.lo-logo-mark", "aria-label") == ["LineaUI"]
+      assert attr_of(html, "svg.lo-logo-mark", "width") == ["32"]
       assert find(html, "svg path") |> Enum.count() == 3
       assert "accent" in classes(html, "path.drop")
       assert [ring] = attr_of(html, "path.ring", "stroke")
@@ -102,7 +102,7 @@ defmodule LineaUI.Components.ThemePickerTest do
 
       ids = render(~H"<.linea_logo /><.linea_logo />") |> attr_of("linearGradient", "id")
       assert length(Enum.uniq(ids)) == 4
-      assert find(html, ".sg-logo-word") |> Enum.empty?()
+      assert find(html, ".lo-logo-word") |> Enum.empty?()
     end
 
     test "size, tone, id and the wordmark" do
@@ -111,18 +111,18 @@ defmodule LineaUI.Components.ThemePickerTest do
       assert "small" in classes(html, "svg")
       assert "mono" in classes(html, "path.drop")
       assert attr_of(html, "linearGradient", "id") == ["hero-r", "hero-b"]
-      assert texts(html, ".sg-logo-word") == ["LineaUI"]
+      assert texts(html, ".lo-logo-word") == ["LineaUI"]
     end
 
     test "the word follows the mark like the canvas, or takes word_size" do
-      word = fn html -> attr_of(html, ".sg-logo-word", "style") end
+      word = fn html -> attr_of(html, ".lo-logo-word", "style") end
       assert word.(render(~H|<.linea_logo size={28} wordmark />|)) == ["font-size:17px"]
       assert word.(render(~H|<.linea_logo size={40} wordmark />|)) == ["font-size:24px"]
       assert word.(render(~H|<.linea_logo size={56} wordmark />|)) == ["font-size:30px"]
       assert word.(render(~H|<.linea_logo size={96} wordmark />|)) == ["font-size:30px"]
 
       html = render(~H|<.linea_logo size={28} word_size={20} wordmark />|)
-      assert attr_of(html, ".sg-logo-word", "style") == ["font-size:20px"]
+      assert attr_of(html, ".lo-logo-word", "style") == ["font-size:20px"]
     end
   end
 

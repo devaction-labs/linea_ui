@@ -75,7 +75,7 @@ defmodule LineaUI.Components.Sidebar do
     * `match`: `"exact"` (the default, or the `match` of the component) or `"prefix"`: the item is also active
       on a path under its own (`navigate: "/app/tasks"` lights up on `/app/tasks/NXP-1`; only the path is
       compared, and `/` is always exact).
-    * `disabled`: a "coming soon" item: a `span` (not a link) with `aria-disabled="true"` and `class="sg-sb-a dis"`,
+    * `disabled`: a "coming soon" item: a `span` (not a link) with `aria-disabled="true"` and `class="lo-sb-item dis"` inside an `li.menu-disabled`,
       never active and never toggling. `title` is its tooltip (a string `disabled` works as the title too).
     * `formats`: a list of formats that show it (`["rail"]`: only the rail); every format when left out.
 
@@ -116,7 +116,7 @@ defmodule LineaUI.Components.Sidebar do
 
   The foot of the menu is a choice (`footer`, in the three formats):
 
-    * `"user"`: the person. The user card in the `tree` and in `sections` (the same `.sg-sb-user` card, in place
+    * `"user"`: the person. The user card in the `tree` and in `sections` (the same `.lo-sb-user` card, in place
       of the plan card), the avatar in the `rail`.
     * `"version"`: the version line of the canvas (a status dot, `v1.4.2`, the build and the "What's new" link)
       in place of the user (`tree`, `rail`) or of the plan card (`sections`). The line is at the foot of the
@@ -148,9 +148,10 @@ defmodule LineaUI.Components.Sidebar do
 
   ## The canvas "Painel" menu
 
-  The `tree` format reproduces the canvas `sg-sb treex` menu: collapsible groups with a chevron
-  (`aria-expanded`, `aria-controls`), items with `children` joined by a line (`.sg-sb-tree.line`), `disabled`
-  "soon" items and the mono `count` (`sg-sb-n`). Groups open and close in the browser; `persist_groups` keeps
+  Every format draws its items as a daisyUI `menu` (`ul.menu.menu-sm`, `li.menu-title` for labels, `menu-active`
+  on the active item, `menu-disabled` on a "soon" one), so the look follows the daisyUI theme. The `tree` format
+  has collapsible groups with a chevron (`aria-expanded`, `aria-controls`), items with `children` in a nested
+  `ul` (daisyUI's indent and line), `disabled` "soon" items and the mono `count` (a `badge`). Groups open and close in the browser; `persist_groups` keeps
   which ones are open in `localStorage` (`linea-sidebar-groups:<id>`), so the next visit restores them.
 
       <.sidebar id="menu" format="tree" persist_groups match="prefix" current={@current_path}
@@ -162,17 +163,17 @@ defmodule LineaUI.Components.Sidebar do
           ]}
         ]}>
         <:sidebar_footer>
-          <button type="button" class="sg-sb-a" data-rail-toggle="menu">Recolher menu</button>
+          <button type="button" class="btn btn-ghost btn-sm justify-start" data-rail-toggle="menu">Recolher menu</button>
         </:sidebar_footer>
         <:mobile_drawer>
-          <.link navigate={~p"/settings"} class="sg-sb-a">Configurações</.link>
-          <.link href={~p"/sair"} method="delete" class="sg-sb-a">Sair</.link>
+          <.link navigate={~p"/settings"} class="btn btn-ghost btn-sm justify-start">Configurações</.link>
+          <.link href={~p"/sair"} method="delete" class="btn btn-ghost btn-sm justify-start">Sair</.link>
         </:mobile_drawer>
       </.sidebar>
 
   The `:sidebar_footer` slot is in the foot of the menu, above the version line (`footer="version"`), so a
   "Recolher menu" button (any element with `data-rail-toggle="<id of the menu>"`) and the version live together.
-  The `:mobile_drawer` slot (`.sg-sb-drawer`) is in the menu body and shows only below 768px, when the menu is
+  The `:mobile_drawer` slot (`.lo-sb-drawer`) is in the menu body and shows only below 768px, when the menu is
   the top bar with a hamburger: put the search, settings, theme and logout there.
 
   ## Collapsing
@@ -295,7 +296,7 @@ defmodule LineaUI.Components.Sidebar do
 
   slot :mobile_drawer,
     doc:
-      "Content of the menu body shown only below 768px (`.sg-sb-drawer`): search, settings, theme, logout."
+      "Content of the menu body shown only below 768px (`.lo-sb-drawer`): search, settings, theme, logout."
 
   def sidebar(assigns) do
     assigns =
@@ -320,7 +321,7 @@ defmodule LineaUI.Components.Sidebar do
     ~H"""
     <nav
       id={@id}
-      class={merge(["sg-sb", format_class(@fmt), @class])}
+      class={merge(["lo-sb", format_class(@fmt), @class])}
       aria-label={@label}
       phx-hook="LineaUI.ShellRail"
       phx-mounted='[["ignore_attrs",{"attrs":["data-collapsed","data-mobile-open"]}]]'
@@ -418,28 +419,32 @@ defmodule LineaUI.Components.Sidebar do
 
   defp sections(assigns) do
     ~H"""
-    <div class="sg-sb-brand">
+    <div class="lo-sb-brand">
       <.brand_mark brand={@brand} mark={@mark} />
       <.switcher :if={@brand && @brand[:switch] != false} switch={@brand[:switch]} />
       <.burger id={@id} label={@mobile_label} />
     </div>
-    <div id={@id <> "-body"} class="sg-sb-body">
-      <div class="sg-sb-scroll">
-        <.entry :for={entry <- @menu.body} entry={entry} format="sections" />
+    <div id={@id <> "-body"} class="lo-sb-body">
+      <div class="lo-sb-scroll">
+        <ul class="menu lo-sb-menu menu-sm w-full">
+          <.entry :for={entry <- @menu.body} entry={entry} format="sections" />
+        </ul>
       </div>
-      <div class="sg-sb-foot">
-        <div :if={@menu.footer_label} class="sg-sb-h2">{@menu.footer_label}</div>
-        <.row :for={item <- @menu.footer_items} item={item} format="sections" />
-        <div :if={@plan} class="sg-sb-plan">
+      <div class="lo-sb-foot">
+        <div :if={@menu.footer_label} class="lo-sb-title2">{@menu.footer_label}</div>
+        <ul :if={@menu.footer_items != []} class="menu lo-sb-menu menu-sm w-full">
+          <.row :for={item <- @menu.footer_items} item={item} format="sections" />
+        </ul>
+        <div :if={@plan} class="lo-sb-plan card card-border card-sm">
           <.logo brand={@brand} />
           <b>{@plan[:name]}</b>
-          <span :if={@plan[:badge]} class="pro">{@plan[:badge]}</span>
+          <span :if={@plan[:badge]} class="pro badge badge-primary badge-sm">{@plan[:badge]}</span>
         </div>
         {render_slot(@footer)}
       </div>
       <.user_card :if={@user} user={@user} />
       <.version :if={@version} version={@version} />
-      <div :if={@drawer != []} class="sg-sb-drawer">{render_slot(@drawer)}</div>
+      <div :if={@drawer != []} class="lo-sb-drawer">{render_slot(@drawer)}</div>
     </div>
     """
   end
@@ -450,7 +455,7 @@ defmodule LineaUI.Components.Sidebar do
     ~H"""
     <button
       type="button"
-      class="sw"
+      class="sw btn btn-ghost btn-square btn-xs"
       aria-label={switch_label(@switch)}
       phx-click={switch_click(@switch)}
     >
@@ -480,12 +485,12 @@ defmodule LineaUI.Components.Sidebar do
 
   defp tree(assigns) do
     ~H"""
-    <div class="sg-sb-brand">
+    <div class="lo-sb-brand">
       <.brand_mark brand={@brand} mark={@mark} />
       <button
         :if={@collapsible}
         type="button"
-        class="col"
+        class="col btn btn-ghost btn-square btn-xs"
         aria-label={@collapse_label}
         aria-pressed="false"
         title={@collapse_label}
@@ -495,17 +500,21 @@ defmodule LineaUI.Components.Sidebar do
       </button>
       <.burger id={@id} label={@mobile_label} />
     </div>
-    <div id={@id <> "-body"} class="sg-sb-body">
-      <div class="sg-sb-scroll">
-        <.entry :for={entry <- @menu.body} entry={entry} format="tree" />
+    <div id={@id <> "-body"} class="lo-sb-body">
+      <div class="lo-sb-scroll">
+        <ul class="menu lo-sb-menu menu-sm w-full">
+          <.entry :for={entry <- @menu.body} entry={entry} format="tree" />
+        </ul>
       </div>
-      <div class="sg-sb-foot">
-        <.row :for={item <- @menu.footer_items} item={item} format="tree" />
+      <div class="lo-sb-foot">
+        <ul :if={@menu.footer_items != []} class="menu lo-sb-menu menu-sm w-full">
+          <.row :for={item <- @menu.footer_items} item={item} format="tree" />
+        </ul>
         {render_slot(@footer)}
       </div>
       <.user_card :if={@user} user={@user} />
       <.version :if={@version} version={@version} />
-      <div :if={@drawer != []} class="sg-sb-drawer">{render_slot(@drawer)}</div>
+      <div :if={@drawer != []} class="lo-sb-drawer">{render_slot(@drawer)}</div>
     </div>
     """
   end
@@ -525,7 +534,7 @@ defmodule LineaUI.Components.Sidebar do
   # and the user at the foot opening a menu
   defp nested(assigns) do
     ~H"""
-    <div class="sg-sb-brand">
+    <div class="lo-sb-brand">
       <.menu_button
         :if={@brand && @brand[:menu]}
         id={@id <> "-team"}
@@ -535,18 +544,22 @@ defmodule LineaUI.Components.Sidebar do
         <.brand_mark brand={@brand} mark={@mark} />
         <span :if={@brand[:plan]} class="sub">{@brand[:plan]}</span>
       </.menu_button>
-      <div :if={!(@brand && @brand[:menu])} class="sg-sb-team">
+      <div :if={!(@brand && @brand[:menu])} class="lo-sb-team">
         <.brand_mark brand={@brand} mark={@mark} />
         <span :if={@brand && @brand[:plan]} class="sub">{@brand[:plan]}</span>
       </div>
       <.burger id={@id} label={@mobile_label} />
     </div>
-    <div id={@id <> "-body"} class="sg-sb-body">
-      <div class="sg-sb-scroll">
-        <.entry :for={entry <- @menu.body} entry={entry} format="nested" />
+    <div id={@id <> "-body"} class="lo-sb-body">
+      <div class="lo-sb-scroll">
+        <ul class="menu lo-sb-menu menu-sm w-full">
+          <.entry :for={entry <- @menu.body} entry={entry} format="nested" />
+        </ul>
       </div>
-      <div class="sg-sb-foot">
-        <.row :for={item <- @menu.footer_items} item={item} format="nested" />
+      <div class="lo-sb-foot">
+        <ul :if={@menu.footer_items != []} class="menu lo-sb-menu menu-sm w-full">
+          <.row :for={item <- @menu.footer_items} item={item} format="nested" />
+        </ul>
         {render_slot(@footer)}
       </div>
       <.menu_button
@@ -574,12 +587,12 @@ defmodule LineaUI.Components.Sidebar do
   # a row of the header or the foot that opens a menu to the right (under it on a phone)
   defp menu_button(assigns) do
     ~H"""
-    <div class="sg-sb-mm">
+    <div class="lo-sb-mm">
       <Dropdown.dropdown id={@id} placement="right-end" offset={8}>
         <:toggle>
           <button
             type="button"
-            class="sg-sb-mb"
+            class="lo-sb-mb btn btn-ghost"
             aria-label={@label}
             aria-haspopup="menu"
             data-rail-tip
@@ -589,14 +602,14 @@ defmodule LineaUI.Components.Sidebar do
             <span class="rail-tip" role="tooltip">{@label}</span>
           </button>
         </:toggle>
-        <div :if={@user} class="sg-sb-mm-h">
+        <div :if={@user} class="lo-sb-mm-h">
           <.avatar user={@user} />
           <span class="who"><b>{@user[:name]}</b><span :if={@user[:email]}>{@user[:email]}</span></span>
         </div>
         <Dropdown.dropdown_separator :if={@user} />
         <%= for item <- @items do %>
           <Dropdown.dropdown_separator :if={item == :separator} />
-          <div :if={is_map(item) && item[:label] && item[:heading]} class="sg-sb-mm-l">
+          <div :if={is_map(item) && item[:label] && item[:heading]} class="lo-sb-mm-l menu-title">
             {item.label}
           </div>
           <Dropdown.dropdown_item
@@ -607,7 +620,7 @@ defmodule LineaUI.Components.Sidebar do
           >
             <:icon :if={item[:icon]}><Icon.icon name={Nav.icon(item[:icon])} class="size-4" /></:icon>
             {item.label}
-            <span :if={item[:hint]} class="sg-sb-mm-k">{item.hint}</span>
+            <span :if={item[:hint]} class="lo-sb-mm-k">{item.hint}</span>
           </Dropdown.dropdown_item>
         <% end %>
       </Dropdown.dropdown>
@@ -633,12 +646,12 @@ defmodule LineaUI.Components.Sidebar do
 
   defp rail(assigns) do
     ~H"""
-    <div class="sg-sb-mbar">
+    <div class="lo-sb-mbar">
       <.brand_mark brand={@brand} mark={@mark} />
       <.burger id={@id} label={@mobile_label} />
     </div>
-    <div id={@id <> "-body"} class="sg-sb-body">
-      <div class="sg-sb-rail">
+    <div id={@id <> "-body"} class="lo-sb-body">
+      <div class="lo-sb-rail">
         <.brand_mark brand={@brand} mark={@mark} large />
         <.rail_icon :if={@menu.home} item={@menu.home} />
         <.avatar :if={@user} user={@user} />
@@ -650,13 +663,14 @@ defmodule LineaUI.Components.Sidebar do
         <span class="grow"></span>
         <.rail_icon :for={item <- @menu.footer_items} item={item} />
       </div>
-      <div :if={@menu.module} class="sg-sb-panel">
-        <div class="sg-sb-ph">
+      <div :if={@menu.module} class="lo-sb-panel">
+        <div class="lo-sb-ph">
           <b>{@menu.module.label}</b>
           <span>
             <button
               :if={@collapsible}
               type="button"
+              class="btn btn-ghost btn-square btn-xs"
               aria-label={@collapse_label}
               aria-pressed="false"
               title={@collapse_label}
@@ -666,35 +680,35 @@ defmodule LineaUI.Components.Sidebar do
             </button>
           </span>
         </div>
-        <div class="sg-sb-scroll">
-          <.link :if={@menu.module.action} class="sg-sb-new" {@menu.module.action.link}>
+        <div class="lo-sb-scroll">
+          <.link
+            :if={@menu.module.action}
+            class="lo-sb-new btn btn-sm w-full justify-start"
+            {@menu.module.action.link}
+          >
             <Icon.icon :if={@menu.module.action.icon} name={@menu.module.action.icon} class="i sm" />{@menu.module.action.label}
           </.link>
-          <.entry :for={entry <- @menu.module.items} entry={entry} format="rail" />
+          <ul class="menu lo-sb-menu menu-sm w-full">
+            <.entry :for={entry <- @menu.module.items} entry={entry} format="rail" />
+          </ul>
           <span class="grow"></span>
-          <div :if={@menu.module.try} class="sg-sb-gh plain">{@menu.module.try.label}</div>
-          <.row
-            :for={item <- (@menu.module.try && @menu.module.try.items) || []}
-            item={item}
-            format="rail"
-          />
+          <div :if={@menu.module.try} class="lo-sb-gh plain">{@menu.module.try.label}</div>
+          <ul :if={@menu.module.try} class="menu lo-sb-menu menu-sm w-full">
+            <.row :for={item <- @menu.module.try.items || []} item={item} format="rail" />
+          </ul>
         </div>
-        <div :if={@trial} class="sg-sb-trial">
+        <div :if={@trial} class="lo-sb-trial card card-sm bg-base-200">
           <div class="row1">
             <span class="z"><Icon.icon name="huge-flash" class="i sm" /></span>
             <b>{@trial[:title]}</b>
-            <span :if={@trial[:label]} class="free">{@trial[:label]}</span>
+            <span :if={@trial[:label]} class="free badge badge-sm">{@trial[:label]}</span>
           </div>
-          <div
-            class="bar"
-            role="progressbar"
+          <progress
+            class="bar progress progress-primary"
             aria-label={@trial[:title]}
-            aria-valuemin="0"
-            aria-valuemax="100"
-            aria-valuenow={@trial[:value]}
-          >
-            <i style={"width:#{@trial[:value] || 0}%"}></i>
-          </div>
+            value={@trial[:value] || 0}
+            max="100"
+          ></progress>
           <div class="row2">
             <span>{@trial[:text]}</span>
             <.link :if={@trial[:action]} {Nav.link_attrs(@trial)}>{@trial[
@@ -705,7 +719,7 @@ defmodule LineaUI.Components.Sidebar do
         {render_slot(@footer)}
         <.version :if={@version} version={@version} />
       </div>
-      <div :if={@drawer != []} class="sg-sb-drawer">{render_slot(@drawer)}</div>
+      <div :if={@drawer != []} class="lo-sb-drawer">{render_slot(@drawer)}</div>
     </div>
     """
   end
@@ -717,7 +731,11 @@ defmodule LineaUI.Components.Sidebar do
   defp rail_icon(assigns) do
     ~H"""
     <.link
-      class={["r", (@on or @item[:active]) && "on", @item[:badge] && "has-badge"]}
+      class={[
+        "r btn btn-ghost btn-square",
+        (@on or @item[:active]) && "on btn-active",
+        @item[:badge] && "has-badge"
+      ]}
       aria-label={@item.label}
       aria-current={(@on or @item[:active]) && "page"}
       data-rail-tip="always"
@@ -763,40 +781,45 @@ defmodule LineaUI.Components.Sidebar do
 
   defp entry(%{entry: %{kind: :group}, format: "sections"} = assigns) do
     ~H"""
-    <div class="sg-sb-h">{@entry.label}</div>
+    <li class="menu-title lo-sb-title">{@entry.label}</li>
     <.row :for={item <- @entry.items} item={item} format="sections" />
     """
   end
 
   defp entry(%{entry: %{kind: :group}, format: "tree"} = assigns) do
     ~H"""
-    <button
-      :if={@entry.collapsible}
-      type="button"
-      class="sg-sb-gt"
-      aria-expanded={if @entry.open, do: "true", else: "false"}
-      aria-controls={@entry.id}
-      phx-mounted='[["ignore_attrs",{"attrs":["aria-expanded"]}]]'
-      phx-click={toggle(@entry.id)}
-    >
-      {@entry.label}
-      <svg class="i sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10l5 5 5-5" /></svg>
-    </button>
-    <div :if={!@entry.collapsible} class="sg-sb-gt">{@entry.label}</div>
-    <div
-      id={@entry.id}
-      class="sg-sb-grp"
-      data-closed={!@entry.open && "true"}
-      phx-mounted='[["ignore_attrs",{"attrs":["data-closed"]}]]'
-    >
-      <.row :for={item <- @entry.items} item={item} format="tree" />
-    </div>
+    <li class="menu-title lo-sb-title lo-sb-gt">
+      <button
+        :if={@entry.collapsible}
+        type="button"
+        class="lo-sb-toggle"
+        aria-expanded={if @entry.open, do: "true", else: "false"}
+        aria-controls={@entry.id}
+        phx-mounted='[["ignore_attrs",{"attrs":["aria-expanded"]}]]'
+        phx-click={toggle(@entry.id)}
+      >
+        {@entry.label}
+        <svg class="i sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10l5 5 5-5" /></svg>
+      </button>
+      <span :if={!@entry.collapsible}>{@entry.label}</span>
+    </li>
+    <li class="lo-sb-group-li">
+      <ul
+        id={@entry.id}
+        class="lo-sb-group"
+        data-sb-group
+        data-closed={!@entry.open && "true"}
+        phx-mounted='[["ignore_attrs",{"attrs":["data-closed"]}]]'
+      >
+        <.row :for={item <- @entry.items} item={item} format="tree" />
+      </ul>
+    </li>
     """
   end
 
   defp entry(%{entry: %{kind: :group}, format: "nested"} = assigns) do
     ~H"""
-    <div class="sg-sb-h">{@entry.label}</div>
+    <li class="menu-title lo-sb-title">{@entry.label}</li>
     <.row :for={item <- @entry.items} item={item} format="nested" />
     """
   end
@@ -804,29 +827,34 @@ defmodule LineaUI.Components.Sidebar do
   # a nested group of the rail panel
   defp entry(%{entry: %{kind: :group}, format: "rail"} = assigns) do
     ~H"""
-    <button
-      :if={@entry.collapsible}
-      type="button"
-      class="sg-sb-gh"
-      aria-expanded={if @entry.open, do: "true", else: "false"}
-      aria-controls={@entry.id}
-      phx-mounted='[["ignore_attrs",{"attrs":["aria-expanded"]}]]'
-      phx-click={toggle(@entry.id)}
-    >
-      {@entry.label}
-      <span class="tg" aria-hidden="true">
-        <svg class="i sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10l5 5 5-5" /></svg>
-      </span>
-    </button>
-    <div :if={!@entry.collapsible} class="sg-sb-gh">{@entry.label}</div>
-    <div
-      id={@entry.id}
-      class="sg-sb-grp"
-      data-closed={!@entry.open && "true"}
-      phx-mounted='[["ignore_attrs",{"attrs":["data-closed"]}]]'
-    >
-      <.row :for={item <- @entry.items} item={item} format="rail" />
-    </div>
+    <li class="menu-title lo-sb-title lo-sb-gh">
+      <button
+        :if={@entry.collapsible}
+        type="button"
+        class="lo-sb-toggle"
+        aria-expanded={if @entry.open, do: "true", else: "false"}
+        aria-controls={@entry.id}
+        phx-mounted='[["ignore_attrs",{"attrs":["aria-expanded"]}]]'
+        phx-click={toggle(@entry.id)}
+      >
+        {@entry.label}
+        <span class="tg" aria-hidden="true">
+          <svg class="i sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10l5 5 5-5" /></svg>
+        </span>
+      </button>
+      <span :if={!@entry.collapsible}>{@entry.label}</span>
+    </li>
+    <li class="lo-sb-group-li">
+      <ul
+        id={@entry.id}
+        class="lo-sb-group"
+        data-sb-group
+        data-closed={!@entry.open && "true"}
+        phx-mounted='[["ignore_attrs",{"attrs":["data-closed"]}]]'
+      >
+        <.row :for={item <- @entry.items} item={item} format="rail" />
+      </ul>
+    </li>
     """
   end
 
@@ -859,93 +887,82 @@ defmodule LineaUI.Components.Sidebar do
       end)
 
     ~H"""
-    <span
-      :if={@item.disabled}
-      class={["sg-sb-a", "dis", @child && @format == "rail" && "t", @chip == "sqi" && "sq"]}
-      aria-disabled="true"
-      title={@item.hint || @item.label}
-      data-disabled
-      data-rail-tip
-    >
-      <.row_body item={@item} chip={@chip} />
-    </span>
-    <button
-      :if={@item.toggle_row}
-      type="button"
-      class={[
-        "sg-sb-a",
-        "rw",
-        @item.active && "on",
-        @child && @format == "rail" && "t",
-        @chip == "sqi" && "sq"
-      ]}
-      aria-current={@item.active && "page"}
-      aria-expanded={if @item.open, do: "true", else: "false"}
-      aria-controls={@item.tree_id}
-      data-rail-tip
-      phx-mounted='[["ignore_attrs",{"attrs":["aria-expanded"]}]]'
-      phx-click={toggle(@item.tree_id)}
-    >
-      <.row_body item={@item} chip={@chip} />
-      <span class="cv" aria-hidden="true">
-        <svg class="i sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10l5 5 5-5" /></svg>
-      </span>
-    </button>
-    <.link
-      :if={!@item.toggle_row and !@item.disabled}
-      class={[
-        "sg-sb-a",
-        @item.active && "on",
-        @child && @format == "rail" && "t",
-        @chip == "sqi" && "sq"
-      ]}
-      aria-current={@item.active && "page"}
-      data-rail-tip
-      phx-click={@item.collapsible && open(@item.tree_id)}
-      {@item.link}
-    >
-      <.row_body item={@item} chip={@chip} />
-    </.link>
-    <button
-      :if={@item.collapsible && !@item.toggle_row}
-      id={@item.tree_id <> "-btn"}
-      type="button"
-      class="sg-sb-ct"
-      aria-expanded={if @item.open, do: "true", else: "false"}
-      aria-controls={@item.tree_id}
-      aria-label={@item.label}
-      phx-mounted='[["ignore_attrs",{"attrs":["aria-expanded"]}]]'
-      phx-click={toggle(@item.tree_id)}
-    >
-      <svg class="i sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10l5 5 5-5" /></svg>
-    </button>
-    <div
-      :if={@item.children != []}
-      id={@item.collapsible && @item.tree_id}
-      class={["sg-sb-tree", @format == "tree" && "line"]}
-      data-closed={!@item.open && "true"}
-      phx-mounted={@item.collapsible && JS.ignore_attributes(["data-closed"])}
-    >
-      <svg
-        :if={@item.branch}
-        class="tb"
-        height={@item.branch.height}
-        viewBox={"0 0 24 #{@item.branch.height}"}
-        aria-hidden="true"
+    <li class={[
+      "lo-sb-li",
+      @item.disabled && "menu-disabled",
+      @item.collapsible && !@item.toggle_row && "lo-sb-parent"
+    ]}>
+      <span
+        :if={@item.disabled}
+        class={["lo-sb-item", "dis", @child && @format == "rail" && "t", @chip == "sqi" && "sq"]}
+        aria-disabled="true"
+        title={@item.hint || @item.label}
+        data-disabled
+        data-rail-tip
       >
-        <path class="t" d={@item.branch.trunk} />
-        <path :if={@item.branch.path} class="a" d={@item.branch.path} />
-        <circle :for={n <- @item.branch.nodes} :if={n.on} class="h" cx="16" cy={"#{n.y}.0"} r="7" />
-        <circle
-          :for={n <- @item.branch.nodes}
-          class={["n", n.on && "on"]}
-          cx="16"
-          cy={"#{n.y}.0"}
-          r="3.75"
-        />
-      </svg>
-      <.row :for={child <- @item.children} item={child} format={@format} child />
-    </div>
+        <.row_body item={@item} chip={@chip} />
+      </span>
+      <button
+        :if={@item.toggle_row}
+        type="button"
+        class={[
+          "lo-sb-item",
+          "rw",
+          @item.active && "on menu-active",
+          @child && @format == "rail" && "t",
+          @chip == "sqi" && "sq"
+        ]}
+        aria-current={@item.active && "page"}
+        aria-expanded={if @item.open, do: "true", else: "false"}
+        aria-controls={@item.tree_id}
+        data-rail-tip
+        phx-mounted='[["ignore_attrs",{"attrs":["aria-expanded"]}]]'
+        phx-click={toggle(@item.tree_id)}
+      >
+        <.row_body item={@item} chip={@chip} />
+        <span class="cv" aria-hidden="true">
+          <svg class="i sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10l5 5 5-5" /></svg>
+        </span>
+      </button>
+      <.link
+        :if={!@item.toggle_row and !@item.disabled}
+        class={[
+          "lo-sb-item",
+          @item.active && "on menu-active",
+          @child && @format == "rail" && "t",
+          @chip == "sqi" && "sq"
+        ]}
+        aria-current={@item.active && "page"}
+        data-rail-tip
+        phx-click={@item.collapsible && open(@item.tree_id)}
+        {@item.link}
+      >
+        <.row_body item={@item} chip={@chip} />
+      </.link>
+      <button
+        :if={@item.collapsible && !@item.toggle_row}
+        id={@item.tree_id <> "-btn"}
+        type="button"
+        class="lo-sb-caret btn btn-ghost btn-square btn-xs"
+        aria-expanded={if @item.open, do: "true", else: "false"}
+        aria-controls={@item.tree_id}
+        aria-label={@item.label}
+        phx-mounted='[["ignore_attrs",{"attrs":["aria-expanded"]}]]'
+        phx-click={toggle(@item.tree_id)}
+      >
+        <svg class="i sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10l5 5 5-5" /></svg>
+      </button>
+      <ul
+        :if={@item.children != []}
+        id={@item.collapsible && @item.tree_id}
+        class="lo-sb-children"
+        data-sb-group
+        data-closed={!@item.open && "true"}
+        phx-mounted={@item.collapsible && JS.ignore_attributes(["data-closed"])}
+      >
+        <.row :for={child <- @item.children} item={child} format={@format} child />
+      </ul>
+    </li>
     """
   end
 
@@ -959,10 +976,10 @@ defmodule LineaUI.Components.Sidebar do
     </span>
     <Icon.icon :if={!@chip && @item.icon} name={@item.icon} class="i" />
     <span class="lbl">{@item.label}</span>
-    <span :if={@item.count} class="sg-sb-n">{@item.count}</span>
+    <span :if={@item.count} class="lo-sb-count badge badge-ghost badge-sm font-mono">{@item.count}</span>
     <span
       :if={@item.badge}
-      class="red"
+      class="lo-sb-dot red status status-error"
       role={is_binary(@item.badge) && "img"}
       aria-label={is_binary(@item.badge) && @item.badge}
       aria-hidden={!is_binary(@item.badge) && "true"}
@@ -1001,7 +1018,7 @@ defmodule LineaUI.Components.Sidebar do
 
   defp logo(assigns) do
     ~H"""
-    <span :if={@brand} class={["sg-sb-logo", @large && "lg"]}>
+    <span :if={@brand} class={["lo-sb-logo bg-primary text-primary-content", @large && "lg"]}>
       <img
         :if={@brand[:src]}
         src={@brand[:src]}
@@ -1019,13 +1036,13 @@ defmodule LineaUI.Components.Sidebar do
   defp version(assigns) do
     ~H"""
     <div
-      class="sg-sb-ver"
+      class="lo-sb-ver"
       role="group"
       title={@version.aria}
       aria-label={@version.aria}
       data-status={@version.status}
     >
-      <span class="dot" aria-hidden="true"></span>
+      <span class={["dot status", status_class(@version.status)]} aria-hidden="true"></span>
       <span class="v">{@version.version}</span>
       <span :if={@version.build} class="b">{@version.build}</span>
       <.link :if={@version.link} class="new" title={@version.title} {@version.link}>
@@ -1035,12 +1052,16 @@ defmodule LineaUI.Components.Sidebar do
     """
   end
 
+  defp status_class("warning"), do: "status-warning"
+  defp status_class("down"), do: "status-error"
+  defp status_class(_status), do: "status-success"
+
   attr :user, :map, required: true
 
   defp user_card(assigns) do
     ~H"""
-    <div class="sg-sb-user">
-      <div class="me">
+    <div class="lo-sb-user">
+      <div class="me card card-border">
         <.avatar user={@user} />
         <div class="who">
           <b>{@user[:name]}</b>
@@ -1056,7 +1077,7 @@ defmodule LineaUI.Components.Sidebar do
   defp avatar(assigns) do
     ~H"""
     <span
-      class="sg-av"
+      class="lo-sb-av avatar avatar-placeholder bg-neutral text-neutral-content"
       style={@user[:color] && "background:#{@user[:color]}"}
       title={@user[:name]}
       role="img"
@@ -1081,7 +1102,7 @@ defmodule LineaUI.Components.Sidebar do
     ~H"""
     <button
       type="button"
-      class="sg-sb-burger"
+      class="lo-sb-burger btn btn-ghost btn-square btn-sm"
       aria-expanded="false"
       aria-controls={@id <> "-body"}
       aria-label={@label}

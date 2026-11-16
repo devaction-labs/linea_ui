@@ -179,7 +179,9 @@ defmodule LineaUI.Components.Ai do
   def ai_message(%{role: "user"} = assigns) do
     ~H"""
     <div class={merge(["ai-msg me", @class])} {@rest}>
-      <div class="sg-bubble me">{render_slot(@inner_block)}</div>
+      <div class="chat chat-end lo-chat">
+        <div class="chat-bubble lo-bubble me">{render_slot(@inner_block)}</div>
+      </div>
       <.avatar :if={@name} name={@name} size="24" tint="#8a5cd6" />
     </div>
     """
@@ -316,7 +318,7 @@ defmodule LineaUI.Components.Ai do
         <%= for row <- @preview do %>
           <span class="faint">{row[:label] || "Mensagem"}</span>
           <span class="ai-proposal-value">
-            <span class="sg-bubble ai-preview">{render_slot(row)}</span>
+            <span class="chat-bubble lo-bubble ai-preview">{render_slot(row)}</span>
           </span>
         <% end %>
       </div>
@@ -607,7 +609,7 @@ defmodule LineaUI.Components.Ai do
       <button
         :for={item <- @items}
         type="button"
-        class="sg-tag ai-pill"
+        class="btn btn-sm ai-pill"
         phx-click={pick(@on_pick, item.title, item.text, @target)}
       >
         <.icon name="huge-sparkles" class="i sm" />{item.text}
@@ -801,7 +803,7 @@ defmodule LineaUI.Components.Ai do
           phx-submit={@on_search || JS.dispatch("linea:noop")}
           phx-target={@target}
         >
-          <label class="sg-input">
+          <label class="input w-full">
             <.icon name="huge-search-01" class="i" />
             <input
               type="search"

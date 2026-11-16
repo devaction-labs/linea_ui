@@ -1667,8 +1667,8 @@ defmodule LineaUI.Components.AppShell do
         <:tab navigate={~p"/orders"} label="Orders"><.icon name="huge-shopping-cart-01" /></:tab>
       </.tab_bar>
 
-  `variant="canvas"` is the bar of the canvas "Celular" board (`sg-m-tab`): a pill with the icon and the label
-  visible under it, the current tab highlighted (`<nav class="sg-m-tab"><a class="on">…</a></nav>`). The `class`
+  `variant="canvas"` is the bar of the canvas "Celular" board (`lo-m-tab`): a pill with the icon and the label
+  visible under it, the current tab highlighted (`<nav class="lo-m-tab"><a class="on">…</a></nav>`). The `class`
   of a tab is added to its link, so the app can mark its own states.
 
       <.tab_bar variant="canvas" current={@current_path} match="prefix">
@@ -1691,7 +1691,7 @@ defmodule LineaUI.Components.AppShell do
     default: "default",
     values: ~w(default canvas),
     doc:
-      "`canvas` draws the `sg-m-tab` pill with the label visible under each icon; `default` keeps the icon-only `linea-tabbar`."
+      "`canvas` draws the `lo-m-tab` pill with the label visible under each icon; `default` keeps the icon-only `linea-tabbar`."
 
   attr :match, :string,
     default: "exact",
@@ -1714,7 +1714,7 @@ defmodule LineaUI.Components.AppShell do
 
   def tab_bar(%{variant: "canvas"} = assigns) do
     ~H"""
-    <nav aria-label={@label} class={merge(["sg-m-tab", @class])} {@rest}>
+    <nav aria-label={@label} class={merge(["lo-m-tab", @class])} {@rest}>
       <.link
         :for={tab <- @tab}
         class={merge([tab_active?(tab, @current, @match) && "on", tab[:class]])}

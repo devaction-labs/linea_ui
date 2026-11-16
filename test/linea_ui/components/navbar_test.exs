@@ -26,32 +26,32 @@ defmodule LineaUI.Components.NavbarTest do
         </.navbar>
         """)
 
-      assert ["sg-nb"] == classes(html, "header")
+      assert ["navbar", "lo-nb"] == classes(html, "header")
       assert attrs(html, "header", "id") == ["top"]
       assert text(html, "header > #left") == ["left"]
-      assert text(html, "header > .sg-nb-end > #right") == ["right"]
-      assert count(html, ".sg-nb-floatwrap") == 0
-      assert count(html, ".sg-nb-row") == 0
+      assert text(html, "header > .lo-nb-end > #right") == ["right"]
+      assert count(html, ".lo-nb-floatwrap") == 0
+      assert count(html, ".lo-nb-row") == 0
     end
 
-    test "no end slot, no .sg-nb-end" do
+    test "no end slot, no .lo-nb-end" do
       html = render(~H|<.navbar>x</.navbar>|)
-      assert count(html, ".sg-nb-end") == 0
+      assert count(html, ".lo-nb-end") == 0
     end
 
     test "float is wrapped in the float wrap" do
       html = render(~H|<.navbar variant="float">x</.navbar>|)
-      assert count(html, ".sg-nb-floatwrap > header.sg-nb.float") == 1
+      assert count(html, ".lo-nb-floatwrap > header.lo-nb.float") == 1
     end
 
     test "clear, dense and mobile" do
-      assert ["sg-nb", "clear"] ==
+      assert ["navbar", "lo-nb", "clear"] ==
                classes(render(~H|<.navbar variant="clear">x</.navbar>|), "header")
 
-      assert ["sg-nb", "dense"] ==
+      assert ["navbar", "lo-nb", "dense"] ==
                classes(render(~H|<.navbar variant="dense">x</.navbar>|), "header")
 
-      assert ["sg-nb", "mob"] ==
+      assert ["navbar", "lo-nb", "mob"] ==
                classes(render(~H|<.navbar variant="mobile">x</.navbar>|), "header")
     end
 
@@ -65,17 +65,17 @@ defmodule LineaUI.Components.NavbarTest do
         </.navbar>
         """)
 
-      assert ["sg-nb", "tall"] == classes(html, "header")
-      assert count(html, "header > .sg-nb-row > #left") == 1
-      assert count(html, "header > .sg-nb-row > .sg-nb-end > #right") == 1
-      assert count(html, "header > nav.sg-nb-tabs") == 1
+      assert ["navbar", "lo-nb", "tall"] == classes(html, "header")
+      assert count(html, "header > .lo-nb-row > #left") == 1
+      assert count(html, "header > .lo-nb-row > .lo-nb-end > #right") == 1
+      assert count(html, "header > nav.lo-nb-tabs") == 1
     end
 
     test "center and class" do
       html = render(~H|<.navbar class="x">
   <:center><i id="c"></i></:center>
 </.navbar>|)
-      assert ["sg-nb", "x"] == classes(html, "header")
+      assert ["navbar", "lo-nb", "x"] == classes(html, "header")
       assert count(html, "header > #c") == 1
     end
   end
@@ -83,15 +83,15 @@ defmodule LineaUI.Components.NavbarTest do
   describe "left side" do
     test "brand with a letter, a name, or a picture" do
       html = render(~H|<.navbar_brand name="Linea" />|)
-      assert ["row", "sg-nb-brandrow"] == classes(html, "span.row")
-      assert text(html, ".sg-nb-logo") == ["L"]
-      assert text(html, "b.sg-nb-brand") == ["Linea"]
+      assert ["row", "lo-nb-brandrow"] == classes(html, "span.row")
+      assert text(html, ".lo-nb-logo") == ["L"]
+      assert text(html, "b.lo-nb-brand") == ["Linea"]
 
       html = render(~H|<.navbar_brand name="Linea" logo="Z" />|)
-      assert text(html, ".sg-nb-logo") == ["Z"]
+      assert text(html, ".lo-nb-logo") == ["Z"]
 
       html = render(~H|<.navbar_brand name="Linea" src="/logo.svg" />|)
-      assert attrs(html, ".sg-nb-logo img", "src") == ["/logo.svg"]
+      assert attrs(html, ".lo-nb-logo img", "src") == ["/logo.svg"]
     end
 
     test "crumbs: links, separators and the last one in bold" do
@@ -104,12 +104,12 @@ defmodule LineaUI.Components.NavbarTest do
         ]} />
         """)
 
-      assert ["sg-nb-crumb"] == classes(html, "nav")
+      assert ["breadcrumbs", "lo-nb-crumb"] == classes(html, "nav")
       assert attrs(html, "nav", "aria-label") == ["Breadcrumb"]
       assert text(html, "nav a") == ["Início", "Projetos"]
-      assert text(html, "nav > b") == ["Site novo"]
-      assert attrs(html, "nav > b", "aria-current") == ["page"]
-      assert text(html, "nav .sep") == ["/", "/"]
+      assert text(html, "nav > ul > li > b") == ["Site novo"]
+      assert attrs(html, "nav li > b", "aria-current") == ["page"]
+      assert count(html, "nav > ul > li") == 3
     end
 
     test "a crumb with no link in the middle is plain text" do
@@ -117,16 +117,16 @@ defmodule LineaUI.Components.NavbarTest do
 
       assert attrs(html, "nav", "aria-label") == ["Caminho"]
       assert count(html, "nav a") == 0
-      assert text(html, "nav > span:not(.sep)") == ["A"]
-      assert text(html, "nav > b") == ["B"]
+      assert text(html, "nav li > span") == ["A"]
+      assert text(html, "nav li > b") == ["B"]
     end
 
-    test "workspace is a button in .sg-nb-start" do
+    test "workspace is a button in .lo-nb-start" do
       html = render(~H|<.navbar_workspace name="Loja Bom Fim" sub="Plano Pro" phx-click="ws" />|)
 
-      assert count(html, ".sg-nb-start > button.sg-nb-ws") == 1
+      assert count(html, ".lo-nb-start > button.lo-nb-ws") == 1
       assert attrs(html, "button", "phx-click") == ["ws"]
-      assert text(html, ".sg-nb-logo") == ["L"]
+      assert text(html, ".lo-nb-logo") == ["L"]
       assert text(html, ".col b") == ["Loja Bom Fim"]
       assert text(html, ".col span") == ["Plano Pro"]
     end
@@ -134,13 +134,13 @@ defmodule LineaUI.Components.NavbarTest do
     test "chip with square, color and tag; slash" do
       html = render(~H|<.navbar_chip label="Loja" square="LB" color="#1a7f4b" tag="Pro" />|)
 
-      assert text(html, "button.sg-nb-chip b") == ["Loja"]
-      assert text(html, ".sg-nb-sq") == ["LB"]
-      assert attrs(html, ".sg-nb-sq", "style") == ["background:#1a7f4b"]
-      assert text(html, ".sg-nb-tag") == ["Pro"]
-      assert text(html, "button.sg-nb-chip span.tag") == ["Pro"]
+      assert text(html, "button.lo-nb-chip b") == ["Loja"]
+      assert text(html, ".lo-nb-sq") == ["LB"]
+      assert attrs(html, ".lo-nb-sq", "style") == ["background:#1a7f4b"]
+      assert text(html, ".lo-nb-tag") == ["Pro"]
+      assert text(html, "button.lo-nb-chip span.badge") == ["Pro"]
 
-      assert text(render(~H|<.navbar_slash />|), ".sg-nb-slash") == ["/"]
+      assert text(render(~H|<.navbar_slash />|), ".lo-nb-slash") == ["/"]
     end
   end
 
@@ -154,9 +154,9 @@ defmodule LineaUI.Components.NavbarTest do
         ]} />
         """)
 
-      assert ["sg-nb-links"] == classes(html, "nav")
-      assert text(html, "a.on") == ["Projetos"]
-      assert attrs(html, "a.on", "aria-current") == ["page"]
+      assert ["lo-nb-links"] == classes(html, "nav")
+      assert text(html, "a.menu-active") == ["Projetos"]
+      assert attrs(html, "a.menu-active", "aria-current") == ["page"]
       assert count(html, "a[aria-current]") == 1
 
       html =
@@ -167,7 +167,7 @@ defmodule LineaUI.Components.NavbarTest do
         />
         """)
 
-      assert text(html, "a.on") == ["Início"]
+      assert text(html, "a.menu-active") == ["Início"]
     end
 
     test "tabs with a count" do
@@ -179,14 +179,14 @@ defmodule LineaUI.Components.NavbarTest do
         ]} />
         """)
 
-      assert ["sg-nb-tabs"] == classes(html, "nav")
-      assert text(html, "a.on") == ["Quadro"]
+      assert ["tabs", "tabs-border", "lo-nb-tabs"] == classes(html, "nav")
+      assert text(html, "a.tab-active") == ["Quadro"]
       assert text(html, "a .n") == ["12"]
       assert count(html, ".n") == 1
     end
 
     test "mobile title" do
-      assert text(render(~H|<.navbar_title>Site novo</.navbar_title>|), "b.sg-nb-mtitle") == [
+      assert text(render(~H|<.navbar_title>Site novo</.navbar_title>|), "b.lo-nb-mtitle") == [
                "Site novo"
              ]
     end
@@ -195,7 +195,7 @@ defmodule LineaUI.Components.NavbarTest do
   describe "right side" do
     test "search is a button trigger with the shortcut" do
       html = render(~H|<.navbar_search placeholder="Buscar" phx-click="palette" />|)
-      assert ["sg-nb-search"] == classes(html, "button")
+      assert ["lo-nb-search", "input"] == classes(html, "button")
       assert attrs(html, "button", "type") == ["button"]
       assert attrs(html, "button", "phx-click") == ["palette"]
       assert text(html, "button > span:not([class])") == ["Buscar"]
@@ -204,21 +204,21 @@ defmodule LineaUI.Components.NavbarTest do
 
     test "search wide, width and no shortcut" do
       html = render(~H|<.navbar_search wide width="440px" kbd={nil} />|)
-      assert ["sg-nb-search", "wide"] == classes(html, "button")
+      assert ["lo-nb-search", "input", "wide"] == classes(html, "button")
       assert attrs(html, "button", "style") == ["width:440px"]
       assert count(html, "kbd") == 0
     end
 
     test "bell with and without the dot" do
       html = render(~H|<.navbar_bell dot label="Avisos" phx-click="bell" />|)
-      assert count(html, "span.sg-nb-bell > button.btn-square") == 1
+      assert count(html, "span.lo-nb-bell > button.btn-square") == 1
       assert attrs(html, "button", "aria-label") == ["Avisos"]
       assert attrs(html, "button", "phx-click") == ["bell"]
-      assert count(html, ".sg-nb-bell > i") == 1
+      assert count(html, ".lo-nb-bell > .indicator-item.status") == 1
 
       html = render(~H|<.navbar_bell size="sm" />|)
       assert "btn-sm" in classes(html, "button")
-      assert count(html, ".sg-nb-bell > i") == 0
+      assert count(html, ".lo-nb-bell > .indicator-item.status") == 0
     end
 
     test "generic icon button" do
@@ -230,9 +230,9 @@ defmodule LineaUI.Components.NavbarTest do
 
     test "lang from strings and from maps" do
       html = render(~H|<.navbar_lang locales={["PT", "EN"]} current="PT" />|)
-      assert ["sg-nb-lang"] == classes(html, "span")
+      assert ["lo-nb-lang", "join"] == classes(html, "span")
       assert attrs(html, "span", "role") == ["group"]
-      assert text(html, "a.on") == ["PT"]
+      assert text(html, "a.btn-active") == ["PT"]
       assert text(html, "a") == ["PT", "EN"]
 
       html =
@@ -244,24 +244,27 @@ defmodule LineaUI.Components.NavbarTest do
         ]} />
         """)
 
-      assert text(html, "a.on") == ["EN"]
+      assert text(html, "a.btn-active") == ["EN"]
       assert attrs(html, "a", "href") == ["/pt", "/en", "#"]
       assert attrs(html, "a", "phx-click") == ["es"]
     end
 
     test "sep, env, sync" do
-      assert ["sg-nb-sep"] == classes(render(~H|<.navbar_sep />|), "span")
+      assert ["lo-nb-sep", "divider", "divider-horizontal"] ==
+               classes(render(~H|<.navbar_sep />|), "span")
 
       html = render(~H|<.navbar_env label="Produção" />|)
-      assert ["sg-nb-env"] == classes(html, "span")
-      assert text(html, "span") == ["Produção"]
+      assert ["lo-nb-env", "badge", "badge-soft", "badge-success"] == classes(html, "span")
+      assert text(html, "span.lo-nb-env") == ["Produção"]
 
       html = render(~H|<.navbar_env label="Homologação" tone="warn" />|)
-      assert ["sg-nb-env", "warn"] == classes(html, "span")
+
+      assert ["lo-nb-env", "badge", "badge-soft", "warn", "badge-warning"] ==
+               classes(html, "span")
 
       html = render(~H|<.navbar_sync text="Salvo há 2 min" />|)
-      assert text(html, ".sg-nb-sync") == ["Salvo há 2 min"]
-      assert count(html, ".sg-nb-sync .huge-tick-02") == 1
+      assert text(html, ".lo-nb-sync") == ["Salvo há 2 min"]
+      assert count(html, ".lo-nb-sync .huge-tick-02") == 1
     end
 
     test "avatars with the +N bubble" do
@@ -272,8 +275,8 @@ defmodule LineaUI.Components.NavbarTest do
       assigns = %{users: users}
       html = rendered_to_string(~H|<.navbar_avatars users={@users} max={3} />|)
 
-      assert count(html, ".sg-nb-avs .sg-av.sm") == 3
-      assert text(html, ".sg-av") == ["MC", "RS", "LF"]
+      assert count(html, ".lo-nb-avs .lo-av.sm:not(.more)") == 3
+      assert text(html, ".lo-av:not(.more)") == ["MC", "RS", "LF"]
       assert text(html, ".more") == ["+2"]
 
       html = rendered_to_string(~H|<.navbar_avatars users={@users} max={5} />|)
@@ -289,36 +292,36 @@ defmodule LineaUI.Components.NavbarTest do
       assigns = %{user: @user}
       html = rendered_to_string(~H|<.navbar_user user={@user} phx-click="me" />|)
 
-      assert ["sg-nb-me"] == classes(html, "button")
+      assert ["lo-nb-me", "btn", "btn-ghost", "btn-circle"] == classes(html, "button")
       assert attrs(html, "button", "aria-label") == ["Account menu"]
       assert attrs(html, "button", "phx-click") == ["me"]
       assert attrs(html, "button", "aria-haspopup") == []
-      assert text(html, ".sg-av") == ["MC"]
-      assert attrs(html, ".sg-av", "style") == ["background:#8a5cd6"]
-      assert count(html, ".sg-nb-mewrap") == 0
+      assert text(html, ".lo-av") == ["MC"]
+      assert attrs(html, ".lo-av", "style") == ["background:#8a5cd6"]
+      assert count(html, ".lo-nb-mewrap") == 0
     end
 
     test "ring and named" do
       assigns = %{user: @user}
 
-      assert ["sg-nb-me", "ring"] ==
+      assert ["lo-nb-me", "btn", "btn-ghost", "btn-circle", "ring"] ==
                classes(
                  rendered_to_string(~H|<.navbar_user user={@user} variant="ring" />|),
                  "button"
                )
 
       html = rendered_to_string(~H|<.navbar_user user={@user} variant="named" />|)
-      assert ["sg-nb-me", "named"] == classes(html, "button")
-      assert text(html, ".sg-nb-who b") == ["Marina Costa"]
-      assert text(html, ".sg-nb-who span") == ["Administradora"]
-      assert classes(html, ".sg-nb-who") |> Enum.member?("col")
+      assert ["lo-nb-me", "btn", "btn-ghost", "named"] == classes(html, "button")
+      assert text(html, ".lo-nb-who b") == ["Marina Costa"]
+      assert text(html, ".lo-nb-who span") == ["Administradora"]
+      assert classes(html, ".lo-nb-who") |> Enum.member?("col")
     end
 
     test "the picture instead of the initials" do
       assigns = %{user: Map.put(@user, :avatar, "/me.jpg")}
       html = rendered_to_string(~H|<.navbar_user user={@user} />|)
-      assert attrs(html, ".sg-av img", "src") == ["/me.jpg"]
-      assert text(html, ".sg-av") == [""]
+      assert attrs(html, ".lo-av img", "src") == ["/me.jpg"]
+      assert text(html, ".lo-av") == [""]
     end
 
     test "with a menu: hidden, role menu, toggled by JS" do
@@ -333,7 +336,7 @@ defmodule LineaUI.Components.NavbarTest do
         </.navbar_user>
         """)
 
-      assert count(html, "div#me.sg-nb-mewrap") == 1
+      assert count(html, "div#me.lo-nb-mewrap") == 1
       assert attrs(html, "button", "id") == ["me-trigger"]
       assert attrs(html, "button", "aria-haspopup") == ["menu"]
       assert attrs(html, "button", "aria-expanded") == ["false"]
@@ -347,7 +350,7 @@ defmodule LineaUI.Components.NavbarTest do
       assert [menu] = html |> find("#me-menu") |> Enum.to_list()
       assert LazyHTML.attribute(menu, "role") == ["menu"]
       assert LazyHTML.attribute(menu, "hidden") != []
-      assert classes(html, "#me-menu") == ["sg-am", "sg-nb-menu"]
+      assert "lo-nb-menu" in classes(html, "#me-menu")
 
       assert [away] = attrs(html, "#me", "phx-click-away")
       assert away =~ "hidden"
@@ -371,19 +374,19 @@ defmodule LineaUI.Components.NavbarTest do
         <.navbar_menu_item danger href="/sair" method="delete">Sair</.navbar_menu_item>
         """)
 
-      assert text(html, ".sg-nb-mhead .col b") == ["Marina Costa"]
-      assert text(html, ".sg-nb-mhead .col span") == ["marina@lojabomfim.com.br"]
-      assert text(html, ".sg-nb-mhead .sg-av") == ["MC"]
-      assert text(html, ".sg-nb-mhead #badge") == ["Admin"]
-      assert [status] = text(html, ".sg-nb-mstatus")
+      assert text(html, ".lo-nb-mhead .col b") == ["Marina Costa"]
+      assert text(html, ".lo-nb-mhead .col span") == ["marina@lojabomfim.com.br"]
+      assert text(html, ".lo-nb-mhead .lo-av") == ["MC"]
+      assert text(html, ".lo-nb-mhead #badge") == ["Admin"]
+      assert [status] = text(html, ".lo-nb-mstatus")
       assert status =~ "Disponível"
-      assert text(html, ".sg-nb-mstatus .faint") == ["Mudar"]
-      assert text(html, ".sg-nb-mrow > span") == ["Tema"]
-      assert count(html, ".sg-nb-mrow #ctl") == 1
+      assert text(html, ".lo-nb-mstatus .faint") == ["Mudar"]
+      assert text(html, ".lo-nb-mrow > span") == ["Tema"]
+      assert count(html, ".lo-nb-mrow #ctl") == 1
       assert attrs(html, "a[role=menuitem]", "href") == ["/c", "/sair"]
       assert text(html, "a .t") == ["Configurações", "Sair"]
       assert text(html, "a .kbd") == ["⌘,"]
-      assert classes(html, "a.neg") == ["neg"]
+      assert "text-error" in classes(html, "a.neg")
       assert count(html, "a .huge-settings-02") == 1
     end
   end

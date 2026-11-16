@@ -304,7 +304,7 @@ defmodule LineaUI.Components.Treeview do
   defp check(assigns) do
     ~H"""
     <span
-      class={["tree-check sg-box", @checked == true && "on", @checked == "mixed" && "mixed"]}
+      class={["tree-check lo-box", @checked == true && "on", @checked == "mixed" && "mixed"]}
       data-tree-check={@id}
       data-checked={bool(@checked == true)}
       aria-hidden="true"

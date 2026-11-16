@@ -247,7 +247,6 @@ defmodule LineaUI.Components.Sidebar.Nav do
       color: color,
       style: style,
       children: children,
-      branch: branch(children, format),
       active: active,
       deep: deep
     }
@@ -258,29 +257,6 @@ defmodule LineaUI.Components.Sidebar.Nav do
   defp open?(_entry, false, _holds_active), do: true
   defp open?(%{open: open}, true, _holds_active) when is_boolean(open), do: open
   defp open?(_entry, true, holds_active), do: holds_active
-
-  # The connector of the `tree` format, drawn once per group: a trunk, a rounded branch and a node per child,
-  # and the way down to the active child in the accent. Rows are 34px plus 1px of gap, the first centre at 21.
-  defp branch(children, "tree") when children != [] do
-    centers = Enum.map(0..(length(children) - 1)//1, &(21 + &1 * 35))
-    last = List.last(centers)
-    active = Enum.find_index(children, & &1.active)
-
-    %{
-      height: last + 6,
-      trunk: "M1 0V#{last - 8}.0" <> Enum.map_join(centers, &spur/1),
-      path: active && "M1 0V#{Enum.at(centers, active) - 8}.0" <> curve(Enum.at(centers, active)),
-      nodes:
-        Enum.map(centers, &%{y: &1})
-        |> Enum.with_index()
-        |> Enum.map(fn {node, i} -> Map.put(node, :on, i == active) end)
-    }
-  end
-
-  defp branch(_children, _format), do: nil
-
-  defp spur(y), do: "M1 #{y - 8}.0" <> curve(y)
-  defp curve(y), do: "Q1 #{y}.0 9 #{y}.0H12"
 
   defp action(nil, _current), do: nil
 

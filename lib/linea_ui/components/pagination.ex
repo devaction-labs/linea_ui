@@ -29,9 +29,9 @@ defmodule LineaUI.Components.Pagination do
 
   `%{shown}` is the rows on the current page (`6 of 14 charges`), and an `:aside` slot puts
   content at the right of the pages, or in place of them when there is a single page. With
-  `class="sg-pager"` the footer takes the canvas pager look:
+  `class="lo-pager"` the footer takes the canvas pager look:
 
-      <.pagination class="sg-pager" page={@page} page_size={10} total_entries={14}
+      <.pagination class="lo-pager" page={@page} page_size={10} total_entries={14}
         summary="%{shown} de %{total} cobranças" on_change="paginate">
         <:aside>Webhook recebido há 2 min</:aside>
       </.pagination>
@@ -384,7 +384,7 @@ defmodule LineaUI.Components.Pagination do
     do:
       "grid h-[30px] min-w-[30px] place-items-center font-mono text-[12.5px] text-base-content/65"
 
-  # the canvas `sg-ib sm`: a 28px panel circle with an inset line; an arrow at either end stays
+  # the canvas `lo-ib sm`: a 28px panel circle with an inset line; an arrow at either end stays
   # inert (a `<span aria-disabled>`) but is not dimmed, as on the canvas
   defp entry_class(%{shape: "canvas"}, _arrow, _number, _disabled),
     do:

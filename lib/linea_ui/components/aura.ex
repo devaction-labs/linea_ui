@@ -58,8 +58,8 @@ defmodule LineaUI.Components.Aura do
     <div
       class={
         merge([
-          "sg-aura",
-          @shadow && "sg-aura-shadow",
+          "lo-aura",
+          @shadow && "lo-aura-shadow",
           tone_class(@tone),
           mode_class(@mode),
           width_class(@width),

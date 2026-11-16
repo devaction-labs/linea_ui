@@ -26,7 +26,7 @@
   color: var(--muted);
 }
 
-/* stepper, canvas variant (horizontal): the canvas `sg-steps` as a list; the steps' dots and labels
+/* stepper, canvas variant (horizontal): the canvas `lo-steps` as a list; the steps' dots and labels
    are items of the row (`display: contents`) so every 1px line between them (drawn before each step
    after the first) gets the same share of the width, like the canvas `hr` */
 .stepper-canvas:not(.is-vertical) > li {
@@ -41,10 +41,10 @@
   height: 1px;
   background: var(--line);
 }
-.stepper-canvas > li.sg-step.err {
+.stepper-canvas > li.lo-step.err {
   color: var(--neg);
 }
-.stepper-canvas > li.sg-step.err i {
+.stepper-canvas > li.lo-step.err i {
   background: var(--neg-soft);
   color: var(--neg);
   box-shadow: none;
@@ -137,7 +137,7 @@
   display: none;
 }
 
-/* command palette, canvas variant: the card is the canvas menu (`sg-menu`), on the raised color in dark */
+/* command palette, canvas variant: the card is the canvas menu (`lo-menu`), on the raised color in dark */
 .palette-canvas {
   background: var(--panel);
   box-shadow: 0 0 0 1px var(--ctl-line), var(--shadow-lg);
@@ -223,7 +223,7 @@
   font-weight: 600;
   color: var(--ink);
 }
-.nc-canvas-empty > span:not(.sg-ic) {
+.nc-canvas-empty > span:not(.lo-ic) {
   font-size: 13px;
   color: var(--faint);
 }
@@ -245,46 +245,13 @@
   color: #171717;
 }
 
-/* tabs, `segmented`: the canvas `sg-seg` with tab buttons (`aria-selected` instead of `.on`) */
-.sg-seg > .sg-seg-tab {
-  all: unset;
-  box-sizing: border-box;
-  height: 30px;
-  padding: 0 14px;
-  border-radius: var(--pill);
-  font-size: 13.5px;
-  color: var(--muted);
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  white-space: nowrap;
+/* the segmented control: daisyUI `tabs-box` buttons, the pressed one raised like `tab-active` */
+.lo-seg.tabs-box > .tab[aria-pressed="true"] {
+  background-color: var(--tab-bg, var(--color-base-100));
+  color: var(--color-base-content);
+  box-shadow: 0 1px 2px rgb(0 0 0 / .06), 0 0 0 1px var(--color-base-300);
 }
-.sg-seg > .sg-seg-tab:hover {
-  color: var(--ink);
-}
-.sg-seg > .sg-seg-tab:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 1px;
-}
-.sg-seg > .sg-seg-tab:disabled {
+.lo-seg.tabs-box > .tab:disabled {
   cursor: default;
   opacity: .5;
-}
-.sg-seg > .sg-seg-tab[aria-selected="true"] {
-  background: var(--panel);
-  color: var(--ink);
-  font-weight: 500;
-  box-shadow: 0 0 0 1px var(--ctl-line), 0 1px 3px rgb(10 10 10 / .08);
-}
-.sg-seg > .sg-seg-tab[aria-selected="true"]:where(.dark *, [data-theme="dark"] *):not(:where(:is(.dark, [data-theme="dark"]) [data-theme="light"], :is(.dark, [data-theme="dark"]) [data-theme="light"] *):not(:where(:is(.dark, [data-theme="dark"]) [data-theme="light"] :is(.dark, [data-theme="dark"]), :is(.dark, [data-theme="dark"]) [data-theme="light"] :is(.dark, [data-theme="dark"]) *))) {
-  background: var(--raised);
-}
-/* the count badge of a line tab: 6px after the label (the tab's own gap), and as short as the canvas
-   badge, which is an inline box there (14px, no minimum width) */
-.sg-tabs > .sg-tab > .sg-nav-n {
-  margin-left: 0;
-  min-width: 0;
-  height: 14px;
-  line-height: 14px;
 }

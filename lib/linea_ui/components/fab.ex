@@ -41,7 +41,7 @@ defmodule LineaUI.Components.Fab do
 
   ## The canvas look
 
-  `variant="canvas"` (the default; `variant="pill"` is the old retracting pill) is the design canvas's FAB: the solid ink button (`sg-btn solid lg`) with 18px corners,
+  `variant="canvas"` (the default; `variant="pill"` is the old retracting pill) is the design canvas's FAB: the solid ink button (daisyUI `btn btn-neutral btn-lg`) with 18px corners,
   the icon and the label always shown (`retract`, `color`, `size` and `badge` do not apply). `offset` moves
   it from the corner, in pixels, in either variant:
 
@@ -49,8 +49,8 @@ defmodule LineaUI.Components.Fab do
         <:icon><.icon name="huge-add-01" class="size-4" /></:icon>
       </.fab>
 
-  On `fab_dial/1`, `variant="canvas"` (the default; `pill` is the old one) is the 56px solid square (`sg-m-fab`) and its actions are a canvas
-  menu (`sg-menu`), a list of icon and label rows.
+  On `fab_dial/1`, `variant="canvas"` (the default; `pill` is the old one) is the 56px solid square (a `btn btn-neutral btn-square`) and its actions are a
+  daisyUI surface of ghost `btn` rows (icon and label).
 
   The button sits under modals and drawers and above the page (`--linea-z-fab`, 90 by default; an app raises it in
   its own CSS like the other `--linea-z-*` layers).
@@ -252,7 +252,7 @@ defmodule LineaUI.Components.Fab do
     default: "canvas",
     values: ~w(canvas pill),
     doc:
-      "`canvas` (the default) is the canvas's 56px solid square with the actions in a menu (`sg-menu`); `pill` is the old round button with labelled mini actions."
+      "`canvas` (the default) is the canvas's 56px solid square with the actions on a daisyUI surface of ghost buttons; `pill` is the old round button with labelled mini actions."
   )
 
   attr(:offset, :integer,
@@ -288,7 +288,7 @@ defmodule LineaUI.Components.Fab do
       merge([
         @dial_base,
         @dial_positions[assigns.position],
-        canvas? && "sg-fab-dial gap-4",
+        canvas? && "lo-fab-dial gap-4",
         assigns.class
       ])
     end)
@@ -338,13 +338,13 @@ defmodule LineaUI.Components.Fab do
         id={"#{@id}-menu"}
         role="menu"
         aria-label={@label}
-        class="linea-fab-dial-menu sg-menu"
+        class="linea-fab-dial-menu lo-fab-menu bg-base-100 rounded-box border border-base-300 shadow-lg"
       >
         <.dial_item
           :for={action <- @action}
           action={action}
           id={@id}
-          class="sg-menu-item"
+          class="lo-fab-item btn btn-ghost btn-sm justify-start font-normal"
           left={false}
           canvas
         />
@@ -359,7 +359,7 @@ defmodule LineaUI.Components.Fab do
         aria-expanded={to_string(@open)}
         aria-controls={"#{@id}-menu"}
         phx-mounted='[["ignore_attrs",{"attrs":["aria-expanded"]}]]'
-        class="sg-m-fab"
+        class="lo-m-fab btn btn-neutral btn-square"
       >
         <span class="linea-fab-dial-icon flex" aria-hidden="true">
           {render_slot(@icon)}<.plus :if={@icon == []} class="size-5.5" />
@@ -437,7 +437,7 @@ defmodule LineaUI.Components.Fab do
 
   defp dial_item_body(%{canvas: true} = assigns) do
     ~H"""
-    <span class="sg-menu-ic" aria-hidden="true">{render_slot(@action)}</span>
+    <span class="lo-menu-ic" aria-hidden="true">{render_slot(@action)}</span>
     {@action.label}
     """
   end
@@ -488,7 +488,7 @@ defmodule LineaUI.Components.Fab do
     ~H"""
     <.link
       id={@id}
-      class={merge(["btn btn-neutral btn-lg sg-fab", @class])}
+      class={merge(["btn btn-neutral btn-lg lo-fab", @class])}
       style={@style}
       aria-disabled={@disabled && "true"}
       tabindex={@disabled && "-1"}
@@ -505,7 +505,7 @@ defmodule LineaUI.Components.Fab do
     <button
       id={@id}
       type={@type}
-      class={merge(["btn btn-neutral btn-lg sg-fab", @class])}
+      class={merge(["btn btn-neutral btn-lg lo-fab", @class])}
       style={@style}
       disabled={@disabled}
       {@rest}
