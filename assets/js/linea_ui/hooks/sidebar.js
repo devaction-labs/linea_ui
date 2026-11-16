@@ -489,7 +489,7 @@ const ShellRail = {
 
   toggles() {
     return [...this.el.querySelectorAll("button[aria-controls][aria-expanded], a[aria-controls][aria-expanded]")].filter(
-      (button) => document.getElementById(button.getAttribute("aria-controls"))?.matches(".sg-sb-grp, .sg-sb-tree"),
+      (button) => document.getElementById(button.getAttribute("aria-controls"))?.hasAttribute("data-sb-group"),
     )
   },
 
