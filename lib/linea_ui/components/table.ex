@@ -440,7 +440,9 @@ defmodule LineaUI.Components.Table do
   slot :col, doc: "A column; receives the row (after `row_item`)." do
     attr(:label, :string, doc: "Header text.")
 
-    attr(:class, :any, doc: "Extra classes of the column's cells (the header takes `head_class`).")
+    attr(:class, :any,
+      doc: "Extra classes of the column's cells (the header takes `head_class`)."
+    )
 
     attr(:head_class, :any, doc: "Extra classes of the column's header.")
 
@@ -523,7 +525,11 @@ defmodule LineaUI.Components.Table do
       merge([@head_row[assigns.variant], no_border(assigns)])
     end)
     |> assign_derived(:body_row_class, [:variant, :borderless], fn ->
-      merge([@body_row[assigns.variant], "data-[selected=true]:bg-primary/10", no_border(assigns)])
+      merge([
+        @body_row[assigns.variant],
+        "data-[selected=true]:bg-primary/10",
+        no_border(assigns)
+      ])
     end)
     |> assign_derived(
       :wrapper,

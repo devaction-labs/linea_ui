@@ -255,7 +255,7 @@ defmodule LineaUI.Components.Card do
         merge([
           "card card-border bg-base-100",
           @variant == "soft" && "border-transparent bg-base-200",
-          @variant != "flush" and @padded && "p-5",
+          (@variant != "flush" and @padded) && "p-5",
           @class
         ])
       }
