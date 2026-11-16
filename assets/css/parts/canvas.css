@@ -1,6 +1,6 @@
 /*
   The Signetum component system of the design canvas (`sg.css`), as the kit's own: cards, tables, buttons,
-  tabs, drawers, the shell... Every class is `sg-*` and lives under a `.sg` root that carries the tokens.
+  tabs, drawers, the shell... The own classes are `lo-*` (painted with daisyUI's tokens) under a `.sg` root that carries the kit tokens.
   The kit's components render this markup; the dark theme follows the `.dark` class of the page.
 */
 /* Signetum UI — identidade própria (neutros quentes + teal do cata-vento, Geist). Sem dependências de terceiros. */
@@ -182,7 +182,7 @@
 .lo-cal span.on{background:var(--solid);color:var(--on-solid);font-weight:600}
 .lo-cal span.rg{background:var(--accent-soft);border-radius:0;color:var(--accent-ink)}
 .lo-drop{display:flex;flex-direction:column;align-items:center;gap:8px;padding:28px;border-radius:16px;border:1.5px dashed var(--line-strong);text-align:center;color:var(--muted);background:var(--sunken)}
-/* .sg-chipin: the field the pills sit in, see canvas-pills.css */
+/* the multiple select field: the field the pills sit in, see canvas-pills.css */
 
 /* ---------- Auth ---------- */
 

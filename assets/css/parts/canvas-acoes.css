@@ -1,8 +1,8 @@
 /* Canvas look for the acoes components (see the Vitrine canvas). */
 
 /* ---------- Button: disabled and loading ---------- */
-:is(.sg-btn, .lo-ib):is(:disabled, [aria-disabled="true"]):not([aria-busy="true"]){opacity:.45;cursor:not-allowed}
-:is(.sg-btn, .lo-ib)[aria-busy="true"]{cursor:progress}
+:is(.btn, .lo-ib):is(:disabled, [aria-disabled="true"]):not([aria-busy="true"]){opacity:.45;cursor:not-allowed}
+:is(.btn, .lo-ib)[aria-busy="true"]{cursor:progress}
 
 /* ---------- Spinner (variant="canvas"): lo-spin sizes and tones ---------- */
 .lo-spin.spinner{display:inline-block;flex:none}
