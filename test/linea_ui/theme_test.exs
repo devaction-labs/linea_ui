@@ -194,6 +194,62 @@ defmodule LineaUI.ThemeTest do
       end
     end
 
+    test "the page without a theme (canvas.css) carries linea's values, so the kit and daisyUI agree" do
+      canvas = File.read!("assets/css/parts/canvas.css")
+      themes = File.read!("assets/css/parts/themes.css")
+
+      block = fn css, start ->
+        css |> String.split(start, parts: 2) |> Enum.at(1) |> block_vars()
+      end
+
+      linea_light = block.(themes, ~S|[data-theme="linea"]{|)
+      linea_dark = block.(themes, ~S|.dark[data-theme="linea"]|)
+
+      root = block.(canvas, ":where(:root, .sg:not(:is(.dark, [data-theme]) *)){")
+      light = block.(canvas, ~S|[data-theme="light"]{|)
+      dark = block.(canvas, ~S|:is(.dark, [data-theme="dark"]){|)
+
+      for {name, scope, linea} <- [
+            {"root", root, linea_light},
+            {"data-theme=light", light, linea_light},
+            {"dark", dark, linea_dark}
+          ] do
+        shared = Map.keys(scope) -- ["main", "c2", "c3", "c4", "c5", "sans", "mono"]
+
+        shared =
+          Enum.filter(
+            shared,
+            &(Map.has_key?(linea, &1) and not String.starts_with?(&1, "shadow"))
+          )
+
+        assert length(shared) > 40, name
+
+        for token <- shared, do: assert(scope[token] == linea[token], "#{name} --#{token}")
+      end
+
+      # the daisyUI variables of the default blocks agree with the kit's tokens
+      daisy_light =
+        block.(themes, ":where(:root,.sg:not(:is(.dark,[data-theme]) *)),[data-theme=\"light\"]{")
+
+      daisy_dark = block.(themes, ~S|:is(.dark,[data-theme="dark"]){|)
+
+      for {name, kit, daisy} <- [
+            {"light", root, daisy_light},
+            {"light block", light, daisy_light},
+            {"dark", dark, daisy_dark}
+          ] do
+        assert kit["panel"] == daisy["color-base-100"], name
+        assert kit["sunken"] == daisy["color-base-200"], name
+        assert kit["fg"] == daisy["color-base-content"], name
+        assert kit["accent"] == daisy["color-primary"], name
+        assert kit["r-sm"] == daisy["radius-selector"], name
+        assert kit["r"] == daisy["radius-field"], name
+        assert kit["r-lg"] == daisy["radius-box"], name
+      end
+
+      assert root["pill"] == "999px"
+    end
+
     test "themes.css is the stylesheet the seeds build" do
       assert File.read!("assets/css/parts/themes.css") == Theme.stylesheet(),
              "run mix linea_ui.themes"
@@ -300,5 +356,20 @@ defmodule LineaUI.ThemeTest do
       assert_raise Mix.Error, ~r/accent/, fn -> Mix.Tasks.LineaUi.Gen.Theme.run(["acme"]) end
       assert_raise Mix.Error, ~r/usage/, fn -> Mix.Tasks.LineaUi.Gen.Theme.run([]) end
     end
+  end
+
+  # the custom properties of the CSS block that starts the string
+  defp block_vars(css) do
+    css
+    |> String.split("}", parts: 2)
+    |> hd()
+    |> String.split(";", trim: true)
+    |> Enum.flat_map(fn decl ->
+      case Regex.run(~r/^\s*--([\w-]+):(.*)$/s, decl) do
+        [_, name, value] -> [{name, String.trim(value)}]
+        _ -> []
+      end
+    end)
+    |> Map.new()
   end
 end
