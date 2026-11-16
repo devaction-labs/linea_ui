@@ -145,7 +145,14 @@ defmodule LineaUI.Components.KpiCard do
           </span>
           <span class="kpi-label grow text-[13px] text-base-content/60">{@label}</span>
           <span :if={@delta} class={["kpi-delta badge badge-soft badge-sm gap-1", @tone]}>
-            <svg class="size-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <svg
+              class="size-3"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              aria-hidden="true"
+            >
               <path :if={@trend == "up"} d="M7 17 17 7M9 7h8v8" />
               <path :if={@trend == "down"} d="M7 7l10 10M17 9v8H9" />
               <path :if={@trend == "flat"} d="M5 12h14" />
@@ -162,15 +169,17 @@ defmodule LineaUI.Components.KpiCard do
           value={min(max(@progress, 0), 100)}
           max="100"
           aria-label={@label}
-        >
-        </progress>
+        ></progress>
         <div :if={!@progress} class="flex items-end justify-between gap-3">
           <span id={@value_id} class="kpi-value stat-value text-2xl font-semibold">
             {@value}<small :if={@unit} class="ml-1 text-sm font-normal text-base-content/60">{@unit}</small>
           </span>
           <svg
             :if={@paths}
-            class={["kpi-spark h-[34px] w-[104px]", (@color == "primary" && "text-primary") || "text-base-content"]}
+            class={[
+              "kpi-spark h-[34px] w-[104px]",
+              (@color == "primary" && "text-primary") || "text-base-content"
+            ]}
             viewBox="0 0 104 34"
             preserveAspectRatio="none"
             aria-hidden="true"

@@ -274,7 +274,12 @@ defmodule LineaUI.Components.Ai do
     assigns = assign(assigns, :state, to_string(assigns.status))
 
     ~H"""
-    <div id={@id} class={merge(["card card-border bg-base-100 overflow-hidden ai-proposal", @class])} data-status={@state} {@rest}>
+    <div
+      id={@id}
+      class={merge(["card card-border bg-base-100 overflow-hidden ai-proposal", @class])}
+      data-status={@state}
+      {@rest}
+    >
       <div class="ai-proposal-head">
         <span class="ai-proposal-spark"><.icon name="huge-sparkles" class="i sm" /></span>
         <b class="ink">{@title}</b>

@@ -384,7 +384,13 @@ defmodule LineaUI.Components.CardTable do
 
     ~H"""
     <div
-      class={merge(["card card-border bg-base-100 overflow-hidden linea-ctable-flat", !@bordered && "is-plain", @class])}
+      class={
+        merge([
+          "card card-border bg-base-100 overflow-hidden linea-ctable-flat",
+          !@bordered && "is-plain",
+          @class
+        ])
+      }
       id={@id <> "-box"}
       data-resp={@resp && ""}
       data-cards={@cards && @resp && ""}

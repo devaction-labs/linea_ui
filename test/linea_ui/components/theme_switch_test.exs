@@ -57,7 +57,15 @@ defmodule LineaUI.Components.ThemeSwitchTest do
     test "has the icons class and each radio carries its label as title" do
       html = render(~H|<.theme_switch id="t" variant="icons" dark_label="Escuro" />|)
 
-      assert classes(html, "#t") == ["theme-switch", "tabs", "tabs-box", "flex-nowrap", "icons", "tabs-sm"]
+      assert classes(html, "#t") == [
+               "theme-switch",
+               "tabs",
+               "tabs-box",
+               "flex-nowrap",
+               "icons",
+               "tabs-sm"
+             ]
+
       assert attr_of(html, "#t > button", "title") == ["Light", "Escuro", "System"]
       assert find(html, "#t .lbl") |> Enum.count() == 3
     end
@@ -71,13 +79,30 @@ defmodule LineaUI.Components.ThemeSwitchTest do
   describe "size and system" do
     test "size sm" do
       html = render(~H|<.theme_switch id="t" size="sm" variant="icons" class="extra" />|)
-      assert classes(html, "#t") == ["theme-switch", "tabs", "tabs-box", "flex-nowrap", "icons", "tabs-xs", "extra"]
+
+      assert classes(html, "#t") == [
+               "theme-switch",
+               "tabs",
+               "tabs-box",
+               "flex-nowrap",
+               "icons",
+               "tabs-xs",
+               "extra"
+             ]
     end
 
     test "system={false} leaves light and dark and marks the group two" do
       html = render(~H|<.theme_switch id="t" system={false} />|)
 
-      assert classes(html, "#t") == ["theme-switch", "tabs", "tabs-box", "flex-nowrap", "two", "tabs-sm"]
+      assert classes(html, "#t") == [
+               "theme-switch",
+               "tabs",
+               "tabs-box",
+               "flex-nowrap",
+               "two",
+               "tabs-sm"
+             ]
+
       assert attr_of(html, "#t", "data-system") == ["false"]
       assert attr_of(html, "#t > button", "data-theme-value") == ["light", "dark"]
     end

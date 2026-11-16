@@ -73,16 +73,20 @@ defmodule LineaUI.Components.Chip do
 
   def chip(assigns) do
     assigns
-    |> assign_derived(:classes, [:avatar, :avatar_src, :on_remove, :remove_patch, :rest, :class], fn ->
-      merge([
-        "chip badge h-7 gap-1.5 border-base-300 bg-base-100 px-2.5 text-[13px] text-base-content/85",
-        (assigns.avatar || assigns.avatar_src) && "has-av ps-0.5",
-        is_nil(assigns.on_remove) && is_nil(assigns.remove_patch) && "static",
-        (assigns.rest[:href] || assigns.rest[:navigate] || assigns.rest[:patch]) &&
-          "hover:bg-base-200",
-        assigns.class
-      ])
-    end)
+    |> assign_derived(
+      :classes,
+      [:avatar, :avatar_src, :on_remove, :remove_patch, :rest, :class],
+      fn ->
+        merge([
+          "chip badge h-7 gap-1.5 border-base-300 bg-base-100 px-2.5 text-[13px] text-base-content/85",
+          (assigns.avatar || assigns.avatar_src) && "has-av ps-0.5",
+          is_nil(assigns.on_remove) && is_nil(assigns.remove_patch) && "static",
+          (assigns.rest[:href] || assigns.rest[:navigate] || assigns.rest[:patch]) &&
+            "hover:bg-base-200",
+          assigns.class
+        ])
+      end
+    )
     |> render_chip()
   end
 

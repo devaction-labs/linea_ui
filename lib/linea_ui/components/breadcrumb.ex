@@ -137,7 +137,9 @@ defmodule LineaUI.Components.Breadcrumb do
     attr(:title, :string, doc: "The full label, shown on hover when the current page is cut.")
   end
 
-  slot(:separator, doc: "What goes between two steps, daisyUI's (or `/` in the canvas variant) by default.")
+  slot(:separator,
+    doc: "What goes between two steps, daisyUI's (or `/` in the canvas variant) by default."
+  )
 
   def breadcrumb(assigns) do
     assigns =

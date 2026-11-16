@@ -88,7 +88,9 @@ defmodule LineaUI.Components.KpiCardTest do
       </.kpi_card>
       """)
 
-    assert ["kpi-icon", "bg-success/10", "text-success"] -- classes(html, ".stat-title > span:first-child") == []
+    assert ["kpi-icon", "bg-success/10", "text-success"] --
+             classes(html, ".stat-title > span:first-child") == []
+
     assert [_] = find(html, ".stat-title > .kpi-icon + .kpi-label") |> Enum.to_list()
     assert [_] = find(html, ".kpi-icon .x") |> Enum.to_list()
   end

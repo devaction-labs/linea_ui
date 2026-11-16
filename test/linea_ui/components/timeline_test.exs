@@ -11,7 +11,8 @@ defmodule LineaUI.Components.TimelineTest do
       </.timeline>
       """)
 
-    assert ["timeline", "timeline-vertical", "timeline-compact", "max-w-sm"] -- classes(html, "ol") ==
+    assert ["timeline", "timeline-vertical", "timeline-compact", "max-w-sm"] --
+             classes(html, "ol") ==
              []
 
     assert html |> find("li > .timeline-middle .timeline-item-point") |> Enum.count() == 1
@@ -140,7 +141,10 @@ defmodule LineaUI.Components.TimelineTest do
 
     assert "timeline" in classes(html, "ul#t")
     assert [_, _] = find(html, "#t > li.timeline-event") |> Enum.to_list()
-    assert ["timeline-middle", "bg-warning/10", "text-warning"] -- classes(html, "#r-a > span") == []
+
+    assert ["timeline-middle", "bg-warning/10", "text-warning"] -- classes(html, "#r-a > span") ==
+             []
+
     assert find(html, "#r-a .grow > div") |> Enum.map(&LazyHTML.text/1) == ["a", "by me"]
     assert find(html, "#r-a span.font-mono") |> LazyHTML.text() == "10:42"
     assert [] = find(html, "ol") |> Enum.to_list()
