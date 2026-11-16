@@ -1,6 +1,6 @@
 defmodule LineaUI.Components.Chip do
   @moduledoc """
-  The canvas chip: a small grey pill for an applied filter or a selected person, with an optional
+  The chip, a daisyUI `badge`: a small pill for an applied filter or a selected person, with an optional
   avatar and a plain x that removes it.
 
       <.chip label="Situação: Aprovação" on_remove={JS.hide(to: "#c1")} id="c1" />
@@ -9,7 +9,7 @@ defmodule LineaUI.Components.Chip do
       </.chip>
       <.chip label="Matriz" />
 
-  With `href`, `navigate` or `patch` the chip itself is a link (`<.link class="sg-chip">`), for filters that
+  With `href`, `navigate` or `patch` the chip itself is a link (`<.link class="badge">`), for filters that
   live in the URL; a link chip has no x. A removable chip whose x is a patch takes `remove_patch`:
 
       <.chip patch={~p"/extract?account=1"} label="Conta 1" />
@@ -21,6 +21,9 @@ defmodule LineaUI.Components.Chip do
 
   use LineaUI.Component
   import LineaUI.Components.Avatar, only: [avatar: 1]
+
+  # the x: daisyUI's ghost, circle, extra small button
+  @x "chip-x btn btn-ghost btn-circle btn-xs size-4 min-h-0 p-0 text-base-content/60 hover:text-base-content"
 
   @doc """
   Renders a chip, with `label` or the inner block as its text.
@@ -70,11 +73,13 @@ defmodule LineaUI.Components.Chip do
 
   def chip(assigns) do
     assigns
-    |> assign_derived(:classes, [:avatar, :avatar_src, :on_remove, :remove_patch, :class], fn ->
+    |> assign_derived(:classes, [:avatar, :avatar_src, :on_remove, :remove_patch, :rest, :class], fn ->
       merge([
-        "sg-chip",
-        (assigns.avatar || assigns.avatar_src) && "has-av",
+        "chip badge h-7 gap-1.5 border-base-300 bg-base-100 px-2.5 text-[13px] text-base-content/85",
+        (assigns.avatar || assigns.avatar_src) && "has-av ps-0.5",
         is_nil(assigns.on_remove) && is_nil(assigns.remove_patch) && "static",
+        (assigns.rest[:href] || assigns.rest[:navigate] || assigns.rest[:patch]) &&
+          "hover:bg-base-200",
         assigns.class
       ])
     end)
@@ -97,6 +102,8 @@ defmodule LineaUI.Components.Chip do
   end
 
   defp render_chip(assigns) do
+    assigns = assign(assigns, :x_class, @x)
+
     ~H"""
     <span id={@id} class={@classes} {@rest}>
       <.chip_content
@@ -109,7 +116,7 @@ defmodule LineaUI.Components.Chip do
       <.link
         :if={@remove_patch}
         patch={@remove_patch}
-        class="sg-chip-x"
+        class={@x_class}
         aria-label={@remove_label}
       >
         <.chip_x />
@@ -117,7 +124,7 @@ defmodule LineaUI.Components.Chip do
       <button
         :if={@on_remove && !@remove_patch}
         type="button"
-        class="sg-chip-x"
+        class={@x_class}
         aria-label={@remove_label}
         phx-click={remove_js(@on_remove, @target, @id)}
       >
@@ -129,7 +136,17 @@ defmodule LineaUI.Components.Chip do
 
   defp chip_x(assigns) do
     ~H"""
-    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg>
+    <svg
+      class="size-3.5"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.5"
+      stroke-linecap="round"
+      aria-hidden="true"
+    >
+      <path d="M6 6l12 12M18 6 6 18" />
+    </svg>
     """
   end
 
@@ -143,7 +160,7 @@ defmodule LineaUI.Components.Chip do
       tint={@avatar_color}
       color={if @avatar_color, do: "neutral", else: "auto"}
       size="24"
-      class="sg-chip-av"
+      class="chip-av size-6 text-[10px] font-semibold"
     />
     <%= if @inner_block != [] do %>
       {render_slot(@inner_block)}
