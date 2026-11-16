@@ -141,9 +141,7 @@ defmodule LineaUI.Components.FormControlsTest do
       html = render(~H'<.range name="v" value={50} color="primary" size="lg" />')
       assert [_] = find(html, "input[type=range][name=v][value='50']") |> Enum.to_list()
       classes = classes(html, "input")
-      assert "form-range" in classes
-      assert "text-primary" in classes
-      assert "[--range-thumb-size:24px]" in classes
+      assert ["range", "range-primary", "range-lg"] -- classes == []
     end
 
     test "min, max, step and phx-debounce pass through" do
