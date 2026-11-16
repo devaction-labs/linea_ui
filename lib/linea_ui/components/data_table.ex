@@ -277,7 +277,9 @@ defmodule LineaUI.Components.DataTable do
   slot :col, required: true, doc: "A column; receives the row (after `row_item`)." do
     attr(:label, :string, doc: "Header text.")
 
-    attr(:class, :any, doc: "Extra classes of the column's cells (the header takes `head_class`).")
+    attr(:class, :any,
+      doc: "Extra classes of the column's cells (the header takes `head_class`)."
+    )
 
     attr(:head_class, :any, doc: "Extra classes of the column's header.")
 

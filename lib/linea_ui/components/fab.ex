@@ -162,7 +162,9 @@ defmodule LineaUI.Components.Fab do
   attr(:disabled, :boolean, default: false)
   attr(:class, :any, default: nil)
 
-  attr(:rest, :global, include: ~w(href navigate patch method download target rel form name value))
+  attr(:rest, :global,
+    include: ~w(href navigate patch method download target rel form name value)
+  )
 
   slot(:icon, doc: "The glyph in the tile; the sparkle of the assistant by default.")
   slot(:inner_block, doc: "Replaces the visible label text (`label` stays the `aria-label`).")
