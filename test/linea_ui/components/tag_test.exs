@@ -14,8 +14,7 @@ defmodule LineaUI.Components.TagTest do
     assert [_] = find(html, "button#b[type=button].tag") |> Enum.to_list()
     assert [_] = find(html, "a#h[href='#']") |> Enum.to_list()
     assert [_] = find(html, "a#n[href='/tags']") |> Enum.to_list()
-    assert "bg-primary" in classes(html, "#h")
-    assert "hover:bg-primary-focus" in classes(html, "#h")
+    assert ["badge", "badge-primary"] -- classes(html, "#h") == []
     assert "rounded-full" in classes(html, "#n")
   end
 
@@ -27,9 +26,9 @@ defmodule LineaUI.Components.TagTest do
       <.tag id="o" color="warning" variant="outline">x</.tag>
       """)
 
-    assert "bg-info/10" in classes(html, "#s")
-    assert "border-error/30" in classes(html, "#b")
-    assert "border-warning" in classes(html, "#o")
+    assert ["badge-soft", "badge-info"] -- classes(html, "#s") == []
+    assert ["badge-soft", "badge-error", "border-error/30"] -- classes(html, "#b") == []
+    assert ["badge-outline", "badge-warning"] -- classes(html, "#o") == []
   end
 
   test "tag_group squares the inner corners" do
@@ -57,15 +56,13 @@ defmodule LineaUI.Components.TagTest do
 
     for id <- ~w(a o) do
       classes = classes(html, "##{id}")
-      assert "bg-primary" in classes
-      assert "text-white" in classes
-      assert "border-primary" in classes
+      assert "badge-primary" in classes
     end
 
-    refute "bg-info/10" in classes(html, "#a")
-    refute "text-error" in classes(html, "#o")
+    refute "badge-info" in classes(html, "#a")
+    refute "badge-error" in classes(html, "#o")
     assert [_] = find(html, "#a[aria-pressed=true]") |> Enum.to_list()
-    assert "bg-info/10" in classes(html, "#b")
+    assert "badge-info" in classes(html, "#b")
     assert [] = find(html, "#b[aria-pressed]") |> Enum.to_list()
     assert [_] = find(html, "a#c[aria-current=true]") |> Enum.to_list()
   end
@@ -92,17 +89,16 @@ defmodule LineaUI.Components.TagTest do
       <.tag id="a" variant="flat" active>Todos</.tag>
       """)
 
-    assert "sg-tag" in classes(html, "#f")
+    assert "tag-flat" in classes(html, "#f")
     refute "on" in classes(html, "#f")
-    assert ["sg-tag", "on"] -- classes(html, "#a") == []
-    refute "bg-primary" in classes(html, "#a")
+    assert ["tag-flat", "on", "badge-soft", "badge-primary"] -- classes(html, "#a") == []
     assert attr_of(html, "#a", "aria-pressed") == ["true"]
   end
 
   test "tint paints the tag in a colour of its own" do
     html = render(~H|<.tag id="t" variant="flat" tint="#8a5cd6">Novo cliente</.tag>|)
     assert "tag-tint" in classes(html, "#t")
-    assert "sg-tag" in classes(html, "#t")
+    assert "badge" in classes(html, "#t")
     assert attr_of(html, "#t", "style") == ["--tag-tint:#8a5cd6"]
   end
 
@@ -114,9 +110,9 @@ defmodule LineaUI.Components.TagTest do
       <.tag id="c" variant="flat">teste</.tag>
       """)
 
-    assert [_] = find(html, "span#a.sg-tag") |> Enum.to_list()
-    assert [_] = find(html, "span#b.sg-tag") |> Enum.to_list()
-    assert [_] = find(html, "button#c.sg-tag") |> Enum.to_list()
+    assert [_] = find(html, "span#a.tag-flat") |> Enum.to_list()
+    assert [_] = find(html, "span#b.tag-flat") |> Enum.to_list()
+    assert [_] = find(html, "button#c.tag-flat") |> Enum.to_list()
     assert attr_of(html, "#a", "href") == []
     assert attr_of(html, "#a", "type") == []
     assert find(html, "#b .tag-count") |> Enum.count() == 1

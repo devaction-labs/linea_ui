@@ -816,15 +816,6 @@ code.inline-code {
    focus:outline-hidden disabled:pointer-events-none;
 }
 
-/* tag: a clickable chip (LineOne's refined look: 28px high, 8px radius, 12.5px type) */
-.tag {
-    @apply inline-flex h-7 cursor-pointer items-center justify-center gap-1.5 whitespace-nowrap
-     rounded-lg border border-transparent px-[11px] font-inter text-[12.5px] font-medium
-     leading-none align-baseline transition-all duration-200 outline-hidden
-     focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary/50
-     dark:focus-visible:outline-accent-light/50
-}
-
 /* progress */
 .lo-progress {
   @apply relative flex w-full overflow-hidden rounded-full;

@@ -2,9 +2,6 @@
 
 /* ---------- Tag ---------- */
 /* `variant="flat"`: the canvas `sg-tag` over the kit's `.tag` base (no border, regular weight, 26px). */
-.tag.sg-tag{height:26px;border:0;padding:0 10px;font-weight:400;font-size:12.5px;color:var(--muted);background:var(--sunken)}
-.tag.sg-tag:hover{color:var(--ink)}
-.tag.sg-tag.on{color:var(--accent-ink);background:var(--accent-soft);font-weight:500}
 /* `tint`: a colour of the user's own, the text in it on a 14% tint. */
 .tag.tag-tint{color:var(--tag-tint);background:color-mix(in srgb,var(--tag-tint) 14%,transparent);border-color:transparent;box-shadow:none}
 
