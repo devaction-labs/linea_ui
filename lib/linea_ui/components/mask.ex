@@ -1,6 +1,6 @@
 defmodule LineaUI.Components.Mask do
   @moduledoc """
-  Crops its content to one of LineOne's nine mask shapes: `squircle`, `reuleaux-triangle`,
+  Crops its content to one of nine mask shapes (daisyUI's `mask mask-squircle`, `mask-hexagon`… where daisyUI has the shape, LineOne's for `reuleaux-triangle` and `octagon`): `squircle`, `reuleaux-triangle`,
   `diamond`, `hexagon`, `hexagon-2`, `octagon`, `star`, `star-2` and `heart`.
 
       <.mask shape="heart" src="/images/avatar.jpg" alt="Jane" class="size-36" />
@@ -16,15 +16,15 @@ defmodule LineaUI.Components.Mask do
   use LineaUI.Component
 
   @shapes %{
-    "squircle" => "mask is-squircle",
-    "reuleaux-triangle" => "mask is-reuleaux-triangle",
-    "diamond" => "mask is-diamond",
-    "hexagon" => "mask is-hexagon",
-    "hexagon-2" => "mask is-hexagon-2",
-    "octagon" => "mask is-octagon",
-    "star" => "mask is-star",
-    "star-2" => "mask is-star-2",
-    "heart" => "mask is-heart"
+    "squircle" => "mask mask-squircle",
+    "reuleaux-triangle" => "lo-mask is-reuleaux-triangle",
+    "diamond" => "mask mask-diamond",
+    "hexagon" => "mask mask-hexagon",
+    "hexagon-2" => "mask mask-hexagon-2",
+    "octagon" => "lo-mask is-octagon",
+    "star" => "mask mask-star",
+    "star-2" => "mask mask-star-2",
+    "heart" => "mask mask-heart"
   }
 
   @doc "The shape names `mask/1` takes."

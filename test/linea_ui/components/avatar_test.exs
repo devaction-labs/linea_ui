@@ -7,7 +7,7 @@ defmodule LineaUI.Components.AvatarTest do
       <.avatar src="/a.jpg" alt="Jane" size="lg" />
       """)
 
-    assert "size-16" in classes(html, "div.avatar")
+    assert "size-16" in classes(html, "div.lo-avatar")
     assert [_] = find(html, "img.rounded-full[src='/a.jpg'][alt=Jane]") |> Enum.to_list()
   end
 
@@ -26,13 +26,12 @@ defmodule LineaUI.Components.AvatarTest do
              "uppercase",
              "rounded-full",
              "text-[17px]" | _
-           ] =
-             classes(html, "#a > div")
+           ] = classes(html, "#a > div")
 
     assert "bg-primary" in classes(html, "#a > div")
     assert "bg-info/10" in classes(html, "#b > div")
     assert "rounded-lg" in classes(html, "#b > div")
-    assert "is-squircle" in classes(html, "#c > div")
+    assert "mask-squircle" in classes(html, "#c > div")
     assert "border-error/30" in classes(html, "#c > div")
   end
 
@@ -52,7 +51,7 @@ defmodule LineaUI.Components.AvatarTest do
       <.avatar src="/a.jpg" size="xl" status="success" status_position="bottom-left" ping />
       """)
 
-    dot = classes(html, "div.avatar > div")
+    dot = classes(html, "div.lo-avatar > div")
     assert "bg-success" in dot
     assert "bottom-0" in dot
     assert "left-0" in dot
@@ -68,7 +67,7 @@ defmodule LineaUI.Components.AvatarTest do
 
     assert "from-sky-400" in classes(html, "div")
     assert "size-16" in classes(html, "div")
-    assert [_] = find(html, "div > div.avatar > img") |> Enum.to_list()
+    assert [_] = find(html, "div > div.lo-avatar > img") |> Enum.to_list()
   end
 
   test "avatar_group stacks rings" do
@@ -181,7 +180,7 @@ defmodule LineaUI.Components.AvatarTest do
       <.avatar src="/a.jpg" status="neutral" status_position="bottom-right" />
       """)
 
-    assert "bg-slate-300" in classes(html, "div.avatar > div")
+    assert "bg-base-content/15" in classes(html, "div.lo-avatar > div")
   end
 
   test "a name gives the initials, the alt and a color that never changes" do
@@ -196,7 +195,7 @@ defmodule LineaUI.Components.AvatarTest do
     assert find(html, "#a > div") |> LazyHTML.text() =~ "AS"
     assert classes(html, "#a > div") == classes(html, "#b > div")
     assert find(html, "#c > div") |> LazyHTML.text() =~ "HA"
-    assert "bg-slate-200" in classes(html, "#c > div")
+    assert "bg-base-300" in classes(html, "#c > div")
     assert LazyHTML.attribute(find(html, "#d > img"), "alt") == ["Madonna"]
 
     colors =
@@ -204,7 +203,7 @@ defmodule LineaUI.Components.AvatarTest do
         assigns = %{name: name}
 
         Phoenix.LiveViewTest.rendered_to_string(~H|<.avatar name={@name} color="auto" />|)
-        |> then(&classes(&1, "div.avatar > div"))
+        |> then(&classes(&1, "div.lo-avatar > div"))
         |> Enum.find(&String.starts_with?(&1, "bg-"))
       end
 
@@ -284,14 +283,14 @@ defmodule LineaUI.Components.AvatarTest do
       </.avatar_group>
       """)
 
-    assert [_, _] = find(html, "#g > .avatar") |> Enum.to_list()
-    assert "size-8" in classes(html, "#g > .avatar:last-child")
-    assert find(html, "#g > .avatar:last-child") |> LazyHTML.text() =~ "+3"
+    assert [_, _] = find(html, "#g > .lo-avatar") |> Enum.to_list()
+    assert "size-8" in classes(html, "#g > .lo-avatar:last-child")
+    assert find(html, "#g > .lo-avatar:last-child") |> LazyHTML.text() =~ "+3"
 
     assert [_] =
              find(
                render(~H|<.avatar_group id="h"><.avatar initials="a" /></.avatar_group>|),
-               "#h > .avatar"
+               "#h > .lo-avatar"
              )
              |> Enum.to_list()
   end
@@ -321,7 +320,7 @@ defmodule LineaUI.Components.AvatarTest do
       """)
 
     assert "-space-x-[7px]" in classes(html, "#g")
-    more = classes(html, "#g > .avatar:last-child .is-initial")
+    more = classes(html, "#g > .lo-avatar:last-child .is-initial")
     assert "ring-(--panel)" in more
     assert "text-(--fg)" in more
   end
@@ -338,7 +337,7 @@ defmodule LineaUI.Components.AvatarTest do
     assert "-space-x-[8px]" in group
     assert "[&>.avatar:hover]:-translate-y-0.5" in group
     assert "[&>.avatar:hover]:z-[2]" in group
-    more = classes(html, "#g > .avatar:last-child .is-initial")
+    more = classes(html, "#g > .lo-avatar:last-child .is-initial")
     assert "bg-(--sunken)" in more
   end
 

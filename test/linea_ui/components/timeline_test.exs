@@ -11,7 +11,7 @@ defmodule LineaUI.Components.TimelineTest do
       </.timeline>
       """)
 
-    assert ["timeline", "max-w-sm"] == classes(html, "ol")
+    assert ["lo-timeline", "max-w-sm"] == classes(html, "ol")
     assert "bg-primary" in classes(html, ".timeline-item-point")
 
     assert html
@@ -95,7 +95,7 @@ defmodule LineaUI.Components.TimelineTest do
     point = classes(html, "#a .timeline-item-point")
     assert ["rounded-full", "ring-2"] -- point == []
     refute Enum.any?(point, &String.starts_with?(&1, "bg-"))
-    assert "size-full" in classes(html, "#a .timeline-item-point .avatar")
+    assert "size-full" in classes(html, "#a .timeline-item-point .lo-avatar")
   end
 
   test "compact density, and a description with markup" do
@@ -110,7 +110,7 @@ defmodule LineaUI.Components.TimelineTest do
       <.timeline id="d"><.timeline_item title="Default" description="Text" /></.timeline>
       """)
 
-    assert ["timeline", "line-space", "is-compact"] -- classes(html, "#c") == []
+    assert ["lo-timeline", "line-space", "is-compact"] -- classes(html, "#c") == []
     refute "is-compact" in classes(html, "#d")
     refute "line-space" in classes(html, "#d")
     assert html |> find("#a .timeline-item-description b") |> Enum.count() == 1

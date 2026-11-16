@@ -10,7 +10,7 @@ defmodule LineaUI.Components.Popover do
       </.popover>
 
       <.popover id="john" trigger_on="hover" placement="top" class="w-48 px-4 py-5 text-center">
-        <:trigger><div class="avatar size-8">…</div></:trigger>
+        <:trigger><div class="lo-avatar size-8">…</div></:trigger>
         …
       </.popover>
 

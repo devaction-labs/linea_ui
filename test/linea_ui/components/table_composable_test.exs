@@ -21,15 +21,14 @@ defmodule LineaUI.Components.TableComposableTest do
       """)
 
     assert "linea-table" in classes(html, "table")
-    assert "sg-table" in classes(html, "table")
+    assert "table" in classes(html, "table")
     assert "min-w-[760px]" in classes(html, "table")
     assert "overflow-x-auto" in classes(html, "div")
     assert ["hoverable"] = html |> find("table") |> LazyHTML.attribute("data-variant")
     assert ["top"] = html |> find("table") |> LazyHTML.attribute("data-rounded")
     assert [_] = html |> find("table[data-compact][data-sticky]") |> Enum.to_list()
 
-    assert ["Number", "Total"] =
-             html |> find("th") |> Enum.map(&String.trim(LazyHTML.text(&1)))
+    assert ["Number", "Total"] = html |> find("th") |> Enum.map(&String.trim(LazyHTML.text(&1)))
 
     assert "text-right" in classes(html, "th:last-child")
     assert "w-32" in classes(html, "th:last-child")

@@ -38,19 +38,18 @@ defmodule LineaUI.Components.Accordion do
 
   @variants %{
     "basic" => "flex flex-col",
-    "border-bottom" => "flex flex-col divide-y divide-slate-150 dark:divide-navy-500",
+    "border-bottom" => "flex flex-col divide-y divide-base-300",
     "bordered" =>
-      "flex flex-col divide-y divide-slate-150 overflow-hidden rounded-[10px] border border-slate-150 dark:divide-navy-500 dark:border-navy-500",
+      "flex flex-col divide-y divide-base-300 overflow-hidden rounded-box border border-base-300",
     "canvas" =>
-      "flex flex-col divide-y divide-slate-150 overflow-hidden rounded-[14px] shadow-[inset_0_0_0_1px_var(--color-slate-150)] dark:divide-navy-500 dark:shadow-[inset_0_0_0_1px_var(--color-navy-500)]",
+      "flex flex-col divide-y divide-base-300 overflow-hidden rounded-box border border-base-300 bg-base-100",
     "divided" => "flex flex-col space-y-3",
-    "primary" => "flex flex-col divide-y overflow-hidden rounded-[10px] border",
+    "primary" => "flex flex-col divide-y overflow-hidden rounded-box border",
     "advanced" => "flex flex-col space-y-3"
   }
 
   @frames %{
-    "primary" =>
-      "divide-[color-mix(in_oklab,var(--color-primary)_55%,white)] border-primary dark:border-accent",
+    "primary" => "divide-[color-mix(in_oklab,var(--color-primary)_55%,white)] border-primary",
     "secondary" =>
       "divide-[color-mix(in_oklab,var(--color-secondary)_55%,white)] border-secondary dark:border-secondary",
     "info" =>
@@ -154,7 +153,7 @@ defmodule LineaUI.Components.Accordion do
     >
       <:trigger class={
         merge([
-          "ac-header pointer-events-none flex items-center justify-between bg-slate-150 px-3.5 py-3 dark:bg-navy-500",
+          "ac-header pointer-events-none flex items-center justify-between bg-base-200 px-3.5 py-3",
           @trigger_class
         ])
       }>
@@ -162,7 +161,7 @@ defmodule LineaUI.Components.Accordion do
           {render_slot(@header)}
         </div>
         <span
-          class="ac-trigger lo-btn pointer-events-auto size-8 rounded-full p-0 hover:bg-slate-300/20 focus:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25"
+          class="ac-trigger btn btn-ghost btn-circle btn-sm pointer-events-auto"
           aria-label={@toggle_label}
         >
           <.chevron class="ac-icon text-sm transition-transform" />

@@ -69,39 +69,33 @@ defmodule LineaUI.Components.Tabs do
   use LineaUI.Component
 
   @tab_base %{
-    {"line", "horizontal"} => "sg-tab",
+    {"line", "horizontal"} => "tab gap-2",
     {"line", "vertical"} =>
-      "lo-btn justify-start gap-2 rounded-none border-r-2 px-3 py-2 text-left font-medium aria-selected:border-primary aria-selected:text-primary dark:aria-selected:border-accent dark:aria-selected:text-accent-light not-aria-selected:border-transparent not-aria-selected:hover:text-slate-800 not-aria-selected:focus:text-slate-800 dark:not-aria-selected:hover:text-navy-100 dark:not-aria-selected:focus:text-navy-100",
-    {"boxed", "horizontal"} =>
-      "lo-btn gap-2 px-3 py-1.5 font-medium aria-selected:bg-white aria-selected:shadow-sm dark:aria-selected:bg-navy-500 dark:aria-selected:text-navy-100 not-aria-selected:hover:text-slate-800 not-aria-selected:focus:text-slate-800 dark:not-aria-selected:hover:text-navy-100 dark:not-aria-selected:focus:text-navy-100",
-    {"boxed", "vertical"} =>
-      "lo-btn justify-start gap-2 px-3 py-1.5 text-left font-medium aria-selected:bg-white aria-selected:shadow-sm dark:aria-selected:bg-navy-500 dark:aria-selected:text-navy-100 not-aria-selected:hover:text-slate-800 not-aria-selected:focus:text-slate-800 dark:not-aria-selected:hover:text-navy-100 dark:not-aria-selected:focus:text-navy-100",
-    {"pill", "horizontal"} =>
-      "lo-btn h-8 gap-2 rounded-full text-xs-plus font-medium not-aria-selected:hover:bg-slate-300/20 not-aria-selected:focus:bg-slate-300/20 not-aria-selected:active:bg-slate-300/25 not-aria-selected:hover:text-slate-800 not-aria-selected:focus:text-slate-800 dark:not-aria-selected:hover:bg-navy-300/20 dark:not-aria-selected:focus:bg-navy-300/20 dark:not-aria-selected:active:bg-navy-300/25 dark:not-aria-selected:hover:text-navy-100 dark:not-aria-selected:focus:text-navy-100",
-    {"pill", "vertical"} =>
-      "lo-btn h-8 justify-start gap-2 rounded-full text-left text-xs-plus font-medium not-aria-selected:hover:bg-slate-300/20 not-aria-selected:focus:bg-slate-300/20 not-aria-selected:active:bg-slate-300/25 not-aria-selected:hover:text-slate-800 not-aria-selected:focus:text-slate-800 dark:not-aria-selected:hover:bg-navy-300/20 dark:not-aria-selected:focus:bg-navy-300/20 dark:not-aria-selected:active:bg-navy-300/25 dark:not-aria-selected:hover:text-navy-100 dark:not-aria-selected:focus:text-navy-100",
+      "tab justify-start gap-2 rounded-none border-r-2 border-transparent px-3 text-left aria-selected:border-primary aria-selected:text-primary",
+    {"boxed", "horizontal"} => "tab gap-2",
+    {"boxed", "vertical"} => "tab justify-start gap-2 text-left",
+    {"pill", "horizontal"} => "tab h-8 gap-2 rounded-field text-xs-plus",
+    {"pill", "vertical"} => "tab h-8 justify-start gap-2 rounded-field text-left text-xs-plus",
     {"segmented", "horizontal"} => "sg-seg-tab",
     {"segmented", "vertical"} => "sg-seg-tab"
   }
 
-  @text_base "lo-btn gap-2 rounded-none p-0 font-medium tracking-wide not-aria-selected:hover:text-slate-800 not-aria-selected:focus:text-slate-800 dark:not-aria-selected:hover:text-navy-100 dark:not-aria-selected:focus:text-navy-100"
+  @text_base "tab h-auto gap-2 rounded-none p-0 tracking-wide"
 
   @boxed_sizes %{
-    "xs" => "px-2.5 py-0.5 text-xs",
-    "sm" => "px-3 py-1 text-xs-plus",
-    "md" => nil
+    "xs" => "h-auto px-2.5 py-0.5 text-xs",
+    "sm" => "h-auto px-3 py-1 text-xs-plus",
+    "md" => "h-auto px-3 py-1.5"
   }
 
   @text_colors %{
-    "primary" => "aria-selected:text-primary dark:aria-selected:text-accent-light",
-    "neutral" => "aria-selected:text-slate-800 dark:aria-selected:text-navy-50"
+    "primary" => "aria-selected:text-primary",
+    "neutral" => "aria-selected:text-base-content"
   }
 
   @pill_colors %{
-    "primary" =>
-      "aria-selected:bg-primary/10 aria-selected:text-primary dark:aria-selected:bg-accent-light/10 dark:aria-selected:text-accent-light",
-    "neutral" =>
-      "aria-selected:bg-slate-150 aria-selected:text-slate-800 dark:aria-selected:bg-navy-600 dark:aria-selected:text-navy-50"
+    "primary" => "aria-selected:bg-primary/10 aria-selected:text-primary",
+    "neutral" => "aria-selected:bg-base-200 aria-selected:text-base-content"
   }
 
   @text_tabs %{
@@ -114,10 +108,8 @@ defmodule LineaUI.Components.Tabs do
   @scroll %{
     {"line", "horizontal"} => "is-scrollbar-hidden overflow-x-auto",
     {"line", "vertical"} => "shrink-0",
-    {"boxed", "horizontal"} =>
-      "is-scrollbar-hidden overflow-x-auto rounded-lg bg-slate-200 text-slate-600 dark:bg-navy-800 dark:text-navy-200",
-    {"boxed", "vertical"} =>
-      "shrink-0 self-start rounded-lg bg-slate-200 text-slate-600 dark:bg-navy-800 dark:text-navy-200",
+    {"boxed", "horizontal"} => "is-scrollbar-hidden overflow-x-auto",
+    {"boxed", "vertical"} => "shrink-0 self-start",
     {"pill", "horizontal"} => "is-scrollbar-hidden overflow-x-auto",
     {"pill", "vertical"} => "shrink-0",
     {"text", "horizontal"} => "is-scrollbar-hidden overflow-x-auto",
@@ -127,21 +119,21 @@ defmodule LineaUI.Components.Tabs do
   }
 
   @track %{
-    {true, "horizontal"} => "border-b-2 border-slate-150 dark:border-navy-500",
-    {true, "vertical"} => "h-full border-r-2 border-slate-150 dark:border-navy-500",
+    {true, "horizontal"} => "border-b border-base-300",
+    {true, "vertical"} => "h-full border-r-2 border-base-300",
     {false, "horizontal"} => nil,
     {false, "vertical"} => nil
   }
 
   @list %{
-    {"line", "horizontal"} => "sg-tabs",
+    {"line", "horizontal"} => "tabs tabs-border flex-nowrap",
     {"line", "vertical"} => "flex flex-col",
-    {"boxed", "horizontal"} => "flex px-1.5 py-1",
-    {"boxed", "vertical"} => "flex flex-col px-1.5 py-1",
-    {"pill", "horizontal"} => "flex gap-2",
-    {"pill", "vertical"} => "flex flex-col space-y-2",
-    {"text", "horizontal"} => "flex gap-4",
-    {"text", "vertical"} => "flex flex-col space-y-2",
+    {"boxed", "horizontal"} => "tabs tabs-box flex-nowrap",
+    {"boxed", "vertical"} => "tabs tabs-box flex-col items-stretch",
+    {"pill", "horizontal"} => "tabs flex-nowrap gap-2",
+    {"pill", "vertical"} => "tabs flex-col items-stretch gap-2",
+    {"text", "horizontal"} => "tabs flex-nowrap gap-4",
+    {"text", "vertical"} => "tabs flex-col items-stretch gap-2",
     {"segmented", "horizontal"} => "sg-seg",
     {"segmented", "vertical"} => "sg-seg flex-col items-stretch rounded-[18px]"
   }
@@ -156,8 +148,8 @@ defmodule LineaUI.Components.Tabs do
   @panels %{"horizontal" => "pt-4", "vertical" => "min-w-0 flex-1 pl-4"}
 
   @transitions %{
-    "left" => "tab-content is-active tab-shift-left",
-    "up" => "tab-content is-active tab-shift-up",
+    "left" => "lo-tab-content is-active tab-shift-left",
+    "up" => "lo-tab-content is-active tab-shift-up",
     "none" => nil
   }
 

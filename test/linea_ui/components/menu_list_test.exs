@@ -10,22 +10,22 @@ defmodule LineaUI.Components.MenuListTest do
       </.menu_list>
       """)
 
-    assert "space-y-3.5" in classes(html, "ul")
+    assert ["menu", "gap-3.5"] -- classes(html, "ul") == []
     assert [active, other] = find(html, "li > a") |> Enum.to_list()
     assert LazyHTML.attribute(active, "aria-current") == ["page"]
     assert "text-primary" in classes(LazyHTML.to_html(active), "a")
     assert "inline-flex" in classes(LazyHTML.to_html(other), "a")
-    assert "hover:text-slate-800" in classes(LazyHTML.to_html(other), "a")
+    assert "hover:text-base-content" in classes(LazyHTML.to_html(other), "a")
     assert LazyHTML.attribute(other, "href") == ["/shipping"]
   end
 
   test "variants and colors pick LineOne's classes" do
     cases = [
-      {"solid", "primary", "bg-primary", "rounded-lg"},
-      {"solid", "neutral", "bg-slate-150", "rounded-lg"},
-      {"pill", "primary", "bg-primary", "rounded-full"},
-      {"gradient", "primary", "from-purple-500", "rounded-lg"},
-      {"bordered", "primary", "border-slate-150", "rounded-lg"}
+      {"solid", "primary", "bg-primary", "rounded-field"},
+      {"solid", "neutral", "bg-base-200", "rounded-field"},
+      {"pill", "primary", "bg-primary", "rounded-field"},
+      {"gradient", "primary", "from-purple-500", "rounded-field"},
+      {"bordered", "primary", "border-base-300", "rounded-field"}
     ]
 
     for {variant, color, active, shape} <- cases do
@@ -39,7 +39,7 @@ defmodule LineaUI.Components.MenuListTest do
         </.menu_list>
         """)
 
-      assert "space-y-1.5" in classes(html, "ul")
+      assert ["menu", "gap-1.5"] -- classes(html, "ul") == []
       assert active in classes(html, "a[aria-current]")
       assert shape in classes(html, "a[aria-current]")
     end

@@ -22,7 +22,7 @@ defmodule LineaUI.Components.MenuList do
       </.menu_item>
 
   `variant` follows LineOne's examples: `link` (text only), `solid` (filled; `color` picks
-  primary or neutral), `pill` (rounded-full with a tinted hover), `gradient` and `bordered`.
+  primary or neutral), `pill` (rounded with a tinted hover), `gradient` and `bordered`.
 
   Items that are not links take `on_select` (an event name or `%JS{}`), pushed with
   `%{"value" => item_value}`:
@@ -46,46 +46,42 @@ defmodule LineaUI.Components.MenuList do
   use LineaUI.Component
 
   @spacing %{
-    "link" => "space-y-3.5",
-    "solid" => "space-y-1.5",
-    "pill" => "space-y-1.5",
-    "gradient" => "space-y-1.5",
-    "bordered" => "space-y-1.5"
+    "link" => "menu w-full gap-3.5 p-0",
+    "solid" => "menu w-full gap-1.5 p-0",
+    "pill" => "menu w-full gap-1.5 p-0",
+    "gradient" => "menu w-full gap-1.5 p-0",
+    "bordered" => "menu w-full gap-1.5 p-0"
   }
 
   @base "group flex items-center gap-2 tracking-wide outline-hidden"
 
   @shape %{
-    "link" => "inline-flex transition-colors",
-    "solid" => "rounded-lg px-4 py-2.5 transition-all",
-    "pill" => "rounded-full px-5 py-2.5 transition-all",
-    "gradient" => "rounded-lg px-4 py-2.5 transition-all",
-    "bordered" => "rounded-lg px-4 py-2.5 transition-all"
+    "link" => "inline-flex p-0 transition-colors hover:bg-transparent",
+    "solid" => "rounded-field px-4 py-2.5 transition-all",
+    "pill" => "rounded-field px-5 py-2.5 transition-all",
+    "gradient" => "rounded-field px-4 py-2.5 transition-all",
+    "bordered" => "rounded-field px-4 py-2.5 transition-all"
   }
 
   @active %{
-    {"link", "primary"} => "font-medium text-primary dark:text-accent-light",
-    {"link", "neutral"} => "font-medium text-slate-800 dark:text-navy-50",
-    {"solid", "primary"} => "bg-primary text-white dark:bg-accent",
-    {"solid", "neutral"} => "bg-slate-150 text-slate-800 dark:bg-navy-500 dark:text-navy-50",
-    {"pill", "primary"} => "bg-primary text-white dark:bg-accent",
-    {"pill", "neutral"} => "bg-slate-150 text-slate-800 dark:bg-navy-500 dark:text-navy-50",
+    {"link", "primary"} => "font-medium text-primary",
+    {"link", "neutral"} => "font-medium text-base-content",
+    {"solid", "primary"} => "bg-primary text-primary-content",
+    {"solid", "neutral"} => "bg-base-200 text-base-content",
+    {"pill", "primary"} => "bg-primary text-primary-content",
+    {"pill", "neutral"} => "bg-base-200 text-base-content",
     {"gradient", "primary"} => "bg-gradient-to-r from-purple-500 to-purple-600 text-white",
     {"gradient", "neutral"} => "bg-gradient-to-r from-purple-500 to-purple-600 text-white",
-    {"bordered", "primary"} =>
-      "border border-slate-150 text-primary shadow-xs dark:border-navy-500 dark:text-accent-light",
-    {"bordered", "neutral"} =>
-      "border border-slate-150 text-slate-800 shadow-xs dark:border-navy-500 dark:text-navy-50"
+    {"bordered", "primary"} => "border border-base-300 text-primary shadow-xs",
+    {"bordered", "neutral"} => "border border-base-300 text-base-content shadow-xs"
   }
 
-  @neutral_hover "hover:bg-slate-100 hover:text-slate-800 focus:bg-slate-100 focus:text-slate-800 dark:hover:bg-navy-600 dark:hover:text-navy-100 dark:focus:bg-navy-600 dark:focus:text-navy-100"
+  @neutral_hover "hover:bg-base-200 hover:text-base-content focus:bg-base-200 focus:text-base-content"
 
   @inactive %{
-    "link" =>
-      "hover:text-slate-800 focus:text-slate-800 dark:hover:text-navy-100 dark:focus:text-navy-100",
+    "link" => "hover:text-base-content focus:text-base-content",
     "solid" => @neutral_hover,
-    "pill" =>
-      "hover:bg-primary/10 hover:text-primary focus:bg-primary/10 focus:text-primary dark:hover:bg-accent-light/15 dark:hover:text-accent-light dark:focus:bg-accent-light/15 dark:focus:text-accent-light",
+    "pill" => "hover:bg-primary/10 hover:text-primary focus:bg-primary/10 focus:text-primary",
     "gradient" => @neutral_hover,
     "bordered" => @neutral_hover
   }
@@ -94,10 +90,10 @@ defmodule LineaUI.Components.MenuList do
 
   @icon_inactive %{
     "pill" =>
-      "[&>svg]:size-5 [&>svg]:shrink-0 [&>svg]:text-slate-400 [&>svg]:transition-colors group-hover:[&>svg]:text-primary group-focus:[&>svg]:text-primary dark:[&>svg]:text-navy-300 dark:group-hover:[&>svg]:text-accent dark:group-focus:[&>svg]:text-accent"
+      "[&>svg]:size-5 [&>svg]:shrink-0 [&>svg]:text-base-content/50 [&>svg]:transition-colors group-hover:[&>svg]:text-primary group-focus:[&>svg]:text-primary"
   }
 
-  @icon_muted "[&>svg]:size-5 [&>svg]:shrink-0 [&>svg]:text-slate-400 [&>svg]:transition-colors group-hover:[&>svg]:text-slate-500 group-focus:[&>svg]:text-slate-500 dark:[&>svg]:text-navy-300 dark:group-hover:[&>svg]:text-navy-200 dark:group-focus:[&>svg]:text-navy-200"
+  @icon_muted "[&>svg]:size-5 [&>svg]:shrink-0 [&>svg]:text-base-content/50 [&>svg]:transition-colors group-hover:[&>svg]:text-base-content/65 group-focus:[&>svg]:text-base-content/65"
 
   @doc """
   Renders the list. Items come from `:item` slots (each takes `href`/`navigate`/`patch`,

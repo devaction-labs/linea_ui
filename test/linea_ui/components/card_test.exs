@@ -3,14 +3,14 @@ defmodule LineaUI.Components.CardTest do
 
   test "a canvas card holds its content" do
     html = render(~H|<.card id="c">Texto</.card>|)
-    assert "sg-card" in classes(html, "#c")
+    assert ["card", "card-border", "bg-base-100", "p-5"] -- classes(html, "#c") == []
     assert String.trim(LazyHTML.text(find(html, "#c"))) == "Texto"
   end
 
   test "soft and flush are the canvas variants, class is kept" do
-    assert "soft" in classes(render(~H|<.card id="c" variant="soft">x</.card>|), "#c")
-    assert "flush" in classes(render(~H|<.card id="c" variant="flush">x</.card>|), "#c")
-    assert "flush" in classes(render(~H|<.card id="c" padded={false}>x</.card>|), "#c")
+    assert "bg-base-200" in classes(render(~H|<.card id="c" variant="soft">x</.card>|), "#c")
+    refute "p-5" in classes(render(~H|<.card id="c" variant="flush">x</.card>|), "#c")
+    refute "p-5" in classes(render(~H|<.card id="c" padded={false}>x</.card>|), "#c")
     assert "mt-4" in classes(render(~H|<.card id="c" class="mt-4">x</.card>|), "#c")
   end
 
@@ -50,7 +50,7 @@ defmodule LineaUI.Components.CardTest do
     html = render(~H|<.card id="c" href="/banks/1"><b>Banco</b></.card>|)
     plain = render(~H|<.card id="d" navigate="/x" arrow={false}>Banco</.card>|)
 
-    assert [_] = find(html, "a#c.sg-card[href='/banks/1']") |> Enum.to_list()
+    assert [_] = find(html, "a#c.card[href='/banks/1']") |> Enum.to_list()
     assert [_] = find(html, "#c > svg") |> Enum.to_list()
     assert [_] = find(plain, "a#d[data-phx-link=redirect]") |> Enum.to_list()
     assert [] = find(plain, "#d > svg") |> Enum.to_list()

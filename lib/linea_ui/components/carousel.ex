@@ -139,7 +139,7 @@ defmodule LineaUI.Components.Carousel do
     ~H"""
     <div
       id={@id}
-      class={merge(["carousel", @thumb != [] && "has-thumbs", @class])}
+      class={merge(["lo-carousel", @thumb != [] && "has-thumbs", @class])}
       data-variant={@variant != "classic" && @variant}
       role="region"
       aria-roledescription="carousel"

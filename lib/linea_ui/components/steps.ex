@@ -58,83 +58,43 @@ defmodule LineaUI.Components.Steps do
   use LineaUI.Component
   import LineaUI.Components.Icon, only: [glyph: 1]
 
-  @sizes %{
-    "xs" => "[--line:1px] [--size:.75rem]",
-    "sm" => "[--size:1rem] [--line:1px]",
-    "md" => nil,
-    "lg" => "[--size:2.75rem] [--line:.5rem]"
-  }
+  @sizes %{"xs" => "text-xs", "sm" => "text-xs-plus", "md" => nil, "lg" => "text-base"}
 
-  @labels %{
-    "xs" => "text-xs-plus text-slate-600 dark:text-navy-100",
-    "sm" => "text-xs-plus text-slate-600 dark:text-navy-100",
-    "md" => "text-slate-600 dark:text-navy-100",
-    "lg" => "text-slate-600 dark:text-navy-100"
-  }
+  @labels %{"xs" => "text-xs-plus", "sm" => "text-xs-plus", "md" => nil, "lg" => nil}
 
-  @lines %{
-    "neutral" => "before:bg-slate-200 dark:before:bg-navy-500",
-    "primary" => "before:bg-primary dark:before:bg-accent",
-    "secondary" => "before:bg-secondary dark:before:bg-secondary-light",
-    "accent" => "before:bg-accent dark:before:bg-accent",
-    "info" => "before:bg-info",
-    "success" => "before:bg-success",
-    "warning" => "before:bg-warning",
-    "error" => "before:bg-error"
-  }
-
-  @points %{
-    "neutral" => "bg-slate-200 text-slate-800 dark:bg-navy-500 dark:text-white",
-    "primary" => "bg-primary text-white dark:bg-accent",
-    "secondary" => "bg-secondary text-white dark:bg-secondary-light",
-    "accent" => "bg-accent text-white dark:bg-accent",
-    "info" => "bg-info text-white",
-    "success" => "bg-success text-white",
-    "warning" => "bg-warning text-white",
-    "error" => "bg-error text-white"
-  }
-
-  @pings %{
-    "neutral" => "bg-slate-200 dark:bg-navy-500",
-    "primary" => "bg-primary dark:bg-accent",
-    "secondary" => "bg-secondary dark:bg-secondary-light",
-    "accent" => "bg-accent dark:bg-accent",
-    "info" => "bg-info",
-    "success" => "bg-success",
-    "warning" => "bg-warning",
-    "error" => "bg-error"
-  }
+  @step_colors Map.new(
+                 ~w(primary secondary accent info success warning error),
+                 &{&1, "step-" <> &1}
+               )
 
   @state_colors %{"done" => "primary", "current" => nil, "error" => "error", "todo" => nil}
 
   @stepper_bars %{
-    "done" => "bg-primary dark:bg-accent",
-    "current" =>
-      "bg-[linear-gradient(90deg,var(--color-primary)_50%,var(--color-slate-150)_50%)] dark:bg-[linear-gradient(90deg,var(--color-accent)_50%,var(--color-navy-800)_50%)]",
+    "done" => "bg-primary",
+    "current" => "bg-[linear-gradient(90deg,var(--color-primary)_50%,var(--color-base-300)_50%)]",
     "error" => "bg-error",
-    "todo" => "bg-slate-150 dark:bg-navy-800"
+    "todo" => "bg-base-200"
   }
 
   @stepper_dots %{
-    "done" => "bg-primary text-white dark:bg-accent",
-    "current" =>
-      "bg-white text-primary ring-2 ring-inset ring-primary dark:bg-navy-700 dark:text-accent-light dark:ring-accent",
-    "error" => "bg-error text-white",
-    "todo" => "bg-slate-150 text-slate-400 dark:bg-navy-800 dark:text-navy-300"
+    "done" => "bg-primary text-primary-content",
+    "current" => "bg-base-100 text-primary ring-2 ring-inset ring-primary",
+    "error" => "bg-error text-error-content",
+    "todo" => "bg-base-200 text-base-content/50"
   }
 
   @stepper_labels %{
-    "done" => "font-medium text-slate-700 dark:text-navy-50",
-    "current" => "font-semibold text-slate-700 dark:text-navy-50",
+    "done" => "font-medium text-base-content/85",
+    "current" => "font-semibold text-base-content/85",
     "error" => "font-semibold text-error",
-    "todo" => "font-medium text-slate-500 dark:text-navy-200"
+    "todo" => "font-medium text-base-content/65"
   }
 
   @stepper_links %{
-    "done" => "before:bg-primary dark:before:bg-accent",
-    "current" => "before:bg-slate-150 dark:before:bg-navy-600",
-    "error" => "before:bg-slate-150 dark:before:bg-navy-600",
-    "todo" => "before:bg-slate-150 dark:before:bg-navy-600"
+    "done" => "before:bg-primary",
+    "current" => "before:bg-base-200",
+    "error" => "before:bg-base-200",
+    "todo" => "before:bg-base-200"
   }
 
   @state_names %{
@@ -144,14 +104,10 @@ defmodule LineaUI.Components.Steps do
     "todo" => "Upcoming"
   }
 
-  @vertical_gaps %{
-    false => "space-x-4 not-last:pb-8",
-    true => "space-x-4 not-last:pb-12"
-  }
-
   @doc """
-  Renders a list of steps. Each `:step` is a point (showing the slot's content) with an
-  optional `label` under it, or beside it when vertical.
+  Renders daisyUI's steps (`steps`, `step`, `step-primary`…, `steps-vertical`). Each `:step` is a point
+  (showing the slot's content in a `step-icon`, else its number) with an optional `label` under it, or beside it
+  when vertical.
 
       <.steps color="primary">
         <:step label="Cart">1</:step>
@@ -175,7 +131,7 @@ defmodule LineaUI.Components.Steps do
 
   attr(:line_space, :boolean,
     default: false,
-    doc: "Leaves a gap between the points and the line."
+    doc: "Kept for compatibility: daisyUI's steps draw the line under the points."
   )
 
   attr(:class, :any, default: nil)
@@ -202,8 +158,7 @@ defmodule LineaUI.Components.Steps do
       class={
         merge([
           "steps",
-          @orientation == "vertical" && "is-vertical",
-          @line_space && "line-space",
+          @orientation == "vertical" && "steps-vertical",
           size_class(@size),
           @class
         ])
@@ -212,21 +167,16 @@ defmodule LineaUI.Components.Steps do
     >
       <li
         :for={step <- @step}
-        class={
-          merge(["step", step_class(@orientation, @line_space), line_class(@color), step[:class]])
-        }
+        class={merge(["step", step_color(point_color(step, @color)), step[:class]])}
         aria-current={current?(step) && "step"}
       >
-        <div class={["step-header rounded-full", point_class(point_color(step, @color))]}>
+        <span :if={step.inner_block || step[:ping]} class="step-icon">
           <span
             :if={step[:ping]}
-            class={[
-              "inline-flex h-full w-full animate-ping rounded-full opacity-80",
-              ping_class(point_color(step, @color))
-            ]}
+            class="absolute inset-0 inline-flex animate-ping rounded-full bg-[var(--step-bg)] opacity-60"
           ></span>
           {step.inner_block && render_slot(step)}
-        </div>
+        </span>
         <h3 :if={step[:label]} class={label_class(@size)}>{step.label}</h3>
       </li>
     </ol>
@@ -386,7 +336,7 @@ defmodule LineaUI.Components.Steps do
             <span class={["block", stepper_label(entry.state)]}>
               <span class="sr-only">{Map.fetch!(@state_names, entry.state)}: </span>{entry.label}
             </span>
-            <span :if={entry.sub} class="block text-xs text-slate-400 dark:text-navy-300">
+            <span :if={entry.sub} class="block text-xs text-base-content/50">
               {entry.sub}
             </span>
           </span>
@@ -496,10 +446,5 @@ defmodule LineaUI.Components.Steps do
 
   defp size_class(size), do: @sizes[size]
   defp label_class(size), do: @labels[size]
-  defp line_class(color), do: @lines[color]
-  defp point_class(color), do: @points[color]
-  defp ping_class(color), do: @pings[color]
-
-  defp step_class("vertical", line_space), do: @vertical_gaps[line_space]
-  defp step_class("horizontal", _line_space), do: nil
+  defp step_color(color), do: @step_colors[color]
 end

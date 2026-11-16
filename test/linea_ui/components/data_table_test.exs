@@ -44,7 +44,7 @@ defmodule LineaUI.Components.DataTableTest do
     assert "h-10" in classes(html, "#a-table th")
     assert "text-[13px]" in classes(html, "#a-table th")
     assert "h-12" in classes(html, "#a-table td")
-    assert "size-4" in classes(html, "#a-table td input")
+    assert "checkbox-xs" in classes(html, "#a-table td input")
     assert "flush" in classes(html, "#a .sg-card")
 
     assert "linea-dt" in classes(html, "#g-table")
@@ -53,7 +53,7 @@ defmodule LineaUI.Components.DataTableTest do
     assert "h-[34px]" in classes(html, "#g-table th")
     assert "h-[38px]" in classes(html, "#g-table td")
     assert "sticky" in classes(html, "#g-table th")
-    assert "border-slate-150" in classes(html, "#g-table td")
+    assert "border-base-300" in classes(html, "#g-table td")
   end
 
   test "density options reach the table" do

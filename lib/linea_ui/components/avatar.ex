@@ -15,7 +15,7 @@ defmodule LineaUI.Components.Avatar do
       </.avatar_group>
 
       <.avatar src="/images/jane.jpg" size="2xs" ring={1} ring_color="primary" />
-      <.avatar src="/images/jane.jpg" size="lg" face_class="border-2 border-white dark:border-navy-700" />
+      <.avatar src="/images/jane.jpg" size="lg" face_class="border-2 border-white" />
       <.avatar src="/images/jane.jpg" status="success" status_position="bottom-right" />
 
   The inner block, when given, replaces the initials (an icon, a counter). `icon` draws an icon on
@@ -84,8 +84,8 @@ defmodule LineaUI.Components.Avatar do
 
   @initials %{
     "solid" => %{
-      "neutral" => "bg-slate-200 text-slate-600 dark:bg-navy-500 dark:text-navy-100",
-      "primary" => "bg-primary text-white dark:bg-accent",
+      "neutral" => "bg-base-300 text-base-content/75",
+      "primary" => "bg-primary text-white",
       "secondary" => "bg-secondary text-white",
       "info" => "bg-info text-white",
       "success" => "bg-success text-white",
@@ -93,42 +93,38 @@ defmodule LineaUI.Components.Avatar do
       "error" => "bg-error text-white"
     },
     "soft" => %{
-      "neutral" => "bg-slate-150/60 text-slate-600 dark:bg-navy-500/40 dark:text-navy-100",
-      "primary" => "bg-primary/10 text-primary dark:bg-accent-light/10 dark:text-accent-light",
-      "secondary" =>
-        "bg-secondary/10 text-secondary dark:bg-secondary-light/10 dark:text-secondary-light",
+      "neutral" => "bg-slate-150/60 text-base-content/75",
+      "primary" => "bg-primary/10 text-primary",
+      "secondary" => "bg-secondary/10 text-secondary",
       "info" => "bg-info/10 text-info",
       "success" => "bg-success/10 text-success",
       "warning" => "bg-warning/10 text-warning",
       "error" => "bg-error/10 text-error"
     },
     "bordered" => %{
-      "neutral" =>
-        "border border-slate-300 bg-slate-150/60 text-slate-600 dark:border-navy-450 dark:bg-navy-500/40 dark:text-navy-100",
-      "primary" =>
-        "border border-primary/30 bg-primary/10 text-primary dark:border-accent-light/30 dark:bg-accent-light/10 dark:text-accent-light",
-      "secondary" =>
-        "border border-secondary/30 bg-secondary/10 text-secondary dark:border-secondary-light/30 dark:bg-secondary-light/10 dark:text-secondary-light",
+      "neutral" => "border border-base-content/20 bg-slate-150/60 text-base-content/75",
+      "primary" => "border border-primary/30 bg-primary/10 text-primary",
+      "secondary" => "border border-secondary/30 bg-secondary/10 text-secondary",
       "info" => "border border-info/30 bg-info/10 text-info",
       "success" => "border border-success/30 bg-success/10 text-success",
       "warning" => "border border-warning/30 bg-warning/10 text-warning",
       "error" => "border border-error/30 bg-error/10 text-error"
     },
     "skeleton" => %{
-      "neutral" => "bg-slate-200 text-white dark:bg-navy-500",
-      "primary" => "bg-slate-200 text-white dark:bg-navy-500",
-      "secondary" => "bg-slate-200 text-white dark:bg-navy-500",
-      "info" => "bg-slate-200 text-white dark:bg-navy-500",
-      "success" => "bg-slate-200 text-white dark:bg-navy-500",
-      "warning" => "bg-slate-200 text-white dark:bg-navy-500",
-      "error" => "bg-slate-200 text-white dark:bg-navy-500"
+      "neutral" => "bg-base-300 text-white",
+      "primary" => "bg-base-300 text-white",
+      "secondary" => "bg-base-300 text-white",
+      "info" => "bg-base-300 text-white",
+      "success" => "bg-base-300 text-white",
+      "warning" => "bg-base-300 text-white",
+      "error" => "bg-base-300 text-white"
     }
   }
 
   @dots %{
-    "neutral" => "bg-slate-300",
-    "primary" => "bg-primary dark:bg-accent",
-    "secondary" => "bg-secondary dark:bg-secondary-light",
+    "neutral" => "bg-base-content/15",
+    "primary" => "bg-primary",
+    "secondary" => "bg-secondary",
     "info" => "bg-info",
     "success" => "bg-success",
     "warning" => "bg-warning",
@@ -140,9 +136,9 @@ defmodule LineaUI.Components.Avatar do
   }
 
   @pings %{
-    "neutral" => "bg-slate-300",
-    "primary" => "bg-primary dark:bg-accent",
-    "secondary" => "bg-secondary dark:bg-secondary-light",
+    "neutral" => "bg-base-content/15",
+    "primary" => "bg-primary",
+    "secondary" => "bg-secondary",
     "info" => "bg-info",
     "success" => "bg-success",
     "warning" => "bg-warning",
@@ -150,7 +146,7 @@ defmodule LineaUI.Components.Avatar do
     "online" => "bg-success",
     "away" => "bg-warning",
     "busy" => "bg-error",
-    "offline" => "bg-slate-400"
+    "offline" => "bg-base-300"
   }
 
   @dot_sizes %{
@@ -246,8 +242,7 @@ defmodule LineaUI.Components.Avatar do
     "customer" => "rounded-[10px] bg-success-focus text-white",
     "supplier" => "rounded-[10px] bg-warning-focus text-white",
     "assistant" => "bg-linear-to-br from-primary to-purple-500 text-white",
-    "invite" =>
-      "border-[1.5px] border-slate-300 bg-transparent text-slate-500 dark:border-navy-450 dark:text-navy-200"
+    "invite" => "border-[1.5px] border-base-content/20 bg-transparent text-base-content/60"
   }
 
   @ring_widths %{
@@ -257,9 +252,9 @@ defmodule LineaUI.Components.Avatar do
   }
 
   @ring_colors %{
-    "white" => "ring-white dark:ring-navy-700",
+    "white" => "ring-white",
     "panel" => "ring-(--panel)",
-    "neutral" => "ring-slate-300 dark:ring-navy-450",
+    "neutral" => "ring-slate-300",
     "primary" => "ring-primary dark:ring-accent",
     "secondary" => "ring-secondary dark:ring-secondary-light",
     "info" => "ring-info",
@@ -455,7 +450,7 @@ defmodule LineaUI.Components.Avatar do
       class={merge(["flex rounded-full p-0.5", gradient_class(@gradient), size(@size), @class])}
       {@rest}
     >
-      <div class="avatar h-full w-full rounded-full bg-white p-[3px] dark:bg-navy-700">
+      <div class="lo-avatar h-full w-full rounded-full bg-base-100 p-[3px]">
         <.face
           src={@src}
           icon={@icon}
@@ -489,7 +484,7 @@ defmodule LineaUI.Components.Avatar do
 
   defp render_avatar(assigns) do
     ~H"""
-    <div class={merge(["avatar", size(@size), @ring && "hover:z-10", @class])} {@rest}>
+    <div class={merge(["lo-avatar", size(@size), @ring && "hover:z-10", @class])} {@rest}>
       <.face
         src={@src}
         icon={@icon}
@@ -667,7 +662,7 @@ defmodule LineaUI.Components.Avatar do
 
   defp dot_frame(_status, status_position, shape, size),
     do: [
-      "border-white dark:border-navy-700",
+      "border-white",
       position(status_position),
       dot_size(shape, size)
     ]
@@ -804,7 +799,7 @@ defmodule LineaUI.Components.Avatar do
         <ul class="space-y-0.5">
           <li
             :for={person <- @hidden}
-            class="flex items-center gap-2.5 rounded-md px-2 py-1.5 text-sm text-slate-700 dark:text-navy-100"
+            class="flex items-center gap-2.5 rounded-md px-2 py-1.5 text-sm text-base-content/85"
           >
             <.avatar src={person[:src]} name={person[:name]} color="auto" size="3xs" />
             <span class="truncate">{person[:name]}</span>

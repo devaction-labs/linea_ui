@@ -23,7 +23,7 @@ defmodule LineaUI.Components.TableTest do
 
     assert 2 = html |> find("tbody tr") |> Enum.count()
     assert "w-full" in classes(html, "table")
-    assert "sg-table" in classes(html, "table")
+    assert "table" in classes(html, "table")
   end
 
   test "bleed runs the table edge to edge of the card and gives the padding back to the edge cells" do
@@ -77,11 +77,11 @@ defmodule LineaUI.Components.TableTest do
 
   test "hoverable and zebra fill the header and mark the table" do
     html = render_table(%{variant: "hoverable"})
-    assert "sg-table" in classes(html, "table")
+    assert "table" in classes(html, "table")
     assert "first:rounded-l-lg" in classes(html, "th")
 
     html = render_table(%{variant: "zebra", rounded: "none"})
-    assert "sg-table" in classes(html, "table")
+    assert "table-zebra" in classes(html, "table")
     refute "first:rounded-l-lg" in classes(html, "th")
 
     html = render_table(%{variant: "hoverable", rounded: "top"})
@@ -91,7 +91,7 @@ defmodule LineaUI.Components.TableTest do
   test "grid variant uses the gridjs look" do
     html = render_table(%{variant: "grid"})
     assert "lg:px-4" in classes(html, "th")
-    assert "is-hoverable" in classes(html, "table")
+    assert "[&>tbody>tr:hover]:bg-base-200/70" in classes(html, "table")
   end
 
   test "hoverable overrides the variant" do
@@ -102,7 +102,7 @@ defmodule LineaUI.Components.TableTest do
       </.table>
       """)
 
-    assert "is-hoverable" in classes(html, "table")
+    assert "[&>tbody>tr:hover]:bg-base-200/70" in classes(html, "table")
   end
 
   test "sortable headers send the column and the next direction" do
@@ -177,7 +177,7 @@ defmodule LineaUI.Components.TableTest do
 
     assert "h-7" in classes(html, "th button")
     assert "inline-flex" in classes(html, "th button")
-    assert "hover:bg-slate-300/40" in classes(html, "th button")
+    assert "hover:bg-base-300/40" in classes(html, "th button")
   end
 
   test "selection adds checkboxes with their keys" do
@@ -435,7 +435,7 @@ defmodule LineaUI.Components.TableTest do
   test "sticky_header pins the header cells" do
     html = render(~H|<.table id="t" rows={[]} sticky_header><:col label="A" /></.table>|)
     assert "sticky" in classes(html, "th")
-    assert "bg-white" in classes(html, "th")
+    assert "bg-base-100" in classes(html, "th")
 
     html =
       render(
@@ -443,7 +443,7 @@ defmodule LineaUI.Components.TableTest do
       )
 
     assert "sticky" in classes(html, "th")
-    assert "sg-table" in classes(html, "table")
+    assert "table" in classes(html, "table")
   end
 
   test "a stream renders the empty row hidden until the body is empty" do

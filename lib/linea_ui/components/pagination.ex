@@ -40,48 +40,17 @@ defmodule LineaUI.Components.Pagination do
   use LineaUI.Component
   import LineaUI.Components.Icon, only: [glyph: 1]
 
-  @item %{
-    "sm" =>
-      "flex h-7 min-w-[1.75rem] items-center justify-center px-2 text-[12.5px] leading-tight transition-colors",
-    "md" =>
-      "flex h-8 min-w-[2rem] items-center justify-center px-3 text-[13.5px] leading-tight transition-colors",
-    "lg" =>
-      "flex h-10 min-w-[2.5rem] items-center justify-center px-3.5 text-[14.5px] leading-tight transition-colors"
-  }
-
-  @arrow %{
-    "sm" =>
-      "flex size-7 items-center justify-center text-slate-500 transition-colors dark:text-navy-200",
-    "md" =>
-      "flex size-8 items-center justify-center text-slate-500 transition-colors dark:text-navy-200",
-    "lg" =>
-      "flex size-10 items-center justify-center text-slate-500 transition-colors dark:text-navy-200"
-  }
+  @item %{"sm" => "btn-xs", "md" => "btn-sm", "lg" => "btn-md"}
 
   @icon %{"sm" => "size-4", "md" => "size-4", "lg" => "size-4.5"}
 
-  @shapes %{"rounded" => "rounded-lg", "pill" => "rounded-full", "canvas" => "rounded-[9px]"}
+  @shapes %{"rounded" => nil, "pill" => "[--radius-field:9999px]", "canvas" => nil}
 
-  @focus "focus-visible:relative focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-primary/55 dark:focus-visible:outline-accent/55"
+  @current "btn-neutral"
 
-  @hover "hover:bg-slate-300 focus:bg-slate-300 active:bg-slate-300/80 dark:hover:bg-navy-450 dark:focus:bg-navy-450 dark:active:bg-navy-450/90"
+  @disabled "btn-disabled"
 
-  @fill "bg-slate-150 dark:bg-navy-500"
-
-  @current "bg-slate-900 text-white hover:bg-slate-900 focus:bg-slate-900 active:bg-slate-900 dark:bg-navy-50 dark:text-navy-900 dark:hover:bg-navy-50 dark:focus:bg-navy-50 dark:active:bg-navy-50"
-
-  @disabled "pointer-events-none opacity-60"
-
-  @page_size_select "form-select h-8 rounded-lg border border-slate-300 bg-white pr-7 pl-3 text-[12.5px] font-medium text-slate-700 hover:border-slate-400 focus:border-primary dark:border-navy-450 dark:bg-navy-700 dark:text-navy-100 dark:hover:border-navy-400 dark:focus:border-accent"
-
-  @joined_ends %{
-    {"rounded", :first} => "rounded-l-lg",
-    {"rounded", :last} => "rounded-r-lg",
-    {"pill", :first} => "rounded-l-full",
-    {"pill", :last} => "rounded-r-full",
-    {"rounded", :middle} => nil,
-    {"pill", :middle} => nil
-  }
+  @page_size_select "select select-sm w-auto text-[12.5px] font-medium"
 
   @doc ~S"""
   Renders the page links between a previous and a next arrow.
@@ -330,9 +299,9 @@ defmodule LineaUI.Components.Pagination do
         role="status"
         aria-live="polite"
         class={[
-          "text-slate-500 dark:text-navy-200",
+          "text-base-content/65",
           (@shape == "canvas" && "[&_b]:font-normal") ||
-            "[&_b]:font-semibold [&_b]:text-slate-700 dark:[&_b]:text-navy-50"
+            "[&_b]:font-semibold [&_b]:text-base-content/85"
         ]}
       >
         {summary(@total_entries, @page_size, @page, @summary)}
@@ -373,9 +342,9 @@ defmodule LineaUI.Components.Pagination do
     ~H"""
     <nav class={@class} {@rest}>
       <ol class={[
-        "pagination",
-        @divided && "space-x-1.5",
-        @shape == "canvas" && "!flex items-center gap-x-1"
+        @shape == "canvas" && "flex items-center gap-x-1",
+        @shape != "canvas" && ((@divided && "flex items-center gap-1.5") || "join"),
+        shape_class(@shape)
       ]}>
         <li :for={item <- @items} :key={item.key} class={item.li_class}>
           <.entry
@@ -399,25 +368,21 @@ defmodule LineaUI.Components.Pagination do
   defp li_class(%{shape: "canvas", last: last, arrows: true}, last), do: "order-2 ml-1.5"
   defp li_class(%{shape: "canvas"}, _index), do: nil
 
-  defp li_class(%{divided: true}, _index), do: nil
+  defp li_class(_assigns, _index), do: nil
 
-  defp li_class(%{shape: shape, last: last}, index),
-    do: [@fill, @joined_ends[{shape, position(index, last)}]]
-
-  defp position(0, _last), do: :first
-  defp position(last, last), do: :last
-  defp position(_index, _last), do: :middle
+  defp shape_class(shape), do: @shapes[shape]
 
   defp entry_class(%{shape: "canvas", page: page}, :page, page, _disabled),
     do:
-      "grid h-[30px] min-w-[30px] place-items-center rounded-[9px] bg-slate-900 px-2 font-mono text-[12.5px] font-medium text-white dark:bg-navy-50 dark:text-navy-900"
+      "grid h-[30px] min-w-[30px] place-items-center rounded-[9px] bg-neutral px-2 font-mono text-[12.5px] font-medium text-neutral-content"
 
   defp entry_class(%{shape: "canvas"}, :page, _number, _disabled),
     do:
-      "grid h-[30px] min-w-[30px] place-items-center rounded-[9px] px-2 font-mono text-[12.5px] font-medium text-slate-500 hover:bg-slate-100 dark:text-navy-200 dark:hover:bg-navy-600"
+      "grid h-[30px] min-w-[30px] place-items-center rounded-[9px] px-2 font-mono text-[12.5px] font-medium text-base-content/65 hover:bg-base-200"
 
   defp entry_class(%{shape: "canvas"}, :gap, _number, _disabled),
-    do: "grid h-[30px] min-w-[30px] place-items-center font-mono text-[12.5px] text-slate-500"
+    do:
+      "grid h-[30px] min-w-[30px] place-items-center font-mono text-[12.5px] text-base-content/65"
 
   # the canvas `sg-ib sm`: a 28px panel circle with an inset line; an arrow at either end stays
   # inert (a `<span aria-disabled>`) but is not dimmed, as on the canvas
@@ -426,26 +391,18 @@ defmodule LineaUI.Components.Pagination do
       "grid size-7 place-items-center rounded-[var(--pill-in,8px)] bg-[var(--panel)] text-[var(--muted)] shadow-[inset_0_0_0_1px_var(--line)] hover:bg-[var(--hover)]"
 
   defp entry_class(assigns, :gap, _number, _disabled),
-    do: [@item[assigns.size], @shapes[assigns.shape], divided_fill(assigns)]
+    do: [item(assigns), "btn-disabled pointer-events-none"]
 
   defp entry_class(%{page: page} = assigns, :page, page, _disabled),
-    do: [@item[assigns.size], @shapes[assigns.shape], @current, @focus]
+    do: [item(assigns), @current]
 
-  defp entry_class(assigns, :page, _number, _disabled),
-    do: [@item[assigns.size], @shapes[assigns.shape], divided_fill(assigns), @hover, @focus]
+  defp entry_class(assigns, :page, _number, _disabled), do: item(assigns)
 
   defp entry_class(assigns, _arrow, _number, disabled),
-    do: [
-      @arrow[assigns.size],
-      @shapes[assigns.shape],
-      divided_fill(assigns),
-      @hover,
-      @focus,
-      disabled && @disabled
-    ]
+    do: [item(assigns), "btn-square", disabled && @disabled]
 
-  defp divided_fill(%{divided: true}), do: @fill
-  defp divided_fill(_assigns), do: nil
+  defp item(%{divided: true, size: size}), do: ["btn", @item[size]]
+  defp item(%{size: size}), do: ["join-item btn", @item[size]]
 
   defp entry_label(assigns, :prev, _number), do: assigns.prev_label
   defp entry_label(assigns, :next, _number), do: assigns.next_label

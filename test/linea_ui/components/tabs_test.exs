@@ -47,14 +47,15 @@ defmodule LineaUI.Components.TabsTest do
   end
 
   test "variants change the tab look" do
-    assert "sg-tab" in classes(render_tabs(%{}), "#t-tab-home")
-    assert "aria-selected:bg-white" in classes(render_tabs(%{variant: "boxed"}), "#t-tab-home")
-    assert "bg-slate-200" in classes(render_tabs(%{variant: "boxed"}), "#t > div")
+    assert "tab" in classes(render_tabs(%{}), "#t-tab-home")
+    assert "tabs-border" in classes(render_tabs(%{}), "[role=tablist]")
+    assert "tab" in classes(render_tabs(%{variant: "boxed"}), "#t-tab-home")
+    assert "tabs-box" in classes(render_tabs(%{variant: "boxed"}), "[role=tablist]")
     pill = classes(render_tabs(%{variant: "pill"}), "#t-tab-home")
-    assert "rounded-full" in pill
+    assert "rounded-field" in pill
     assert "aria-selected:bg-primary/10" in pill
 
-    assert "aria-selected:bg-slate-150" in classes(
+    assert "aria-selected:bg-base-200" in classes(
              render_tabs(%{variant: "pill", color: "neutral"}),
              "#t-tab-home"
            )
@@ -64,7 +65,7 @@ defmodule LineaUI.Components.TabsTest do
 
   test "bordered draws the rule, overlap pulls the list over it" do
     html = render_tabs(%{bordered: true, overlap: true})
-    assert "border-slate-150" in classes(html, "#t > div > div")
+    assert "border-base-300" in classes(html, "#t > div > div")
     assert "-mb-0.5" in classes(html, "[role=tablist]")
   end
 
@@ -78,7 +79,7 @@ defmodule LineaUI.Components.TabsTest do
 
   test "transitions" do
     assert "tab-shift-up" in classes(render_tabs(%{transition: "up"}), "#t-panel-home")
-    refute "tab-content" in classes(render_tabs(%{transition: "none"}), "#t-panel-home")
+    refute "lo-tab-content" in classes(render_tabs(%{transition: "none"}), "#t-panel-home")
   end
 
   test "on_change as an event name or JS, with a target" do
@@ -100,7 +101,7 @@ defmodule LineaUI.Components.TabsTest do
     assert ["px-3", "py-1", "text-xs-plus"] -- sm == []
     refute "py-1.5" in sm
     assert ["px-2.5", "py-0.5", "text-xs"] -- xs == []
-    assert "sg-tab" in line
+    assert "tab" in line
   end
 
   test "text variant has no chrome" do
@@ -112,7 +113,7 @@ defmodule LineaUI.Components.TabsTest do
     refute Enum.any?(tab, &String.contains?(&1, "aria-selected:bg"))
     assert "gap-4" in classes(html, "[role=tablist]")
 
-    assert "aria-selected:text-slate-800" in classes(
+    assert "aria-selected:text-base-content" in classes(
              render_tabs(%{variant: "text", color: "neutral"}),
              "#t-tab-home"
            )

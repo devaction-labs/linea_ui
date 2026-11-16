@@ -67,7 +67,7 @@ defmodule LineaUI.Components.Breadcrumb do
     "plain" =>
       "flex items-center gap-1.5 rounded-md text-primary transition-colors hover:text-primary-focus hover:underline hover:underline-offset-3 dark:text-accent-light dark:hover:text-blue-300",
     "bordered" =>
-      "flex items-center gap-1.5 rounded-lg px-2 py-[5px] leading-none text-primary shadow-[inset_0_0_0_1px_var(--color-slate-200)] transition-colors hover:text-primary-focus hover:shadow-[inset_0_0_0_1px_color-mix(in_oklab,var(--color-primary)_40%,transparent)] dark:text-accent-light dark:shadow-[inset_0_0_0_1px_var(--color-navy-500)] dark:hover:text-blue-300 dark:hover:shadow-[inset_0_0_0_1px_color-mix(in_oklab,var(--color-accent)_40%,transparent)]",
+      "flex items-center gap-1.5 rounded-lg px-2 py-[5px] leading-none text-primary shadow-[inset_0_0_0_1px_var(--color-base-300)] transition-colors hover:text-primary-focus hover:shadow-[inset_0_0_0_1px_color-mix(in_oklab,var(--color-primary)_40%,transparent)]",
     "canvas" =>
       "flex items-center gap-1.5 rounded-md text-[var(--muted)] transition-colors hover:text-[var(--ink)]"
   }
@@ -79,8 +79,8 @@ defmodule LineaUI.Components.Breadcrumb do
   }
 
   @currents %{
-    "plain" => "text-slate-600 dark:text-navy-200",
-    "bordered" => "text-slate-600 dark:text-navy-200",
+    "plain" => "text-base-content/75",
+    "bordered" => "text-base-content/75",
     "canvas" => "font-medium text-[var(--ink)]"
   }
 
@@ -291,7 +291,7 @@ defmodule LineaUI.Components.Breadcrumb do
 
   defp separator(%{separator: []} = assigns) do
     ~H"""
-    <.glyph name={:chevron_right} class="size-3.5 shrink-0 text-slate-400 dark:text-navy-300" />
+    <.glyph name={:chevron_right} class="size-3.5 shrink-0 text-base-content/50" />
     """
   end
 

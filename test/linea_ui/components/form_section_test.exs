@@ -8,7 +8,7 @@ defmodule LineaUI.Components.FormSectionTest do
       """)
 
     assert "stacked" in classes(html, "section")
-    assert "divider" in classes(html, "section")
+    assert "is-divided" in classes(html, "section")
     assert LazyHTML.text(find(html, "h4#c-title")) =~ "Contato"
     assert LazyHTML.attribute(find(html, "section"), "aria-labelledby") == ["c-title"]
     assert "c2" in classes(html, ".lc-fs-grid")
@@ -24,7 +24,7 @@ defmodule LineaUI.Components.FormSectionTest do
       """)
 
     assert "aside" in classes(html, "section")
-    refute "divider" in classes(html, "section")
+    refute "is-divided" in classes(html, "section")
     assert LazyHTML.text(find(html, ".lc-fs-desc")) =~ "Usado na NF-e"
     assert "c1" in classes(html, ".lc-fs-grid")
   end
@@ -38,7 +38,7 @@ defmodule LineaUI.Components.FormSectionTest do
       </.form_section>
       """)
 
-    refute "divider" in classes(html, "section")
+    refute "is-divided" in classes(html, "section")
     assert [_] = find(html, "h4 #more") |> Enum.to_list()
   end
 end

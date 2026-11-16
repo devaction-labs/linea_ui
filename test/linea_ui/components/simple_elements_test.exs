@@ -11,11 +11,11 @@ defmodule LineaUI.Components.SimpleElementsTest do
         <.divider id="vt" orientation="vertical">OR</.divider>
         """)
 
-      assert "h-px" in classes(html, "#h")
-      assert [_, _] = find(html, "#ht > div.h-px") |> Enum.to_list()
-      assert "w-px" in classes(html, "#v")
+      assert "divider" in classes(html, "#h")
+      assert LazyHTML.text(find(html, "#ht.divider")) =~ "OR"
+      assert "divider-horizontal" in classes(html, "#v")
       assert [_] = find(html, "#v[aria-orientation=vertical]") |> Enum.to_list()
-      assert [_, _] = find(html, "#vt > div.w-px") |> Enum.to_list()
+      assert "divider-horizontal" in classes(html, "#vt")
     end
   end
 
@@ -28,8 +28,8 @@ defmodule LineaUI.Components.SimpleElementsTest do
         """)
 
       assert "size-36" in classes(html, "#i")
-      assert [_] = find(html, "#i > img.mask.is-heart[src='/a.jpg']") |> Enum.to_list()
-      assert "is-star-2" in classes(html, "#b")
+      assert [_] = find(html, "#i > img.mask.mask-heart[src='/a.jpg']") |> Enum.to_list()
+      assert "mask-star-2" in classes(html, "#b")
       assert "heart" in mask_shapes()
     end
 
