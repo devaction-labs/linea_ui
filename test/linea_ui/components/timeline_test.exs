@@ -95,7 +95,7 @@ defmodule LineaUI.Components.TimelineTest do
     point = classes(html, "#a .timeline-item-point")
     assert ["rounded-full", "ring-2"] -- point == []
     refute Enum.any?(point, &String.starts_with?(&1, "bg-"))
-    assert "size-full" in classes(html, "#a .timeline-item-point .avatar")
+    assert "size-full" in classes(html, "#a .timeline-item-point .lo-avatar")
   end
 
   test "compact density, and a description with markup" do

@@ -542,7 +542,7 @@ defmodule LineaUI.Components.AppShell do
         aria-expanded="false"
         aria-controls={@id <> "-box"}
         aria-label={@name}
-        class="avatar cursor-pointer size-12"
+        class="lo-avatar cursor-pointer size-12"
       >
         <img class="rounded-full" src={@src} alt={@alt} />
         <span
@@ -562,7 +562,7 @@ defmodule LineaUI.Components.AppShell do
       >
         <div class="popper-box w-64 rounded-lg border border-slate-150 bg-white shadow-soft dark:border-navy-600 dark:bg-navy-700">
           <div class="flex items-center space-x-4 rounded-t-lg bg-slate-100 py-5 px-4 dark:bg-navy-800">
-            <div class="avatar size-14">
+            <div class="lo-avatar size-14">
               <img class="rounded-full" src={@src} alt={@alt} />
             </div>
             <div>
@@ -829,7 +829,7 @@ defmodule LineaUI.Components.AppShell do
   `sidebar_min_divider/1`) and a footer.
 
       <.sidebar_panel_min>
-        <:header><div class="avatar size-10">…</div></:header>
+        <:header><div class="lo-avatar size-10">…</div></:header>
         <.sidebar_min_group>
           <.sidebar_min_link navigate={~p"/inbox"} label="Inbox" current={@current_path}><svg>…</svg></.sidebar_min_link>
           <.sidebar_min_link navigate={~p"/trash"} label="Trash" color="error"><svg>…</svg></.sidebar_min_link>
