@@ -50,7 +50,7 @@ defmodule LineaUI.ThemeTest do
         assert Enum.map(tokens, &elem(&1, 0)) == names, "#{theme.id} #{scheme}"
 
         assert Enum.all?(tokens, fn {_, value} ->
-                 value =~ ~r/^(#[0-9a-f]{6}|rgb\(\d+ \d+ \d+\/[.\d]+\)|\d+px)$/
+                 value =~ ~r/^(#[0-9a-f]{6}|rgb\(\d+ \d+ \d+\/[.\d]+\)|\d+px|\.\d+rem|0)$/
                end)
       end
 
@@ -73,6 +73,48 @@ defmodule LineaUI.ThemeTest do
           assert Color.contrast(get(t, "on-accent"), get(t, "accent")) >= 4.5, at
         end
       end
+    end
+
+    test "every theme sets daisyUI's variables, with content colors that read" do
+      for theme <- Theme.themes(), scheme <- [:light, :dark] do
+        t = Theme.tokens(theme) |> Map.fetch!(scheme)
+        at = "#{theme.id} #{scheme}"
+        names = Enum.map(t, &elem(&1, 0))
+
+        assert Enum.all?(["color-primary", "color-accent" | Theme.daisy_names()], &(&1 in names)),
+               at
+
+        assert get(t, "color-base-100") == get(t, "panel"), at
+        assert get(t, "color-base-content") == get(t, "fg"), at
+        assert get(t, "color-primary") == get(t, "accent"), at
+        assert get(t, "radius-field") == get(t, "r"), at
+
+        for color <- ~w(secondary neutral info success warning error) do
+          assert Color.contrast(get(t, "color-#{color}-content"), get(t, "color-#{color}")) >=
+                   4.5,
+                 "#{at} #{color}"
+        end
+      end
+    end
+
+    test "the bridge writes every token of the kit over daisyUI's variables" do
+      names =
+        Theme.themes() |> hd() |> Theme.tokens() |> Map.fetch!(:light) |> Enum.map(&elem(&1, 0))
+
+      own = ["color-primary", "color-accent" | Theme.daisy_names()]
+
+      assert Enum.sort(Enum.map(Theme.bridge(), &elem(&1, 0))) == Enum.sort(names -- own)
+      assert Enum.all?(Theme.bridge(), fn {_, value} -> value =~ "var(--" end)
+    end
+
+    test "the stylesheet gives the page linea's daisyUI variables and bridges daisyUI's themes" do
+      css = Theme.stylesheet()
+
+      assert css =~
+               ~S|:where(:root,.sg:not(:is(.dark,[data-theme]) *)),[data-theme="light"]{--color-primary:#0d8f91;|
+
+      assert css =~ ~S|:is(.dark,[data-theme="dark"]){--color-primary:#2bbfbd;|
+      assert css =~ ~S|:where([data-theme]){--canvas:var(--color-base-200);|
     end
 
     test "the text on any accent reaches 4.5:1" do

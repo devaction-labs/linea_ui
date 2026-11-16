@@ -187,6 +187,13 @@ grays, accent and corners, in a light and a dark version. A theme is the `data-t
 | `forest` | green | green | md |
 | `nord` | steel blue, slate dark | blue-gray | none |
 
+Every theme is also a daisyUI 5 theme: it sets daisyUI's variables (`--color-base-100`, `--color-primary`,
+`--color-success`, `--radius-field`…), so daisyUI's components (`btn`, `card`, `badge`, `input`…) in the app take the
+same palette and corners, in light and in dark. The other way round works too: a daisyUI theme enabled in the app's
+plugin (`@plugin "daisyui" { themes: light --default, dark, cupcake, dracula; }`) and set as `data-theme`
+drives the kit's own tokens through a bridge, so `data-theme="dracula"` paints LineaUI's components as well.
+The kit is moving onto daisyUI's component classes; see the CHANGELOG for what has moved.
+
 Let the user choose with the picker (a menu for the top bar, or a grid of previews for a settings page), and put
 the script in the root layout so the choice is on before the first paint:
 

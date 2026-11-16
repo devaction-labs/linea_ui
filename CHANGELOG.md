@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- First step of the move onto daisyUI 5: every theme of the kit (the twelve and those made by `mix linea_ui.gen.theme`) also sets daisyUI's variables (`--color-base-100/200/300`, `--color-base-content`, `--color-primary`, `--color-secondary`, `--color-neutral`, `--color-info/success/warning/error`, their `-content` colors chosen by contrast, `--radius-selector/field/box` and the sizes), and the page without a theme gets linea's in light and in dark. So daisyUI's components in the app follow the palette. The other way round, a daisyUI theme (`data-theme="cupcake"`, `"dracula"`…) drives the kit's tokens through a bridge (`LineaUI.Theme.bridge/0`). Nothing changes for an app that does not load daisyUI.
+
 ## 0.25.0 (2026-11-15)
 
 - `landing_mega` takes `variant="cards"`, the "Products" menu of laravel.com: large product cards side by side with the new `landing_product` (the product's logo and name, a large title, a link with an arrow and a preview that runs off the bottom, `:preview` or a drawn `mock`), in three tones (`default`, `tint`, `dark`); `columns` sets how many fit in a row.
