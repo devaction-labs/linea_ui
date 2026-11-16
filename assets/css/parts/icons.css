@@ -27,8 +27,8 @@
   pointer-events: none;
 }
 .carousel-button[data-carousel-prev] > [class*="huge-"] { transform: rotate(180deg); }
-.carousel[data-direction="vertical"] > .carousel-button[data-carousel-prev] > [class*="huge-"] { transform: rotate(-90deg); }
-.carousel[data-direction="vertical"] > .carousel-button[data-carousel-next] > [class*="huge-"] { transform: rotate(90deg); }
+.lo-carousel[data-direction="vertical"] > .carousel-button[data-carousel-prev] > [class*="huge-"] { transform: rotate(-90deg); }
+.lo-carousel[data-direction="vertical"] > .carousel-button[data-carousel-next] > [class*="huge-"] { transform: rotate(90deg); }
 
 .flatpickr-months .flatpickr-next-month [class*="huge-"],
 .flatpickr-months .flatpickr-prev-month [class*="huge-"] {

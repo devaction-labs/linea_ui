@@ -202,7 +202,7 @@
     display: none;
   }
 
-  .carousel {
+  .lo-carousel {
     --carousel-theme: #7e75fa;
     --carousel-pagination: #2b7fff;
     position: relative;
@@ -243,7 +243,7 @@
     transition: transform 300ms;
   }
 
-  .carousel[data-direction="vertical"] > .carousel-track {
+  .lo-carousel[data-direction="vertical"] > .carousel-track {
     flex-direction: column;
     overflow-x: hidden;
     overflow-y: auto;
@@ -251,60 +251,60 @@
     scroll-snap-type: y mandatory;
   }
 
-  .carousel[data-direction="vertical"] .carousel-slide {
+  .lo-carousel[data-direction="vertical"] .carousel-slide {
     height: 100%;
   }
 
-  .carousel:is([data-effect="fade"], [data-effect="flip"], [data-effect="cube"], [data-effect="cards"], [data-effect="coverflow"], [data-effect="creative"]) > .carousel-track {
+  .lo-carousel:is([data-effect="fade"], [data-effect="flip"], [data-effect="cube"], [data-effect="cards"], [data-effect="coverflow"], [data-effect="creative"]) > .carousel-track {
     display: grid;
     overflow: visible;
     touch-action: pan-y;
     transform-style: preserve-3d;
   }
 
-  .carousel:is([data-effect="fade"], [data-effect="flip"], [data-effect="cube"], [data-effect="cards"], [data-effect="coverflow"], [data-effect="creative"]) .carousel-slide {
+  .lo-carousel:is([data-effect="fade"], [data-effect="flip"], [data-effect="cube"], [data-effect="cards"], [data-effect="coverflow"], [data-effect="creative"]) .carousel-slide {
     grid-area: 1 / 1;
     transition:
       transform 300ms,
       opacity 300ms;
   }
 
-  .carousel[data-effect="fade"] .carousel-slide {
+  .lo-carousel[data-effect="fade"] .carousel-slide {
     opacity: calc(1 - var(--near, 0));
   }
 
-  .carousel:is([data-effect="flip"], [data-effect="cube"], [data-effect="cards"], [data-effect="coverflow"], [data-effect="creative"]) > .carousel-track {
+  .lo-carousel:is([data-effect="flip"], [data-effect="cube"], [data-effect="cards"], [data-effect="coverflow"], [data-effect="creative"]) > .carousel-track {
     perspective: 1200px;
   }
 
-  .carousel[data-effect="flip"] {
+  .lo-carousel[data-effect="flip"] {
     overflow: visible;
   }
 
-  .carousel[data-effect="flip"] .carousel-slide {
+  .lo-carousel[data-effect="flip"] .carousel-slide {
     backface-visibility: hidden;
     transform: rotateY(calc(var(--offset, 0) * 180deg));
   }
 
-  .carousel[data-effect="cube"] {
+  .lo-carousel[data-effect="cube"] {
     overflow: visible;
   }
 
-  .carousel[data-effect="cube"] .carousel-slide {
+  .lo-carousel[data-effect="cube"] .carousel-slide {
     backface-visibility: hidden;
     transform-origin: 50% 50% -50cqw;
     transform: rotateY(calc(var(--offset, 0) * 90deg));
   }
 
-  .carousel[data-effect="cards"] {
+  .lo-carousel[data-effect="cards"] {
     overflow: visible;
   }
 
-  .carousel[data-effect="cards"] > .carousel-track {
+  .lo-carousel[data-effect="cards"] > .carousel-track {
     cursor: grab;
   }
 
-  .carousel[data-effect="cards"] .carousel-slide {
+  .lo-carousel[data-effect="cards"] .carousel-slide {
     transform-origin: center bottom;
     backface-visibility: hidden;
     overflow: hidden;
@@ -312,7 +312,7 @@
       rotateZ(calc(var(--offset, 0) * 2deg));
   }
 
-  .carousel[data-effect="cards"] .carousel-slide::after {
+  .lo-carousel[data-effect="cards"] .carousel-slide::after {
     content: "";
     position: absolute;
     inset: 0;
@@ -323,16 +323,16 @@
     transition: opacity 300ms;
   }
 
-  .carousel[data-effect="coverflow"] .carousel-slide {
+  .lo-carousel[data-effect="coverflow"] .carousel-slide {
     transform: translateX(calc(var(--offset, 0) * 100%)) translateZ(calc(var(--distance, 0) * -100px))
       rotateY(calc(var(--offset, 0) * -35deg));
   }
 
-  .carousel[data-effect="creative"] > .carousel-track {
+  .lo-carousel[data-effect="creative"] > .carousel-track {
     cursor: grab;
   }
 
-  .carousel[data-effect="creative"] .carousel-slide {
+  .lo-carousel[data-effect="creative"] .carousel-slide {
     transform: translate3d(calc(var(--side, 0) * 125%), 0, calc(var(--near, 0) * -800px))
       rotateZ(calc(var(--side, 0) * 90deg));
   }
@@ -351,11 +351,11 @@
     cursor: pointer;
   }
 
-  .carousel[data-navigation="outside"] {
+  .lo-carousel[data-navigation="outside"] {
     padding-inline: 32px;
   }
 
-  .carousel[data-navigation="outside"][data-direction="vertical"] {
+  .lo-carousel[data-navigation="outside"][data-direction="vertical"] {
     padding-inline: 0;
     padding-block: 32px;
   }
@@ -386,27 +386,27 @@
     right: 4px;
   }
 
-  .carousel[data-direction="vertical"] > .carousel-button {
+  .lo-carousel[data-direction="vertical"] > .carousel-button {
     left: 50%;
     right: auto;
     margin-top: 0;
     margin-left: -12px;
   }
 
-  .carousel[data-direction="vertical"] > .carousel-button[data-carousel-prev] {
+  .lo-carousel[data-direction="vertical"] > .carousel-button[data-carousel-prev] {
     top: 4px;
   }
 
-  .carousel[data-direction="vertical"] > .carousel-button[data-carousel-prev] svg {
+  .lo-carousel[data-direction="vertical"] > .carousel-button[data-carousel-prev] svg {
     transform: rotate(-90deg);
   }
 
-  .carousel[data-direction="vertical"] > .carousel-button[data-carousel-next] {
+  .lo-carousel[data-direction="vertical"] > .carousel-button[data-carousel-next] {
     top: auto;
     bottom: 4px;
   }
 
-  .carousel[data-direction="vertical"] > .carousel-button[data-carousel-next] svg {
+  .lo-carousel[data-direction="vertical"] > .carousel-button[data-carousel-next] svg {
     transform: rotate(90deg);
   }
 
@@ -442,7 +442,7 @@
     background: var(--carousel-pagination);
   }
 
-  .carousel[data-direction="vertical"] > .carousel-pagination[data-carousel-pagination="bullets"] {
+  .lo-carousel[data-direction="vertical"] > .carousel-pagination[data-carousel-pagination="bullets"] {
     top: 50%;
     right: 8px;
     bottom: auto;
@@ -451,7 +451,7 @@
     transform: translate3d(0, -50%, 0);
   }
 
-  .carousel[data-direction="vertical"] .carousel-bullet {
+  .lo-carousel[data-direction="vertical"] .carousel-bullet {
     display: block;
     margin: 6px 0;
   }
@@ -464,7 +464,7 @@
     background: rgba(0, 0, 0, 0.25);
   }
 
-  .carousel[data-direction="vertical"] > .carousel-pagination[data-carousel-pagination="progress"] {
+  .lo-carousel[data-direction="vertical"] > .carousel-pagination[data-carousel-pagination="progress"] {
     width: 4px;
     height: 100%;
   }
@@ -490,7 +490,7 @@
     touch-action: none;
   }
 
-  .carousel[data-direction="vertical"] > .carousel-scrollbar {
+  .lo-carousel[data-direction="vertical"] > .carousel-scrollbar {
     top: 1%;
     right: 4px;
     bottom: auto;

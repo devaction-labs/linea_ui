@@ -32,7 +32,7 @@ defmodule LineaUI.Components.AvatarTest do
     assert "bg-primary" in classes(html, "#a > div")
     assert "bg-info/10" in classes(html, "#b > div")
     assert "rounded-lg" in classes(html, "#b > div")
-    assert "is-squircle" in classes(html, "#c > div")
+    assert "mask-squircle" in classes(html, "#c > div")
     assert "border-error/30" in classes(html, "#c > div")
   end
 

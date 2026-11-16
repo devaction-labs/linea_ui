@@ -64,7 +64,7 @@ defmodule LineaUI.Components.Timeline do
   use LineaUI.Component
 
   @solid %{
-    "neutral" => "bg-slate-500 dark:bg-navy-200",
+    "neutral" => "bg-base-content/55",
     "primary" => "bg-primary dark:bg-accent",
     "secondary" => "bg-secondary dark:bg-secondary-light",
     "accent" => "bg-accent dark:bg-accent",
@@ -75,7 +75,7 @@ defmodule LineaUI.Components.Timeline do
   }
 
   @outline %{
-    "neutral" => "border-2 border-slate-500 dark:border-navy-200",
+    "neutral" => "border-2 border-base-content/40",
     "primary" => "border-2 border-primary dark:border-accent",
     "secondary" => "border-2 border-secondary dark:border-secondary-light",
     "accent" => "border-2 border-accent dark:border-accent",
@@ -88,7 +88,7 @@ defmodule LineaUI.Components.Timeline do
   @icon_disc "bg-[color-mix(in_srgb,currentColor_13%,transparent)] shadow-[inset_0_0_0_1px_color-mix(in_srgb,currentColor_38%,transparent)]"
 
   @icon %{
-    "neutral" => "#{@icon_disc} text-slate-500 dark:text-navy-200",
+    "neutral" => "#{@icon_disc} text-base-content/65",
     "primary" => "#{@icon_disc} text-primary dark:text-accent",
     "secondary" => "#{@icon_disc} text-secondary dark:text-secondary-light",
     "accent" => "#{@icon_disc} text-accent",
@@ -103,7 +103,7 @@ defmodule LineaUI.Components.Timeline do
   @variants %{"solid" => @solid, "outline" => @outline, "icon" => @icon, "avatar" => @avatar}
 
   @pings %{
-    "neutral" => "bg-slate-500 dark:bg-navy-200",
+    "neutral" => "bg-base-content/55",
     "primary" => "bg-primary dark:bg-accent",
     "secondary" => "bg-secondary dark:bg-secondary-light",
     "accent" => "bg-accent dark:bg-accent",
@@ -199,7 +199,7 @@ defmodule LineaUI.Components.Timeline do
       id={@id}
       class={
         merge([
-          "timeline",
+          "lo-timeline",
           (@line_space || @density == "compact") && "line-space",
           @density == "compact" && "is-compact",
           @size_class,
@@ -291,10 +291,10 @@ defmodule LineaUI.Components.Timeline do
           :if={@title || @time}
           class="flex flex-col justify-between pb-2 sm:flex-row sm:pb-0"
         >
-          <p class="timeline-item-title pb-2 font-medium leading-none text-slate-600 dark:text-navy-100 sm:pb-0">
+          <p class="timeline-item-title pb-2 font-medium leading-none text-base-content/75 sm:pb-0">
             {@title}
           </p>
-          <span :if={@time} class="timeline-item-time text-xs text-slate-500 dark:text-navy-200">
+          <span :if={@time} class="timeline-item-time text-xs text-base-content/65">
             {@time}
           </span>
         </div>
@@ -369,7 +369,7 @@ defmodule LineaUI.Components.Timeline do
     <li class={merge(["timeline-item timeline-day pb-3", @class])} {@rest}>
       <div class="timeline-item-point"></div>
       <div class="timeline-item-content flex-1 pl-4 sm:pl-8">
-        <span class="inline-flex h-5.5 items-center rounded-full bg-slate-150 px-2.5 text-[11px] font-semibold uppercase tracking-wide text-slate-500 dark:bg-navy-500 dark:text-navy-200">
+        <span class="inline-flex h-5.5 items-center rounded-full bg-base-200 px-2.5 text-[11px] font-semibold uppercase tracking-wide text-base-content/65">
           {@label}
         </span>
       </div>
