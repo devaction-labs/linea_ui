@@ -9,12 +9,12 @@ defmodule LineaUI.Components.DrawerTest do
     assert attr_of(html, "#d", "phx-hook") == ["LineaUI.Dialog"]
     assert attr_of(html, "#d", "data-kind") == ["drawer"]
     assert attr_of(html, "#d", "data-lock") == ["false"]
-    assert ["drawer-overlay", "hidden"] -- classes(html, "#d > [data-backdrop]") == []
+    assert ["lo-drawer-overlay", "hidden"] -- classes(html, "#d > [data-backdrop]") == []
 
-    assert ["drawer-content", "hidden", "left-0", "w-72"] -- classes(html, "#d > div:last-child") ==
+    assert ["lo-drawer-content", "hidden", "left-0", "w-72"] -- classes(html, "#d > div:last-child") ==
              []
 
-    refute "drawer-right" in classes(html, "#d")
+    refute "lo-drawer-right" in classes(html, "#d")
   end
 
   test "right side, no overlay, open, a frame class and a panel class" do
@@ -23,11 +23,11 @@ defmodule LineaUI.Components.DrawerTest do
         ~H|<.drawer id="d" side="right" overlay={false} open class="w-80" panel_class="p-4">x</.drawer>|
       )
 
-    assert "drawer-right" in classes(html, "#d")
+    assert "lo-drawer-right" in classes(html, "#d")
     assert "right-0" in classes(html, "#d > div")
     assert find(html, "#d [data-backdrop]") |> Enum.to_list() == []
     assert attr_of(html, "#d", "data-open") == ["true"]
-    frame = classes(html, ".drawer-content")
+    frame = classes(html, ".lo-drawer-content")
     assert "w-80" in frame
     refute "w-72" in frame
     assert "p-4" in classes(html, "#d-panel")
@@ -56,12 +56,12 @@ defmodule LineaUI.Components.DrawerTest do
       </.drawer>
       """)
 
-    assert "drawer-right" in classes(html, "#s")
+    assert "lo-drawer-right" in classes(html, "#s")
 
     assert ["right-3", "w-full", "max-w-[min(520px,calc(100%-1.5rem))]"] --
-             classes(html, ".drawer-content") == []
+             classes(html, ".lo-drawer-content") == []
 
-    refute "w-72" in classes(html, ".drawer-content")
+    refute "w-72" in classes(html, ".lo-drawer-content")
     assert attr_of(html, "#s", "aria-labelledby") == ["s-title"]
     assert find(html, "#s-title") |> LazyHTML.text() =~ "New customer"
     assert find(html, "[data-drawer-header] p") |> LazyHTML.text() =~ "Who buys"
@@ -74,7 +74,7 @@ defmodule LineaUI.Components.DrawerTest do
 
     assert [_] = find(html, "[data-drawer-body] > #body") |> Enum.to_list()
 
-    assert ["justify-end", "border-t", "bg-white", "gap-3"] --
+    assert ["justify-end", "border-t", "bg-base-100", "gap-3"] --
              classes(html, "[data-drawer-footer]") == []
 
     assert [_] = find(html, "[data-drawer-footer] > #save") |> Enum.to_list()
@@ -84,12 +84,12 @@ defmodule LineaUI.Components.DrawerTest do
     html = render(~H|<.drawer id="s" title="T" size="lg">x</.drawer>|)
 
     assert attr_of(html, "#s", "data-variant") == ["float"]
-    assert "drawer-float" in classes(html, "#s")
+    assert "lo-drawer-float" in classes(html, "#s")
 
     assert ["top-3", "left-3", "h-[calc(100%-1.5rem)]", "max-w-[min(640px,calc(100%-1.5rem))]"] --
-             classes(html, ".drawer-content") == []
+             classes(html, ".lo-drawer-content") == []
 
-    assert ["rounded-2xl", "overflow-hidden"] -- classes(html, "#s-panel") == []
+    assert ["rounded-box", "overflow-hidden"] -- classes(html, "#s-panel") == []
   end
 
   test "flush keeps the panel against the edge" do
@@ -99,9 +99,9 @@ defmodule LineaUI.Components.DrawerTest do
       )
 
     assert attr_of(html, "#s", "data-variant") == ["flush"]
-    refute "drawer-float" in classes(html, "#s")
+    refute "lo-drawer-float" in classes(html, "#s")
 
-    assert ["top-0", "right-0", "h-full", "max-w-[520px]"] -- classes(html, ".drawer-content") ==
+    assert ["top-0", "right-0", "h-full", "max-w-[520px]"] -- classes(html, ".lo-drawer-content") ==
              []
 
     refute "rounded-2xl" in classes(html, "#s-panel")
@@ -110,12 +110,12 @@ defmodule LineaUI.Components.DrawerTest do
   test "bottom is a mobile sheet with a grab handle and 78% of the height" do
     html = render(~H|<.drawer id="s" title="T" placement="bottom">x</.drawer>|)
 
-    assert "drawer-bottom" in classes(html, "#s")
-    assert ["inset-x-3", "bottom-3", "h-[78dvh]"] -- classes(html, ".drawer-content") == []
+    assert "lo-drawer-bottom" in classes(html, "#s")
+    assert ["inset-x-3", "bottom-3", "h-[78dvh]"] -- classes(html, ".lo-drawer-content") == []
     assert [_] = find(html, "#s-panel > [data-drawer-grab]") |> Enum.to_list()
 
     flush = render(~H|<.drawer id="f" title="T" placement="bottom" variant="flush">x</.drawer>|)
-    assert ["inset-x-0", "bottom-0"] -- classes(flush, ".drawer-content") == []
+    assert ["inset-x-0", "bottom-0"] -- classes(flush, ".lo-drawer-content") == []
     assert "rounded-t-2xl" in classes(flush, "#f-panel")
   end
 
@@ -139,7 +139,7 @@ defmodule LineaUI.Components.DrawerTest do
       </.drawer>
       """)
 
-    assert "drawer-float" in classes(html, "#c")
+    assert "lo-drawer-float" in classes(html, "#c")
     assert find(html, "[data-drawer-header] h2") |> LazyHTML.text() =~ "Edit"
     assert find(html, "[data-drawer-header] p") |> LazyHTML.text() =~ "Since 2025"
     assert "gap-2" in classes(html, "[data-drawer-body]")
@@ -171,14 +171,14 @@ defmodule LineaUI.Components.DrawerTest do
       html =
         Phoenix.LiveViewTest.rendered_to_string(~H|<.drawer id="d" size={@size}>x</.drawer>|)
 
-      assert width in classes(html, ".drawer-content")
+      assert width in classes(html, ".lo-drawer-content")
     end
   end
 
   test "placement wins over side" do
     html = render(~H|<.drawer id="d" side="right" placement="left">x</.drawer>|)
-    refute "drawer-right" in classes(html, "#d")
-    assert "left-0" in classes(html, ".drawer-content")
+    refute "lo-drawer-right" in classes(html, "#d")
+    assert "left-0" in classes(html, ".lo-drawer-content")
   end
 
   test "back, actions and a custom header; the close button can go" do
@@ -208,8 +208,8 @@ defmodule LineaUI.Components.DrawerTest do
 
   test "the layers come from CSS, not from z utilities" do
     html = render(~H|<.drawer id="d">x</.drawer>|)
-    refute Enum.any?(classes(html, ".drawer-overlay"), &String.starts_with?(&1, "z-"))
-    refute Enum.any?(classes(html, ".drawer-content"), &String.starts_with?(&1, "z-"))
+    refute Enum.any?(classes(html, ".lo-drawer-overlay"), &String.starts_with?(&1, "z-"))
+    refute Enum.any?(classes(html, ".lo-drawer-content"), &String.starts_with?(&1, "z-"))
   end
 
   test "the open panel carries no transform, so a modal inside it covers the viewport" do
@@ -233,9 +233,9 @@ defmodule LineaUI.Components.DrawerTest do
 
   test "wide is 800px, between lg and xl" do
     html = render(~H|<.drawer id="s" title="T" size="wide" variant="flush">x</.drawer>|)
-    assert "max-w-[800px]" in classes(html, ".drawer-content")
+    assert "max-w-[800px]" in classes(html, ".lo-drawer-content")
 
     html = render(~H|<.drawer id="s" title="T" size="wide">x</.drawer>|)
-    assert "max-w-[min(800px,calc(100%-1.5rem))]" in classes(html, ".drawer-content")
+    assert "max-w-[min(800px,calc(100%-1.5rem))]" in classes(html, ".lo-drawer-content")
   end
 end

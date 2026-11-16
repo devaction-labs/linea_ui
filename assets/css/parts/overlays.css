@@ -379,15 +379,15 @@
 }
 
 @layer components {
-  .modal {
+  .lo-modal {
     z-index: calc(var(--linea-z-modal) + var(--linea-layer, 0) * 10);
   }
 
-  .drawer > .drawer-overlay {
+  .lo-drawer > .lo-drawer-overlay {
     z-index: calc(var(--linea-z-overlay) + var(--linea-layer, 0) * 10);
   }
 
-  .drawer > .drawer-content {
+  .lo-drawer > .lo-drawer-content {
     z-index: calc(var(--linea-z-overlay) + var(--linea-layer, 0) * 10 + 1);
   }
 
@@ -1213,19 +1213,19 @@
   }
 }
 
-.drawer.drawer-float {
+.lo-drawer.drawer-float {
   --drawer-from: translate(calc(-100% - 0.75rem));
 }
 
-.drawer.drawer-float.drawer-right {
+.lo-drawer.drawer-float.drawer-right {
   --drawer-from: translate(calc(100% + 0.75rem));
 }
 
-.drawer.drawer-bottom {
+.lo-drawer.drawer-bottom {
   --drawer-from: translateY(100%);
   --drawer-to: translateY(0%);
 }
 
-.drawer.drawer-float.drawer-bottom {
+.lo-drawer.drawer-float.drawer-bottom {
   --drawer-from: translateY(calc(100% + 0.75rem));
 }

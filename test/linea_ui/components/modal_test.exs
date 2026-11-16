@@ -14,7 +14,7 @@ defmodule LineaUI.Components.ModalTest do
     assert attr_of(html, "#m", "data-open") == ["false"]
     assert attr_of(html, "#m", "data-kind") == ["modal"]
     assert attr_of(html, "#m", "role") == ["dialog"]
-    assert "modal" in classes(html, "#m")
+    assert "lo-modal" in classes(html, "#m")
     assert "max-w-lg" in classes(html, "#m-panel")
     assert [_] = find(html, "#m [data-backdrop]") |> Enum.to_list()
     assert [_] = find(html, "#m-panel button[aria-label=Close]") |> Enum.to_list()
@@ -37,7 +37,7 @@ defmodule LineaUI.Components.ModalTest do
       </.modal>
       """)
 
-    assert "modal-scale" in classes(html, "#m")
+    assert "lo-modal-scale" in classes(html, "#m")
     assert "justify-start" in classes(html, "#m")
     assert ["max-w-2xl", "origin-bottom", "pb-4"] -- classes(html, "#m-panel") == []
     assert "backdrop-blur-sm" in classes(html, "#m [data-backdrop]")
@@ -66,7 +66,7 @@ defmodule LineaUI.Components.ModalTest do
       """)
 
     assert find(html, "#m-title") |> LazyHTML.text() =~ "Edit Pin"
-    assert "bg-slate-200" in classes(html, "#m-panel > div:first-child")
+    assert "bg-base-200" in classes(html, "#m-panel > div:first-child")
     assert attr_of(html, "#m", "aria-labelledby") == ["m-title"]
     assert "p-0" in classes(html, "#m-panel > div:nth-child(2)")
     assert "text-center" in classes(html, "#m-panel > div:last-child")
@@ -104,10 +104,10 @@ defmodule LineaUI.Components.ModalTest do
       <.modal id="b" close_variant="chip">x</.modal>
       """)
 
-    assert ["absolute", "z-10", "hover:bg-slate-300/20"] -- classes(html, "#a-panel > button") ==
+    assert ["absolute", "z-10", "btn-ghost"] -- classes(html, "#a-panel > button") ==
              []
 
-    assert ["absolute", "z-10", "bg-white/80", "backdrop-blur-sm"] --
+    assert ["absolute", "z-10", "bg-base-100/80", "backdrop-blur-sm"] --
              classes(html, "#b-panel > button") == []
 
     refute "hover:bg-slate-300/20" in classes(html, "#b-panel > button")

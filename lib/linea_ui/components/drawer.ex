@@ -94,9 +94,9 @@ defmodule LineaUI.Components.Drawer do
     {"flush", "bottom"} => "inset-x-0 bottom-0 h-[78dvh]"
   }
 
-  @floating "overflow-hidden rounded-2xl shadow-[0_24px_48px_-12px_rgb(15_23_42/.35)] ring-1 ring-slate-150 dark:shadow-[0_24px_48px_-12px_rgb(0_0_0/.5)] dark:ring-navy-500"
+  @floating "overflow-hidden rounded-box shadow-2xl ring-1 ring-base-content/5"
 
-  @flush "shadow-[0_0_40px_rgb(15_23_42/.2)] dark:shadow-[0_24px_48px_-12px_rgb(0_0_0/.5)] dark:ring-1 dark:ring-navy-500"
+  @flush "shadow-2xl"
 
   @panels %{
     {"float", "left"} => @floating,
@@ -207,10 +207,10 @@ defmodule LineaUI.Components.Drawer do
     <div
       id={@id}
       class={[
-        "drawer",
-        @side == "right" && "drawer-right",
-        @side == "bottom" && "drawer-bottom",
-        @variant == "float" && "drawer-float"
+        "lo-drawer",
+        @side == "right" && "lo-drawer-right",
+        @side == "bottom" && "lo-drawer-bottom",
+        @variant == "float" && "lo-drawer-float"
       ]}
       role="dialog"
       aria-modal={bool(@overlay)}
@@ -218,7 +218,7 @@ defmodule LineaUI.Components.Drawer do
       aria-labelledby={@headed && "#{@id}-title"}
       phx-hook="LineaUI.Dialog"
       phx-mounted='[["ignore_attrs",{"attrs":["data-state","aria-hidden","style"]}]]'
-      phx-remove={JS.add_class("drawer-leaving", to: "##{@id}") |> JS.hide(to: "##{@id}", time: 220)}
+      phx-remove={JS.add_class("lo-drawer-leaving", to: "##{@id}") |> JS.hide(to: "##{@id}", time: 220)}
       data-state="closed"
       data-open={bool(@open)}
       data-kind="drawer"
@@ -233,20 +233,20 @@ defmodule LineaUI.Components.Drawer do
     >
       <div
         :if={@overlay}
-        class="drawer-overlay fixed inset-0 hidden bg-[rgb(23_23_26/.28)] backdrop-blur-[2px]"
+        class="lo-drawer-overlay fixed inset-0 hidden bg-black/30 backdrop-blur-[2px]"
         phx-mounted='[["ignore_attrs",{"attrs":["class"]}]]'
         data-backdrop
       >
       </div>
       <div
-        class={merge(["drawer-content fixed hidden", @frame, @class])}
+        class={merge(["lo-drawer-content fixed hidden", @frame, @class])}
         phx-mounted='[["ignore_attrs",{"attrs":["class"]}]]'
       >
         <div
           id={"#{@id}-panel"}
           class={
             merge([
-              "flex h-full w-full flex-col bg-white outline-hidden transition-transform duration-200 dark:bg-navy-700",
+              "flex h-full w-full flex-col bg-base-100 text-base-content outline-hidden transition-transform duration-200",
               @panel,
               @panel_class
             ])
@@ -256,7 +256,7 @@ defmodule LineaUI.Components.Drawer do
         >
           <span
             :if={@variant && @side == "bottom"}
-            class="mx-auto mt-2.5 h-1 w-10 shrink-0 rounded-full bg-slate-300 dark:bg-navy-450"
+            class="mx-auto mt-2.5 h-1 w-10 shrink-0 rounded-full bg-base-content/15"
             aria-hidden="true"
             data-drawer-grab
           ></span>
@@ -379,13 +379,13 @@ defmodule LineaUI.Components.Drawer do
         <h2
           :if={@content == [] and @title}
           id={@id}
-          class="text-[19px]/6 font-semibold tracking-[-0.02em] text-slate-900 dark:text-navy-50"
+          class="text-[19px]/6 font-semibold tracking-[-0.02em] text-base-content"
         >
           {@title}
         </h2>
         <p
           :if={@content == [] and @description}
-          class="mt-0.5 text-[13px]/[18px] text-slate-500 dark:text-navy-300"
+          class="mt-0.5 text-[13px]/[18px] text-base-content/60"
         >
           {@description}
         </p>
@@ -396,7 +396,7 @@ defmodule LineaUI.Components.Drawer do
       <button
         :if={@close_button}
         type="button"
-        class="sg-ib sm shrink-0"
+        class="btn btn-ghost btn-sm btn-square shrink-0"
         aria-label={@close_label}
         phx-click={@close_js}
         data-drawer-close
@@ -452,7 +452,7 @@ defmodule LineaUI.Components.Drawer do
     <footer
       class={
         merge([
-          "flex shrink-0 items-center justify-end gap-2 border-t border-slate-150 bg-white px-4 py-3.5 dark:border-navy-700 dark:bg-navy-750 sm:px-6",
+          "flex shrink-0 items-center justify-end gap-2 border-t border-base-300 bg-base-100 px-4 py-3.5 sm:px-6",
           @class
         ])
       }
