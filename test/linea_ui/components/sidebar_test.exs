@@ -264,10 +264,11 @@ defmodule LineaUI.Components.SidebarTest do
                "background:#f43f5e"
              ]
 
-      assert texts(html, ".lo-sb-scroll > ul > li > a.lo-sb-item > .lbl") ==
-               ["Conectar banco"]
-               |> then(&(&1 -- &1))
-               |> Kernel.++(texts(html, ".lo-sb-scroll > ul > li > a.lo-sb-item > .lbl"))
+      assert texts(html, ".lo-sb-scroll > ul > li > a.lo-sb-item > .lbl") == [
+               "Pedidos",
+               "Clientes",
+               "Conectar banco"
+             ]
 
       assert "Conectar banco" in texts(html, ".lo-sb-scroll .lo-sb-item > .lbl")
       assert attrs(html, ".lo-sb-panel [data-rail-toggle]", "data-rail-toggle") == ["sb"]

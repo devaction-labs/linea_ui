@@ -151,8 +151,6 @@ span.flatpickr-weekday{font-size:12.5px;font-weight:400;color:var(--muted)}
 
 /* step group and timeline */
 .lo-sgp{border-radius:var(--r-lg);box-shadow:0 0 0 1px var(--line)}
-.lo-step.cur i{background:var(--control-on);color:var(--on-control)}
-.lo-step.done i{background:var(--tint);color:var(--ink)}
 
 /* upload: a dashed 10px area on the panel */
 .lo-drop{border-radius:var(--r);border:1px dashed var(--line-strong);background:transparent;padding:24px}

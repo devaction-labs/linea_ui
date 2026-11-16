@@ -1,6 +1,10 @@
 /* StepGroup (canvas "StepGroup"): a framed card of process steps, each with a status and a log. */
 .lo-sgp{border-radius:14px;background:var(--sunken);box-shadow:0 0 0 1px var(--ctl-line);padding:0 3px 3px}
 .lo-sgp.is-collapsed{padding-bottom:0}
+/* daisyUI `collapse`: the open/closed state comes from collapse-open/collapse-close; the parts keep their own spacing */
+.lo-sgp.collapse{display:block;overflow:visible;border-radius:14px}
+.lo-sgp>.collapse-title{min-height:0}
+.lo-sgp>.collapse-content{padding:0;visibility:visible;min-height:0}
 .lo-sgp-h{all:unset;box-sizing:border-box;display:flex;align-items:center;gap:10px;width:100%;height:52px;padding:0 12px 0 13px;cursor:pointer;border-radius:14px}
 .lo-sgp-h .t{font-size:14px;font-weight:550;color:var(--ink)}
 .lo-sgp-h .m{margin-left:auto;font-family:'Geist Mono',ui-monospace,monospace;font-size:12.5px;color:var(--muted)}

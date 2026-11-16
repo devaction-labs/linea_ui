@@ -26,29 +26,10 @@
   color: var(--muted);
 }
 
-/* stepper, canvas variant (horizontal): the canvas `lo-steps` as a list; the steps' dots and labels
-   are items of the row (`display: contents`) so every 1px line between them (drawn before each step
-   after the first) gets the same share of the width, like the canvas `hr` */
-.stepper-canvas:not(.is-vertical) > li {
-  display: contents;
-}
-.stepper-canvas:not(.is-vertical) > li > span:first-of-type {
-  margin-left: -2px;
-}
-.stepper-canvas:not(.is-vertical) > li + li::before {
-  content: "";
-  flex: 1;
-  height: 1px;
-  background: var(--line);
-}
-.stepper-canvas > li.lo-step.err {
-  color: var(--neg);
-}
-.stepper-canvas > li.lo-step.err i {
-  background: var(--neg-soft);
-  color: var(--neg);
-  box-shadow: none;
-}
+/* stepper, canvas variant (horizontal): daisyUI `steps`, the label under the circle at 13px */
+.stepper-canvas.steps .step{font-size:13px}
+.stepper-canvas.steps .step:not(.step-primary):not(.step-error){color:color-mix(in oklab,var(--color-base-content) 55%,transparent)}
+.stepper-canvas.steps .step.cur{font-weight:500}
 
 /* stepper, canvas variant (vertical): 26px round tiles joined by a 1.5px x 28px line, the label in
    the ink (550, or 450 to do) over a faint 12.5px sub line */

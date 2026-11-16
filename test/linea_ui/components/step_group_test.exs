@@ -68,11 +68,13 @@ defmodule LineaUI.Components.StepGroupTest do
   test "expanded by default, collapsed on request" do
     html = render(~H"<.deploy />")
     refute "is-collapsed" in classes(html, "section")
+    assert ["lo-sgp", "collapse", "collapse-open"] -- classes(html, "section") == []
     assert find(html, ".lo-sgp-h") |> LazyHTML.attribute("aria-expanded") == ["true"]
     assert find(html, ".lo-sgp-b") |> LazyHTML.attribute("hidden") == []
 
     html = render(~H|<.step_group id="g" title="T" status={:ok} collapsed />|)
     assert "is-collapsed" in classes(html, "section")
+    assert "collapse-close" in classes(html, "section")
     assert find(html, ".lo-sgp-h") |> LazyHTML.attribute("aria-expanded") == ["false"]
     assert find(html, ".lo-sgp-b") |> LazyHTML.attribute("hidden") == [""]
   end

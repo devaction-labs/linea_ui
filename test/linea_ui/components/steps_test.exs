@@ -235,7 +235,7 @@ defmodule LineaUI.Components.StepsTest do
     assert html |> find("#s") |> LazyHTML.attribute("data-x") == ["1"]
   end
 
-  test "the canvas stepper: lo-steps with checks, a solid current and numbers to do" do
+  test "the canvas stepper: daisyUI steps with checks, a solid current and numbers to do" do
     html =
       render(~H"""
       <.stepper variant="canvas" current={1}>
@@ -249,7 +249,7 @@ defmodule LineaUI.Components.StepsTest do
     assert states(html) == ["done", "current", "todo"]
     assert "done" in classes(html, "li:nth-child(1)")
     assert "cur" in classes(html, "li:nth-child(2)")
-    assert stepper_texts(html, "li i") == ["✓", "2", "3"]
+    assert stepper_texts(html, "li .step-icon") == ["✓", "2", "3"]
   end
 
   test "the vertical canvas stepper shows a step's icon in its tile" do
