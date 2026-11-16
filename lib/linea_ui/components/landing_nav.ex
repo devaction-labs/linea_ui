@@ -470,7 +470,7 @@ defmodule LineaUI.Components.LandingNav do
       <span :if={@preview != []} class="pv">{render_slot(@preview)}</span>
       <span :if={@preview == [] && @mock} class="pv mock" aria-hidden="true">
         <span class="top"><i class="logo"></i><i class="crumb"></i><i class="crumb s"></i><i class="chip"></i></span>
-        <span class="tabs"><i class="on"></i><i></i><i></i><i></i><i></i></span>
+        <span class="tb"><i class="on"></i><i></i><i></i><i></i><i></i></span>
         <span class="row hi"><i class="av"></i><i class="ln"></i><i class="tag"></i></span>
         <span class="row"><i class="dot"></i><i class="ln"></i><i class="ln s"></i></span>
         <span class="row"><i class="dot"></i><i class="ln"></i><i class="ln s"></i></span>
