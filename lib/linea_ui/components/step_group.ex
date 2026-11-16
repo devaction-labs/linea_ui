@@ -83,13 +83,19 @@ defmodule LineaUI.Components.StepGroup do
     ~H"""
     <section
       id={@id}
-      class={merge(["lo-sgp", @collapsed && "is-collapsed", @class])}
+      class={
+        merge([
+          "lo-sgp collapse",
+          if(@collapsed, do: "is-collapsed collapse-close", else: "collapse-open"),
+          @class
+        ])
+      }
       phx-mounted='[["ignore_attrs",{"attrs":["class"]}]]'
       {@rest}
     >
       <button
         type="button"
-        class="lo-sgp-h"
+        class="lo-sgp-h collapse-title"
         aria-expanded={bool(!@collapsed)}
         aria-controls={"#{@id}-body"}
         phx-click={toggle_group(@id)}
@@ -102,7 +108,7 @@ defmodule LineaUI.Components.StepGroup do
       </button>
       <div
         id={"#{@id}-body"}
-        class="lo-sgp-b"
+        class="lo-sgp-b collapse-content"
         hidden={@collapsed}
         phx-mounted='[["ignore_attrs",{"attrs":["hidden"]}]]'
       >
@@ -227,7 +233,7 @@ defmodule LineaUI.Components.StepGroup do
 
   # collapse the card: the class, the header's aria-expanded and the panel, all in the browser
   defp toggle_group(id) do
-    JS.toggle_class("is-collapsed", to: "##{id}")
+    JS.toggle_class("is-collapsed collapse-open collapse-close", to: "##{id}")
     |> JS.toggle_attribute({"aria-expanded", "true", "false"})
     |> JS.toggle_attribute({"hidden", "hidden"}, to: "##{id}-body")
   end

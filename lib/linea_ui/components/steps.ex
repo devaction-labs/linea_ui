@@ -39,7 +39,7 @@ defmodule LineaUI.Components.Steps do
         </:step>
       </.stepper>
 
-  `variant="canvas"` (the default; `variant="classic"` is the old LineOne stepper) is the design canvas look: horizontal, small numbered circles joined by
+  `variant="canvas"` (the default; `variant="classic"` is the old LineOne stepper) is the design canvas look on daisyUI `steps` (`step-primary` for done and current, `step-error`, the marker in a `step-icon`): horizontal, numbered circles joined by
   1px lines (done in the accent tint with a check, the current one solid); vertical, 26px round
   tiles (done green, current in the accent tint) joined by a line, each able to show an `icon`.
 
@@ -248,14 +248,14 @@ defmodule LineaUI.Components.Steps do
     assigns = assign(assigns, :entries, entries(assigns))
 
     ~H"""
-    <ol class={merge(["lo-steps stepper-canvas m-0 list-none p-0", @class])} {@rest}>
+    <ol class={merge(["steps lo-steps stepper-canvas m-0 p-0", @class])} {@rest}>
       <li
         :for={entry <- @entries}
-        class={merge(["lo-step", canvas_step(entry.state), entry.class])}
+        class={merge(["step lo-step", canvas_step(entry.state), entry.class])}
         aria-current={entry.state in ~w(current error) && "step"}
         data-state={entry.state}
       >
-        <i><.canvas_marker entry={entry} /></i>
+        <span class="step-icon"><.canvas_marker entry={entry} /></span>
         <span><span class="sr-only">{Map.fetch!(@state_names, entry.state)}: </span>{entry.label}</span>
         <span :if={entry.content != []}>{render_slot(entry.content)}</span>
       </li>
@@ -390,9 +390,9 @@ defmodule LineaUI.Components.Steps do
   defp canvas_marker(%{entry: %{state: "error"}} = assigns), do: ~H"!"
   defp canvas_marker(assigns), do: ~H"{@entry.number}"
 
-  defp canvas_step("done"), do: "done"
-  defp canvas_step("current"), do: "cur"
-  defp canvas_step("error"), do: "err"
+  defp canvas_step("done"), do: "done step-primary"
+  defp canvas_step("current"), do: "cur step-primary"
+  defp canvas_step("error"), do: "err step-error"
   defp canvas_step("todo"), do: nil
 
   defp canvas_tile("done"), do: "pos"
