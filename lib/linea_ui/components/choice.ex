@@ -26,11 +26,11 @@ defmodule LineaUI.Components.Choice do
     ]
   end
 
-  @chip "group/choice inline-flex h-7 cursor-pointer select-none items-center gap-1.5 rounded-[var(--pill-in,8px)] border border-slate-200 bg-white px-2.5 text-xs font-medium text-slate-950 shadow-xs transition-colors duration-200 hover:not-has-checked:bg-slate-100 has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-primary/50 has-disabled:pointer-events-none has-disabled:opacity-60 dark:border-navy-450 dark:bg-navy-900 dark:text-navy-50 dark:hover:not-has-checked:bg-navy-600 dark:has-focus-visible:outline-accent/50"
+  @chip "group/choice inline-flex h-7 cursor-pointer select-none items-center gap-1.5 rounded-[var(--pill-in,8px)] border border-base-300 bg-base-100 px-2.5 text-xs font-medium text-base-content shadow-xs transition-colors duration-200 hover:not-has-checked:bg-base-200 has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-primary/50 has-disabled:pointer-events-none has-disabled:opacity-60 dark:has-focus-visible:outline-accent/50"
 
   @chip_tones %{
     "neutral" =>
-      "has-checked:border-slate-700 has-checked:bg-slate-700 has-checked:text-white dark:has-checked:border-navy-450 dark:has-checked:bg-navy-450 dark:has-checked:text-white",
+      "has-checked:border-slate-700 has-checked:bg-base-content/80 has-checked:text-white dark:has-checked:border-navy-450 dark:has-checked:text-white",
     "primary" =>
       "has-checked:border-primary has-checked:bg-primary has-checked:text-white dark:has-checked:border-accent dark:has-checked:bg-accent dark:has-checked:text-white",
     "secondary" =>
@@ -45,12 +45,12 @@ defmodule LineaUI.Components.Choice do
       "has-checked:border-error has-checked:bg-error has-checked:text-white dark:has-checked:text-white"
   }
 
-  @chip_count "inline-flex h-5 min-w-5 items-center justify-center rounded-[var(--pill-xs,6px)] bg-white px-1.5 text-tiny-plus font-semibold text-slate-600 group-has-checked/choice:bg-white/20 group-has-checked/choice:text-white dark:bg-navy-700 dark:text-navy-100 dark:group-has-checked/choice:bg-white/20 dark:group-has-checked/choice:text-white"
+  @chip_count "inline-flex h-5 min-w-5 items-center justify-center rounded-[var(--pill-xs,6px)] bg-base-100 px-1.5 text-tiny-plus font-semibold text-base-content/75 group-has-checked/choice:bg-white/20 group-has-checked/choice:text-white dark:group-has-checked/choice:bg-white/20 dark:group-has-checked/choice:text-white"
 
-  @card "group/choice relative flex cursor-pointer flex-row items-start gap-3 rounded-[14px] border border-slate-150 p-3.5 transition-[border-color,box-shadow,background-color] duration-200 hover:border-slate-300 has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-primary/50 has-disabled:pointer-events-none has-disabled:opacity-60 dark:border-navy-450 dark:hover:border-navy-400 dark:has-focus-visible:outline-accent/50"
+  @card "group/choice relative flex cursor-pointer flex-row items-start gap-3 rounded-[14px] border border-base-300 p-3.5 transition-[border-color,box-shadow,background-color] duration-200 hover:border-base-content/20 has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-primary/50 has-disabled:pointer-events-none has-disabled:opacity-60 dark:has-focus-visible:outline-accent/50"
 
   @card_tones %{
-    "neutral" => "has-checked:border-slate-500 dark:has-checked:border-navy-300",
+    "neutral" => "has-checked:border-base-content/40",
     "primary" => "has-checked:border-primary dark:has-checked:border-accent",
     "secondary" => "has-checked:border-secondary dark:has-checked:border-secondary-light",
     "info" => "has-checked:border-info dark:has-checked:border-info",
@@ -72,12 +72,12 @@ defmodule LineaUI.Components.Choice do
     "error" => "group-has-checked/choice:text-error"
   }
 
-  @card_count "ml-auto inline-flex h-5 min-w-5 shrink-0 items-center justify-center rounded-[var(--pill-xs,6px)] bg-slate-150 px-1.5 text-tiny-plus font-semibold text-slate-600 dark:bg-navy-500 dark:text-navy-100"
+  @card_count "ml-auto inline-flex h-5 min-w-5 shrink-0 items-center justify-center rounded-[var(--pill-xs,6px)] bg-base-200 px-1.5 text-tiny-plus font-semibold text-base-content/75"
 
   # A segment of `radio_group variant="segmented"`: the look of `segmented`'s buttons, chosen through `:checked`.
-  @segment "group/choice inline-flex cursor-pointer select-none items-center justify-center whitespace-nowrap rounded-md font-medium text-slate-500 transition-colors duration-200 hover:not-has-checked:text-slate-700 has-focus-visible:outline-2 has-focus-visible:outline-offset-1 has-focus-visible:outline-primary/50 has-disabled:pointer-events-none has-disabled:opacity-60 has-checked:bg-white has-checked:text-slate-800 has-checked:shadow-soft dark:text-navy-200 dark:hover:not-has-checked:text-navy-50 dark:has-focus-visible:outline-accent/50 dark:has-checked:bg-navy-500 dark:has-checked:text-navy-50 dark:has-checked:shadow-soft-dark"
+  @segment "group/choice inline-flex cursor-pointer select-none items-center justify-center whitespace-nowrap rounded-md font-medium text-base-content/65 transition-colors duration-200 hover:not-has-checked:text-base-content/85 has-focus-visible:outline-2 has-focus-visible:outline-offset-1 has-focus-visible:outline-primary/50 has-disabled:pointer-events-none has-disabled:opacity-60 has-checked:bg-base-100 has-checked:text-base-content has-checked:shadow-soft dark:has-focus-visible:outline-accent/50 dark:has-checked:shadow-soft-dark"
 
-  @segment_count "ml-1.5 font-inter text-tiny-plus font-medium text-slate-400 group-has-checked/choice:text-primary dark:text-navy-300 dark:group-has-checked/choice:text-accent-light"
+  @segment_count "ml-1.5 font-inter text-tiny-plus font-medium text-base-content/50 group-has-checked/choice:text-primary dark:group-has-checked/choice:text-accent-light"
 
   @segment_sizes %{"xs" => "sm", "sm" => "sm", "md" => "md", "lg" => "lg"}
 
@@ -142,7 +142,7 @@ defmodule LineaUI.Components.Choice do
       <span class="mt-0.5 flex">{render_slot(@inner_block)}</span>
       <span class="flex flex-col">
         <span class={merge([@text_class, @label_class])}>{@label}{render_slot(@content)}</span>
-        <span class="text-xs/5 text-slate-400 dark:text-navy-300">{@description}</span>
+        <span class="text-xs/5 text-base-content/50">{@description}</span>
       </span>
     </label>
     """
@@ -219,17 +219,17 @@ defmodule LineaUI.Components.Choice do
       <span
         :if={@icon}
         class={[
-          "flex size-6 shrink-0 items-center justify-center text-slate-500 dark:text-navy-200",
+          "flex size-6 shrink-0 items-center justify-center text-base-content/65",
           @icon_tone
         ]}
       >
         <.icon name={@icon} class="size-5" />
       </span>
       <span class="flex min-w-0 flex-col">
-        <span class="text-sm leading-5 font-medium text-slate-900 dark:text-navy-50">
+        <span class="text-sm leading-5 font-medium text-base-content">
           {@label}{render_slot(@content)}
         </span>
-        <span :if={@description} class="text-[12.5px] text-slate-400 dark:text-navy-300">
+        <span :if={@description} class="text-[12.5px] text-base-content/50">
           {@description}
         </span>
       </span>

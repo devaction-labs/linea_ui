@@ -43,7 +43,7 @@ defmodule LineaUI.Components.Tag do
   @variants %{
     "solid" => %{
       "neutral" =>
-        "bg-slate-150 text-slate-800 hover:bg-slate-200 focus:bg-slate-200 active:bg-slate-200/80 dark:bg-navy-500 dark:text-navy-100 dark:hover:bg-navy-450 dark:focus:bg-navy-450 dark:active:bg-navy-450/90",
+        "bg-base-200 text-base-content hover:bg-base-300 focus:bg-base-300 active:bg-base-300/80",
       "primary" =>
         "bg-primary text-white hover:bg-primary-focus focus:bg-primary-focus active:bg-primary-focus/90 dark:bg-accent dark:hover:bg-accent-focus dark:focus:bg-accent-focus dark:active:bg-accent/90",
       "secondary" =>
@@ -57,11 +57,11 @@ defmodule LineaUI.Components.Tag do
       "error" =>
         "bg-error text-white hover:bg-error-focus focus:bg-error-focus active:bg-error-focus/90",
       "light" =>
-        "bg-slate-150 text-slate-800 hover:bg-slate-200 focus:bg-slate-200 active:bg-slate-200/80"
+        "bg-base-200 text-base-content hover:bg-base-300 focus:bg-base-300 active:bg-base-300/80"
     },
     "soft" => %{
       "neutral" =>
-        "bg-slate-150/60 text-slate-700 hover:bg-slate-150 focus:bg-slate-150 active:bg-slate-150/80 dark:bg-navy-500/40 dark:text-navy-100 dark:hover:bg-navy-500 dark:focus:bg-navy-500 dark:active:bg-navy-500/90",
+        "bg-base-200/60 text-base-content/85 hover:bg-base-200 focus:bg-base-200 active:bg-base-200/80",
       "primary" =>
         "bg-primary/10 text-primary hover:bg-primary/20 focus:bg-primary/20 active:bg-primary/25 dark:bg-accent-light/10 dark:text-accent-light dark:hover:bg-accent-light/20 dark:focus:bg-accent-light/20 dark:active:bg-accent-light/25",
       "secondary" =>
@@ -73,11 +73,11 @@ defmodule LineaUI.Components.Tag do
         "bg-warning/10 text-warning hover:bg-warning/20 focus:bg-warning/20 active:bg-warning/25",
       "error" => "bg-error/10 text-error hover:bg-error/20 focus:bg-error/20 active:bg-error/25",
       "light" =>
-        "bg-slate-150/60 text-slate-700 hover:bg-slate-150 focus:bg-slate-150 active:bg-slate-150/80"
+        "bg-base-200/60 text-base-content/85 hover:bg-base-200 focus:bg-base-200 active:bg-base-200/80"
     },
     "bordered" => %{
       "neutral" =>
-        "border border-slate-300 bg-slate-150/60 text-slate-700 hover:bg-slate-150 focus:bg-slate-150 active:bg-slate-150/80 dark:border-navy-450 dark:bg-navy-500/40 dark:text-navy-100 dark:hover:bg-navy-500 dark:focus:bg-navy-500 dark:active:bg-navy-500/90",
+        "border border-base-content/20 bg-base-200/60 text-base-content/85 hover:bg-base-200 focus:bg-base-200 active:bg-base-200/80",
       "primary" =>
         "border border-primary/30 bg-primary/10 text-primary hover:bg-primary/20 focus:bg-primary/20 active:bg-primary/25 dark:border-accent-light/30 dark:bg-accent-light/10 dark:text-accent-light dark:hover:bg-accent-light/20 dark:focus:bg-accent-light/20 dark:active:bg-accent-light/25",
       "secondary" =>
@@ -91,11 +91,11 @@ defmodule LineaUI.Components.Tag do
       "error" =>
         "border border-error/30 bg-error/10 text-error hover:bg-error/20 focus:bg-error/20 active:bg-error/25",
       "light" =>
-        "border border-slate-300 bg-slate-150/60 text-slate-700 hover:bg-slate-150 focus:bg-slate-150 active:bg-slate-150/80"
+        "border border-base-content/20 bg-base-200/60 text-base-content/85 hover:bg-base-200 focus:bg-base-200 active:bg-base-200/80"
     },
     "outline" => %{
       "neutral" =>
-        "border border-slate-300 text-slate-800 hover:bg-slate-150 focus:bg-slate-150 active:bg-slate-150/80 dark:border-navy-450 dark:text-navy-50 dark:hover:bg-navy-500 dark:focus:bg-navy-500 dark:active:bg-navy-500/90",
+        "border border-base-content/20 text-base-content hover:bg-base-200 focus:bg-base-200 active:bg-base-200/80",
       "primary" =>
         "border border-primary text-primary hover:bg-primary/20 focus:bg-primary/20 active:bg-primary/25 dark:border-accent-light dark:text-accent-light dark:hover:bg-accent-light/20 dark:focus:bg-accent-light/20 dark:active:bg-accent-light/25",
       "secondary" =>
@@ -109,7 +109,7 @@ defmodule LineaUI.Components.Tag do
       "error" =>
         "border border-error text-error hover:bg-error/20 focus:bg-error/20 active:bg-error/25",
       "light" =>
-        "border border-slate-150 text-slate-800 hover:bg-slate-150 focus:bg-slate-150 active:bg-slate-150/80"
+        "border border-base-300 text-base-content hover:bg-base-200 focus:bg-base-200 active:bg-base-200/80"
     }
   }
 

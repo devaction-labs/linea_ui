@@ -2,10 +2,10 @@ defmodule LineaUI.Components.Segments do
   @moduledoc false
 
   @spec group() :: String.t()
-  def group, do: "inline-flex gap-0.5 rounded-lg bg-slate-150 p-0.5 dark:bg-navy-800"
+  def group, do: "inline-flex gap-0.5 rounded-lg bg-base-200 p-0.5"
 
   @spec item() :: String.t()
   def item,
     do:
-      "inline-flex h-7.5 items-center justify-center rounded-md px-3 text-xs-plus font-medium whitespace-nowrap text-slate-500 outline-hidden transition-colors duration-200 hover:text-slate-700 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-primary/50 disabled:pointer-events-none disabled:opacity-60 aria-pressed:bg-white aria-pressed:text-slate-800 aria-pressed:shadow-soft dark:text-navy-200 dark:hover:text-navy-50 dark:focus-visible:outline-accent/50 dark:aria-pressed:bg-navy-500 dark:aria-pressed:text-navy-50 dark:aria-pressed:shadow-none"
+      "inline-flex h-7.5 items-center justify-center rounded-md px-3 text-xs-plus font-medium whitespace-nowrap text-base-content/65 outline-hidden transition-colors duration-200 hover:text-base-content/85 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-primary/50 disabled:pointer-events-none disabled:opacity-60 aria-pressed:bg-base-100 aria-pressed:text-base-content aria-pressed:shadow-soft dark:focus-visible:outline-accent/50 dark:aria-pressed:shadow-none"
 end

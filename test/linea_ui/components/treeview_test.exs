@@ -55,7 +55,7 @@ defmodule LineaUI.Components.TreeviewTest do
 
     assert [_] = find(html, "details#a[data-server-open=false]:not([open])") |> Enum.to_list()
     assert [_] = find(html, "[data-tree-leaf=c]") |> Enum.to_list()
-    assert "text-slate-800" in classes(html, "[data-tree-leaf=c]")
+    assert "text-base-content" in classes(html, "[data-tree-leaf=c]")
     assert "space-x-1.5" in classes(html, "details#a [data-tree-leaf]")
     assert LazyHTML.attribute(find(html, "#t"), "data-expanded") == [~s(["a"])]
   end

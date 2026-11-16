@@ -102,7 +102,7 @@ defmodule LineaUI.Components.PasswordInput do
         aria-label={@show_label}
         aria-controls={@id}
         phx-click={JS.toggle_attribute({"type", "password", "text"}, to: "#" <> @id)}
-        class="absolute end-1 bottom-0 flex h-9 w-8 items-center justify-center rounded-md text-slate-500 outline-none hover:text-slate-950 focus-visible:ring-2 focus-visible:ring-primary/50 dark:text-navy-300 dark:hover:text-navy-50"
+        class="absolute end-1 bottom-0 flex h-9 w-8 items-center justify-center rounded-md text-base-content/65 outline-none hover:text-base-content focus-visible:ring-2 focus-visible:ring-primary/50"
       >
         <svg
           viewBox="0 0 24 24"

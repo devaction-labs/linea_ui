@@ -217,7 +217,7 @@ defmodule LineaUI.Components.Timer do
       data-state={state(@running)}
       class={
         merge([
-          "group inline-flex items-center bg-white font-mono font-medium text-slate-800 shadow-[inset_0_0_0_1px_var(--color-slate-300)] dark:bg-navy-700 dark:text-navy-50 dark:shadow-[inset_0_0_0_1px_var(--color-navy-450)]",
+          "group inline-flex items-center bg-base-100 font-mono font-medium text-base-content shadow-[inset_0_0_0_1px_var(--color-slate-300)] dark:shadow-[inset_0_0_0_1px_var(--color-navy-450)]",
           mini_size(@size),
           @class
         ])
@@ -241,7 +241,7 @@ defmodule LineaUI.Components.Timer do
       data-state={state(@running)}
       class={
         merge([
-          "timer-checker group relative flex flex-col items-center rounded-lg bg-slate-50 px-5 py-6.5 shadow-[inset_0_0_0_1px_var(--color-slate-150)] dark:bg-navy-750 dark:shadow-[inset_0_0_0_1px_var(--color-navy-700)]",
+          "timer-checker group relative flex flex-col items-center rounded-lg bg-base-200 px-5 py-6.5 shadow-[inset_0_0_0_1px_var(--color-slate-150)] dark:shadow-[inset_0_0_0_1px_var(--color-navy-700)]",
           @class
         ])
       }
@@ -257,7 +257,7 @@ defmodule LineaUI.Components.Timer do
               r="52"
               fill="none"
               stroke-width="8"
-              class="stroke-slate-150 dark:stroke-navy-800"
+              class="stroke-base-content/20"
             />
             <circle
               data-ring
@@ -286,7 +286,7 @@ defmodule LineaUI.Components.Timer do
             <span
               data-time
               class={[
-                "font-mono font-medium tracking-[0.02em] text-slate-800 dark:text-navy-50",
+                "font-mono font-medium tracking-[0.02em] text-base-content",
                 ring_size(@size, :time)
               ]}
             >
@@ -294,7 +294,7 @@ defmodule LineaUI.Components.Timer do
             </span>
             <span
               :if={@label != nil or @caption != []}
-              class={["font-inter text-slate-400 dark:text-navy-300", ring_size(@size, :label)]}
+              class={["font-inter text-base-content/50", ring_size(@size, :label)]}
             >
               {@label}{render_slot(@caption)}
             </span>

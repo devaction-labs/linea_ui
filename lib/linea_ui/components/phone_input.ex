@@ -87,9 +87,9 @@ defmodule LineaUI.Components.PhoneInput do
   # While the picker is open the number's border takes the focus color, as the field's own focus does.
   @open "[&:has([data-picker][aria-expanded=true])_[data-display]]:border-primary dark:[&:has([data-picker][aria-expanded=true])_[data-display]]:border-accent"
 
-  @code "font-inter font-normal text-[13px] text-slate-950 dark:text-navy-50"
+  @code "font-inter font-normal text-[13px] text-base-content"
 
-  @picker "flex h-full w-full items-center gap-1.5 rounded-l-lg pl-3 pr-1 text-slate-950 outline-hidden transition-colors hover:text-slate-600 focus-visible:text-primary disabled:pointer-events-none dark:text-navy-50 dark:hover:text-navy-100 dark:focus-visible:text-accent"
+  @picker "flex h-full w-full items-center gap-1.5 rounded-l-lg pl-3 pr-1 text-base-content outline-hidden transition-colors hover:text-base-content/75 focus-visible:text-primary disabled:pointer-events-none dark:focus-visible:text-accent"
 
   @doc """
   Renders the phone input.
@@ -398,7 +398,7 @@ defmodule LineaUI.Components.PhoneInput do
       <span class={@prefix_class} data-prefix>
         <span
           aria-hidden="true"
-          class="absolute top-1/2 left-[6.25rem] h-5 w-px -translate-x-px -translate-y-1/2 bg-slate-200 dark:bg-navy-450"
+          class="absolute top-1/2 left-[6.25rem] h-5 w-px -translate-x-px -translate-y-1/2 bg-base-300"
         ></span>
         <div
           id={@id <> "-country"}
@@ -423,7 +423,7 @@ defmodule LineaUI.Components.PhoneInput do
             <span class={@code_class} data-code>+{@selected.code}</span>
             <.glyph
               name={:chevron_down}
-              class="size-3.5 shrink-0 text-slate-950 dark:text-navy-50"
+              class="size-3.5 shrink-0 text-base-content"
             />
           </button>
           <div
@@ -461,7 +461,7 @@ defmodule LineaUI.Components.PhoneInput do
       <span :if={@clearable} class={@suffix_class} data-suffix>
         <button
           type="button"
-          class="flex size-6 items-center justify-center rounded-full outline-hidden hover:text-slate-600 focus-visible:text-primary dark:hover:text-navy-100 dark:focus-visible:text-accent"
+          class="flex size-6 items-center justify-center rounded-full outline-hidden hover:text-base-content/75 focus-visible:text-primary dark:focus-visible:text-accent"
           tabindex="-1"
           title={@clear_label}
           aria-label={@clear_label}

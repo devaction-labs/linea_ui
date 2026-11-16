@@ -93,7 +93,7 @@ defmodule LineaUI.Components.Avatar do
       "error" => "bg-error text-white"
     },
     "soft" => %{
-      "neutral" => "bg-slate-150/60 text-base-content/75",
+      "neutral" => "bg-base-200/60 text-base-content/75",
       "primary" => "bg-primary/10 text-primary",
       "secondary" => "bg-secondary/10 text-secondary",
       "info" => "bg-info/10 text-info",
@@ -102,7 +102,7 @@ defmodule LineaUI.Components.Avatar do
       "error" => "bg-error/10 text-error"
     },
     "bordered" => %{
-      "neutral" => "border border-base-content/20 bg-slate-150/60 text-base-content/75",
+      "neutral" => "border border-base-content/20 bg-base-200/60 text-base-content/75",
       "primary" => "border border-primary/30 bg-primary/10 text-primary",
       "secondary" => "border border-secondary/30 bg-secondary/10 text-secondary",
       "info" => "border border-info/30 bg-info/10 text-info",
@@ -254,7 +254,7 @@ defmodule LineaUI.Components.Avatar do
   @ring_colors %{
     "white" => "ring-white",
     "panel" => "ring-(--panel)",
-    "neutral" => "ring-slate-300",
+    "neutral" => "ring-base-content/20",
     "primary" => "ring-primary dark:ring-accent",
     "secondary" => "ring-secondary dark:ring-secondary-light",
     "info" => "ring-info",

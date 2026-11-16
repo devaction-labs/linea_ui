@@ -176,7 +176,7 @@ defmodule LineaUI.Components.AppShell do
     "horizontal" => false
   }
 
-  @icon_button "lo-btn size-8 rounded-full p-0 hover:bg-slate-300/20 focus:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25"
+  @icon_button "lo-btn size-8 rounded-full p-0 hover:bg-base-300/20 focus:bg-base-300/20 active:bg-base-300/25"
 
   @doc """
   The page frame: the sidebar, the header, the drawers and the `<main>` content, with LineOne's body classes.
@@ -239,7 +239,7 @@ defmodule LineaUI.Components.AppShell do
       id={@id}
       class={
         merge([
-          "sg linea-frame flex h-dvh flex-col gap-2.5 bg-slate-50 max-md:pt-14 md:flex-row md:p-2.5 dark:bg-navy-900",
+          "sg linea-frame flex h-dvh flex-col gap-2.5 bg-base-200 max-md:pt-14 md:flex-row md:p-2.5",
           @class
         ])
       }
@@ -250,13 +250,13 @@ defmodule LineaUI.Components.AppShell do
       {render_slot(@aside)}
       <main class={
         merge([
-          "flex min-w-0 flex-1 flex-col gap-6 overflow-y-auto bg-white px-4 pt-5 pb-10 shadow-[0_0_0_1px_var(--color-slate-150),0_1px_2px_rgb(23_23_26/.04),0_4px_16px_-6px_rgb(23_23_26/.08)] md:rounded-[22px] md:px-8 md:pt-5 md:pb-10 dark:bg-navy-900 dark:shadow-[0_0_0_1px_var(--color-navy-600)]",
+          "flex min-w-0 flex-1 flex-col gap-6 overflow-y-auto bg-base-100 px-4 pt-5 pb-10 shadow-[0_0_0_1px_var(--color-slate-150),0_1px_2px_rgb(23_23_26/.04),0_4px_16px_-6px_rgb(23_23_26/.08)] md:rounded-[22px] md:px-8 md:pt-5 md:pb-10 dark:shadow-[0_0_0_1px_var(--color-navy-600)]",
           @main_class
         ])
       }>
         {render_slot(@inner_block)}
       </main>
-      <div :if={@tab_bar != []} class="-mt-2.5 bg-white md:hidden dark:bg-navy-900">
+      <div :if={@tab_bar != []} class="-mt-2.5 bg-base-100 md:hidden">
         {render_slot(@tab_bar)}
       </div>
     </div>
@@ -281,7 +281,7 @@ defmodule LineaUI.Components.AppShell do
       data-target={@target}
       class={
         merge([
-          "min-h-100vh flex grow bg-slate-50 dark:bg-navy-900",
+          "min-h-100vh flex grow bg-base-200",
           layout_class(@layout),
           @open && "is-sidebar-open",
           @header_blur && "is-header-blur",
@@ -297,7 +297,7 @@ defmodule LineaUI.Components.AppShell do
         data-app-preloader
         id={@id <> "-preloader"}
         phx-mounted='[["ignore_attrs",{"attrs":["class"]}]]'
-        class="app-preloader fixed z-50 grid h-full w-full place-content-center bg-slate-50 dark:bg-navy-900"
+        class="app-preloader fixed z-50 grid h-full w-full place-content-center bg-base-200"
       >
         <div class="app-preloader-inner relative inline-block size-48"></div>
       </div>
@@ -366,7 +366,7 @@ defmodule LineaUI.Components.AppShell do
     ~H"""
     <div id={@id} phx-hook="LineaUI.ShellTooltips" class={merge(["main-sidebar", @class])} {@rest}>
       <div class={[
-        "flex h-full w-full flex-col items-center border-r border-slate-150 bg-white dark:border-navy-700 dark:bg-navy-800",
+        "flex h-full w-full flex-col items-center border-r border-base-300 bg-base-100",
         @centered && "justify-between"
       ]}>
         <div :for={logo <- @logo} class="flex pt-4">
@@ -475,7 +475,7 @@ defmodule LineaUI.Components.AppShell do
     "warning" => "bg-warning",
     "error" => "bg-error",
     "info" => "bg-info",
-    "neutral" => "bg-slate-300 dark:bg-navy-400"
+    "neutral" => "bg-base-300"
   }
 
   @doc """
@@ -560,8 +560,8 @@ defmodule LineaUI.Components.AppShell do
         phx-mounted='[["ignore_attrs",{"attrs":["class","style"]}]]'
         class="popper-root fixed top-0 left-0"
       >
-        <div class="popper-box w-64 rounded-lg border border-slate-150 bg-white shadow-soft dark:border-navy-600 dark:bg-navy-700">
-          <div class="flex items-center space-x-4 rounded-t-lg bg-slate-100 py-5 px-4 dark:bg-navy-800">
+        <div class="popper-box w-64 rounded-lg border border-base-300 bg-base-100 shadow-soft">
+          <div class="flex items-center space-x-4 rounded-t-lg bg-base-200 py-5 px-4">
             <div class="lo-avatar size-14">
               <img class="rounded-full" src={@src} alt={@alt} />
             </div>
@@ -570,18 +570,18 @@ defmodule LineaUI.Components.AppShell do
                 href={@href}
                 navigate={@navigate}
                 data-popper-close
-                class="text-base font-medium text-slate-700 hover:text-primary focus:text-primary dark:text-navy-100 dark:hover:text-accent-light dark:focus:text-accent-light"
+                class="text-base font-medium text-base-content/85 hover:text-primary focus:text-primary dark:hover:text-accent-light dark:focus:text-accent-light"
               >
                 {@name}
               </.link>
-              <p :if={@subtitle} class="text-xs text-slate-400 dark:text-navy-300">{@subtitle}</p>
+              <p :if={@subtitle} class="text-xs text-base-content/50">{@subtitle}</p>
             </div>
           </div>
           <div class="flex flex-col pt-2 pb-5">
             <.link
               :for={item <- @item}
               data-popper-close
-              class="group flex items-center space-x-3 py-2 px-4 tracking-wide outline-hidden transition-all hover:bg-slate-100 focus:bg-slate-100 dark:hover:bg-navy-600 dark:focus:bg-navy-600"
+              class="group flex items-center space-x-3 py-2 px-4 tracking-wide outline-hidden transition-all hover:bg-base-200 focus:bg-base-200"
               {link_attrs(item)}
             >
               <div class={[
@@ -591,12 +591,12 @@ defmodule LineaUI.Components.AppShell do
                 {item.inner_block && render_slot(item)}
               </div>
               <div>
-                <h2 class="font-medium text-slate-700 transition-colors group-hover:text-primary group-focus:text-primary dark:text-navy-100 dark:group-hover:text-accent-light dark:group-focus:text-accent-light">
+                <h2 class="font-medium text-base-content/85 transition-colors group-hover:text-primary group-focus:text-primary dark:group-hover:text-accent-light dark:group-focus:text-accent-light">
                   {item.title}
                 </h2>
                 <div
                   :if={item[:description]}
-                  class="text-xs text-slate-400 line-clamp-1 dark:text-navy-300"
+                  class="text-xs text-base-content/50 line-clamp-1"
                 >
                   {item.description}
                 </div>
@@ -630,9 +630,9 @@ defmodule LineaUI.Components.AppShell do
   def sidebar_panel(assigns) do
     ~H"""
     <div class={merge(["sidebar-panel", @class])} {@rest}>
-      <div class="flex h-full grow flex-col bg-white pl-[var(--main-sidebar-width)] dark:bg-navy-750">
+      <div class="flex h-full grow flex-col bg-base-100 pl-[var(--main-sidebar-width)]">
         <div class="flex h-18 w-full items-center justify-between pl-4 pr-1">
-          <p class="text-base tracking-wider text-slate-800 dark:text-navy-100">{@title}</p>
+          <p class="text-base tracking-wider text-base-content">{@title}</p>
           <.sidebar_close />
         </div>
         <div class="nav-wrapper scrollbar-sm h-[calc(100%-4.5rem)] overflow-x-hidden overflow-y-auto pb-6">
@@ -653,7 +653,7 @@ defmodule LineaUI.Components.AppShell do
       aria-label="Close sidebar"
       class={
         merge([
-          "sidebar-close lo-btn size-7 rounded-full p-0 text-primary hover:bg-slate-300/20 focus:bg-slate-300/20 active:bg-slate-300/25 dark:text-accent-light/80 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25 xl:hidden",
+          "sidebar-close lo-btn size-7 rounded-full p-0 text-primary hover:bg-base-300/20 focus:bg-base-300/20 active:bg-base-300/25 dark:text-accent-light/80 xl:hidden",
           @class
         ])
       }
@@ -725,7 +725,7 @@ defmodule LineaUI.Components.AppShell do
   defp nav_state(true), do: "font-medium text-primary dark:text-accent-light"
 
   defp nav_state(false),
-    do: "text-slate-600 hover:text-slate-800 dark:text-navy-200 dark:hover:text-navy-50"
+    do: "text-base-content/75 hover:text-base-content"
 
   @doc """
   A collapsible group of the sidebar panel. It opens when one of its items is active (or with `open`); the
@@ -776,13 +776,13 @@ defmodule LineaUI.Components.AppShell do
         data-open={bool(@open)}
         phx-hook="LineaUI.SidebarGroup"
         phx-mounted='[["ignore_attrs",{"attrs":["open"]}]]'
-        class="sidebar-group nav-parent [&[open]>summary]:font-semibold [&[open]>summary]:text-slate-800 dark:[&[open]>summary]:text-navy-50 [&[open]>summary_svg]:rotate-90"
+        class="sidebar-group nav-parent [&[open]>summary]:font-semibold [&[open]>summary]:text-base-content [&[open]>summary_svg]:rotate-90"
       >
-        <summary class="ac-trigger flex w-full cursor-pointer list-none items-center justify-between py-2 text-xs-plus tracking-wide text-slate-600 outline-hidden transition-[color,padding-left] duration-300 ease-in-out hover:text-slate-800 dark:text-navy-200 dark:hover:text-navy-50">
+        <summary class="ac-trigger flex w-full cursor-pointer list-none items-center justify-between py-2 text-xs-plus tracking-wide text-base-content/75 outline-hidden transition-[color,padding-left] duration-300 ease-in-out hover:text-base-content">
           <span>{@label}</span>
           <.glyph
             name={:chevron_right}
-            class="size-4 text-slate-400 transition-transform ease-in-out"
+            class="size-4 text-base-content/50 transition-transform ease-in-out"
           />
         </summary>
         <ul class="ac-panel">
@@ -819,7 +819,7 @@ defmodule LineaUI.Components.AppShell do
 
   def sidebar_nav_divider(assigns) do
     ~H"""
-    <div class={merge(["my-3 mx-4 h-px bg-slate-200 dark:bg-navy-500", @class])}></div>
+    <div class={merge(["my-3 mx-4 h-px bg-base-300", @class])}></div>
     """
   end
 
@@ -848,7 +848,7 @@ defmodule LineaUI.Components.AppShell do
   def sidebar_panel_min(assigns) do
     ~H"""
     <div class={merge(["sidebar-panel-min", @class])} {@rest}>
-      <div class="flex h-full flex-col items-center bg-white dark:bg-navy-750">
+      <div class="flex h-full flex-col items-center bg-base-100">
         <div class="flex h-18 shrink-0 items-center justify-center">{render_slot(@header)}</div>
         <div class="flex h-[calc(100%-4.5rem)] grow flex-col">
           <div class="is-scrollbar-hidden flex grow flex-col overflow-y-auto">
@@ -878,8 +878,7 @@ defmodule LineaUI.Components.AppShell do
   end
 
   @min_colors %{
-    "neutral" =>
-      "hover:bg-slate-300/20 focus:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25",
+    "neutral" => "hover:bg-base-300/20 focus:bg-base-300/20 active:bg-base-300/25",
     "primary" =>
       "text-primary hover:bg-primary/20 focus:bg-primary/20 active:bg-primary/25 dark:text-accent-light dark:hover:bg-accent-light/20 dark:focus:bg-accent-light/20 dark:active:bg-accent-light/25",
     "secondary" =>
@@ -949,7 +948,7 @@ defmodule LineaUI.Components.AppShell do
 
   def sidebar_min_divider(assigns) do
     ~H"""
-    <div class={merge(["my-4 h-px bg-slate-200 dark:bg-navy-500", @class])}></div>
+    <div class={merge(["my-4 h-px bg-base-300", @class])}></div>
     """
   end
 
@@ -982,7 +981,7 @@ defmodule LineaUI.Components.AppShell do
   def sideblock(assigns) do
     ~H"""
     <div class={merge(["sidebar-panel", @class])} {@rest}>
-      <div class="flex h-full grow flex-col border-r border-slate-150 bg-white dark:border-navy-700 dark:bg-navy-750">
+      <div class="flex h-full grow flex-col border-r border-base-300 bg-base-100">
         <div class="flex items-center justify-between px-3 pt-4">
           <div :for={logo <- @logo} class="flex">
             <.link {link_attrs(logo)}>
@@ -1064,7 +1063,7 @@ defmodule LineaUI.Components.AppShell do
     ~H"""
     <nav id={@id} class={merge(["header print:hidden", @class])} {@rest}>
       <div class={[
-        "header-container relative flex w-full bg-white dark:bg-navy-700 print:hidden",
+        "header-container relative flex w-full bg-base-100 print:hidden",
         @horizontal && "sm:flex-col"
       ]}>
         <div class={["flex w-full items-center justify-between", @horizontal && "sm:h-16"]}>
@@ -1083,7 +1082,7 @@ defmodule LineaUI.Components.AppShell do
               </.link>
               <span
                 :if={brand[:label]}
-                class="text-xl font-semibold uppercase text-slate-700 dark:text-navy-100"
+                class="text-xl font-semibold uppercase text-base-content/85"
               >
                 {brand.label}
               </span>
@@ -1101,7 +1100,7 @@ defmodule LineaUI.Components.AppShell do
             >
               <.glyph
                 name={:search}
-                class="size-5.5 text-slate-500 dark:text-navy-100"
+                class="size-5.5 text-base-content/65"
                 stroke_width="1.5"
               />
             </button>
@@ -1124,10 +1123,10 @@ defmodule LineaUI.Components.AppShell do
                   phx-mounted='[["ignore_attrs",{"attrs":["class","aria-expanded"]}]]'
                   placeholder={@search_placeholder}
                   aria-label={@search_placeholder}
-                  class="form-input peer h-full w-60 rounded-(--pill) bg-slate-150 px-4 pl-9 text-xs-plus text-slate-800 ring-primary/50 hover:bg-slate-200 focus:ring-3 dark:bg-navy-900/90 dark:text-navy-100 dark:placeholder-navy-300 dark:ring-accent/50 dark:hover:bg-navy-900 dark:focus:bg-navy-900"
+                  class="form-input peer h-full w-60 rounded-(--pill) bg-base-200 px-4 pl-9 text-xs-plus text-base-content ring-primary/50 hover:bg-base-300 focus:ring-3 dark:placeholder-navy-300 dark:ring-accent/50 dark:focus:bg-navy-900"
                   {@search_input}
                 />
-                <div class="pointer-events-none absolute flex h-full w-10 items-center justify-center text-slate-400 peer-focus:text-primary dark:text-navy-300 dark:peer-focus:text-accent">
+                <div class="pointer-events-none absolute flex h-full w-10 items-center justify-center text-base-content/50 peer-focus:text-primary dark:peer-focus:text-accent">
                   <.search_glyph />
                 </div>
               </div>
@@ -1139,7 +1138,7 @@ defmodule LineaUI.Components.AppShell do
                 phx-mounted='[["ignore_attrs",{"attrs":["class","style"]}]]'
                 class="popper-root fixed top-0 left-0"
               >
-                <div class="popper-box flex max-h-[calc(100vh-6rem)] w-80 flex-col rounded-lg border border-slate-150 bg-white shadow-soft dark:border-navy-800 dark:bg-navy-700 dark:shadow-soft-dark">
+                <div class="popper-box flex max-h-[calc(100vh-6rem)] w-80 flex-col rounded-lg border border-base-300 bg-base-100 shadow-soft dark:shadow-soft-dark">
                   {render_slot(@search_results)}
                 </div>
               </div>
@@ -1167,7 +1166,7 @@ defmodule LineaUI.Components.AppShell do
               >
                 <.glyph
                   name={:bell}
-                  class="size-5 text-slate-500 dark:text-navy-100"
+                  class="size-5 text-base-content/65"
                   stroke_width="1.5"
                 />
                 <span
@@ -1185,7 +1184,7 @@ defmodule LineaUI.Components.AppShell do
                 phx-mounted='[["ignore_attrs",{"attrs":["class","style"]}]]'
                 class="popper-root fixed top-0 left-0"
               >
-                <div class="popper-box mx-4 mt-1 flex max-h-[calc(100vh-6rem)] w-[calc(100vw-2rem)] flex-col rounded-lg border border-slate-150 bg-white shadow-soft dark:border-navy-800 dark:bg-navy-700 dark:shadow-soft-dark sm:m-0 sm:w-80">
+                <div class="popper-box mx-4 mt-1 flex max-h-[calc(100vh-6rem)] w-[calc(100vw-2rem)] flex-col rounded-lg border border-base-300 bg-base-100 shadow-soft dark:shadow-soft-dark sm:m-0 sm:w-80">
                   {render_slot(notifications)}
                 </div>
               </div>
@@ -1207,14 +1206,14 @@ defmodule LineaUI.Components.AppShell do
       id={@id <> "-mobile-search"}
       data-mobile-searchbar
       data-hide={hide_mobile_search(@id)}
-      class="mobile-searchbar fixed inset-0 z-[100] hidden flex-col bg-white dark:bg-navy-700"
+      class="mobile-searchbar fixed inset-0 z-[100] hidden flex-col bg-base-100"
     >
-      <div class="flex items-center space-x-2 bg-slate-100 px-3 pt-2 dark:bg-navy-800">
+      <div class="flex items-center space-x-2 bg-base-200 px-3 pt-2">
         <button
           type="button"
           aria-label="Close search"
           phx-click={hide_mobile_search(@id)}
-          class="mobile-searchbar-hide lo-btn -ml-1.5 size-7 shrink-0 rounded-full p-0 text-slate-600 hover:bg-slate-300/20 active:bg-slate-300/25 dark:text-navy-100 dark:hover:bg-navy-300/20 dark:active:bg-navy-300/25"
+          class="mobile-searchbar-hide lo-btn -ml-1.5 size-7 shrink-0 rounded-full p-0 text-base-content/75 hover:bg-base-300/20 active:bg-base-300/25"
         >
           <.glyph name={:chevron_left} class="size-5" stroke_width="1.5" />
         </button>
@@ -1223,7 +1222,7 @@ defmodule LineaUI.Components.AppShell do
           type="text"
           placeholder={@search_placeholder}
           aria-label={@search_placeholder}
-          class="mobile-searchbar-input form-input h-8 w-full bg-transparent placeholder-slate-400 dark:placeholder-navy-300"
+          class="mobile-searchbar-input form-input h-8 w-full bg-transparent placeholder-base-content/50"
           {@search_input}
         />
       </div>
@@ -1343,7 +1342,7 @@ defmodule LineaUI.Components.AppShell do
         phx-mounted='[["ignore_attrs",{"attrs":["class","style"]}]]'
         class="popper-root fixed top-0 left-0"
       >
-        <div class="popper-box max-h-[calc(100vh-120px)] overflow-y-auto rounded-md border border-slate-150 bg-white py-1.5 font-inter dark:border-navy-500 dark:bg-navy-700">
+        <div class="popper-box max-h-[calc(100vh-120px)] overflow-y-auto rounded-md border border-base-300 bg-base-100 py-1.5 font-inter">
           <ul :if={@item != []}>
             <li :for={item <- @item}>
               <.horizontal_nav_link active={item.active} {link_attrs(item)}>
@@ -1362,8 +1361,7 @@ defmodule LineaUI.Components.AppShell do
     do: "bg-primary/10 text-primary dark:bg-accent-light/10 dark:text-accent-light"
 
   defp menu_state(false),
-    do:
-      "text-slate-600 hover:bg-slate-300/20 hover:text-slate-800 active:bg-slate-300/25 dark:text-navy-200 dark:hover:bg-navy-300/20 dark:hover:text-navy-100 dark:active:bg-navy-300/25"
+    do: "text-base-content/75 hover:bg-base-300/20 hover:text-base-content active:bg-base-300/25"
 
   @doc """
   A link of a horizontal navigation box (inside `horizontal_nav_menu/1`). A click closes the box.
@@ -1392,7 +1390,7 @@ defmodule LineaUI.Components.AppShell do
       aria-current={@active && "page"}
       class={
         merge([
-          "flex h-8 items-center px-3 pr-8 font-medium tracking-wide outline-hidden transition-all hover:bg-slate-100 hover:text-slate-800 focus:bg-slate-100 focus:text-slate-800 dark:hover:bg-navy-600 dark:hover:text-navy-100 dark:focus:bg-navy-600 dark:focus:text-navy-100",
+          "flex h-8 items-center px-3 pr-8 font-medium tracking-wide outline-hidden transition-all hover:bg-base-200 hover:text-base-content focus:bg-base-200 focus:text-base-content",
           @active && "text-primary dark:text-accent-light",
           @class
         ])
@@ -1413,7 +1411,7 @@ defmodule LineaUI.Components.AppShell do
 
   def horizontal_nav_divider(assigns) do
     ~H"""
-    <div role="separator" class={merge(["my-1 h-px bg-slate-150 dark:bg-navy-500", @class])}></div>
+    <div role="separator" class={merge(["my-1 h-px bg-base-200", @class])}></div>
     """
   end
 
@@ -1485,7 +1483,7 @@ defmodule LineaUI.Components.AppShell do
         id={@id <> "-overlay"}
         data-drawer-overlay
         phx-mounted='[["ignore_attrs",{"attrs":["class"]}]]'
-        class="lo-drawer-overlay right-sidebar-overlay fixed inset-0 z-[150] hidden bg-slate-900/60"
+        class="lo-drawer-overlay right-sidebar-overlay fixed inset-0 z-[150] hidden bg-neutral/60"
       >
       </div>
       <div
@@ -1498,14 +1496,14 @@ defmodule LineaUI.Components.AppShell do
         phx-mounted='[["ignore_attrs",{"attrs":["class","aria-hidden"]}]]'
         class="lo-drawer-content right-sidebar-content fixed right-0 top-0 z-[151] hidden h-full w-full sm:w-80"
       >
-        <div class="relative flex h-full w-full flex-col bg-white dark:bg-navy-750">
+        <div class="relative flex h-full w-full flex-col bg-base-100">
           <div class="flex items-center justify-between py-2 px-4">
             <div class="flex min-w-0 items-center">{render_slot(@title)}</div>
             <button
               type="button"
               data-drawer-close
               aria-label="Close"
-              class="lo-btn -mr-1 size-6 rounded-full p-0 hover:bg-slate-300/20 focus:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25"
+              class="lo-btn -mr-1 size-6 rounded-full p-0 hover:bg-base-300/20 focus:bg-base-300/20 active:bg-base-300/25"
             >
               <.glyph name={:close} class="size-4" />
             </button>
@@ -1540,7 +1538,7 @@ defmodule LineaUI.Components.AppShell do
       class={merge([@icon_button, @class])}
       {@rest}
     >
-      <.glyph name={:apps} class="size-5.5 text-slate-500 dark:text-navy-100" stroke_width="1.5" />
+      <.glyph name={:apps} class="size-5.5 text-base-content/65" stroke_width="1.5" />
     </button>
     """
   end
@@ -1976,15 +1974,15 @@ defmodule LineaUI.Components.AppShell do
     <button type="button" class={merge(["rail-workspace", @class])} {@rest}>
       <span class="rail-workspace-avatar">{render_slot(@inner_block) || @initials}</span>
       <span class="rail-workspace-text">
-        <span class="block truncate text-[13px] font-medium text-slate-800 dark:text-navy-50">
+        <span class="block truncate text-[13px] font-medium text-base-content">
           {@name}
         </span>
-        <span :if={@subtitle} class="block truncate text-xs text-slate-400 dark:text-navy-300">
+        <span :if={@subtitle} class="block truncate text-xs text-base-content/50">
           {@subtitle}
         </span>
       </span>
       <svg
-        class="size-4 shrink-0 text-slate-400 dark:text-navy-300"
+        class="size-4 shrink-0 text-base-content/50"
         viewBox="0 0 24 24"
         fill="none"
         stroke="currentColor"
@@ -2023,8 +2021,8 @@ defmodule LineaUI.Components.AppShell do
     <div class={merge(["rail-user", @class])} {@rest}>
       {render_slot(@inner_block)}
       <span class="rail-label min-w-0">
-        <span class="block truncate text-sm font-medium text-slate-800 dark:text-navy-50">{@name}</span>
-        <span :if={@subtitle} class="block truncate text-xs text-slate-400 dark:text-navy-300">
+        <span class="block truncate text-sm font-medium text-base-content">{@name}</span>
+        <span :if={@subtitle} class="block truncate text-xs text-base-content/50">
           {@subtitle}
         </span>
       </span>
@@ -2124,7 +2122,7 @@ defmodule LineaUI.Components.AppShell do
       <.link
         :if={@back}
         navigate={@back}
-        class="flex w-fit items-center gap-1.5 text-[13px] text-slate-500 no-underline transition-colors hover:text-slate-800 dark:text-navy-200 dark:hover:text-navy-50"
+        class="flex w-fit items-center gap-1.5 text-[13px] text-base-content/65 no-underline transition-colors hover:text-base-content"
       >
         <.glyph name={:chevron_left} class="size-3.5" />{@back_label}
       </.link>
@@ -2136,12 +2134,12 @@ defmodule LineaUI.Components.AppShell do
         <nav
           :if={@crumb != []}
           aria-label="Breadcrumb"
-          class="flex min-h-8 min-w-0 flex-wrap items-center gap-2 rounded-(--pill) border border-slate-150 bg-white pr-3.5 pl-[13px] text-[13px] text-slate-500 dark:border-navy-600 dark:bg-navy-750 dark:text-navy-200"
+          class="flex min-h-8 min-w-0 flex-wrap items-center gap-2 rounded-(--pill) border border-base-300 bg-base-100 pr-3.5 pl-[13px] text-[13px] text-base-content/65"
         >
           <%= for {crumb, last} <- @crumbs do %>
             <.link
               :if={link?(crumb)}
-              class="transition-colors hover:text-slate-800 dark:hover:text-navy-50"
+              class="transition-colors hover:text-base-content"
               {link_attrs(crumb)}
             >
               {render_slot(crumb)}
@@ -2149,7 +2147,7 @@ defmodule LineaUI.Components.AppShell do
             <span
               :if={!link?(crumb)}
               aria-current={last && "page"}
-              class={last && "text-slate-800 dark:text-navy-50"}
+              class={last && "text-base-content"}
             >
               {render_slot(crumb)}
             </span>
@@ -2161,7 +2159,7 @@ defmodule LineaUI.Components.AppShell do
           <span
             :if={@clock}
             id={"#{@rest[:id] || "page-header-#{:erlang.phash2(@title)}"}-clock"}
-            class="hidden text-sm text-slate-400 sm:inline dark:text-navy-300"
+            class="hidden text-sm text-base-content/50 sm:inline"
             phx-hook="LineaUI.ShellClock"
             data-locale={@locale}
           ></span>
@@ -2196,7 +2194,7 @@ defmodule LineaUI.Components.AppShell do
             <h1
               :if={@title != ""}
               class={[
-                "mb-0 text-[34px] leading-10 font-semibold tracking-[-0.03em] text-slate-900 dark:text-navy-50",
+                "mb-0 text-[34px] leading-10 font-semibold tracking-[-0.03em] text-base-content",
                 if(@top or (@badge_position == "above" and @badge != []), do: "mt-1", else: "mt-0")
               ]}
             >
@@ -2208,7 +2206,7 @@ defmodule LineaUI.Components.AppShell do
             <p
               :if={@description}
               class={[
-                "text-[15px] leading-[22px] text-slate-500 dark:text-navy-300",
+                "text-[15px] leading-[22px] text-base-content/65",
                 !@top && "mt-1.5",
                 @badge_position == "inline" && "basis-full"
               ]}
@@ -2231,9 +2229,9 @@ defmodule LineaUI.Components.AppShell do
 
     ~H"""
     <div class={merge(["flex items-center space-x-4 py-5 lg:py-6", @class])} {@rest}>
-      <h2 class="text-xl font-medium text-slate-800 dark:text-navy-50 lg:text-2xl">{@title}</h2>
+      <h2 class="text-xl font-medium text-base-content lg:text-2xl">{@title}</h2>
       <div :if={@crumb != []} class="hidden h-full py-1 sm:flex">
-        <div class="h-full w-px bg-slate-300 dark:bg-navy-600"></div>
+        <div class="h-full w-px bg-base-300"></div>
       </div>
       <ul :if={@crumb != []} class="hidden flex-wrap items-center space-x-2 sm:flex">
         <li :for={{crumb, last} <- @crumbs} class={!last && "flex items-center space-x-2"}>
@@ -2335,7 +2333,7 @@ defmodule LineaUI.Components.AppShell do
         data-change-event={event_name(@on_change)}
         data-on-change={js_command(@on_change)}
         data-target={@target}
-        class="form-switch h-5 w-10 rounded-lg bg-slate-300 before:rounded-md before:bg-slate-50 checked:bg-slate-500 checked:before:bg-white dark:bg-navy-900 dark:before:bg-navy-300 dark:checked:bg-navy-400 dark:checked:before:bg-white"
+        class="form-switch h-5 w-10 rounded-lg bg-base-300 before:rounded-md before:bg-base-200 checked:bg-base-content/55 checked:before:bg-base-100 dark:checked:before:bg-white"
         {@rest}
       />
       <span :if={@inner_block != []}>{render_slot(@inner_block)}</span>

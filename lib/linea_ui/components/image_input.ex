@@ -72,8 +72,8 @@ defmodule LineaUI.Components.ImageInput do
         style={@value && "background-image: url('#{@value}')"}
         class={
           merge([
-            "relative block size-full cursor-pointer overflow-hidden border-2 bg-slate-100 bg-cover bg-center transition-colors dark:bg-navy-600",
-            "border-slate-200 group-data-[state=filled]/img:border-success dark:border-navy-450 dark:group-data-[state=filled]/img:border-success",
+            "relative block size-full cursor-pointer overflow-hidden border-2 bg-base-200 bg-cover bg-center transition-colors",
+            "border-base-300 group-data-[state=filled]/img:border-success dark:group-data-[state=filled]/img:border-success",
             @shape_class
           ])
         }
@@ -90,7 +90,7 @@ defmodule LineaUI.Components.ImageInput do
         data-remove
         aria-label={@remove_label}
         title={@remove_label}
-        class="absolute -end-1.5 -top-1.5 z-10 hidden size-5 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-600 shadow-xs outline-none hover:text-slate-950 focus-visible:ring-2 focus-visible:ring-primary/50 group-data-[state=filled]/img:flex dark:border-navy-450 dark:bg-navy-900 dark:text-navy-200"
+        class="absolute -end-1.5 -top-1.5 z-10 hidden size-5 items-center justify-center rounded-full border border-base-300 bg-base-100 text-base-content/75 shadow-xs outline-none hover:text-base-content focus-visible:ring-2 focus-visible:ring-primary/50 group-data-[state=filled]/img:flex"
       >
         <svg
           viewBox="0 0 24 24"

@@ -172,7 +172,7 @@ defmodule LineaUI.Components.SignaturePad do
           class={
             merge([
               @variant == "classic" &&
-                "relative w-full touch-none overflow-hidden rounded-lg border border-slate-300 bg-white select-none data-[mode=draw]:cursor-crosshair dark:border-navy-450 dark:bg-navy-700",
+                "relative w-full touch-none overflow-hidden rounded-lg border border-base-content/20 bg-base-100 select-none data-[mode=draw]:cursor-crosshair",
               @variant == "canvas" &&
                 "lu-sign relative w-full touch-none overflow-hidden select-none data-[mode=draw]:cursor-crosshair",
               @disabled && "pointer-events-none opacity-60",
@@ -182,11 +182,11 @@ defmodule LineaUI.Components.SignaturePad do
         >
           <span
             :if={@variant == "classic"}
-            class="pointer-events-none absolute inset-x-6 bottom-10.5 border-t border-dashed border-slate-300 dark:border-navy-450"
+            class="pointer-events-none absolute inset-x-6 bottom-10.5 border-t border-dashed border-base-content/20"
           ></span>
           <span
             :if={@variant == "classic"}
-            class="pointer-events-none absolute bottom-12 left-6 font-inter text-sm font-medium text-slate-400 dark:text-navy-300"
+            class="pointer-events-none absolute bottom-12 left-6 font-inter text-sm font-medium text-base-content/50"
           >
             ×
           </span>
@@ -210,12 +210,12 @@ defmodule LineaUI.Components.SignaturePad do
           />
           <span
             data-typed
-            class="pointer-events-none absolute bottom-11.5 left-11 text-4xl text-slate-800 italic dark:text-navy-50 [font-family:'Brush_Script_MT','Segoe_Script','Snell_Roundhand',cursive]"
+            class="pointer-events-none absolute bottom-11.5 left-11 text-4xl text-base-content italic [font-family:'Brush_Script_MT','Segoe_Script','Snell_Roundhand',cursive]"
           ></span>
           <span
             :if={@variant == "classic"}
             data-hint
-            class="pointer-events-none absolute inset-0 flex items-center justify-center text-xs-plus text-slate-400"
+            class="pointer-events-none absolute inset-0 flex items-center justify-center text-xs-plus text-base-content/50"
           >
             {@text.signature_hint}
           </span>

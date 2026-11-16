@@ -160,7 +160,7 @@ defmodule LineaUI.Components.TableComposableTest do
             <.table_cell colspan="2" rowspan="1" align="center" class="w-4">x</.table_cell>
           </tr>
         </.table_body>
-        <.table_foot class="bg-slate-50">
+        <.table_foot class="bg-base-200">
           <:cell colspan="2">Total</:cell>
           <:cell align="right">R$ 10,00</:cell>
           <tr id="extra">
@@ -173,7 +173,7 @@ defmodule LineaUI.Components.TableComposableTest do
     assert ["row"] = html |> find("#free th") |> LazyHTML.attribute("scope")
     assert ["2"] = html |> find("#free td") |> LazyHTML.attribute("colspan")
     assert "text-center" in classes(html, "#free td")
-    assert "bg-slate-50" in classes(html, "tfoot tr")
+    assert "bg-base-200" in classes(html, "tfoot tr")
 
     assert ["2"] =
              html |> find("tfoot tr:first-child td:first-child") |> LazyHTML.attribute("colspan")
@@ -202,7 +202,7 @@ defmodule LineaUI.Components.TableComposableTest do
             <:cell>A</:cell>
             <:cell><.table_expand_toggle row_id="o1" /></:cell>
           </.table_row>
-          <.table_detail_row row_id="o1" class="bg-slate-50">Notes</.table_detail_row>
+          <.table_detail_row row_id="o1" class="bg-base-200">Notes</.table_detail_row>
           <.table_row id="o2">
             <:cell><.table_expand_toggle row_id="o2" open /></:cell>
           </.table_row>
@@ -217,7 +217,7 @@ defmodule LineaUI.Components.TableComposableTest do
     assert toggle =~ "#o1-detail"
     assert ["100"] = html |> find("#o1-detail-row td") |> LazyHTML.attribute("colspan")
     assert "hidden" in classes(html, "#o1-detail")
-    assert "bg-slate-50" in classes(html, "#o1-detail")
+    assert "bg-base-200" in classes(html, "#o1-detail")
     refute "hidden" in classes(html, "#o2-detail")
     assert ["true"] = html |> find("#o2 button") |> LazyHTML.attribute("aria-expanded")
     assert "rotate-180" in classes(html, "#o2 svg")

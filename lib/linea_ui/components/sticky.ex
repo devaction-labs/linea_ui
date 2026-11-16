@@ -2,7 +2,7 @@ defmodule LineaUI.Components.Sticky do
   @moduledoc """
   A block that sticks to the top of the page and takes classes while the page is scrolled: a header that gets an edge, a bar that gets a shadow.
 
-      <.sticky id="page-bar" stuck_class="border-b border-slate-200 shadow-xs">
+      <.sticky id="page-bar" stuck_class="border-b border-base-300 shadow-xs">
         …
       </.sticky>
 
@@ -24,7 +24,7 @@ defmodule LineaUI.Components.Sticky do
     doc: "How many pixels the page scrolls before the block counts as stuck."
 
   attr :stuck_class, :string,
-    default: "border-b border-slate-200 dark:border-navy-450",
+    default: "border-b border-base-300",
     doc: "Classes added while stuck."
 
   attr :class, :any, default: nil

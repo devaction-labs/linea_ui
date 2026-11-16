@@ -35,7 +35,7 @@ defmodule LineaUI.Components.ChoiceTest do
       assert "rounded-[var(--pill-in,8px)]" in label
       assert "has-checked:bg-primary" in label
       assert "dark:has-checked:bg-accent" in label
-      assert "dark:bg-navy-900" in label
+      assert "bg-base-100" in label
 
       assert html |> find("label") |> Enum.map(&LazyHTML.text/1) |> Enum.map(&String.split/1) == [
                ["Todos", "128"],
@@ -90,7 +90,7 @@ defmodule LineaUI.Components.ChoiceTest do
                |> Enum.to_list()
 
       assert "sr-only" in classes(html, "input[type=checkbox]")
-      assert "has-checked:bg-slate-700" in classes(html, "label")
+      assert "has-checked:bg-base-content/80" in classes(html, "label")
     end
 
     test "cards with descriptions" do
@@ -197,8 +197,7 @@ defmodule LineaUI.Components.ChoiceTest do
     end
 
     test "pt_BR: names, dd/mm/aaaa and até" do
-      html =
-        render(~H|<.date_picker
+      html = render(~H|<.date_picker
   id="p"
   name="p"
   mode="range"

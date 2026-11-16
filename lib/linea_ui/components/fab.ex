@@ -84,10 +84,9 @@ defmodule LineaUI.Components.Fab do
       label: "text-white"
     },
     "light" => %{
-      root:
-        "bg-white text-slate-800 ring-1 ring-slate-200 dark:bg-navy-700 dark:text-navy-50 dark:ring-navy-500",
-      tile: "bg-slate-100 text-slate-600 dark:bg-navy-500 dark:text-navy-100",
-      label: "text-slate-800 dark:text-navy-50"
+      root: "bg-base-100 text-base-content ring-1 ring-base-300",
+      tile: "bg-base-200 text-base-content/75",
+      label: "text-base-content"
     }
   }
 
@@ -449,7 +448,7 @@ defmodule LineaUI.Components.Fab do
       {@action.label}
     </span>
     <span
-      class="linea-fab-dial-mini flex size-10 shrink-0 items-center justify-center rounded-full bg-white text-primary ring-1 ring-slate-200 shadow-[0_6px_14px_-4px_rgba(25,33,50,.3)] transition-colors hover:bg-primary/10 dark:bg-navy-700 dark:text-accent-light dark:ring-navy-500 dark:hover:bg-navy-600"
+      class="linea-fab-dial-mini flex size-10 shrink-0 items-center justify-center rounded-full bg-base-100 text-primary ring-1 ring-base-300 shadow-[0_6px_14px_-4px_rgba(25,33,50,.3)] transition-colors hover:bg-primary/10 dark:text-accent-light dark:hover:bg-navy-600"
       aria-hidden="true"
     >
       {render_slot(@action)}

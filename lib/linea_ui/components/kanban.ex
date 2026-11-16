@@ -103,8 +103,8 @@ defmodule LineaUI.Components.Kanban do
 
   @colors %{
     "neutral" => %{
-      tile: "bg-slate-500/[.13] text-slate-500 dark:bg-navy-200/[.13] dark:text-navy-200",
-      bar: "bg-slate-500 dark:bg-navy-200"
+      tile: "bg-slate-500/[.13] text-base-content/65 dark:bg-navy-200/[.13]",
+      bar: "bg-base-content/55"
     },
     "info" => %{
       tile: "bg-info-focus/[.13] text-info-focus dark:bg-info/[.13] dark:text-info",
@@ -128,15 +128,15 @@ defmodule LineaUI.Components.Kanban do
     }
   }
 
-  @card "group relative flex cursor-grab flex-col gap-2.5 rounded-[14px] bg-white p-3.5 shadow-[0_0_0_1px_var(--color-slate-150),0_1px_2px_rgb(23_23_26/0.05)] transition-shadow hover:shadow-[0_0_0_1px_var(--color-slate-300),0_8px_20px_-10px_rgb(16_24_64/0.3)] active:cursor-grabbing focus-within:outline-2 focus-within:outline-offset-1 focus-within:outline-primary/50 dark:focus-within:outline-accent/50 data-[dragging]:shadow-none dark:bg-navy-700 dark:shadow-[0_0_0_1px_var(--color-navy-500)] dark:hover:shadow-[0_0_0_1px_var(--color-navy-450)]"
+  @card "group relative flex cursor-grab flex-col gap-2.5 rounded-[14px] bg-base-100 p-3.5 shadow-[0_0_0_1px_var(--color-slate-150),0_1px_2px_rgb(23_23_26/0.05)] transition-shadow hover:shadow-[0_0_0_1px_var(--color-slate-300),0_8px_20px_-10px_rgb(16_24_64/0.3)] active:cursor-grabbing focus-within:outline-2 focus-within:outline-offset-1 focus-within:outline-primary/50 dark:focus-within:outline-accent/50 data-[dragging]:shadow-none dark:shadow-[0_0_0_1px_var(--color-navy-500)] dark:hover:shadow-[0_0_0_1px_var(--color-navy-450)]"
 
   @risk "!shadow-[0_0_0_1px_color-mix(in_oklab,var(--color-warning)_55%,var(--color-slate-200)),0_1px_2px_rgb(0_0_0/0.05)] dark:!shadow-[0_0_0_1px_color-mix(in_oklab,var(--color-warning)_55%,var(--color-navy-500))]"
 
-  @lost "flex w-[52px] flex-none flex-col items-center gap-2.5 self-stretch rounded-[14px] bg-slate-50 py-3 text-slate-500 ring-1 ring-slate-150 ring-inset data-[over]:bg-primary/10 dark:bg-navy-900 dark:text-navy-200 dark:ring-navy-500 dark:data-[over]:bg-accent/[.18]"
+  @lost "flex w-[52px] flex-none flex-col items-center gap-2.5 self-stretch rounded-[14px] bg-base-200 py-3 text-base-content/65 ring-1 ring-base-300 ring-inset data-[over]:bg-primary/10 dark:data-[over]:bg-accent/[.18]"
 
   @over_limit "bg-error-focus/10 text-error-focus ring-error-focus/50 dark:bg-error/10 dark:text-error dark:ring-error/50"
 
-  @pill "inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-white px-1.5 font-mono text-[11px]/none font-semibold ring-1 ring-slate-200 dark:bg-navy-700 dark:ring-navy-500"
+  @pill "inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-base-100 px-1.5 font-mono text-[11px]/none font-semibold ring-1 ring-base-300"
 
   @doc """
   Renders the board: a row of columns that scrolls sideways, and the drag and drop between them.
@@ -350,7 +350,7 @@ defmodule LineaUI.Components.Kanban do
         >
           {render_slot(@icon)}
         </span>
-        <span class="text-[13.5px] font-[550] text-slate-900 dark:text-navy-50">{@label}</span>
+        <span class="text-[13.5px] font-[550] text-base-content">{@label}</span>
         <span :if={@shown && !@exceeded} class="sg-nav-n">{@shown}</span>
         <span :if={@shown && @exceeded} class={merge([@pill, "ml-auto", @over_limit_class])}>
           {@shown}
@@ -359,11 +359,11 @@ defmodule LineaUI.Components.Kanban do
       </div>
       <div :if={@meta || @total} class="font-inter flex items-center justify-between px-0.5 text-xs">
         <span>{@meta}</span>
-        <b class="font-semibold text-slate-800 tabular-nums dark:text-navy-50">{@total}</b>
+        <b class="font-semibold text-base-content tabular-nums">{@total}</b>
       </div>
       <div
         :if={@width}
-        class="mx-0.5 h-1 overflow-hidden rounded-full bg-slate-200 dark:bg-navy-500"
+        class="mx-0.5 h-1 overflow-hidden rounded-full bg-base-300"
         aria-hidden="true"
       >
         <span
@@ -392,11 +392,11 @@ defmodule LineaUI.Components.Kanban do
         <.icon
           :if={empty[:icon]}
           name={empty[:icon]}
-          class="mb-2 size-10 text-slate-300 dark:text-navy-450"
+          class="mb-2 size-10 text-base-content/35"
         />
         <.empty_box :if={!empty[:icon]} class="mb-2 h-28" />
-        <b class="text-[14.5px] font-semibold text-slate-600 dark:text-navy-100">{empty[:title]}</b>
-        <span class="font-inter text-[13px]/[18px] text-slate-500 dark:text-navy-200">
+        <b class="text-[14.5px] font-semibold text-base-content/75">{empty[:title]}</b>
+        <span class="font-inter text-[13px]/[18px] text-base-content/65">
           {render_slot(empty)}
         </span>
       </div>
@@ -419,7 +419,7 @@ defmodule LineaUI.Components.Kanban do
   drag handle that shows on hover.
 
       <.kanban_card id="order-2462" item="2462" risk>
-        <span class="font-mono text-xs text-slate-400">#2462</span>
+        <span class="font-mono text-xs text-base-content/50">#2462</span>
         <a href="#" class="font-semibold">Hospital Santa Clara</a>
         <.button size="sm" variant="flat" icon phx-click="advance" phx-value-id="2462" aria-label="Move on">
           <.icon name="huge-arrow-right-02" class="size-4" />
@@ -474,7 +474,7 @@ defmodule LineaUI.Components.Kanban do
         :if={@grip}
         data-grip
         aria-hidden="true"
-        class="pointer-events-none absolute top-3 right-3 grid grid-cols-[repeat(2,3px)] gap-x-[3px] gap-y-0.5 p-[3px] text-slate-500 opacity-0 transition-opacity group-focus-within:opacity-90 group-hover:opacity-90 motion-reduce:transition-none dark:text-navy-200"
+        class="pointer-events-none absolute top-3 right-3 grid grid-cols-[repeat(2,3px)] gap-x-[3px] gap-y-0.5 p-[3px] text-base-content/65 opacity-0 transition-opacity group-focus-within:opacity-90 group-hover:opacity-90 motion-reduce:transition-none"
       >
         <i :for={_ <- 1..6} class="block size-[3px] rounded-full bg-current"></i>
       </span>

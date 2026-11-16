@@ -114,8 +114,7 @@ defmodule LineaUI.Components.DatetimePickerTest do
   end
 
   test "a range submits name[] twice behind an empty one and shows both ends" do
-    html =
-      render(~H|<.datetime_picker
+    html = render(~H|<.datetime_picker
   id="r"
   name="shift"
   mode="range"
@@ -140,8 +139,7 @@ defmodule LineaUI.Components.DatetimePickerTest do
 
     assert data(html, "#r-display", "value") == [""]
 
-    html =
-      render(~H|<.datetime_picker
+    html = render(~H|<.datetime_picker
   id="r"
   name="s"
   mode="range"
@@ -153,8 +151,7 @@ defmodule LineaUI.Components.DatetimePickerTest do
   end
 
   test "start_name and end_name submit the ends as two fields" do
-    html =
-      render(~H|<.datetime_picker
+    html = render(~H|<.datetime_picker
   id="r"
   start_name="from"
   end_name="to"
@@ -217,8 +214,7 @@ defmodule LineaUI.Components.DatetimePickerTest do
   end
 
   test "interval, time, restrictions and the week are handed to the hook" do
-    html =
-      render(~H|<.datetime_picker
+    html = render(~H|<.datetime_picker
   id="d"
   name="at"
   interval={15}
@@ -247,8 +243,7 @@ defmodule LineaUI.Components.DatetimePickerTest do
   end
 
   test "unavailable takes a list of dates, date-times and time ranges" do
-    html =
-      render(~H|<.datetime_picker
+    html = render(~H|<.datetime_picker
   id="d"
   name="at"
   unavailable={[
@@ -277,7 +272,7 @@ defmodule LineaUI.Components.DatetimePickerTest do
     html =
       render(~H|<.datetime_picker id="d" name="at" variant="filled" size="lg" class="w-64" />|)
 
-    assert "bg-slate-150" in classes(html, "#d-display")
+    assert "bg-base-200" in classes(html, "#d-display")
     assert "h-12" in classes(html, "#d-display")
     assert "w-64" in classes(html, "#d-display")
 

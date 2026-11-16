@@ -211,7 +211,7 @@ defmodule LineaUI.Components.Segmented do
   @spec track(boolean()) :: String.t()
   def track(full \\ false) do
     merge([
-      "gap-0.5 rounded-lg bg-slate-150 p-0.75 dark:bg-navy-800",
+      "gap-0.5 rounded-lg bg-base-200 p-0.75",
       full && "flex w-full",
       !full && "inline-flex"
     ])

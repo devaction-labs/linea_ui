@@ -63,7 +63,7 @@ defmodule LineaUI.Components.Calendar do
   alias LineaUI.Components.Strings
 
   @colors %{
-    "neutral" => "bg-slate-150/60 text-slate-700 dark:bg-navy-500/40 dark:text-navy-100",
+    "neutral" => "bg-base-200/60 text-base-content/85",
     "primary" => "bg-primary/10 text-primary dark:bg-accent-light/15 dark:text-accent-light",
     "secondary" =>
       "bg-secondary/10 text-secondary dark:bg-secondary-light/15 dark:text-secondary-light",
@@ -74,7 +74,7 @@ defmodule LineaUI.Components.Calendar do
   }
 
   @solid %{
-    "neutral" => "bg-slate-400 dark:bg-navy-300",
+    "neutral" => "bg-base-content/40",
     "primary" => "bg-primary dark:bg-accent-light",
     "secondary" => "bg-secondary dark:bg-secondary-light",
     "info" => "bg-info",
@@ -85,8 +85,8 @@ defmodule LineaUI.Components.Calendar do
 
   @today_column "bg-[color-mix(in_oklab,var(--color-primary)_5%,white)] dark:bg-[color-mix(in_oklab,var(--color-accent)_6%,var(--color-navy-700))]"
 
-  @cell "relative border-t border-l border-slate-300 bg-white outline-hidden first:border-l-0 focus-visible:z-10 focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:ring-inset dark:border-navy-450 dark:bg-navy-700 dark:focus-visible:ring-accent/60"
-  @head "bg-slate-200 px-2.5 py-2 font-inter text-tiny-plus font-semibold tracking-wider text-slate-500 uppercase dark:bg-navy-800 dark:text-navy-200"
+  @cell "relative border-t border-l border-base-content/20 bg-base-100 outline-hidden first:border-l-0 focus-visible:z-10 focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:ring-inset dark:focus-visible:ring-accent/60"
+  @head "bg-base-300 px-2.5 py-2 font-inter text-tiny-plus font-semibold tracking-wider text-base-content/65 uppercase"
   @chip "block w-full truncate rounded px-1.5 py-0.5 text-left font-inter text-tiny-plus font-medium"
   @chip_button "outline-hidden transition-opacity hover:opacity-80 focus-visible:ring-2 focus-visible:ring-primary/60 dark:focus-visible:ring-accent/60"
 
@@ -619,7 +619,7 @@ defmodule LineaUI.Components.Calendar do
           <h2
             id={@label_id}
             aria-live="polite"
-            class="text-base font-medium text-slate-700 dark:text-navy-100"
+            class="text-base font-medium text-base-content/85"
           >
             {@title}
           </h2>
@@ -691,7 +691,7 @@ defmodule LineaUI.Components.Calendar do
         role="grid"
         aria-labelledby={@header && @label_id}
         aria-label={!@header && @title}
-        class="overflow-hidden rounded-lg border border-slate-300 dark:border-navy-450"
+        class="overflow-hidden rounded-lg border border-base-content/20"
       >
         <div role="row" class="grid grid-cols-7">
           <div :for={name <- @short_weekdays} role="columnheader" class={@head}>{name}</div>
@@ -711,16 +711,16 @@ defmodule LineaUI.Components.Calendar do
               merge([
                 @cell,
                 "flex min-h-28 min-w-0 flex-col gap-1 px-1.5 pt-1.5 pb-2",
-                cell.out? && "bg-slate-50 dark:bg-navy-750",
-                @on_select && "cursor-pointer hover:bg-slate-100 dark:hover:bg-navy-600"
+                cell.out? && "bg-base-200",
+                @on_select && "cursor-pointer hover:bg-base-200"
               ])
             }
           >
             <span class={[
               "inline-flex h-6 min-w-6 items-center justify-center self-start rounded-full px-1 font-inter text-xs font-medium",
               (cell.today? && "bg-primary text-white dark:bg-accent") ||
-                (cell.out? && "text-slate-400 dark:text-navy-300") ||
-                "text-slate-600 dark:text-navy-100",
+                (cell.out? && "text-base-content/50") ||
+                "text-base-content/75",
               cell.selected? && "ring-[1.5px] ring-primary ring-inset dark:ring-accent-light"
             ]}>
               {cell.day}
@@ -737,7 +737,7 @@ defmodule LineaUI.Components.Calendar do
               tabindex="-1"
               aria-label={Strings.fill(@text.calendar_more_label, %{count: cell.more})}
               phx-click={push_js(@on_select, @id, @target, %{date: cell.iso})}
-              class="w-full truncate rounded px-1.5 py-0.5 text-left font-inter text-tiny-plus font-medium text-slate-500 outline-hidden hover:bg-slate-150/60 dark:text-navy-200 dark:hover:bg-navy-500/40"
+              class="w-full truncate rounded px-1.5 py-0.5 text-left font-inter text-tiny-plus font-medium text-base-content/65 outline-hidden hover:bg-base-200/60"
             >
               {Strings.fill(@text.calendar_more, %{count: cell.more})}
             </button>
@@ -750,7 +750,7 @@ defmodule LineaUI.Components.Calendar do
         role="grid"
         aria-labelledby={@header && @label_id}
         aria-label={!@header && @title}
-        class="overflow-x-auto rounded-lg border border-slate-300 dark:border-navy-450"
+        class="overflow-x-auto rounded-lg border border-base-content/20"
       >
         <div role="row" class="grid" style={@grid_style}>
           <div role="columnheader" class={@head}></div>
@@ -766,7 +766,7 @@ defmodule LineaUI.Components.Calendar do
         <div :if={@all_day} role="row" class="grid" style={@grid_style}>
           <div
             role="rowheader"
-            class="border-t border-slate-300 px-1.5 py-2 text-right font-inter text-[10.5px] whitespace-nowrap text-slate-400 dark:border-navy-450 dark:text-navy-300"
+            class="border-t border-base-content/20 px-1.5 py-2 text-right font-inter text-[10.5px] whitespace-nowrap text-base-content/50"
           >
             {@text.calendar_all_day}
           </div>
@@ -790,7 +790,7 @@ defmodule LineaUI.Components.Calendar do
         <div :for={row <- @rows} role="row" class="grid" style={@grid_style}>
           <div
             role="rowheader"
-            class="h-11 border-t border-slate-300 px-1.5 py-1.5 text-right font-inter text-[10.5px] whitespace-nowrap text-slate-400 dark:border-navy-450 dark:text-navy-300"
+            class="h-11 border-t border-base-content/20 px-1.5 py-1.5 text-right font-inter text-[10.5px] whitespace-nowrap text-base-content/50"
           >
             {row.label}
           </div>
@@ -831,7 +831,7 @@ defmodule LineaUI.Components.Calendar do
 
       <ul
         :if={@legend != []}
-        class="mt-4 flex flex-wrap gap-4 font-inter text-xs font-medium text-slate-500 dark:text-navy-200"
+        class="mt-4 flex flex-wrap gap-4 font-inter text-xs font-medium text-base-content/65"
       >
         <li :for={{label, color} <- @legend} class="inline-flex items-center gap-1.5">
           <span class={

@@ -41,18 +41,25 @@ defmodule LineaUI.Installer.InstallTest do
       """)
     end
 
-    test "keeps daisyUI and warns that it can conflict" do
+    test "keeps daisyUI, which the components need, without a warning" do
       igniter = install(project())
 
       assert content(igniter, "assets/css/app.css") =~ "daisyui"
-      assert_has_warning(igniter, &(&1 =~ "daisyUI" and &1 =~ "--replace-daisyui"))
+      refute Enum.any?(igniter.warnings, &(&1 =~ "daisyUI"))
     end
 
-    test "--replace-daisyui removes the daisyUI and heroicons plugins and does not warn" do
+    test "warns when the stylesheet does not load daisyUI" do
+      igniter = install(project(%{"assets/css/app.css" => ~s|@import "tailwindcss";\n|}))
+
+      assert_has_warning(igniter, &(&1 =~ "daisyUI" and &1 =~ ~s|@plugin "daisyui"|))
+    end
+
+    test "--replace-daisyui removes Phoenix's daisyUI themes and heroicons, keeping daisyUI" do
       igniter = install(project(), ["--replace-daisyui"])
       css = content(igniter, "assets/css/app.css")
 
-      refute css =~ "daisyui"
+      assert css =~ ~s|@plugin "daisyui/packages/bundle/daisyui"|
+      refute css =~ "daisyui-theme"
       refute css =~ "heroicons"
       assert css =~ "linea_ui.css"
       refute Enum.any?(igniter.warnings, &(&1 =~ "daisyUI"))

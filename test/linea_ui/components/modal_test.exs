@@ -52,7 +52,7 @@ defmodule LineaUI.Components.ModalTest do
 
     backdrop = classes(html, "#m [data-backdrop]")
     assert "bg-black/30" in backdrop
-    refute "bg-slate-900/60" in backdrop
+    refute "bg-neutral/60" in backdrop
   end
 
   test "the bar header carries the title and the close button; the footer and body follow" do
@@ -110,7 +110,7 @@ defmodule LineaUI.Components.ModalTest do
     assert ["absolute", "z-10", "bg-base-100/80", "backdrop-blur-sm"] --
              classes(html, "#b-panel > button") == []
 
-    refute "hover:bg-slate-300/20" in classes(html, "#b-panel > button")
+    refute "hover:bg-base-300/20" in classes(html, "#b-panel > button")
   end
 
   test "a title gives the modal a sheet's header, body and footer" do

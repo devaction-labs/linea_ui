@@ -51,31 +51,27 @@ defmodule LineaUI.Components.DataTable do
   }
 
   @pager_li %{
-    "rounded" =>
-      {"rounded-l-lg bg-slate-150 dark:bg-navy-500", "bg-slate-150 dark:bg-navy-500",
-       "rounded-r-lg bg-slate-150 dark:bg-navy-500"},
-    "pill" =>
-      {"rounded-l-full bg-slate-150 dark:bg-navy-500", "bg-slate-150 dark:bg-navy-500",
-       "rounded-r-full bg-slate-150 dark:bg-navy-500"},
+    "rounded" => {"rounded-l-lg bg-base-200", "bg-base-200", "rounded-r-lg bg-base-200"},
+    "pill" => {"rounded-l-full bg-base-200", "bg-base-200", "rounded-r-full bg-base-200"},
     "circle" => {"", "", ""}
   }
 
   @pager_arrow %{
     "rounded" =>
-      "flex size-8 items-center justify-center rounded-lg text-slate-500 transition-colors hover:bg-slate-300 focus:bg-slate-300 active:bg-slate-300/80 disabled:pointer-events-none disabled:opacity-60 aria-disabled:pointer-events-none aria-disabled:opacity-60 dark:text-navy-200 dark:hover:bg-navy-450 dark:focus:bg-navy-450 dark:active:bg-navy-450/90",
+      "flex size-8 items-center justify-center rounded-lg text-base-content/65 transition-colors hover:bg-base-300 focus:bg-base-300 active:bg-base-300/80 disabled:pointer-events-none disabled:opacity-60 aria-disabled:pointer-events-none aria-disabled:opacity-60",
     "pill" =>
-      "flex size-8 items-center justify-center rounded-full text-slate-500 transition-colors hover:bg-slate-300 focus:bg-slate-300 active:bg-slate-300/80 disabled:pointer-events-none disabled:opacity-60 aria-disabled:pointer-events-none aria-disabled:opacity-60 dark:text-navy-200 dark:hover:bg-navy-450 dark:focus:bg-navy-450 dark:active:bg-navy-450/90",
+      "flex size-8 items-center justify-center rounded-full text-base-content/65 transition-colors hover:bg-base-300 focus:bg-base-300 active:bg-base-300/80 disabled:pointer-events-none disabled:opacity-60 aria-disabled:pointer-events-none aria-disabled:opacity-60",
     "circle" =>
-      "flex size-8 items-center justify-center rounded-full bg-slate-150 text-slate-500 transition-colors hover:bg-slate-300 focus:bg-slate-300 active:bg-slate-300/80 disabled:pointer-events-none disabled:opacity-60 aria-disabled:pointer-events-none aria-disabled:opacity-60 dark:bg-navy-500 dark:text-navy-200 dark:hover:bg-navy-450 dark:focus:bg-navy-450 dark:active:bg-navy-450/90"
+      "flex size-8 items-center justify-center rounded-full bg-base-200 text-base-content/65 transition-colors hover:bg-base-300 focus:bg-base-300 active:bg-base-300/80 disabled:pointer-events-none disabled:opacity-60 aria-disabled:pointer-events-none aria-disabled:opacity-60"
   }
 
   @pager_page %{
     "rounded" =>
-      "flex h-8 min-w-[2rem] items-center justify-center rounded-lg px-2.5 text-[13px] leading-tight focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-primary/55 dark:focus-visible:outline-accent/55 transition-colors hover:bg-slate-300 focus:bg-slate-300 active:bg-slate-300/80 dark:hover:bg-navy-450 dark:focus:bg-navy-450 dark:active:bg-navy-450/90",
+      "flex h-8 min-w-[2rem] items-center justify-center rounded-lg px-2.5 text-[13px] leading-tight focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-primary/55 dark:focus-visible:outline-accent/55 transition-colors hover:bg-base-300 focus:bg-base-300 active:bg-base-300/80",
     "pill" =>
-      "flex h-8 min-w-[2rem] items-center justify-center rounded-full px-2.5 text-[13px] leading-tight focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-primary/55 dark:focus-visible:outline-accent/55 transition-colors hover:bg-slate-300 focus:bg-slate-300 active:bg-slate-300/80 dark:hover:bg-navy-450 dark:focus:bg-navy-450 dark:active:bg-navy-450/90",
+      "flex h-8 min-w-[2rem] items-center justify-center rounded-full px-2.5 text-[13px] leading-tight focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-primary/55 dark:focus-visible:outline-accent/55 transition-colors hover:bg-base-300 focus:bg-base-300 active:bg-base-300/80",
     "circle" =>
-      "flex h-8 min-w-[2rem] items-center justify-center rounded-full bg-slate-150 px-2.5 text-[13px] leading-tight focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-primary/55 dark:focus-visible:outline-accent/55 transition-colors hover:bg-slate-300 focus:bg-slate-300 active:bg-slate-300/80 dark:bg-navy-500 dark:hover:bg-navy-450 dark:focus:bg-navy-450 dark:active:bg-navy-450/90"
+      "flex h-8 min-w-[2rem] items-center justify-center rounded-full bg-base-200 px-2.5 text-[13px] leading-tight focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-primary/55 dark:focus-visible:outline-accent/55 transition-colors hover:bg-base-300 focus:bg-base-300 active:bg-base-300/80"
   }
 
   @pager_current %{
@@ -87,13 +83,13 @@ defmodule LineaUI.Components.DataTable do
       "flex h-8 min-w-[2rem] items-center justify-center rounded-full bg-primary px-2.5 text-[13px] leading-tight focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-primary/55 dark:focus-visible:outline-accent/55 text-white transition-colors hover:bg-primary-focus focus:bg-primary-focus active:bg-primary-focus/90 dark:bg-accent dark:hover:bg-accent-focus dark:focus:bg-accent-focus dark:active:bg-accent/90"
   }
 
-  @grid_button "flex h-8 min-w-[2rem] items-center justify-center rounded-full bg-slate-150 px-2.5 text-[13px] leading-tight focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-primary/55 dark:focus-visible:outline-accent/55 transition-colors hover:bg-slate-300 focus:bg-slate-300 disabled:pointer-events-none disabled:opacity-60 aria-disabled:pointer-events-none aria-disabled:opacity-60 dark:bg-navy-500 dark:hover:bg-navy-450 dark:focus:bg-navy-450"
+  @grid_button "flex h-8 min-w-[2rem] items-center justify-center rounded-full bg-base-200 px-2.5 text-[13px] leading-tight focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-primary/55 dark:focus-visible:outline-accent/55 transition-colors hover:bg-base-300 focus:bg-base-300 disabled:pointer-events-none disabled:opacity-60 aria-disabled:pointer-events-none aria-disabled:opacity-60"
 
   @grid_current "flex h-8 min-w-[2rem] items-center justify-center rounded-full bg-primary px-2.5 text-[13px] leading-tight focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-primary/55 dark:focus-visible:outline-accent/55 text-white transition-colors dark:bg-accent"
 
-  @numbers "[&_b]:font-semibold [&_b]:text-slate-700 dark:[&_b]:text-navy-50"
+  @numbers "[&_b]:font-semibold [&_b]:text-base-content/85"
 
-  @icon_button "lo-btn size-8 rounded-full p-0 hover:bg-slate-300/20 focus:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25"
+  @icon_button "lo-btn size-8 rounded-full p-0 hover:bg-base-300/20 focus:bg-base-300/20 active:bg-base-300/25"
 
   @doc """
   Renders a data table. The LiveView passes the rows of the current page and handles the
@@ -395,7 +391,7 @@ defmodule LineaUI.Components.DataTable do
         phx-submit={@on_search}
         phx-target={@target}
       >
-        <label class="flex h-9 w-full max-w-[300px] items-center gap-2 rounded-full border-0 bg-white px-3 text-slate-400 shadow-[inset_0_0_0_1px_var(--color-slate-300),0_1px_2px_rgb(23_23_26/.05)] focus-within:shadow-[inset_0_0_0_1px_var(--color-primary),0_0_0_4px_color-mix(in_oklab,var(--color-primary)_14%,transparent)] dark:bg-navy-700 dark:shadow-[inset_0_0_0_1px_var(--color-navy-450)] dark:focus-within:shadow-[inset_0_0_0_1px_var(--color-accent)]">
+        <label class="flex h-9 w-full max-w-[300px] items-center gap-2 rounded-full border-0 bg-base-100 px-3 text-base-content/50 shadow-[inset_0_0_0_1px_var(--color-slate-300),0_1px_2px_rgb(23_23_26/.05)] focus-within:shadow-[inset_0_0_0_1px_var(--color-primary),0_0_0_4px_color-mix(in_oklab,var(--color-primary)_14%,transparent)] dark:shadow-[inset_0_0_0_1px_var(--color-navy-450)] dark:focus-within:shadow-[inset_0_0_0_1px_var(--color-accent)]">
           <.glyph name={:search} class="size-4 shrink-0" stroke_width="1.5" />
           <input
             type="search"
@@ -405,7 +401,7 @@ defmodule LineaUI.Components.DataTable do
             aria-label={@search_placeholder || "Type a keyword..."}
             autocomplete="off"
             phx-debounce="300"
-            class="min-w-0 flex-1 appearance-none border-0 bg-transparent p-0 font-medium text-slate-700 outline-hidden placeholder:font-normal placeholder:text-slate-500 focus:ring-0 dark:text-navy-100"
+            class="min-w-0 flex-1 appearance-none border-0 bg-transparent p-0 font-medium text-base-content/85 outline-hidden placeholder:font-normal placeholder:text-base-content/65 focus:ring-0"
           />
         </label>
       </form>
@@ -450,13 +446,13 @@ defmodule LineaUI.Components.DataTable do
       />
       <div
         :if={@paginated}
-        class="flex flex-col justify-between gap-3.5 px-4 py-3.5 text-[12.5px] text-slate-500 sm:flex-row sm:items-center sm:px-0 dark:text-navy-200"
+        class="flex flex-col justify-between gap-3.5 px-4 py-3.5 text-[12.5px] text-base-content/65 sm:flex-row sm:items-center sm:px-0"
       >
         <div role="status" aria-live="polite" class={@numbers}>
           <span :if={@summary == []}>{grid_summary(@summary_label, @range)}</span>
           {render_slot(@summary, @range)}
         </div>
-        <div class="flex flex-wrap gap-1 text-slate-600 dark:text-slate-300">
+        <div class="flex flex-wrap gap-1 text-base-content/75 dark:text-slate-300">
           <.pager_link
             on_page={@on_page}
             page_path={@page_path}
@@ -517,7 +513,7 @@ defmodule LineaUI.Components.DataTable do
       {@rest}
     >
       <div :if={@title_bar} class="flex items-center justify-between">
-        <h2 class="line-clamp-1 text-base font-semibold tracking-[-0.01em] text-slate-900 dark:text-navy-50">
+        <h2 class="line-clamp-1 text-base font-semibold tracking-[-0.01em] text-base-content">
           {render_slot(@title)}
         </h2>
         <div class="flex">
@@ -621,7 +617,7 @@ defmodule LineaUI.Components.DataTable do
         </div>
         <div
           :if={@paginated and @pager != "canvas"}
-          class="flex flex-col justify-between gap-3.5 px-[18px] py-3.5 text-[12.5px] text-slate-500 sm:flex-row sm:items-center dark:text-navy-200"
+          class="flex flex-col justify-between gap-3.5 px-[18px] py-3.5 text-[12.5px] text-base-content/65 sm:flex-row sm:items-center"
         >
           <form
             :if={@page_sizes != []}
@@ -635,7 +631,7 @@ defmodule LineaUI.Components.DataTable do
               <select
                 name="page_size"
                 aria-label={@show_label <> " " <> @entries_label}
-                class="form-select h-7 rounded-full border border-slate-300 bg-white py-0 pr-7 pl-3 font-inter text-[12.5px] font-medium text-slate-700 hover:border-slate-400 focus:border-primary dark:border-navy-450 dark:bg-navy-700 dark:text-navy-100 dark:hover:border-navy-400 dark:focus:border-accent"
+                class="form-select h-7 rounded-full border border-base-content/20 bg-base-100 py-0 pr-7 pl-3 font-inter text-[12.5px] font-medium text-base-content/85 hover:border-base-content/30 focus:border-primary dark:focus:border-accent"
               >
                 <option :for={size <- @page_sizes} value={size} selected={size == @page_size}>
                   {size}
@@ -817,7 +813,7 @@ defmodule LineaUI.Components.DataTable do
 
     ~H"""
     <div
-      class={["text-[12.5px] text-slate-500 dark:text-navy-200", @numbers]}
+      class={["text-[12.5px] text-base-content/65", @numbers]}
       role="status"
       aria-live="polite"
     >
@@ -1013,11 +1009,11 @@ defmodule LineaUI.Components.DataTable do
   end
 
   defp search_input_class("") do
-    "form-input w-0 bg-transparent px-1 text-right transition-all duration-100 placeholder:text-slate-500 dark:placeholder:text-navy-200"
+    "form-input w-0 bg-transparent px-1 text-right transition-all duration-100 placeholder:text-base-content/65"
   end
 
   defp search_input_class(_search) do
-    "form-input w-32 bg-transparent px-1 text-right transition-all duration-100 placeholder:text-slate-500 lg:w-48 dark:placeholder:text-navy-200"
+    "form-input w-32 bg-transparent px-1 text-right transition-all duration-100 placeholder:text-base-content/65 lg:w-48"
   end
 
   defp toggle_search(id) do

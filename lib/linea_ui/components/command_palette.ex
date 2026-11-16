@@ -86,11 +86,11 @@ defmodule LineaUI.Components.CommandPalette do
   alias LineaUI.Components.Overlay
   alias LineaUI.Components.Select.Options
 
-  @item_row "group/item flex w-full cursor-pointer items-center gap-2.5 px-2.5 py-2 text-left no-underline outline-hidden rounded-md aria-selected:bg-slate-100 dark:aria-selected:bg-navy-600"
+  @item_row "group/item flex w-full cursor-pointer items-center gap-2.5 px-2.5 py-2 text-left no-underline outline-hidden rounded-md aria-selected:bg-base-200"
 
-  @item_icon "flex size-4.5 shrink-0 items-center justify-center text-slate-950 dark:text-navy-50"
+  @item_icon "flex size-4.5 shrink-0 items-center justify-center text-base-content"
 
-  @key "rounded-[4px] border-0 bg-slate-100 px-1.5 text-slate-950 shadow-none dark:bg-navy-600 dark:text-navy-50"
+  @key "rounded-[4px] border-0 bg-base-200 px-1.5 text-base-content shadow-none"
 
   @assistant_icon "flex size-6 shrink-0 items-center justify-center rounded-md bg-gradient-to-br from-blue-600 to-purple-500 text-white"
 
@@ -98,16 +98,14 @@ defmodule LineaUI.Components.CommandPalette do
   @looks %{
     "classic" => %{
       card: "rounded-xl",
-      head: "h-[67px] gap-2.5 border-b border-slate-200 px-5 dark:border-navy-450",
-      search: "size-4 shrink-0 text-slate-950 dark:text-navy-50",
-      input:
-        "h-full text-sm text-slate-950 placeholder:text-slate-500 dark:text-navy-50 dark:placeholder:text-navy-300",
+      head: "h-[67px] gap-2.5 border-b border-base-300 px-5",
+      search: "size-4 shrink-0 text-base-content",
+      input: "h-full text-sm text-base-content placeholder:text-base-content/65",
       key: @key,
-      heading:
-        "px-2.5 pb-1 pt-2.5 text-xs font-medium uppercase text-slate-500 dark:text-navy-300",
+      heading: "px-2.5 pb-1 pt-2.5 text-xs font-medium uppercase text-base-content/65",
       row: @item_row,
       icon: @item_icon,
-      label: "text-[13px] text-slate-950 dark:text-navy-50"
+      label: "text-[13px] text-base-content"
     },
     "canvas" => %{
       card: "palette-canvas rounded-[14px]",
@@ -301,7 +299,7 @@ defmodule LineaUI.Components.CommandPalette do
         </div>
         <div
           :if={@chips != []}
-          class="flex flex-wrap gap-1.5 border-b border-slate-200 px-3.5 py-2.5 dark:border-navy-450"
+          class="flex flex-wrap gap-1.5 border-b border-base-300 px-3.5 py-2.5"
           role="group"
           aria-label={@scopes_label}
         >
@@ -309,7 +307,7 @@ defmodule LineaUI.Components.CommandPalette do
             :for={chip <- @chips}
             type="button"
             aria-pressed="false"
-            class="h-6.5 rounded-(--pill-in) px-2.5 text-xs font-medium text-slate-500 outline-hidden ring-1 ring-inset ring-slate-300 transition-colors hover:text-slate-700 focus-visible:outline-2 focus-visible:outline-primary/50 aria-pressed:bg-primary aria-pressed:text-white aria-pressed:ring-0 dark:text-navy-200 dark:ring-navy-450 dark:hover:text-navy-50 dark:focus-visible:outline-accent/50 dark:aria-pressed:bg-accent"
+            class="h-6.5 rounded-(--pill-in) px-2.5 text-xs font-medium text-base-content/65 outline-hidden ring-1 ring-inset ring-base-content/20 transition-colors hover:text-base-content/85 focus-visible:outline-2 focus-visible:outline-primary/50 aria-pressed:bg-primary aria-pressed:text-white aria-pressed:ring-0 dark:focus-visible:outline-accent/50 dark:aria-pressed:bg-accent"
             phx-mounted='[["ignore_attrs",{"attrs":["aria-pressed"]}]]'
             data-scope-chip
             data-scope={chip.value}
@@ -368,12 +366,12 @@ defmodule LineaUI.Components.CommandPalette do
             </span>
             <span class="min-w-0">
               <span
-                class="block truncate text-sm text-slate-800 dark:text-navy-50"
+                class="block truncate text-sm text-base-content"
                 data-assistant-text
               ></span>
               <span
                 :if={@assistant_row.sub}
-                class="block truncate text-xs text-slate-400 dark:text-navy-300"
+                class="block truncate text-xs text-base-content/50"
               >
                 {@assistant_row.sub}
               </span>
@@ -382,7 +380,7 @@ defmodule LineaUI.Components.CommandPalette do
           </button>
           <div
             data-empty
-            class="px-4.5 py-7 text-center text-xs-plus text-slate-400 dark:text-navy-300"
+            class="px-4.5 py-7 text-center text-xs-plus text-base-content/50"
             hidden
           >
             {@empty}
@@ -390,7 +388,7 @@ defmodule LineaUI.Components.CommandPalette do
         </div>
         <div
           :if={@hints or @footer != []}
-          class="flex items-center gap-4 border-t border-slate-200 bg-slate-50 px-5 py-2.5 text-xs text-slate-500 dark:border-navy-450 dark:bg-navy-800 dark:text-navy-300"
+          class="flex items-center gap-4 border-t border-base-300 bg-base-200 px-5 py-2.5 text-xs text-base-content/65"
         >
           <span :if={@hints} class="inline-flex items-center gap-1.5">
             <.kbd class={@look.key}>↑↓</.kbd>{@hint_navigate}
@@ -469,7 +467,7 @@ defmodule LineaUI.Components.CommandPalette do
     </span>
     <span class="min-w-0">
       <span class={["block truncate", @look.label]}>{@item.label}</span>
-      <span :if={@item.sub} class="block truncate text-xs text-slate-400 dark:text-navy-300">{@item.sub}</span>
+      <span :if={@item.sub} class="block truncate text-xs text-base-content/50">{@item.sub}</span>
     </span>
     <span :if={@item.keys != []} class="ml-auto flex gap-1">
       <.kbd :for={name <- @item.keys} class={@look.key}>{name}</.kbd>

@@ -102,7 +102,7 @@ defmodule LineaUI.Components.EmptyStateTest do
     assert html |> find("div") |> LazyHTML.text() =~ "Try another term."
     assert [_] = find(html, "span.huge-search-01") |> Enum.to_list()
     assert "ring-1" in classes(html, "div")
-    assert "text-slate-800" in classes(html, "b")
+    assert "text-base-content" in classes(html, "b")
   end
 
   test "the inline colors" do

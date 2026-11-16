@@ -97,8 +97,7 @@ defmodule LineaUI.Components.RadioTest do
 
     assigns = %{form: form}
 
-    html =
-      rendered_to_string(~H'<.radio_group field={@form[:plan]} options={["free", "pro"]} />')
+    html = rendered_to_string(~H'<.radio_group field={@form[:plan]} options={["free", "pro"]} />')
 
     assert "radio-error" in classes(html, "input")
 
@@ -130,10 +129,10 @@ defmodule LineaUI.Components.RadioTest do
       refute "form-radio" in classes(html, "#period-0")
 
       track = classes(html, "[role=radiogroup]")
-      assert "bg-slate-150" in track
+      assert "bg-base-200" in track
       assert "inline-flex" in track
 
-      assert "has-checked:bg-white" in classes(html, "label")
+      assert "has-checked:bg-base-100" in classes(html, "label")
       assert "h-[30px]" in classes(html, "label")
       assert LazyHTML.text(find(html, "label:nth-child(2)")) =~ "Week"
       assert LazyHTML.text(find(html, "label:nth-child(2)")) =~ "3"

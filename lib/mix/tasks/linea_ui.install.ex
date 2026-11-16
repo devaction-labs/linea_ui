@@ -29,8 +29,9 @@ if Code.ensure_loaded?(Igniter) do
     * `--hugeicons` - draws the components' glyphs with Hugeicons: sets
       `config :linea_ui, :icons, :hugeicons`, adds the Tailwind plugin to `app.css` (reading
       `assets/vendor/hugeicons`) and tells you to run `mix linea_ui.icons sync`, which downloads the SVGs
-    * `--replace-daisyui` - removes the daisyUI and heroicons plugins from `app.css`, which LineaUI's
-      styles can conflict with. Without it they stay and a warning says so
+    * `--replace-daisyui` - removes Phoenix's two daisyUI themes and the heroicons plugin from `app.css`
+      (LineaUI's themes set daisyUI's variables). The daisyUI plugin stays: LineaUI's components use its
+      classes, and a stylesheet without it gets a warning
     * `--no-skill` - does not write the Claude Code skill
 
     `mix linea_ui.gen.skill` refreshes only the skill. This task needs the `igniter` dependency; without
@@ -71,8 +72,9 @@ if Code.ensure_loaded?(Igniter) do
 
     defp replaced_daisyui(igniter, true) do
       Igniter.add_notice(igniter, """
-      daisyUI and the heroicons plugin are gone from app.css, but Phoenix's generated CoreComponents
-      and Layouts still use their classes (`btn`, `hero-*`...). Restyle them with LineaUI's components.
+      Phoenix's daisyUI themes and the heroicons plugin are gone from app.css (LineaUI's themes set daisyUI's
+      variables; daisyUI itself stays). Phoenix's generated CoreComponents and Layouts still use the `hero-*`
+      icons: switch them to LineaUI's components and icons.
       """)
     end
 

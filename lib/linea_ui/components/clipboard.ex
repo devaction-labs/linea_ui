@@ -211,8 +211,7 @@ defmodule LineaUI.Components.Clipboard do
   attr :rest, :global, include: ~w(readonly disabled phx-debounce autocomplete form)
 
   def clipboard_input(assigns) do
-    assigns =
-      assign(assigns, :label, assigns.label || Map.fetch!(@texts, assigns.locale).label)
+    assigns = assign(assigns, :label, assigns.label || Map.fetch!(@texts, assigns.locale).label)
 
     ~H"""
     <div class={merge(["flex -space-x-px", @class])}>
@@ -222,7 +221,7 @@ defmodule LineaUI.Components.Clipboard do
         name={@name}
         value={@value}
         placeholder={@placeholder}
-        class="form-input w-full rounded-l-lg border border-slate-300 bg-transparent px-3 py-2 placeholder:text-slate-500 hover:z-10 hover:border-slate-400 focus:z-10 focus:border-primary dark:border-navy-450 dark:hover:border-navy-400 dark:focus:border-accent"
+        class="form-input w-full rounded-l-lg border border-base-content/20 bg-transparent px-3 py-2 placeholder:text-base-content/65 hover:z-10 hover:border-base-content/30 focus:z-10 focus:border-primary dark:focus:border-accent"
         {@rest}
       />
       <.clipboard

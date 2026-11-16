@@ -46,7 +46,7 @@ defmodule LineaUI.Components.Scrollspy do
         :for={item <- @item}
         href={item.href}
         data-spy-link
-        class="rounded-md px-2.5 py-2 text-sm font-medium text-slate-700 outline-none hover:bg-slate-100 hover:text-slate-950 focus-visible:ring-2 focus-visible:ring-primary/50 aria-[current=true]:bg-slate-100 aria-[current=true]:text-primary dark:text-navy-200 dark:hover:bg-navy-600 dark:hover:text-navy-50 dark:aria-[current=true]:bg-navy-600 dark:aria-[current=true]:text-accent-light"
+        class="rounded-md px-2.5 py-2 text-sm font-medium text-base-content/85 outline-none hover:bg-base-200 hover:text-base-content focus-visible:ring-2 focus-visible:ring-primary/50 aria-[current=true]:bg-slate-100 aria-[current=true]:text-primary dark:aria-[current=true]:bg-navy-600 dark:aria-[current=true]:text-accent-light"
       >
         {render_slot(item)}
       </a>

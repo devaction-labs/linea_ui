@@ -211,7 +211,7 @@ defmodule LineaUI.Components.CardTable do
 
   alias Phoenix.LiveView.LiveStream
 
-  @checkbox "form-checkbox is-basic size-4 rounded-sm border-slate-400/70 checked:border-primary checked:bg-primary hover:border-primary focus:border-primary dark:border-navy-400 dark:checked:border-accent dark:checked:bg-accent dark:hover:border-accent dark:focus:border-accent"
+  @checkbox "form-checkbox is-basic size-4 rounded-sm border-base-content/30 checked:border-primary checked:bg-primary hover:border-primary focus:border-primary dark:checked:border-accent dark:checked:bg-accent dark:hover:border-accent dark:focus:border-accent"
 
   @roles ~w(head title status meta value)
   @colors ~w(neutral primary secondary accent info success warning error)
