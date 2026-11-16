@@ -60,8 +60,8 @@ defmodule LineaUI.Components.DisclosureTest do
       </.accordion>
       """)
 
-    assert "rounded-[10px]" in classes(html, "#b")
-    assert "rounded-[10px]" in classes(html, "#p")
+    assert "rounded-box" in classes(html, "#b")
+    assert "rounded-box" in classes(html, "#p")
     assert "space-y-3" in classes(html, "#v")
     assert "gap-3" in classes(html, "#b1 > summary")
   end

@@ -179,7 +179,7 @@ defmodule LineaUI.Components.Collapse do
       name={:chevron_right}
       class={
         merge([
-          "size-4 shrink-0 text-slate-400 transition-transform group-open/collapse:rotate-90 dark:text-navy-300",
+          "size-4 shrink-0 text-base-content/50 transition-transform group-open/collapse:rotate-90",
           @class
         ])
       }
@@ -194,7 +194,7 @@ defmodule LineaUI.Components.Collapse do
       name={:chevron_down}
       class={
         merge([
-          "size-4 shrink-0 text-slate-400 transition-transform group-open/collapse:rotate-180 dark:text-navy-300",
+          "size-4 shrink-0 text-base-content/50 transition-transform group-open/collapse:rotate-180",
           @class
         ])
       }

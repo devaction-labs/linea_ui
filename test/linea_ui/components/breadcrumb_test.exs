@@ -19,7 +19,7 @@ defmodule LineaUI.Components.BreadcrumbTest do
     assert "text-primary" in classes(html, "a")
     assert "rounded-md" in classes(html, "a")
     assert "hover:underline-offset-3" in classes(html, "a")
-    assert "text-slate-400" in classes(html, "li > svg")
+    assert "text-base-content/50" in classes(html, "li > svg")
   end
 
   test "a custom separator and the bordered variant" do
@@ -34,7 +34,7 @@ defmodule LineaUI.Components.BreadcrumbTest do
 
     assert [_] = find(html, "span.sep") |> Enum.to_list()
     assert [] = find(html, "li > svg") |> Enum.to_list()
-    assert "shadow-[inset_0_0_0_1px_var(--color-slate-200)]" in classes(html, "a")
+    assert "shadow-[inset_0_0_0_1px_var(--color-base-300)]" in classes(html, "a")
     refute "border" in classes(html, "a")
     assert "px-2" in classes(html, "a")
     assert "py-[5px]" in classes(html, "a")
@@ -49,7 +49,7 @@ defmodule LineaUI.Components.BreadcrumbTest do
       </.breadcrumb>
       """)
 
-    assert "text-slate-600" in classes(html, "[aria-current=page]")
+    assert "text-base-content/75" in classes(html, "[aria-current=page]")
     assert "min-w-0" in classes(html, "[aria-current=page]")
     assert "truncate" in classes(html, "[aria-current=page] > span")
 
