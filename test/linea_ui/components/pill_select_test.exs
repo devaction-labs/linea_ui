@@ -17,7 +17,13 @@ defmodule LineaUI.Components.PillSelectTest do
 
     assert attr_of(html, "#canal", "role") == ["radiogroup"]
     assert "lo-pills" in classes(html, "#canal")
-    assert attr_of(html, "#canal label", "class") == ["lo-pill btn btn-sm", "lo-pill btn btn-sm", "lo-pill btn btn-sm"]
+
+    assert attr_of(html, "#canal label", "class") == [
+             "lo-pill btn btn-sm",
+             "lo-pill btn btn-sm",
+             "lo-pill btn btn-sm"
+           ]
+
     assert attr_of(html, "#canal input", "type") == ["radio", "radio", "radio"]
     assert attr_of(html, "#canal input", "name") == ["canal", "canal", "canal"]
     assert attr_of(html, "#canal input[checked]", "value") == ["Online"]

@@ -19,11 +19,6 @@
 .lo-spin.info{border-top-color:var(--info)}
 
 /* ---------- Alert (variant="canvas"): sg-alert body, actions and the tones canvas.css lacks ---------- */
-.sg-alert.info{background:var(--info-soft);box-shadow:none;color:var(--info)}
-.sg-alert.pos{background:var(--pos-soft);box-shadow:none;color:var(--pos)}
-.sg-alert > svg, .sg-alert > .i, .sg-alert > [class*="huge-"]{flex:none;width:16px;height:16px}
-.sg-alert-body{flex:1;min-width:0}
-.sg-alert-actions{display:flex;align-items:center;gap:8px;margin-top:10px}
 
 /* ---------- Progress: the lo-meter tones ---------- */
 .lo-meter.pos i{background:var(--pos)}
@@ -33,9 +28,6 @@
 .lo-meter.grad i{background:var(--grad,linear-gradient(90deg,var(--accent),var(--info)))}
 
 /* ---------- Skeleton (variant="canvas"): sg-skel shapes ---------- */
-.sg-skel.circle,.sg-skel.pill{border-radius:999px}
-.sg-skel.square{border-radius:0}
-.sg-skel.lg{border-radius:12px}
 
 /* ---------- Empty state (variant="canvas" and "plain") ---------- */
 .lo-empty .art.pos{color:var(--pos)}

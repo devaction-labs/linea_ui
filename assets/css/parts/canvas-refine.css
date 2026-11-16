@@ -14,36 +14,16 @@
 }
 
 /* buttons */
-.sg-btn{padding:0 16px;letter-spacing:0;transition:background-color .15s,color .15s,box-shadow .15s,opacity .15s}
-.sg-btn:has(>svg:first-child,>.i:first-child,>[class*="huge-"]:first-child){padding-left:13px}
-.sg-btn.sm{padding:0 12px}
-.sg-btn.solid{box-shadow:var(--shadow-xs)}
-.sg-btn.accent{box-shadow:var(--shadow-xs)}
-.sg-btn.solid:hover,.sg-btn.solid.hv{background:color-mix(in srgb,var(--solid) 90%,transparent)}
-.sg-btn.accent:hover,.sg-btn.accent.hv{background:color-mix(in srgb,var(--accent) 90%,transparent)}
-.sg-btn:not(.solid,.accent,.filled,.soft,.ghost,.subtle,.danger):hover,.sg-btn:not(.solid,.accent,.filled,.soft,.ghost,.subtle,.danger).hv{background:var(--ctl-fill)}
-.sg-btn.danger{background:var(--danger);color:var(--on-danger);box-shadow:var(--shadow-xs)}
-.sg-btn.danger:hover,.sg-btn.danger.hv{background:color-mix(in srgb,var(--danger) 90%,transparent);color:var(--on-danger)}
-.sg-btn:focus-visible,.lo-ib:focus-visible{outline:none;box-shadow:inset 0 0 0 1px var(--ring-line),0 0 0 3px var(--ring)}
+.lo-ib:focus-visible{outline:none;box-shadow:inset 0 0 0 1px var(--ring-line),0 0 0 3px var(--ring)}
 .lo-ib:hover,.lo-ib.hv{background:var(--ctl-fill)}
 
 /* fields */
-.sg-input{height:36px;background:var(--ctl);box-shadow:inset 0 0 0 1px var(--ctl-line),var(--shadow-xs);transition:box-shadow .15s}
-.sg-input .ph{color:var(--muted)}
-.sg-input.focus,.sg-input:focus-within{box-shadow:inset 0 0 0 1px var(--ring-line),0 0 0 3px var(--ring)}
-.sg-input.error{box-shadow:inset 0 0 0 1px var(--neg),0 0 0 3px color-mix(in srgb,var(--neg) 20%,transparent)}
-.sg-input.area{min-height:80px;padding:8px 12px}
 
 /* cards */
-.sg-card{border-radius:var(--r-lg);box-shadow:0 0 0 1px var(--line),var(--shadow-sm);padding:24px}
-.sg-card.flush{padding:0}
-.sg-card.soft{box-shadow:inset 0 0 0 1px var(--line)}
 .lo-card-h h3{font-size:15px;line-height:20px;font-weight:600;letter-spacing:-.01em}
 .lo-card-f{padding:14px 24px}
 
 /* badges */
-.sg-badge{height:22px;padding:0 8px;border-radius:var(--pill-xs);font-size:12px;font-weight:500;background:var(--sunken);box-shadow:none}
-.sg-badge.outline{background:transparent;box-shadow:inset 0 0 0 1px var(--line);color:var(--ink)}
 
 /* segmented tabs: a gray track without border, the chosen one in white with a short shadow */
 
@@ -59,19 +39,17 @@
 /* ---------- the rest of the kit, in the same finish ---------- */
 
 /* form labels and hints */
-.sg-label{font-size:14px;font-weight:500}
-.lo-kbd,.sg-input .kbd{height:20px;padding:0 5px;border-radius:4px;font:500 11.5px/20px var(--sans);box-shadow:none;background:var(--sunken);color:var(--muted)}
+.lo-kbd{height:20px;padding:0 5px;border-radius:4px;font:500 11.5px/20px var(--sans);box-shadow:none;background:var(--sunken);color:var(--muted)}
 
 /* checkbox, radio and switch: ink when on (`--control-on`), the neutral ring on focus */
 .lo-box,input.form-checkbox{border-radius:4px}
 .lo-box.on,.lo-box.mixed,input.form-checkbox:checked,input.form-checkbox:indeterminate{background-color:var(--control-on);color:var(--on-control);box-shadow:inset 0 0 0 1px var(--control-on)}
-.sg-radio.on{background:radial-gradient(circle,var(--control-on) 0 3.5px,transparent 4px),var(--ctl);box-shadow:inset 0 0 0 1px var(--control-on),var(--shadow-xs)}
 input.form-radio:checked{background-color:var(--ctl);box-shadow:inset 0 0 0 1px var(--control-on),var(--shadow-xs)}
 input.form-radio:checked::after{width:8px;height:8px;background:var(--control-on)}
-.sg-sw,input.form-switch{width:32px;height:18px;background:var(--track);box-shadow:inset 0 0 0 1px transparent}
-.sg-sw::after,input.form-switch::before{top:1px;left:1px;width:16px;height:16px;background:#fff;box-shadow:0 1px 2px rgb(0 0 0/.12)}
-.sg-sw.on,input.form-switch:checked{background:var(--control-on)}
-.sg-sw.on::after,input.form-switch:checked::before{left:15px;background:var(--on-control)}
+input.form-switch{width:32px;height:18px;background:var(--track);box-shadow:inset 0 0 0 1px transparent}
+input.form-switch::before{top:1px;left:1px;width:16px;height:16px;background:#fff;box-shadow:0 1px 2px rgb(0 0 0/.12)}
+input.form-switch:checked{background:var(--control-on)}
+input.form-switch:checked::before{left:15px;background:var(--on-control)}
 input.form-checkbox:focus-visible,input.form-radio:focus-visible,input.form-switch:focus-visible{outline:0;box-shadow:inset 0 0 0 1px var(--ring-line),0 0 0 3px var(--ring)}
 .lo-choice{border-radius:var(--r)}
 .lo-choice.on{box-shadow:inset 0 0 0 1px var(--control-on);background:color-mix(in srgb,var(--sunken) 50%,var(--panel))}
@@ -85,9 +63,6 @@ input.form-checkbox:focus-visible,input.form-radio:focus-visible,input.form-swit
 .lo-meter.acc{background:color-mix(in srgb,var(--accent) 16%,transparent)}
 
 /* one-time code: 40x44 slots, the active one with the neutral ring */
-.sg-otp{gap:6px}
-.sg-otp span{width:40px;height:44px;border-radius:var(--pill);font:500 18px var(--mono);background:var(--ctl);box-shadow:inset 0 0 0 1px var(--ctl-line),var(--shadow-xs)}
-.sg-otp span.on{box-shadow:inset 0 0 0 1px var(--ring-line),0 0 0 3px var(--ring)}
 
 /* menus, dropdowns, select lists and popovers: one surface, 10px corners, a thin line and a short shadow */
 .popper-root[data-panel] > .popper-box[role="menu"],
@@ -109,21 +84,16 @@ input.form-checkbox:focus-visible,input.form-radio:focus-visible,input.form-swit
 .ts-wrapper[phx-hook="LineaUI.Select"] .ts-control{min-height:36px;box-shadow:inset 0 0 0 1px var(--ctl-line),var(--shadow-xs)}
 
 /* tooltips: ink in light, light in dark, 12px text, 6px corners */
-.sg-tooltip,.tippy-box[data-theme~="dark"],.linea-tip{border-radius:6px;background:var(--tip);color:var(--on-tip);font-size:12px;line-height:16px}
-.sg-tooltip{padding:6px 12px}
+.tippy-box[data-theme~="dark"],.linea-tip{border-radius:6px;background:var(--tip);color:var(--on-tip);font-size:12px;line-height:16px}
 .tippy-box[data-theme~="dark"] > .tippy-content{padding:6px 12px}
 .tippy-box[data-theme~="dark"] > .tippy-svg-arrow svg{color:var(--tip)}
-.sg-tip{border-radius:var(--r);box-shadow:var(--pop-shadow)}
 
 /* modals and sheets: the scrim, a 14px card with a thin line, 18px titles, a muted description, a plain footer */
-.sg-scrim,:is(.dark .sg:not([data-theme="light"]), .sg[data-theme="dark"]) .sg-scrim{background:var(--scrim);backdrop-filter:none}
-.sg-modal,.lo-modal-content[data-panel]{border-radius:var(--r-lg);background:var(--panel);box-shadow:0 0 0 1px var(--line),var(--shadow-lg)}
-.sg-drawer{border-radius:var(--r-lg);box-shadow:0 0 0 1px var(--line),var(--shadow-lg)}
-.sg-drawer-h,[data-drawer-header]{padding:24px 24px 16px}
-.sg-drawer-h h3,[data-drawer-header] h2{font-size:18px;line-height:24px;font-weight:600;letter-spacing:-.01em;color:var(--ink)}
-.sg-drawer-h p,[data-drawer-header] h2 + p{font-size:14px;line-height:20px;color:var(--muted);margin-top:4px}
-.sg-drawer-b{padding:0 24px 24px}
-.sg-drawer-f,[data-drawer-footer]{padding:16px 24px 24px;border-top:0;background:transparent;gap:8px}
+.lo-modal-content[data-panel]{border-radius:var(--r-lg);background:var(--panel);box-shadow:0 0 0 1px var(--line),var(--shadow-lg)}
+[data-drawer-header]{padding:24px 24px 16px}
+[data-drawer-header] h2{font-size:18px;line-height:24px;font-weight:600;letter-spacing:-.01em;color:var(--ink)}
+[data-drawer-header] h2 + p{font-size:14px;line-height:20px;color:var(--muted);margin-top:4px}
+[data-drawer-footer]{padding:16px 24px 24px;border-top:0;background:transparent;gap:8px}
 
 /* toasts: a 10px card with a thin line, the title 14/500, the description muted */
 .lo-toast{width:356px;padding:16px;gap:10px}
@@ -132,26 +102,14 @@ input.form-checkbox:focus-visible,input.form-radio:focus-visible,input.form-swit
 .lo-toast .lo-toast-ic{width:20px;height:20px;background:none;box-shadow:none}
 
 /* alerts: a 10px card with a thin line on the panel, the title 14/500, the text muted; tones tint the text only */
-.sg-alert{padding:12px 16px;border-radius:var(--r);background:var(--panel);box-shadow:inset 0 0 0 1px var(--line);font-size:14px;line-height:20px}
-.sg-alert b{font-weight:500}
-.sg-alert p{color:var(--muted)}
-.sg-alert:is(.acc,.warn,.neg){background:var(--panel);box-shadow:inset 0 0 0 1px var(--line)}
-.sg-alert:is(.acc,.warn,.neg) p{color:color-mix(in srgb,currentColor 80%,var(--panel))}
 
 /* tabs with a line: 14px, the chosen one ink with a 2px underline */
 
 /* breadcrumbs: plain text, muted links, the current page ink */
 
 /* pagination: 32px ghost buttons, the current page outlined */
-.sg-pages span{min-width:32px;height:32px;border-radius:var(--pill);font:500 14px var(--sans);color:var(--fg)}
-.sg-pages span:hover{background:var(--tint)}
-.sg-pages span.on{background:var(--panel);color:var(--ink);box-shadow:inset 0 0 0 1px var(--ctl-line),var(--shadow-xs)}
 
 /* accordion: no outer box, items split by a line, 14/500 triggers */
-.sg-acc{border-radius:0;box-shadow:none;overflow:visible}
-.sg-acc-h{padding:16px 0;font-size:14px;font-weight:500}
-.sg-acc-h:hover{text-decoration:underline;text-underline-offset:4px}
-.sg-acc-b{padding:0 0 16px;font-size:14px;line-height:20px}
 
 /* calendar: 32px days with 6px corners, today and the range on the gray tint, the chosen day ink */
 .lo-cal span{height:32px;border-radius:6px;font-size:14px}
@@ -173,36 +131,19 @@ span.flatpickr-weekday{font-size:12.5px;font-weight:400;color:var(--muted)}
 .lo-empty .art{width:40px;height:40px;border-radius:var(--pill);background:var(--sunken);box-shadow:none;color:var(--fg)}
 .lo-empty-title{font-size:18px;font-weight:500;letter-spacing:-.01em}
 .lo-empty-text{font-size:14px}
-.sg-skel{border-radius:6px;background:var(--tint)}
-.sg-kb-col{border-radius:var(--r-lg);box-shadow:none}
-.sg-kb-card{border-radius:var(--r);box-shadow:0 0 0 1px var(--line),var(--shadow-xs)}
 
 /* the app shell's side menu, in the same rows */
-.sg-nav-a{height:32px;gap:8px;padding:0 8px;border-radius:6px;font-size:14px;font-weight:400}
-.sg-nav-a .i{width:16px;height:16px}
-.sg-nav-a:hover{background:var(--tint)}
-.sg-nav-a.on,:is(.dark .sg:not([data-theme="light"]), .sg[data-theme="dark"]) .sg-nav-a.on{background:var(--tint);color:var(--ink);font-weight:500;box-shadow:none}
-.sg-nav-a.on .i{color:var(--ink)}
-.sg-nav-h{padding:16px 8px 6px;font:500 12px/16px var(--sans);letter-spacing:0;text-transform:none;color:var(--muted)}
-.sg-nav-sub a{height:28px;padding:0 8px;border-radius:6px;font-size:13.5px}
-.sg-nav-sub a.on{background:var(--tint)}
 
 /* ---------- data, structure and AI components, in the same finish ---------- */
 
 /* chips and pills inside fields: 6px corners, a thin line, no shadow */
-.sg-chip{height:26px;border-radius:6px;box-shadow:inset 0 0 0 1px var(--line);background:var(--panel);font-size:13px}
 .lo-tag{border-radius:6px}
-.sg-delta{border-radius:6px;font-family:var(--sans)}
 
 /* KPI and stats: muted 14px labels, 28/600 values */
-.sg-kpi-l,.lo-stat .l{font-size:14px;color:var(--muted)}
-.sg-kpi-v{font-size:28px;line-height:32px;font-weight:600;letter-spacing:-.025em}
+.lo-stat .l{font-size:14px;color:var(--muted)}
 .lo-stat .v{font-weight:600}
 
 /* kanban: the column a muted track, cards as cards */
-.sg-kb-col{padding:8px;gap:8px;border-radius:var(--r-lg);background:var(--sunken);box-shadow:none}
-.sg-kb-h{padding:6px 6px 4px;font-size:14px;font-weight:500}
-.sg-kb-card{padding:12px;gap:8px;border-radius:var(--r);background:var(--panel);box-shadow:0 0 0 1px var(--line),var(--shadow-xs)}
 
 /* flow: nodes as 10px cards, chips at 6px */
 .linea-flow-card{border-color:var(--line);border-radius:0 var(--r) var(--r) var(--r);box-shadow:var(--shadow-sm)}
@@ -227,23 +168,13 @@ span.flatpickr-weekday{font-size:12.5px;font-weight:400;color:var(--muted)}
 .ai-send:focus-visible{outline:0;box-shadow:0 0 0 3px var(--ring)}
 
 /* charts: legend at 13px, bar list tracks at 4px */
-.sg-legend{font-size:13px}
 .linea-bar-list-track{border-radius:4px}
 
 /* card table (the canvas sg-ct): a thin-line card, the header in ink on the panel, 48px rows, the chosen row on the gray tint */
-.sg-ct{box-shadow:0 0 0 1px var(--line),var(--shadow-xs)}
-.sg-ct-row{min-height:48px;font-size:14px}
-.sg-ct-row.h{min-height:40px;font-size:13px;font-weight:500;color:var(--ink);background:transparent}
-.sg-ct-row:not(.h):hover{background:color-mix(in srgb,var(--sunken) 60%,transparent)}
-.sg-ct-row.sel{background:var(--tint);box-shadow:none}
-.sg-ct-copy{width:28px;height:28px;border-radius:6px;box-shadow:none}
-.sg-ct-copy:hover{background:var(--tint);color:var(--ink)}
-.sg-ct-foot{font-size:13px}
 
 /* ---------- navbars, landing, hero, pixel card, toasts with aura, error page and auth, in the same finish ---------- */
 
 /* app navbar: 36px search with the field line, 8px links and toggles, menus as the popover surface */
-.sg-am a{border-radius:6px}
 
 /* landing navbar: 8px links and buttons, the mega menu as a 14px popover */
 

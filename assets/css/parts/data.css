@@ -1464,7 +1464,6 @@
     .linea-ctable-top-text { flex-basis: 100%; }
     .linea-ctable-top-act { flex: 1 1 100%; justify-content: flex-end; }
     .linea-ctable-top-act > :not(.sg-btn):not(a) { flex: 1 1 100%; width: auto !important; max-width: 100%; }
-    .linea-ctable-top-act > .sg-btn { flex: 0 0 auto !important; width: auto !important; }
     .linea-ctable-grid {
       grid-template-columns: auto minmax(0, 1fr) max-content max-content;
       column-gap: 0;

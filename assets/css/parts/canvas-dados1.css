@@ -163,20 +163,6 @@
 }
 
 /* ---------- card: a linked card ---------- */
-.sg-card-link {
-  color: inherit;
-  text-decoration: none;
-  transition: box-shadow 0.15s ease;
-}
-
-.sg-card-link:hover {
-  box-shadow: 0 0 0 1px var(--line-strong), var(--shadow-xs);
-}
-
-.sg-card-link:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
-}
 
 /* ---------- card_table variant="flat": a plain table in a card ---------- */
 .linea-ctable-flat.is-plain {

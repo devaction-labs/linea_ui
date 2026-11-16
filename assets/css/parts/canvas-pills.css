@@ -18,8 +18,6 @@
   background-color: var(--panel); box-shadow: inset 0 0 0 1px var(--ctl-line), var(--shadow-xs);
   font-size: 14px; line-height: 20px; color: var(--ink);
 }
-.sg-chipin > .faint { color: var(--faint); }
-.sg-chipin > :not(.sg-chip) { font-size: 14px !important; padding-left: 5px; }
 .ts-wrapper[phx-hook="LineaUI.Select"]:is(.multi, .pillbox) .ts-control > input { padding: 0 0 0 5px !important; font-size: 14px; color: var(--ink); }
 .ts-wrapper[phx-hook="LineaUI.Select"]:is(.multi, .pillbox):is(.focus, .input-active, .dropdown-active) .ts-control { box-shadow: inset 0 0 0 1px var(--accent), 0 0 0 3px color-mix(in srgb,var(--accent) 22%,transparent); }
 .ts-wrapper[phx-hook="LineaUI.Select"]:is(.multi, .pillbox).is-invalid .ts-control { box-shadow: inset 0 0 0 1px var(--neg), 0 0 0 4px color-mix(in srgb, var(--neg) 14%, transparent); }
@@ -27,7 +25,6 @@
 /* a select that keeps one line (`overflow="count"`) is as tall as the field and never grows */
 .ts-wrapper[phx-hook="LineaUI.Select"][data-overflow="count"].multi .ts-control { flex-wrap: nowrap; overflow: hidden; height: auto; padding-block: 4px; }
 .ts-wrapper[phx-hook="LineaUI.Select"][data-overflow="count"] { --ts-chip-max: var(--pill-max); }
-.sg-chipin.one { flex-wrap: nowrap; overflow: hidden; }
 .ts-wrapper[phx-hook="LineaUI.Select"][data-size="sm"]:is(.multi, .pillbox) { --pill-h: 22px; --pill-r: 6px; }
 .ts-wrapper[phx-hook="LineaUI.Select"][data-size="sm"]:is(.multi, .pillbox) .ts-control { min-height: var(--ctl-h-sm, 32px); padding: 4px 10px 4px 4px; }
 .ts-wrapper[phx-hook="LineaUI.Select"][data-size="lg"]:is(.multi, .pillbox) .ts-control { min-height: var(--ctl-h-lg, 48px); }
@@ -42,11 +39,9 @@
   border: 0; border-radius: var(--pill-r); background-color: var(--sunken); box-shadow: inset 0 0 0 1px var(--line);
   font-size: 13.5px; font-weight: 400; line-height: 20px; color: var(--ink); white-space: nowrap;
 }
-.sg-chipin.one .sg-chip { flex: none; max-width: var(--pill-max); overflow: hidden; text-overflow: ellipsis; }
 :is(.dark, [data-theme="dark"]) .ts-wrapper[phx-hook="LineaUI.Select"]:is(.multi, .pillbox) .ts-control > div.item:not(:where(:is(.dark, [data-theme="dark"]) [data-theme="light"], :is(.dark, [data-theme="dark"]) [data-theme="light"] *):not(:where(:is(.dark, [data-theme="dark"]) [data-theme="light"] :is(.dark, [data-theme="dark"]), :is(.dark, [data-theme="dark"]) [data-theme="light"] :is(.dark, [data-theme="dark"]) *))) { color: var(--ink); }
 
 /* the x */
-.sg-chipin .sg-chip .i { width: 15px; height: 15px; color: var(--faint); border-radius: 4px; }
 .ts-wrapper[phx-hook="LineaUI.Select"]:is(.multi, .pillbox) .ts-control .item .remove {
   width: 15px; height: 15px; margin: 0; border-radius: 4px; color: var(--faint); opacity: 1; background: none;
 }
@@ -67,7 +62,6 @@
   min-width: 0; margin: 0; padding: 0 10px; justify-content: center; font-weight: 600; font-variant-numeric: tabular-nums;
   color: var(--ink); background-color: var(--hover); box-shadow: inset 0 0 0 1px var(--line);
 }
-.sg-chipin .sg-chip { white-space: nowrap; }
 
 /* ---------- pillbox: the canvas `sg-pbox` ---------- */
 .ts-wrapper[phx-hook="LineaUI.Select"].pillbox { position: relative; margin-top: 0 !important; }

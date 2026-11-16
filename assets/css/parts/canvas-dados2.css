@@ -6,10 +6,6 @@
 .tag.tag-tint{color:var(--tag-tint);background:color-mix(in srgb,var(--tag-tint) 14%,transparent);border-color:transparent;box-shadow:none}
 
 /* ---------- Stat ---------- */
-.sg-stat-group{display:flex;padding:16px 20px}
-.sg-stat-group:not(.sg-card){padding:0}
-.sg-stat-group.sg-stat-sunken{background:var(--sunken);border-radius:12px}
-.sg-stat-group.sg-stat-sunken.sg-card{box-shadow:none}
 .lo-stat .v.sm{font-size:18px}
 
 /* ---------- Mini card ---------- */
@@ -22,11 +18,6 @@
 /* ---------- KPI card ---------- */
 /* `gap={false}`: the figure right under the top line. `progress`: the figure 8px under it, the meter 12px under
    the figure and the faint caption 6px under the meter. */
-.sg-kpi.sg-kpi-tight{gap:0}
-.sg-kpi-goal > .sg-kpi-v{margin-top:8px}
-.sg-kpi-goal > .lo-meter{margin-top:12px}
-.sg-kpi-c{display:block;margin-top:6px;font-size:12px;color:var(--faint)}
-.sg-kpi:not(.sg-kpi-tight) > .sg-kpi-c{margin-top:-8px}
 
 /* ---------- Kanban ---------- */
 /* The compact empty hint of a column (an `empty` slot with no title): the canvas `lo-drop`, 18px, 12.5px text. */

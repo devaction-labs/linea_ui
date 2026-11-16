@@ -1,13 +1,6 @@
 /* Canvas look for the forms1 components (see the Vitrine canvas). */
 
 /* ---------- Chip ---------- */
-.sg-chip.has-av{padding-left:3px}
-.sg-chip.static{padding-right:10px}
-.sg-chip .sg-chip-av{width:24px;height:24px;font-size:10px;font-weight:600}
-.sg-chip-x{display:inline-grid;place-items:center;width:14px;height:14px;padding:0;margin:0;border:0;background:none;color:inherit;cursor:pointer;border-radius:4px}
-.sg-chip-x svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
-.sg-chip-x:hover{color:var(--ink)}
-.sg-chip-x:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
 
 /* ---------- Autocomplete: the canvas field and the canvas menu ---------- */
 .ts-wrapper.autocomplete .ts-control{display:flex;align-items:center;gap:8px;height:40px;min-height:40px;padding:0 12px;border:0;border-radius:var(--pill);background:var(--panel);box-shadow:inset 0 0 0 1px var(--ctl-line),var(--shadow-xs);color:var(--ink);font-size:14px}
@@ -36,7 +29,6 @@
 /* ---------- Calendar: the canvas mini month ---------- */
 .lc-mini-wrap{display:block}
 .lc-mini-wrap.multi{display:flex;flex-wrap:wrap;gap:12px}
-.lc-mini.sg-card{padding:14px}
 .lc-mini.two{width:270px;padding:12px}
 .lc-mini-h{display:flex;align-items:center;gap:8px;margin-bottom:6px}
 .lc-mini-h b{flex:1;min-width:0;font-weight:600;color:var(--ink)}
@@ -121,10 +113,6 @@
 :is([data-kind="date"],[data-kind="datetime"]) [data-display] + span :is(svg,[class^="huge-"]){width:16px;height:16px}
 
 /* ---------- Input group: 11px joined corners, a button at an end joins too, the canvas addon ---------- */
-.lc-ig > .sg-btn{height:40px;border-radius:0}
-.lc-ig > .sg-btn:first-child{border-radius:var(--pill) 0 0 11px}
-.lc-ig > .sg-btn:last-child{border-radius:0 11px 11px 0}
-.lc-ig > .sg-btn:only-child{border-radius:var(--pill)}
 .lc-ig > .lc-ig-addon.is-outline{border:0;background:var(--panel);box-shadow:inset 0 0 0 1px var(--ctl-line),var(--shadow-xs);color:var(--muted);font-size:13px}
 
 /* ---------- Number input steppers: the canvas field with plain icon buttons, and the round compact one ---------- */
@@ -166,7 +154,6 @@
 .lc-mini .lo-cal > .lc-tn-error{background:var(--neg-soft);color:var(--neg)}
 .lc-mini .lo-cal > .lc-tn-success{background:var(--pos-soft);color:var(--pos)}
 .lc-mini .lo-cal > .lc-tn-info{background:var(--info-soft);color:var(--info)}
-.lc-mini.sg-card:has(> .lc-mini-legend){padding:18px 20px}
 
 /* ---------- Textarea with `tokens`: the text is drawn by a mirror over a transparent-text textarea ---------- */
 .linea-tokens{position:relative;display:block;width:100%}
