@@ -1,7 +1,8 @@
 defmodule LineaUI.Components.Textarea do
   @moduledoc """
-  LineOne's textareas: outlined or filled, fixed or resizable, and framed with a header or a
-  footer (a title input, a toolbar, a submit button).
+  daisyUI's textarea (`textarea`, `textarea-sm`, `textarea-lg`, `textarea-ghost`, `textarea-success`,
+  `textarea-error`): outlined or filled, fixed or resizable, and framed with a header or a footer (a title input,
+  a toolbar, a submit button).
 
       <.textarea name="bio" placeholder="Enter Text" />
       <.textarea field={@form[:bio]} label="Bio" variant="filled" resizable />
@@ -28,33 +29,18 @@ defmodule LineaUI.Components.Textarea do
   alias LineaUI.Components.Form
 
   @variants %{
-    "outlined" =>
-      "form-textarea w-full rounded-[11px] border-0 bg-white px-3 py-2.5 text-[14px] leading-[22px] text-slate-950 shadow-[inset_0_0_0_1px_var(--color-slate-300),0_1px_2px_rgb(23_23_26/.05)] placeholder:text-slate-400 hover:shadow-[inset_0_0_0_1px_var(--color-slate-400),0_1px_2px_rgb(23_23_26/.05)] focus:shadow-[inset_0_0_0_1px_var(--color-primary),0_0_0_4px_color-mix(in_oklab,var(--color-primary)_14%,transparent)] focus:ring-0 disabled:pointer-events-none disabled:select-none disabled:bg-zinc-100 dark:bg-navy-750 dark:text-navy-50 dark:shadow-[inset_0_0_0_1px_var(--color-navy-450)] dark:hover:shadow-[inset_0_0_0_1px_var(--color-navy-400)] dark:focus:shadow-[inset_0_0_0_1px_var(--color-accent),0_0_0_4px_color-mix(in_oklab,var(--color-accent)_16%,transparent)] dark:disabled:bg-navy-600",
-    "filled" =>
-      "form-textarea w-full rounded-md bg-slate-150 p-3 text-[13px] placeholder:text-slate-500 disabled:pointer-events-none disabled:select-none disabled:opacity-60 dark:bg-navy-900 dark:placeholder:text-navy-300",
-    "plain" => "form-textarea w-full bg-transparent p-3 placeholder:text-slate-500"
+    "outlined" => "textarea w-full",
+    "filled" => "textarea w-full border-transparent bg-base-200 focus:bg-base-100",
+    "plain" => "textarea textarea-ghost w-full"
   }
 
-  @sizes %{
-    "sm" => "p-2.5 text-xs",
-    "md" => nil,
-    "lg" => "p-4 text-sm"
-  }
+  @sizes %{"sm" => "textarea-sm", "md" => nil, "lg" => "textarea-lg"}
 
-  # The error paint is part of the variant (`aria-invalid:` utilities) instead of a class swap, so the
-  # classes do not change when errors appear or go away on a keystroke.
-  @error_states %{
-    "outlined" => "linea-invalid",
-    "filled" => "aria-invalid:ring-1 aria-invalid:ring-error aria-invalid:dark:ring-error"
-  }
+  # The error paint reads `aria-invalid`, so the classes do not change when errors appear or go away on a
+  # keystroke.
+  @error_paint "aria-invalid:textarea-error"
 
-  @states %{
-    {"outlined", "success"} =>
-      "shadow-[inset_0_0_0_1px_var(--color-success),0_0_0_4px_color-mix(in_oklab,var(--color-success)_14%,transparent)] hover:shadow-[inset_0_0_0_1px_var(--color-success),0_0_0_4px_color-mix(in_oklab,var(--color-success)_14%,transparent)] focus:shadow-[inset_0_0_0_1px_var(--color-success),0_0_0_4px_color-mix(in_oklab,var(--color-success)_14%,transparent)] dark:shadow-[inset_0_0_0_1px_var(--color-success),0_0_0_4px_color-mix(in_oklab,var(--color-success)_16%,transparent)] dark:hover:shadow-[inset_0_0_0_1px_var(--color-success),0_0_0_4px_color-mix(in_oklab,var(--color-success)_16%,transparent)] dark:focus:shadow-[inset_0_0_0_1px_var(--color-success),0_0_0_4px_color-mix(in_oklab,var(--color-success)_16%,transparent)]",
-    {"filled", "success"} => "ring-1 ring-success dark:ring-success"
-  }
-
-  @frame "rounded-md border border-slate-200 ring-primary/25 transition-colors duration-200 focus-within:!border-primary focus-within:ring-3 hover:border-slate-400 dark:border-navy-450 dark:ring-accent/30 dark:focus-within:!border-accent dark:hover:border-navy-400"
+  @frame "rounded-field border border-base-content/20 bg-base-100 transition-colors duration-200 focus-within:border-base-content/40 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-base-content/25"
 
   @framed_padding %{
     {true, false} => "pt-0",
@@ -76,7 +62,7 @@ defmodule LineaUI.Components.Textarea do
   attr(:size, :string,
     default: "md",
     values: ~w(sm md lg),
-    doc: "Three paddings and text sizes: 10px and 12px, 12px and 13px, 16px and 14px."
+    doc: "daisyUI's `textarea-sm`, default and `textarea-lg`."
   )
 
   attr(:resizable, :boolean, default: false)
@@ -193,8 +179,8 @@ defmodule LineaUI.Components.Textarea do
       @sizes[assigns.size],
       resize(assigns.resizable and not assigns.autogrow),
       grow(assigns.autogrow),
-      @error_states[assigns.variant],
-      @states[{assigns.variant, success(assigns.state)}],
+      assigns.variant != "plain" && @error_paint,
+      assigns.state == "success" && "textarea-success",
       assigns.class
     ])
   end
@@ -208,9 +194,6 @@ defmodule LineaUI.Components.Textarea do
       assigns.class
     ])
   end
-
-  defp success("success"), do: "success"
-  defp success(_state), do: nil
 
   defp resize(true), do: nil
   defp resize(false), do: "resize-none"

@@ -56,16 +56,15 @@ defmodule LineaUI.Components.FormControlsTest do
       assert [textarea] = find(html, "textarea[name=t][rows='4']") |> Enum.to_list()
       assert LazyHTML.text(textarea) =~ "hello"
       classes = classes(html, "textarea")
-      assert "form-textarea" in classes
+      assert "textarea" in classes
       assert "resize-none" in classes
-      assert "rounded-[11px]" in classes
     end
 
     test "filled and resizable" do
       classes =
         classes(render(~H'<.textarea name="t" variant="filled" resizable />'), "textarea")
 
-      assert "bg-slate-150" in classes
+      assert "bg-base-200" in classes
       refute "resize-none" in classes
     end
 
@@ -118,8 +117,8 @@ defmodule LineaUI.Components.FormControlsTest do
         </.textarea>
         """)
 
-      assert [_] = find(html, "div.rounded-md.border > div.flex .h") |> Enum.to_list()
-      assert [_] = find(html, "div.rounded-md.border > div.py-2 .f") |> Enum.to_list()
+      assert [_] = find(html, "div.rounded-field.border > div.flex .h") |> Enum.to_list()
+      assert [_] = find(html, "div.rounded-field.border > div.py-2 .f") |> Enum.to_list()
       classes = classes(html, "textarea")
       assert "py-0" in classes
       refute "border" in classes
@@ -133,7 +132,7 @@ defmodule LineaUI.Components.FormControlsTest do
       assert [_] =
                find(html, "textarea#u_bio[name='u[bio]'][aria-invalid=true]") |> Enum.to_list()
 
-      assert "linea-invalid" in classes(html, "textarea")
+      assert "aria-invalid:textarea-error" in classes(html, "textarea")
     end
   end
 
