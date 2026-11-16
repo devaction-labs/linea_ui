@@ -262,14 +262,6 @@ span.flatpickr-weekday{font-size:12.5px;font-weight:400;color:var(--muted)}
 .sg-am a{border-radius:6px}
 
 /* landing navbar: 8px links and buttons, the mega menu as a 14px popover */
-.sg-lp-links :is(a,button),.sg-lp-login,.sg-lp-cta,.sg-lp-cta.lg,.sg-lp-nb.float .sg-lp-cta,.sg-lp-mmenu-end :is(.sg-lp-cta,.sg-lp-login){border-radius:var(--pill)}
-.sg-lp-cta{box-shadow:var(--shadow-xs)}
-.sg-lp-nb.float{border-radius:var(--r-lg);box-shadow:0 0 0 1px var(--line),var(--shadow-sm)}
-.sg-lp-mega{border-radius:var(--r-lg);box-shadow:var(--pop-shadow),var(--shadow-lg)}
-.sg-lp-feat,.sg-lp-thumb{border-radius:var(--r)}
-.sg-lp-feat .ic{border-radius:var(--pill)}
-.sg-lp-megaside{border-radius:var(--r)}
-.sg-lp-ann button{border-radius:6px}
 
 /* hero and pixel cards: the card corners and the thin line */
 .linea-hero{border-radius:var(--r-xl);box-shadow:0 0 0 1px var(--line)}

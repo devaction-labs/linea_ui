@@ -26,7 +26,7 @@ defmodule LineaUI.Components.LandingNav do
   ## Variants
 
     * `default` - the classic bar, in the page flow.
-    * `float` - a detached, centered pill of frosted glass (wrapped in `.sg-lp-floatwrap`).
+    * `float` - a detached, centered pill of frosted glass (wrapped in `.lo-lp-floatwrap`).
     * `clear` - transparent over a hero image (white text); with `sticky` it turns solid, with border and shadow,
       once the page scrolls. Put the bar over the hero yourself (a negative margin on the hero, say).
     * `mobile` - the phone layout at any width: logo, Entrar and the menu button.
@@ -53,7 +53,7 @@ defmodule LineaUI.Components.LandingNav do
   ## Phone
 
   Below 768px (or with `variant="mobile"`) the links and the primary button leave the bar and a menu button
-  (`.sg-ib`) appears; it opens a panel under the bar listing every `:link` as a row (a trigger row goes to its
+  (a daisyUI `btn`) appears; it opens a panel under the bar listing every `:link` as a row (a trigger row goes to its
   `href`, `"#"` when it has none) and the `:actions` again, stacked and full width. So `:actions` is rendered twice:
   do not put an `id` on what is inside it. The mega menu is not shown on a phone.
 
@@ -64,7 +64,7 @@ defmodule LineaUI.Components.LandingNav do
 
   The brand is the `brand` map or, for something else, the `:logo` slot.
 
-  Styles: `canvas-landing-nav.css` (`sg-lp-*`).
+  Styles: `canvas-landing-nav.css` (`lo-lp-*`).
   """
 
   use LineaUI.Component
@@ -111,12 +111,12 @@ defmodule LineaUI.Components.LandingNav do
     assigns =
       assigns
       |> assign_derived(:items, [:link], fn -> Enum.with_index(assigns.link, 1) end)
-      |> assign_derived(:bar_class, [:class], fn -> merge(["sg-lp-bar", assigns.class]) end)
+      |> assign_derived(:bar_class, [:class], fn -> merge(["lo-lp-bar", assigns.class]) end)
       |> assign_derived(:nav_class, [:variant], fn ->
-        merge(["sg-lp-nb", nav_variant(assigns.variant)])
+        merge(["navbar lo-lp-nb", nav_variant(assigns.variant)])
       end)
       |> assign_derived(:wrap_class, [:variant], fn ->
-        assigns.variant == "float" && "sg-lp-floatwrap"
+        assigns.variant == "float" && "lo-lp-floatwrap"
       end)
       |> assign_derived(:close, [:id], fn -> close_js(assigns.id) end)
       |> assign_derived(:mmenu, [:id], fn -> "#{assigns.id}-mmenu" end)
@@ -144,42 +144,45 @@ defmodule LineaUI.Components.LandingNav do
         <header class={@nav_class}>
           {render_slot(@logo)}
           <.brand :if={@logo == [] && @brand} brand={@brand} />
-          <nav class="sg-lp-links" aria-label={@label}>
-            <%= for {link, i} <- @items do %>
-              <button
-                :if={link.inner_block}
-                id={"#{@id}-trigger-#{i}"}
-                type="button"
-                aria-haspopup="true"
-                aria-expanded="false"
-                aria-controls={"#{@id}-mega-#{i}"}
-                phx-click={mega_js(@id, i, @open_on)}
-              >
-                {link.label}<.glyph name={:chevron_down} class="sg-lp-i" />
-              </button>
-              <.item_link
-                :if={!link.inner_block}
-                href={link[:href] || "#"}
-                navigate={link[:navigate]}
-                patch={link[:patch]}
-                aria-current={link[:active] && "page"}
-              >
-                {link.label}
-              </.item_link>
-            <% end %>
+          <nav class="lo-lp-links" aria-label={@label}>
+            <ul class="menu menu-horizontal">
+              <li :for={{link, i} <- @items}>
+                <button
+                  :if={link.inner_block}
+                  id={"#{@id}-trigger-#{i}"}
+                  type="button"
+                  aria-haspopup="true"
+                  aria-expanded="false"
+                  aria-controls={"#{@id}-mega-#{i}"}
+                  phx-click={mega_js(@id, i, @open_on)}
+                >
+                  {link.label}<.glyph name={:chevron_down} class="lo-lp-i" />
+                </button>
+                <.item_link
+                  :if={!link.inner_block}
+                  href={link[:href] || "#"}
+                  navigate={link[:navigate]}
+                  patch={link[:patch]}
+                  class={link[:active] && "menu-active"}
+                  aria-current={link[:active] && "page"}
+                >
+                  {link.label}
+                </.item_link>
+              </li>
+            </ul>
           </nav>
-          <div class="sg-nb-end">
+          <div class="lo-nb-end">
             {render_slot(@actions)}
             <button
               type="button"
-              class="btn btn-square btn-sm sg-lp-menubtn"
+              class="btn btn-square btn-sm lo-lp-menubtn"
               aria-label={@menu_label}
               aria-expanded="false"
               aria-controls={@mmenu}
               phx-click={@menu_toggle}
             >
-              <.icon name="huge-menu-01" class="sg-lp-i sg-lp-i-open" />
-              <.icon name="huge-cancel-01" class="sg-lp-i sg-lp-i-close" />
+              <.icon name="huge-menu-01" class="lo-lp-i lo-lp-i-open" />
+              <.icon name="huge-cancel-01" class="lo-lp-i lo-lp-i-close" />
             </button>
           </div>
         </header>
@@ -188,27 +191,30 @@ defmodule LineaUI.Components.LandingNav do
         :for={{link, i} <- @items}
         :if={link.inner_block}
         id={"#{@id}-mega-#{i}"}
-        class="sg-lp-mega"
+        class="lo-lp-mega"
         style="display: none"
       >
         {render_slot(link)}
       </div>
-      <div id={@mmenu} class="sg-lp-mmenu" style="display: none">
-        <.item_link
-          :for={{link, _i} <- @items}
-          href={link[:href] || "#"}
-          navigate={link[:navigate]}
-          patch={link[:patch]}
-          class="sg-lp-mi"
-          aria-current={link[:active] && "page"}
-        >
-          {link.label}<.glyph :if={link.inner_block} name={:chevron_down} class="sg-lp-i" /><.glyph
-            :if={!link.inner_block}
-            name={:chevron_right}
-            class="sg-lp-i"
-          />
-        </.item_link>
-        <div :if={@actions != []} class="sg-lp-mmenu-end">{render_slot(@actions)}</div>
+      <div id={@mmenu} class="lo-lp-mmenu" style="display: none">
+        <ul class="menu w-full p-0">
+          <li :for={{link, _i} <- @items}>
+            <.item_link
+              href={link[:href] || "#"}
+              navigate={link[:navigate]}
+              patch={link[:patch]}
+              class="lo-lp-mi"
+              aria-current={link[:active] && "page"}
+            >
+              {link.label}<.glyph :if={link.inner_block} name={:chevron_down} class="lo-lp-i" /><.glyph
+                :if={!link.inner_block}
+                name={:chevron_right}
+                class="lo-lp-i"
+              />
+            </.item_link>
+          </li>
+        </ul>
+        <div :if={@actions != []} class="lo-lp-mmenu-end">{render_slot(@actions)}</div>
       </div>
     </div>
     """
@@ -221,21 +227,21 @@ defmodule LineaUI.Components.LandingNav do
 
   # Closes every mega menu and the phone menu (a click outside the bar, Escape).
   defp close_js(id) do
-    JS.hide(to: "##{id} .sg-lp-mega")
-    |> JS.remove_class("open", to: "##{id} .sg-lp-links button.open")
-    |> JS.set_attribute({"aria-expanded", "false"}, to: "##{id} .sg-lp-links button")
+    JS.hide(to: "##{id} .lo-lp-mega")
+    |> JS.remove_class("open", to: "##{id} .lo-lp-links button.open")
+    |> JS.set_attribute({"aria-expanded", "false"}, to: "##{id} .lo-lp-links button")
     |> JS.hide(to: "##{id}-mmenu")
-    |> JS.set_attribute({"aria-expanded", "false"}, to: "##{id} .sg-lp-menubtn")
+    |> JS.set_attribute({"aria-expanded", "false"}, to: "##{id} .lo-lp-menubtn")
   end
 
   # Opens one mega menu and closes the others: on hover the trigger only opens (a click right after the hover
   # opened it must not close it), on click it toggles.
   defp mega_js(id, i, open_on) do
     trigger = "##{id}-trigger-#{i}"
-    others = "##{id} .sg-lp-links button:not(#{trigger})"
+    others = "##{id} .lo-lp-links button:not(#{trigger})"
 
     js =
-      JS.hide(to: "##{id} .sg-lp-mega:not(##{id}-mega-#{i})")
+      JS.hide(to: "##{id} .lo-lp-mega:not(##{id}-mega-#{i})")
       |> JS.remove_class("open", to: others)
       |> JS.set_attribute({"aria-expanded", "false"}, to: others)
 
@@ -254,7 +260,7 @@ defmodule LineaUI.Components.LandingNav do
 
   defp menu_toggle_js(id) do
     JS.toggle(to: "##{id}-mmenu", display: "flex")
-    |> JS.toggle_attribute({"aria-expanded", "true", "false"}, to: "##{id} .sg-lp-menubtn")
+    |> JS.toggle_attribute({"aria-expanded", "true", "false"}, to: "##{id} .lo-lp-menubtn")
   end
 
   attr :brand, :map, required: true
@@ -264,11 +270,11 @@ defmodule LineaUI.Components.LandingNav do
     <.item_link
       href={@brand[:href] || (!@brand[:navigate] && "/") || nil}
       navigate={@brand[:navigate]}
-      class="sg-lp-brand"
+      class="lo-lp-brand"
     >
       <img :if={@brand[:src]} src={@brand[:src]} alt="" />
-      <span :if={!@brand[:src] && @brand[:logo]} class="sg-nb-logo">{@brand[:logo]}</span>
-      <b :if={@brand[:name]} class="sg-nb-brand">{@brand[:name]}</b>
+      <span :if={!@brand[:src] && @brand[:logo]} class="lo-nb-logo bg-primary text-primary-content">{@brand[:logo]}</span>
+      <b :if={@brand[:name]} class="lo-nb-brand">{@brand[:name]}</b>
     </.item_link>
     """
   end
@@ -312,7 +318,7 @@ defmodule LineaUI.Components.LandingNav do
 
   def landing_login(assigns) do
     assigns =
-      assign_derived(assigns, :classes, [:class], fn -> merge(["sg-lp-login", assigns.class]) end)
+      assign_derived(assigns, :classes, [:class], fn -> merge(["lo-lp-login btn btn-ghost", assigns.class]) end)
 
     ~H"""
     <.item_link href={@href} navigate={@navigate} patch={@patch} class={@classes} {@rest}>
@@ -342,9 +348,9 @@ defmodule LineaUI.Components.LandingNav do
       assigns
       |> assign_derived(:classes, [:class, :size, :block], fn ->
         merge([
-          "sg-lp-cta",
-          assigns.size == "lg" && "lg",
-          assigns.block && "block",
+          "lo-lp-cta btn btn-neutral",
+          assigns.size == "lg" && "lg btn-lg",
+          assigns.block && "block btn-block",
           assigns.class
         ])
       end)
@@ -361,10 +367,10 @@ defmodule LineaUI.Components.LandingNav do
       class={@classes}
       {@rest}
     >
-      {render_slot(@inner_block)}<.icon :if={@icon} name={@icon} class="sg-lp-i" />
+      {render_slot(@inner_block)}<.icon :if={@icon} name={@icon} class="lo-lp-i" />
     </.item_link>
     <button :if={!@linked} type="button" class={@classes} {@rest}>
-      {render_slot(@inner_block)}<.icon :if={@icon} name={@icon} class="sg-lp-i" />
+      {render_slot(@inner_block)}<.icon :if={@icon} name={@icon} class="lo-lp-i" />
     </button>
     """
   end
@@ -401,13 +407,13 @@ defmodule LineaUI.Components.LandingNav do
 
   def landing_mega(%{variant: "cards"} = assigns) do
     ~H"""
-    <div class="sg-lp-cards" style={@columns && "--n:#{@columns}"}>{render_slot(@inner_block)}</div>
+    <div class="lo-lp-cards" style={@columns && "--n:#{@columns}"}>{render_slot(@inner_block)}</div>
     """
   end
 
   def landing_mega(assigns) do
     ~H"""
-    <div class="sg-lp-grid">{render_slot(@inner_block)}</div>
+    <div class="lo-lp-grid">{render_slot(@inner_block)}</div>
     {render_slot(@side)}
     """
   end
@@ -446,7 +452,7 @@ defmodule LineaUI.Components.LandingNav do
   def landing_product(assigns) do
     assigns =
       assign_derived(assigns, :classes, [:tone, :class], fn ->
-        merge(["sg-lp-prod", assigns.tone != "default" && assigns.tone, assigns.class])
+        merge(["lo-lp-prod", assigns.tone != "default" && assigns.tone, assigns.class])
       end)
 
     ~H"""
@@ -460,12 +466,12 @@ defmodule LineaUI.Components.LandingNav do
     >
       <span :if={@name || @logo || @mark != []} class="hd">
         <span :if={@mark != []} class="mk">{render_slot(@mark)}</span>
-        <span :if={@mark == [] && @logo} class="lg"><.icon name={@logo} class="sg-lp-i" /></span>
+        <span :if={@mark == [] && @logo} class="lg"><.icon name={@logo} class="lo-lp-i" /></span>
         <span :if={@name}>{@name}</span>
       </span>
       <span class="t">{@title}</span>
       <span :if={@link_label} class="go">
-        {@link_label}<.icon name="huge-arrow-right-01" class="sg-lp-i" />
+        {@link_label}<.icon name="huge-arrow-right-01" class="lo-lp-i" />
       </span>
       <span :if={@preview != []} class="pv">{render_slot(@preview)}</span>
       <span :if={@preview == [] && @mock} class="pv mock" aria-hidden="true">
@@ -494,11 +500,11 @@ defmodule LineaUI.Components.LandingNav do
 
   def landing_feature(assigns) do
     assigns =
-      assign_derived(assigns, :classes, [:class], fn -> merge(["sg-lp-feat", assigns.class]) end)
+      assign_derived(assigns, :classes, [:class], fn -> merge(["lo-lp-feat", assigns.class]) end)
 
     ~H"""
     <.item_link href={@href} navigate={@navigate} patch={@patch} class={@classes} {@rest}>
-      <span :if={@icon} class="ic"><.icon name={@icon} class="sg-lp-i" /></span>
+      <span :if={@icon} class="ic"><.icon name={@icon} class="lo-lp-i" /></span>
       <span class="col">
         <b>{@title}</b>
         <span :if={@description}>{@description}</span>
@@ -524,17 +530,17 @@ defmodule LineaUI.Components.LandingNav do
   def landing_mega_side(assigns) do
     assigns =
       assign_derived(assigns, :classes, [:class], fn ->
-        merge(["sg-lp-megaside", assigns.class])
+        merge(["lo-lp-megaside", assigns.class])
       end)
 
     ~H"""
     <div class={@classes} {@rest}>
-      <span :if={@eyebrow} class="sg-lp-eb">{@eyebrow}</span>
+      <span :if={@eyebrow} class="lo-lp-eb">{@eyebrow}</span>
       <b>{@title}</b>
       <span :if={@inner_block != []}>{render_slot(@inner_block)}</span>
-      <div :if={@thumb} class="sg-lp-thumb" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+      <div :if={@thumb} class="lo-lp-thumb" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
       <.item_link :if={@link_label} href={@href} navigate={@navigate}>
-        {@link_label}<.icon name="huge-arrow-right-01" class="sg-lp-i" />
+        {@link_label}<.icon name="huge-arrow-right-01" class="lo-lp-i" />
       </.item_link>
     </div>
     """
@@ -562,18 +568,26 @@ defmodule LineaUI.Components.LandingNav do
   def landing_announcement(assigns) do
     assigns =
       assigns
-      |> assign_derived(:classes, [:class], fn -> merge(["sg-lp-ann", assigns.class]) end)
+      |> assign_derived(:classes, [:class], fn ->
+        merge(["lo-lp-ann bg-neutral text-neutral-content", assigns.class])
+      end)
       |> assign_derived(:hide, [:id], fn -> JS.hide(to: "##{assigns.id}") end)
 
     ~H"""
     <div id={@id} class={@classes} {@rest}>
-      <span :if={@eyebrow} class="sg-lp-eb light">{@eyebrow}</span>
+      <span :if={@eyebrow} class="lo-lp-eb light badge badge-sm">{@eyebrow}</span>
       {render_slot(@inner_block)}
       <.item_link :if={@link_label} href={@href} navigate={@navigate}>
-        {@link_label}<.icon name="huge-arrow-right-01" class="sg-lp-i" />
+        {@link_label}<.icon name="huge-arrow-right-01" class="lo-lp-i" />
       </.item_link>
-      <button :if={@dismissible} type="button" aria-label={@close_label} phx-click={@hide}>
-        <.icon name="huge-cancel-01" class="sg-lp-i" />
+      <button
+        :if={@dismissible}
+        type="button"
+        class="btn btn-ghost btn-xs btn-square"
+        aria-label={@close_label}
+        phx-click={@hide}
+      >
+        <.icon name="huge-cancel-01" class="lo-lp-i" />
       </button>
     </div>
     """

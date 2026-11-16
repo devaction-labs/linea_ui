@@ -33,7 +33,7 @@ export default {
       const clear = () => (clearTimeout(this.timer), (this.timer = null))
       const later = (ms, fn) => (clear(), (this.timer = setTimeout(fn, ms)))
 
-      const triggers = () => [...el.querySelectorAll(".sg-lp-links > button[aria-controls]")]
+      const triggers = () => [...el.querySelectorAll(".lo-lp-links button[aria-controls]")]
       const panelOf = (trigger) => document.getElementById(trigger.getAttribute("aria-controls"))
       const isOpen = (trigger) => trigger.getAttribute("aria-expanded") === "true"
       const openTrigger = () => triggers().find(isOpen)
@@ -44,8 +44,8 @@ export default {
 
       this.onOver = (e) => {
         if (!hover(e)) return
-        const trigger = e.target.closest?.(".sg-lp-links > button[aria-controls]")
-        const panel = e.target.closest?.(".sg-lp-mega")
+        const trigger = e.target.closest?.(".lo-lp-links button[aria-controls]")
+        const panel = e.target.closest?.(".lo-lp-mega")
 
         if (trigger && el.contains(trigger)) {
           if (isOpen(trigger)) return clear()
@@ -62,8 +62,8 @@ export default {
       this.onLeave = (e) => hover(e) && (openTrigger() ? later(CLOSE_DELAY, close) : clear())
 
       this.onKey = (e) => {
-        const trigger = e.target.closest?.(".sg-lp-links > button[aria-controls]")
-        const panel = e.target.closest?.(".sg-lp-mega")
+        const trigger = e.target.closest?.(".lo-lp-links button[aria-controls]")
+        const panel = e.target.closest?.(".lo-lp-mega")
 
         if (trigger && e.key === "ArrowDown") {
           e.preventDefault()
