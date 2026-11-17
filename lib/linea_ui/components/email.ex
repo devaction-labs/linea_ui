@@ -65,10 +65,10 @@ defmodule LineaUI.Components.Email do
 
   @dark %{
     canvas: "#111113",
-    card: "#19191c",
-    card_clear: "rgba(25,25,28,0)",
-    hair: "#28282d",
-    edge: "#36363c",
+    card: "#1f1f23",
+    card_clear: "rgba(31,31,35,0)",
+    hair: "#303036",
+    edge: "#3c3c43",
     ink: "#f3f3f4",
     body: "#d9d9dd",
     muted: "#a3a3ab",

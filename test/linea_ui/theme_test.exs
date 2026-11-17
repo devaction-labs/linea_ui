@@ -153,8 +153,8 @@ defmodule LineaUI.ThemeTest do
       for {name, value} <- [
             {"canvas", "#111113"},
             {"main", "#111113"},
-            {"panel", "#19191c"},
-            {"raised", "#1f1f23"},
+            {"panel", "#1f1f23"},
+            {"raised", "#25252a"},
             {"accent-soft", "rgb(43 191 189/.14)"},
             {"neg", "#f08a5b"},
             {"heat4", "#2bbfbd"},
@@ -174,8 +174,8 @@ defmodule LineaUI.ThemeTest do
       assert get(light, "radius-field") == "12px"
       assert get(light, "radius-box") == "16px"
       assert get(light, "color-primary") == "#0d8f91"
-      assert get(dark, "color-base-100") == "#19191c"
-      assert get(dark, "color-base-300") == "#232327"
+      assert get(dark, "color-base-100") == "#1f1f23"
+      assert get(dark, "color-base-300") == "#2a2a2f"
 
       seed = %{id: "t", accent: "#7c3aed", tokens: %{light: %{"line" => "#123456"}}}
       t = Theme.tokens(seed)
